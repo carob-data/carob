@@ -81,18 +81,18 @@ carob_script <- function(path) {
       soil_NO3= r2$no3.N.mg.kg,
       soil_NH4= r2$nh4.N.mg.kg,
       #r2$tot.inorg.n.mg.kg,
-      DNA= r2$dna.con.ng.ul,
+      #DNA= r2$dna.con.ng.ul,
       soil_GWC= r2$GWC # gravimetric water content
 
    )
    
    dd <- merge(d2, d1, by= c("rep", "treatment", "variety", "planting_date"), all.x = TRUE)
    dd$record_id <- as.integer(1: nrow(dd))
-   i <- grep("enzyme|soil|DNA|^date", names(dd))
+   i <- grep("enzyme|soil|^date", names(dd))
    nms <- names(dd)[i]
    d <- dd[, -i] 
    ds <- dd[, c("record_id", names(dd)[i])]
-   nms <- names(ds)[grep("enzyme|soil|DNA", names(ds))]
+   nms <- names(ds)[grep("enzyme", names(ds))]
    ds <- reshape(ds, direction="long", varying=nms, v.names="soil_microbial_activity_value", timevar="soil_microbial_activity_category")
    ds$soil_microbial_activity_category <- nms[ds$soil_microbial_activity_category]
    
