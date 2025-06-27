@@ -32,49 +32,45 @@ carob_script <- function(path) {
       names(r) <- gsub("Plot.yield.Kg.Ha|Yield.Kg.ha", "Yield.kg.ha", names(r))
       if(is.null(r$X1000.seed.weight)) r$X1000.seed.weight <- NA
       if(is.null(r$Rep)) r$Rep <- NA
-      d1 <- data.frame(
+      data.frame(
          planting_date= as.character(r$Year),
          location= r$Site,
          rep= as.integer(r$Rep),
          variety= r$Genotype,
-         variety_type= r$Hybrid,
+         variety_type= tolower(r$Hybrid),
          plant_height= r$HGT,
          flowering_days= r$DFL, 
          yield= r$Yield.kg.ha, 
          seed_weight= r$X1000.seed.weight,
-         trial_id= paste0(r$Year, "-", i),
-         #season= "summer",
-         row_spacing= 75,
-         crop= "sorghum",
-         country= "Australia",
-         adm1= "Queensland",
-         geo_from_source= FALSE,
-         yield_part= "grain",
-         on_farm = TRUE,
-         is_survey= FALSE,
-         irrigated= NA
+         trial_id= paste0(r$Site, "_", r$Year)
       )
    })
    
    d <- do.call(rbind, d)
    
-   #### Add longitude and latitude coordinate 
-   
+   ## longitude/latitude
    geo <- data.frame(
       location= c("Hermitage", "Biloela", "Dalby", "Dalby Box", "Springsure"),
       latitude= c(-42.2496, -24.4022, -27.1795, -27.1732, -24.1154),
       longitude= c(146.8747, 150.5121, 151.2585, 151.2661, 148.0852)
    )
-   
    d <- merge(d, geo, by="location", all.x = TRUE)
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-  
-   ## removing 6 rows with negative yield value 
-   d <- d[!grepl("-1250", d$yield),]
+   d$row_spacing= 75
+   d$crop= "sorghum"
+   d$country= "Australia"
+   d$adm1= "Queensland"
+   d$geo_from_source= FALSE
+   d$yield_part= "grain"
+   d$on_farm = TRUE
+   d$is_survey= FALSE
+   d$irrigated= NA
+
+   ## removing 3 rows with negative yield value 
+   d <- d[which(d$yield != -1250), ]
    
    carobiner::write_files(path, meta, d)
-   
 }
 
 
