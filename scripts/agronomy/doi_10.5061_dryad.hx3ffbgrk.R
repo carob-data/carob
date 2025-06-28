@@ -13,7 +13,8 @@ carob_script <- function(path) {
    
    .Conclusions: Our results demonstrated that planting date was the most critical factor driving soybean seed yield, yet yield responses are modulated to a lesser extent by longitude, SOC, ACE-N, and STK.
    
-   Implications: To optimize soybean yield, conservation practices should prioritize early planting and soil health improvement. These findings can help identify soil health parameters associated with soybean seed yield for future long-term research."
+   Implications: To optimize soybean yield, conservation practices should prioritize early planting and soil health improvement. These findings can help identify soil health parameters associated with soybean seed yield for future long-term research.
+"
    
    uri <- "doi:10.5061/dryad.hx3ffbgrk"
    group <- "agronomy"
