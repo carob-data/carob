@@ -38,13 +38,13 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	f6 <- ff[basename(ff) == "6.-Costs and revenues_2012-2022_01.xlsx"]
 	f7 <- ff[basename(ff) == "Spanish-English Glossary.xlsx"]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	r1 <- suppressWarnings(carobiner::read.excel(f1))
+	r2 <- suppressWarnings(carobiner::read.excel(f2))
 	r3 <- carobiner::read.excel(f3)
 	r4a <- carobiner::read.excel(f4, sheet="Organic Fertilization")
-	r4b <- carobiner::read.excel(f4, sheet="Agricultural supplies")
+	r4b <- suppressWarnings(carobiner::read.excel(f4, sheet="Agricultural supplies"))
 	r4c <- carobiner::read.excel(f4, sheet="Products applied to the seed")
-	r5 <- carobiner::read.excel(f5)
+	r5 <- suppressWarnings(carobiner::read.excel(f5))
 	r6 <- carobiner::read.excel(f6)
 	r7 <- carobiner::read.excel(f7)
 
@@ -53,8 +53,8 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d1 <- data.frame(
 		farmer = r1[["FARMER ID"]],
 		logbook = r1[["LOGBOOK ID"]],
-		adm1 = carobiner::fix_namer1[["STATE WHERE THE FARMER LIVES"]], "title")
-		adm2 = carobiner::fix_namer1[["MUNICIPALITY WHERE THE FARMER LIVES"]], "title"),
+		adm1 = carobiner::fix_name(r1[["STATE WHERE THE FARMER LIVES"]], "title"),
+		adm2 = carobiner::fix_name(r1[["MUNICIPALITY WHERE THE FARMER LIVES"]], "title"),
 #		year = r1[["YEARS OF EXPERIENCE IN THE AGRICULTURAL SECTOR"]],
 		farm_size = r1[["TOTAL AREA OF THE PLOTS SOWN BY PRODUCER (HA)"]],
 		plot_size = r1[["TOTAL PLOT AREA (HA) DATA OBTAINED BY SURVEY WITH THE FARMER"]],
@@ -145,6 +145,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 ## K <- K2O / 1.2051
 ## normalize names 
 
+	d$country <- "Mexico"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE
