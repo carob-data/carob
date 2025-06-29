@@ -157,6 +157,114 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	i <- rowSums(is.na(d4a[, c("N_fertilizer", "P_fertilizer", "K_fertilizer", "other")])) < 4
 	f <- d4a[i,]
 	f <- f[f$units == "KG_HA", ]
+
+	f$fertilizer_type <- gsub("  ", " ", f$fertilizer_type)
+	f$fertilizer_type <- gsub("MEZLA|MEZLCA|MECLA|ME.CLA|MEZCAL", "MEZCLA", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("UREA", "urea", f$fertilizer_type)
+	f$fertilizer_type <- gsub("urea \\+", "urea;", f$fertilizer_type)
+	
+	f$fertilizer_type <- gsub("urea DE LENTA LIBERACION|urea RECUBIERTA COLANTA GRADO", "SR_urea", f$fertilizer_type)
+	f$fertilizer_type <- gsub("urea 46.00.00", "urea", f$fertilizer_type)
+	f$fertilizer_type <- gsub("urea PRILADA|urea ESTABILIZADA|urea MINERALIZADA", "urea", f$fertilizer_type)
+	
+	f$fertilizer_type <- gsub("CLORURO DE ZINC", "ZnCl2", f$fertilizer_type)
+	f$fertilizer_type <- gsub("CLORURO DE CALCIO", "CaCl2", f$fertilizer_type)
+	f$fertilizer_type <- gsub("CLORURO DE AMONIO", "NH4Cl", f$fertilizer_type)
+	f$fertilizer_type <- gsub("CLORURO DE POTA.IO|KCL", "KCl", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SULFATO DE AMONIO", "DAS", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SU.FATO.*IN.|SULFATO DE ZN", "ZnSO4", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("ZNSO4|ZINC", "ZnSO4", f$fertilizer_type)
+	f$fertilizer_type <- gsub("PROZnSO4", "ZnSO4", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SULFATO FERRO.O|SULFATO FERRROSO|SULFATO FEROSO|SULFATO DE FERROSO|SULFATO DE FIERRO", "FeSO4", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SUL..TO DE COBRE", "CuSO4", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SULFATO DE MAGNE.IO", "MgSO4", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SULFATO DE POTASIO", "POS", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("TIOSULFURO DE AMONIO", "ATS", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("FOSFATO DIAMONICO \\(DAP)", "DAP", f$fertilizer_type)
+	f$fertilizer_type <- gsub("FOSFATO DIAMONICO", "DAP", f$fertilizer_type)
+	f$fertilizer_type <- gsub("FOSFATO MONOAMONICO", "MAP", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SUPERFOSFATO SIMPLE", "SSP", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SUPERFOSFATO TRIPLE", "TSP", f$fertilizer_type)
+	f$fertilizer_type <- gsub("FOSFONITRATO", "NP", f$fertilizer_type)
+	f$fertilizer_type <- gsub("ACIDO FOSFORICO", "PA", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("AMONIACO ANHIDRO", "NH3", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("NITRATO DE AMONIO", "AN", f$fertilizer_type)
+	f$fertilizer_type <- gsub("NITRATO DE POTASIO", "KNO", f$fertilizer_type)
+	f$fertilizer_type <- gsub("NITRATO DE CALCIO", "CN", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("K-MAG", "KMgS", f$fertilizer_type)
+
+	f$fertilizer_type[grep("YARA.*TAR|YA.*ST|STAR YARA|SATR YaraMila", f$fertilizer_type)] <- "YaraMila Star"
+	f$fertilizer_type[grep("YARA.*AC|YARA.*21|^ACT.VA|^ACTIUVA|^ACTICA", f$fertilizer_type)] <- "YaraMila ACTYVA"
+	f$fertilizer_type[grep("YARA.*H.DRAN", f$fertilizer_type)] <- "YaraMila HYDRAN" 
+	f$fertilizer_type[grep("YARA COMPLEX", f$fertilizer_type)] <- "YaraMila COMPLEX" 
+	f$fertilizer_type[grep("^UNIK", f$fertilizer_type)] <- "YaraMila UNIK16" 
+	
+	f$fertilizer_type[grep("YARA.*NITRO|^NITROMAG|^NITRO MAG", f$fertilizer_type)] <- "YaraBela NITROMAG" 
+	f$fertilizer_type <- gsub("YARAMILLA|YARAMILA|YARA MILLA|YARA MILA", "YaraMila", f$fertilizer_type)
+	f$fertilizer_type <- gsub("YARAMIL|YARA MILL", "YaraMila", f$fertilizer_type)
+	f$fertilizer_type <- gsub("YARA MIL", "YaraMila", f$fertilizer_type)
+	f$fertilizer_type <- gsub("YARA BELLA|YARA BELA|YARABELA", "YaraBela", f$fertilizer_type)
+	f$fertilizer_type <- gsub("YARALIVA NITRABOR", "YaraLiva NITRABOR", f$fertilizer_type)
+	f$fertilizer_type <- gsub("^YAR$|^YARA$", "Yara", f$fertilizer_type)
+	f$fertilizer_type[grep("YaraBela COMPLEX", f$fertilizer_type)] <- "YaraMila COMPLEX" 
+
+	f$fertilizer_product <- NA 
+	i <- grep("Yara..la.[A-Z]", f$fertilizer_type)
+	f$fertilizer_product[i] <- f$fertilizer_type[i]
+
+	f$fertilizer_type <- gsub("YaraBela NITROMAG", "NCaMg", f$fertilizer_type) #27 (half NO, half NH), 3*0.6, 6*0.7 
+	f$fertilizer_type <- gsub("YaraMila Star", "NPKMgSZn", f$fertilizer_type) #21, 17*0.44, 3*.6, .4*.7, 12, .15
+	f$fertilizer_type <- gsub("YaraMila ACTYVA", "NPKMgSZn", f$fertilizer_type) #23, 10*0.44, 5*.6, .3*.7, 12, .3
+	f$fertilizer_type <- gsub("YaraMila HYDRAN", "NPKBMgSZn", f$fertilizer_type) #19, 4*0.44, 19*.6, .1, .3*.7, 1.9, .1
+	f$fertilizer_type <- gsub("YaraMila COMPLEX", "NPKBFeMgMnSZn", f$fertilizer_type) #12, 11*0.44, 18*.6, .015, .2, 2.7*.7, .02, .4*20, .02
+	f$fertilizer_type <- gsub("YaraMila UNIK16", "NPK 16-16-16", f$fertilizer_type) 
+
+
+	i <- grep(" \\([0-9]", f$fertilizer_type)
+	f$fertilizer_type[i] <-  gsub(" \\([0-9]", " ", f$fertilizer_type[i])
+	f$fertilizer_type[i] <-  gsub(")", "", f$fertilizer_type[i])
+	i <- grep("MEZCLA FISICA [0-9]|MEZCLA [0-9]", f$fertilizer_type)
+	f$fertilizer_type[i] <-  gsub("MEZCLA FISICA", "NPK", f$fertilizer_type[i])
+	f$fertilizer_type[i] <-  gsub("MEZCLA|FORMULA", "NPK", f$fertilizer_type[i])
+	f$fertilizer_type <-  gsub("1 MEZCLA FISICA ESTANDAR|1 MEZCLA FISICA PREEMIUM", "NPK", f$fertilizer_type)
+	f$fertilizer_type <-  gsub("^MF", "NPK", f$fertilizer_type)
+	f$fertilizer_type[f$fertilizer_type == "MEZCLA FISICA"] <- "NPK"
+	f$fertilizer_type[f$fertilizer_type == "MEZCLA MAICERA"] <- "NPK"
+	f$fertilizer_type[f$fertilizer_type == "MEZCLA MAS MAIZ"] <- "NPK"
+
+	i <- grep("^[0-9][0-9]-", f$fertilizer_type)
+	f$fertilizer_type[i] <-  paste0("NPK ", f$fertilizer_type[i])
+	f$fertilizer_type <- gsub("N-P-K|N-PK|N\\+P\\+K", "NPK", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("TRIPLE 12", "NPK 12-12-12", f$fertilizer_type)
+	f$fertilizer_type <- gsub("TRIPLE 15", "NPK 15-15-15", f$fertilizer_type)
+	f$fertilizer_type <- gsub("TRIPLE 16", "NPK 16-16-16", f$fertilizer_type)
+	f$fertilizer_type <- gsub("TRIPLE 17", "NPK 17-17-17", f$fertilizer_type)
+	f$fertilizer_type <- gsub("TRIPLE18.*|TRIPLE 18.*", "NPK 18-18-18", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub(" MAS ", "; ", f$fertilizer_type)
+	f$fertilizer_type <- gsub("urea/DAP", "urea;DAP", f$fertilizer_type)
+	f$fertilizer_type <- gsub(",MAP Y DAS|, MAP Y DAS", ";MAP;DAS", f$fertilizer_type)
+	f$fertilizer_type <- gsub("MEZCLA FISICA A BASE DE urea Y DAS|urea MAS DAS", "urea;DAS", f$fertilizer_type)
+
+
+#unique(grep("CLORURO", f$fertilizer_type, value=T))
+
+#u <- sort(unique(f$fertilizer_type))
+#unique(grep("SUPERFOSFATO", f$fertilizer_type, value=T))
+#tab <- sort(table(f$fertilizer_type))
+	
 	f$N_fertilizer = f$amount * f$N_fertilizer / 100
 	f$P_fertilizer = f$amount * f$P_fertilizer / 100
 	f$K_fertilizer = f$amount * f$K_fertilizer / 100
