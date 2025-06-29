@@ -3,6 +3,7 @@ build_carob.bat
 .html
 temp.*
 _old/
+_draft/
 data/
 run.R
 *.zip
