@@ -259,6 +259,27 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	f$fertilizer_type <- gsub("MEZCLA FISICA A BASE DE urea Y DAS|urea MAS DAS", "urea;DAS", f$fertilizer_type)
 
 
+	i <- grepl("[0-9]", f$other) & grepl("[A-Z,a-z]", f$other)
+	f$other[!i] <-  NA
+	u <- unique(f[!is.na(f$other), c("fertilizer_type", "other")])
+	u <- u[order(u[,1]), ]
+
+
+	f$B_fertilizer <- f$Ca_fertilizer <- f$S_fertilizer <- f$Zn_fertilizer <- NA
+	f$B_fertilizer[grepl("BORONAT", f$other)] <- 10
+	f$Ca_fertilizer[grepl("BORONAT", f$other)] <- 9.5
+	f$B_fertilizer[grepl("MEZCLA FISICA MAPEO", f$other)] <- .8
+	f$Zn_fertilizer[grepl("MEZCLA FISICA MAPEO", f$other)] <- 1.5
+	f$B_fertilizer[grepl("MEZCLA FISICA MAPEO", f$other)] <- .8
+	f$Zn_fertilizer[grepl("MEZCLA FISICA MAPEO", f$other)] <- 1.5
+
+	f$S_fertilizer[grepl("12", f$other)] <- 11
+	f$S_fertilizer[grepl("DAS", f$other)] <- 24
+	f$S_fertilizer[grepl("MAP", f$other)] <- 2
+	f$S_fertilizer[grepl("SSP", f$other)] <- 12
+
+
+
 #unique(grep("CLORURO", f$fertilizer_type, value=T))
 
 #u <- sort(unique(f$fertilizer_type))
