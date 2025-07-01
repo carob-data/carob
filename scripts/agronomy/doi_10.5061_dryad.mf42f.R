@@ -1,6 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 carob_script <- function(path) {
    
 "Grain legume crops are a significant component of the human diet and animal feed and have an important role in the environment, but the global diversity of agricultural legume species is currently underexploited. Experimental assessments of grain legume performances are required, to identify potential species with high yields. Here, we introduce a dataset including results of field experiments published in 173 articles. The selected experiments were carried out over five continents on 39 grain legume species. The dataset includes measurements of grain yield, aerial biomass, crop nitrogen content, residual soil nitrogen content and water use. When available, yields for cereals and oilseeds grown after grain legumes in the crop sequence are also included. The dataset is arranged into a relational database with nine structured tables and 198 standardized attributes. Tillage, fertilization, pest and irrigation management are systematically recorded for each of the 8,581 crop*field site*growing season*treatment combinations. The dataset is freely reusable and easy to update. We anticipate that it will provide valuable information for assessing grain legume production worldwide."
@@ -13,7 +14,7 @@ carob_script <- function(path) {
       data_organization = "UPS", #Université Paris-Saclay 
       publication="doi:10.1038/sdata.2016.84", 
       project=NA, 
-      data_type= "experiment", 
+      data_type= "compilation", 
       treatment_vars= "N_fertilizer; P_fertilizer; K_fertilizer; land_prep_method; variety", 
       response_vars = "fw_yield", 
       carob_contributor= "Cedric Ngakou", 
@@ -106,15 +107,15 @@ carob_script <- function(path) {
    r3 <- read.csv(f3)
    names(r3) <- gsub("Fertilization_NPK_Dose_Product_Name", "fertilizer_type",  names(r3))
    r3$fertilizer_type <- ifelse(grepl("Fertilzer formula|Fertilizer formula", r3$fertilizer_type), "NPK",
-                        ifelse(grepl("Monoammonium phosphate", r3$fertilizer_type), "MAP",
-                        ifelse(grepl("Potassium chloride|Potassium", r3$fertilizer_type), "KCl",
-                        ifelse(grepl("Single super phosphate|Super phosphate", r3$fertilizer_type), "SSP",
-                        ifelse(grepl("Double super phosphate", r3$fertilizer_type), "DSP",
-                        ifelse(grepl("Potassium muriate", r3$fertilizer_type), "MOP",
-                        ifelse(grepl("Ammonium nitrate", r3$fertilizer_type), "AN",
-                        ifelse(grepl("Triple super phosphate", r3$fertilizer_type), "TSP",
-                        ifelse(grepl("Diammonium phosphate", r3$fertilizer_type), "DAP",
-                        ifelse(grepl("Calcium ammonium nitrate", r3$fertilizer_type), "CAN", r3$fertilizer_type))))))))))
+         ifelse(grepl("Monoammonium phosphate", r3$fertilizer_type), "MAP",
+         ifelse(grepl("Potassium chloride|Potassium", r3$fertilizer_type), "KCl",
+         ifelse(grepl("Single super phosphate|Super phosphate", r3$fertilizer_type), "SSP",
+         ifelse(grepl("Double super phosphate", r3$fertilizer_type), "DSP",
+         ifelse(grepl("Potassium muriate", r3$fertilizer_type), "MOP",
+         ifelse(grepl("Ammonium nitrate", r3$fertilizer_type), "AN",
+         ifelse(grepl("Triple super phosphate", r3$fertilizer_type), "TSP",
+         ifelse(grepl("Diammonium phosphate", r3$fertilizer_type), "DAP",
+         ifelse(grepl("Calcium ammonium nitrate", r3$fertilizer_type), "CAN", r3$fertilizer_type))))))))))
    
    
    P <- carobiner::fix_name(r3$fertilizer_type)
@@ -137,10 +138,10 @@ carob_script <- function(path) {
    N_fert <- N_fert[, c("N_fertilizer", "fertilizer_type1", "IDCrop_Crop")]
    N_fert$N_fertilizer <- gsub(" and 3000.00|NA and 10.00| and 10.00| and 35.00| and 28.00| and 59.00| and 60.00| or 7.00 or 15.00 or 22.00 or 29.00 or 44.00 and 20.00| or 50.00| or 40.00 or 80.00| or 60.00", NA, N_fert$N_fertilizer)
    N_fert$N_fertilizer <- ifelse(grepl("DAS", N_fert$fertilizer_type1 ), as.numeric(N_fert$N_fertilizer)*0.21, 
-                                                 ifelse(grepl("MAP", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.11, 
-                                                 ifelse(grepl("CAN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.26,
-                                                 ifelse(grepl("urea", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.46,
-                                                 ifelse(grepl("AN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.34, as.numeric(N_fert$N_fertilizer)))))) 
+           ifelse(grepl("MAP", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.11, 
+           ifelse(grepl("CAN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.26,
+           ifelse(grepl("urea", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.46,
+           ifelse(grepl("AN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.34, as.numeric(N_fert$N_fertilizer)))))) 
    
    
    P_fert <- r3[grepl("P", r3$Fertilization_NPK), ]
@@ -149,10 +150,10 @@ carob_script <- function(path) {
    P_fert <- unique(P_fert[, c("P_fertilizer", "fertilizer_type2", "IDCrop_Crop")])
    P_fert$P_fertilizer <- gsub(" and 3000.00| or 30.00 or 90.00| or 30.00 or 60.00| or 17.80| or 7.00 or 15.00 or 22.00 or 29.00 or 44.00", NA, P_fert$P_fertilizer)
    P_fert$P_fertilizer <- ifelse(grepl("DAP", P_fert$fertilizer_type2 ), as.numeric(P_fert$P_fertilizer)*0.201, 
-                          ifelse(grepl("MAP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.52, 
-                          ifelse(grepl("DSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.20,
-                          ifelse(grepl("SSP",P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.0874,
-                          ifelse(grepl("TSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.1923, as.numeric(P_fert$P_fertilizer)))))) 
+           ifelse(grepl("MAP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.52, 
+           ifelse(grepl("DSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.20,
+           ifelse(grepl("SSP",P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.0874,
+           ifelse(grepl("TSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.1923, as.numeric(P_fert$P_fertilizer)))))) 
    
    K_fert <- r3[grepl("K", r3$Fertilization_NPK),]
    names(K_fert) <- gsub("^Fertilization_NPK_Dose$", "K_fertilizer", names(K_fert))
@@ -313,14 +314,14 @@ carob_script <- function(path) {
   
  d6 <- data.frame(
     land_prep_method= ifelse(grepl("no till|seeding|Seeding", r6$Tillage_Presence_Tillage_Tool), "minimum tillage",
-                      ifelse(grepl("chisel plow|rototiller", r6$Tillage_Presence_Tillage_Tool), "tillage",
-                      ifelse(grepl("rotovator", r6$Tillage_Presence_Tillage_Tool), "rotovating",
-                      ifelse(grepl("hoe", r6$Tillage_Presence_Tillage_Tool), "hoeing",
-                      ifelse(grepl("moldboard plow|plow|till|harrow", r6$Tillage_Presence_Tillage_Tool), "tillage",
-                      ifelse(grepl("with hand", r6$Tillage_Presence_Tillage_Tool), "manual",
-                      ifelse(grepl("disc", r6$Tillage_Presence_Tillage_Tool), "disk tillage",
-                      ifelse(grepl("puddle", r6$Tillage_Presence_Tillage_Tool), "puddled", 
-                      ifelse(grepl("burn", r6$Tillage_Presence_Tillage_Tool), "burn tillage", "unknown"))))))))),
+          ifelse(grepl("chisel plow|rototiller", r6$Tillage_Presence_Tillage_Tool), "tillage",
+          ifelse(grepl("rotovator", r6$Tillage_Presence_Tillage_Tool), "rotovating",
+          ifelse(grepl("hoe", r6$Tillage_Presence_Tillage_Tool), "hoeing",
+          ifelse(grepl("moldboard plow|plow|till|harrow", r6$Tillage_Presence_Tillage_Tool), "tillage",
+          ifelse(grepl("with hand", r6$Tillage_Presence_Tillage_Tool), "manual",
+          ifelse(grepl("disc", r6$Tillage_Presence_Tillage_Tool), "disk tillage",
+          ifelse(grepl("puddle", r6$Tillage_Presence_Tillage_Tool), "puddled", 
+          ifelse(grepl("burn", r6$Tillage_Presence_Tillage_Tool), "burn tillage", "unknown"))))))))),
     row_spacing= as.numeric(gsub(" or 100.0| or 36.0| or 36.0 or 100.0", "", r6$Tillage_Seeding_Row_Inter)),
     plant_spacing= r6$Tillage_Seeding_Row_Intra,
     seed_density= as.numeric(gsub(" or 75 or 90", "", r6$Tillage_Seeding_Density))*10000,
@@ -462,9 +463,6 @@ carob_script <- function(path) {
  
  df$IDCrop_Crop <- df$IDRotation <- df$year <- df$month <- df$site_id <- df$id <- NULL
 
-	 
  carobiner::write_files(path, meta, df)
-   
- 
 }
 
