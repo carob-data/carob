@@ -5,7 +5,7 @@ carob_script <- function(path) {
    
 "Grain legume crops are a significant component of the human diet and animal feed and have an important role in the environment, but the global diversity of agricultural legume species is currently underexploited. Experimental assessments of grain legume performances are required, to identify potential species with high yields. Here, we introduce a dataset including results of field experiments published in 173 articles. The selected experiments were carried out over five continents on 39 grain legume species. The dataset includes measurements of grain yield, aerial biomass, crop nitrogen content, residual soil nitrogen content and water use. When available, yields for cereals and oilseeds grown after grain legumes in the crop sequence are also included. The dataset is arranged into a relational database with nine structured tables and 198 standardized attributes. Tillage, fertilization, pest and irrigation management are systematically recorded for each of the 8,581 crop*field site*growing season*treatment combinations. The dataset is freely reusable and easy to update. We anticipate that it will provide valuable information for assessing grain legume production worldwide."
   
-    uri <- "doi:10.5061/dryad.mf42f"
+   uri <- "doi:10.5061/dryad.mf42f"
    group <- "agronomy"
    ff <- carobiner::get_data(uri, path, group)
    
@@ -452,12 +452,17 @@ carob_script <- function(path) {
  P <- gsub("wakil \\(metalaxyl\\)", "metalaxyl", P)
  P <- gsub("wakil", "metalaxyl", P)
  df$fungicide_product <- P
+
+	i <- which(df$fungicide_product == "chlorpyrifos")
+	df$insecticide_product[i] <- "chlorpyrifos"
+	df$fungicide_product[i] <- NA
+
  
  df$trial_id <- paste(df$location, "-", df$id)
  
  df$IDCrop_Crop <- df$IDRotation <- df$year <- df$month <- df$site_id <- df$id <- NULL
- 
- 
+
+	 
  carobiner::write_files(path, meta, df)
    
  
