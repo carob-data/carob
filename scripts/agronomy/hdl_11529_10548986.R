@@ -177,15 +177,20 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	f$fertilizer_type <- gsub("SU.FATO.*IN.|SULFATO DE ZN", "ZnSO4", f$fertilizer_type)
 
 	f$fertilizer_type <- gsub("ZNSO4|ZINC", "ZnSO4", f$fertilizer_type)
-	f$fertilizer_type <- gsub("PROZnSO4", "ZnSO4", f$fertilizer_type)
+	f$fertilizer_type <- gsub("PROZnSO4|SULTAFO DE ZnSO4", "ZnSO4", f$fertilizer_type)
 
 	f$fertilizer_type <- gsub("SULFATO FERRO.O|SULFATO FERRROSO|SULFATO FEROSO|SULFATO DE FERROSO|SULFATO DE FIERRO", "FeSO4", f$fertilizer_type)
 	f$fertilizer_type <- gsub("SUL..TO DE COBRE", "CuSO4", f$fertilizer_type)
 
-	f$fertilizer_type <- gsub("SULFATO DE MAGNE.IO", "MgSO4", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SULFATO DE BORO", "BSO4", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SULFATO DE MANGANESO", "MnSO4", f$fertilizer_type)
+
+	f$fertilizer_type <- gsub("SULFATO DE MAGNE.IO|SULMAG", "MgSO4", f$fertilizer_type)
 	f$fertilizer_type <- gsub("SULFATO DE POTASIO", "POS", f$fertilizer_type)
 
 	f$fertilizer_type <- gsub("TIOSULFURO DE AMONIO", "ATS", f$fertilizer_type)
+	f$fertilizer_type <- gsub("SULF..O DE AMONIO", "AS", f$fertilizer_type)
 
 	f$fertilizer_type <- gsub("FOSFATO DIAMONICO \\(DAP)", "DAP", f$fertilizer_type)
 	f$fertilizer_type <- gsub("FOSFATO DIAMONICO", "DAP", f$fertilizer_type)
