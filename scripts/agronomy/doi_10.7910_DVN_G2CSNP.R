@@ -61,6 +61,10 @@ About the project  Project title: Identification of the Key Biophysical Producti
    d$geo_from_source <- FALSE
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+   i <- d$fertilizer_type == "none"
+   d$N_fertilizer[i] <- d$P_fertilizer[i] <- d$K_fertilizer[i] <- 0
+   #i <- d$fertilizer_type == "NAFAKA+"
+   # N 9%; P2O5 16%; K 6%; S 5%; CaO 25%; MgO ; Zn 0.5%; Bo 0.1%
    
    carobiner::write_files(path, meta, d)
 }
