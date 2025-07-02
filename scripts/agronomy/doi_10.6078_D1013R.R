@@ -1,7 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-
 carob_script <- function(path) {
    
 "Cropland management practices that restore soil organic carbon (SOC) are increasingly presented as climate solutions that also enhance yields. But how often these benefits align at the farm level — the scale of farmers’ decision-making — remains uncertain. We examined concurrent SOC and yield responses to cover cropping, including their direct connection, with a global meta-analysis. Cover cropping simultaneously increased yields and SOC in 59.7% of 434 paired observations. Increases in SOC helped increase crop yields in soils with initial SOC concentrations below 11.6 g kg-1; for example, a change from 5 g kg-1 to 6 g kg-1 increased yields by 2.4%. These yield benefits of SOC did not decline as nitrogen inputs increased or when legume cover crops were used, suggesting fertility inputs cannot substitute for SOC effects. Integrating legume cover crops into systems with simplified rotations or with nitrogen inputs < 157 kg N ha-1 season-1 led to the largest yield increases (up to 24.3%), with legumes also increasing SOC more than non-legumes (up to 1.5 g C kg-1). By simultaneously increasing yields and SOC, targeting cover crops on low carbon soils is an opportunity to benefit both food security and climate."
@@ -11,7 +10,8 @@ carob_script <- function(path) {
    ff <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=9, minor=NA,
-         data_organization = "UCB", #University of California, Berkeley
+		#University of California, Berkeley, Lawrence Livermore National Laboratory; University of Oregon
+         data_organization = "UCB; LLNM; UO",
          publication="doi:10.1038/s41893-023-01131-7", 
          project=NA, 
          data_type= "compilation", 
@@ -160,10 +160,14 @@ carob_script <- function(path) {
    ds <- df[, c("record_id", mns, dph)]
    
    #### long records 
-   ds <- reshape(ds, direction="long", varying =list(c(mns), c(dph)) , v.names=c("value","depth"), timevar="step")
+   ds <- reshape(ds, direction="long", varying =list(mns, dph) , v.names=c("value", "depth"), timevar="step")
    ds$variable <- c(rep("soil_SOC",3), rep("soil_NO3", 2), rep("soil_NH4", 2), rep("soil_N", 2))[ds$step]
    ds <- na.omit(ds)
    ds$step <- ds$id <- NULL
+   depth <- do.call(rbind, lapply(strsplit(ds$depth, "_"), \(x) as.numeric(x[1:2])))
+   ds$depth_top <- depth[,1]
+   ds$depth_bottom <- depth[,2] 
+   ds$depth <- NULL
    
    d <- df[, names(df)[!grepl("SOC|NO3|NH4|_N|^d[1-9]$", names(df))]]
    
