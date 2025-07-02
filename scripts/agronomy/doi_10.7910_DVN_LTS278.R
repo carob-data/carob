@@ -5,7 +5,6 @@ carob_script <- function(path) {
 "Replication Data for: Response of Maize to blended fertilizer  
 Maize grain and bio-mass yield were increased by application of different rates of blended fertilizers (2020-12-02)"
 
-	## Process 
 	uri <- "doi:10.7910/DVN/LTS278"
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
@@ -16,7 +15,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 		data_type="experiment",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer",
-		data_organization=NA,
+		data_organization="EIAR",
 		project=NA
 	)
 

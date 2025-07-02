@@ -3,14 +3,20 @@
 
 carob_script <- function(path) {
    
-"This study contains data from twelve (12) sites/farmers on sustainable intensification through efficient application of different fertilizers. These 12 sites/farmers were selected from Hallu, Long, Seloto, and Sabilo villages. Farmer selection was participatory, but among farmers who were willing to provide land and were also committed to implementing the trials.The project tested intercropping of maize/pigeonpea varieties that are differentiated by maturity periods.The maize varieties include PAN 691, a long maturing maize variety, Mkombozi, an early to medium maturity high yielding maize variety, and SC 627, an early maturing variety. These will be intercropped with pigeonpea variety Mali from ICRISAT, a long maturing and high yielding variety that is considered new in the study sites." 
+"
+Promoting Sustainable Intensification Through Efficient Application of Different Sources of Phosphorus (Minjingu Granular, Minjingu Mazao, DAP and TSP) (CIAT)
+
+This study contains data from twelve (12) sites/farmers on sustainable intensification through efficient application of different fertilizers. These 12 sites/farmers were selected from Hallu, Long, Seloto, and Sabilo villages. Farmer selection was participatory, but among farmers who were willing to provide land and were also committed to implementing the trials.The project tested intercropping of maize/pigeonpea varieties that are differentiated by maturity periods.The maize varieties include PAN 691, a long maturing maize variety, Mkombozi, an early to medium maturity high yielding maize variety, and SC 627, an early maturing variety. These will be intercropped with pigeonpea variety Mali from ICRISAT, a long maturing and high yielding variety that is considered new in the study sites. 
+
+About the project  Project title: Identification of the Key Biophysical Production Constraints to Crops and Livestock at Farm and Landscape Levels  Project abstract  Maize and pigeonpeas intercropping will be microdosed with different sources of P fertilizer to enhance BNF and environmental quality. Project website:  http://africa-rising.net  Project start date: 01/11/2012   Project end date : 01/12/2016
+" 
    
    uri <- "doi:10.7910/DVN/G2CSNP"
    group <- "agronomy"
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0, 
-      data_organization ="IFPRI", 
+      data_organization = "CIAT; SARI", 
       publication=NA, 
       project="Africa RISING", 
       data_type= "experiment", 
