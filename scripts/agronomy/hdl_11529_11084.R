@@ -23,7 +23,7 @@ Considering all cultivars and environments, ECa at sowing, flowering and grain f
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		project = "CSISA",
 		publication = "doi:10.1016/j.fcr.2014.09.019",
-		data_organization = "CIMMYT; IRRI; IFPRI",
+		data_organization = "CIMMYT; UMELB",
 		data_type = "experiment", 
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2023-12-18",
@@ -137,5 +137,9 @@ Considering all cultivars and environments, ECa at sowing, flowering and grain f
 	)
 
 	d <- merge(d, geo, by="adm2", all.x=TRUE)
+
+	d$season <- "rabi"
+	d <- d[!is.na(d$planting_date), ]
+
 	carobiner::write_files(meta, d, path=path)
 }

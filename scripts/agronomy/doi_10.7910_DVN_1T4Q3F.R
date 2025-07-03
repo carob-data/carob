@@ -2,14 +2,18 @@
 
 carob_script <- function(path) {
 
-"This dataset is generated from maize response trials (legume/maize rotation system) that were conducted in Linthipe EPA, Dedza district, and Ntubwi EPA in Machinga district in Malawi, 2019/2020 cropping season. In the previous season, certifies and recycled seed of different varieties of groundnut were grown. In the current season, maize was planted as a test crop."
+"
+Performance of Maize Following Groundnut Varieties at Different Densities
+
+This dataset is generated from maize response trials (legume/maize rotation system) that were conducted in Linthipe EPA, Dedza district, and Ntubwi EPA in Machinga district in Malawi, 2019/2020 cropping season. In the previous season, certifies and recycled seed of different varieties of groundnut were grown. In the current season, maize was planted as a test crop.
+"
 
 	uri <- "doi:10.7910/DVN/1T4Q3F"
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "IFPRI",
+		data_organization = "LUANAR",
 		publication= NA,
 		project=NA,
 		data_type= "experiment",
