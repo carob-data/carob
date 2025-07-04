@@ -10,7 +10,7 @@ carob_script <- function(path) {
    ff <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=5, minor=NA,
-        data_organization = "UQ", # The University of Queensland
+        data_organization = "UQL", # The University of Queensland
         publication="doi.org/10.1002/csc2.21160", 
         project=NA, 
         data_type= "experiment", 

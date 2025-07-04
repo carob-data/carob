@@ -11,7 +11,7 @@ carob_script <- function(path) {
    
    meta <- carobiner::get_metadata(uri, path, group, major=9, minor=NA,
 		#University of California, Berkeley, Lawrence Livermore National Laboratory; University of Oregon
-         data_organization = "UCB; LLNM; UO",
+         data_organization = "UCB; LLNL; UOR",
          publication="doi:10.1038/s41893-023-01131-7", 
          project=NA, 
          data_type= "compilation", 
