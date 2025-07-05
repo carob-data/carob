@@ -10,7 +10,7 @@ carob_script <- function(path) {
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1, 
-      data_organization ="CIP", 
+      data_organization ="CIP;NARO", 
       publication = "http://www.sweetpotatoknowledge.org/wp-content/uploads/2017/10/SA10-Rice-sp-Rice-rotation-agronomic-benefits-and-profitability-analysis.pdf",
       project =NA, 
       data_type = "experiment",

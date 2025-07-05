@@ -8,9 +8,10 @@ carob_script <- function(path) {
    uri <- "doi:10.5061/dryad.djh9w0w4m"
    group <- "agronomy"
    ff  <- carobiner::get_data(uri, path, group)
-   
+
+  
    meta <- carobiner::get_metadata(uri, path, group, major=12, minor=NA, 
-      data_organization = "WUR",
+      data_organization = "WUR;APNI;IFA",
       publication=NA, 
       project=NA, 
       data_type= "compilation", 

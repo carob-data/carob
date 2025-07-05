@@ -1,6 +1,5 @@
 # R script for "carob"
 
-
 carob_script <- function(path) {
    
 "An experiment was conducted to evaluate the effects of row spacing (RS) and interplant spacing (IPS) on the yield of total biomass, leaf, and edible twigs, and nutritive value of pigeon pea,(Cajanus cajan L. Millsp.) at three locations in the Rift Valley area of Ethiopia, using a randomized completed block design with three replications in 3 × 3 factorial arrangement; three RS ( 25, 50, and 75 cm) and three IPS (15, 30, and 45 cm). Row spacing × IPS of 25 × 30 cm and 50 × 15 cm, gave greater total biomass yield than the other RS and IPS combinations.  A similar result was found for edible plant yield. At Hawassa the greater leaf CP was found for the wider IPS of 45 cm than the narrower IPS of 30 cm (318 Vs. 303 g kg-1 ). At Wondo-Genet, the greater leaf in vitro digestible organic matter  (597 Vs. 582 g kg-1 ) was found for the wider RS of 75 cm than narrower RS. Similar to leaf, a better nutritional value of edible twigs was found for a wider RS and IPS than narrower RS and IPS at Hawassa and Wondo-Genet. In contrast at Aliyu-Amab, a better nutritional value of edible twigs was found for narrower RS and IPS than the wider spacing. Thus, it can be concluded that RS × IPS of 25 × 30 cm or 50 × 15 cm are advisable for pigeon pea forage production."
@@ -10,7 +9,7 @@ carob_script <- function(path) {
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA, 
-		data_organization = "ARARI", ##Amhara Agricultural Research Institute (Debre Birehan Agricultural Research Center)
+		data_organization = "ARARI;HWU",
 		publication="doi:10.1002/agj2.20803", 
 		project=NA, 
 		data_type= "experiment", 

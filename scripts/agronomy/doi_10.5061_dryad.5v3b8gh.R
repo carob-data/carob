@@ -2,7 +2,7 @@
 
 carob_script <- function(path) {
      
-"Sorghum (Sorghum bicolor L. Moench)–groundnut (Arachis hypogaea L.) intercropping is important in the Sahel and Sudan Savanna. Nineteen trials were conducted during 2014 and 2015 in Mali and Niger for determination of: response functions for sorghum sole crop (SSC) and intercrop to N, P, and K; effects of the P×N interaction and of a nutrient package for diagnosis of other deficiencies; and a procedure for estimation of intercrop functions from SSC response functions. Six Niger on-station trials included treatments for determination of intercrop effects on sorghum yield and response. Mean grain and fodder yield increases for SSC were, respectively, 18.8 and 17.6% with 10 kg ha–1 P, 30.7 and 18.8% with 30 kg ha–1 N, and 0 and 6.8% with 10 kg ha–1 K applied. The diagnostic treatment increased grain yield for only 1 of 19 site-years (SYs). Sorghum grain yield was 30% less with intercropping compared with SSC for 2 of 6 SY but 11% less overall. Overall, sorghum fodder yield was 23% more with intercropping. Sorghum response to P was 86% greater for SSC compared with intercrop. With intercropping, groundnut pod yield exceeded sorghum grain yield. The value of intercrop production was higher than for SSC. Fodder added 23 and 30% to the value of SSC and intercrop harvests, respectively. Equations were developed for determining optimal nutrient rates and intercrop response functions from SSC functions. Fertilizer applied to the intercrop compared with SSC has much more profit potential for this part of West Africa."
+"Sorghum (Sorghum bicolor L. Moench)–groundnut (Arachis hypogaea L.) intercropping is important in the Sahel and Sudan Savanna. Nineteen trials were conducted during 2014 and 2015 in Mali and Niger for determination of: response functions for sorghum sole crop (SSC) and intercrop to N, P, and K; effects of the P×N interaction and of a nutrient package for diagnosis of other deficiencies; and a procedure for estimation of intercrop functions from SSC response functions. Six Niger on-station trials included treatments for determination of intercrop effects on sorghum yield and response. Mean grain and fodder yield increases for SSC were, respectively, 18.8 and 17.6% with 10 kg ha–1 P, 30.7 and 18.8% with 30 kg ha–1 N, and 0 and 6.8% with 10 kg ha–1 K applied. The diagnostic treatment increased grain yield for only 1 of 19 site-years (SYs). Sorghum grain yield was 30% less with intercropping compared with SSC for 2 of 6 SY but 11% less overall. Overall, sorghum fodder yield was 23% more with intercropping. Sorghum response to P was 86% greater for SSC compared with intercrop. With intercropping, groundnut pod yield exceeded sorghum grain yield. The value of intercrop production was higher than for SSC. Fodder added 23 and 30% to the value of `SSC and intercrop harvests, respectively. Equations were developed for determining optimal nutrient rates and intercrop response functions from SSC functions. Fertilizer applied to the intercrop compared with SSC has much more profit potential for this part of West Africa."
 
 
    uri <- "doi:10.5061/dryad.5v3b8gh"
@@ -10,7 +10,7 @@ carob_script <- function(path) {
    ff  <- carobiner::get_data(uri, path, group)
 
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA, 
-      data_organization = "UNL", 
+      data_organization = "UNL;IER;INRAN", 
       publication="doi:10.2134/agronj2017.02.0120", 
       project=NA, 
       data_type= "experiment", 

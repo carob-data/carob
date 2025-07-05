@@ -10,7 +10,7 @@ carob_script <- function(path) {
 
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
 		publication= "doi:10.1016/j.fcr.2022.108578",
-		data_organization = "WUR",
+		data_organization = "WUR;APNI;IFA",
 		carob_contributor="Cedric Ngakou",
 		carob_date="2023-03-08",
 		data_type="compilation",
