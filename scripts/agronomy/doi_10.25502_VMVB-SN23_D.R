@@ -15,7 +15,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project="N2Africa",
 		publication="doi:10.21955/gatesopenres.1115299.1",
-		data_organization = "IITA;WUR",
+		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Rachel Mukami; Effie Ochieng'",
 		carob_date="2022-08-03",
 		data_type = "on-farm experiment",

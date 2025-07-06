@@ -13,7 +13,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project="N2Africa",
 		publication=NA,
-		data_organization = "IITA;WUR",
+		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Eduardo Garcia Bendito",
 		carob_date="2023-08-21",
 		data_type="experiment",

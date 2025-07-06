@@ -11,7 +11,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project="AfSIS", 
 		publication= "doi:10.1016/j.agee.2016.05.012",
-		data_organization = "IITA", 
+		data_organization = "IITA;ICRISAT;ABC", 
 		carob_contributor="Cedric Ngakou", 
 		carob_date="2023-04-04",
 		data_type="experiment",

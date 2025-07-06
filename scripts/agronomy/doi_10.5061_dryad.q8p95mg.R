@@ -6,7 +6,6 @@ carob_script <- function(path) {
 
 Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for human dietary protein. Low yields are attributed to biotic and abiotic constraints including inadequate nutrient availability. Research was conducted to determine nutrient response functions for bean production areas of Kenya, Mozambique, Rwanda, Tanzania, and Zambia."
 
-
 	uri <- "doi:10.5061/dryad.q8p95mg"
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
@@ -14,7 +13,7 @@ Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
 		publication= "doi:10.1007/s10705-018-9915-9",
 		project="Optimizing Fertilizer Use in Africa",
-		data_organization = "UNL",
+		data_organization = "NARL;RAB;KALRO;TARI;ZARI;IIAM;UNL",
 		carob_contributor="Rachel Mukami",
 		carob_date="2023-07-06",
 		data_type="experiment",

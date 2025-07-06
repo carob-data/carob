@@ -12,7 +12,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project= "AfSIS", 
 		publication = "doi:10.1016/j.agee.2016.05.012",
-		data_organization = "IITA",
+		data_organization = "IITA;ICRISAT;ABC",
 		data_type="on-farm experiment",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;lime;OM_amount",
