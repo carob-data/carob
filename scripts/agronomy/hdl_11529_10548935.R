@@ -12,7 +12,7 @@ of El Batán Texcoco, the State of Mexico, Mexico. The experiment was a randomiz
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIMMYT;AAU",
+		data_organization = "UNAM;CIMMYT;AAU",
 		publication = "doi:10.1016/j.ejsobi.2024.103653", 
 		project = NA,
 		data_type = "experiment",

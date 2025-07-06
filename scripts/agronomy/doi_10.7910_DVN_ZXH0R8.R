@@ -10,7 +10,7 @@ carob_script <- function(path) {
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication="doi:10.1017/S1742170519000504",
-		data_organization = "ICRISAT; ARARI; ILRI",
+		data_organization = "ICRISAT; ARARI; GIZ; ILRI",
 		carob_contributor="Siyabusa Mkuhlani; Eduardo Garcia Bendito",
 		carob_date="2022-02-16",
 		data_type="on-farm experiment",
