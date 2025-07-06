@@ -16,7 +16,7 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
     project=NA,
     publication= "doi:10.2135/cropsci2014.11.0796",
-    data_organization = "CIMMYT;ZARI",
+    data_organization = "CIMMYT",
     treatment_vars = "land_prep_method;residue_prevcrop_used;intercrops;crop_rotation",
     response_vars="yield",
     data_type="experiment",
