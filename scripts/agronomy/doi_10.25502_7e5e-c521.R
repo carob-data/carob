@@ -11,11 +11,11 @@ carob_script <- function(path) {
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		publication= NA, 
-		data_organization = "IITA",
+		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Cedric Ngakou",
 		carob_date="2023-07-14",
 		data_type="experiment",
-		project=NA,
+		project="N2Africa",
 		response_vars= "yield",
 		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"
 	)

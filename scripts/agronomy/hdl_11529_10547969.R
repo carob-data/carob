@@ -15,7 +15,7 @@ carob_script <- function(path) {
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
     project=NA, 
     publication= "doi:10.1016/j.fcr.2019.04.005", 
-    data_organization = "CIMMYT", 
+    data_organization = "CIMMYT;UBKV", 
     data_type="on-farm experiment", 
 	  response_vars = "yield",
 	  treatment_vars = "land_prep_method;crop_rotation",

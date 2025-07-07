@@ -1,7 +1,6 @@
 # R script for "carob"
 
 # ## ISSUES 
-# New fertiliser type which is not in carob
 #Fertiliser amount are given as ratios 
 # ....
 
@@ -29,7 +28,7 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
     project=NA,
     publication= "doi:10.1017/S1742170517000606",
-    data_organization = "CIMMYT;TLC",
+    data_organization = "CIMMYT;ZARI;TLC",
     data_type="experiment",
     carob_contributor="Fredy Chimire",
     carob_date="2024-01-16",

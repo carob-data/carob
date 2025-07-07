@@ -10,8 +10,8 @@ carob_script <- function(path) {
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=2, minor=NA, 
-      data_organization = "ARC", #Agricultural Research Council of South Africa 
-      publication=NA, 
+      data_organization = "CREA;CIMMYT;ARC",
+      publication="doi:10.3390/su13179902", 
       project=NA, 
       data_type= "experiment", 
       response_vars= "yield", 

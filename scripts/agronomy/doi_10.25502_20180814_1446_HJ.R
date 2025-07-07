@@ -16,7 +16,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project= "AfSIS", 
 		publication = "doi:10.1016/j.agee.2016.05.012",
-		data_organization = "IITA",
+		data_organization = "IITA;ICRISAT;ABC",
 		data_type="on-farm experiment",
 		carob_contributor = "Eduardo Garcia Bendito",
 		carob_date="2024-02-28",

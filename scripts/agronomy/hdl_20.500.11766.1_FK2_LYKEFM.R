@@ -6,12 +6,12 @@ carob_script <- function(path) {
    
    uri <- "hdl:20.500.11766.1/FK2/LYKEFM"
    group <- "agronomy"
-	ff <- carobiner::get_data(uri, path, group)
+   ff <- carobiner::get_data(uri, path, group)
   
    meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
       project=NA, 
-		publication="hdl:20.500.11766/5084",
-      data_organization = "ICARDA", 
+      publication="hdl:20.500.11766/5084",
+      data_organization = "ARARI", 
       data_type="on-farm experiment", 
       carob_contributor="Cedric Ngakou", 
       carob_date="2023-11-10",

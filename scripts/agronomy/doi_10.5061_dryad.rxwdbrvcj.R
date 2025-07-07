@@ -13,7 +13,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
 		project="Millennium Villages Project",
 		publication= "doi:10.1029/2022JG007128",
-		data_organization = "UMD",
+		data_organization = "UMD;GISS;PSU;WHRC;TARI;ILO;IITA;UFL",
 		data_type="experiment",
 		response_vars= "yield",
 		treatment_vars="N_fertilizer;P_fertilizer",
