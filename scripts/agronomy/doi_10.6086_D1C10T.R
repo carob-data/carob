@@ -90,7 +90,8 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 	   season= c(rep("early wet", 2), rep("late wet", 2), rep("early wet", 2), rep("late wet", 2)),
 	   irrigation_method= c(rep(c("flood", "drip"), time= 4)),
 	   soil_CO2= c(9.24, 11.09, 14.63, 13.05, 4.22, 3.63, 10.37, 3.66),
-	   soil_N2O= c(5.07, 3.44, 5.73, 1.48, 3.44, 3.94, 3.21, 0.92)
+	   soil_N2O= c(5.07, 3.44, 5.73, 1.48, 3.44, 3.94, 3.21, 0.92),
+	   soil_NO= c(1.31, 1.36, 1.67, 0.41, 0.19, 0.21, 0.5, 0.43)
 	)
 	
 	d <- merge(d, ems, by=c("crop", "season", "irrigation_method"), all.x = TRUE)
