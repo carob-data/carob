@@ -62,13 +62,9 @@ carob_script <- function(path) {
                   latitude=c(-12.0093, -11.25, -11.12787, -11.5538237),
 				  geo_from_source = FALSE
 			)
-
-
-   ## fix name
    d <- merge(d, geo, by="location", all.x = TRUE)
 
    d$rep <- as.integer(d$rep)
-
    d$harvest_date <- as.character(NA)
    
    carobiner::write_files(meta, d, path=path)

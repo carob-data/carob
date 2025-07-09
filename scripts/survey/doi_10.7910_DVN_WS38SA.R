@@ -8,12 +8,12 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.7910/DVN/WS38SA"
 	group <- "survey"
-	ff <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group, recursive=TRUE)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		project="RHoMIS",
 		publication= "doi:10.1038/s41597-020-0388-8",
-		data_organization = "ILRI",
+		data_organization = "UBR;ILRI;FRB;WUR;CIMMYT;CIRAD;ABC;TAID;ABIO;USM;SNV;IER;UED;ICRAF;COLSU;FVAL;CU;RUA;UCBU;SLU;IITA;UFS;ROTH;YANAPAI;STATS4SD;CIP;BAU;GIZ;KALRO;OAF;TUAF;ZALF",
 		data_type="survey", 
 		response_vars = "none",
 		treatment_vars = "none",

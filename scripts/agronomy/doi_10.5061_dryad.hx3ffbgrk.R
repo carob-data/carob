@@ -3,17 +3,17 @@
 
 carob_script <- function(path) {
    
-"Context or problem: The associations among soil health, management practices, and environmental conditions are complex, and research often focuses on specific practices or regional contexts. This have led to varying results regarding which soil health parameters are most influential for soybean yield. Objective: 
+"Context or problem: The associations among soil health, management practices, and environmental conditions are complex, and research often focuses on specific practices or regional contexts. This have led to varying results regarding which soil health parameters are most influential for soybean yield. 
+
+Objective: In this study, we investigated the effects of soil health measurements, agricultural management practices (4 - 40 years), inherent soil properties, location-specific factors, and soil fertility analytical results on soybean (Glycine max L. Merr.) seed yield. 
    
-   In this study, we investigated the effects of soil health measurements, agricultural management practices (4 - 40 years), inherent soil properties, location-specific factors, and soil fertility analytical results on soybean (Glycine max L. Merr.) seed yield. 
+Methods: Soil samples (0–15 cm) were collected in 2023 from 17 agricultural research trials across the US. Soil health measurements, inherent soil properties, and soil fertility analytical results were assessed. Field management history and yield data were reported by the collaborators, and publicly available weather data (precipitation and temperature) were retrieved. Conditional inference trees were used to identify soybean yield influential factors.
    
-   Methods: Soil samples (0–15 cm) were collected in 2023 from 17 agricultural research trials across the US. Soil health measurements, inherent soil properties, and soil fertility analytical results were assessed. Field management history and yield data were reported by the collaborators, and publicly available weather data (precipitation and temperature) were retrieved. Conditional inference trees were used to identify soybean yield influential factors.
+Results: Soybean seed yield was mainly driven by planting date. Trials planted before 26 May averaged 4,809 kg ha⁻¹, 55% greater yields than planting after 26 May (2,649 kg ha⁻¹). Longitude, along with soil organic carbon (SOC), autoclaved citrate extractable N (ACE-N), and soil test potassium (STK) were also important factors explaining yield variability.
    
-   Results: Soybean seed yield was mainly driven by planting date. Trials planted before 26 May averaged 4,809 kg ha⁻¹, 55% greater yields than planting after 26 May (2,649 kg ha⁻¹). Longitude, along with soil organic carbon (SOC), autoclaved citrate extractable N (ACE-N), and soil test potassium (STK) were also important factors explaining yield variability
+Conclusions: Our results demonstrated that planting date was the most critical factor driving soybean seed yield, yet yield responses are modulated to a lesser extent by longitude, SOC, ACE-N, and STK.
    
-   .Conclusions: Our results demonstrated that planting date was the most critical factor driving soybean seed yield, yet yield responses are modulated to a lesser extent by longitude, SOC, ACE-N, and STK.
-   
-   Implications: To optimize soybean yield, conservation practices should prioritize early planting and soil health improvement. These findings can help identify soil health parameters associated with soybean seed yield for future long-term research.
+Implications: To optimize soybean yield, conservation practices should prioritize early planting and soil health improvement. These findings can help identify soil health parameters associated with soybean seed yield for future long-term research.
 "
    
    uri <- "doi:10.5061/dryad.hx3ffbgrk"

@@ -65,7 +65,7 @@ carob_script <- function(path) {
    
    d <- merge(d, geo, by="location", all.x = TRUE)
    
-  d$season <- "October 2009-March 2010"  # from doi:10.1017/S002185961600099X
+  #season: "October 2009-March 2010"  # from doi:10.1017/S002185961600099X
   d$planting_date <- paste(d$planting_date, "10", sep = "-")  
   d$harvest_date <- "2010-03" 
 
