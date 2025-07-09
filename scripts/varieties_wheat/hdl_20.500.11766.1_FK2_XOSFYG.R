@@ -11,7 +11,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=15, minor=0,
 		project=NA,
 		publication="doi:20.500.11766/4516",
-		data_organization = "ICARDA",
+		data_organization = "ICARDA;INAT;INRAMAR",
 		carob_contributor="Samar Attaher",
 		carob_date="2023-03-15",
 		data_type="experiment",

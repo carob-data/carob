@@ -6,11 +6,11 @@ carob_script <- function(path) {
 "The data set for the “NASPOT 11” HortScience release paper has on-farm participatory planta breeding trials conducted in Mpigi, Luwero, Soroti, Kiboga, and Kabale districts and on-station trials conducted at Namulonge, Kachwekano, Ngetta, and Serere between 2005 and 2008 leading to official cultivar release of “NASPOT 11” in Uganda in April 2010. Descriptions of the data are in a pdf file (Submission to the Variety Release Committee for Release of Sweetpotato Varieties). The on-farm and on-station data are in Excel format for Sweetpotato Breeding Protocol (manual) http://www.sweetpotatoknowledge.org/). The on-farm and on-station data on disease resistance, dry matter content, taste test and root weight from plots used to compute root yield, and biomass yield was the basis for official cultivar release of ‘NASPOT 11’, in 2010 in Uganda. The pdf file has details on background information, pedigree, cultivar description, site description, materials and methods, analysis, production package, cultivar maintenance and availability, and relevant tables and illustrations. illustrations"
   
    uri <- "doi:10.21223/P3/1BBKLN"
-   group <- "varieties_potato" 
+   group <- "varieties" 
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1, 
-      data_organization ="CIP", 
+      data_organization ="CIP;NARO;UGRE;NCSU", 
       publication ="doi:10.21273/HORTSCI.46.2.317",
       project =NA, 
       data_type = "experiment",

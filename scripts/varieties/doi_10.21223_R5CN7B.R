@@ -5,7 +5,7 @@ carob_script <- function(path) {
 "The purpose of this study was to estimate the genetic gains for yield and quality traits in sweetpotatoes. The field evaluation was conducted in San Ramon 2016, 2018A, 2018B; Huaral 2016, 2019A, 2019B; Ica 2016, 2019A, 2019B and Satipo 2016, 2018A, 2018B evaluating 17 clones (Abigail, Adriano, Alexander, Arne, Atacama, Benjamin, Caplina, Costanero, Huambachero, INA-100, Isabel, Jonathan, Milagrosa, PZ06.120, Sumi, Tacna, Yarada) and 3 checks (Cemsa, Dagga, Salyboro).  Each of the trials was harvested at 90 and then 120 days."
    
    uri <-  "doi:10.21223/R5CN7B"
-   group <- "varieties_potato"
+   group <- "varieties"
    ff <- carobiner::get_data(uri, path, group)
   
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -26,7 +26,7 @@ carob_script <- function(path) {
 	d <- data.frame(
 		trial_id = r$trial_name,
 		planting_date = r$planting_date,
-		season = r$season ,
+		#season = r$season ,
 		location = r$loc,
 		variety_code = r$cipno,
 		variety = r$geno,

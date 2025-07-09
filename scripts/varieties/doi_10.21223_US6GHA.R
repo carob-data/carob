@@ -6,7 +6,7 @@ carob_script <- function(path) {
 "The current study was aimed at identifying mega-environments in Ghana and evaluating adaptability of superior sweetpotato genotypes from a targeted breeding effort. Three sets of genotypes were evaluated in multi-environment trials (MET). In the first part, twelve sweetpotato varieties were evaluated across nine environments representing the main agro-ecological zones in Ghana. Analysis of MET data was conducted using a stage-wise approach withthe genotype-by-environment (GxE) table of means used as a starting point to model the GxE interaction for sweetpotato yield. Emphasis was given to the genetic correlation matrix used in a second-order factor analytic model that accommodates heterogeneity of genetic variances across environments. A GGE plot of storage root yield explained 82 percent of the variation in the first principal component and visualized the genetic variances and discriminating power of each environment, and the genetic correlation between the environments. Two mega- environments, corresponding northern and southern trial sites, were delineated. In the second part of the study, six breeding lines selected from the south and eight breeding lines selected from the north were tested and compared to two common check clones at five locations in Ghana. A Finlay-Wilkinson stability analysis resulted in stable performances within the target mega-environment from which the genotypes were selected, but predominantly without adaptation to the other region. Our results provide a strong rationale for running separate programs to allow for faster genetic progress in each of these two major West African mega-environments by selecting for specific and broad adaptation. (2019-04-11) "
    
    uri <- "doi:10.21223/US6GHA"
-   group <- "varieties_potato" 
+   group <- "varieties" 
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0, 
@@ -84,7 +84,7 @@ carob_script <- function(path) {
    d$N_fertilizer <- 40
    d$P_fertilizer <- 40/2.29
    d$K_fertilizer <- 70/1.2051
-
+	d$season <- NULL
    
    carobiner::write_files (path, meta, d)
 }

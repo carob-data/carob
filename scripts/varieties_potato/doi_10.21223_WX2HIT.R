@@ -11,7 +11,7 @@ We use the randomized complete blocks (RCB) statistical design, with three repet
   
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		publication= NA,
-		data_organization = "CIP",
+		data_organization = "CIP;PATAZ",
 		carob_contributor="Cedric Ngakou",
 		data_type="experiment",
 		response_vars = "yield",

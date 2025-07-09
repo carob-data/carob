@@ -3,18 +3,18 @@
 
 carob_script <- function(path) {
    
-" The data set has on-station advanced yied trials for 2011 to 2012 for Kachwekano, Ngetta, Serere, and Namulonge, and 2012 on-farm trials for Isingiro, Buyende, Rakai, Oyam, and Kabale districts in in Uganda. The data is in CloneSelector format or Excel and format for Sweetpotato Breeding Protocol (manual) (http://www.sweetpotatoknowledge.org/). The on-station and on-farm data on disease resistance, beta-carotene content, dry matter content, taste test and root weght from plots used to compute root yield, and biomass yield was the basis for official cultivar release in Uganda."
+"The data set has on-station advanced yied trials for 2011 to 2012 for Kachwekano, Ngetta, Serere, and Namulonge, and 2012 on-farm trials for Isingiro, Buyende, Rakai, Oyam, and Kabale districts in in Uganda. The data is in CloneSelector format or Excel and format for Sweetpotato Breeding Protocol (manual) (http://www.sweetpotatoknowledge.org/). The on-station and on-farm data on disease resistance, beta-carotene content, dry matter content, taste test and root weght from plots used to compute root yield, and biomass yield was the basis for official cultivar release in Uganda."
    
    uri <- "doi:10.21223/P3/CYD0PI"
-   group <- "varieties_potato" 
+   group <- "varieties" 
    ff  <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=9, 
-      data_organization ="CIP", 
+      data_organization ="CIP;NARO;IFPRI;NCSU", 
       publication ="doi:10.21273/HORTSCI.51.3.291", 
       project =NA, 
       data_type = "experiment",
-      response_vars = "yield, marketable_yield",
+      response_vars = "yield;yield_marketable",
       treatment_vars = "variety", 
       carob_contributor = "Cedric Ngakou", 
       carob_date = "2024-09-19",

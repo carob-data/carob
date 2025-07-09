@@ -10,7 +10,7 @@ carob_script <- function(path) {
   
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0, 
 		publication="doi:10.1007/s11540-021-09495-z", 
-		data_organization = "CIP", 
+		data_organization = "CIP;PATAZ", 
 		carob_contributor="Cedric Ngakou", 
 		data_type="experiment", 
 		response_vars = "yield",
@@ -78,6 +78,9 @@ carob_script <- function(path) {
    
    d$planting_date <- "2016" 
    d$planting_date[d$season=="2017-2018"] <- "2017"
+   d$harvest_date <- "2017" 
+   d$harvest_date[d$season=="2017-2018"] <- "2018"
+   d$season <- NULL
 
 	
 # ambiguous from methods in paper: the dose of fertilisation was 180-160-160 of NPK

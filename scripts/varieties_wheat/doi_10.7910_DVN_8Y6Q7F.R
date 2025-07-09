@@ -12,7 +12,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		project=NA,
 		publication="doi:10.1038/s41467-020-18317-8",
-		data_organization = "SARC",
+		data_organization = "ARSU;KSU;UAR;SARC",
    		data_type="experiment", 
 		response_vars = "yield",
 		treatment_vars = "variety",
