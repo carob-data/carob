@@ -17,7 +17,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 		data_type = "survey",
 		response_vars = "none",
 		treatment_vars = "none",
-		data_organization="IITA"
+		data_organization="IITA;ICRAF;WUR"
 	)
 	
 	n2afun <- carobiner::get_function("N2A_monitoring_1", path, group)
@@ -75,6 +75,9 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 	d$irrigated <- NA
 	d$on_farm <- TRUE
 
+	d$planting_date[is.na(d$planting_date)] <- "2012"
+	d$harvest_date[is.na(d$harvest_date)] <- "2013"
+	d$season <- NULL
 			
 	# all scripts should end like this
 	carobiner::write_files(meta, d, path=path)

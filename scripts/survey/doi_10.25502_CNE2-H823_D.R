@@ -12,7 +12,7 @@ carob_script <- function(path) {
    meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project=NA, 
 		publication= NA, 
-		data_organization = "IITA", 
+		data_organization = "IITA;BOKU;MAK",
 		carob_contributor="Cedric Ngakou", 
 		carob_date="2023-11-14", 
 		data_type="crop-cuts", 
@@ -51,9 +51,9 @@ carob_script <- function(path) {
 	d$geo_from_source <- FALSE
 
     d$planting_date <- c("2016-02", "2017-02")[d$season]
-   d$harvest_date <- c("2016-06", "2017-06")[d$season]	
-   d$season <- c("Feb-June 2016", "Feb-June 2017")[d$season]
-
+	d$harvest_date <- c("2016-06", "2017-06")[d$season]	
+   #d$season <- c("Feb-June 2016", "Feb-June 2017")[d$season]
+	d$season <- NULL
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    
    carobiner::write_files(meta, d, path=path)

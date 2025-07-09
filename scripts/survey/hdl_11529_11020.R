@@ -11,7 +11,7 @@ carob_script <- function(path) {
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 	   publication=NA,
-	   data_organization = "CIMMYT",
+	   data_organization = "CIMMYT;EIAR",
 	   carob_contributor="Eduardo Garcia Bendito",
 	   carob_date="2022-11-02",
 	   data_type= "crop cuts",

@@ -11,7 +11,7 @@ carob_script <- function(path) {
  
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
     publication= NA, 
-    data_organization = "IITA",
+    data_organization = "IITA;ICRAF;WUR",
     carob_contributor="Cedric Ngakou",
     carob_date="2023-08-20",
     data_type="survey",
@@ -218,6 +218,9 @@ carob_script <- function(path) {
   # Assuming that the crop was harvested 120 days after planting. Only indicating %Y-%m
   d$planting_date <- as.character(format(as.Date("2012-12-01"), "%Y-%m"))
   d$harvest_date <- as.character(format(as.Date("2012-12-01") + 120, "%Y-%m"))
+  
+  d$adm1 <- trimws(d$adm1)
+  d$adm2 <- trimws(d$adm2)
   
   carobiner::write_files(meta, d, path=path)
 }

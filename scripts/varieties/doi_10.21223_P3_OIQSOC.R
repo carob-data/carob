@@ -6,7 +6,7 @@ carob_script <- function(path) {
 "The objectives of this study were to describe an Acelerated breeding scheme, ABS, for sweetpotato and to investigate the efficiency of this breeding scheme for selecting high-yielding and well-adapted orange-fleshed sweetpotato (OFSP) cultivars with high β-carotene content. More than 198, 500 seeds from two crossing blocks were germinated and rapidly multiplied for evaluations in observation trials at four breeding locations in Mozambique. Breeding clones with storage root yields above 10 t/ha were advanced to preliminary and advanced yield trials across four sites and for three years. As a result, 64 high-yielding OFSP breeding clones were selected and evaluated in four mega-environments following a randomized complete block design with three replicates at Angónia, Chókwè, Gurué, and Umbelúzi. Field agronomic data and storage root quality data were collected. Data from multi-environment trials were subjected to single site and combined analysis of variance as well as to stability analysis using AMMI and regression."
 
    uri <- "doi:10.21223/P3/OIQSOC"
-   group <- "varieties_potato"
+   group <- "varieties"
    ff <- carobiner::get_data(uri, path, group)
 
    meta <- carobiner::get_metadata(uri, path, group, major=1,minor=7, 
