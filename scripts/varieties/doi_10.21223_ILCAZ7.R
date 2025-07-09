@@ -68,7 +68,9 @@ carob_script <- function(path) {
    
    ## Removing one duplicate row
    d <- unique(d)
-   
+   d$season <- NULL
+   d$treatment <- trimws(d$treatment)
+
    carobiner::write_files (path, meta, d)
 }
 
