@@ -10,10 +10,9 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.48529/k739-c548"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
-	if (length(ff) == 0) return(TRUE)
+	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0, 
 		publication = NA,
 		carob_contributor = "Robert Hijmans",
 		data_organization = "xxx;WB",
