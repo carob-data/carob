@@ -172,7 +172,7 @@ carob_script <- function(path) {
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- as.character(NA)
-	d$country <- "Mali"
+	d$country <- "Ethiopia"
 	d$geo_from_source <- TRUE
 	d$geo_uncertainty <- 5000
 
