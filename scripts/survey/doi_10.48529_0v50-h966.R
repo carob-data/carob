@@ -5,13 +5,11 @@ carob_script <- function(path) {
 
 "Mali: Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017"
 
-
 	up <- carobiner::usr_pwd(path, "LSMS")
-	if (is.null(up)) return(TRUE)
-	
 	uri <- "doi:10.48529/0v50-h966"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
+	ff <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
+	if (is.null(ff)) return(TRUE)
 	
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
 		carob_contributor = "Robert Hijmans",
@@ -158,7 +156,7 @@ carob_script <- function(path) {
 		prodkg = s7fp2$s7fq13a * s7fp2$s7fq13d
 	)
 	
-	d7f2$stress <- c("drought", "excess water", "fire", "animals", "pest", "disease", "theft", NA, NA, NA)[d7f2$stress]
+	d7f2$stress <- c("drought", "excess water", "fire", "wild animals", "pests", "disease", "theft", NA, NA, NA)[d7f2$stress]
 	
 	harvest_year1 <- c(2017,2018)[(d7f2$harvest_month1 < 4)+1]
 	harvest_date1 <- paste0(harvest_year1, "-", formatC(d7f2$harvest_month1, width=2, flag="0"), "-", formatC(d7f2$harvest_day1, width=2, flag="0"))

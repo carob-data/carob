@@ -5,7 +5,7 @@
 
 pwds <- function() {
 	list(
-		LSMS = c(username="name@email.com", password="LSMS_password")
+		LSMS = c(username="name@email.com", password="password")
 	)
 }
 

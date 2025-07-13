@@ -120,9 +120,8 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 	d  <- d[!grepl("kg/ square centimeter|trays/ha|lb/plant|boxes/ha|kg/plant|kg Fw/plant|kg/tree|bales/ha|^g$|^kg$", d$unit), ]
 
 	d$unit[d$reference == "Teasdale et al."] <- "kg/ha"
-
 	
-	d$yield2 <- ifelse(grepl("Kg/ha|kg/ha|ka/ha", d$unit), d$yield, 
+	d$yield <- ifelse(grepl("Kg/ha|kg/ha|ka/ha", d$unit), d$yield, 
 				ifelse(grepl("Mg/ha|t/ha", d$unit), d$yield*1000, 
 				ifelse(grepl("t/A|t/acre", d$unit), d$yield*1000*2.471, 
 				ifelse(grepl("g/m\\^2", d$unit), d$yield*10, #!! d$yield*1000, 
