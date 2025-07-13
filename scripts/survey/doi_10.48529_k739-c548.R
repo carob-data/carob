@@ -3,8 +3,6 @@
 
 carob_script <- function(path) {
 
-	return(TRUE)
-
 "Ethiopia: Socioeconomic Survey 2018-2019"
 
 	up <- carobiner::usr_pwd(path, "LSMS")
@@ -94,8 +92,8 @@ carob_script <- function(path) {
 		crop = gsub(".\\. |..\\. |...\\. ", "", tolower(s4pp$s4q01b)),
 		has_intercrop = s4pp$s4q02 == "2. Mixed",
 		variety_type = s4pp$s4q11,
-		stress = s4pp$s4q09,
-		pesticide_used = s4pp$s4q05 == "1. YES",
+		stress = tolower(gsub(".\\. |..\\. ", "", s4pp$s4q09)),
+		insecticide_used = s4pp$s4q05 == "1. YES",
 		herbicide_used = s4pp$s4q06 == "1. YES",
 		fungicide_used = s4pp$s4q07 == "1. YES",
 		seed_rate = as.numeric(s4pp$s4q11a) * 1000, # kg, divide by area
@@ -110,6 +108,17 @@ carob_script <- function(path) {
 	d4pp$planting_date[d4pp$plant_month == ""] <- NA
 	d4pp$plant_month <- d4pp$plant_year <- NULL
 
+	d4pp$stress[d4pp$stress == "too much rain"] <- "excess water"
+	d4pp$stress[d4pp$stress == "too little rain"] <- "drought"
+	d4pp$stress[d4pp$stress == "crop disease"] <- "disease"
+	d4pp$stress[d4pp$stress == "depletion of soil"] <- "nutrient deficiency"
+	d4pp$stress[d4pp$stress == "floods"] <- "flood"
+	d4pp$stress[d4pp$stress == "insects"] <- "pests"
+	d4pp$stress[d4pp$stress == "security problems"] <- "theft"
+	d4pp$stress[grep("shortage of seeds|bad seeds", d4pp$stress)] <- "none"
+	d4pp$stress[d4pp$stress == ""] <- "none"
+	d4pp$stress[d4pp$stress == "other specify"] <- "other"
+
 
 #amboshika = Opuntia stricta?
 #beer root = beetroot?
@@ -117,7 +126,7 @@ carob_script <- function(path) {
 
 	d4pp$crop <- carobiner::replace_values(d4pp$crop,
 		c("amboshika", "apples", "avocados", "bananas",  "beer root", "cardamon", "chat", "chick peas", "chilies", "field peas", "gibto", "ground nuts", "haricot beans", "horse beans", "lentils", "lineseed", "mung bean/ masho", "nueg", "pinapples", "potatoes", "pumpkins", "green pepper", "red pepper", "rape seed", "red kideny beans", "soya beans", "sugar cane", "sweet potato", "tomatoes", "lemons", "mandarins", "mangos", "oranges", "other cereal", "other fruits", "other pulses", "other root c", "other vegetable", "other oil seed", "gishita", "godere", "kazmir", "shiferaw", "white cumin", "sacred basil", "grazing land", "temporary gr", "other land", "other spices"),
-		c("erect pricly pear", "apple", "avocado", "banana", "beetroot", "cardamom", "khat", "chickpea", "chili pepper", "pea", "white lupin", "groundnut", "green bean", "faba bean", "lentil", "flax", "mung bean", "noug", "pineapple", "potato", "pumpkin", "bell pepper", "bell pepper", "rapeseed", "kidney bean", "soybean", "sugarcane", "sweetpotato", "tomato", "lemon", "mandarin", "mango", "orange", "cereal", "fruit", "pulse", "root", "vegetable", "oilseed", "soursop", "taro", "white sapote", "moringa", "zira", "ethiopian basil", "pasture", "pasture", "other", "spices"))
+		c("erect prickly pear", "apple", "avocado", "banana", "beetroot", "cardamom", "khat", "chickpea", "chili pepper", "pea", "white lupin", "groundnut", "green bean", "faba bean", "lentil", "flax", "mung bean", "noug", "pineapple", "potato", "pumpkin", "bell pepper", "bell pepper", "rapeseed", "kidney bean", "soybean", "sugarcane", "sweetpotato", "tomato", "lemon", "mandarin", "mango", "orange", "cereal", "fruit", "pulse", "root", "vegetable", "oilseed", "soursop", "taro", "white sapote", "moringa", "zira", "ethiopian basil", "pasture", "pasture", "other", "spices"))
 
 
 
@@ -154,6 +163,9 @@ carob_script <- function(path) {
 	d <- merge(d, d4pp, by=c("holder_id", "hhid", "ea_id", "parcel_id", "field_id"))
 	d <- merge(d, d9app, by=c("holder_id", "hhid", "ea_id", "parcel_id", "field_id", "crop_id", "crop"), all.x=TRUE)
 
+
+
+	d$cropcheck <- NULL
 	d$ea_id <- d$holder_id <- d$parcel_id <- d$field_id <- d$crop_id <- NULL
 	d$trial_id <- as.character(1:nrow(d))
 	d$on_farm <- TRUE
