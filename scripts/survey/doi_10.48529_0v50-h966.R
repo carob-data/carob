@@ -5,6 +5,7 @@ carob_script <- function(path) {
 
 "Mali: Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017"
 
+
 	up <- carobiner::usr_pwd(path, "LSMS")
 	if (is.null(up)) return(TRUE)
 	
@@ -16,6 +17,7 @@ carob_script <- function(path) {
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2025-05-14",
 		data_organization = "MAM;WB",
+		data_citation = "Cellule de Planification et de Statistiques, Institut National de la Statistique & Direction Nationale de l'Agriculture (2019). Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017. World Bank. https://doi.org/10.48529/0V50-H966",		
 		completion = 5
 	)
 
@@ -216,7 +218,8 @@ carob_script <- function(path) {
 	d$has_intercrop <- d$crop_fraction <- NULL
 	d$N_splits <- as.integer(d$N_splits)
 	d$N_splits[d$N_splits>3] <- NA
-	
+	d$crop_cut = FALSE
+
 	carobiner::write_files(path, meta, d)
 }
 
