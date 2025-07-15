@@ -28,7 +28,7 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 "
 
 	uri <- "doi:10.6084/m9.figshare.c.5296369"
-	group <- "draft"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
