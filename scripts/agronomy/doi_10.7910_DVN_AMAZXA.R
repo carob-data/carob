@@ -128,11 +128,11 @@ Result of a multi-location study across Africa and Asia where different varietie
 
 	d$crop <- "rice"
 	d$yield_part <- "grain"
-	# check with paper 
-	d$on_farm <- NA
-	d$irrigated <- NA
-	d$ID <- NULL
-	d$design <- NULL
+	
+	d$on_farm <- FALSE
+	d$irrigated <- TRUE
+	d$irrigated[d$country %in% c("Gambia", "Burkina Faso")] <- FALSE
+	d$ID <- d$design <- NULL
 	
 	carobiner::write_files(path, meta, d)
 }
