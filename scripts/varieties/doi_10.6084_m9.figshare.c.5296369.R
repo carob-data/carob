@@ -44,6 +44,7 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 		completion = 5,	
 		notes = NA
 	)
+
 	
 	f <- ff[basename(ff) == "variety_frame.rds"]
 	r <- readRDS(f)
@@ -58,33 +59,56 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 		crop = tolower(r[["PHENDom_Crop"]]),
 		yield = as.character(r[["PHENDom_yield_t_ha"]]),
 
-		# = r[["PHENDom_Rows_per_Plot"]],
-		planting_date = as.character(as.Date("1970-01-01") -1 + r[["BOMDom_Sowing_date_numeric"]]),
-		harvest_date = as.character(as.Date("1970-01-01") -1 + r[["PHENDom_Harvest_date_numeric"]])
-		#year = r[["METADom_Year"]],
+		N_fertilizer = r[["METADom_Nitrogen_fert"]],
+		P_fertilizer = r[["METADom_Phos_fert"]],
+		S_fertilizer = r[["METADom_Sulfur_fert"]], #!!
 
+		# = r[["PHENDom_Rows_per_Plot"]],
+		planting_date = as.character(as.Date("1970-01-01") + r[["BOMDom_Sowing_date_numeric"]]),
+		harvest_date = as.character(as.Date("1970-01-01") + r[["PHENDom_Harvest_date_numeric"]])
+		#year = r[["METADom_Year"]],
 	)
-	vars <- grep("METADom_Variety_", names(r), value=TRUE)
-	v <- sapply(r[, vars], as.logical)
-	i <- apply(v, 1, \(i)which(i)[1])
-	d$variety <- tolower(gsub("METADom_Variety_", "", vars)[i])
 
 	d$adm1 <- carobiner::replace_values(d$adm1,
 			c("NSW", "QLD", "SA", "TAS", "VIC", "WA"),
 			c("New South Wales", "Queensland", "South Australia", "Tasmania", "Victoria", "West Australia"))
 
 	d$crop <- carobiner::replace_values(d$crop,
-			c("canola", "oat", "field pea", "lupin"),
-			c("rapeseed", "oats", "pea", "white lupin"))
+			c("canola", "oat", "field pea"),
+			c("rapeseed", "oats", "pea"))
 
 	d$yield[d$yield == "-"] <- NA
 	d$yield <- as.numeric(d$yield) * 1000
 
+	vars <- grep("METADom_Variety_", names(r), value=TRUE)
+	v <- sapply(r[, vars], as.logical)
+	i <- apply(v, 1, \(i)which(i)[1])
+	d$variety <- tolower(gsub("METADom_Variety_", "", vars)[i])
 
-	#	N_fertilizer = r[["METADom_Nitrogen_fert"]],
-	#	P_fertilizer = r[["METADom_Phos_fert"]],
-	#	S_fertilizer = r[["METADom_Sulfur_fert"]],				
+
+	#fn <- grep("METADom_Fertiliser_", names(r), value=TRUE)
+	#f <- r[, fn]
+	#names(f) <- gsub("METADom_Fertiliser_", "", names(f))
+	#products <- unique(gsub("time_|_repeat_.", "", names(f)))
+	
 	#	soil_texture = tolower(r[["METADom_texture_class_10cm.test_10cm"]])
+
+#"METADom_texture_class_10cm.test_10cm"
+#"METADom_total_N_10cm.test_10cm"
+#"METADom_total_P_10cm.test_10cm"                                     
+#"METADom_Organic_C_10cm.test_10cm"                                   
+#"METADom_pH_water_10cm.test_10cm"
+#"METADom_pH_CaCl2_10cm.test_10cm"                                    
+#"METADom_Conductivity_10cm.test_10cm"
+#"METADom_ESP_10cm.test_10cm"                                         
+#"METADom_Date_soil_test_10cm_numeric.test_10cm"
+#"METADom_texture_class_10cm.test_10cm_repeat_1"                      
+# _repeat_1
+# _60cm
+# _60cm_repeat_1
+
+# "METADom_Crop_rotation_minus_0" _6  
+
 
 
 	d$geo_from_source <- TRUE
