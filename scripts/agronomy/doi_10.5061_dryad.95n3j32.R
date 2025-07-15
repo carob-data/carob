@@ -139,7 +139,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
          names(r) <- new_names
       }
       else {
-         ifelse(r[grep("T-High", r[, ii[1]]), ] %in% cols, r[grep("T-High", r[, ii[1]]),], names(r))
+         new_names <- ifelse(r[grep("T-High", r[, ii[1]]), ] %in% cols, r[grep("T-High", r[, ii[1]]),], names(r))
          names(r) <- new_names
       }
       names(r) <- make.names(names(r), unique = TRUE)
@@ -147,6 +147,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
       return(r)
    }
  
+   
    ### Fixing date in weather data 
   
    pr_wth <- function(date, d){
