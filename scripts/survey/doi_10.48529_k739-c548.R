@@ -65,6 +65,7 @@ carob_script <- function(path) {
 		parcel_id = s3pp$parcel_id,
 		field_id = s3pp$field_id,
 		ea_id = s3pp$ea_id,
+		area = as.numeric(s3pp$s3q08) / 10000,
 		irrigated = s3pp$s3q17 == "1. YES",
 		urea = as.numeric(s3pp$s3q21a),
 		dap = as.numeric(s3pp$s3q22a),
@@ -77,11 +78,14 @@ carob_script <- function(path) {
 	
 	famnt <- d3pp[, c("urea", "dap", "nps", "npk")]
 	famnt[is.na(famnt)] <- 0
-	d3pp$N_fertilizer <- colSums(t(famnt)  * c(.46, .18, .2, .2))
-	d3pp$P_fertilizer <- colSums(t(famnt) * c(0, .201, .2, .2))
-	d3pp$K_fertilizer <- colSums(t(famnt) * c(0, 0, 0, .2))
-	d3pp$S_fertilizer <- colSums(t(famnt) * c(0, 0, 0.04, 0))
+	d3pp$N_fertilizer <- colSums(t(famnt)  * c(.46, .18, .2, .2)) / d3pp$area
+	d3pp$P_fertilizer <- colSums(t(famnt) * c(0, .201, .2, .2))  / d3pp$area
+	d3pp$K_fertilizer <- colSums(t(famnt) * c(0, 0, 0, .2))  / d3pp$area
+	d3pp$S_fertilizer <- colSums(t(famnt) * c(0, 0, 0.04, 0))  / d3pp$area
 	d3pp$urea <- d3pp$dap <- d3pp$nps <- d3pp$npk <- NULL
+
+	i <- which((d3pp$N_fertilizer > 300) | (d3pp$P_fertilizer > 300) | (d3pp$K_fertilizer > 300))
+	d3pp$N_fertilizer[i] <- d3pp$P_fertilizer[i] <- d3pp$K_fertilizer[i] <- d3pp$S_fertilizer[i] <- NA
 		
 	d4pp <- data.frame(
 		holder_id = s4pp$holder_id,
@@ -127,7 +131,7 @@ carob_script <- function(path) {
 
 	d4pp$crop <- carobiner::replace_values(d4pp$crop,
 		c("amboshika", "apples", "avocados", "bananas",  "beer root", "cardamon", "chat", "chick peas", "chilies", "field peas", "gibto", "ground nuts", "haricot beans", "horse beans", "lentils", "lineseed", "mung bean/ masho", "nueg", "pinapples", "potatoes", "pumpkins", "green pepper", "red pepper", "rape seed", "red kideny beans", "soya beans", "sugar cane", "sweet potato", "tomatoes", "lemons", "mandarins", "mangos", "oranges", "other cereal", "other fruits", "other pulses", "other root c", "other vegetable", "other oil seed", "gishita", "godere", "kazmir", "shiferaw", "white cumin", "sacred basil", "grazing land", "temporary gr", "other land", "other spices"),
-		c("erect prickly pear", "apple", "avocado", "banana", "beetroot", "cardamom", "khat", "chickpea", "chili pepper", "pea", "white lupin", "groundnut", "green bean", "faba bean", "lentil", "flax", "mung bean", "noug", "pineapple", "potato", "pumpkin", "bell pepper", "bell pepper", "rapeseed", "kidney bean", "soybean", "sugarcane", "sweetpotato", "tomato", "lemon", "mandarin", "mango", "orange", "cereal", "fruit", "pulse", "root", "vegetable", "oilseed", "soursop", "taro", "white sapote", "moringa", "zira", "ethiopian basil", "pasture", "pasture", "other", "spices"))
+		c("erect prickly pear", "apple", "avocado", "banana", "beetroot", "cardamom", "khat", "chickpea", "chili pepper", "pea", "white lupin", "groundnut", "green bean", "faba bean", "lentil", "flax", "mung bean", "noug", "pineapple", "potato", "pumpkin", "bell pepper", "bell pepper", "rapeseed", "kidney bean", "soybean", "sugarcane", "sweetpotato", "tomato", "lemon", "mandarin", "mango", "orange", "cereal", "fruit", "pulse", "root", "vegetable", "oilseed", "soursop", "taro", "white sapote", "moringa", "zira", "ethiopian basil", "pasture", "pasture", "unknown", "spices"))
 
 
 
