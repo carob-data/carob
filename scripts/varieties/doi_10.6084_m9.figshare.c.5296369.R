@@ -41,7 +41,7 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
-		completion = 5,	
+		completion = 25,	
 		notes = NA
 	)
 

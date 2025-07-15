@@ -8,7 +8,7 @@
 
 carob_script <- function(path) {
    
-   "
+"
 Data from: High soil test phosphorus effect on corn yield
 
 Phosphorus removal in crop harvest has increased as yields have increased.  Fertilizer P use guidelines are based on calibrations often developed for much  lower yield levels and may need recalibration. Corn yields may be greater  with higher than recommended soil test P when springs are relatively wet  and cool. Research was conducted across 12 irrigated and five rainfed siteyr  in Nebraska with initial Bray-1 P ≤ 11 mg kg–1 to evaluate P application  strategies for yield and P uptake of continuous corn (Zea mays L.) with and without tillage. The fertilizer P treatments were maintained on the same plots and included: (i) no P applied (0P); (ii) P applied according to the University  of Nebraska-Lincoln deficiency correction recommendation (UNL_P); (iii) P applied to replace P removed in the previous harvest (Replace_P); (iv) Bray-1 P increased and maintained at 25 mg kg–1 (Bray_25); and (v) Bray-1 P increased and maintained at 35 mg kg–1 (Bray_35). Interactions of P practice with other factors were not significant indicating consistency of P practice effects across varied climate conditions near planting and plant emergence. Grain yield was 9.3% and 0.89 Mg ha–1 more with the P-applied treatments compared with 0P. Grain yield was 3.3% more due to the additional 5.9 kg ha–1 yr–1 P applied with Replace_P compared with UNL_P. Grain yield did not differ for Replace-P, Bray_25, and Bray_35. Plant P uptake was on average linearly increased by 0.27 kg kg–1 P applied. Fertilizer P application for continuous corn should be by Replace_P.

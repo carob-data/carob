@@ -40,7 +40,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	rfun <- function(f) {
 		r <- carobiner::read.excel(f)
 		data.frame(
-			#year = r[["Year"]],
+			year = r[["Year"]],
 			country = r[["Country"]],
 			location = r[["Site"]],
 			season = tolower(r[["Season"]]),
@@ -63,7 +63,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	
 	d$yield_moisture <- 14
 	d$trial_id <- paste0(d$location, d$year, d$season, sep="_")
-
+	d$year <- NULL
 
 	# from "Dictionnary.txt"
 	npk <- data.frame(rbind(c(0,0,0), c(120,26,50), c(120,52,100), c(120,0,0), c(180,26,50), c(60,26,50)))
@@ -87,7 +87,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
+	d$irrigated <- TRUE
 
 	d$crop <- "rice"
 	d$yield_part <- "grain"
