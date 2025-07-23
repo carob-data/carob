@@ -18,7 +18,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=7, minor=NA,
-		data_organization ="OSU;PSU;USDA;ISU;WIU;UW", #"The Ohio State University; Pennsylvania State University; United States Department of Agriculture; Illinois State University; Western Illinois University; University of Minnesota; University of Wisconsin–Platteville",
+		data_organization ="OHSU;PSU;USDA-ARS;ILSU;WIU;UMINN;UWP", 
 		publication = "doi:10.3389/fagro.2023.1205259",
 		project = NA,
 		carob_date = "2025-07-22",
@@ -53,7 +53,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		diseases= "leaf",
 		harvest_date= as.character(as.Date(as.numeric(r$PC.Harvest.Day..DOY.) - 1, origin = paste0(r$Year, "-01-01"))),
 		soil_type = tolower(r$Soil.Series.and.Texture),
-		crop= "oilseed",
+		crop= "pennycress",
 		previous_crop = tolower(r$Previous.crop),
 		plot_id = r$PlotID,
 		seed_weight= as.numeric(r$X1000.seed.weight),
@@ -67,7 +67,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	)
 
 
-	d$treatment <- c("untreated", "Gasoak", "Fung", "pellet", "pellet+Fung","pellet+Fung+Gasoak", "untreated", "Gasoak", "Fung", "pellet", "pellet+Fung", "pellet+Fung+Gasoak")[as.numeric(d$trt_number)]
+	d$treatment <- c("untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide","pellet+fungicide+Gasoak", "untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide", "pellet+fungicide+Gasoak")[as.numeric(d$trt_number)]
 	d$variety <- c(rep("MN106NS", 6), rep("tt8-t/ARV1", 6))[as.numeric(d$trt_number)]
 	d$trt_number <- d$year <- NULL
 	
