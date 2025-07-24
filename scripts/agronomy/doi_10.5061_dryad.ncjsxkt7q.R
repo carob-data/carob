@@ -1,7 +1,5 @@
 # R script for "carob"
 # license: GPL (>=3)
-## ISSUES
-
 
 
 carob_script <- function(path) {
@@ -70,7 +68,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	)
 
 
-	d$seed_treatment <- c("untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide","pellet+fungicide+Gasoak", "untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide", "pellet+fungicide+Gasoak")[as.numeric(d$trt_number)]
+	d$treatment <- d$seed_treatment <- c("untreated", "gibberellic acid", "fludioxonil", "pellet", "pellet; fludioxonil", "pellet; fludioxonil; gibberellic acid", "untreated", "gibberellic acid", "fludioxonil", "pellet", "pellet; fludioxonil", "pellet; fludioxonil; gibberellic acid")[as.numeric(d$trt_number)]
 	d$variety <- c(rep("MN106NS", 6), rep("tt8-t/ARV1", 6))[as.numeric(d$trt_number)]
 	d$trt_number <- d$year <- NULL
 
@@ -91,24 +89,23 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	P <- gsub("stover", "none", P)
 	d$previous_crop <- P
 	
- d$N_fertilizer <- 45
- d$P_fertilizer <- d$K_fertilizer <- 0
+	d$N_fertilizer <- 45
+	d$P_fertilizer <- d$K_fertilizer <- 0
 
  ### Adding soil data from paper
- soil <- data.frame(
-    location= c("OSU_Wat", "UMn_2", "USDA_Mn", "ISU", "WIU", "UW_1"),
-    soil_SOM= (c( 34, 33, 37, 42, 34, 32))/10, ## in %
-    soil_CEC= c( 16.6, 13.9, 17.4, 19.5, 22, 14.8),
-    soil_pH= c( 7, 5, 6.9, 5.9, 5.8, 7.2),
-    soil_P_available= c( 164, 36, 18, 85, 25, 35),
-    soil_K= c( 590, 99, 125, 155, 165, 163),
-    soil_Ca= c( 2250, 1100, 2400, 2300, 2500, 1800),
-    soil_Mg= c(455, 260, 575, 340, 515, 645)
- )
+	 soil <- data.frame(
+		location= c("OSU_Wat", "UMn_2", "USDA_Mn", "ISU", "WIU", "UW_1"),
+		soil_SOM= (c( 34, 33, 37, 42, 34, 32))/10, ## in %
+		soil_CEC= c( 16.6, 13.9, 17.4, 19.5, 22, 14.8),
+		soil_pH= c( 7, 5, 6.9, 5.9, 5.8, 7.2),
+		soil_P_available= c( 164, 36, 18, 85, 25, 35),
+		soil_K= c( 590, 99, 125, 155, 165, 163),
+		soil_Ca= c( 2250, 1100, 2400, 2300, 2500, 1800),
+		soil_Mg= c(455, 260, 575, 340, 515, 645)
+	 )
 
- d	<- merge(d, soil, by="location", all.x = TRUE)
+	d	<- merge(d, soil, by="location", all.x = TRUE)
  
-carobiner::write_files(path, meta, d)
-
+	carobiner::write_files(path, meta, d)
 }
 
