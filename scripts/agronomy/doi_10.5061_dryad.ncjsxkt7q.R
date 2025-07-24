@@ -9,7 +9,7 @@ carob_script <- function(path) {
 "
 Seed treatment affected establishment and yield in two pennycress lines
 
-This dataset contains data related to pennycress establishment, growth, and yield as affected by applied treatments and site effects. Data related to sites includes field location, management practices of tillage, rotational crop, and soil type, and precipitation before and after planting. Treatments tested include two genetic pennycress lines (black-seeded line called 'MN106NS' and a golden-seeded line called 'tt8-t/ARV1') and six seed treatments: 1) non-treated control, 2) a treatment where seeds were soaked for 12 hrs in 0.01% w/w solution of Gibberellic Acid A4+A7, 3) treament with fludioxonil fungicide at a rate of 50 μg ai per g of seed, 4) seeds were pelleted using a commercial binder and diatomaceous earth as the filler, 5) a combination of pelleting + fungicide, and 6) the pelleting treatment in 4) but added 0.01% w/w GA solution to the binding agent during pellet construction plus the fungicide. All combinations of pennycress line and seed treatment were assigned a unique value from 1-12 as described in the column header information for 'Treatment' within the dataset. 
+This dataset contains data related to pennycress establishment, growth, and yield as affected by applied treatments and site effects. Data related to sites includes field location, management practices of tillage, rotational crop, and soil type, and precipitation before and after planting. Treatments tested include two genetic pennycress lines (black-seeded line called 'MN106NS' and a golden-seeded line called 'tt8-t/ARV1') and six seed treatments: 1) non-treated control, 2) a treatment where seeds were soaked for 12 hrs in 0.01% w/w solution of Gibberellic Acid A4+A7, 3) treament with fludioxonil fungicide at a rate of 50 μg ai per g of seed, 4) seeds were pelleted using a commercial binder and diatomaceous earth as the filler, 5) a combination of pelleting + fungicide, and 6) the pelleting treatment in 4) but added 0.01% w/w GA solution to the binding agent during pellet construction plus the fungicide. All combinations of pennycress line and seed treatment were assigned a unique value from 1-12 as described in the column header information for 'Treatment' within the dataset.
 "
 
 
@@ -24,8 +24,8 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		carob_date = "2025-07-22",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "land_prep_method; variety",
-		response_vars = "yield", 
+		treatment_vars ="seed_treatment;variety",
+		response_vars ="yield;plant_density", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 100,	
 		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed."
@@ -50,12 +50,15 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		trt_number= r$Treatment,
 		soil_WHC_sat= as.numeric(r$Estimated.soil.moisture),
 		disease_severity= r$PC.Leaf.Disease,
+		plant_density= as.numeric(r$PC.Autumn.establishment.in.plants.m2)*10000,
 		diseases= "leaf",
 		harvest_date= as.character(as.Date(as.numeric(r$PC.Harvest.Day..DOY.) - 1, origin = paste0(r$Year, "-01-01"))),
 		soil_type = tolower(r$Soil.Series.and.Texture),
 		crop= "pennycress",
 		previous_crop = tolower(r$Previous.crop),
 		plot_id = r$PlotID,
+		residue_prevcrop_used= ifelse(!is.na(r$Residue.Coverage....), TRUE, FALSE),
+		previous_crop_residue_perc= as.numeric(r$Residue.Coverage....), ## 
 		seed_weight= as.numeric(r$X1000.seed.weight),
 		yield = as.numeric(r$PC.Seed.Yield..kg.ha.),
 		trial_id = r$Location, 
@@ -67,10 +70,10 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	)
 
 
-	d$treatment <- c("untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide","pellet+fungicide+Gasoak", "untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide", "pellet+fungicide+Gasoak")[as.numeric(d$trt_number)]
+	d$seed_treatment <- c("untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide","pellet+fungicide+Gasoak", "untreated", "Gasoak", "fungicide", "pellet", "pellet+fungicide", "pellet+fungicide+Gasoak")[as.numeric(d$trt_number)]
 	d$variety <- c(rep("MN106NS", 6), rep("tt8-t/ARV1", 6))[as.numeric(d$trt_number)]
 	d$trt_number <- d$year <- NULL
-	
+
 	d <- d[!is.na(d$yield), ]
 	
 	P <- carobiner::fix_name(d$soil_type)
@@ -94,7 +97,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
  ### Adding soil data from paper
  soil <- data.frame(
     location= c("OSU_Wat", "UMn_2", "USDA_Mn", "ISU", "WIU", "UW_1"),
-    soil_SOM= (c( 34, 33, 37, 42, 34, 32))/10,
+    soil_SOM= (c( 34, 33, 37, 42, 34, 32))/10, ## in %
     soil_CEC= c( 16.6, 13.9, 17.4, 19.5, 22, 14.8),
     soil_pH= c( 7, 5, 6.9, 5.9, 5.8, 7.2),
     soil_P_available= c( 164, 36, 18, 85, 25, 35),
