@@ -51,7 +51,7 @@ To address the decline in crop productivity in the drylands ofWest Africa, many 
 		location = r$Site,
 		elevation = r$Elevation,
 		T_treatment = r$Treatment,
-		C_treatment= paste("not", " ","CA practices", "(", r$Treatment, ")", sep = ""),
+		C_treatment= paste("no", " ","CA practices", "(", r$Treatment, ")", sep = ""),
 		crop = tolower(r$Crop),
 		crop_rotation= r$crop_rotation,
 		intercrops= r$intercrops,
@@ -68,7 +68,7 @@ df <- reshape(d, varying = list(c("T_treatment", "C_treatment"), c("Treatment_yi
               times = c(1,2),
               direction= "long")
 
-df$CA_practices <- ifelse(grepl("not", df$treatment), paste( df$CA_practices,"(", "control", ")", sep = ""), df$CA_practices)
+df$CA_practices <- ifelse(grepl("no", df$treatment), paste( df$CA_practices,"(", "control", ")", sep = ""), df$CA_practices)
 
 df <- df[order(df$year, df$country), ]
 
@@ -153,13 +153,12 @@ df$yield_part <- P
 d_biomass <- df[grepl("straws|aboveground biomass|leaves", df$yield_part),]
 d_biomass$fwy_total <- d_biomass$yield
 d_biomass$yield <- NULL
-d_main <- df[!grepl("straws|aboveground biomass|leaves", df$yield_part),]
+d_main <- df[!grepl("straws|aboveground biomass|leaves", df$yield_part),] ## main harvestable part
 
 df <- merge(d_main, d_biomass, by= intersect(names(d_main), names(d_biomass)), all = TRUE)
 
 
 ### Adding geo coordinate 
-
 
 
 geo <- data.frame(
