@@ -1,6 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## ISSUES
 ## Alternaria blight disease severity was recorded twice (alt1 and alt2), but the recording times are missing.
 
@@ -18,7 +19,7 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization ="CIP;NCSU", #"International Potato Center; North Carolina State University",
-		publication = "NA",
+		publication = NA,
 		project = NA,
 		carob_date = "2025-07-28",
 		design = "alpha lattice experimental",
@@ -51,7 +52,7 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 		disease_severity= as.character(r$alt1),
 		severity_scale= "1-9",
 		#root_damage= r$damr,
-		shelling_percentage= r$SHI,
+		##shelling_percentage= r$SHI, ??? sweetpotato!
 		country= "Uganda",
 		crop= "sweetpotato",
 		yield_part= "roots",
@@ -69,18 +70,18 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 	   trial_id= c("1", "2", "3")
 	)
 	
-d <- merge(d, geo, by="location", all.x = TRUE)	
+	dd <- merge(d, geo, by="location")	
 
-cols <- c("white", "cream", "dark cream", "pale yellow", "dark yellow", "pale orange", "intermediate orange", "dark orange", "strongly pigmented with anthocyanins")
-d$flesh_color[d$flesh_color > 9] <- NA
-d$flesh_color <- cols[d$flesh_color]	
+	cols <- c("white", "cream", "dark cream", "pale yellow", "dark yellow", "pale orange", "intermediate orange", "dark orange", "strongly pigmented with anthocyanins")
+	d$flesh_color[d$flesh_color > 9] <- NA
+	d$flesh_color <- cols[d$flesh_color]	
 
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-## keep rows with yield > 0  
-#d <- d[d$yield>0, ]
-	
-carobiner::write_files(path, meta, d)
+	## keep rows with yield > 0  
+	#d <- d[d$yield>0, ]
+		
+	carobiner::write_files(path, meta, d)
 
 }
 
