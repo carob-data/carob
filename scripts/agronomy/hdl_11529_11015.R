@@ -98,7 +98,7 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	d2$soil_N[d2$soil_N > 10000] <- NA
 	  
 	d <- merge(d1, d2, by = "code", all.x=TRUE)
-	d$Code <- NULL
+	d$code <- NULL
 
 	carobiner::write_files(path, meta, d)
 }
