@@ -29,75 +29,75 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	)
 	
 	f <- ff[basename(ff) == "TAMASA_ET_NOT_2015_&_2016F.xlsx"]
-	r <- carobiner::read.excel(f,sheet = "Raw_data Harvest parameters")
-	r1 <- carobiner::read.excel(f,sheet = "Pre_soil sample analysis")
+	r1 <- carobiner::read.excel(f,sheet = "Raw_data Harvest parameters")
+	r2 <- carobiner::read.excel(f,sheet = "Pre_soil sample analysis")
 	
 	cols_to_fill <- c("Code", "District", "Peasant Association")
-	
 	for (col in cols_to_fill) {
-	  for (i in 1:nrow(r)) {
-	    if (is.na(r[i, col]) || r[i, col] == "") {
-	      r[i, col] <- r[i - 1, col]
+	  for (i in 1:nrow(r1)) {
+	    if (is.na(r1[i, col]) || r1[i, col] == "") {
+	      r1[i, col] <- r1[i - 1, col]
 	    }
 	  }
 	}
 	
-	d <- data.frame(
+	d1 <- data.frame(
 		country = "Ethiopia",
-		crop= "maize", 
-		code = r$Code,
-		location = r$Location,
-		site = r$District,
-		elevation = r$`Altitude (m.a.s.l)`,
-		treatment = r$Treatment,
-		fwy_total = r$`Biomass Weight (kg/18m2)`*556,
-		yield_moisture = r$`Grain moisture content(%)`,
-		dm_yield = r$`Grain Yield (kg/ha)`,
-		plant_density = r$`Crop Stand (Number/18m2)`*556,
-		cob_density = r$`Crop Stand (Number/18m2)`*556,
+		crop= "maize",
+		code = r1$Code,
+		location = r1$Location,
+		site = r1$District,
+		elevation = r1$`Altitude (m.a.s.l)`,
+		treatment = r1$Treatment,
+		fwy_total = r1$`Biomass Weight (kg/18m2)`*556,
+		yield_moisture = r1$`Grain moisture content(%)`,
+		dm_yield = r1$`Grain Yield (kg/ha)`,
+		plant_density = r1$`Crop Stand (Number/18m2)`*556,
+		cob_density = r1$`Crop Stand (Number/18m2)`*556,
 		yield_part = "grain",
-		yield = r$`Grain Yield (kg/ha)`
+		yield = r1$`Grain Yield (kg/ha)`
 	)
 
-	d$trial_id <- as.character(as.integer(as.factor(1)))
+	d1$trial_id <- as.character(as.integer(as.factor(1)))
 
-	d$on_farm <- TRUE
-	d$is_survey <- FALSE
-	d$irrigated <- FALSE
-	d$borer_trial <- FALSE
-	d$striga_trial <- FALSE
-	d$striga_infected <- FALSE
+	d1$on_farm <- TRUE
+	d1$is_survey <- FALSE
+	d1$irrigated <- FALSE
+	d1$borer_trial <- FALSE
+	d1$striga_trial <- FALSE
+	d1$striga_infected <- FALSE
 	
-	#d$longitude <- 37.135 
-	#d$latitude <- 8.41
-	#d$geo_from_source <- FALSE
+	#d1$longitude <- 37.135 
+	#d1$latitude <- 8.41
+	#d1$geo_from_source <- FALSE
 
-	d$planting_date <- as.character(as.Date(r$Year))
-	d$harvest_date <- NA
-	d$harvest_date[d$planting_date=="2015"]  <- as.character("2016")
-	d$harvest_date[d$planting_date=="2016"]  <- as.character("2017")
+	d1$planting_date <- as.character(as.Date(r1$Year))
+	d1$harvest_date <- NA
+	d1$harvest_date[d1$planting_date=="2015"]  <- as.character("2016")
+	d1$harvest_date[d1$planting_date=="2016"]  <- as.character("2017")
 
-	d$fertilizer_used <- d$treatment != "Control"
-	d$fertilizer_type <- NA
-	d$fertilizer_type[d$treatment=="NP (-K)"] <- "NP"
-	d$fertilizer_type[d$treatment=="NPK"] <- "NPK"
-	d$P_fertilizer <- ifelse(d$treatment=="Control", 0, NA)
-	d$K_fertilizer <- ifelse(d$treatment=="Control", 0, NA)
-	d$N_fertilizer <- ifelse(d$treatment=="Control", 0, NA)
-	d$S_fertilizer <- ifelse(d$treatment=="Control", 0, NA)
+	d1$fertilizer_used <- d1$treatment != "Control"
+	d1$fertilizer_type <- NA
+	d1$fertilizer_type[d1$treatment=="NP (-K)"] <- "NP"
+	d1$fertilizer_type[d1$treatment=="NPK"] <- "NPK"
+	d1$P_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
+	d1$K_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
+	d1$N_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
+	d1$S_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
 
-	d1 <- data.frame(
-		code = r1$Code,
+	d2 <- data.frame(
+		code = r2$Code,
 		depth_top = 0,
 		depth_bottom = 20,
-		soil_pH = r1$pH,
-		soil_N = r1$`TN (%)`*10000,
-		soil_P_total = r1$`P (ppm) or  mg/kg soil)`,
-		soil_SOC = r1$`OC (%)`,
-		soil_K = r1$`K (mg/kg soil)`) 
+		soil_pH = r2$pH,
+		soil_N = r2$`TN (%)`*10000,
+		soil_P_total = r2$`P (ppm) or  mg/kg soil)`,
+		soil_SOC = r2$`OC (%)`,
+		soil_K = r2$`K (mg/kg soil)`
+	) 
+	d2$soil_N[d2$soil_N > 10000] <- NA
 	  
-	d <- merge(d,d1,by = "code")
-	d$soil_N[d$soil_N > 10000] <- NA
+	d <- merge(d1, d2, by = "code", all.x=TRUE)
 	d$Code <- NULL
 
 	carobiner::write_files(path, meta, d)
