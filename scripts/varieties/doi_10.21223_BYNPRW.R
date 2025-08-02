@@ -2,8 +2,14 @@
 # license: GPL (>=3)
 
 carob_script <- function(path) {
-   
-"Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing season at Holetta and Adet, Ethiopia. The dataset includes data about potato clones. The experiment was created with an RCBD design, with 3 replication. Each plot contains 2 rows, for a total of 8 plants. Row length is 3 m, spaced 0.75 m between rows and 0.3 m within rows and alleys are spaced 1m. The farmer selection process is based on yield, organoleptic characteristic and appearance at flowering."
+
+
+"
+Dataset for: Assessment of at least 10 advanced clones from inter-population crosses (LBHT x LTVR) in Ethiopia and introduce them to Kenya for clean and further distribution
+
+Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing season at Holetta and Adet, Ethiopia. The dataset includes data about potato clones. The experiment was created with an RCBD design, with 3 replication. Each plot contains 2 rows, for a total of 8 plants. Row length is 3 m, spaced 0.75 m between rows and 0.3 m within rows and alleys are spaced 1m. The farmer selection process is based on yield, organoleptic  characteristic and appearance at flowering.
+"
+
   
    uri <- "doi:10.21223/BYNPRW"
    group <- "varieties"
