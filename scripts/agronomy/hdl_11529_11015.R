@@ -77,13 +77,26 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	d1$harvest_date[d1$planting_date=="2016"]  <- as.character("2017")
 
 	d1$fertilizer_used <- d1$treatment != "Control"
-	d1$fertilizer_type <- NA
-	d1$fertilizer_type[d1$treatment=="NP (-K)"] <- "NP"
-	d1$fertilizer_type[d1$treatment=="NPK"] <- "NPK"
-	d1$P_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
-	d1$K_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
-	d1$N_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
-	d1$S_fertilizer <- ifelse(d1$treatment=="Control", 0, NA)
+	d1$fertilizer_type <- ""
+	d1$N_fertilizer <- d1$P_fertilizer <- d1$K_fertilizer <- d1$S_fertilizer <- d1$Ca_fertilizer <- d1$Mg_fertilizer <- d1$Zn_fertilizer <- d1$B_fertilizer <- 0
+	i <- grep("^N", d1$treatment)
+	d1$N_fertilizer[i] <- 120
+	d1$fertilizer_type[i] <- paste0(d1$fertilizer_type[i], "urea")
+	i <- grep("^NP|PK", d1$treatment)
+	d1$P_fertilizer[i] <- 40
+	d1$fertilizer_type[i] <- paste0(d1$fertilizer_type[i], ";TSP")
+	i <- grep("^NK|PK", d1$treatment)
+	d1$K_fertilizer[i] <- 40
+	d1$fertilizer_type[i] <- paste0(d1$fertilizer_type[i], ";KCl")
+	i <- grep("Mg", d1$treatment)	
+	d1$S_fertilizer[i] <- 20
+	d1$Ca_fertilizer[i] <- 10
+	d1$Mg_fertilizer[i] <- 10
+	d1$Zn_fertilizer[i] <- 5
+	d1$B_fertilizer[i] <- 5
+	d1$fertilizer_type[i] <- paste0(d1$fertilizer_type[i], ";CaSO4;MgSO4;ZnSO4;Borax")
+	d1$fertilizer_type <- gsub("^;",  "", d1$fertilizer_type)
+	d1$fertilizer_type[d1$fertilizer_type == ""] <- "none"
 
 	d2 <- data.frame(
 		code = r2$Code,
