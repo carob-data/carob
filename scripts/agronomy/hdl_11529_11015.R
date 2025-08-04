@@ -18,7 +18,7 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "CIMMYT;EIAR",
 		publication = NA,
-		project = NA,
+		project = "TAMASA",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
@@ -54,11 +54,11 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 		site = r1$District,
 		elevation = r1$`Altitude (m.a.s.l)`,
 		treatment = r1$Treatment,
-		fwy_total = r1$`Biomass Weight (kg/18m2)`*556,
+		fwy_total = r1$`Biomass Weight (kg/18m2)` * 556,
 		yield_moisture = r1$`Grain moisture content(%)`,
 		dm_yield = r1$`Grain Yield (kg/ha)`,
-		plant_density = r1$`Crop Stand (Number/18m2)`*556,
-		cob_density = r1$`Crop Stand (Number/18m2)`*556,
+		plant_density = r1$`Crop Stand (Number/18m2)` * 556,
+		cob_density = r1$`Crop Stand (Number/18m2)` * 556,
 		yield_part = "grain",
 		yield = r1$`Grain Yield (kg/ha)`
 	)
@@ -70,10 +70,8 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	d1$striga_trial <- FALSE
 	d1$striga_infected <- FALSE
 	
-	d1$planting_date <- as.character(as.Date(r1$Year))
-	d1$harvest_date <- NA
-	d1$harvest_date[d1$planting_date=="2015"]  <- as.character("2016")
-	d1$harvest_date[d1$planting_date=="2016"]  <- as.character("2017")
+	d1$planting_date <- as.character(r1$Year)
+	d1$harvest_date <- as.character(r1$Year + 1)
 
 	d1$fertilizer_used <- d1$treatment != "Control"
 	d1$fertilizer_type <- ""
@@ -118,11 +116,10 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 	) 
 
 	d <- merge(d, geo, by="code")
-	d$trial_id <- as.integer(d$code)
+	d$trial_id <- as.character(d$code)
 	d$code <- NULL
 	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }
-
 
