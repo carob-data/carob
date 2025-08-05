@@ -92,7 +92,7 @@ Tamasa APS Ethiopia  2016 Agronomy Panel Survey
 		soil_Na= r1$Na.mg.kg.1,
 		soil_Fe= r1$Fe.mg.kg.1,
 		soil_B= r1$Boron.mg.kg.1,
-		soil_N= r1$Nitrogen.pct*10
+		soil_N= r1$Nitrogen.pct*10000
 		
 	)
 
@@ -125,7 +125,7 @@ Tamasa APS Ethiopia  2016 Agronomy Panel Survey
 	   soil_Na= r2$Na.mg.kg,
 	   soil_Fe= r2$Fe.mg.kg,
 	   soil_B= r2$Boron.mg.kg,
-	   soil_N= r2$Nitrogen.pct*10
+	   soil_N= r2$Nitrogen.pct*10000
 	)
 	
 	d3 <- data.frame(
@@ -157,7 +157,7 @@ Tamasa APS Ethiopia  2016 Agronomy Panel Survey
 	   soil_Na= r3$Na.mg.kg,
 	   soil_Fe= r3$Fe.mg.kg,
 	   soil_B= r3$Boron.mg.kg,
-	   soil_N= r3$Nitrogen.pct*10
+	   soil_N= r3$Nitrogen.pct*10000 # mg/kg
 	 
 	   
 	)
