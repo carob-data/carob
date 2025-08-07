@@ -73,7 +73,6 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 	      dmy_stems= r2$StmDMYld_C_kgha,
 	      #seed_weight= r2$GW_100grnM_g*10, 
 	      yield= r2$GHvYld_C_kgha,
-		  yield_moisture = NA,
 	      harvest_index= r2$GHI_C_pct,
 	      residue_N= (r2$StoND_Kjdl_pct*100)*10, ##from % to mg/g
 	      crop= "sorghum",
@@ -85,9 +84,8 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 	      irrigated= NA
 	)
 	 
-	### join r1 and r2
-	 
 	 d <- rbind(d1, d2)
+	 d$yield_moisture <- as.numeric(NA)
 	 
 	 d$country <- "India"
 	 d$adm1 <- "Hyderabad"
