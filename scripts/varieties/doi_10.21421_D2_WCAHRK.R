@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-
 
 carob_script <- function(path) {
 
@@ -10,8 +8,8 @@ carob_script <- function(path) {
 Data on Nitrogen Use Efficiency in Sorghum: exploring native variability for traits under variable N-regimes
 
 A set of sixty diverse Sorghum genotypes including parents of several genetic populations such as Back-Cross derived Nested Association Mapping (BCNAM) populations; bi-parental mapping populations, along with accessions from different countries such as Nigeria, USA, Lesotho, Ethiopia, and Mali were evaluated for different leaf, growth, panicle, and biological yield traits along with NUE traits in the field (under three N regimes0%, 50% and 100% of the recommended (90 kg ha-1 for two seasons (2016-17 & 2017-18)) in the black soil precision fields of ICRISAT, Patancheru, India). Different physiological, agronomical, and biological yield attributes associated with NUE were systematically recorded in three different N dosages; chlorophyll content, leaf area, leaf number, days to 50% flowering, plant height, a number of tillers, panicle number, panicle weight, fresh straw yield, dry straw yield, grain yield, test weight, harvest Index, N content in grain and straw. On the basis of the data selection under high and low nitrogen, efficient lines will be identified and contribute towards the development of nitrogen efficient sorghum cultivars.
-
 "
+
 	uri <- "doi:10.21421/D2/WCAHRK"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -75,6 +73,7 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 	      dmy_stems= r2$StmDMYld_C_kgha,
 	      #seed_weight= r2$GW_100grnM_g*10, 
 	      yield= r2$GHvYld_C_kgha,
+		  yield_moisture = NA,
 	      harvest_index= r2$GHI_C_pct,
 	      residue_N= (r2$StoND_Kjdl_pct*100)*10, ##from % to mg/g
 	      crop= "sorghum",
@@ -92,7 +91,8 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 	 
 	 d$country <- "India"
 	 d$adm1 <- "Hyderabad"
-	 d$location <- "ICRISAT-HQ,Patancheru"
+	 d$location <- "Patancheru"
+	 d$site <- "ICRISAT"
 	 d$latitude <- 17.5180 
 	 d$longitude <- 78.27903  
 	 d$geo_from_source <- FALSE
