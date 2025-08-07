@@ -18,7 +18,6 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
   group <- "varieties_maize"
   ff  <- carobiner::get_data(uri, path, group)
   
-  ## metadata 
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
@@ -42,12 +41,13 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
 	crop="maize",
 	yield_part="grain",
     variety_code=r$var_code,
-    planting_date=r$yr,
+	variety_type = r$var_cat,
+    planting_date=as.character(r$yr),
     yield=r$GY*1000,
-	yield_moisture = 12.5
+	yield_moisture = 12.5,
+	grain_color = r$col
   )
-  
-  
+    
   d$on_farm <- FALSE
   d$is_survey <- FALSE
   d$irrigated <- FALSE
@@ -56,6 +56,8 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
   
   d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
   
+  d$longitude <- d$latitude <- as.numeric(NA)
+  d$geo_from_source <- FALSE
   carobiner::write_files(path, meta, d)
 }
 
