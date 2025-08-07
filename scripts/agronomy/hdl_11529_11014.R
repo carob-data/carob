@@ -3,20 +3,19 @@
 
 ## ISSUES
 # Raw data has no specific geo locations
-# Raw data has no information on fertilizer types and rates for N, P and K
 
 carob_script <- function(path) {
 
-"This files ontains yiedl and soils data coillected by CSA (Central Statistical Agency) from four zones in Oromia (East Showa, Wollega, West and South West Showa and Jimma) and one Zone in Amhara (West Gojjam). A total of 38 primary sampling units were covered and making a total of 383 sampling points. Unreplicated crop cuts were made on farmers maize fields and yield measured. Soil samples were also collected at 0-20 and 20-50cm but are not all analysed yet."
+"
+TAMASA Ethiopia. Yield, soil and agronomy data from farmers’ maize fields collected by CSA,  2015 season
 
+This files ontains yiedl and soils data coillected by CSA (Central Statistical Agency)  from four  zones in Oromia (East Showa, Wollega, West and South West Showa and Jimma) and one Zone in Amhara (West Gojjam). A total of 38 primary sampling units were covered and making a total of 383 sampling points. Unreplicated crop cuts were made on farmers maize fields and yield measured. Soil samples were also collected at 0-20 and 20-50cm but are not all analysed yet.
+"
 
 
 	uri <- "hdl:11529/11014"
 	group <- "agronomy"
-
-
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
@@ -47,8 +46,10 @@ carob_script <- function(path) {
 	  plant_density = r$`Number of crop stands /16m2`*625,
 	  cob_density = r$`Number of cobs/16m2`*625,
 	  fw_yield = r$`Field weight of remaining grain (kg/16m2)`*625,
-	  dm_yield = r$`Moisture adjusted grain  yield (kg /ha)`,
+	  yield = r$`Moisture adjusted grain  yield (kg /ha)`,
+	  yield_moisture = 14,
 	  yield_part = "grain",
+      crop_cut = TRUE,
 	  yield = r$`Moisture adjusted grain  yield (kg /ha)`,
 	  plot_area = r$`Field area (ha)`,
 	  soil_SOC = r$`Carbon (%)`,
@@ -110,10 +111,10 @@ carob_script <- function(path) {
 
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
   d$fertilizer_type <- as.character(NA)
+  d$fertilizer_amount[d$fertilizer_amount == "."] <- NA 
   d$fertilizer_amount <- as.numeric(d$fertilizer_amount)
+
   d$fertilizer_amount[d$fertilizer_amount > 1000] <- NA
-  d$soil_Al[d$soil_Al > 200] <- NA
-  d$soil_Na[d$soil_Na > 200] <- NA
    
 	carobiner::write_files(path, meta, d)
 }
