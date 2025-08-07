@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# Raw data has no specific geo locations
 
 carob_script <- function(path) {
 
@@ -20,11 +18,11 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = NA,
-		data_type = "experiment",
-		treatment_vars = "fertilizer_used;fertilizer_amount;OM_used;OM_amount",
+		project = "TAMASA",
+		data_type = "survey",
+		treatment_vars = NA
 		response_vars = "yield", 
-		completion = 0,
+		completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2025-08-05",
 		notes = NA,
@@ -69,28 +67,6 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 	  depth_bottom = 20
 	)
 
-## Raw data states that the trial coverage included Oromia and Amhara regions 
-	#Jimma, Wollega, West Showa, East Showa, Gojjam  Districts 
-	#but there was no specification as to which location(s) was the data collected from
-
-	#adm1 = carobiner::fix_name(r$Region, "title"), #Oromia & Amhara
-	#adm2 = carobiner::fix_name(r$District, "title"), #East & West Showa, Jimma, Wollega, Illubabor under Oromia region
-                                                    #East & West Gojjam under Amhara region
-	
-	  #d$longitude[d$adm2=="East Showa"] <- 39.1667
-	  #d$longitude[d$adm2=="West Showa"] <- 38.5
-	  #d$longitude[d$adm2=="Jimma"] <- 36.8344
-	  #d$longitude[d$adm2=="Wollega"] <- 36.5506
-	  #d$longitude[d$adm2=="Illubabor"] <- 35.7559
-	  #d$longitude[d$adm2=="East Gojjam"] <- 37.81
-	  #d$longitude[d$adm2=="West Gojjam"] <- 37.3
-	  #d$latitude[d$adm2=="East Showa"] <- 8.9167
-	  #d$latitude[d$adm2=="West Showa"] <- 9.0500
-	  #d$latitude[d$adm2=="Jimma"] <- 7.6736
-	  #d$latitude[d$adm2=="Wollega"] <- 9.0820
-	  #d$latitude[d$adm2=="Illubabor"] <- 8.2752
-	  #d$latitude[d$adm2=="East Gojjam"] <- 10.33
-	  #d$latitude[d$adm2=="West Gojjam"] <- 10
 	  
 	d$trial_id <- as.character(as.integer(as.factor(1)))
 	d$on_farm <- TRUE
@@ -101,20 +77,19 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 	d$striga_infected <- FALSE
 	d$geo_from_source <- FALSE
 
-	d$planting_date <- as.character(2015)
-	d$harvest_date  <- as.character(2016)
+	d$planting_date <- "2015"
+	d$harvest_date  <- "2016"
 	
-	d$variety <- gsub("Limu\r\n","Limu",d$variety)
-	d$variety <- gsub("Kenya \r\n","kenya",d$variety)
-	d$variety <- gsub("BH- 660\r\n\r\n|Bh-660","BH-660",d$variety)
-	d$variety <- gsub("BH-661\r\n","BH 661",d$variety)
+	d$variety <- gsub("\r\n", "", d$variety)
+	d$variety <- gsub("BH- 660|Bh-660","BH-660",d$variety)
+	d$variety <- trimws(d$variety)
 
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
-  d$fertilizer_type <- as.character(NA)
-  d$fertilizer_amount[d$fertilizer_amount == "."] <- NA 
-  d$fertilizer_amount <- as.numeric(d$fertilizer_amount)
-
-  d$fertilizer_amount[d$fertilizer_amount > 1000] <- NA
+	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
+	d$fertilizer_type <- as.character(NA)
+	d$fertilizer_amount[d$fertilizer_amount == "."] <- NA 
+	d$fertilizer_amount <- as.numeric(d$fertilizer_amount)
+	d$fertilizer_amount[d$fertilizer_amount > 1000] <- NA
+  
    
 	carobiner::write_files(path, meta, d)
 }
