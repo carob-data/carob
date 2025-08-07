@@ -12,7 +12,7 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 
 
 	uri <- "hdl:11529/11014"
-	group <- "agronomy"
+	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
