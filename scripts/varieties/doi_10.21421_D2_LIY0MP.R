@@ -72,11 +72,13 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 	
 	d$record_id <- 1:nrow(d)
 
-	x <- reshape(r[, c("ELS", "LLS", "RUST")], direction="long", varying=c("ELS", "LLS", "RUST"), v.names="disease_severity", timevar="diseases")
-	x$diseases <- c("early leaf spot", "late leaf spot", "rust")[x$diseases]
+	x <- reshape(r[, c("ELS", "LLS", "RUST")], direction="long", varying=c("ELS", "LLS", "RUST"), v.names="disease_severity", timevar="disease")
+	x$disease <- c("early leaf spot", "late leaf spot", "rust")[x$disease]
 	colnames(x)[3] <- "record_id"
 	x$severity_scale <- "1-9"
 	x$disease_severity <- as.character(x$disease_severity)
 		
   carobiner::write_files(path, meta, d, long=x)
 }
+
+
