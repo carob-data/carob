@@ -55,11 +55,15 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 		geo_uncertainty = r$data$M3._M3.GPS_precision,
 		variety_type = tolower(r$data$S1b.S1.Q1), 
 		variety = r$data$S1b.S1.Q2,
-		insecticide_used = r$data$S1b.S1.Q17,
-		herbicide_used = r$data$S1b.S1.Q18,
-		irrigated = r$data$S1b.S1.Q10
-
+		insecticide_used = as.logical(r$data$S1b.S1.Q17),
+		herbicide_used = as.logical(r$data$S1b.S1.Q18),
+		irrigated = as.logical(r$data$S1b.S1.Q10),
+		hhid = r$data$note_demog.hhid,
+		urea = as.numeric(r$data$S1b.S1.Q7),
+		npsdap = as.numeric(r$data$S1b.S1.Q8)
 	)
+
+	d <- merge(d, r$GIS[,c("note_demog.hhid", "area_m2")], by.x="hhid", by.y="note_demog.hhid")
 
 	d$trial_id <- as.character(1:nrow(d))
 	d$planting_date <- as.character(NA)
@@ -69,23 +73,28 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 	Wn <- paste0("M5.M5.Sub", 1:8, ".W")
 	Mn <- gsub("W$", "Mo", Wn)
 	for (i in 1:length(Wn)) {
-		j <- data[,Wn[i]] > 400
-		data[j, Wn[i]] <- data[j, Wn[i]] / 10
+		j <- r$data[,Wn[i]] > 400
+		r$data[j, Wn[i]] <- r$data[j, Wn[i]] / 10
 	}
-	d$yield <- rowSums(data[, Wn] * ((100 - round(data[, Mn])) / 87.5))
+	yield <- rowSums(r$data[, Wn] * ((100 - round(r$data[, Mn])) / 87.5))
 
-	urea <- as.numeric(r$data$S1b.S1.Q7)
-	npsdap <- as.numeric(r$data$S1b.S1.Q8)
+	d$yield <- 10000 * yield / d$area_m2
+	d$urea <- 10000 * d$urea / d$area_m2
+	d$npsdap <- 10000 * d$npsdap / d$area_m2
 
-	d$N_fertilizer <- urea * .46 + npsdap * .18
-	d$P_fertilizer <- npsdap * .2
-	d$K_fertilizer <- NA
+	d$N_fertilizer <- d$urea * .46 + d$npsdap * .18
+	d$P_fertilizer <- d$npsdap * .2
+	d$K_fertilizer <- as.numeric(NA)
+	d$urea <- d$npsdap <- NULL
 	  
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE
+	d$crop_cut <- TRUE
 
-   
+
+	d$plot_size <- d$area_m2
+	d$area_m2 <- NULL	
 	carobiner::write_files(path, meta, d)
 }
 
