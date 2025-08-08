@@ -39,16 +39,21 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
     flowering_days = r$DFF,
     dmy_storage = r$DPWkgha,
     dmy_residue = r$DFWkgha,
+    yield = r$DPWkgha,
     seed_weight = as.numeric(r$HSW)*10, # From 100 to 1000 Seed Weight
     shelling_percentage = r$`Shelling ratio`,
     maturity_days = r$DM
   )
   
+  
   d$planting_date <- "2015-06-14" # from dataverse metadata 
   
   d$trial_id <- "1"
   d$crop <- "groundnut"
+
   d$yield_part <- "pod"
+  d$yield_moisture <- 0
+	
   d$country <- "Nigeria"
   d$adm1 <- "Kano"
   
