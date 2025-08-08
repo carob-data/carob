@@ -42,7 +42,6 @@ carob_script <- function(path) {
     severity_scale = "1-9"
   )
   
-  cc=  paste(r$RUST, r$LLS,  r$ELS, sep = ";")
   d$trial_id <- "1"
   d$crop <- "groundnut"
   d$yield_part <- "pod"
@@ -54,7 +53,7 @@ carob_script <- function(path) {
   d$latitude <- mean(c(11.983994, 11.983964))
   d$geo_from_source <- TRUE
   
-  d$on_farm <- FALSE
+  d$on_farm <- NA
   d$is_survey <- FALSE
   d$irrigated <- NA
   d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
