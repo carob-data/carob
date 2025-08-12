@@ -1,6 +1,5 @@
 # R script for "carob"
 
-
 carob_script <- function(path) {
 
 "Soil analysis from 0-20 cm depth from Nutrient Ommission Trials (NOTS) sites conducted in two regions in Tanzania in 2015/ 2016 season."
@@ -40,22 +39,28 @@ carob_script <- function(path) {
 		record_id=r$Fcode,
 		soil_C=r$C,
 		soil_pH=r$pH,
-		soil_Al_Mehlich=r$Al,
-		soil_Ca_Mehlich=r$Ca,
+		soil_Al = r$Al,
+		soil_Ca = r$Ca,
 		soil_EC=r$EC.S*0.1,
-		soil_S_Mehlich=r$S,
-		soil_Mn_Mehlich=r$Mn,
-		soil_P_Mehlich=r$P,
-		soil_Zn_Mehlich=r$Zn,
-		soil_K_Mehlich=r$K,
+		soil_S = r$S,
+		soil_Mn = r$Mn,
+		soil_P = r$P,
+		soil_Zn = r$Zn,
+		soil_K = r$K,
 		soil_M_exch=r$Mg,
-		soil_Na_Mehlich=r$Na,
-		soil_Fe_Mehlich=r$Fe,
-		soil_B_Mehlich=r$B,
-		soil_N=r$N * 10
+		soil_Na = r$Na,
+		soil_Fe = r$Fe,
+		soil_B = r$B,
+		soil_N = r$N * 10
 	)
 
 	r$soil_depth <- "0-20"
+
+	soilmeta <- data.frame(
+		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S", "P", "Zn"),
+		soil_method = "Mehlich3 extraction"
+	)
+
 
 ##### Time #####
 	#start and end dates were obtained from the metadata sheet in the data set file
@@ -64,7 +69,7 @@ carob_script <- function(path) {
 	
 	d$date <- "2016-01"
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
 }
 
  

@@ -1,0 +1,22 @@
+TY  - EJOUR
+AU  - Tiedeman, Kate 
+AU  - Chamberlin, Jordan 
+AU  - Kosmowski, Frédéric 
+AU  - Ayalew, Hailemariam 
+AU  - Sida, Tesfaye 
+AU  - Hijmans, Robert J. 
+TI  - Field Data Collection Methods Strongly Affect Satellite-Based Crop Yield Estimation
+T2  - Remote Sensing
+PY  - 2022
+VL  - 14
+IS  - 9
+SN  - 2072-4292
+AB  - Crop yield estimation from satellite data requires field observations to fit and evaluate predictive models. However, it is not clear how much field data collection methods matter for predictive performance. To evaluate this, we used maize yield estimates obtained with seven field methods (two farmer estimates, two point transects, and three crop cut methods) and the “true yield” measured from a full-field harvest for 196 fields in three districts in Ethiopia in 2019. We used a combination of nine vegetation indices and five temporal aggregation methods for the growing season from Sentinel-2 SR data as yield predictors in the linear regression and Random Forest models. Crop-cut-based models had the highest model fit and accuracy, similar to that of full-field-harvest-based models. When the farmer estimates were used as the training data, the prediction gain was negligible, indicating very little advantage to using remote sensing to predict yield when the training data quality is low. Our results suggest that remote sensing models to estimate crop yield should be fit with data from crop cuts or comparable high-quality measurements, which give better prediction results than low-quality training data sets, even when much larger numbers of such observations are available.
+KW  - yield estimation
+KW  - maize yield
+KW  - sentinel-2
+KW  - field methods
+KW  - crop yield
+KW  - maize
+DO  - 10.3390/rs14091995
+ER  -

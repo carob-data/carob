@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 
+
 carob_script <- function(path) {
 
 "
@@ -25,8 +26,8 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 		license = "CC-BY-4.0",
 		data_citation = "Frederic Kosmowski; Jordan Chamberlin; Hailemariam Ayalew; Tesfaye Sida; Kibrom Abay; Peter Craufurd (2021). How accurate are yield estimates from crop cuts? Evidence from smallholder maize farms in Ethiopia. Food Policy 102:102122",
  		version = NA,
-		data_organization = "SPIA;CIMMYT",
-		publication = "doi:10.1016/j.foodpol.2021.102122",
+		data_organization = "SPIA;CIMMYT;TCD;IFPRI",
+		publication = "doi:10.1016/j.foodpol.2021.102122;doi:10.3390/rs14091995",
 		project = "TAMASA",
 		data_type = "survey",
 		treatment_vars = "none",
@@ -37,7 +38,6 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 		notes = NA,
 		design = NA
 	)
-	
 	
 	r <- carobiner::read.RData(ff)
 
@@ -65,10 +65,10 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 		seed_rate = r$data$S1b.S1.Q4b
 	)
 
-## labour_days is different than in the paper. The code from the paper had this error	
+## labour_days is different than in the paper. The code from the paper had this error that transposes (effectively randomizes) the data	
 ##	data [, c(65,66,67,69,70,71)] <- apply (data [, c(65,66,67,69,70,71)], 1, as.numeric)
-## it should be (note the "t")
-##	data [, c(65,66,67,69,70,71)] <- t(apply (data [, c(65,66,67,69,70,71)], 1, as.numeric))
+## it should be
+##	data [, c(65,66,67,69,70,71)] <- sapply (data [, c(65,66,67,69,70,71)], as.numeric)
 
 	lab <- r$data[, c("S1b.S1.Q20_1", "S1b.S1.Q20_2", "S1b.S1.Q20_3", "S1b.S1.Q21_1", "S1b.S1.Q21_2", "S1b.S1.Q21_3")]
 	d$labour_days <- apply(lab, 1, \(x) sum(as.numeric(x), na.rm=TRUE))
