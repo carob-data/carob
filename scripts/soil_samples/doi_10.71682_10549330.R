@@ -3,7 +3,6 @@
 
 ## ISSUES
 
-
 carob_script <- function(path) {
 
 "
@@ -12,7 +11,7 @@ Soil properties predicted from mid-infrared spectral (MIRS) analysis of soil sam
 Selected soil properties were predicted from 375 topsoil samples subjected to spectral analysis (MIRS). A subset of samples were also subjected to wet chemistry analysis, and results were used to calibrate a machine-learning algorithm developed by the International Centre for Research in Agroforestry (ICRAF) in Kenya. Coordinates were truncated to protect farmer's privacy.  Unless specified, all properties were predicted. This dataset can be linked with yield data (coming soon) and previous soil analysis data (https://hdl.handle.net/11529/10549139) through the unique farm identifer 'fid'.   A link is provided to match terms used in the 'terminag' GitHub (https://github.com/reagro/terminag/) as of June 2025.
 "
 
-   uri <- "doi:10.71682/10549330"
+	uri <- "doi:10.71682/10549330"
 	group <- "soil_samples"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -21,7 +20,7 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		publication =NA,
 		project = NA,
 		carob_date = "2025-08-12",
-		design = "unitOfAnalysis: Soil sample; collectionMode: Sample collection",
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -36,8 +35,6 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 	
 	r <- read.csv(f)
 	
-	## Process 
-
 	d <- data.frame(
 		country = r$country,
 		adm1 = r$adm1,
@@ -45,32 +42,37 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		longitude = r$longitude,
 		latitude = r$latitude,
 		#crop = tolower(r$crop),
-		soil_depth= r$soil_depth,
-		depth_top= r$soil_sample_top,
-		depth_bottom= r$soil_sample_bottom,
-		soil_sand= r$Sand,
-		soil_clay= r$Clay,
-		soil_silt= r$Silt,
-		soil_type= r$Soil_Textural_Class,
-		soil_pH= r$pH,
-		soil_SOC= r$SOC,
-		soil_N= r$TN*10000,# from % to mg/ka
-		soil_Al_Mehlich= r$m3.Al,
-		soil_B_Mehlich= r$m3.B,
-		soil_Ca_Mehlich= r$m3.Ca,
-		soil_Fe_Mehlich= r$m3.Fe,
-		soil_K_Mehlich= r$m3.K,
-		soil_Mg_Mehlich= r$m3.Mg,
-		soil_Mn_Mehlich= r$m3.Mn,
-		soil_Na_Mehlich= r$m3.Na,
-		soil_S_Mehlich= r$m3.S,
-		soil_ex_acidity= r$ExAc,
-		geo_from_source= TRUE
+		soil_depth = r$soil_depth,
+		depth_top = r$soil_sample_top,
+		depth_bottom = r$soil_sample_bottom,
+		soil_sand = r$Sand,
+		soil_clay = r$Clay,
+		soil_silt = r$Silt,
+		soil_texture = r$Soil_Textural_Class,
+		soil_pH = r$pH,
+		soil_SOC = r$SOC,
+		soil_N = r$TN*10000,# from % to mg/ka
+		soil_Al = r$m3.Al,
+		soil_B = r$m3.B,
+		soil_Ca = r$m3.Ca,
+		soil_Fe = r$m3.Fe,
+		soil_K = r$m3.K,
+		soil_Mg = r$m3.Mg,
+		soil_Mn = r$m3.Mn,
+		soil_Na = r$m3.Na,
+		soil_S = r$m3.S,
+		soil_ex_acidity = r$ExAc,
+		geo_from_source = TRUE
 	)
+ 
+	soilmeta <- data.frame(
+		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
+		soil_method = "spectroscopy (Mehlich3 extraction estimate)"
+	)
+ 
  ### drop 4 rows with missing adm1, adm2, adm3, longitude and latitude coordinates 
+ 	d <- d[!is.na(d$latitude),]
 	
-	d <- d[!is.na(d$latitude),]
-	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
 }
 
