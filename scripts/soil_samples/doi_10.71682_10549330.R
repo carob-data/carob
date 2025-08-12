@@ -48,7 +48,7 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		soil_sand = r$Sand,
 		soil_clay = r$Clay,
 		soil_silt = r$Silt,
-		soil_texture = r$Soil_Textural_Class,
+		soil_texture = tolower(r$Soil_Textural_Class),
 		soil_pH = r$pH,
 		soil_SOC = r$SOC,
 		soil_N = r$TN*10000,# from % to mg/ka
@@ -65,6 +65,14 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		geo_from_source = TRUE
 	)
  
+   P <- carobiner::fix_name(d$soil_texture)
+   P <- gsub("sandyclayLoam", "sandy clay loam", P)
+   P <- gsub("sandyloam", "sandy loam", P)
+   P <- gsub("clayloam", "clay loam", P)
+   P <- gsub("loamysand", "loamy sand", P)
+   P <- gsub("sandyclay", "sandy clay", P)
+   d$soil_texture <- P
+   
 	soilmeta <- data.frame(
 		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
 		soil_method = "spectroscopy (Mehlich3 extraction estimate)"
