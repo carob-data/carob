@@ -29,8 +29,6 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		notes = NA
 	)
 	
-
-	
 	f <- ff[basename(ff) == "GAIA_TZA_on_farm_trials_soil_properties_yr2_v0.1.csv"]
 	
 	r <- read.csv(f)
@@ -41,7 +39,6 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		adm2 = r$adm2,
 		longitude = r$longitude,
 		latitude = r$latitude,
-		#crop = tolower(r$crop),
 		soil_depth = r$soil_depth,
 		depth_top = r$soil_sample_top,
 		depth_bottom = r$soil_sample_bottom,
@@ -65,13 +62,7 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		geo_from_source = TRUE
 	)
  
-   P <- carobiner::fix_name(d$soil_texture)
-   P <- gsub("sandyclayLoam", "sandy clay loam", P)
-   P <- gsub("sandyloam", "sandy loam", P)
-   P <- gsub("clayloam", "clay loam", P)
-   P <- gsub("loamysand", "loamy sand", P)
-   P <- gsub("sandyclay", "sandy clay", P)
-   d$soil_texture <- P
+	d$soil_texture <- trimws(gsub("y", "y ", d$soil_texture))
    
 	soilmeta <- data.frame(
 		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
