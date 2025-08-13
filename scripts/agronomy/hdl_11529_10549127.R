@@ -63,6 +63,9 @@ The dataset includes: Grain yield data for maize and wheat, Biomass production m
 	d$land_prep_method[i] <- paste0(d$land_prep_method[i], "; open furrows")
 	d$land_prep_method[!i] <- paste0(d$land_prep_method[!i], "; tied ridges")
 
+	d$seed_density <- ifelse(d$crop=="maize", 67500, NA)
+	d$seed_rate <- ifelse(d$crop=="maize", NA, 105)
+
 	d$K_fertilizer <- as.numeric(NA)
 	d$trial_id <- d$planting_date
 	d$yield_part<- "grain"
