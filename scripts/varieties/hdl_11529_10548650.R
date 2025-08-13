@@ -30,6 +30,11 @@ carob_script <- function(path) {
 
 	d <- data.frame(
 		country = "Mexico",
+		adm1 = "Mexico",
+		adm2 = "Texcoco",
+		location = "El Batán",
+		elevation = 2200,
+		
 		trial_id="1",
 		latitude=23.951259,
 		longitude= -102.514361,
