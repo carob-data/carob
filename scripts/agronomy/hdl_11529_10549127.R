@@ -85,6 +85,10 @@ The dataset includes: Grain yield data for maize and wheat, Biomass production m
 		crop = c("wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "wheat", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize", "maize")
 	)
 
+	x$fertilizer_type <- "urea"
+	x$fertilizer_type[x$planting_date < "2009" & x$crop == "wheat"] <- "AN"
+	x$fertilizer_type[x$P_fertilizer == 17] <- paste0(x$fertilizer_type[x$P_fertilizer == 17], "; TSP"); 
+
 	d <- merge(d, x, by=c("planting_date", "crop"))
 
 	carobiner::write_files(path, meta, d)
