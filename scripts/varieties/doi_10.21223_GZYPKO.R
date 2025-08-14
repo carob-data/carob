@@ -12,7 +12,7 @@ Dataset for: Participatory variety trial on selected clones from diversity panel
 The dataset contains data about a participatory variety trial on selected clones from diversity panel population for potato varieties in Amhara region, Ethiopia.
 "
 
-   uri <- "doi:10.21223/GZYPKO"
+	uri <- "doi:10.21223/GZYPKO"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -37,7 +37,6 @@ The dataset contains data about a participatory variety trial on selected clones
 	r1 <- read.csv(f1, sep = ";")
 	r2 <- read.csv(f2, sep = ";")
 	
-
 	d1 <- data.frame(
 		plot_id = as.character(r1$Plot),
 		variety = r1$CIP_Clone_No,
@@ -47,14 +46,15 @@ The dataset contains data about a participatory variety trial on selected clones
 		planting_date= "2016-07-20",
 		harvest_date= "2016-11-02",
 		crop= "potato",
-		plot_area= 3.6/10000, # ha
+		plot_area= 3.6, #m2 /10000
 		row_spacing= 75,
 		plant_spacing= 30,
 		plant_density= (r1$No_Plant_Harvested/3.6)*10000,
-		location= "Amhara region",
+		adm1= "Amhara",
+		location = "Adet",
 		country= "Ethiopia",
-		longitude= 37.9526,
-		latitude= 12.2048 
+		longitude= 37.481,
+		latitude= 11.269
 	)
 
 	d2 <- data.frame(
@@ -62,37 +62,36 @@ The dataset contains data about a participatory variety trial on selected clones
 	   variety= r2$CIP_Clone_No,
 	   emergence_days= r2$DAP_50_Emergence,
 	   flowering_days= r2$DAP_50_Flowering,
-	   AUDPC= r2$AUDPC,
+	   AUDPC= r2$AUDPC / 100,
 	   plant_height= r2$Average_Plant_Height,
 	   r2[, grepl("Late", names(r2))],
 	   record_id= as.integer(1:nrow(r2))
 	)
 
-d <- merge(d1, d2, by= c("plot_id", "variety"), all.x = TRUE)
+	d <- merge(d1, d2, by= c("plot_id", "variety"), all.x = TRUE)
 
-d$trial_id <- "1"	
-d$on_farm <- TRUE 
-d$is_survey <- FALSE
-d$yield_part <- "tubers" 
-d$yield_moisture <- as.numeric(NA)
-d$irrigated <- NA 
-d$geo_from_source <- FALSE
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$trial_id <- "1"	
+	d$on_farm <- TRUE 
+	d$is_survey <- FALSE
+	d$yield_part <- "tubers" 
+	d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- TRUE
+	d$irrigated <- NA 
+	d$geo_from_source <- FALSE
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-### Adding disease
-x <- d[, grepl("Late", names(d))]
-x$record_id <- as.integer(1:nrow(x))
-x <- reshape(x, direction="long", varying=c("LateBlight_46DAP", "LateBlight_58DAP"), v.names="disease_severity", timevar="DAP")
-x$DAP <- as.integer(c(46, 58)[x$DAP])
-x$disease <- "Late blight"
-x$disease_severity <- as.character(x$disease_severity) 
-x$severity_scale <- "0-100" ## in % (Could we convert it into a 0 to 9 scale?)
-x$id <- NULL
+	### Adding disease
+	x <- d[, grepl("Late", names(d))]
+	x$record_id <- as.integer(1:nrow(x))
+	x <- reshape(x, direction="long", varying=c("LateBlight_46DAP", "LateBlight_58DAP"), v.names="disease_severity", timevar="DAP")
+	x$DAP <- as.integer(c(46, 58)[x$DAP])
+	x$disease <- "late blight"
+	x$disease_severity <- as.character(x$disease_severity) 
+	x$severity_scale <- "0-100"
+	x$id <- NULL
 
-d <- d[, !grepl("Late", names(d))]
+	d <- d[, !grepl("Late", names(d))]
 
-
-carobiner::write_files(path, meta, d, long = x)
-
+	carobiner::write_files(path, meta, d, long = x)
 }
 
