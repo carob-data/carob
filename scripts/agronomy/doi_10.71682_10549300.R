@@ -115,7 +115,6 @@ carob_script <- function(path) {
   d$plant_spacing <- 25
   d$pest_species <- "Busseola fusca;Phyllophaga spp."
   
-  
   #removing duplicates
   d <- d[!duplicated(d), ]
    
