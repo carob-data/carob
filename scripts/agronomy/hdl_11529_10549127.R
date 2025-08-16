@@ -42,8 +42,8 @@ The dataset includes: Grain yield data for maize and wheat, Biomass production m
 		adm2 = "Texcoco",
 		location = "El Batán",
 		elevation = 2200,
-		latitude= 23.9513,
-		longitude= -102.5144,
+		latitude= 19.530,
+		longitude=  -98.848,
 
 		planting_date= as.character(r$Year),
 		crop=tolower(r$Crop),

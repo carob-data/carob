@@ -36,8 +36,8 @@ carob_script <- function(path) {
 		elevation = 2200,
 		
 		trial_id="1",
-		latitude=23.951259,
-		longitude= -102.514361,
+		latitude=19.5293,
+		longitude= -98.8492,
 		planting_date="2016-11-23",
 		crop="grass pea",
 		rep=r$REP,

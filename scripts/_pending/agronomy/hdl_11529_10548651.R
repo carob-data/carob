@@ -30,7 +30,11 @@ Effectiveness of 14 herbicides were compared during 2016 in El Batán, México. 
 
 	d <- data.frame(
 		country = "Mexico",
-		adm3="El Batán",
+		adm1 = "Mexico",
+		adm2 = "Texcoco",
+		location = "El Batán",
+		site = "CIMMYT",
+		elevation = 2200,
 		latitude=19.5275,
 		longitude=-98.8559,
 		trial_id="1",

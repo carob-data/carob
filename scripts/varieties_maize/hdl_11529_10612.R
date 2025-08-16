@@ -53,13 +53,7 @@ carob_script <- function(path) {
 	    ear_height = as.numeric(r$mEarHeightCm),
 	    #plant_density = as.numeric(r$mPlantStand_NumPerPlot),
 	    yield_part = "grain", 
-	    yield = as.numeric(r$mGrainYieldTons_GrainWt) * 1000,
-	    geo_from_source = FALSE,
-	    country = "Mexico",
-	    adm1 = "El Batán",
-	    longitude = -100.8386,
-	    latitude = 20.2692
-   
+	    yield = as.numeric(r$mGrainYieldTons_GrainWt) * 1000
 	  )
 	 }
 
@@ -74,6 +68,16 @@ carob_script <- function(path) {
 	
 	#binding datasets
 	d <- rbind(d1, d2, d3, d4)
+
+	d$country <- "Mexico"
+	d$adm1 <- "Mexico"
+	d$adm2 <- "Texcoco"
+	d$location <- "El Batán"
+	d$site <- "CIMMYT"
+	d$elevation <- 2200
+	d$latitude<-19.5293
+	d$longitude<- -98.8492
+	d$geo_from_source <- FALSE
 
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE

@@ -30,9 +30,15 @@ carob_script <- function(path) {
 	r <- merge(r1, r2, by=c("Rep", "Trt"))
 	
 	d <- data.frame(
-		country="Mexico",
-		longitude= -100.2028,
-		latitude= 20.3125,
+		country = "Mexico",
+		adm1 = "Mexico",
+		adm2 = "Texcoco",
+		location = "El Batán",
+		site = "CIMMYT",
+		elevation = 2200,
+		latitude=19.5293,
+		longitude= -98.8492,
+
 		rep=r$Rep,
 		variety_code=as.character(r$Trt),
 		dmy_total=r$Yield_Dry,

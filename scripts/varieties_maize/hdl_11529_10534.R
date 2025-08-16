@@ -13,7 +13,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "International Early White Hybrid trial - IEWH0852",
+		project = "International Wheat Trials",
 		data_type = "experiment",
 		treatment_vars = "variety_code",
 		response_vars = "yield", 

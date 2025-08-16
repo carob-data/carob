@@ -145,11 +145,12 @@ of El Batán Texcoco, the State of Mexico, Mexico. The experiment was a randomiz
 	d$yield_part <- "grain"
 
 	d$country <- "Mexico"
-	d$location <- "El Batán Experimental Station"
-	d$adm1 <- "Estado de México"
+	d$location <- "El Batán"
+	d$site <- "CIMMYT"
+	d$adm1 <- "México"
 	d$adm2 <- "Texcoco"
-	d$elevation <- 2257  # define as numeric, not character
-	d$longitude <- -98.88056
+	d$elevation <- 2257 
+	d$longitude <- -98.8806
 	d$latitude <- 19.517
 	d$geo_from_source <- FALSE
 	d$crop <- tolower(d$crop)

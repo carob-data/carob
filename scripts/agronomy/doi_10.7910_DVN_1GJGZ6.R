@@ -132,7 +132,7 @@ d3 <- data.frame(
    soil_EC= r3$X.EC.Salts.uS.cm/1000, #mS/cm
    soil_N= r3$pctN,
    soil_C= r3$pctC,
-   soil_P_available= r3$X.Phosphorus.Olsen.ppm,
+   soil_P= r3$X.Phosphorus.Olsen.ppm,
    soil_K= r3$Potassium.ppm,
    soil_Ca= r3$Calcium.ppm,
    soil_Mg= r3$Magnesium.ppm,
@@ -148,7 +148,7 @@ d3 <- data.frame(
 
 soilmeta <- data.frame(
    soil_element = "P",
-   soil_method = "Olsen extraction"
+   soil_method = "Olsen"
 )
 
 ### merge d3 with d
