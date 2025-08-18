@@ -36,12 +36,12 @@ carob_script <- function(path) {
 		#trial_id = r$SSN,
 		soil_pH = as.numeric(r$pH),
 		soil_ECEC = as.numeric(r$eCEC),
-		soil_ex_Ca = as.numeric(r$Caex),
-		soil_ex_K = as.numeric(r$Kex),
-		soil_ex_Mg = as.numeric(r$Mgex),
-		soil_ex_Na = as.numeric(r$Naex),
+		soil_Ca = as.numeric(r$Caex),
+		soil_K = as.numeric(r$Kex),
+		soil_Mg = as.numeric(r$Mgex),
+		soil_Na = as.numeric(r$Naex),
 		soil_P_total = as.numeric(r$P),
-		soil_P_Olsen = as.numeric(r$Olsen.P),
+		soil_P = as.numeric(r$Olsen.P),
 		soil_C = r$Percent_C,
 		soil_SOC = r$Percent_Org_C,
 		soil_N = r$Percent_N,
@@ -79,10 +79,10 @@ carob_script <- function(path) {
 	# Replace -ve reported values with a small value equivalent to lowest detection limit
 ## or are they wrong if < 0?
 	d$soil_ECEC[d$soil_ECEC <= 0] <- 0.0001
-	d$soil_ex_Ca[d$soil_ex_Ca <= 0] <- 0.0001
-	d$soil_ex_K[d$soil_ex_K <= 0] <- 0.0001
-	d$soil_ex_Mg[d$soil_ex_Mg <= 0] <- 0.0001
-	d$soil_ex_Na[d$soil_ex_Na <= 0] <- 0.0001
+	d$soil_Ca[d$soil_Ca <= 0] <- 0.0001
+	d$soil_K[d$soil_K <= 0] <- 0.0001
+	d$soil_Mg[d$soil_Mg <= 0] <- 0.0001
+	d$soil_Na[d$soil_Na <= 0] <- 0.0001
 	d$soil_P_total[d$soil_P_total <= 0] <- 0.0001
 	d$soil_SOC[d$soil_SOC <= 0] <- 0.001
 
