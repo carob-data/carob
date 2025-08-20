@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## Missing plot size 
+## yield is reported in g/plot but plot size is not reported
 
 carob_script <- function(path) {
 
