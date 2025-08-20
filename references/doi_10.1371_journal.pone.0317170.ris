@@ -1,0 +1,20 @@
+TY  - JOUR
+T1  - Assessing yield stability of pearl millet and rice cropping systems across West Africa using long-term experiments and a modeling approach
+A1  - Kouadio, Louis
+A1  - Fraser, Kristina
+A1  - Ibrahim, Ali
+A1  - Saito, Kazuki
+A1  - Dougbedji, Fatondji
+A1  - Senthilkumar, Kalimuthu
+Y1  - 2025/05/27
+N2  - Long-term field experiments (LTEs) provide invaluable insights into temporal yield patterns of agronomic interventions. However, the number of LTEs and agronomic management options tested withing these experiments remain limited compared to the diversity of farming systems in West Africa. Well-tested crop models may be used to identify crop management strategies with high temporal yield stability. This study examines the yield stability of pearl millet and rice under various management options in West Africa, utilizing both experimental and modeling approaches. The Agricultural Production Systems Simulator (APSIM) for pearl millet and rice were calibrated and tested for locally-recommended varieties using LTE data from Niger (pearl millet) and Senegal (rice). Yield stability was evaluated with multiple metrics, including the adjusted coefficient of variation, the sustainable yield index, and the Finlay-Wilkinson regression coefficient. Both APSIM models exhibited a strong performance for grain yield, with Willmott’s indices of agreement at 0.74 for pearl millet and 0.90 for rice, and absolute root mean square errors of 0.19 and 1.20 Mg ha-1, respectively. The models effectively reproduced yield stability patterns across a variety of management options including planting date, planting density, fertilizer treatments, and residue retention. Combining fertilizer applications with crop residue retention enhanced yield stability in pearl millet, while season-specific nitrogen management strategies reduced yield variability in rice. Our study underscores the potential of well-tested crop models to complement LTEs in investigating pearl millet and rice yield stability, offering actionable insights for agronomic intensification strategies to enhance productivity and sustainability.
+JF  - PLOS ONE
+JA  - PLOS ONE
+VL  - 20
+IS  - 5
+UR  - https://doi.org/10.1371/journal.pone.0317170
+SP  - e0317170
+EP  - 
+PB  - Public Library of Science
+M3  - doi:10.1371/journal.pone.0317170
+ER  - 
