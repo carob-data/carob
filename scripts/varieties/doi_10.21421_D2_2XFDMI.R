@@ -35,8 +35,8 @@ Grain Yield and Fodder Yield have been recorded in different villages
 	d <- data.frame(
 	  trial_id = r$Farmer_name,
 	  variety = r$Variety,
-	  yield = as.numeric(r$Grain_Yield) * 2.47105,  # kg/acre to kg/ha
-	  fwy_total = as.numeric(r$Fodder_Yield) * 2.47105,
+	  yield = r$Grain_Yield * 2.47105,  # kg/acre to kg/ha
+	  fwy_residue = r$Fodder_Yield * 2.47105,
 	  country = "India",
 	  crop = "sorghum",
 	  yield_part = "grain",
