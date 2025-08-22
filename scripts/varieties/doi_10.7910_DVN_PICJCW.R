@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-
 
 carob_script <- function(path) {
 
@@ -17,7 +15,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "PU", #Purdue University
+		data_organization = "PURDUE", #Purdue University
 		publication = NA,
 		project = NA,
 		carob_date = "2025-08-22",
@@ -69,8 +67,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 		
 	
-carobiner::write_files(path, meta, d)
-
+	carobiner::write_files(path, meta, d)
 }
 
 

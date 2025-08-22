@@ -66,7 +66,7 @@ carob_script <- function(path) {
 	d$land_prep_method[grep("PTR", d$treatment)] <- "puddling"
 
 	d$irrigation_method <- "continuous flooding"
-	d$irrigation_method[grep("SSD", d$treatment)] <- "sub-surface drip"
+	d$irrigation_method[grep("SSD", d$treatment)] <- "subsurface drip"
 
 	d$planting_method <- "direct seeding"
 	d$planting_method[grep("PTR", d$treatment)] <- "transplanting"

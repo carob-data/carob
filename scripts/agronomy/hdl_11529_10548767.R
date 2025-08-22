@@ -51,7 +51,7 @@ carob_script <- function(path) {
   d1$land_prep_method <- ifelse(grepl("PB", d1$treatment), "raised beds", "conventional")
   d1$residue_prevcrop_used <- grepl("WR", d1$treatment)
   d1$irrigated <- TRUE
-  d1$irrigation_method <- ifelse(grepl("SSD", d1$treatment), "sub-surface drip", "furrow")
+  d1$irrigation_method <- ifelse(grepl("SSD", d1$treatment), "subsurface drip", "furrow")
   
   # fertilizer information (from the data and the paper)
   d1$fertilizer_used <- grepl("N0", d1$treatment)

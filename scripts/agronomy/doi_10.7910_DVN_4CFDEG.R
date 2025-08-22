@@ -82,8 +82,6 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	d <- merge(d, geo, by="location")
 	d$geo_from_source <- FALSE
 
-	d$fw_yield <- d$yield
-	d$dm_yield <- d$yield / (1 + d$yield_moisture/100) 
 
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE

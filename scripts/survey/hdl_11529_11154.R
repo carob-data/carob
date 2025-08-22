@@ -37,12 +37,11 @@ carob_script <- function(path) {
 		longitude = r$`_gps_longitude`,
 		latitude = r$`_gps_latitude`,
 		yield= r$`12%_yield(kg/ha)`,
+		yield_moisture=12,
 		seed_weight=r$`graiwt(kg)`,
 		row_spacing=r$`rowdist(cm)`,
 		plant_spacing=r$`plantdis(cm)`,
-		trial_id=r$barcode_ccut,
-		yield_moisture=r$avgmc,
-		dm_yield = r$`dry_yield(kg/ha)`
+		trial_id=r$barcode_ccut
 	)
 	
 	d$country <- "Nigeria"	

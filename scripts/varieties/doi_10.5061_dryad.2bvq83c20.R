@@ -15,7 +15,7 @@ carob_script <- function(path) {
       project=NA, 
       data_type= "experiment", 
       treatment_vars= "variety", 
-      response_vars = "growth_stage;node_count;fw_yield", 
+      response_vars = "growth_stage;node_count;yield", 
       carob_contributor= "Cedric Ngakou", 
       carob_date="2025-06-16",
       completion=90,
@@ -68,14 +68,13 @@ carob_script <- function(path) {
 	  variety_traits = paste0("maturity=", round(as.numeric(r2$RM), 1)),
       #rm= r2$RM,
       yield_moisture= as.numeric(r2$`combine moisture`),
-      fw_yield= as.numeric(r2$`Total yield kg/a`)*2.471, # in kg/ha
+      yield= as.numeric(r2$`Total yield kg/a`)*2.471, # in kg/ha
       grain_protein= as.numeric(r2$`Protein 13%`),
       #grain_oil= r2$`Oil 13%`, ## oil content in %
       ### no!
 	  ###trial_id=paste0(r2$location, "-", r2$plot)
 	  trial_id=paste0(r2$location, "-", r2$year)
    )
-   d2$dm_yield <- d2$fw_yield / (1 + d2$yield_moisture/100)
    
    ### merge d1 and d2 
    ### d <- merge(d2, d1, by= c("adm1", "location", "year"))

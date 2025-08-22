@@ -56,7 +56,6 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 		treatment = r1$Treatment,
 		fwy_total = r1$`Biomass Weight (kg/18m2)` * 556,
 		yield_moisture = r1$`Grain moisture content(%)`,
-		dm_yield = r1$`Grain Yield (kg/ha)`,
 		plant_density = r1$`Crop Stand (Number/18m2)` * 556,
 		cob_density = r1$`Crop Stand (Number/18m2)` * 556,
 		yield_part = "grain",

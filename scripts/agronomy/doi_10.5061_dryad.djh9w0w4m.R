@@ -15,7 +15,7 @@ carob_script <- function(path) {
       publication=NA, 
       project=NA, 
       data_type= "compilation", 
-      response_vars= "fw_yield; dm_yield", 
+      response_vars= "yield", 
       treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
       carob_date="2025-05-31",
@@ -108,16 +108,16 @@ carob_script <- function(path) {
       #r$pc_Ndfa
 
    ## Process yield data
-      fw_yield= r$CPY_mean_kg_fresh_ha,
       #fwy_cobs= r$CobY_mean_kg_fresh_ha,
+      yield= r$CPY_mean_kg_fresh_ha,
+      yield_moisture= r$CPCon_DM_mean_kg_DM_kg_fresh*100,
       fwy_residue= r$CRY_mean_kg_fresh_ha,
       fwy_total= r$AGY_mean_kg_fresh_ha,
-      dm_yield= r$CPY_mean_kg_DM_ha,
+      dmy_storage= r$CPY_mean_kg_DM_ha,
       #dmy_cobs= r$CobY_mean_kg_DM_ha,
       dmy_residue= r$CRY_mean_kg_DM_ha,
       dmy_total= r$AGY_mean_kg_DM_ha,
       harvest_index= r$HI_mean_Unitless,
-      yield_moisture= r$CPCon_DM_mean_kg_DM_kg_fresh*100,
       geo_from_source= TRUE,
       on_farm= NA, 
       is_survey= FALSE,
