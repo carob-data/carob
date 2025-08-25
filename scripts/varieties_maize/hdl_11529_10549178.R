@@ -5,9 +5,8 @@
 #1. Crop management practices are also a treatment variable in this experiment 
 #2. Since date is only a year, i cant properly format it to become date as it requires a month and day
 
+
 carob_script <- function(path) {
-
-
 
 "Replication Data for: Understanding the interactions of genotype with environment and management (G×E×M) to maize productivity in conservation agriculture systems of Malawi
   
@@ -60,7 +59,7 @@ The key objectives of the study included assessing the interactions between geno
 		yield_part= "grain"
 		)
 	
-	d$adm2 <- gsub("Nkotakhota","Nkhotakota",d$adm2)
+	d$adm2<- gsub("Nkotakhota","Nkhotakota",d$adm2)
 	pub_data <- data.frame(
 	  adm2 = c("Dowa", "Nkhotakota", "Nkhotakota", "Nkhotakota", "Salima",
 	           "Balaka", "Balaka", "Balaka", "Machinga", "Zomba"),
@@ -77,13 +76,13 @@ The key objectives of the study included assessing the interactions between geno
 	  soil_texture = tolower(c("Sandy loam", "Sandy loam", "Sandy clay loam",
 	                   "Sandy clay loam", "Sandy clay loam",
 	                   "Sandy loam", "Sandy loam", "Loamy sand",
-	                   "Sandy loam", "Clay loam"))
-	  
-	)
+	                   "Sandy loam", "Clay loam")))
 
 	d <- merge(d, pub_data, by = c("adm2"), all.x = TRUE)
 	d$crop_rotation<- ifelse(d$crop_rotation=="sole crop","maize","maize_legume")
 	d$trial_id <- paste(d$adm4, as.character(d$planting_date), sep = "_")
+
+## about the data (TRUE/FALSE)
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
@@ -93,9 +92,8 @@ The key objectives of the study included assessing the interactions between geno
   d$N_fertilizer <- 69
   d$S_fertilizer <- 4
   d$lime <- as.numeric(NA)
-	d$yield_part <- "tubers"
 	d$yield_moisture <- 12.5
-	
+
 # all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
