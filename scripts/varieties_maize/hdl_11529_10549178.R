@@ -1,10 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-#1. Crop management practices are also a treatment variable in this experiment 
-#2. Since date is only a year, i cant properly format it to become date as it requires a month and day
-
 
 carob_script <- function(path) {
 
@@ -14,26 +10,23 @@ The database consists of data collected over seven seasons to evaluate maize pro
 The key objectives of the study included assessing the interactions between genotype (G), environment (E), and management (M) to optimize maize production amid climatic variability and soil fertility challenges."
 
 
-## Identifiers
 	uri <- "hdl:11529/10549178"
 	group <- "varieties_maize"
 
-## Download data 
 	ff  <- carobiner::get_data(uri, path, group)
 
-## metadata 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "Machinga Agriculture Development Division;TLC;CIMMYT",
 		publication = "10.1371_journal.pone.0298009",
 		project = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "variety_code;location",
+		treatment_vars = "variety",
 		response_vars = "yield", 
-		completion = 0,
+		completion = 80,
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2025-08-20",
-		notes = NA,
-		design = "Split plot + RCB"
+		notes = "Publication contains info on whether the stalks are fresh weight or dry weight",
+		design = "split plot; RCB"
 	)
 	
 	f <- ff[basename(ff) == "Malawi Maize Performance.xlsx"]
@@ -41,27 +34,26 @@ The key objectives of the study included assessing the interactions between geno
 
 	d <- data.frame(
 		country = r$Country,
-		harvest_date = as.Date(r$`Harvest Year`),
-		planting_date = as.Date(r$`Harvest Year`-1),
-		adm2= r$District,
-		adm3= r$Village,
+		harvest_date = as.character(r$`Harvest Year`),
+		planting_date = as.character(r$`Harvest Year`-1),
+		adm2 = r$District,
+		location= r$Village,
 		rep = as.integer(r$Rep),
-		crop_rotation = r$`Growth strategy`,
 		treatment = r$Tmnt.,
 		variety = r$Variety,
 		crop= tolower(r$`Crop grown`),
 		plant_density= r$`Plant population`,
-		dmy_stems= r$`Stalk yield (kg/ha)`,
+		dmy_stems= r$`Stalk yield (kg/ha)`, 
 		yield= r$`Grain yield (kg/ha)`,
-		yield_part= "grain"
-		)
-	
-	d$adm2<- gsub("Nkotakhota","Nkhotakota",d$adm2)
+		yield_part= "grain",
+		CA_years=r$`Years of CA`
+	)
+
+	d$intercrops <- ifelse(r$`Growth strategy` == "intercropped", "legume", "none")
+	d$adm2 <- gsub("Nkotakhota", "Nkhotakota", d$adm2)
 	pub_data <- data.frame(
 	  adm2 = c("Dowa", "Nkhotakota", "Nkhotakota", "Nkhotakota", "Salima",
 	           "Balaka", "Balaka", "Balaka", "Machinga", "Zomba"),
-	  location = c("Chipeni", "Linga", "Mwansambo", "Zidyana", "Chinguluwe",
-	           "Herbert", "Lemu", "Malula", "Matandika", "Songani"),
 	  latitude = c(-13.76, -12.75, -13.29, -13.23, -13.69,
 	               -14.88, -14.80, -14.96, -15.18, -15.34),
 	  longitude = c(34.05, 34.20, 34.13, 34.26, 34.24,
@@ -76,14 +68,12 @@ The key objectives of the study included assessing the interactions between geno
 	                   "Sandy loam", "Clay loam")))
 
 	d <- merge(d, pub_data, by = c("adm2"), all.x = TRUE)
-	d$crop_rotation<- ifelse(d$crop_rotation=="sole crop","maize","maize_legume")
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$land_prep_method <- ifelse(d$treatment=="Check","conventional","none")
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- TRUE
-	
 	#figures extracted from publication
   d$P_fertilizer <- 21/2.29
   d$K_fertilizer <- 0
@@ -91,6 +81,5 @@ The key objectives of the study included assessing the interactions between geno
   d$S_fertilizer <- 4
   d$lime <- as.numeric(NA)
 	d$yield_moisture <- 12.5
-
 	carobiner::write_files(path, meta, d)
 }
