@@ -36,12 +36,9 @@ The key objectives of the study included assessing the interactions between geno
 		design = "Split plot + RCB"
 	)
 	
-## read data 
-
 	f <- ff[basename(ff) == "Malawi Maize Performance.xlsx"]
-	r <- read_excel(f, sheet ="Data")
+	r <- carobiner::read.excel(f, sheet = "Data")
 
-## select the variables of interest and assign them to the correct name
 	d <- data.frame(
 		country = r$Country,
 		harvest_date = as.Date(r$`Harvest Year`),
@@ -63,7 +60,7 @@ The key objectives of the study included assessing the interactions between geno
 	pub_data <- data.frame(
 	  adm2 = c("Dowa", "Nkhotakota", "Nkhotakota", "Nkhotakota", "Salima",
 	           "Balaka", "Balaka", "Balaka", "Machinga", "Zomba"),
-	  adm4 = c("Chipeni", "Linga", "Mwansambo", "Zidyana", "Chinguluwe",
+	  location = c("Chipeni", "Linga", "Mwansambo", "Zidyana", "Chinguluwe",
 	           "Herbert", "Lemu", "Malula", "Matandika", "Songani"),
 	  latitude = c(-13.76, -12.75, -13.29, -13.23, -13.69,
 	               -14.88, -14.80, -14.96, -15.18, -15.34),
@@ -80,13 +77,14 @@ The key objectives of the study included assessing the interactions between geno
 
 	d <- merge(d, pub_data, by = c("adm2"), all.x = TRUE)
 	d$crop_rotation<- ifelse(d$crop_rotation=="sole crop","maize","maize_legume")
-	d$trial_id <- paste(d$adm4, as.character(d$planting_date), sep = "_")
-
-## about the data (TRUE/FALSE)
+	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
+	d$land_prep_method <- ifelse(d$treatment=="Check","conventional","none")
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- TRUE
+	
+	#figures extracted from publication
   d$P_fertilizer <- 21/2.29
   d$K_fertilizer <- 0
   d$N_fertilizer <- 69
@@ -94,6 +92,5 @@ The key objectives of the study included assessing the interactions between geno
   d$lime <- as.numeric(NA)
 	d$yield_moisture <- 12.5
 
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
