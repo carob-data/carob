@@ -59,7 +59,7 @@ Selected soil properties were predicted from 232 topsoil samples subjected to sp
 		soil_Na = as.numeric(r$m3.Na),
 		soil_S = as.numeric(r$m3.S),
 		soil_ex_acidity=r$ExAc,
-		soil_CEC=r$CEC,
+		soil_CEC=r$CEC
 	) 
 	d$geo_from_source <- TRUE
 
