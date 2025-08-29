@@ -26,15 +26,15 @@ carob_script <- function(path) {
   )
   
   f <- ff[basename(ff) == "Residue Level Trial.xlsx"]
-  r <- carobiner::read.excel(f)
+  r <- carobiner::read.excel(f, na="-")
   
   d <- data.frame(
     country = r$Country,
     crop = "maize",
     yield_part = "grain",
-    site = r$Site,
+    location = r$Site,
     treatment = r$Treatment,
-    yield = r$`Grain (kg/ha)`
+    yield = as.numeric(r$`Grain (kg/ha)`)
   )
   
   
@@ -88,10 +88,12 @@ carob_script <- function(path) {
   d$N_fertilizer[r$subtreatment == 1] <- 0 
   d$N_fertilizer[r$subtreatment == 2] <- 29.64
   d$N_fertilizer[r$subtreatment == 3] <- 89.9
-  d$fertlizer_type <- ifelse((r$subtreatment == 1), "none", 
+  d$fertilizer_type <- ifelse((r$subtreatment == 1), "none", 
                       ifelse(d$treatment %in% c(2, 3), "D-compound;AN", NA))
 
 
+	d$yield_moisture <- as.numeric(NA)
+	d$treatment <- as.character(d$treatment)
   
   carobiner::write_files(path, meta, d)
 }
