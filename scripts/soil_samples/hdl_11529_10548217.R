@@ -69,7 +69,7 @@ carob_script <- function(path) {
 	
 	d$date <- "2016-01"
 	
-	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 
  

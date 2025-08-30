@@ -72,6 +72,6 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
  ### drop 4 rows with missing adm1, adm2, adm3, longitude and latitude coordinates 
  	d <- d[!is.na(d$latitude),]
 	
-	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 

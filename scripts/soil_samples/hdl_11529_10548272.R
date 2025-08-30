@@ -81,6 +81,6 @@ Data of soil samples (0-20, 20-50cm) as part of the Agronomy Panel Survey (APS) 
 	   soil_method = "Olsen"
 	)
 	
-	carobiner::write_files(path, meta, d, soil_meta = soilmeta)
+	carobiner::write_files(path, meta, d, var_meta = soilmeta)
 }
 

@@ -72,6 +72,6 @@ Selected soil properties were predicted from 524 topsoil samples subjected to sp
 
 	d <- d[d$longitude < 30.4, ]
 
-	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 

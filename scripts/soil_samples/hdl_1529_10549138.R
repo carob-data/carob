@@ -72,5 +72,5 @@ A subset of samples were also subjected to wet chemistry analysis, and results w
 		soil_method = "Mehlich3 (estimated from spectroscopy)"
 	)
 	  
-	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }

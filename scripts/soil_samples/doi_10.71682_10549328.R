@@ -69,6 +69,6 @@ Selected soil properties were predicted from 232 topsoil samples subjected to sp
 		soil_method = "Mehlich3 (estimated from spectroscopy)"
 	)
 
-	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 
