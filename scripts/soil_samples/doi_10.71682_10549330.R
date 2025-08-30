@@ -66,7 +66,7 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
    
 	soilmeta <- data.frame(
 		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S"),
-		soil_method = "Mehlich3 (estimated with spectroscopy)"
+		method = "Mehlich3 (estimated with spectroscopy)"
 	)
  
  ### drop 4 rows with missing adm1, adm2, adm3, longitude and latitude coordinates 

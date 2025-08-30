@@ -78,7 +78,7 @@ Data of soil samples (0-20, 20-50cm) as part of the Agronomy Panel Survey (APS) 
 	
 	soilmeta <- data.frame(
 	   variable = "soil_P",
-	   soil_method = "Olsen"
+	   method = "Olsen"
 	)
 	
 	carobiner::write_files(path, meta, d, var_meta = soilmeta)

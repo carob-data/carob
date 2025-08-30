@@ -36,7 +36,7 @@ carob_script <- function(path) {
 		longitude=r$Longitude,
 		elevation=r$Altitude,
 		geo_from_source= TRUE,
-		record_id=r$Fcode,
+#		record_id=r$Fcode,
 		soil_C=r$C,
 		soil_pH=r$pH,
 		soil_Al = r$Al,
@@ -47,7 +47,7 @@ carob_script <- function(path) {
 		soil_P = r$P,
 		soil_Zn = r$Zn,
 		soil_K = r$K,
-		soil_M_exch=r$Mg,
+		soil_Mg=r$Mg,
 		soil_Na = r$Na,
 		soil_Fe = r$Fe,
 		soil_B = r$B,
@@ -58,7 +58,7 @@ carob_script <- function(path) {
 
 	soilmeta <- data.frame(
 		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn"),
-		soil_method = "Mehlich3 extraction"
+		method = "Mehlich3 extraction"
 	)
 
 
