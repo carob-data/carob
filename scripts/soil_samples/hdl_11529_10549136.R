@@ -18,17 +18,17 @@ Coordinates were truncated to protect farmer's privacy. Unless specified, all pr
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-	                                data_organization = "CIMMYT; CIRAD; EIAR; ICRAF",
-	                                publication =NA,
-	                                project = "GAIA",
-	                                carob_date = "2025-08-30",
-	                                design = NA,
-	                                data_type = "survey",
-	                                treatment_vars = "none",
-	                                response_vars = "none", 
-	                                carob_contributor = "Blessing Dzuda",
-	                                completion = 100,	
-	                                notes = NA
+		data_organization = "CIMMYT; CIRAD; EIAR; ICRAF",
+		publication =NA,
+		project = "GAIA",
+		carob_date = "2025-08-30",
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none", 
+		carob_contributor = "Blessing Dzuda",
+		completion = 100,	
+		notes = NA
 	)
 	
 	f <- ff[basename(ff) == "GAIA_Eth_on_farm_trials_soil_properties_yr1_v0.1-1.csv"]
@@ -65,11 +65,11 @@ Coordinates were truncated to protect farmer's privacy. Unless specified, all pr
 	    soil_acidity_sat=r$Estimated_Acid_Saturation,
 	    geo_from_source = TRUE
 	  )
-	  
+
 	  soilmeta <- data.frame(
-	    soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
-	    soil_method = "spectroscopy (Mehlich3 extraction estimate)"
+	    variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S"),
+		soil_method = "Mehlich3 (estimated from spectroscopy)"
 	  )
-	  
+
 	  carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }

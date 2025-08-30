@@ -68,9 +68,10 @@ A subset of samples were also subjected to wet chemistry analysis, and results w
 	  d[d == ""] <- NA #replacing blanks with NA in adm1, adm2 and adm3
 
 	soilmeta <- data.frame(
-		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
+		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S"),
 		soil_method = "Mehlich3 (estimated from spectroscopy)"
 	)
 	  
 	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
+

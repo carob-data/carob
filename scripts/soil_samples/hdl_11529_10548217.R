@@ -57,7 +57,7 @@ carob_script <- function(path) {
 	r$soil_depth <- "0-20"
 
 	soilmeta <- data.frame(
-		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S", "P", "Zn"),
+		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn"),
 		soil_method = "Mehlich3 extraction"
 	)
 
@@ -67,10 +67,9 @@ carob_script <- function(path) {
 	#start_date <- 2016-01-05
 	#end_date <- 2016-01-12
 	
-	d$date <- "2016-01"
-	
+	d$date <- "2016-01"	
 	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 
- 
+
 
