@@ -17,17 +17,18 @@ A subset of samples were also subjected to wet chemistry analysis, and results w
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-	                                data_organization = "CIMMYT;RAB;ICRAF",
-	                                publication =NA,
-	                                project = "GAIA",
-	                                carob_date = "2025-08-30",
-	                                design = NA,
-	                                data_type = "survey",
-	                                treatment_vars = "none",
-	                                response_vars = "none", 
-	                                carob_contributor = "Blessing Dzuda",
-	                                completion = 100,	
-	                                notes = "1. Consider adding Soil Acidity Saturation in Terminag, i think its an important variable")
+		data_organization = "CIMMYT;RAB;ICRAF",
+		publication =NA,
+		project = "GAIA",
+		carob_date = "2025-08-30",
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none", 
+		carob_contributor = "Blessing Dzuda",
+		completion = 100,	
+		notes = NA
+	)
 	
 	f <- ff[basename(ff) == "GAIA_Rwa_on_farm_trials_soil_properties_yr1_v0.1.csv"]
 	r <- read.csv(f)
@@ -60,12 +61,16 @@ A subset of samples were also subjected to wet chemistry analysis, and results w
 	    soil_Na = r$m3.Na,
 	    soil_S = r$m3.S,
 	    soil_CEC=r$CEC,
-	    soil_method="mid-infrared (MIR) spectroscopy",
 	    geo_from_source = TRUE
 	  )
 	  
 	  d$soil_texture <- trimws(gsub("y", "y ", d$soil_texture))
-	  d[d == ""] <- NA#replacing blanks with NA in adm1,adm2 and adm3
+	  d[d == ""] <- NA #replacing blanks with NA in adm1, adm2 and adm3
+
+	soilmeta <- data.frame(
+		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
+		soil_method = "Mehlich3 (estimated from spectroscopy)"
+	)
 	  
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
 }
