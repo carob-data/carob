@@ -65,6 +65,13 @@ Selected soil properties were predicted from 524 topsoil samples subjected to sp
 	
 	d$soil_texture <- trimws(gsub("y", "y ", d$soil_texture))
 
-	carobiner::write_files(path, meta, d)
+	soilmeta <- data.frame(
+		soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
+		soil_method = "Mehlich3 (estimated from spectroscopy)"
+	)
+
+	d <- d[d$longitude < 30.4, ]
+
+	carobiner::write_files(path, meta, d, soil_meta=soilmeta)
 }
 
