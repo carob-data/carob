@@ -20,17 +20,17 @@ Unless specified, all properties were predicted. When calculated from other pred
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-	                                data_organization = "CIMMYT; TARI;ICRAF",
-	                                publication =NA,
-	                                project = "GAIA",
-	                                carob_date = "2025-08-30",
-	                                design = NA,
-	                                data_type = "survey",
-	                                treatment_vars = "none",
-	                                response_vars = "none", 
-	                                carob_contributor = "Blessing Dzuda",
-	                                completion = 100,	
-	                                notes = NA
+		data_organization = "CIMMYT; TARI;ICRAF",
+		publication =NA,
+		project = "GAIA",
+		carob_date = "2025-08-30",
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none", 
+		carob_contributor = "Blessing Dzuda",
+		completion = 100,	
+		notes = NA
 	)
 	
 	f <- ff[basename(ff) == "GAIA_Tza_on_farm_trials_soil_properties_yr1_v0.1.csv"]
@@ -68,13 +68,13 @@ Unless specified, all properties were predicted. When calculated from other pred
 	    geo_from_source = TRUE
 	  )
 	  
-	  d <- d[!is.na(d$latitude),]#dropping 3 rows without longitude,latitude,adm1,adm2 and adm3
+	  d <- d[!is.na(d$latitude),] #dropping 3 rows without longitude,latitude,adm1,adm2 and adm3
 	  d$soil_texture <- trimws(gsub("y", "y ", d$soil_texture))
 	  
-	  soilmeta <- data.frame(
-	    soil_element = c("Al", "B", "Ca", "Fe", "K", "Mg", "Mn", "Na", "S"),
-	    soil_method = "spectroscopy (Mehlich3 extraction estimate)"
-	  )
+	soilmeta <- data.frame(
+		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S"),
+		method = "Mehlich3 (estimated from spectroscopy)"
+	)
 	  
 	  carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
