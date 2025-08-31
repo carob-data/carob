@@ -64,11 +64,14 @@ Unless specified, all properties were predicted. When calculated from other pred
 	    soil_S = r$m3.S,
 	    soil_K = r$m3.K,
 	    soil_CEC=r$CEC,
-	    soil_acidity_sat=r$Estimated_Acid_Saturation,
 	    geo_from_source = TRUE
 	  )
+
+	d$latitude[d$latitude > 3.4] <- NA
+	d <- d[!is.na(d$latitude),] #dropping 3 rows without longitude,latitude,adm1,adm2 and adm3
+
+	d$latitude[d$latitude > 0] = - d$latitude[d$latitude > 0]
 	  
-	  d <- d[!is.na(d$latitude),] #dropping 3 rows without longitude,latitude,adm1,adm2 and adm3
 	  d$soil_texture <- trimws(gsub("y", "y ", d$soil_texture))
 	  
 	soilmeta <- data.frame(
