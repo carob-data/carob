@@ -1,4 +1,6 @@
-Carob_script <- function(path) {
+
+
+carob_script <- function(path) {
   
   "16th Acid Soil Wheat Screening Nursery
   
@@ -8,21 +10,21 @@ Carob_script <- function(path) {
   group <- "varieties_wheat"
   ff <- carobiner::get_data(uri, path, group)
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "CIMMYT",
-                                  publication=NA,
-                                  project="Acid Soil Wheat Screening Nursery",
-                                  data_type= "experiment",
-                                  response_vars = "yield",
-                                  treatment_vars = "variety_code",
-                                  carob_contributor= "Blessing Dzuda",
-                                  carob_date="2025-09-01",
-                                  completion = 100,	
-                                  design=NA,
-                                  notes = NA
+		data_organization = "CIMMYT",
+		publication=NA,
+		project="Acid Soil Wheat Screening Nursery",
+		data_type= "experiment",
+		response_vars = "yield",
+		treatment_vars = "variety_code",
+		carob_contributor= "Blessing Dzuda",
+		carob_date="2025-09-01",
+		completion = 100,	
+		design=NA,
+		notes = NA
   )
   
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)
-  d$yield_moisture <- as.numeric(NA)
+
   carobiner::write_files(path, meta, d)
 }
