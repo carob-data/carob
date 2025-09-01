@@ -2,9 +2,11 @@
 
 carob_script <- function(path) {
   
-  "16th Acid Soil Wheat Screening Nursery
+"
+16th Acid Soil Wheat Screening Nursery
   
-  The Acid-Soils Wheat Screening Nursery (ASWSN) contains spring bread wheat germplasm adapted to areas affected by low pH that are predominately in Brazil, the highlands of central Africa, and the Himalayas; the total estimated area is close to 2 million hectares. Disease and stress problems are similar to ME2. However, aluminum and manganese toxicities, plus phosphorus deficiency, are major constraints to production. Red grain is generally preferred, except in the Himalayas. High-level quality is demanded, especially in Latin America. (2004)"
+The Acid-Soils Wheat Screening Nursery (ASWSN) contains spring bread wheat germplasm adapted to areas affected by low pH that are predominately in Brazil, the highlands of central Africa, and the Himalayas; the total estimated area is close to 2 million hectares. Disease and stress problems are similar to ME2. However, aluminum and manganese toxicities, plus phosphorus deficiency, are major constraints to production. Red grain is generally preferred, except in the Himalayas. High-level quality is demanded, especially in Latin America. (2004)
+"
   
   uri <- "hdl:11529/10548422"
   group <- "varieties_wheat"

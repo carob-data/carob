@@ -41,7 +41,6 @@ carob_script <- function(path) {
 		#trial_id = r$SSN,
 		depth_top = r$Depth_top,
 		depth_bottom = r$Depth_bottom,
-		soil_depth = r$soil_depth,
 		soil_C = r$Total.Carbon,
 		soil_SOC = r$AcidCarbon,
 		soil_N = r$Total.Nitrogen,
@@ -49,9 +48,6 @@ carob_script <- function(path) {
 		soil_silt = r$Silt,
 		soil_sand = r$Sand
 	)
-	
-	# correcting country conflict error 
-	d <- d[!grepl("37.16563", d$longitude),] 
 	
 	carobiner::write_files(path, meta, d)
 }
