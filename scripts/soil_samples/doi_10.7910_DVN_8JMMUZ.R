@@ -73,9 +73,10 @@ carob_script <- function(path) {
 		soil_N = as.numeric(r$Tota.N)
 	)
 	
-	d$soil_depth <- "0-20"
-	d$soil_depth[r$`Soil Depth` == 'Sub Soil'] <- "20-50"
-
+	i <- r["Soil Depth"] == "Sub Soil"
+	r$depth_top <- ifelse(i, 20, 0)
+	r$depth_bottom  <- ifelse(i, 50, 20)
+	
 	carobiner::write_files(path, meta, d)
 }
 

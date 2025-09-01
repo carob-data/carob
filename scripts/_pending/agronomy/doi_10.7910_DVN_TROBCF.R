@@ -68,7 +68,7 @@ This data study contains data on pigeonpea and soybean intensification through p
 	   
 	)
 	
-d1	<- d1[!is.na(d1$yield),]
+	d1	<- d1[!is.na(d1$yield),]
 
 
 ## Adding N fixation 
@@ -85,14 +85,14 @@ d1	<- d1[!is.na(d1$yield),]
 		N_fixation= r2$BNF..kgha.1.
 	)
 
-d <- merge(d1, d2, by= c("location", "rep","intercrops", "P_fert_level", "treatment", "crop", "variety"), all.x = TRUE)	
+	d <- merge(d1, d2, by= c("location", "rep","intercrops", "P_fert_level", "treatment", "crop", "variety"), all.x = TRUE)	
 	
 #### Adding node 	
 	d3 <- data.frame(
 		location = r3$Site,
 		treatment = r3$Treatment.Description,
 		crop = tolower(r3$Crop),
-		rep= as.integer(r3$Rep),
+		rep = as.integer(r3$Rep),
 		P_fert_level= r3$plevel,
 		node_count= r3$ave.no..nod.per.plant
 	
@@ -114,7 +114,7 @@ d <- merge(d1, d2, by= c("location", "rep","intercrops", "P_fert_level", "treatm
 	d$latitude[i] <- -14.821
 	
 
- carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
  
 }
 

@@ -32,8 +32,11 @@ carob_script <- function(path) {
 	r1b <- r1[,-4]
 	r1b$bd1 <- NA
 	colnames(r1a) <- colnames(r1b)
-	r1a$soil_depth <- "0-30"
-	r1b$soil_depth <- "30-100"
+
+	r1a$depth_top <- 0
+	r1a$depth_bottom <- 30
+	r1b$depth_top <- 30
+	r1b$depth_bottom <- 100
 
 	r <- rbind(r1a, r1b)
 
@@ -44,7 +47,8 @@ carob_script <- function(path) {
 		latitude = r$lat,
 		geo_from_source= TRUE,
 		#trial_id = r$Waypoint_No,
-		soil_depth = r$soil_depth,
+		depth_top = r$depth_top,
+		depth_bottom = r$depth_bottom,
 		soil_SOC = r$soc2,
 		soil_bd = r$bd1
 	)

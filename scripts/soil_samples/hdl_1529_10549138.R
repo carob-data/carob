@@ -33,14 +33,13 @@ A subset of samples were also subjected to wet chemistry analysis, and results w
 	f <- ff[basename(ff) == "GAIA_Rwa_on_farm_trials_soil_properties_yr1_v0.1.csv"]
 	r <- read.csv(f)
 	
-	  d <- data.frame(
+	d <- data.frame(
 	    country = r$country,
 	    adm1 = r$adm1,
 	    adm2 = r$adm2,
 	    adm3=r$adm3,
 	    longitude = r$longitude,
 	    latitude = r$latitude,
-	    soil_depth = r$soil_depth,
 	    depth_top = r$soil_sample_top,
 	    depth_bottom = r$soil_sample_bottom,
 	    soil_sand = r$Sand,

@@ -38,7 +38,6 @@ Selected soil properties were predicted from 232 topsoil samples subjected to sp
 		adm2=r$adm2,
 		longitude=r$longitude,
 		latitude=r$latitude,
-		soil_depth=r$soil_depth,
 		depth_top=r$soil_sample_top,
 		depth_bottom=r$soil_sample_bottom,
 		soil_sand=r$Sand,

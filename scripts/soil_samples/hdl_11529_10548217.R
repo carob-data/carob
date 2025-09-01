@@ -54,7 +54,8 @@ carob_script <- function(path) {
 		soil_N = r$N * 10
 	)
 
-	r$soil_depth <- "0-20"
+	d$depth_top <- 0
+	d$depth_bottom <- 20
 
 	soilmeta <- data.frame(
 		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn"),

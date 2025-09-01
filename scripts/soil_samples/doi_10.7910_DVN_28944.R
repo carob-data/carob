@@ -26,15 +26,14 @@ carob_script <- function(path) {
 	r2 <- read.csv(f2)
 
 	# Merge r1 and r2 to get lat and lon columns to be appended into the soils data
-	d <- merge(r1,r2[, c('Cluster', "Plot", "Latitude", "Longitude")], by = c("Cluster", "Plot"), all.x = TRUE)
-	d$soil_depth <- "0-20"
-	d$soil_depth[d$Depthcode=="Subsoil"] <- "20-50"
+	r <- merge(r1, r2[, c('Cluster', "Plot", "Latitude", "Longitude")], by = c("Cluster", "Plot"), all.x = TRUE)
 
-	d$Cu.ppm.[d$Cu.ppm.=="< 0.2"] <- 0.001
-	d$B.ppm.[d$B.ppm.=="< 0.02"] <- 0.001
-	
-	
-	r <- d
+	i <- r$Depthcode=="Subsoil"
+	r$depth_top <- ifelse(i, 20, 0)
+	r$depth_bottom  <- ifelse(i, 50, 20)
+
+	r$Cu.ppm.[r$Cu.ppm.=="< 0.2"] <- 0.001
+	r$B.ppm.[r$B.ppm.=="< 0.02"] <- 0.001
 	
 	d <- data.frame(
 		trial_id = r$ldsfID,
@@ -57,11 +56,12 @@ carob_script <- function(path) {
 		soil_clay = as.numeric(r$Clay...),
 		soil_silt = as.numeric(r$Silt...),
 		soil_sand = as.numeric(r$Sand...),
-		soil_depth = r$soil_depth,
+		depth_top = r$depth_top,
+		depth_bottom = r$depth_bottom,
 		longitude = r$Longitude,
 		latitude = r$Latitude,
 		geo_from_source= TRUE,
-		country =  'Democratic Republic of the Congo'
+		country = "Democratic Republic of the Congo"
 	)
 
     carobiner::write_files(path, meta, d)

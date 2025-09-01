@@ -41,7 +41,6 @@ Coordinates were truncated to protect farmer's privacy. Unless specified, all pr
 	    adm3=r$adm3,
 	    longitude = r$longitude,
 	    latitude = r$latitude,
-	    soil_depth = r$soil_depth,
 	    depth_top = r$soil_sample_top,
 	    depth_bottom = r$soil_sample_bottom,
 	    soil_sand = r$Sand,

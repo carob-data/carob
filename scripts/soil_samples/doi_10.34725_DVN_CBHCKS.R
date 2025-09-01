@@ -33,13 +33,16 @@ carob_script <- function(path) {
 		soil_ex_bases = as.numeric(r$predExBas),
 		soil_clay = as.numeric(r$predClay),
 		soil_sand = as.numeric(r$predSand),
-		soil_depth = paste0(as.numeric(r$DepthTop), "-", as.numeric(r$DepthBottom)),
 		longitude = r$Longitude,
 		latitude = r$Latitude,
 		geo_from_source= TRUE,
 		country = "Kenya",
 		location = r$Site
 	)
+
+	d$depth_top <- as.numeric(r$DepthTop)
+	d$depth_bottom <- as.numeric(r$DepthBottom)
+
 	
 	d$geo_from_source[is.na(d$latitude)] <- FALSE
 
