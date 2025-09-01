@@ -7,9 +7,11 @@
 carob_script <- function(path) {
 
 
-"TAMASA Tanzania. Agronomy Panel Survey (APS) 2017. Crop Cut & Soil Sample.
+"
+TAMASA Tanzania. Agronomy Panel Survey (APS) 2017. Crop Cut & Soil Sample.
   
-TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of soil analysis at 0-20 and 20-50 cm soil depths from approximately 580 maize fields in the Southern Highlands, Northern and Eastern Zones of Tanzania in May-August 2017. Soil data can be linked to associated maize yield and biomass by the common HHID. (2018-11-19)  "
+TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of soil analysis at 0-20 and 20-50 cm soil depths from approximately 580 maize fields in the Southern Highlands, Northern and Eastern Zones of Tanzania in May-August 2017. Soil data can be linked to associated maize yield and biomass by the common HHID. (2018-11-19)
+"
 
 	uri <- "hdl:11529/10548153"
 	group <- "soil_samples"
@@ -22,7 +24,7 @@ TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of s
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 0,
+		completion = 100,
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2025-08-31",
 		notes = NA,
@@ -30,8 +32,8 @@ TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of s
 	)
 
 	f <- ff[basename(ff) == "TAMASA_TZ_APS_Soil_2017.xlsx"]
-  r	<- carobiner::read.excel(f, sheet ="Revised_Data")
-
+	r <- carobiner::read.excel(f, sheet ="Revised_Data")
+	r <- r[which(r$Country == "Tanzania"), ] # remove empty rows and rows with stats
 	d <- data.frame(
 		country = r$Country,
 		adm1=r$Region,
@@ -39,7 +41,6 @@ TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of s
 		latitude=r$Latitude,
 		longitude=r$Longitude,
 		elevation=r$Altitude,
-		soil_depth=as.numeric(r$Depth),
 		soil_C=r$C,
 		soil_pH=r$pH,
 		soil_Al = r$Al,
@@ -57,7 +58,10 @@ TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the results of s
 		soil_Zn=r$Zn,
 		geo_from_source = TRUE
 	) 
-	d <- head(d, -8)#dropping last 8 rows with invalid info
-	d <- unique(d)#removing duplicates
+
+	i <- grepl("50", r$Depth)
+	d$depth_top <- ifelse(i, 20, 0)
+	d$depth_bottom  <- ifelse(i, 50, 20)
+
 	carobiner::write_files(path, meta, d)
 }
