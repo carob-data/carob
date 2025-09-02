@@ -1,4 +1,5 @@
 # R script for "carob"
+# license: GPL (>=3)
 
 carob_script <- function(path) {
   
@@ -39,8 +40,8 @@ carob_script <- function(path) {
 		latitude = r$latitude,
 		geo_from_source= TRUE,
 		#trial_id = r$SSN,
-		depth_top = r$Depth_top,
-		depth_bottom = r$Depth_bottom,
+		##depth_top = r$Depth_top, has a few errors
+		##depth_bottom = r$Depth_bottom,
 		soil_C = r$Total.Carbon,
 		soil_SOC = r$AcidCarbon,
 		soil_N = r$Total.Nitrogen,
@@ -49,7 +50,11 @@ carob_script <- function(path) {
 		soil_sand = r$Sand
 	)
 	
+	depth <- do.call(rbind, strsplit(gsub("cm", "", r$Depth.range), "-"))
+	depth_top <- as.numeric(depth[,1])
+	depth_bottom <- as.numeric(depth[,2])
+
+	d <- unique(d)
 	carobiner::write_files(path, meta, d)
 }
-
 
