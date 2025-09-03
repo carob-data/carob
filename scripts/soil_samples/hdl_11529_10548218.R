@@ -65,7 +65,7 @@ TAMASA Tanzania Agronomic Panel Survey (APS) Soil data for 2016. Soil samples we
    
 	soilmeta <- data.frame(
 		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn"),
-		method = "Mehlich3 extraction"
+		method = "Mehlich3"
 	)
   
   carobiner::write_files(path, meta, d)
