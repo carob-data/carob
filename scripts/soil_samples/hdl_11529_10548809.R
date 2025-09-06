@@ -86,10 +86,10 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
    d$soil_texture <- gsub("Franco","sandy",d$soil_texture)
    d$soil_texture <- gsub("Franco Arcillo Arenoso","sandy clay loam",d$soil_texture)
    
-	soilmeta <- data.frame(
-		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu","soil_N"),
-		method = "Mehlich3 extraction"
-	)
-  
+   soilmeta <- data.frame(
+     variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu","soil_N"),
+     method = c("Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Bray/Olson extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction")
+   )
+   
   carobiner::write_files(path, meta, d)
 }
