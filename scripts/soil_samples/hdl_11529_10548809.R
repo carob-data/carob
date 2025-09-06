@@ -30,7 +30,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
   )
   
   f <- ff[basename(ff) == "BD_Suelo_Chamic_Chiapas.xlsx"]
-  r <- carobiner::read.excel(f, sheet ="Suelos")
+  r <- carobiner::read.excel(f, sheet ="Suelos", na=c("NA","."))
   r <- r[-1, ] #removing the second row with units
   
   d <- data.frame(
@@ -43,7 +43,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
     soil_sand =as.numeric(r$Arena),
     soil_clay =as.numeric(r$Arcilla),
     soil_silt =as.numeric(r$Limo),
-    soil_texture =as.numeric(r$`Clase Textural`),
+    soil_texture = r$`Clase Textural`,
     soil_WHC_sat =as.numeric(r$`Punto de Saturación`),
     soil_bd =as.numeric(r$DAP),
     soil_pH = as.numeric(r$`pH(1:2 Agua)`),
@@ -71,10 +71,10 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
   )
   
    #cleaning and combining phosphorus from 2 diff tests
-   r[r == "."] <- NA
    r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
    r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
    d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
+   
    
    #splitting depth column
    depth <- do.call(rbind, strsplit(r$Profundidad, "-"))
@@ -88,8 +88,9 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
    
    soilmeta <- data.frame(
      variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu","soil_N"),
-     method = c("Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Bray/Olson extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction")
+     method = "Mehlich3"
    )
+   soilmeta$method[soilmeta$variable == "soil_P"] <- "Bray;Olson"
    
   carobiner::write_files(path, meta, d)
 }
