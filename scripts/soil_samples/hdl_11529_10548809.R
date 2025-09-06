@@ -75,6 +75,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
    r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
    r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
    d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
+   d$soil_P_method <- ifelse(!is.na(r$`Fosforo Bray 1`), "Bray1",
+                             ifelse(!is.na(r$`Fosforo Olsen`), "Olsen", NA))
    
    #splitting depth column
    depth <- do.call(rbind, strsplit(r$Profundidad, "-"))
