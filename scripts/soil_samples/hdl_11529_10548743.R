@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-#1. Added other variables not in terminag vocabulary
 
 carob_script <- function(path) {
   
@@ -30,7 +28,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Region Mixteca at
   )
   
   f <- ff[basename(ff) == "BD_Suelo_Oaxaca.xls"]
-  r <- carobiner::read.excel(f, sheet ="OAXACA")
+  r <- carobiner::read.excel(f, sheet ="OAXACA", na=".")
+  #units <- r[1,]
   r <- r[-1, ] #removing the second row with units
   
   d <- data.frame(
@@ -41,7 +40,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Region Mixteca at
     soil_sand =as.numeric(r$Arena),
     soil_clay =as.numeric(r$Arcilla),
     soil_silt =as.numeric(r$Limo),
-    soil_texture =as.character(r$`Clase Textural`),
+    soil_texture = r$`Clase Textural`,
     soil_WHC_sat =as.numeric(r$`Punto de Saturación`),
     soil_bd =as.numeric(r$`Densidad Aparente`),
     soil_pH = as.numeric(r$`pH(1:2 Agua)`),
@@ -69,12 +68,14 @@ Soil sampling with 1x1 km grid in the agricultural area of the Region Mixteca at
   )
   
    #cleaning and combining phosphorus from 2 diff tests
-   r[r == "."] <- NA
+   #r[r == "."] <- NA
    r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
    r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
    d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
-   d$soil_P_method <- "Olsen"
-   d$soil_P_method[c(38, 40)] <- "Bray1"
+   d$soil_P_method <- ifelse(!is.na(r$`Fosforo Bray 1`), "Bray 1", "Olsen")
+
+#  avoid using numbers. it is not clear, and these can change if the data or script changes.
+#  d$soil_P_method[c(38, 40)] <- "Bray1"
    
    #splitting depth column
    depth <- do.call(rbind, strsplit(r$Profundidad, "-"))
@@ -85,11 +86,11 @@ Soil sampling with 1x1 km grid in the agricultural area of the Region Mixteca at
    d$soil_texture <- gsub("Arcilla","clay",d$soil_texture)
    d$soil_texture <- gsub("Franco","loam",d$soil_texture)
    d$soil_texture <- gsub("Arena","sand",d$soil_texture)
-   d$soil_texture <- gsub(".",NA,d$soil_texture)
+   #d$soil_texture <- gsub(".",NA,d$soil_texture)
    
    soilmeta <- data.frame(
      variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_Zn", "soil_Cu","soil_N"),
-     method = c("Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction","Mehlich3 extraction")
+     method = c("Mehlich3")
    )
    
   carobiner::write_files(path, meta, d)
