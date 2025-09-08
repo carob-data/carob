@@ -35,7 +35,6 @@ In this paper, we quantified five sustainability performance indicators (grain y
 	
 	r <- carobiner::read.excel(f)
 	
-### Process
 	
 	d <- data.frame(
 		country = r$country,
@@ -45,10 +44,10 @@ In this paper, we quantified five sustainability performance indicators (grain y
 		K_fertilizer = r$elementalK,
 		seed_rate = r$qseed,
 		crop_price = r$sprice,
-		herbicide_used = ifelse(grepl("Yes", r$useherb), TRUE, FALSE),
-		insecticide_used = ifelse(grepl("Yes", r$useinect), TRUE, FALSE),
+		herbicide_used = grepl("Yes", r$useherb),
+		insecticide_used = grepl("Yes", r$useinect),
 		yield = r$yield,
-		irrigated= ifelse(grepl("Irrigated", r$domain), TRUE, FALSE),
+		irrigated= grepl("Irrigated", r$domain),
 		currency= "USD",
 		trial_id = paste(r$country, r$hub, r$laborinput, sep = "-" ), 
 		planting_date = "2013", 
@@ -61,7 +60,6 @@ In this paper, we quantified five sustainability performance indicators (grain y
 		fertilizer_used= TRUE
 	)
 
-### Adding geo coordinate
 	
 	geo <- data.frame(
 	   location = c("Ndop", "Man", "Gagnoa", "Navrongo", "Kumasi", "Ambohibary", "Ankazomiriotra", "Sikasso", "Tillabéri", "Nassarawa", "Kano", "Kahama", "Région des Plateaux", "Région Maritime", "Glazoue", "Kouroumari", "Dagana", "Bo (South) and Kenema (East)"),
@@ -72,8 +70,6 @@ In this paper, we quantified five sustainability performance indicators (grain y
 	
 	d <- merge(d, geo, by= c("country", "location"), all.x = TRUE)
 	
-	## fixing country names
-	
 	P <- carobiner::fix_name(d$country)
 	P <- gsub("Cameroun", "Cameroon", P)
 	P <- gsub("Cote d'ivoire", "Côte d'Ivoire", P)
@@ -82,7 +78,7 @@ In this paper, we quantified five sustainability performance indicators (grain y
 ### remove duplicate rows
 	d <- unique(d)
 		
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 
