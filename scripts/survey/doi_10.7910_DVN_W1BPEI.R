@@ -17,11 +17,11 @@ BSF finger millet crowdsourcing data for Nyando Kenya
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIAT;KALRO;GRRI" , # GRRI: Genetic Resources Research Institute"
+		data_organization = "CIAT;KALRO", 
 		publication = NA,
 		project = NA,
 		carob_date = "2025-09-09",
-   	design = NA,
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "variety",
 		response_vars = "yield", 
@@ -72,25 +72,24 @@ BSF finger millet crowdsourcing data for Nyando Kenya
 	)
 
 	
- dd <- merge(d1, d2, by= ("trial_id"), all.x = TRUE)[-1,]
+	dd <- merge(d1, d2, by= ("trial_id"), all.x = TRUE)[-1,]
 
- d <- reshape(dd, varying = list(c("yield_A", "yield_B", "yield_C"), c("variety_A", "variety_B", "variety_C")), v.names = c("yield", "variety"),
-      times = c("A", "B", "C"),
-      direction = "long")
- 
- d$yield <- (as.numeric(d$yield)/6)*10000
- d$trial_id <- paste(d$trial_id, d$time, sep = "-")
- d$id	<- d$time <-  NULL
- 
- ### Fixing date
- d$planting_date <- as.character(as.Date(as.numeric(d$planting_date), origin = "1899-12-31"))
- d$harvest_date <- as.character(as.Date(as.numeric(d$harvest_date), origin = "1899-12-31"))
- d$maturity_days <- as.numeric(d$maturity_days)
+	 d <- reshape(dd, varying = list(c("yield_A", "yield_B", "yield_C"), c("variety_A", "variety_B", "variety_C")), v.names = c("yield", "variety"),
+		  times = c("A", "B", "C"),
+		  direction = "long")
+	 
+	 d$yield <- (as.numeric(d$yield)/6)*10000
+	 d$trial_id <- paste(d$trial_id, d$time, sep = "-")
+	 d$id <- d$time <- NULL
+	 
+	 ### Fixing date
+	 d$planting_date <- as.character(as.Date(as.numeric(d$planting_date), origin = "1899-12-31"))
+	 d$harvest_date <- as.character(as.Date(as.numeric(d$harvest_date), origin = "1899-12-31"))
+	 d$maturity_days <- as.numeric(d$maturity_days)
 
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
- 
-
-carobiner::write_files(path, meta, d)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	 
+	carobiner::write_files(path, meta, d)
 
 }
 
