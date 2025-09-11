@@ -58,22 +58,20 @@ Soil sampling with 1x1 km grid in the agricultural area of the Cadereyta Municip
     soil_B =as.numeric(r$`Boro (B)`),
     soil_Al =as.numeric(r$`Alumino (Al)`),
     soil_S =as.numeric(r$`Azufre (S)`),
-    soil_Ca_sat =as.numeric(r$`Ca % Sat.`),
-    soil_Mg_sat =as.numeric(r$`Mg % Sat.`),
-    soil_K_sat =as.numeric(r$`K % Sat.`),
-    soil_Na_sat =as.numeric(r$`Na % Sat.`),
-    soil_Al_sat =as.numeric(r$`Al % Sat.`),
     soil_CEC=as.numeric(r$`(CIC)`),
     soil_EC =as.numeric(r$`CE (Extracto)`),
     geo_from_source = TRUE
   )
   
    #cleaning and combining phosphorus from 2 diff tests
-   r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
-   r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
-   d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
-   d$soil_P_method <- ifelse(!is.na(r$`Fosforo Bray 1`), "Bray 1", "Olsen")
+#   r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
+#   r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
+#   d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
+#   d$soil_P_method <- ifelse(!is.na(r$`Fosforo Bray 1`), "Bray1", "Olsen")
 
+   d$soil_P <- as.numeric(r$`Fosforo Bray 1`)
+   d$soil_P_method <- "Bray1"
+   
    #splitting depth column
    depth <- do.call(rbind, strsplit(r$Profundidad, "-"))
    d$depth_top <- as.numeric(depth[,1])
@@ -86,6 +84,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Cadereyta Municip
      variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_Zn", "soil_Cu","soil_N"),
      method = c("Mehlich3")
    )
-   
+	soilmeta$soil_P <- "Bray1"
+	
   carobiner::write_files(path, meta, d)
 }
