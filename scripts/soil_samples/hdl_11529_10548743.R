@@ -77,10 +77,10 @@ Soil sampling with 1x1 km grid in the agricultural area of the Region Mixteca at
 #  avoid using numbers. it is not clear, and these can change if the data or script changes.
 #  d$soil_P_method[c(38, 40)] <- "Bray1"
    
-   #splitting depth column
    depth <- do.call(rbind, strsplit(r$Profundidad, "-"))
    d$depth_top <- as.numeric(depth[,1])
    d$depth_bottom <- as.numeric(depth[,2])
+   
    d$soil_texture <- gsub("Franco Arcillo Arenoso","sandy clay loam",d$soil_texture)
    d$soil_texture <- gsub("Franco Arcilloso","clay loam",d$soil_texture)
    d$soil_texture <- gsub("Arcilla","clay",d$soil_texture)
