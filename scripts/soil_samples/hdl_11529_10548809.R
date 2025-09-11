@@ -61,11 +61,6 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
     soil_Al =as.numeric(r$`Alumino (Al)`),
     soil_S =as.numeric(r$`Azufre (S)`),
     soil_CEC=as.numeric(r$`(CIC)`),
-    soil_Ca_sat =as.numeric(r$`Ca % Sat.`),
-    soil_Mg_sat =as.numeric(r$`Mg % Sat.`),
-    soil_K_sat =as.numeric(r$`K % Sat.`),
-    soil_Na_sat =as.numeric(r$`Na % Sat.`),
-    soil_Al_sat =as.numeric(r$`Al % Sat.`),
     soil_EC =as.numeric(r$`CE (Extracto)`),
     geo_from_source = TRUE
   )

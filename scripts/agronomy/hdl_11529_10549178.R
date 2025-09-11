@@ -11,12 +11,12 @@ The key objectives of the study included assessing the interactions between geno
 
 
 	uri <- "hdl:11529/10549178"
-	group <- "varieties_maize"
+	group <- "agronomy"
 
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "Machinga Agriculture Development Division;TLC;CIMMYT",
+		data_organization = "MMOA;TLC;CIMMYT",
 		publication = "10.1371_journal.pone.0298009",
 		project = NA,
 		data_type = "on-farm experiment",
