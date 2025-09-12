@@ -48,26 +48,26 @@ carob_script <- function(path) {
   d$is_survey <- FALSE
   d$irrigated <- FALSE
     
-  d$longitude[d$site=="DTC"] <- 31.1337
-  d$longitude[d$site=="UZ"] <- 31.0530
-  d$longitude[d$site=="SRS"] <- 33.2416
-  d$longitude[d$site=="Makoholi"] <- 30.7833
-  d$longitude[d$site=="Chitedze"] <- 33.654
-  d$longitude[d$site=="Monze"] <- 27.4414
-  d$latitude[d$site=="DTC"] <- -17.6091
-  d$latitude[d$site=="UZ"] <- -17.7840
-  d$latitude[d$site=="SRS"] <- -19.3169
-  d$latitude[d$site=="Makoholi"] <- -19.8333
-  d$latitude[d$site=="Chitedze"] <- -13.9732
-  d$latitude[d$site=="Monze"] <- -16.2402
+  d$longitude[d$location=="DTC"] <- 31.1337
+  d$longitude[d$location=="UZ"] <- 31.0530
+  d$longitude[d$location=="SRS"] <- 33.2416
+  d$longitude[d$location=="Makoholi"] <- 30.7833
+  d$longitude[d$location=="Chitedze"] <- 33.654
+  d$longitude[d$location=="Monze"] <- 27.4414
+  d$latitude[d$location=="DTC"] <- -17.6091
+  d$latitude[d$location=="UZ"] <- -17.7840
+  d$latitude[d$location=="SRS"] <- -19.3169
+  d$latitude[d$location=="Makoholi"] <- -19.8333
+  d$latitude[d$location=="Chitedze"] <- -13.9732
+  d$latitude[d$location=="Monze"] <- -16.2402
   d$geo_from_source <- FALSE
 
   #specific site names are from LT conservation agricultural data standardized before
   #they are however not documented in this particular dataset
-  d$site <- gsub("DTC","Domboshava Training Center",d$site)
-  d$site <- gsub("UZ","University of Zimbabwe",d$site)
-  d$site <- gsub("SRS","Sussundenga Research station",d$site)
-  d$site <- gsub("Monze|MFTC","Monze Farmers Training Center",d$site)
+  d$location <- gsub("DTC","Domboshava Training Center",d$location)
+  d$location <- gsub("UZ","University of Zimbabwe",d$location)
+  d$location <- gsub("SRS","Sussundenga Research station",d$location)
+  d$location <- gsub("Monze|MFTC","Monze Farmers Training Center",d$location)
 
   
   d$planting_date <- as.character(NA)
