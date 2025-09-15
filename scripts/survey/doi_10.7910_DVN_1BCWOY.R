@@ -9,15 +9,15 @@ carob_script <- function(path) {
 "
 BSF finger millet crowdsourcing data for Hoima Uganda
 
-43 different accessions/varieties of finger millet were randomly distributed to 200 farmers using the Alliance of Bioversity International and CIAT Climmob Version 2 software( http://climmob.net/Version_2/menu.html ). Three blind varieties were given to each farmer coded A, B and C and were planted in three  2m by 3m plots. A total of 8 villages with 25 farmers from each were engaged. This data set comprised of a total of 163 farmers who managed to successfully evaluate the three blind varieties they were given and successfully shared their data.
+43 different accessions/varieties of finger millet were randomly distributed to 200 farmers using the Alliance of Bioversity International and CIAT Climmob Version 2 software( http://climmob.net/Version_2/menu.html ). Three blind varieties were given to each farmer coded A, B and C and were planted in three 2m by 3m plots. A total of 8 villages with 25 farmers from each were engaged. This data set comprised of a total of 163 farmers who managed to successfully evaluate the three blind varieties they were given and successfully shared their data.
 "
 
 	uri <- "doi:10.7910/DVN/1BCWOY"
-	group <- "varieties"
+	group <- "survey"	
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIAT; NARO",
+		data_organization = "ABC; NARO",
 		publication = NA,
 		project = NA,
 		carob_date = "2025-09-15",
