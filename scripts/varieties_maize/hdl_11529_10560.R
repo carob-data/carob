@@ -13,9 +13,9 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Global Maize Program",
+		project = "International Late Yellow Hybrid Trial",
 		data_type = "experiment",
-		treatment_vars = "variety;longitude;latitude",
+		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2024-08-01"

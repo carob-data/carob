@@ -11,12 +11,12 @@ carob_script <- function(path) {
 
 	ff <- carobiner::get_data(uri, path, group)
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		project=NA,
 		publication= NA,
+		project = "International Late Yellow Hybrid Trial",		
 		data_organization = "CIMMYT",
 		data_type="experiment", 
 		response_vars = "yield",
-		treatment_vars = "variety;longitude;latitude",
+		treatment_vars = "variety",
 		carob_contributor="Mitchelle Njukuya",
 		carob_date="2023-01-30",
 		modified_by="Robert Hijmans"

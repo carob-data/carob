@@ -1,7 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-carobiner::on_github(uri="hdl:11529/10666")
 carob_script <- function(path) {
 
 
@@ -15,9 +14,9 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Global Maize Program",
+		project = "International Late Yellow Hybrid Trial",
 		data_type = "experiment",
-		treatment_vars = "variety_pedigree;longitude;latitude",
+		treatment_vars = "variety_pedigree",
 		response_vars = "yield", 
 		completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
@@ -31,11 +30,6 @@ carob_script <- function(path) {
 	  r <- carobiner::read.excel(f, sheet = "Master", skip = 1) 
 	  d <- data.frame( 
 	    trial_id = id,
-	    crop = "maize",
-	    on_farm = TRUE,
-	    striga_trial = FALSE, 
-	    striga_infected = FALSE,
-	    borer_trial = FALSE,
 	    rep = r$REP,
 	    plot_id = r$PLOT,
 	    location = r$...124,
@@ -66,7 +60,7 @@ carob_script <- function(path) {
 	    longitude = longitude,
 	    latitude = latitude,
 	    elevation = elevation
-	    )
+	  )
 	}
 	
 	d0 <- get_data("12CHTTY-A1-1.xls", "1", 80.4667, 8.1167, 117)
@@ -102,6 +96,12 @@ carob_script <- function(path) {
 	d3$variety_pedigree <- var_pedigree4[match(d3$variety_pedigree, entry_code)]
 	
 	d <- carobiner::bindr(d0, d1, d2, d3)
+
+	d$crop <- "maize"
+	d$on_farm <- TRUE
+	d$striga_trial <- FALSE
+	d$striga_infected <- FALSE
+	d$borer_trial <- FALSE
 	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
