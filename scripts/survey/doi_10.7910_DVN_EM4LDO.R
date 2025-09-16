@@ -17,7 +17,7 @@ BSF Sorghum crowd sourcing data for Dodoma and Singida Tanzania
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIAT; TARI",
+		data_organization = "BIOV; TARI", 
 		publication = NA,
 		project = "Crowdsourcing",
 		carob_date = "2025-09-10",

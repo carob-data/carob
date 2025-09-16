@@ -17,7 +17,7 @@ BSF finger millet crowdsourcing data for Nyando Kenya
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIAT;KALRO", 
+		data_organization = "BIOV;KALRO", 
 		publication = NA,
 		project = NA,
 		carob_date = "2025-09-09",
