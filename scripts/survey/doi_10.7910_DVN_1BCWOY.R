@@ -17,7 +17,7 @@ BSF finger millet crowdsourcing data for Hoima Uganda
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "BIOV; NARO",
+		data_organization = "BIOV; NARO; HCSB",
 		publication = NA,
 		project = NA,
 		carob_date = "2025-09-15",
