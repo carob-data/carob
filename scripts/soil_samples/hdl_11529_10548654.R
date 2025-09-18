@@ -4,23 +4,27 @@
 
 carob_script <- function(path) {
   
-  "Soil sampling with 1x1 km grid in the agricultural area of the Salvatierra Municipality at at 0 to 30 cm depth. (2022-04-01)"
+"
+Fertility Maps of Tlalquiltenango, Morelos. 2020
+
+Soil sampling with 1x1 km grid in the agricultural area of the Tlalquiltenango Municipality at at 0 to 30 cm depth.
+"
   
   uri <- "hdl:11529/10548654"
   group <- "soil_samples"
   ff <- carobiner::get_data(uri, path, group)
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-                                  data_organization = "CIMMYT",
-                                  publication=NA,
-                                  project=NA,
-                                  data_type= "survey",
-                                  response_vars = "none",
-                                  treatment_vars = "none",
-                                  carob_contributor= "Mitchelle Njukuya",
-                                  carob_date="2025-09-18",
-                                  completion = 100,	
-                                  design=NA,
-                                  notes = NA
+		data_organization = "CIMMYT",
+		publication=NA,
+		project=NA,
+		data_type= "survey",
+		response_vars = "none",
+		treatment_vars = "none",
+		carob_contributor= "Mitchelle Njukuya",
+		carob_date="2025-09-18",
+		completion = 100,	
+		design=NA,
+		notes = NA
   )
   
   f <- ff[basename(ff) == "BD_Suelo_Tlaquiltenango.xlsx"]
