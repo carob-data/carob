@@ -30,8 +30,6 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		notes = NA
 	)
 	
-	meta$authors <- trimws(meta$authors)
-
 	f <- ff[basename(ff) == "raw_data_maize.csv"]
   
 	r <- read.csv(f)
@@ -70,7 +68,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
       yield_moisture = 0,
       irrigated = NA, 
       geo_from_source = FALSE
-       )
+  )
 
   location <- do.call(rbind, strsplit(d$location, "\\("))
   d$location <- trimws(location[,1])
@@ -78,30 +76,22 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
   d$planting_date <- ifelse(is.na(d$planting_date), d$year, d$planting_date)
   d$year <- NULL
   
-### Adding longitude and latitude
+### Adding longitude and latitude 
+# how determined?
+	geo <- data.frame(
+		location = c("Alajawa", "Albasu Central", "Badafi", "Bagwarai", "Bumai", "Bunkure", "Butunutu", "Chula", "DAbar Gwari", "Dal", "Dalawa", "Dansoshiya", "Dawakiji", "Dugabau", "Falgore", "Faragai", "G/Malam", "Gafasa", "Gani", "Gediya", "Gude", "Gundutse", "Jita", "K/Giwa", "K/Kuka", "Kachako", "Kadan-dani", "Kara", "KauKau", "Kibiya", "Kuka", "Kuki", "Kwa", "Kwamarawa", "Kwankwaso", "Maaraku", "Maimakawa", "Maraku", "Masu", "Mesar Tudu", "Nataala", "Raba", "Rantan", "Rimin Dako", "Ruwan Bako", "Sansan", "Sarbi", "Shagogo", "Sumaila", "Tanagar", "Tangaji", "Tsaudawa", "Tsaure", "Tudun Kaya", "U/Rimi", "UNgoggo", "Wuro Bagga", "Yalwa", "Yammedi", "Yandala", "Yangizo", "yankamaye", "Yautar Kudu", "Yunbu", "Zainabi", "Zinyau", "Zoza"), 
+		longitude = c(7.966, NA, 8.1692, NA, 8.1915, 8.5189, NA, 8.9707, NA, 8.825, 8.6705, 8.0723, 8.7032, 8.2096, 7.6947, 8.9888, NA, 9.133, 8.8438, 8.9122, 8.0666, 8.5137, NA, NA, NA, 9.2492, NA, 9.1551, NA, 8.6925, 8.3525, 8.3639, 8.377, 8.3898, 8.3934, NA, 9.1345, 8.6869, 8.8059, NA, NA, NA, 8.3791, 8.2536, NA, 8.63, 8.673, 8.9312, 8.9622, 8.6894, 8.4876, 8.2027, 7.88, 7.931, NA, NA, NA, 8.1853, 8.0925, NA, NA, 7.9286, NA, NA, 8.7711, NA, 7.8856), 
+		latitude = c(12.1147, NA, 11.3735, NA, 12.5134, 11.6789, NA, 11.9897, NA, 11.4763, 11.3702, 11.5379, 11.8636, 11.8012, 11.5117, 11.6673, NA, 11.9846, 11.3736, 11.3505, 11.9539, 11.8245, NA, NA, NA, 11.538, NA, 11.93, NA, 11.5166, 12.4299, 11.4263, 12.158, 12.3302, 11.8515, NA, 11.795, 10.649, 11.2021, NA, NA, NA, 11.5185, 12.0848, NA, 12.4524, 12.2919, 11.8426, 11.5066, 11.9527, 12.3053, 11.6809, 12.0946, 11.7332, NA, NA, NA, 11.4855, 11.8238, NA, NA, 12.3284, NA, NA, 10.7889, NA, 11.6291)
+	)
 
-  geo <- data.frame(
-     location = c("Kuki", "Maraku", "Zainabi", "Falgore", "Kara", "Tudun Kaya", "Yammedi", "Badafi", "Yalwa", "Tsaudawa", "Dansoshiya", "Zoza", "Gediya", "Masu", "Gani", "Dalawa", 
-       "Bumai", "Tangaji", "Sarbi", "Gafasa", "Chula", "Faragai", "Rimin Dako", "Rantan", "Kwamarawa", "Bunkure", "Sansan", "Dawakiji", "Kwa", "Dal", "Raba", "Maimakawa", "Shagogo", 
-       "Dugabau", "Gude", "Kibiya", "Gundutse", "Kwankwaso", "Tsaure", "Alajawa", "Sumaila", "Kuka", "Kachako", "yankamaye", "Tanagar"),
-     longitude= c(8.3639, 8.6869, 8.7711, 7.6947, 9.1551, 7.931, 8.0925, 8.1692, 8.1853, 8.2027, 8.0723, 7.8856, 8.9122, 8.8059, 8.8438, 8.6705, 8.1915, 8.4876, 8.673, 9.133, 8.9707, 
-                  8.9888, 8.2536, 8.3791, 8.3898, 8.5189, 8.63, 8.7032, 8.0142, 8.825, NA, 9.1345, 8.9312, 8.2096, 8.0666, 8.6925, 8.5137, 8.3934, 7.88, 7.966, 8.9622, 8.3525, 9.2492, 7.9286, 8.6894),
-     latitude = c(11.4263, 10.649, 10.7889, 11.5117, 11.93, 11.7332, 11.8238, 11.3735, 11.4855, 11.6809, 11.5379, 11.6291, 11.3505, 11.2021, 11.3736, 11.3702, 
-                  12.5134, 12.3053, 12.2919, 11.9846, 11.9897, 11.6673, 12.0848, 11.5185, 12.3302, 11.6789, 12.4524, 11.8636, 4.5482, 11.4763, NA, 11.795, 11.8426, 11.8012, 11.9539, 11.5166, 11.8245, 11.8515, 12.0946, 12.1147, 11.5066, 12.4299, 11.538, 12.3284, 11.9527)
-     ) 
 
- d <- merge(d, geo, by= "location", all.x = TRUE) 	 
+	d <- merge(d, geo, by= "location", all.x = TRUE) 	 
  
- i <- is.na(d$longitude)
- d$longitude[i] <- 8.5851
- d$latitude[i] <- 12.0034
-    
- d$flowering_days[d$flowering_days < 15] <- NA
+	d$flowering_days[d$flowering_days < 15] <- NA
  
 #### drop duplicate rows
-  d <- unique(d)
+	d <- unique(d)
  
-carobiner::write_files(path, meta, d)
-
+	carobiner::write_files(path, meta, d)
 }
 
