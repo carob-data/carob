@@ -2,7 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## Harvest date is ambiguous and needs to be investigated (it is showing that some crops were harvested 1 month after planting, which is not credible).
+
+# These are not field data. They were produced through simulation.
+
 
 carob_script <- function(path) {
 
@@ -23,7 +25,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		carob_date = "2025-09-22",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer",
+		treatment_vars = "N_fertilizer;variety",
 		response_vars = "yield; dmy_total", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 100,	
@@ -34,8 +36,6 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
   
 	r <- read.csv(f)
 	
-	### Process
-	
    d <- data.frame(
       location = r$Location,
       year = r$Year,
@@ -44,12 +44,12 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
       crop = "maize",
       rep = r$Rep,
       N_fertilizer = r$N_APPLIED,
-      P_fertilizer = 0 , 
-      K_fertilizer = 0,
+      P_fertilizer = NA, 
+      K_fertilizer = NA,
       planting_date = as.character(as.Date(r$Planting_Date, "%m/%d/%Y")),
       flowering_date = as.character(as.Date(r$Flw_Date, "%m/%d/%Y")),
       maturity_date = as.character(as.Date(r$Maturity_Date, "%m/%d/%Y")),
-      #harvest_date = as.character(as.Date(r$Harvest_Date, "%m/%d/%Y")),
+      harvest_date = as.character(as.Date(r$Harvest_Date, "%m/%d/%Y")),
       flowering_days = r$Days_Flw,
       maturity_days = r$Days_Mat,
       yield = r$Grain_Yield,
@@ -76,8 +76,10 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
   d$planting_date <- ifelse(is.na(d$planting_date), d$year, d$planting_date)
   d$year <- NULL
   
-### Adding longitude and latitude 
-# how determined?
+## Adding longitude and latitude 
+# how determined? 
+# please complete 
+
 	geo <- data.frame(
 		location = c("Alajawa", "Albasu Central", "Badafi", "Bagwarai", "Bumai", "Bunkure", "Butunutu", "Chula", "DAbar Gwari", "Dal", "Dalawa", "Dansoshiya", "Dawakiji", "Dugabau", "Falgore", "Faragai", "G/Malam", "Gafasa", "Gani", "Gediya", "Gude", "Gundutse", "Jita", "K/Giwa", "K/Kuka", "Kachako", "Kadan-dani", "Kara", "KauKau", "Kibiya", "Kuka", "Kuki", "Kwa", "Kwamarawa", "Kwankwaso", "Maaraku", "Maimakawa", "Maraku", "Masu", "Mesar Tudu", "Nataala", "Raba", "Rantan", "Rimin Dako", "Ruwan Bako", "Sansan", "Sarbi", "Shagogo", "Sumaila", "Tanagar", "Tangaji", "Tsaudawa", "Tsaure", "Tudun Kaya", "U/Rimi", "UNgoggo", "Wuro Bagga", "Yalwa", "Yammedi", "Yandala", "Yangizo", "yankamaye", "Yautar Kudu", "Yunbu", "Zainabi", "Zinyau", "Zoza"), 
 		longitude = c(7.966, NA, 8.1692, NA, 8.1915, 8.5189, NA, 8.9707, NA, 8.825, 8.6705, 8.0723, 8.7032, 8.2096, 7.6947, 8.9888, NA, 9.133, 8.8438, 8.9122, 8.0666, 8.5137, NA, NA, NA, 9.2492, NA, 9.1551, NA, 8.6925, 8.3525, 8.3639, 8.377, 8.3898, 8.3934, NA, 9.1345, 8.6869, 8.8059, NA, NA, NA, 8.3791, 8.2536, NA, 8.63, 8.673, 8.9312, 8.9622, 8.6894, 8.4876, 8.2027, 7.88, 7.931, NA, NA, NA, 8.1853, 8.0925, NA, NA, 7.9286, NA, NA, 8.7711, NA, 7.8856), 
@@ -88,8 +90,12 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	d <- merge(d, geo, by= "location", all.x = TRUE) 	 
  
 	d$flowering_days[d$flowering_days < 15] <- NA
- 
-#### drop duplicate rows
+
+# there are > 10,000 rows (15% of records) with yield zero. These do not seem to be missing data, not real observations.
+# removing these records.
+	d <- d[d$yield > 0, ]
+	
+# drop duplicate rows
 	d <- unique(d)
  
 	carobiner::write_files(path, meta, d)
