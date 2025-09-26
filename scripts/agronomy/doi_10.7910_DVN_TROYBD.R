@@ -85,7 +85,7 @@ Improving fertilizer recommendations for farmers is essential to increase food s
    d1$soil_P = r1$AvaP_mg.kg
    i <- is.na(d1$soil_P)
    d1$soil_P[i] = r1$ExtrP_mg.kg[i]
-   d1$soil_P_method <- ifelse(i, "Bray1", "Olsen")
+   d1$soil_P_method <- ifelse(i, "Olsen", "Bray1")
 
 
 	d <- reshape(d1, varying = list(c("treatment_trt", "treatment_crt"), c("yield_trt", "yield_crt"),
