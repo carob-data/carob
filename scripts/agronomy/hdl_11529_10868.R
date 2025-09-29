@@ -1,4 +1,3 @@
-
 # R script for "carob"
 # license: GPL (>=3)
 
