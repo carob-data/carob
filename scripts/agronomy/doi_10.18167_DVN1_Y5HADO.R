@@ -18,11 +18,11 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIRAD; UMP", #UMP: University of Montpellier (France)
+		data_organization = "CIRAD; UMPL",
 		publication = "doi:10.1016/j.fcr.2017.01.024",
 		project = NA,
 		carob_date = "2025-09-28",
-      design = "unitOfAnalysis: Plot and pocket",
+        design = "unitOfAnalysis: Plot and pocket",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;land_prep_method",
 		response_vars = "yield;fwy_total", 
@@ -70,7 +70,8 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	   trial_id = as.character(r1$IDParc),
 	   fwy_total = (r1$PoidsFrais/r1$Surface)*10000,
 	   dmy_total = (r1$PoidsSec/r1$Surface)*10000,
-	   dmy_residue = (as.numeric(r1$BiomResidu)/r1$Surface)*10000,
+	   ## this can't be right (residue <= 20% of biomass)
+	   ## dmy_residue = (as.numeric(r1$BiomResidu)/r1$Surface)*10000,
 	   plot_area = r1$Surface,
 	   crop = r1$Culture
 	)
@@ -79,12 +80,14 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	d2 <- data.frame(
 	   trial_id = as.character(r2$IDParc),
 	   crop = r2$Culture,
-	   planting_date = as.character(as.Date(r2$DateRecRotation, "%d/%m/%Y")),
+	   harvest_date = as.character(as.Date(r2$DateRecRotation, "%d/%m/%Y")), # "Rec" surely stands for "recolte"?
 	   plot_area = r2$SurfaceRecolte,
 	   plant_density = (r2$NbPlanteRecTot/r2$SurfaceRecolte)*10000,
 	   yield = as.numeric(r2$PdGrainTonHa)*1000
 	)	
-	
+
+
+
  dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.x = TRUE ) 	
  dr$crop <- gsub("Maïs|maïs", "maize",  dr$crop)
  dr$crop <- gsub("Soja", "soybean",  dr$crop)
@@ -119,16 +122,16 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	   leaf_Ca = as.numeric(r4$Ca)*10,
 	   leaf_Mg = as.numeric(r4$Mg)*10,
 	   leaf_Na = as.numeric(r4$Na)*10,
-	   leaf_Cu = as.numeric(r4$Cu)*10,
-	   leaf_Mn = as.numeric(r4$Mn)*10,
-	   leaf_Zn = as.numeric(r4$Zn)*10,
-	   leaf_B = as.numeric(r4$B)*10,
-	   leaf_S = as.numeric(r4$S)*10
-	   #leaf_NH4 = as.numeric(r4$NNH4)*10,
-	   #leaf_N03 = as.numeric(r4$NNO3)*10
+	   leaf_S = as.numeric(r4$S)*10,
+	   leaf_Cu = as.numeric(r4$Cu),
+	   leaf_Mn = as.numeric(r4$Mn)/100,
+	   leaf_Zn = as.numeric(r4$Zn),
+	   leaf_B = as.numeric(r4$B),
+	   leaf_N_NH4 = as.numeric(r4$NNH4)/10,
+	   leaf_N_NO3 = as.numeric(r4$NNO3)
 	)
 	
- dd	<- merge(d3, d4, by= "trial_id", all.x = TRUE)
+ dd	<- merge(d3, d4, by= "trial_id")
 
  
  #### Rice variety code
@@ -220,11 +223,12 @@ dd <- merge(dd, d8, by= c("trial_id"), all = TRUE)
     rhmx = as.numeric(r10$HRmax),
     rhum = as.numeric(r10$HRmoy24),
     wspd = as.numeric(r10$Ventmoy24),
-    #wspdmax = r10$Ventmax, ## maximum wind speed
+    wspdmx = r10$Ventmax, ## maximum wind speed
     srad = as.numeric(r10$RayonGlobal24),
-    ET = as.numeric(r10$ETo), # ?
+    ETo = as.numeric(r10$ETo), # ?
     country = "Madagascar"
  )	
+ d10$rhmx[d10$rhmx > 100] <- 100
  
  ### site information
  d11 <- data.frame(
@@ -260,6 +264,7 @@ dd <- merge(dd, d8, by= c("trial_id"), all = TRUE)
  
  ### Adding soil information
  
+  
  soil <- data.frame(
     location = c(rep("Andranomanelatra", 5), rep("Ivory", 6)),
     year = c("2012", rep("2014", 4), "2012", "2014", "2014", rep("2013", 3)),
@@ -274,12 +279,18 @@ dd <- merge(dd, d8, by= c("trial_id"), all = TRUE)
     soil_P_method = "Olsen"
  )
  
+ ### some if the above are in cmolc kg−1. Keep that, but here change the values to mg/g by accounting for the molecular weights.
+
+ 
+ 
  d <- merge(d, soil, by=c("location", "year"), all.x = TRUE)
  d$year <- NULL
 
  ### join maize rotation crop data  and rice data
  
  df <- carobiner::bindr(d, dr)
+ 
+ df$plant_density[df$plant_density == 0] <- NA
  
  ### Missing values in longitude and latitude are due to the missing site information in the maize raw data.
  
