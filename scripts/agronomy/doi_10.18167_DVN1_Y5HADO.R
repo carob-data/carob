@@ -87,6 +87,9 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	)	
 
 
+## I think I would do:
+##	dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.y = TRUE ) 	
+## can you try that?
 
 	dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.x = TRUE ) 	
 	dr$crop <- gsub("Maïs|maïs", "maize",  dr$crop)
