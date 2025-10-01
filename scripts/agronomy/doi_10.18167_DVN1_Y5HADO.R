@@ -87,17 +87,30 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	)	
 
 
-## I think I would do:
-##	dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.y = TRUE ) 	
-## can you try that?
 
-	dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.x = TRUE ) 	
-	dr$crop <- gsub("Maïs|maïs", "maize",  dr$crop)
-	dr$crop <- gsub("Soja", "soybean",  dr$crop)
-	dr$intercrops <- ifelse(grepl("maize", dr$crop), "soybean", "maize")	
+	dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.y = TRUE ) 	
+	#dr <- merge(d2, d1, by=c("trial_id", "crop", "plot_area"), all.x = TRUE ) 	
+	P <- carobiner::fix_name(dr$crop)
+	P <- gsub("Maïs|maïs", "maize",  P)
+	P <- gsub("Soja|soja", "soybean",  P)
+	P <- gsub("Eleusine", "finger millet", P)
+	P <- gsub("Cajanus", "pigeon pea", P)
+	P <- gsub("Chiendent", "bermudagrass", P)
+	P <- gsub("vesce", "vetch", P)
+	P <- gsub("Crotalaire|crotalaire", "crotalaria", P)
+	dr$crop <- P
+	
+	dr <- dr[!is.na(dr$crop),]
+	dr$intercrops <- ifelse(grepl("maize$", dr$crop), "soybean;pigeon pea", 
+	                 ifelse(grepl("soybean$", dr$crop), "maize;pigeon pea", 
+	                 ifelse(grepl("pigeon pea$", dr$crop),"maize;soybean", 
+	                 ifelse(grepl("maize\\+", dr$crop), "soybean;pigeon pea;crotalaria;vetch", "none"))))	
+	
+	dr$crop <- ifelse(grepl("maize\\+", dr$crop), "maize", dr$crop)
+	dr$crop_rotation <- "maize;rice" 
 	dr$row_spacing <- 120
 	dr$plant_spacing <- ifelse(grepl("maize", dr$crop), 50, 40)
-
+    
 	dr$intercrop_type <- "mixed"
 	dr$country <- "Madagascar"
 	dr$on_farm <- TRUE 
@@ -275,9 +288,9 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		depth_top = c(0, 5, 10, 20, 40, 0, 20, 40, 0, 20, 40),
 		soil_pH = c(5.83, 5.08, 4.90, 5.11, 4.93, 5.43, 5.38, 5.64, 5.44, 5.39, 5.60),
 		soil_SOM = c(92.7, 81.2, 70.3, 44.4, 29.7, 29.6, 19.6, 13.9, 32.2, 18.6, 12.2)/10,
-		soil_N = c(4.15, 3.45, 2.83, 1.53, 1, 1.17, 1.84, 0.68, 1.20, 0.80, 0.61)*1000,
+		soil_N = c(4.15, 3.45, 2.83, 1.53, 1, 1.17, 1.84, 0.68, 1.20, 0.80, 0.61)*1000, 
 		soil_P = c(15.5, 7.4, 4.90, 2.10, 1.75, 5.90, 3.35, 3.10, 5.5, 3.6, 3.45),
-		soil_K = c(0.66, 0.2, 0.15, 0.09, 0.07, 0.411, 0.15, 0.12, 0.32, 0.08, 0.05)*390,
+		soil_K = c(0.66, 0.2, 0.15, 0.09, 0.07, 0.411, 0.15, 0.12, 0.32, 0.08, 0.05)*390, ## convert from cmolc kg−1 to mg/kg using molecular weights of potassium (390)
 		soil_CEC = c(9.64, 4.07, 3.10, 2.14, 1.56, 3.68, 3.19,3.19, 3.91, 3.42, 3.37),
 		soil_P_method = "Olsen"
 	)
