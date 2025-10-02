@@ -290,7 +290,8 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		soil_SOM = c(92.7, 81.2, 70.3, 44.4, 29.7, 29.6, 19.6, 13.9, 32.2, 18.6, 12.2)/10,
 		soil_N = c(4.15, 3.45, 2.83, 1.53, 1, 1.17, 1.84, 0.68, 1.20, 0.80, 0.61)*1000, 
 		soil_P = c(15.5, 7.4, 4.90, 2.10, 1.75, 5.90, 3.35, 3.10, 5.5, 3.6, 3.45),
-		soil_K = c(0.66, 0.2, 0.15, 0.09, 0.07, 0.411, 0.15, 0.12, 0.32, 0.08, 0.05)*390, ## convert from cmolc kg−1 to mg/kg using molecular weights of potassium (390)
+		## convert from cmolc kg−1 to mg/kg using molecular weights of potassium (390)
+		soil_K = c(0.66, 0.2, 0.15, 0.09, 0.07, 0.411, 0.15, 0.12, 0.32, 0.08, 0.05)*390, 
 		soil_CEC = c(9.64, 4.07, 3.10, 2.14, 1.56, 3.68, 3.19,3.19, 3.91, 3.42, 3.37),
 		soil_P_method = "Olsen"
 	)
