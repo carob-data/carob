@@ -3,7 +3,7 @@
 
 ## ISSUES
 # 1 - Rate of NPK applied is missing 
-# 2- The experimental date is ambiguous (the survey is for two seasons (2012–2013) and (2013–2014) but the data is not clear on which season yields were registered).
+# 2- The survey date is ambiguous (the survey is for two seasons (2012–2013) and (2013–2014) but the data is not clear on which season yields were registered).
 
 
 carob_script <- function(path) {
@@ -16,7 +16,7 @@ As part of an IFPRI-led study, raw and partially processed secondary data have b
 This work was undertaken as part of, and funded by, the CGIAR Research Program on Policies, Institutions, and Markets (PIM) led by the International Food Policy Research Institute (IFPRI). PIM is in turn supported by the CGIAR Fund donors. The HarvestChoice Project, funded by the Bill and Melinda Gates Foundation, also funded this study. The United States Agency for International Development funded the collection of the household survey data, as part of the Africa RISING program.
 "
 
-   uri <- "doi:10.7910/DVN/ILVSXJ"
+	uri <- "doi:10.7910/DVN/ILVSXJ"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -45,10 +45,9 @@ This work was undertaken as part of, and funded by, the CGIAR Research Program o
 	#f8 <- ff[basename(ff) == "wage.dta"]
 	#f9 <- ff[basename(ff) == "aglab.dta"]
 	
-	library(haven) ### need this library to read .dta file 
 	r1 <- carobiner::read.excel(f1)
 	r2 <- carobiner::read.excel(f2, sheet="soil")
-	r3 <- read_dta(f3)
+	r3 <- haven::read_dta(f3)
 	#r4 <- read_dta(f4)
 	#r5 <- read_dta(f5)
 	#r6 <- read_dta(f6)
