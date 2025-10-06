@@ -6,10 +6,6 @@
 # 2- The survey date is ambiguous (the survey is for two seasons (2012–2013) and (2013–2014) but the data is not clear on which season yields were registered).
 
 
-# RH:
-# I put this in pending because I am not sure if "arHhData.dta" is original data 
-
-
 carob_script <- function(path) {
 
 "
