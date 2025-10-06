@@ -87,9 +87,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Chamic Municipali
    
    soilmeta <- data.frame(
      variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu","soil_N"),
-     method = "Mehlich3"
+     method = c("Potassium Chloride","DTPA+Sorbitol pH 7","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Turbidimetric","Bray1;Olsen","DTPA+Sorbitol pH 7","DTPA+Sorbitol pH 7","Salicyclic Acid Nitration")
    )
-   soilmeta$method[soilmeta$variable == "soil_P"] <- "Bray;Olson"
-   
+
   carobiner::write_files(path, meta, d)
 }
