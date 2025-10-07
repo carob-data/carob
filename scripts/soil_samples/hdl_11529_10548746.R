@@ -63,12 +63,6 @@ Soil sampling with 1x1 km grid in the agricultural area of the Cadereyta Municip
     geo_from_source = TRUE
   )
   
-   #cleaning and combining phosphorus from 2 diff tests
-#   r$`Fosforo Bray 1` <- as.numeric(r$`Fosforo Bray 1`)
-#   r$`Fosforo Olsen`  <- as.numeric(r$`Fosforo Olsen`)
-#   d$soil_P <- ifelse(!is.na(r$`Fosforo Bray 1`), r$`Fosforo Bray 1`, r$`Fosforo Olsen`)
-#   d$soil_P_method <- ifelse(!is.na(r$`Fosforo Bray 1`), "Bray1", "Olsen")
-
    d$soil_P <- as.numeric(r$`Fosforo Bray 1`)
    d$soil_P_method <- "Bray1"
    
@@ -81,10 +75,9 @@ Soil sampling with 1x1 km grid in the agricultural area of the Cadereyta Municip
    d$soil_texture <- gsub("Franco","loam",d$soil_texture)
 
    soilmeta <- data.frame(
-     variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_Zn", "soil_Cu","soil_N"),
-     method = c("Mehlich3")
+     variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_Zn", "soil_Cu","soil_N","soil_P"),
+     method = c("Pottasium Chloride","DTPA+Sorbitol pH 7","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Turbidimetric","DTPA+Sorbitol pH 7","DTPA+Sorbitol pH 7","Salicyclic Acid Nitration","Bray1")
    )
-	soilmeta$soil_P <- "Bray1"
 	
   carobiner::write_files(path, meta, d)
 }
