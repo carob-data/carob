@@ -183,7 +183,7 @@ dd <- reshape(d2, varying = list(c("yield_maize", "yield_groundnut", "yield_cowp
   dd$residue_prevcrop[i] <- dd$residue_prevcrop_burnt[i]
   dd$residue_prevcrop_burnt <- NULL
   
-  dd$plot_area <- dd$plot_area*10000 # m2
+  dd$field_size <- dd$plot_area*10000 # m2
    ## Fixing intercrops 
   dd$intercrops <- ifelse(grepl("groundnut", dd$crop), gsub("groundnut", "maize", dd$intercrops), 
                    ifelse(grepl("cowpea", dd$crop), gsub("cowpea", "maize", dd$intercrops), 
