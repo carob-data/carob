@@ -34,7 +34,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		country = "India",
 		adm1="Odisha",
 		adm2=carobiner::fix_name(r1$District, "title"),
-		adm3=carobiner::fix_name(r1$Blck),
+		adm3=carobiner::fix_name(r1$Blck, "title"),
 		location=carobiner::fix_name(r1$Village, "title"),
 		planting_date=as.character(r1$Sow_date_ymd),
 		variety=r1$Var,
@@ -49,7 +49,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	  country = "India",
 	  adm1="Odisha",
 	  adm2=carobiner::fix_name(r2$District, "title"),
-	  adm3=carobiner::fix_name(r2$GP, "title"),
+	  adm4=carobiner::fix_name(r2$GP, "title"), #Gram Panchayat
 	  location=carobiner::fix_name(r2$Village, "title"),
 	  planting_date=r2$Year,
 	  variety=r2$Var,
