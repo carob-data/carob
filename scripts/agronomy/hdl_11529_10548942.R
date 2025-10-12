@@ -14,10 +14,10 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "IRRI;CIMMYT;CU",
-		publication = "doi.org/10.1016/j.fcr.2023.109078",
+		publication = "doi:10.1016/j.fcr.2023.109078",
 		project = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "land_prep_method;planting method",
+		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "yield", 
 		completion = 100,
 		carob_contributor = "Blessing Dzuda",
@@ -42,8 +42,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		seed_rate=r1$Seed_rate,
 		harvest_date=as.character(r1$Harv_date_ymd),
 		yield=r1$GrYld_Tha*1000,
-		crop_rotation=NA,
-		planting_method=r1$Treat_Desc
+		crop_rotation=NA
 	)
 		
 	dry <- data.frame(
@@ -58,8 +57,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	  seed_rate=NA,
 	  harvest_date=NA,
 	  yield=r2$GrYld_Tha*1000,
-	  crop_rotation=tolower(r2$Crop_Sys),
-	  planting_method=NA
+	  crop_rotation=tolower(r2$Crop_Sys)
 	)
 
 	d <- rbind(wet, dry)
@@ -94,17 +92,26 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
            "Manual random puddled transplanted rice (PTR-R)",
            "Manual line puddled transplanted rice (PTR-L)")
   
-  mthd <- c("transplanted",
+  plant_mthd <- c("direct seeding", # beushening is direct seeding with post-emergence tillage
            "transplanted",
            "direct seeding",
            "transplanted",
            "transplanted")
-  
-  d$planting_method <- mthd[match(d$planting_method, trt)]  
-  
+
+  land_mthd <- c("post-emergence tillage",
+           "mechanical puddling",
+           "none",
+           "manual puddling",
+           "line puddling")
+
+  it <- match(d$treatment, trt)
+  d$planting_method <- plant_mthd[it]  
+  d$land_prep_method <- land_mthd[it]  
+
   d$harvest_date[d$harvest_date == "2018-01-12"] <- "2018-12-12"
   d$harvest_date[d$harvest_date == "2018-07-12"] <- "2018-12-07"
 
   d <- unique(d)  
 	carobiner::write_files(path, meta, d)
 }
+	 
