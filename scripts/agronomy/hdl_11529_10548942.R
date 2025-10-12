@@ -17,7 +17,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		publication = "doi.org/10.1016/j.fcr.2023.109078",
 		project = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "land_prep_method",
+		treatment_vars = "land_prep_method;planting method",
 		response_vars = "yield", 
 		completion = 100,
 		carob_contributor = "Blessing Dzuda",
@@ -42,7 +42,8 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		seed_rate=r1$Seed_rate,
 		harvest_date=as.character(r1$Harv_date_ymd),
 		yield=r1$GrYld_Tha*1000,
-		crop_rotation=NA
+		crop_rotation=NA,
+		planting_method=r1$Treat_Desc
 	)
 		
 	dry <- data.frame(
@@ -57,7 +58,8 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	  seed_rate=NA,
 	  harvest_date=NA,
 	  yield=r2$GrYld_Tha*1000,
-	  crop_rotation=tolower(r2$Crop_Sys)
+	  crop_rotation=tolower(r2$Crop_Sys),
+	  planting_method=NA
 	)
 
 	d <- rbind(wet, dry)
@@ -84,6 +86,21 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
   d$crop_rotation <- gsub("greengram","mung bean", d$crop_rotation)
   d$crop_rotation <- gsub("blackgram","black gram",d$crop_rotation)
   d$crop_rotation <- gsub("toria","mustard",d$crop_rotation)
+  
+  #renaming values in planting_method
+  trt <- c("Beushening",
+           "Mechanical puddled transplanted Rice (PTR-M)",
+           "Dry-direct seeded rice (DSR)",
+           "Manual random puddled transplanted rice (PTR-R)",
+           "Manual line puddled transplanted rice (PTR-L)")
+  
+  mthd <- c("transplanted",
+           "transplanted",
+           "direct seeding",
+           "transplanted",
+           "transplanted")
+  
+  d$planting_method <- mthd[match(d$planting_method, trt)]  
   
   d$harvest_date[d$harvest_date == "2018-01-12"] <- "2018-12-12"
   d$harvest_date[d$harvest_date == "2018-07-12"] <- "2018-12-07"
