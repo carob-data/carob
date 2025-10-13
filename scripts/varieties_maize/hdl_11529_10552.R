@@ -3,7 +3,7 @@
 
 carob_script <- function(path) {
   
-  "Summary results and individual trial results from the International Early White Variety - IEWV, (Tropical Early White Variety Trial - EVT14B) conducted in 2006."
+"Summary results and individual trial results from the International Early White Variety - IEWV, (Tropical Early White Variety Trial - EVT14B) conducted in 2006."
   
   uri <- "hdl:11529/10552"
   group <- "varieties_maize"
@@ -11,18 +11,18 @@ carob_script <- function(path) {
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "CIMMYT",
-                                  publication = NA,
-                                  project = "Global Maize Program",
-                                  carob_date = "2025-10-13",
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety;longitude;latitude",
-                                  response_vars = "yield", 
-                                  carob_contributor = "Mitchelle Njukuya",
-                                  completion = 100,	
-                                  notes = NA
-                                  )
+		data_organization = "CIMMYT",
+		publication = NA,
+		project = NA,
+		carob_date = "2025-10-13",
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield", 
+		carob_contributor = "Mitchelle Njukuya",
+		completion = 100,	
+		notes = NA
+	)
   
   get_data <- function(fname, id, longitude, latitude, elevation, plot_area) {
     
@@ -30,7 +30,7 @@ carob_script <- function(path) {
     r <- carobiner::read.excel(f)
     r <- r[22:33, ]
     
-    d <- data.frame( 
+    data.frame( 
       trial_id = as.character(id),
       yield_part = "grain",
       variety = r$BreedersPedigree1,
