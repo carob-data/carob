@@ -17,7 +17,7 @@ These are the raw data of the paper 'Intra-seasonal rainfall patterns and extrem
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIRAD; INRAE; URCA; UZIM; UZIM",
+		data_organization = "CIRAD; INRAE; URCA; UZIM",
 		publication = "doi:10.1016/j.fcr.2025.110126",
 		project = NA,
 		carob_date = "2025-10-14",
@@ -95,7 +95,7 @@ These are the raw data of the paper 'Intra-seasonal rainfall patterns and extrem
 	   ## from publication
 	   P_fertilizer = 15, 
 	   K_fertilizer = 30, 
-	   fertilizer_type ="SSP;MOP",  
+	   fertilizer_type ="SSP;KCl",  
 	   yield_moisture = 12.5 ,
 	   row_spacing = 90,
 	   plant_spacing = 25,
