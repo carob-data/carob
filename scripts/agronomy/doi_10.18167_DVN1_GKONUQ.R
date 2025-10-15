@@ -107,23 +107,23 @@ These are the raw data of the paper 'Intra-seasonal rainfall patterns and extrem
 	   yield_part = "grain"
 	)
 	
-d <- merge(d3, d2, by= intersect(names(d2), names(d3)), all = TRUE)
+	d <- merge(d3, d2, by= intersect(names(d2), names(d3)), all = TRUE)
 
-d <- d[!is.na(d$yield),]
+	d <- d[!is.na(d$yield),]
 
-### soil from publication
-d$soil_clay <- 24.53
-d$soil_silt <- 42.9
-d$soil_sand <- 32.7
-d$soil_texture <- "loam" 
-d$soil_pH <- 6.6
-d$soil_CEC <-  12.18
-d$soil_SOC <- 0.913 #%
-d$soil_N_total <- 770
-d$soil_bd <-  1.255 
+	### soil from publication
+	d$soil_clay <- 24.53
+	d$soil_silt <- 42.9
+	d$soil_sand <- 32.7
+	d$soil_texture <- "loam" 
+	d$soil_pH <- 6.6
+	d$soil_CEC <-  12.18
+	d$soil_SOC <- 0.913 #%
+	d$soil_N_total <- 770
+	d$soil_bd <-  1.255 
 
 
-carobiner::write_files(path, meta, d, wth = d1)
+	carobiner::write_files(path, meta, d, wth = d1)
 }
 
 
