@@ -30,21 +30,23 @@ This experiments were established with different rates of nitrogen in order to g
  
 #Function to standardize other sheets with same structure
 	make_standard_df <- function(file, sheet_name) {
-		r <- carobiner::read.excel(file, sheet = sheet_name, skip = 1)		
+		#r <- carobiner::read.excel.hdr(file, sheet = sheet_name, hdr=2, skip=0)		
+		r <- carobiner::read.excel.hdr(file, sheet = sheet_name, hdr=1, skip=1, fix_names=TRUE)
 		data.frame(
 		  country = "Mexico",
 		  adm2 = r$Municipality,
 		  location = r$Locality,
 		  latitude = r$Latitude,
 		  longitude = r$Longitude,
-		  planting_date = as.character(r$`Planting Date`),
-		  land_prep_method = paste0(tolower(r$Tillage), ";", tolower(r$`Planting method`)),
+		  planting_date = as.character(r$Planting.Date),
+		  land_prep_method = tolower(paste0(r$Tillage, ";", r$Planting.method))	,
 		  variety = r$Hibrid,
-		  treatment= paste0("N", r$`Rate N\r\n(kg/ha)`),
-		  seed_rate = r$`planting density (Kg/ha)`,
-		  rep = as.integer(r$REP),
-		  N_fertilizer = r$`Rate N\r\n(kg/ha)`,
-		  yield = r[, ncol(r)] #last column, different names
+		  treatment= paste0("N", r$Rate.N.kg.ha),
+		  seed_rate = r$planting.density.Kg.ha,
+		  rep = as.integer(r$Inf.Experiment_REP),
+		  N_fertilizer = r$Rate.N.kg.ha,
+		  yield =  r$Yield.at.14pct.hum,
+		  plot_area = r$Plot.size.m2
 		)
 	}
 		
