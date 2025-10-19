@@ -56,19 +56,20 @@ This experiments were established with different rates of nitrogen in order to g
 	x4 <- make_standard_df(f, "2019")
 	
 	d <-rbind(x1,x2,x3,x4)
-	d$latitude <- 17.511
-	d$longitude <- -97.352
 	
+	# INIFAP Sitio Experimental Mixteca, Santo Domingo Yanhuitlán 
+	d$latitude <- 17.511  
+	d$longitude <- -97.352
+	d$geo_from_source <- FALSE
 	
 	d$crop <- "wheat"
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
-	d$geo_from_source <- TRUE
 	d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
 	d$yield_part <- "grain"
-	d$yield_moisture <- 14
+	d$yield_moisture <- 14 
 	
 	d$land_prep_method <- gsub("conservation","minimum tillage", d$land_prep_method)
 	d$land_prep_method <- gsub("bed","raised beds", d$land_prep_method)
