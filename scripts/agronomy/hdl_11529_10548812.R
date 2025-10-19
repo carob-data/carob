@@ -31,25 +31,21 @@ This experiments were established with different rates of nitrogen in order to g
 #Function to standardize other sheets with same structure
   make_standard_df <- function(file, sheet_name) {
     r <- carobiner::read.excel(file, sheet = sheet_name, skip = 1)
-    
-    # identify the last column (yield)
-    yield_col <- r[, ncol(r)]
-    
+        
     data.frame(
       country = "Mexico",
-      adm1 = r$Municipality,
+      adm2 = r$Municipality,
       location = r$Locality,
       latitude = r$Latitude,
       longitude = r$Longitude,
       planting_date = as.character(r$`Planting Date`),
-      land_prep_method = tolower(r$Tillage),
+      land_prep_method = paste0(tolower(r$Tillage), ";", tolower(r$`Planting method`)),
       variety = r$Hibrid,
-      treatment= as.character(r$`Rate N\r\n(kg/ha)`),
-      #planting_method = r$`Planting method`, i think this one also falls under land_prep_method, no publication for clarity 
+      treatment= paste0("N", r$`Rate N\r\n(kg/ha)`),
       seed_rate = r$`planting density (Kg/ha)`,
       rep = as.integer(r$REP),
       N_fertilizer = r$`Rate N\r\n(kg/ha)`,
-      yield = yield_col
+      yield = r[, ncol(r)] #last column, different names
     )
   }
 		
@@ -59,6 +55,10 @@ This experiments were established with different rates of nitrogen in order to g
   x4 <- make_standard_df(f, "2019")
   
   d <-rbind(x1,x2,x3,x4)
+  d$latitude <- 17.511
+  d$longitude <- -97.352
+  
+  
   d$crop <- "wheat"
   d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- FALSE
@@ -70,6 +70,7 @@ This experiments were established with different rates of nitrogen in order to g
 	d$yield_moisture <- 14
 	
 	d$land_prep_method <- gsub("conservation","minimum tillage", d$land_prep_method)
+	d$land_prep_method <- gsub("bed","raised bed", d$land_prep_method)
 	
 	carobiner::write_files(path, meta, d)
 }
