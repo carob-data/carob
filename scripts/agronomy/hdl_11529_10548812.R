@@ -30,7 +30,6 @@ This experiments were established with different rates of nitrogen in order to g
  
 #Function to standardize other sheets with same structure
 	make_standard_df <- function(file, sheet_name) {
-		#r <- carobiner::read.excel.hdr(file, sheet = sheet_name, hdr=2, skip=0)		
 		r <- carobiner::read.excel.hdr(file, sheet = sheet_name, hdr=1, skip=1, fix_names=TRUE)
 		data.frame(
 		  country = "Mexico",
