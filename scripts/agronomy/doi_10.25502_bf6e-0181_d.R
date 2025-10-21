@@ -26,8 +26,8 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 50,	
-   	notes = "The remaining file that has not been processed does not contain suitable information for Carob."
+		completion = 50,
+		notes = "VCR files were not processed because they were deemed less relevant for data reuse"
 	)
 	
 
@@ -162,12 +162,12 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 	   geo_from_source = FALSE
 	) 
 	
-d <- merge(d, geo, by = "location", all.x = TRUE)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 
 ## drop duplicate rows
-d <- unique(d)
+	d <- unique(d)
 
-carobiner::write_files(path, meta, d, wth = d4)
+	carobiner::write_files(path, meta, d, wth = d4)
 
 }
 
