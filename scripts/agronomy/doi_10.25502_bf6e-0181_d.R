@@ -143,7 +143,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 	### process weather data
      ### We used "Kalehe" as location because the data does not have a specific location.
 	d4 <- data.frame(
-		date = paste(r4$Year, r4$Month, r4$Day, sep = "-"),
+		date = paste(r4$Year, gsub("t", "", carobiner::eng_months_to_nr(r4$Month)), r4$Day, sep = "-"),
 		location = "Kalehe",
 		prec = r4$Precipitation,
 		temp = r4$Temperature,
@@ -152,7 +152,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		country = "Democratic Republic of the Congo",
 		geo_from_source = FALSE
 	)
-
+d4$date <- as.character(as.Date(d4$date, "%Y-%m-%d"))
 	### Adding long and lat coordinate 
 	
 	geo <-  data.frame(
