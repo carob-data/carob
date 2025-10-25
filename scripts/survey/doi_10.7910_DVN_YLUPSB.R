@@ -66,32 +66,30 @@ Inland valleys are becoming increasingly important agricultural production areas
 	   yield_moisture = as.numeric(NA)
 	)
 	
-d$adm1 <- c("Bo", "Bemena")[d$adm1]
-d$location <- c("Bagbe", "Boama", "Bumpeh", "Dama", "Gaura", "Gbo", "Gorama", "Jiama", "Kakua", "Kando" , "Komboya", "Koya", 
-                "Langrama", "Lugbu", "Malegohoun", "Niawa", "Nomo", "Nongowa", "Selenga",
-                "Simbaru", "Small Bo", "Tikonko", "Tunkia", "Valunia", "Wandor", "Wunde")[d$location]
+	d$adm1 <- c("Bo", "Bemena")[d$adm1]
+	d$location <- c("Bagbe", "Boama", "Bumpeh", "Dama", "Gaura", "Gbo", "Gorama", "Jiama", "Kakua", 
+				"Kando" , "Komboya", "Koya", "Langrama", "Lugbu", "Malegohoun", "Niawa", "Nomo", "Nongowa",
+				"Selenga", "Simbaru", "Small Bo", "Tikonko", "Tunkia", "Valunia", "Wandor", "Wunde")[d$location]
 	
-d$variety <- c("improved",  "local", "local and improuve", NA)	[d$variety]
+	d$variety <- c("improved",  "local", "local and improuve", NA)	[d$variety]
 
-d$land_ownedby <- c("Families", "Village", "Individual", "not known")[d$land_ownedby]
-d$planting_method <- c("direct seeding", "transplanting", "none")[d$planting_method]
+	d$land_ownedby <- c("Families", "Village", "Individual", "not known")[d$land_ownedby]
+	d$planting_method <- c("direct seeding", "transplanting", "none")[d$planting_method]
 
-d$trial_id <- paste(d$location, d$hhid, sep = "-")
+	d$trial_id <- paste(d$location, d$hhid, sep = "-")
 
-### Adding Geo coordinate
+	geo <- data.frame(
+	   location = c("Kakua", "Selenga", "Valunia", "Niawa", "Bagbe", "Tikonko", "Bumpeh", "Boama", "Gbo", "Jiama", "Lugbu", "Wunde", "Simbaru", "Langrama", "Tunkia", "Gaura", "Nomo", "Koya", "Dama", "Malegohoun", "Small Bo", "Nongowa", "Kando", "Gorama", "Wandor", "Komboya"),
+	   longitude = c(-11.737, -12.915, -11.381 , -12.614, -11.2001, -11.746, -12.3589, -11.665, -12.7207, -11.2497, -13.1624, -11.693, -11.2646, -11.266, -11.097, -10.912, -11.1974, -11.50, -11.189, -13.111, -12.356, -11.473, -11.712, -12.641, -11.905, -11.782),
+	   latitude = c(7.952, 9.125, 8.286, 8.976, 7.385, 7.958, 8.644, 7.993, 9.0347, 8.696, 8.398, 8.310, 8.4207, 8.383, 8.731, 7.747, 7.863, 8.101, 7.868, 8.206, 7.8054, 7.445, 7.721, 9.235, 7.8911, 8.835),
+	   geo_from_source = FALSE
+	)
 
-geo <- data.frame(
-   location = c("Kakua", "Selenga", "Valunia", "Niawa", "Bagbe", "Tikonko", "Bumpeh", "Boama", "Gbo", "Jiama", "Lugbu", "Wunde", "Simbaru", "Langrama", "Tunkia", "Gaura", "Nomo", "Koya", "Dama", "Malegohoun", "Small Bo", "Nongowa", "Kando", "Gorama", "Wandor", "Komboya"),
-   longitude = c(-11.737, -12.915, -11.381 , -12.614, -11.2001, -11.746, -12.3589, -11.665, -12.7207, -11.2497, -13.1624, -11.693, -11.2646, -11.266, -11.097, -10.912, -11.1974, -11.50, -11.189, -13.111, -12.356, -11.473, -11.712, -12.641, -11.905, -11.782),
-   latitude = c(7.952, 9.125, 8.286, 8.976, 7.385, 7.958, 8.644, 7.993, 9.0347, 8.696, 8.398, 8.310, 8.4207, 8.383, 8.731, 7.747, 7.863, 8.101, 7.868, 8.206, 7.8054, 7.445, 7.721, 9.235, 7.8911, 8.835),
-   geo_from_source = FALSE
-)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 
-d <- merge(d, geo, by = "location", all.x = TRUE)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 
