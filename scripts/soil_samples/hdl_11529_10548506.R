@@ -1,7 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
 
 carob_script <- function(path) {
 
@@ -25,15 +24,14 @@ Conservation agriculture (CA) is based on minimal tillage, permanent soil cover 
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2025-10-26",
 		notes = NA,
-		design = "Randomized Complete Block"
+		design = NA
 	)
 
 	f <- ff[basename(ff) == "DAT-SoilHealthPlatforms.xlsx"]
-	r <- carobiner::read.excel(f, sheet ="Chemical soil parameters")
+	r <- carobiner::read.excel(f, sheet ="Chemical soil parameters", na=".")
 
 	d <- data.frame(
 		country = "Mexico",
-		location = sub(",.*","",r$Site),
 		soil_sand = r$Sand,
 		soil_clay = r$Clay,
 		soil_silt = r$Silt,
@@ -51,41 +49,52 @@ Conservation agriculture (CA) is based on minimal tillage, permanent soil cover 
 		soil_Al= as.numeric(r$Aluminum),
 		soil_S = r$Sulphur,
 		soil_EC =r$`Electrical Conductivity`,
-		soil_CEC= as.numeric(r$`Cation Exchange Capacity`)) 
+		soil_CEC= as.numeric(r$`Cation Exchange Capacity`)
+	) 
 
+	loc <- do.call(rbind, strsplit(r$Site, ", "))
+	d$location <- loc[,1]
 
-loc <- data.frame(
-  location = c("Apaseo el Alto", "Cadereyta de Montes", 
+	abb <- data.frame(
+		abb = c('CAM', 'CHI', 'GTO', 'HID', 'JAL', 'MEX', 'MIC', 'OAX', 'PUE', 'QTO', 'SLP'),
+		adm = c("Campeche", "Chiapas", "Guanajuato", "Hidalgo", "Jalisco", "México", "Michoacán", "Oaxaca", "Puebla", "Querétaro", "San Luis Potosí")
+	)
+	i <- match(loc[,2], abb$abb)
+	d$adm1 <- abb$adm[i]
+ 
+	geo <- data.frame(
+		location = c("Apaseo el Alto", "Cadereyta de Montes", 
                "Comitán", "Cuautempan", "Francisco I. Madero", "Hopelchén", 
                "Indaparapeo", "Metepec", "Molcaxac", "Pénjamo", "San Juan Cotzocón", 
                "San Juan del Rio II", "San Martin Hidalgo", "San Miguel Tlacamama", 
                "Santo Domingo Yanhuitlán", "Soledad de Graciano Sanchez", 
                "Texcoco I", "Texcoco II", "Venustiano Carranza", "Villa Corzo"),
-  longitude = c(-100.5922, -99.666, -92.1349, -97.7938, -103.0997, 
+		longitude = c(-100.5922, -99.666, -92.1349, -97.7938, -99.1094, 
                 -89.6207, -100.9429, -99.5937, -97.88, -101.8405, -95.5297, 
-                -92.3239, -103.9118, -98.1126, -97.3359, -100.8672, -104.27, 
-                -104.27, -92.6379, -93.265),
-  latitude = c(20.4326, 20.7912, 
-               16.2441, 19.9183, 26.2376, 19.5393, 19.7602, 19.2511, 
-               18.6737, 20.4055, 17.3126, 16.4668, 20.4594, 16.445, 
-               17.5261, 22.2971, 28.0933, 28.0933, 16.309, 16.0632))
+                -99.9789, -103.9118, -98.1126, -97.3359, -100.8672, -98.8487, 
+                -98.8487, -92.6379, -93.265),
+		latitude = c(20.4326, 20.7912, 16.2441, 19.9183, 20.2540, 
+				19.5393, 19.7602, 19.2511, 18.6737, 20.4055, 17.3126, 
+				20.3945, 20.4594, 16.445, 17.5261, 22.2971, 19.5287,
+				19.5287, 16.309, 16.0632)
+	)
 
-d <- merge(d,loc, by="location")
+	d <- merge(d, geo, by="location")
+	d$geo_from_source <- FALSE
 
-d$geo_from_source <- FALSE
-r[r == "."] <- NA
-r$`Phosphorous Bray` <- as.numeric(r$`Phosphorous Bray`)
-r$`Phosphorous Olsen`  <- as.numeric(r$`Phosphorous Olsen`)
-d$soil_P <- ifelse(!is.na(r$`Phosphorous Bray`), r$`Phosphorous Bray`, r$`Phosphorous Olsen`)
-depth <- do.call(rbind, strsplit(r$Depth, "_"))
-d$depth_top <- as.numeric(depth[,1])
-d$depth_bottom <- as.numeric(depth[,2])
+	r$`Phosphorous Bray` <- as.numeric(r$`Phosphorous Bray`)
+	r$`Phosphorous Olsen`  <- as.numeric(r$`Phosphorous Olsen`)
+	d$soil_P <- ifelse(!is.na(r$`Phosphorous Bray`), r$`Phosphorous Bray`, r$`Phosphorous Olsen`)
 
-soilmeta <- data.frame(
-  variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu"),
-  method = c("Potassium Chloride","DTPA+Sorbitol pH 7","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Turbidimetric","Bray;Olsen","DTPA+Sorbitol pH 7","DTPA+Sorbitol pH 7")
-)#from pulication
+	depth <- do.call(rbind, strsplit(r$Depth, "_"))
+	d$depth_top <- as.numeric(depth[,1])
+	d$depth_bottom <- as.numeric(depth[,2])
 
+	#from pulication
+	soilmeta <- data.frame(
+		variable = c("soil_Al", "soil_B", "soil_Ca", "soil_Fe", "soil_K", "soil_Mg", "soil_Mn", "soil_Na", "soil_S", "soil_P", "soil_Zn", "soil_Cu"),
+		method = c("Potassium Chloride","DTPA+Sorbitol pH 7","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Turbidimetric","Bray;Olsen","DTPA+Sorbitol pH 7","DTPA+Sorbitol pH 7")
+	)
 
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 }
