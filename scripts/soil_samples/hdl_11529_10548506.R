@@ -96,5 +96,5 @@ Conservation agriculture (CA) is based on minimal tillage, permanent soil cover 
 		method = c("Potassium Chloride","DTPA+Sorbitol pH 7","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Ammonium Acetate","DTPA+Sorbitol pH 7","Ammonium Acetate","Turbidimetric","Bray;Olsen","DTPA+Sorbitol pH 7","DTPA+Sorbitol pH 7")
 	)
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
