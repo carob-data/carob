@@ -3,16 +3,7 @@
 
 ## ISSUES
 ## The units of some soil variables are not clear.
-## The NPK values used are ambiguous. (https://agronomy.unl.edu/ofra/ )
-
-
-# UNBL: University of Nebraska–Lincoln
-#  INRA: Institut National de la Recherche Agronomique du Niger
-# INER: Institut D'Economie Rurale
-# MARI: Mlingano Agricultural Research Institute, Tanga, Tanzania
-# AHBU : Ahmadu Bello University
-# LUANR: Lilongwe university of Agriculture and Natural Resources
-
+## The NPK values used not specified. Guessing that they are the ones recommended in https://agronomy.unl.edu/ofra/
 
 
 
@@ -29,7 +20,7 @@ Crop production in sub-Saharan Africa has numerous biotic and abiotic constraint
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
-		data_organization = "UNBL; NARL; INRA; RAB; INER; MARI; AHBU; CSIR; KALRO;CARS; LUANR; ZARI;IITA; INERA",
+		data_organization = "UNL; NARL; INRAN; RAB; IER; TARI; ABU; CSIR; KALRO;CARS; LUANAR; ZARI;IITA; INERA",
 		publication = "doi:10.1007/s10705-018-09968-7",
 		project = NA,
 		carob_date = "2025-10-27",
@@ -60,7 +51,6 @@ Crop production in sub-Saharan Africa has numerous biotic and abiotic constraint
 		trial_id = r1$Code,
 		crop = tolower(r1$Crop),
 		crop_type = r1$Type,
-		#adm1 = r2$Region,
 		latitude = r1$Latitude,
 		longitude = r1$Longitude,
 		elevation = r1$Elevation,
@@ -75,12 +65,12 @@ Crop production in sub-Saharan Africa has numerous biotic and abiotic constraint
 		soil_P = r1$m3P,
 		soil_S = r1$S,
 		soil_Zn = r1$Zn,
-		#r2$PSI,
-		soil_Na = as.numeric(r1$ExNa)*10*23,
-		soil_Ca = r1$ExCa*10*40/2,
-		soil_Mg = r1$ExMg*10*24/2,
-		soil_K = r1$ExK*10*39,### from meq/100g to ppm
-		#soil_EC = r1$ECd,
+		soil$PSI = r2$PSI,
+		soil_Na_exch = as.numeric(r1$ExNa),
+		soil_Ca_exch = r1$ExCa,
+		soil_Mg_exch = r1$ExMg,
+		soil_K_exch = r1$ExK,
+		soil_EC = r1$ECd,
 		soil_N_total = r1$TotN,
 		soil_C_total = r1$TotCarbon/10000,
 		soil_clay = r1$Clay/10,
@@ -92,138 +82,125 @@ Crop production in sub-Saharan Africa has numerous biotic and abiotic constraint
 		yield_moisture = as.numeric(NA), 
 		irrigated = NA, 
 		geo_from_source= TRUE
-		
-		
 	)
 
- d1 <- reshape(d1, varying = c("yield_treatment", "yield_control"), 
+
+	d1 <- reshape(d1, varying = c("yield_treatment", "yield_control"), 
                v.names = "yield",
                times = c("MgSZnB + NPK", "NPK"),
                timevar = c("treatment"),
-               direction = "long")	
+               direction = "long")
 	
-row.names(d1) <- NULL
+	row.names(d1) <- NULL
+	
+	# removing treatments with no yield
+	d1 <- d1[!is.na(d1$yield),]
 
-d1$yield <- d1$yield*1000 ## from Mg/ha to  kg/ha
+	d1$yield <- d1$yield*1000 ## from Mg/ha to  kg/ha
 
 ### from publication 
+	d1$Mg_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 10, 0)
+	d1$S_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 15, 0)
+	d1$Zn_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 2.5, 0)
+	d1$B_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 0.5, 0)
 
- d1$Mg_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 10, 0)
- d1$S_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 15, 0)
- d1$Zn_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 2.5, 0)
- d1$B_fertilizer <- ifelse(grepl("MgSZnB \\+ NPK", d1$treatment), 0.5, 0)
- 
- ### Adding NPK fertilizer from publication
- d1$P_fertilizer <- 15
- d1$K_fertilizer <- 20
- 
- ### Fertilizer recommendation in Rwanda from https://agronomy.unl.edu/ofra/ as mention in publication
- 
- d1$N_fertilizer <- ifelse(grepl("maize|wheat", d1$crop) & grepl("Rwanda", d1$country) , 41, 
-                    ifelse(grepl("bean", d1$crop) & grepl("Rwanda", d1$country), 18, 
-                    ifelse(grepl("rice", d1$crop) & grepl("Rwanda", d1$country),  80, 0)))
- 
- ### Fertilizer recommendation in Zambia
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Zambia", d1$country) , 112, 
-                    ifelse(grepl("bean", d1$crop) & grepl("Zambia", d1$country), 30, d1$N_fertilizer))
- 
- 
- ### Fertilizer recommendation in Malawi
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Malawi", d1$country) , 92, 
-                    ifelse(grepl("soybean", d1$crop) & grepl("Malawi", d1$country), 50, d1$N_fertilizer))
- 
- 
- ### Fertilizer recommendation in Tanzania
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Tanzania", d1$country) , 112, 
-                    ifelse(grepl("bean|sorghum", d1$crop) & grepl("Tanzania", d1$country), 30, 
-                    ifelse(grepl("wheat", d1$crop) & grepl("Tanzania", d1$country),40, d1$N_fertilizer)))
- 
- ### Fertilizer recommendation in Kenya
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Kenya", d1$country) , 75, 
-                    ifelse(grepl("sorghum", d1$crop) & grepl("Kenya", d1$country), 50, 
-                    ifelse(grepl("cassava", d1$crop) & grepl("Kenya", d1$country), 100, d1$N_fertilizer)))
- 
- 
- ## Fertilizer recommendation in Uganda
- 
- d1$N_fertilizer <- ifelse(grepl("finger millet", d1$crop) & grepl("Uganda", d1$country) , 40, d1$N_fertilizer)
- 
- 
- ### Fertilizer recommendation in Ghana
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Ghana", d1$country) , 90, 
-                    ifelse(grepl("sorghum|cassava", d1$crop) & grepl("Ghana", d1$country), 60, 
-                    ifelse(grepl("cowpea", d1$crop) & grepl("Ghana", d1$country), 20, d1$N_fertilizer)))
- 
- 
- ### Fertilizer recommendation in Nigeria
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Nigeria", d1$country) , 120, 
-                    ifelse(grepl("sorghum", d1$crop) & grepl("Nigeria", d1$country), 64, 
-                    ifelse(grepl("soybean", d1$crop) & grepl("Nigeria", d1$country), 20, d1$N_fertilizer)))
- 
- ### Fertilizer recommendation in Burkina Faso
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Burkina Faso", d1$country) , 67, 
-                    ifelse(grepl("sorghum|pearl millet", d1$crop) & grepl("Burkina Faso", d1$country), 37, 
-                    ifelse(grepl("rice", d1$crop) & grepl("Burkina Faso", d1$country), 74, 
-                    ifelse(grepl("cowpea", d1$crop) & grepl("Burkina Faso", d1$country), 14, d1$N_fertilizer))))
- 
- 
- 
- ### Fertilizer recommendation in Mali
- 
- d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Mali", d1$country) , 84, 
-                    ifelse(grepl("sorghum|pearl millet", d1$crop) & grepl("Mali", d1$country), 32, 
-                    ifelse(grepl("rice", d1$crop) & grepl("Mali", d1$country), 80, d1$N_fertilizer)))
- 
- ### Fertilizer recommendation in Niger
- 
- d1$N_fertilizer <- ifelse(grepl("maize|sorghum|pearl millet|cowpea", d1$crop) & grepl("Niger", d1$country) , 46, d1$N_fertilizer) 
-                    
- #### For All legume crop, No N fertilizer were apply except bean 
- 
- d1$N_fertilizer <- ifelse(grepl("Pulse", d1$crop_type), 0, 
-                   ifelse(grepl("Pigeonpea", d1$crop), 0, d1$N_fertilizer))
- 
- 
- d1$crop_type <- d1$id <- NULL
- ### fixing crop 
- d1$crop <- gsub("^bean$", "common bean", d1$crop)
- d1$crop <- gsub("rice ul", "rice", d1$crop)
- d1$crop <- gsub("pigeonpea", "pigeon pea", d1$crop)
+	### Adding NPK fertilizer from publication
+	d1$P_fertilizer <- 15
+	d1$K_fertilizer <- 20
 
- ### Fixing planting date 
- 
- d1$planting_date <- ifelse(grepl("13", d1$trial_id), "2013",
-                     ifelse(grepl("14", d1$trial_id), "2014",
-                     ifelse(grepl("15", d1$trial_id), "2015", "2016"))) 
- 
- d1$rep <- suppressWarnings(as.integer(gsub("_|a|c|r|u|F|f|o|V|M|C|b|e|A|T|i|S", "", substr(d1$trial_id, nchar(d1$trial_id)-1, nchar(d1$trial_id)))))
- 
- 
- ### Fixing long and lat 
- i <- grepl("Ghana|Mali|Burkina Faso", d1$country)
- d1$longitude[i] <- -abs(d1$longitude[i])
- 
- ### drop rows with NA in yield 
- 
- d <- d1[!is.na(d1$yield),]
- # remove duplicated records
- d <- unique(d)
- 
- ### We need to  investigate why some values are greater than 100
- 
- d$soil_clay[ d$soil_clay > 100] <- NA
- d$soil_sand[ d$soil_sand > 100] <- NA
- d$soil_silt[ d$soil_silt > 100] <- NA
- 
- 
-carobiner::write_files(path, meta, d)
+	### Fertilizer recommendation in Rwanda from https://agronomy.unl.edu/ofra/ as mention in publication
+	d1$N_fertilizer <- ifelse(grepl("maize|wheat", d1$crop) & grepl("Rwanda", d1$country) , 41, 
+						ifelse(grepl("bean", d1$crop) & grepl("Rwanda", d1$country), 18, 
+						ifelse(grepl("rice", d1$crop) & grepl("Rwanda", d1$country),  80, 0)))
+
+	### Fertilizer recommendation in Zambia
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Zambia", d1$country) , 112, 
+						ifelse(grepl("bean", d1$crop) & grepl("Zambia", d1$country), 30, d1$N_fertilizer))
+
+	### Fertilizer recommendation in Malawi
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Malawi", d1$country) , 92, 
+						ifelse(grepl("soybean", d1$crop) & grepl("Malawi", d1$country), 50, d1$N_fertilizer))
+
+	### Fertilizer recommendation in Tanzania
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Tanzania", d1$country) , 112, 
+						ifelse(grepl("bean|sorghum", d1$crop) & grepl("Tanzania", d1$country), 30, 
+						ifelse(grepl("wheat", d1$crop) & grepl("Tanzania", d1$country),40, d1$N_fertilizer)))
+
+	### Fertilizer recommendation in Kenya
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Kenya", d1$country) , 75, 
+						ifelse(grepl("sorghum", d1$crop) & grepl("Kenya", d1$country), 50, 
+						ifelse(grepl("cassava", d1$crop) & grepl("Kenya", d1$country), 100, d1$N_fertilizer)))
+
+	## Fertilizer recommendation in Uganda
+	d1$N_fertilizer <- ifelse(grepl("finger millet", d1$crop) & grepl("Uganda", d1$country) , 40, d1$N_fertilizer)
+
+
+	### Fertilizer recommendation in Ghana
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Ghana", d1$country) , 90, 
+						ifelse(grepl("sorghum|cassava", d1$crop) & grepl("Ghana", d1$country), 60, 
+						ifelse(grepl("cowpea", d1$crop) & grepl("Ghana", d1$country), 20, d1$N_fertilizer)))
+
+
+	### Fertilizer recommendation in Nigeria
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Nigeria", d1$country) , 120, 
+						ifelse(grepl("sorghum", d1$crop) & grepl("Nigeria", d1$country), 64, 
+						ifelse(grepl("soybean", d1$crop) & grepl("Nigeria", d1$country), 20, d1$N_fertilizer)))
+
+	### Fertilizer recommendation in Burkina Faso
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Burkina Faso", d1$country) , 67, 
+						ifelse(grepl("sorghum|pearl millet", d1$crop) & grepl("Burkina Faso", d1$country), 37, 
+						ifelse(grepl("rice", d1$crop) & grepl("Burkina Faso", d1$country), 74, 
+						ifelse(grepl("cowpea", d1$crop) & grepl("Burkina Faso", d1$country), 14, d1$N_fertilizer))))
+
+
+	### Fertilizer recommendation in Mali
+	d1$N_fertilizer <- ifelse(grepl("maize", d1$crop) & grepl("Mali", d1$country) , 84, 
+						ifelse(grepl("sorghum|pearl millet", d1$crop) & grepl("Mali", d1$country), 32, 
+						ifelse(grepl("rice", d1$crop) & grepl("Mali", d1$country), 80, d1$N_fertilizer)))
+
+	### Fertilizer recommendation in Niger
+	d1$N_fertilizer <- ifelse(grepl("maize|sorghum|pearl millet|cowpea", d1$crop) & grepl("Niger", d1$country) , 46, d1$N_fertilizer) 
+					
+	#### For All legume crop, No N fertilizer were apply except bean 
+	d1$N_fertilizer <- ifelse(grepl("Pulse", d1$crop_type), 0, 
+					  ifelse(grepl("Pigeonpea", d1$crop), 0, d1$N_fertilizer))
+
+	d1$crop_type <- d1$id <- NULL
+
+	### fixing crop 
+	d1$crop <- gsub("^bean$", "common bean", d1$crop)
+	d1$crop <- gsub("rice ul", "rice", d1$crop)
+	d1$crop <- gsub("pigeonpea", "pigeon pea", d1$crop)
+
+	### Fixing planting date 
+
+	d1$planting_date <- ifelse(grepl("13", d1$trial_id), "2013",
+						ifelse(grepl("14", d1$trial_id), "2014",
+						ifelse(grepl("15", d1$trial_id), "2015", "2016"))) 
+
+	d1$rep <- suppressWarnings(as.integer(gsub("_|a|c|r|u|F|f|o|V|M|C|b|e|A|T|i|S", "", substr(d1$trial_id, nchar(d1$trial_id)-1, nchar(d1$trial_id)))))
+
+	### Fixing long and lat 
+	i <- grepl("Ghana|Mali|Burkina Faso", d1$country)
+	d1$longitude[i] <- -abs(d1$longitude[i])
+
+	### drop rows with NA in yield 
+
+
+	d1$trial_id <- as.integer(as.factor(apply(d1[, c("longitude", "latitude", "planting_date", "crop")], 1, \(x) paste(x, collapse="_"))))
+
+	itex <- which((d1$soil_clay + d1$soil_silt + d1$soil_sand) > 999)
+	d1$soil_clay[itex] <- d1$soil_clay[itex] / 10
+	d1$soil_sand[itex] <- d1$soil_sand[itex] / 10
+	d1$soil_silt[itex] <- d1$soil_silt[itex] / 10
+
+
+	soilmeta <- data.frame(
+		variable = c('soil_Al', 'soil_B', 'soil_Cu', 'soil_Fe', 'soil_Mn', 'soil_P', 'soil_S', 'soil_Zn', 'soil_Na', 'soil_Ca', 'soil_Mg', 'soil_K'),
+		method = "Mehlich3"
+	)
+
+	carobiner::write_files(path, meta, d1, var_meta=soilmeta)
 
 }
 
