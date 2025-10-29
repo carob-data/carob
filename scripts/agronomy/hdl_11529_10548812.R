@@ -42,6 +42,7 @@ This experiments were established with different rates of nitrogen in order to g
 		  latitude = r$Latitude,
 		  longitude = r$Longitude,
 		  planting_date = as.character(r$Planting.Date),
+		  irrigation_date = as.character(r$Prepalanting.sowing.irrigation),
 		  land_prep_method = tolower(paste0(r$Tillage, ";", r$Planting.method))	,
 		  variety = r$Hibrid,
 		  treatment= paste0("N", r$Rate.N.kg.ha),
@@ -68,7 +69,7 @@ This experiments were established with different rates of nitrogen in order to g
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- TRUE #there is a variable called sowing irrigation in raw dataset which shows date of irrigation
+	d$irrigated <- TRUE
 	d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
 	d$yield_part <- "grain"
 	d$yield_moisture <- 14
