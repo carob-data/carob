@@ -69,7 +69,6 @@ This experiments were established with different rates of nitrogen in order to g
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- TRUE
 	d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
 	d$yield_part <- "grain"
 	d$yield_moisture <- 14
@@ -77,6 +76,12 @@ This experiments were established with different rates of nitrogen in order to g
 	d$land_prep_method <- gsub("bed", "raised beds", d$land_prep_method)
 
 	d$record_id <- 1:nrow(d)
+	
+	d$irrigated <- TRUE
+	i <- d$irrigation_date == "Rain"
+	d$irrigated[i] <- FALSE
+	d$irrigation_date[i] <- NA
+	
 	
 ####################
 # NDVI_data
