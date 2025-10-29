@@ -42,7 +42,7 @@ This experiments were established with different rates of nitrogen in order to g
 		  latitude = r$Latitude,
 		  longitude = r$Longitude,
 		  planting_date = as.character(r$Planting.Date),
-		  irrigation_date = as.character(r$Prepalanting.sowing.irrigation),
+		  irrigation_dates = as.character(r$Prepalanting.sowing.irrigation),
 		  land_prep_method = tolower(paste0(r$Tillage, ";", r$Planting.method))	,
 		  variety = r$Hibrid,
 		  treatment= paste0("N", r$Rate.N.kg.ha),
@@ -78,7 +78,7 @@ This experiments were established with different rates of nitrogen in order to g
 	d$record_id <- 1:nrow(d)
 	
 	d$irrigated <- d$irrigation_date != "Rain"
-	d$irrigation_date[!d$irrigated] <- NA
+	d$irrigation_dates[!d$irrigated] <- NA
 	
 ####################
 # NDVI_data
