@@ -77,11 +77,8 @@ This experiments were established with different rates of nitrogen in order to g
 
 	d$record_id <- 1:nrow(d)
 	
-	d$irrigated <- TRUE
-	i <- d$irrigation_date == "Rain"
-	d$irrigated[i] <- FALSE
-	d$irrigation_date[i] <- NA
-	
+	d$irrigated <- d$irrigation_date != "Rain"
+	d$irrigation_date[!d$irrigated] <- NA
 	
 ####################
 # NDVI_data
