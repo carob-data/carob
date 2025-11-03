@@ -2,21 +2,21 @@
 
 carob_script <- function(path) {
   
-  "Farmers’ participatory researchers managed long-term trials aimed at improving the productivity, profitability, and sustainability of smallholder agriculture in the EGP by addressing the following objectives: 1. Understand farmer circumstances with respect to cropping systems, natural and economic resources base, livelihood strategies, and capacity to bear the risk and undertake technological innovation. 2. Develop with farmers more productive and sustainable technologies that are resilient to climate risks and profitable for smallholders. 3. Facilitate the widespread adoption of sustainable, resilient, and more profitable farming systems."
+"Farmers’ participatory researchers managed long-term trials aimed at improving the productivity, profitability, and sustainability of smallholder agriculture in the EGP by addressing the following objectives: 1. Understand farmer circumstances with respect to cropping systems, natural and economic resources base, livelihood strategies, and capacity to bear the risk and undertake technological innovation. 2. Develop with farmers more productive and sustainable technologies that are resilient to climate risks and profitable for smallholders. 3. Facilitate the widespread adoption of sustainable, resilient, and more profitable farming systems."
   
   uri <- "hdl:11529/10548371"
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2, 
-                                  data_organization = "CIMMYT;BARI;BRRI", 
-                                  publication="doi.org/10.1016/j.jclepro.2019.118982", 
-                                  project=NA, 
-                                  data_type= "experiment", 
-                                  response_vars= "dmy_storage,fwy_total", 
-                                  treatment_vars = "variety;land_prep_method;crop_rotation", 
-                                  carob_contributor= "Mitchelle Njukuya", 
-                                  carob_date="2025-10-31"
+		data_organization = "CIMMYT;BARI;BRRI", 
+		publication="doi.org/10.1016/j.jclepro.2019.118982", 
+		project=NA, 
+		data_type= "experiment", 
+		response_vars= "yield;fwy_total", 
+		treatment_vars = "variety;land_prep_method;crop_rotation", 
+		carob_contributor= "Mitchelle Njukuya", 
+		carob_date="2025-10-31"
   )
   
   ff <- ff[grep("xlsx",basename(ff))]
@@ -259,12 +259,17 @@ carob_script <- function(path) {
   d$herbicide_product <- gsub("Roundup", "glyphosate", d$herbicide_product)
   d$insecticide_implement <- gsub("Spray", "backpack sprayer", d$insecticide_implement)
   d$land_prep_method <- gsub("Tilling", "tillage", d$land_prep_method)
+  d$planting_method <- gsub("N/A", NA, d$planting_method)
   d$planting_method <- gsub("Seeding", "direct seeding", d$planting_method)
   d$planting_method <- gsub("Transplanting|Transplanting, seedling raising and uprooting", "transplanting", d$planting_method)
   
   d_clean <- d[!duplicated(d), ]
   d <- d_clean
-  
+
+  d$yield <- d$dmy_storage
+  d$yield_moisture <- 0
+  d$season <- "kharif"
+  d$maturity_days[d$maturity_days < 0] <- NA
   
   carobiner::write_files(path, meta, d)
 }
