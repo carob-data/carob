@@ -98,19 +98,16 @@ Results from this project showed that with appropriate weed management couple wi
 		plot_area = 16 # m2
 	)
 	
-	
-	### merge da and d2
-	
- d	<- merge(d1, d2, intersect(names(d1), names(d2)), all.x = TRUE)
+	d <- merge(d1, d2, intersect(names(d1), names(d2)), all.x = TRUE)
  
  ## remove rows with NA in yield
- d <- d[!is.na(d$yield),] 	
+	d <- d[!is.na(d$yield),] 	
  
  ### Adding herbicide product and amount
 
-   d$herbicide_amount <- gsub("[^0-9\\.]", "", d$treatment)
-   d$herbicide_amount[d$herbicide_amount==""] <- NA
-   d$herbicide_amount <- as.numeric(d$herbicide_amount)
+	d$herbicide_amount <- gsub("[^0-9\\.]", "", d$treatment)
+	d$herbicide_amount[d$herbicide_amount==""] <- NA
+	d$herbicide_amount <- as.numeric(d$herbicide_amount)
 	d$herbicide_product <- gsub("[0-9\\.]+L", "", d$treatment) 
 	
 	P <- carobiner::fix_name(d$herbicide_product)
@@ -138,11 +135,11 @@ Results from this project showed that with appropriate weed management couple wi
 	P <- gsub("Sencor", "metribuzin", P)
 	d$herbicide_product <- P
 	
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA) 
-d$season <- d$plot_no <- d$year <- NULL	
-d$herbicide_used <- !grepl("none", d$herbicide_product)	
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA) 
+	d$season <- d$plot_no <- d$year <- NULL	
+	d$herbicide_used <- !grepl("none", d$herbicide_product)	
 
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 

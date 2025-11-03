@@ -38,28 +38,26 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	r2 <- read.csv(f2)
 	r3 <- read.csv(f3)
 
-	standardize_data <- function(df) {
-	  required_cols <- c("STATE", "District", "Village", "Treat_details", "Rep",
+	required_cols <- c("STATE", "District", "Village", "Treat_details", "Rep",
 	                     "Tillage", "Var", "SdDate", "CropEst", "SdRate",
 	                     "FN_amt", "FP_amt", "FK_amt", "Weedmgt_type", "PN",
 	                     "GY", "Fert_cost", "Price")
+
+	standardize_data <- function(df) {
 	  
-	  for (col in required_cols) {
-	    if (!col %in% colnames(df)) {
-	      df[[col]] <- NA
-	    }
-	  }
+	  rc <- required_cols[!(required_cols %in% colnames(df))]
+	  df[, rc] <- NA
 	  
-	data.frame(
+	  data.frame(
 		country = "India",
-		adm1 = df$STATE,
+		adm1 = trimws(df$STATE),
 		adm2 = df$District,
 		adm3 = df$Village,
 		treatment = df$Treat_details,
 		rep = as.integer(df$Rep),
 		land_prep_method = df$Tillage,
 		variety = df$Var,
-		planting_date=as.character(df$SdDate),
+		planting_date=as.character(as.Date(df$SdDate, "%m/%d/%Y")),
 		planting_method = tolower(df$CropEst),
 		seed_rate = df$SdRate,
 		N_fertilizer = df$FN_amt,
@@ -68,9 +66,10 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		weeding_method = df$Weedmgt_type,
 		plant_density = df$PN,
 		yield = df$GY*1000,
-    fertilizer_price = as.character(df$Fert_cost),
+		fertilizer_price = as.character(df$Fert_cost),
 		crop_price = df$Price,
-		currency = "USD")
+		currency = "USD"
+	  )
 	}
 	
 	d1 <- standardize_data(r1)
@@ -83,9 +82,8 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	
 	d2_d3 <- rbind(d2,d3)
 	d1 <- d1[, names(d2_d3)]
-	d<- rbind(d1,d2_d3)
-	d$longitude <- 86.4187
-	d$latitude <- 22.0087
+	d <- rbind(d1,d2_d3)
+
 	d$on_farm <- TRUE 
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
@@ -93,15 +91,16 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	d$lime <- as.numeric(NA) 
 	d$yield_moisture <- 15  
 	d$treatment <- iconv(d$treatment, from = "latin1", to = "UTF-8", sub = "")
-	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
+	d$treatment <- trimws(d$treatment)
+	d$trial_id <- paste(d$adm3, substr(d$planting_date, 1, 4), sep = "_")
 	d$crop <- "maize"
 	d$yield_part <- "grain"
-	d$treatment <- trimws(d$treatment)
-	d$adm1 <- trimws(d$adm1)
-	d$land_prep_method <- gsub("Conventional","conventional",d$land_prep_method)
-	d$land_prep_method <- gsub("Zerotillage","none",d$land_prep_method)
-	d$planting_method <- gsub("machine","mechanized",d$planting_method)
+	d$land_prep_method <- gsub("Conventional", "conventional", d$land_prep_method)
+	d$land_prep_method <- gsub("Zerotillage", "none", d$land_prep_method)
+	d$planting_method <- gsub("machine", "mechanized", d$planting_method)
 	
+	d$treatment <- gsub("\u0092", "", d$treatment)
+
 	carobiner::write_files(path, meta, d)
 }
 
