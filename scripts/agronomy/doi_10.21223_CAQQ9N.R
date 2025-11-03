@@ -14,7 +14,7 @@ carob_script <- function(path) {
       publication = NA, 
       project = "GIZ-PZTM", 
       data_type = "experiment",
-      response_vars = "yield;makatable_yield",
+      response_vars = "yield;yield_marketable",
       treatment_vars = "land_prep_method;variety", 
       carob_contributor = "Cedric Ngakou", 
       carob_date = "2024-09-06"

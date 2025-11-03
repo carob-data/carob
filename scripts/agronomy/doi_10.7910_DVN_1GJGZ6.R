@@ -92,103 +92,101 @@ The cropping system physiological characteristic datasheet contains data on maiz
 	   yield_moisture= as.numeric(NA)
 	)
 	
-dd <- merge(d1, d2, by= c("trial_id", "location", "rep", "treatment", "trt"), all.x = TRUE)
-	
-d <- reshape(dd, varying = list(c("maize_yield","bean_yield", "pigeon_yield"), c("maize_biomass","bean_biomass", "pigeon_biomass")), v.names = c("yield","fwy_total"), 
-              timevar ="crop",
-              times = c(1,2,3),
-              direction = "long")
-	
-d <- d[!is.na(d$yield),]
-d$yield <- d$yield*1000 ## kg/ha
-d$fwy_total <- d$fwy_total*1000 ## kg/ha
-d$crop_price <- d$price/d$yield ## 
-d$currency <- "TZS" ## (Not sure as it is missing from the raw data.) 
-d$variety <- c("Meru 513", "Jesica", "Karatu")[d$crop]
-d$crop <- c("maize", "common bean", "pigeon pea")[d$crop]
+	dd <- merge(d1, d2, by= c("trial_id", "location", "rep", "treatment", "trt"), all.x = TRUE)
+		
+	d <- reshape(dd, varying = list(c("maize_yield","bean_yield", "pigeon_yield"), c("maize_biomass","bean_biomass", "pigeon_biomass")), v.names = c("yield","fwy_total"), 
+				  timevar ="crop",
+				  times = c(1,2,3),
+				  direction = "long")
+		
+	d <- d[!is.na(d$yield),]
+	d$yield <- d$yield*1000 ## kg/ha
+	d$fwy_total <- d$fwy_total*1000 ## kg/ha
+	d$crop_price <- d$price/d$yield ## 
+	d$currency <- "TZS" ## (Not sure as it is missing from the raw data.) 
+	d$variety <- c("Meru 513", "Jesica", "Karatu")[d$crop]
+	d$crop <- c("maize", "common bean", "pigeon pea")[d$crop]
 
-d$intercrops <- ifelse(grepl("Continuous maize", d$treatment) & grepl("maize", d$crop), "none",
-                  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("maize", d$crop), "pigeon pea;common bean",
-                  ifelse(grepl("Meru 513|Maize 2 plants per hill|Maize topped|Maize no topping", d$treatment) & grepl("maize", d$crop), "pigeon pea", 
-                  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("pigeon pea", d$crop), "maize;common bean",
-                  ifelse(grepl("Meru 513|Maize 2 plants per hill|Maize topped|Maize no topping", d$treatment) & grepl("pigeon pea", d$crop), "maize", 
-                  ifelse(grepl("Doubled-up Legume", d$treatment) & grepl("pigeon pea", d$crop), "common bean",
-                  ifelse(grepl("Doubled-up Legume", d$treatment) & grepl("common bean", d$crop), "pigeon pea",
-                  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("common bean", d$crop), "pigeon pea;maize", "none"))))))))
+	d$intercrops <- ifelse(grepl("Continuous maize", d$treatment) & grepl("maize", d$crop), "none",
+					  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("maize", d$crop), "pigeon pea;common bean",
+					  ifelse(grepl("Meru 513|Maize 2 plants per hill|Maize topped|Maize no topping", d$treatment) & grepl("maize", d$crop), "pigeon pea", 
+					  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("pigeon pea", d$crop), "maize;common bean",
+					  ifelse(grepl("Meru 513|Maize 2 plants per hill|Maize topped|Maize no topping", d$treatment) & grepl("pigeon pea", d$crop), "maize", 
+					  ifelse(grepl("Doubled-up Legume", d$treatment) & grepl("pigeon pea", d$crop), "common bean",
+					  ifelse(grepl("Doubled-up Legume", d$treatment) & grepl("common bean", d$crop), "pigeon pea",
+					  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("common bean", d$crop), "pigeon pea;maize", "none"))))))))
 
-d$intercrop_type <- ifelse(grepl("Mbili-Mbili", d$treatment), "strip", 
-                      ifelse(grepl("none", d$intercrops), "monocrop", "mixed"))
-d$id <- d$trt <- d$price <- NULL
+	d$intercrop_type <- ifelse(grepl("Mbili-Mbili", d$treatment), "strip", 
+						  ifelse(grepl("none", d$intercrops), "monocrop", "mixed"))
+	d$id <- d$trt <- d$price <- NULL
 
-### Process soil data
+	### Process soil data
 
-d3 <- data.frame(
-   trial_id= r3$Farmer.Name,
-   location= tolower(r3$Ecozone),
-   rep= as.integer(r3$Reps),
-   depth_top = 0,
-   depth_bottom = 20,
-   soil_pH= r3$pH,
-   soil_EC= r3$X.EC.Salts.uS.cm/1000, #mS/cm
-   soil_N= r3$pctN,
-   soil_C= r3$pctC,
-   soil_P= r3$X.Phosphorus.Olsen.ppm,
-   soil_K= r3$Potassium.ppm,
-   soil_Ca= r3$Calcium.ppm,
-   soil_Mg= r3$Magnesium.ppm,
-   soil_Mn= r3$Manganese.ppm,
-   soil_S= r3$Sulphur.ppm,
-   soil_Cu= r3$Copper.ppm,
-   soil_B= r3$Boron.ppm,
-   soil_Zn= r3$Zinc.ppm,
-   soil_Fe= r3$Iron.ppm,
-   soil_Na= r3$X.Sodium.ppm,
-   soil_CEC= r3$X.C.E.C.meq.100g
-)
+	d3 <- data.frame(
+	   trial_id= r3$Farmer.Name,
+	   location= tolower(r3$Ecozone),
+	   rep= as.integer(r3$Reps),
+	   depth_top = 0,
+	   depth_bottom = 20,
+	   soil_pH= r3$pH,
+	   soil_EC= r3$X.EC.Salts.uS.cm/1000, #mS/cm
+	   soil_N= r3$pctN,
+	   soil_C= r3$pctC,
+	   soil_P= r3$X.Phosphorus.Olsen.ppm,
+	   soil_K= r3$Potassium.ppm,
+	   soil_Ca= r3$Calcium.ppm,
+	   soil_Mg= r3$Magnesium.ppm,
+	   soil_Mn= r3$Manganese.ppm,
+	   soil_S= r3$Sulphur.ppm,
+	   soil_Cu= r3$Copper.ppm,
+	   soil_B= r3$Boron.ppm,
+	   soil_Zn= r3$Zinc.ppm,
+	   soil_Fe= r3$Iron.ppm,
+	   soil_Na= r3$X.Sodium.ppm,
+	   soil_CEC= r3$X.C.E.C.meq.100g
+	)
 
-soilmeta <- data.frame(
-   soil_element = "P",
-   soil_method = "Olsen"
-)
+	soilmeta <- data.frame(
+	   soil_element = "P",
+	   soil_method = "Olsen"
+	)
 
-### merge d3 with d
-d <- merge(d, d3, by= c("trial_id", "location", "rep"), all.x = TRUE)
+	### merge d3 with d
+	d <- merge(d, d3, by= c("trial_id", "location", "rep"), all.x = TRUE)
 
-### Adding geo coordinate 
+	### Adding geo coordinate 
 
-geo <- data.frame(
-   location= c("sabilo", "gallapo", "riroda"),
-   longitude= c(35.4790, 35.855, 35.645),
-   latitude= c(-4.347, -4.2840, -4.3001)
-) 
+	geo <- data.frame(
+	   location= c("sabilo", "gallapo", "riroda"),
+	   longitude= c(35.4790, 35.855, 35.645),
+	   latitude= c(-4.347, -4.2840, -4.3001)
+	) 
 
-d <- merge(d, geo, by= "location", all.x = TRUE)
+	d <- merge(d, geo, by= "location", all.x = TRUE)
 
  #### process weather data 
- W <- data.frame(
-    location= tolower(r4$Ecozone),
-    adm2= "Babati",
-    adm1= "Manyara",
-    country= "Tanzania",
-    geo_from_source= FALSE,
-    date= as.character(as.Date(carobiner::eng_months_to_nr(paste0("2019", "-", r4$Measurement.Date)), format ="%Y-%d-%m")),
-    srad= r4$Solar.Rad.wat.m2,
-    rhum= r4$Relative.Humidity.pct,
-    temp= r4$Temperature.C,
-    prec= r4$Rainfall.mm,
-    wdir= r4$Wind.Direction.Deg,
-    wgst= r4$Wind.Gust.km.h/3.6, ## m/s
-    wspd= r4$Wind.Speed.km.h/3.6, ## m/s
-    dewp= r4$Dew.Point.C,
-    longitude= ifelse(grepl("Gallapo", r4$Ecozone), 35.855, 
-                ifelse(grepl("Sabilo", r4$Ecozone), 35.4790, 35.745)),
-    
-   latitude= ifelse(grepl("Gallapo", r4$Ecozone), -4.2840, 
-                      ifelse(grepl("Sabilo", r4$Ecozone), -4.347, -4.207))
- )
+	W <- data.frame(
+		location= tolower(r4$Ecozone),
+		adm2= "Babati",
+		adm1= "Manyara",
+		country= "Tanzania",
+		geo_from_source= FALSE,
+		date= as.character(as.Date(carobiner::eng_months_to_nr(paste0("2019", "-", r4$Measurement.Date)), format ="%Y-%d-%m")),
+		srad= r4$Solar.Rad.wat.m2,
+		rhum= r4$Relative.Humidity.pct,
+		temp= r4$Temperature.C,
+		prec= r4$Rainfall.mm,
+		wdir= r4$Wind.Direction.Deg,
+		wgst= r4$Wind.Gust.km.h/3.6, ## m/s
+		wspd= r4$Wind.Speed.km.h/3.6, ## m/s
+		dewp= r4$Dew.Point.C,
+		longitude= ifelse(grepl("Gallapo", r4$Ecozone), 35.855, 
+					ifelse(grepl("Sabilo", r4$Ecozone), 35.4790, 35.745)),
+		
+	   latitude= ifelse(grepl("Gallapo", r4$Ecozone), -4.2840, 
+						  ifelse(grepl("Sabilo", r4$Ecozone), -4.347, -4.207))
+	)
 
-
-carobiner::write_files(path, meta, d, wth = W, soil_meta = soilmeta)
-
+	carobiner::write_files(path, meta, d, wth = W, var_meta = soilmeta)
 }
 
