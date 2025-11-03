@@ -24,12 +24,19 @@ carob_script <- function(path) {
    
    
    f <- ff[basename(ff) == "Appendix C. Supplementary data.xlsx"]
+
+	locf <- function(x) {
+		for (i in 2:length(x)) {
+			if (is.na(x[i])) x[i] <- x[i-1]
+		}
+		x
+	}
    
    ### process General information 
    r <- carobiner::read.excel(f, na=c("*"))
    d <- data.frame(
-      trial_id= zoo::na.locf(r$ID, na.rm = FALSE),
-      reference= zoo::na.locf(r$Reference, na.rm = FALSE), 
+      trial_id= locf(r$ID),
+      reference= locf(r$Reference), 
       location= r$`City /  Town / County`,
       adm1= r$`Province / state`,
       country= gsub("USA", "United States", r$Country), #

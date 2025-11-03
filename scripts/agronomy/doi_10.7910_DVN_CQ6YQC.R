@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-
 
 carob_script <- function(path) {
 
@@ -12,7 +10,7 @@ Replication Data for: Participatory Upland Rice Seed Rate Determination for Row 
 Participatory upland rice seed determination for row method of sowing
 "
 
-   uri <- "doi:10.7910/DVN/CQ6YQC"
+	uri <- "doi:10.7910/DVN/CQ6YQC"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -46,7 +44,7 @@ Participatory upland rice seed determination for row method of sowing
 	   plant_height = r1$PH,
 	   fwy_total = r1$`BY t/ha`*1000,
 	   yield = r1$`GY t/ha`*1000,
-	   location = "werer" ,
+	   location = "Werer" ,
 	   country = "Ethiopia",
 	   crop = "rice",
 	   planting_date = "2013",
@@ -110,11 +108,9 @@ Participatory upland rice seed determination for row method of sowing
       soil_P = c(8.280, 9.655, 8.155, 10.405, 8.280, 17.279, 14.655, 14.030, 21.841, 18.311)
    )
    
-  d <- merge(d, soil, by= c("seed_rate", "location", "planting_method"), all.x = TRUE) 
+	d <- merge(d, soil, by= c("seed_rate", "location", "planting_method"), all.x = TRUE) 
  
-  d$N_fertilizer <- d$P_fertilizer <-  d$K_fertilizer <- as.numeric(NA)
-    
-carobiner::write_files(path, meta, d)
-
+	d$N_fertilizer <- d$P_fertilizer <-  d$K_fertilizer <- as.numeric(NA)
+	carobiner::write_files(path, meta, d)
 }
 
