@@ -66,22 +66,23 @@ carob_script <- function(path) {
        soil_EC= r2$TEC..meq.100g.,
        soil_pH= r2$pH_water,
        soil_SOM= r2$OM_percent*10,
-       soil_P_available= r2$Bray.I.P_ppm*1000, ##mg/g
-       soil_P_Mehlich= r2$M3.P_ppm*1000,
-       soil_K_Mehlich= r2$M3.K_ppm*1000,
-       soil_S_Mehlich= r2$M3.S_ppm*1000,
-       soil_Ca_Mehlich= r2$M3.Ca_ppm*1000,
-       soil_Mg_Mehlich= r2$M3.Mg_ppm*1000,
+       soil_P_Bray = r2$Bray.I.P_ppm*1000, ##mg/g
+       soil_P = r2$M3.P_ppm*1000,
+       soil_K= r2$M3.K_ppm*1000,
+       soil_S= r2$M3.S_ppm*1000,
+       soil_Ca= r2$M3.Ca_ppm*1000,
+       soil_Mg= r2$M3.Mg_ppm*1000,
        
        soil_Na= r2$Na_ppm*1000,
-       soil_B_Mehlich= r2$M3.B_ppm*1000,
-       soil_Fe_Mehlich= r2$M3.Fe_ppm*1000,
-       soil_Mn_Mehlich= r2$M3.Mn_ppm*1000,
-       soil_Cu_Mehlich= r2$M3.Cu_ppm*1000,
-       soil_Zn_Mehlich= r2$M3.Zn_ppm*1000,
-       soil_Al_Mehlich= r2$M3.Al_ppm*1000
-       
+       soil_B= r2$M3.B_ppm*1000,
+       soil_Fe= r2$M3.Fe_ppm*1000,
+       soil_Mn= r2$M3.Mn_ppm*1000,
+       soil_Cu= r2$M3.Cu_ppm*1000,
+       soil_Zn= r2$M3.Zn_ppm*1000,
+       soil_Al= r2$M3.Al_ppm*1000
     )
+	
+	soilmeta <- data.frame(variable=c("P", "K", "S", "Ca", "Mg", "Na", "B", "Fe", "Mn", "Cu", "Zn", "Al"), method="Mehlich")
     
 ##### Process yield data
     r3 <- read.csv(f3)
@@ -167,5 +168,5 @@ carob_script <- function(path) {
     dd$planting_date <- as.character(dd$date)
     dd$date <- NULL
     
-   carobiner::write_files(meta, dd, path=path)
+	carobiner::write_files(meta, dd, path=path, var_meta=soilmeta)
 }

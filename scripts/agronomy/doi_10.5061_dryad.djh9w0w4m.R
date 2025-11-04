@@ -178,22 +178,24 @@ carob_script <- function(path) {
       #r$Soil_N_.Parco2020._kg_N_ha,
       #r$Soil_N_.De.Silva.2008._kg_N_ha,
       soil_K= r$Soil_K_.Black._kg_K_ha,
-      soil_S= r$Soil_S_available_mg_S_kg,
-      soil_S_Mehlich= r$Soil_S_Mehlich.3_mg_S_kg,
+      soil_S= r$Soil_S_Mehlich.3_mg_S_kg,
+      soil_S_avail= r$Soil_S_available_mg_S_kg,
       #r$Soil_S_.Method.2._mg_S_kg,
       soil_P= r$Soil_P_Olsen_mg_kg,
+	  soil_P_method = "Olsen",
       soil_P_Bray2= r$Soil_P_Bray_2_mg_P_kg,
       #r$Soil_P_Bray_1_mg_P_kg,
       soil_P_Mehlich = r$Soil_P_Mehlich.3_mg_P_kg,
       #r$Soil_K_dry_mg_K_kg,
       #r$Soil_K_wet_mg_K_kg,
-      soil_ex_K= r$Soil_K_exchangeable_mg_K_kg,
-      soil_K_Mehlich= r$Soil_K_.Mehlich.3._mg_K_kg,
+      soil_K_exch= r$Soil_K_exchangeable_mg_K_kg,
+      soil_K= r$Soil_K_.Mehlich.3._mg_K_kg,
       #r$Soil_K_.Method.1._mg_K_kg,
       soil_Fe= r$Soil_FE_DETPA_extractable_mg_kg,
       soil_Zn= r$Soil_Zn_DETPA_extractable_mg_kg,
-      soil_Ca_Mehlich= r$Soil_Ca_Mehlich.3_mg_Ca_kg,
+      soil_Ca= r$Soil_Ca_Mehlich.3_mg_Ca_kg,
       soil_pH_KCl= r$Soil_pH_KCl_Number,
+	  	  
       soil_SOM= r$Soil_OM_.,
       #r$Soil_N_Alkaline_permanganate_kg_N_ha,
       soil_Cu= r$Soil_Cu_DETPA_extractable_mg_kg,
@@ -204,6 +206,9 @@ carob_script <- function(path) {
       #r$Soil_Mg_.ammonium_acetate._mg_kg,
       #r$Soil_K_.ammonium_acetate._mg_kg
    )
+   
+	soilmeta <- data.frame(variable=c("S", "K", "Ca", "Fe", "Zn"), method=c(rep("Mehlich", 3), c("DETPA","DETPA")))
+
 	refs = paste0(r$First_author_name, " & ", r$Second_author_name, ", ", r$Year_published, ". ", r$Title_of_article, ". ",
 			r$Journal_title, " ", r$Journal_vol, ": ", r$Page_numbers, ". ", r$DOI)
 	refs <- gsub("& et al", "et al.", refs)
@@ -432,7 +437,7 @@ carob_script <- function(path) {
    P <- gsub("fallow", "none", P)
    P <- gsub("bean ", "bean", P)
    P[P=="bean"] <- "common bean"
-   d$previous_crop <- P
+   d$previous_crop <- trimws(P)
    #d$previous_crop[d$previous_crop=="bean"]  <- "common bean"
    
    ### Fixing crop names
@@ -445,7 +450,7 @@ carob_script <- function(path) {
    
 # removing one duplicate
 	d <- unique(d)
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 }
 
 

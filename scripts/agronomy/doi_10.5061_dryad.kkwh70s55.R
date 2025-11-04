@@ -156,7 +156,7 @@ carob_script <- function(path) {
     wth$year <-  wth$id <- NULL
     
     
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	dd$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(path, meta, dd, wth = wth)
 }

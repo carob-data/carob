@@ -16,7 +16,7 @@ carob_script <- function(path) {
       project=NA, 
       data_type= "compilation", 
       treatment_vars= "N_fertilizer; P_fertilizer; K_fertilizer; land_prep_method; variety", 
-      response_vars = "fw_yield", 
+      response_vars = "yield", 
       carob_contributor= "Cedric Ngakou", 
       carob_date="2025-06-28",
       completion=100,
@@ -60,7 +60,7 @@ carob_script <- function(path) {
       harvest_date= substr(gsub("NA |\\.", "", r2$Crop_Date_Harvest), 1, 11),
       #harvest_days= as.numeric(gsub(" or 212| or 222| or 165", "", r2$Crop_Date_From_Seeding_To_Harvest_Day_Number)),
       rep= r2$Crop_Replicate_Number,
-      fw_yield= r2$Crop_Yield_Grain,
+      yield= r2$Crop_Yield_Grain,
       yield_moisture= r2$Crop_Yield_Grain_DM_Percentage*100,
       fwy_total= r2$Crop_Biomass_Aerial,
       harvest_index= r2$Crop_Harvest_Index,
@@ -216,7 +216,8 @@ carob_script <- function(path) {
       latitude= r5$Site_Latitude,
       longitude= r5$Site_Longitude,
       geo_from_source= TRUE,
-      soil_depth= gsub("\\.", "-", r5$Site_Soil_Depth_Variable_m),
+      #soil depths are doubtful. More likely soil sampling depths in most cases
+	  #soil_depth = r5$Site_Soil_Depth_Variable_m
       #r5$Site_Soil_Classification_Name,
       soil_type= r5$Site_Soil_Texture_Name,
       soil_sand= r5$Site_Soil_Sand_Percentage,

@@ -1,6 +1,5 @@
 # R script for "carob"
 
-
 carob_script <- function(path) {
 
 "The data were collected for the publication:Does leaving crop residues in the field lead to greater frost damage in wheat and barley under conservation agriculture? The dataset contains data from three experiments conducted to evaluate if leaving more residue in the field is associated with higher levels of frost damage. Farmers in the Bajio had indicated that leaving more crop residue in the field when sowing barley in permanent raised beds is associated with higher frost damage, which is an occasional problem in the region. To evaluate whether this is really the case frost damage was evaluated in a 1) a 2 year on farm experiment in San Juan del Rio, Queretaro, Mexico where barley was sown with different levels of residue retention, 2) An experiment with different types of tillage and levels of residue on the Sanjaya Rajaram station in Metepec, Mexico state, Mexico, where due to the high elevation frost damage was guaranteed to occur and 3) An comparison of yield in side by side comparison of conservation agriculture and conventional agriculture grown during the winter season across Mexico to assess whether conservation agriculture is associated with lower yields which could be indicative of a real problem."
