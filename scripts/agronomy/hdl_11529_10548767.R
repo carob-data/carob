@@ -44,8 +44,8 @@ carob_script <- function(path) {
   d1$yield_part <- "grain"
   d1$dmy_total <- d1$dmy_total * 1000
   #grain yield computed using Harvest index.
-  d1$dm_yield <- d1$dmy_total * d1$harvest_index / 100 
-  d1$dmy_residue <- d1$dmy_total - d1$dm_yield
+  d1$yield <- d1$dmy_total * d1$harvest_index / 100 
+  d1$yield_moisture <- 0
   
   #management
   d1$land_prep_method <- ifelse(grepl("PB", d1$treatment), "raised beds", "conventional")
@@ -112,7 +112,6 @@ carob_script <- function(path) {
     d$harvest_date <- "2019-10-13"
     d$variety <- "P3396"
 
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(meta, d, path=path)
 }

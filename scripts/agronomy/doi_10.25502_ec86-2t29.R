@@ -106,9 +106,9 @@ carob_script <- function(path) {
   dd <- d[!(d$trial_id %in% c("UGAKAN_CBBI_28", "UGAKAN_CBBI_27") & d$treatment %in% c("treatment5", "treatment6")), 
           colnames(d)[!(colnames(d) %in% c("width"))]]
   
-  d$yield[which(d$yield > 25000)] <- NA
+  dd$yield[which(dd$yield > 25000)] <- NA
   
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	dd$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, dd, path=path)
 }

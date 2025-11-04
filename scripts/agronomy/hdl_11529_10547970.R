@@ -132,6 +132,7 @@ carob_script <- function(path) {
 	d$geo_from_source <- FALSE
 
 	d$crop <- gsub("kidneybean", "kidney bean", d$crop)
+	d$season <- "rabi"
 
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 

@@ -83,6 +83,6 @@ The dataset is divided into three parts:
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
 	d$yield_moisture <- 12.5
 	
-# all scripts must end like this
+
 	carobiner::write_files(path, meta, d)
 }

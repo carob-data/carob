@@ -202,7 +202,7 @@ carob_script <- function(path) {
    ### Duplicate rows; original data also has duplicates
    d <- unique(d)
    
-	d$yield_moisture <- NA #needs to be checked
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)
    

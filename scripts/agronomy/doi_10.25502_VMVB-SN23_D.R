@@ -184,7 +184,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	
 	z$elevation[z$elevation < -99] <- NA
 	
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	z$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, z, path=path)
 }

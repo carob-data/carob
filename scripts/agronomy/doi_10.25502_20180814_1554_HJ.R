@@ -85,7 +85,8 @@ carob_script <- function(path) {
 #	d$OM_type <- ifelse(d$OM_used, "farmyard manure", "none")
 #	d$OM_amount <- ifelse(d$OM_used, 1000, 0)
 
-	d$planting_date <- as.character(NA)
+	d$planting_date <- d$season
+	d$season <- NULL
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE

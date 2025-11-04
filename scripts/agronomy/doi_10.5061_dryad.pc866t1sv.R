@@ -15,7 +15,7 @@ carob_script <- function(path) {
        project=NA, 
        data_type= "on-station experiment", 
        treatment_vars= "OM_type; variety", 
-       response_vars = "fw_yield; fwy_total", 
+       response_vars = "yield; fwy_total", 
        carob_contributor= "Cedric Ngakou", 
        carob_date="2025-06-18",
        completion=75,
@@ -39,8 +39,9 @@ carob_script <- function(path) {
       OM_amount= ifelse(grepl("5x", r1$Soil.trt), 109*1000, 0), # kg/ha 
       OM_used= ifelse(grepl("5x", r1$Soil.trt), TRUE, FALSE), # kg/ha
       variety= r1$Variety,
-      fw_yield= r1$wheat.grain.yield.kg.ha,
-      fwy_total= r1$wheat.biomass.yield.kg.ha,
+      yield= r1$wheat.grain.yield.kg.ha,
+      yield_isfresh = TRUE,
+	  fwy_total= r1$wheat.biomass.yield.kg.ha,
       seed_weight= r1$X100.grain.wt.g*10,
       harvest_index= r1$harvest.index,
       grain_N= as.numeric(r1$grain.perc.N)*10, # mg/g

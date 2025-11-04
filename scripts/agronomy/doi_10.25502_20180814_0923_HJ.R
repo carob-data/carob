@@ -105,8 +105,8 @@ carob_script <- function(path) {
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$geo_from_source <- TRUE
+	d$site <- trimws(d$site)
 
-	# all scripts must end like this	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

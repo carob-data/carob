@@ -120,7 +120,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	dv$geo_from_source <- FALSE
 	dv$yield_part <- "grain"
 
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	dv$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, dv, path=path)
 }

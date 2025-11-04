@@ -203,6 +203,8 @@ carob_script <- function(path) {
 	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
+	d$treatment <- trimws(d$treatment)
+
 	carobiner::write_files (meta, d, path=path)
 	
 }

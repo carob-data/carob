@@ -141,5 +141,7 @@ Considering all cultivars and environments, ECa at sowing, flowering and grain f
 	d$season <- "rabi"
 	d <- d[!is.na(d$planting_date), ]
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }

@@ -27,7 +27,7 @@ carob_script <- function(path) {
   ## use a subset 
   from <- c("Village","District","State","Block","PreviousCrop","Variety","SowingDate","HarvestDate","BiomassYield","SowingSchedule","Latitude", "Longitude")
   
-  d <- carobiner::change_names(r[,from], from, c("location","adm2","adm1","site","previous_crop","variety","planting_date","harvest_date","dmy_total","treatment", "latitude", "longitude"))
+  d <- carobiner::change_names(r[,from], from, c("adm3","adm2","adm1", "location", "previous_crop","variety","planting_date","harvest_date","dmy_total","treatment", "latitude", "longitude"))
   d$planting_date <- as.character(format(as.Date(d$planting_date, format = "%Y.%m.%d"), format = "%Y-%m-%d"))
   d$harvest_date <- as.character(format(as.Date(d$harvest_date, format = "%Y.%m.%d"), format = "%Y-%m-%d"))
   d$dmy_total <- (d$dmy_total)*1000 #to convert to kg/ha
@@ -102,11 +102,12 @@ carob_script <- function(path) {
   d$yield <- r$GrainYield * 1000 #ton/acre to kg/ha
   d$yield_part <- "grain"
   d$seed_weight <- r$TestWeight
-  d$trial_id <- paste(1:nrow(d), d$site, sep = "_")
+	d$location <- trimws(d$location)
+  d$trial_id <- paste(1:nrow(d), d$location, sep = "_")
   # d$tiller_count <- r$TillersCount are these  important variables? 
   # d$grain_count <- r$GrainsCount   
    
-  d <- d[, c("trial_id","country", "adm1","adm2","site","latitude","longitude","crop","variety","planting_date","harvest_date","treatment","N_fertilizer","P_fertilizer","K_fertilizer","Zn_fertilizer","yield_part","yield","seed_weight","on_farm","is_survey","irrigated")]
+  d <- d[, c("trial_id","country", "adm1","adm2","adm3", "location","latitude","longitude","crop","variety","planting_date","harvest_date","treatment","N_fertilizer","P_fertilizer","K_fertilizer","Zn_fertilizer","yield_part","yield","seed_weight","on_farm","is_survey","irrigated")]
   
   # EGB:
   # Adding approximate coordinates
@@ -123,32 +124,32 @@ carob_script <- function(path) {
                             84.3541, 85.6226, 86.0284, 84.9933, 84.0544, 83.6678),
                     latitude = c(26.9556, 26.9257, 26.0258, 26.6824, 24.1148, 25.0332,
                             25.3383, 26.0493, 25.4315, 26.4704, 26.6824, 26.8307))
-  del <- merge(d[is.na(d$latitude) | is.na(d$longitude), c("trial_id", "country", "adm2", "site")],
-               gi, by.x = c("country", "site"), by.y = c("country", "location"), all.x = TRUE)
-  del$longitude[del$site == "Gayghat"] <- 84.138
-  del$latitude[del$site == "Gayghat"] <- 25.632
-  del$longitude[del$site == "Ghailadh"] <- 86.687
-  del$latitude[del$site == "Ghailadh"] <- 25.977
-  del$longitude[del$site == "Gharani"] <- 84.573
-  del$latitude[del$site == "Gharani"] <- 25.410
-  del$longitude[del$site == "Gori-Bazar"] <- 83.224
-  del$latitude[del$site == "Gori-Bazar"] <- 26.193
-  del$longitude[del$site == "Kasaya"] <- 83.619
-  del$latitude[del$site == "Kasaya"] <- 26.707
-  del$longitude[del$site == "Padrouna"] <- 83.884
-  del$latitude[del$site == "Padrouna"] <- 26.739
-  del$longitude[del$site == "Ramgharwa"] <- 84.773
-  del$latitude[del$site == "Ramgharwa"] <- 26.875
-  del$longitude[del$site == "Savrhi"] <- 78.790
-  del$latitude[del$site == "Savrhi"] <- 28.853
-  del$longitude[del$site == "Sevarhi"] <- 84.217
-  del$latitude[del$site == "Sevarhi"] <- 26.722
-  del$longitude[del$site == "Surya garha"] <- 86.216
-  del$latitude[del$site == "Surya garha"] <- 25.254
-  del$longitude[del$site == "Tamkuhiraj"] <- 84.164
-  del$latitude[del$site == "Tamkuhiraj"] <- 26.689
-  del$longitude[del$site == "tamkuhiraj"] <- 84.164
-  del$latitude[del$site == "tamkuhiraj"] <- 26.689
+  del <- merge(d[is.na(d$latitude) | is.na(d$longitude), c("trial_id", "country", "adm2", "location")],
+               gi, by.x = c("country", "location"), by.y = c("country", "location"), all.x = TRUE)
+  del$longitude[del$location == "Gayghat"] <- 84.138
+  del$latitude[del$location == "Gayghat"] <- 25.632
+  del$longitude[del$location == "Ghailadh"] <- 86.687
+  del$latitude[del$location == "Ghailadh"] <- 25.977
+  del$longitude[del$location == "Gharani"] <- 84.573
+  del$latitude[del$location == "Gharani"] <- 25.410
+  del$longitude[del$location == "Gori-Bazar"] <- 83.224
+  del$latitude[del$location == "Gori-Bazar"] <- 26.193
+  del$longitude[del$location == "Kasaya"] <- 83.619
+  del$latitude[del$location == "Kasaya"] <- 26.707
+  del$longitude[del$location == "Padrouna"] <- 83.884
+  del$latitude[del$location == "Padrouna"] <- 26.739
+  del$longitude[del$location == "Ramgharwa"] <- 84.773
+  del$latitude[del$location == "Ramgharwa"] <- 26.875
+  del$longitude[del$location == "Savrhi"] <- 78.790
+  del$latitude[del$location == "Savrhi"] <- 28.853
+  del$longitude[del$location == "Sevarhi"] <- 84.217
+  del$latitude[del$location == "Sevarhi"] <- 26.722
+  del$longitude[del$location == "Surya garha"] <- 86.216
+  del$latitude[del$location == "Surya garha"] <- 25.254
+  del$longitude[del$location == "Tamkuhiraj"] <- 84.164
+  del$latitude[del$location == "Tamkuhiraj"] <- 26.689
+  del$longitude[del$location == "tamkuhiraj"] <- 84.164
+  del$latitude[del$location == "tamkuhiraj"] <- 26.689
   for (tid in del$trial_id) {
     el <- del[del$trial_id == tid,]
     d[d$trial_id == tid, "longitude"] <- el$longitude
@@ -156,6 +157,8 @@ carob_script <- function(path) {
   }
   
   
+	d$adm3 <- trimws(d$adm3)
+	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

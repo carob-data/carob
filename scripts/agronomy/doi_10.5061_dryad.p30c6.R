@@ -119,11 +119,11 @@ carob_script <- function(path) {
    
    x <- reshape(ds, direction="long", varying =cols , v.names="value", timevar="step")
    
-   x$soil_depth <- c(rep(c("0-4", "4-8", "0-8", "8-16"), times = 10))[x$step]
+   x$depth_top <- c(rep(c(0, 4, 0, 8), times = 10))[x$step]	
+   x$depth_bottom <- c(rep(c(4, 8, 8, 16), times = 10))[x$step]	
 
-   x$soil_variable <- c(rep(c("soil_Fe", "soil_Zn", "soil_Mn", "soil_Cu", "soil_S", "soil_bd", "soil_SOM", "soil_pH", "soil_P_available", "soil_K"), each= 4))[x$step]
-   x$step <- x$id <- NULL 
-   
+   x$variable <- c(rep(c("soil_Fe", "soil_Zn", "soil_Mn", "soil_Cu", "soil_S", "soil_bd", "soil_SOM", "soil_pH", "soil_P_available", "soil_K"), each= 4))[x$step]
+   x$step <- x$id <- NULL    
 
    carobiner::write_files(path, meta, d, long = x)
 

@@ -92,7 +92,7 @@ carob_script <- function(path) {
          soil_clay= as.numeric(r2$Clay),
          soil_S= as.numeric(r2$S),
          soil_CEC= as.numeric(r2$CEC),
-		 soil_ex_Al = as.numeric(r2$EA),
+		 soil_Al_exch = as.numeric(r2$EA),
 		 soil_Al_sat = as.numeric(r2$AS)
          )
       
@@ -151,6 +151,7 @@ carob_script <- function(path) {
         station_name= "QWAQWA; UNIQWA",
         longitude= 28.82518,
         latitude= -28.48291,
+		geo_from_source = FALSE,
 		elevation = 1696,
         tmin = as.numeric(w$Tn), 
         tmax = as.numeric(w$Tx), 
@@ -173,6 +174,6 @@ carob_script <- function(path) {
 	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
-   carobiner::write_files(path, meta, d,wth = dw)
+   carobiner::write_files(path, meta, d, wth = dw)
 }
 

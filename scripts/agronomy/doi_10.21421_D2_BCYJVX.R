@@ -16,7 +16,7 @@ carob_script <- function(path) {
 		project = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;plant_density;irrigated",
-		response_vars = "fwy_leaves, fwy_stems, fwy_total, yield", 
+		response_vars = "fwy_leaves;fwy_stems;fwy_total;yield", 
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2024-08-21",
 		notes = NA

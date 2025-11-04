@@ -47,7 +47,7 @@ carob_script <- function(path) {
 
 	rr$Site <- trimws(gsub("\\.", ",", rr$Site))
 	d$country <- trimws(gsub(".*,", "", rr$Site))
-	d$location <- gsub("(.*),.*", "\\1", rr$Site)
+	d$location <- trimws(gsub("(.*),.*", "\\1", rr$Site))
 	
 	d$elevation <- round(as.numeric(rr$Altitude), 0)
 ## each site must have corresponding longitude and latitude
@@ -114,12 +114,8 @@ carob_script <- function(path) {
 	year <- substr(gsub("[^0-9.-]", "", rr$Year), 1, 4)
 	year[year == ""] <- NA
 	d$planting_date <- year
-	d$season <- ifelse(grepl("LR", rr$Year), "LR",
-                ifelse(grepl("SR", rr$Year), "SR",
-                ifelse(grepl("M", rr$Year), "M",
-                ifelse(grepl("V", rr$Year), "V",
-                ifelse(grepl("masika", rr$Year), "masika",
-                ifelse(grepl("vuli", rr$Year), "vuli", NA))))))
+	d$season <- ifelse(grepl("LR|M|masika", rr$Year), "long rains",
+                ifelse(grepl("SR|V|vuli", rr$Year), "short rains", NA))
 
 ##### Fertilizers #####
 ## note that we use P and K, not P2O5 and K2O

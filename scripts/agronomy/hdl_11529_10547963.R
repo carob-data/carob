@@ -13,7 +13,7 @@ carob_script <- function(path) {
       publication="doi:10.1016/j.fcr.2019.04.005", 
       project=NA, 
       data_type= "experiment", 
-      response_vars= "dmy_storage,fwy_total", 
+      response_vars= "dmy_storage;fwy_total", 
       treatment_vars = "variety;land_prep_method;crop_rotation", 
       carob_contributor= "Cedric Ngakou", 
       carob_date="2024-08-26"

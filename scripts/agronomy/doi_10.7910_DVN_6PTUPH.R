@@ -11,7 +11,7 @@ carob_script <- function(path) {
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1, 
       data_organization = "MSU",
       publication=NA, 
-      project=" AfricaRISING",
+      project= "AfricaRISING",
       data_type= "experiment", 
       response_vars= "yield", 
       treatment_vars = "variety", 

@@ -32,7 +32,7 @@ carob_script <- function(path) {
 		crop= "wheat",
 		adm1 = r$State, 
 		adm2= r$District,
-		adm3 = r$Block,
+		adm3 = trimws(r$Block),
 		location = r$Village,
 		latitude=r$Latitude,
 		longitude=r$Longitude,
