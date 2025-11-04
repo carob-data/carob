@@ -23,5 +23,7 @@ carob_script <- function(path) {
 	irri_lte <- carobiner::get_function("IRRI_LTE", path, group)
 	d <- irri_lte(ff)
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }

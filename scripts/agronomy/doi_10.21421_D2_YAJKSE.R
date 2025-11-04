@@ -61,6 +61,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	d$yield_part <- "pod"
 	d$irrigated <- FALSE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

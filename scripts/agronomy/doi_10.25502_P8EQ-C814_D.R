@@ -34,7 +34,7 @@ carob_script <- function(path) {
     d1$soil_pH <- (r1$pH_d10 + r1$pH_d20)/2
     d1$soil_SOC <- (r1$OC_d10 + r1$OC_d20)/2
       #P_d10	Phosphorus (ppm) @ Soil Depth: 0-10 cm	
-    d1$soil_P_available <- (r1$P_d10 + r1$P_d20)/2
+    d1$soil_P <- (r1$P_d10 + r1$P_d20)/2
      
     d1$soil_N <- (r1$N_d10 + r1$N_d20)/2
     d1$soil_K <- (r1$K_d10 + r1$K_d20)/2
@@ -67,7 +67,7 @@ carob_script <- function(path) {
     d2$latitude[d2$site=="Ido"] <- 7.55140 #instead of 7.5517
     d2$longitude[d2$site=="Ido"] <- 3.66990 #instead of 3.6691
 	  
-    soil <- d1[, c("uid", "soil_SOC", "soil_pH", "soil_P_available", "soil_K", "soil_N", "soil_Ca", "soil_Mg")]
+    soil <- d1[, c("uid", "soil_SOC", "soil_pH", "soil_P", "soil_K", "soil_N", "soil_Ca", "soil_Mg")]
     d2 <- merge(d2, soil, by="uid", all.x = TRUE)
       
     # combine d1 and d2
@@ -116,6 +116,8 @@ carob_script <- function(path) {
 	d$land_prep_method <- tolower(d$land_prep_method)
 	d$uid <- NULL
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 	
 }

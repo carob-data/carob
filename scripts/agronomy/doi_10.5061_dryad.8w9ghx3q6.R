@@ -78,10 +78,10 @@ carob_script <- function(path) {
 	
       d2 <- data.frame(
 		 trial_id = r2$Farm.No,
-         soil_sample_bottom= 30,
-         soil_sample_top = 0,
+         depth_bottom= 30,
+         depth_top = 0,
          soil_pH= as.numeric(r2$pH),
-         soil_P_available= as.numeric(r2$P),
+         soil_P= as.numeric(r2$P),
          soil_Ca= as.numeric(r2$Ca),
          soil_Mg= as.numeric(r2$Mg),
          soil_K= as.numeric(r2$K),
@@ -171,6 +171,8 @@ carob_script <- function(path) {
 	d$soil_pH[d$soil_pH < 1] <- NA
 	d$geo_from_source <- TRUE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d,wth = dw)
 }
 

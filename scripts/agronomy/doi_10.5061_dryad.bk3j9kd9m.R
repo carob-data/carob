@@ -76,6 +76,8 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
    d$previous_crop <- gsub("sugarbeet", "sugar beet", d$previous_crop)
    d$previous_crop <- gsub("osr", "rapeseed", d$previous_crop)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

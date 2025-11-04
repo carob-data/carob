@@ -103,7 +103,7 @@ carob_script <- function(path) {
     longitude= c(34.6027832, 34.1243749, 34.7484271),
     soil_pH= c(5.4, 5.1, 6.25),
     soil_N= c(0.076, 0.102, 0.094),
-    soil_P_available= c(82.95, 44.1, 35.1),
+    soil_P = c(82.95, 44.1, 35.1),
     soil_SOM= c(1.5, 2.50, 2.25),
     soil_Zn= c(0.30 , 0.25 , 0.29),
     soil_clay= c(12.4, 24.1, 21.85),
@@ -119,5 +119,7 @@ carob_script <- function(path) {
   ## Remove duplicate rows ( This is due to NA in the BNF variable )
   d <- unique(d)
   
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(path, meta, d)
 }

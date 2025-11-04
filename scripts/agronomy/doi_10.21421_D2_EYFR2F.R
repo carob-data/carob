@@ -61,7 +61,7 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
 		trial_id = c("2014_Minjibir","2015_Minjibir","2014_BUK","2015_BUK"),
                  soil_pH = c(5.01,5.35 ,4.86,5.7),
                 soil_SOC = c(0.196,0.359,0.359,0.299),
-        soil_P_available = c(9.013,3.352,4.456,9.219),
+				soil_P = c(9.013,3.352,4.456,9.219),
                soil_sand = c(92.3,82.64, 79.85,78.64),
                soil_clay = c(3.36,16.08,9.91,10.08),
                soil_silt = c(4.35,1.28,10.2,11.28),
@@ -70,6 +70,8 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
   
 	d <- merge(d, ss, by = "trial_id", all.x = TRUE)
 	d$irrigated <- NA
+
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)
 }

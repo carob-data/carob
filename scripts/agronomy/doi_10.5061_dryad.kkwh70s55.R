@@ -94,8 +94,8 @@ carob_script <- function(path) {
       soil_type= c("loam", "sandy clay loam", "clay"),
       soil_pH= c(7.4, 6.8, 5.6),
       soil_N= c(0.77, 0.61, 0.68),
-      soil_P_available= c(12.75, 35.56, 39.8)/1000,## mg/g
-      soil_ex_K= c(0.53, 3.03, 0.91),
+      soil_P= c(12.75, 35.56, 39.8)/1000,## mg/g
+      soil_K_exch= c(0.53, 3.03, 0.91),
       soil_SOC= c(8.9, 7.1, 8),
       soil_SOM= c(15.5, 12.3, 18.8),
       soil_EC= c(0.07, 0.11, 0.06)
@@ -156,6 +156,8 @@ carob_script <- function(path) {
     wth$year <-  wth$id <- NULL
     
     
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
     carobiner::write_files(path, meta, dd, wth = wth)
 }
 

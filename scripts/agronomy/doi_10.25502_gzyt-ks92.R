@@ -159,5 +159,7 @@ carob_script <- function(path) {
   dd$harvest_date <- dd$planting_date <- substr(dd$planting_date, 1, 4)
    
    dd <- dd[!is.na(dd$yield), ]
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, dd, path=path)
 }

@@ -130,6 +130,8 @@ carob_script <- function(path) {
 	d <- cbind(d[nut$id, ], nut[,-1])
 	d <- d[!is.na(d$yield), ]
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

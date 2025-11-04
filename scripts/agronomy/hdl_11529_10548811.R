@@ -132,5 +132,7 @@ carob_script <- function(path) {
 
 	# removing one missing yield value
 	d <- d[!is.na(d$yield), ]
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }

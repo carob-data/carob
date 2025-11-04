@@ -68,7 +68,7 @@ Phosphorus was applied at rate of 0 or 20 kg P ha-1. P fertilizer application in
 			soil_sand = c(88.9 ,92.8),
 			soil_clay = c(6.5 ,2.5),
 			soil_silt = c(4.6 ,4.6),
-	        soil_P_available = c(2.6 ,2.9),
+	        soil_P = c(2.6 ,2.9),
 	        soil_pH  = c(5.10, 5.0),
 	        rain  = c(945.8, 907.4)
 		)
@@ -78,5 +78,7 @@ Phosphorus was applied at rate of 0 or 20 kg P ha-1. P fertilizer application in
 	
 	d$irrigated <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta,  d,  path=path)
 }

@@ -74,6 +74,8 @@ are developed that are tested on farmer's fields in validation trials in a large
    d$harvest_date <- "2017-11-01"
 
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)   
 }
 

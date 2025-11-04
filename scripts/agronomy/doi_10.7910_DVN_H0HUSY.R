@@ -64,7 +64,7 @@ Description: This dataset contains information of experiments carried out upland
 		soil_sand = as.numeric(r3$Arena),
 		soil_clay = as.numeric(r3$Arcilla),
 		soil_N = as.numeric(r3$N),
-		soil_P_available = as.numeric(r3$P),
+		soil_P = as.numeric(r3$P),
 		soil_K = as.numeric(r3$K) * 39 * 10
 	)
 	d3$adm2[grep("Kuka hill",d1$Municipio)] <- 'Kukrahill'
@@ -90,6 +90,8 @@ Description: This dataset contains information of experiments carried out upland
 	d$planting_date <- "2019"
 	d$irrigated <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

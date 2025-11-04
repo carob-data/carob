@@ -100,6 +100,8 @@ carob_script <- function(path) {
 	d$yield <- as.numeric(d$yield)
 	d$soil_SOC <- d$soil_SOC / 10
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 	
 }

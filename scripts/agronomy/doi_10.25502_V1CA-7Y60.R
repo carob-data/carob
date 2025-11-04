@@ -237,6 +237,8 @@ carob_script <- function(path) {
 	d$yield_part <- "seed"
 	d$yield_part[d$crop == "groundnut"] <- "pod"
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 	
 }

@@ -66,7 +66,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 		soil_sand = c(91.7, 89.8),
 		soil_clay = c(4.2, 6.0),
 		soil_silt = c(4.0, 4.2),
-		soil_P_available = c(3.1, 3.6),
+		soil_P = c(3.1, 3.6),
 		soil_pH  = c(5.10, 5.0),
         rain     = c(994, 1054.3)
 	)
@@ -76,6 +76,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	d$s1 <- NULL
 	d$irrigated <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

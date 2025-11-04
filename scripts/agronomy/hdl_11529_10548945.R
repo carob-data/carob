@@ -117,6 +117,8 @@ carob_script <- function(path) {
    y <- substr(d$planting_date, 1, 4)   
    d$trial_id <- as.character(as.integer(as.factor(paste(y, d$longitude, d$latitude))))
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

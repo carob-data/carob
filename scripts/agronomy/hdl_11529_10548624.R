@@ -57,5 +57,7 @@ carob_script <- function(path) {
 	
 
 # all scripts must end like this
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }

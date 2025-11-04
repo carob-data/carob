@@ -112,6 +112,8 @@ carob_script <- function(path) {
     d$harvest_date <- "2019-10-13"
     d$variety <- "P3396"
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
     carobiner::write_files(meta, d, path=path)
 }
 

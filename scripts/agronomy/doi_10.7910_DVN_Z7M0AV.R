@@ -79,6 +79,8 @@ T10: Direct seeding maize (Maize-soybean rotation) (DS-SM), residue retention on
 	d$trial_id <- "1"
 	d$irrigated <- FALSE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, d, path=path)
 }
 

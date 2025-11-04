@@ -166,6 +166,8 @@ carob_script <- function(path) {
 	d$rep <- as.integer(d$rep)
 	d$N_splits <- as.integer(d$N_splits)
 	d$treatment <- as.character(d$treatment)
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

@@ -79,6 +79,8 @@ carob_script <- function(path) {
   d$crop_price <- as.numeric(d$crop_price)/1000
   d$irrigation_number<- as.integer(d$irrigation_number)
   
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(path, meta, d)
 }
 

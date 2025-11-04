@@ -95,6 +95,8 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 	d$K_fertilizer <- 0.06*200
 	d$K_fertilizer <- 0.01*200
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

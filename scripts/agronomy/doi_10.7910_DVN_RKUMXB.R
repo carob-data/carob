@@ -355,7 +355,9 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	d$yield_part[d$crop == "potato"] <- "tubers" 
 
 	d$soil_pH[d$soil_pH < 3.5 | d$soil_pH > 8.5] <- NA
-	d$soil_P_available[d$soil_P_available > 500] <- NA
+	d$soil_P[d$soil_P > 500] <- NA
+
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)
 }

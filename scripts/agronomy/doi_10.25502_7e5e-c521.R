@@ -211,6 +211,8 @@ carob_script <- function(path) {
 	d$location[d$location == "KWAYA KUSAR"] <- "Kwaya Kusar"
 	d$location[d$location == "HAWUL"] <- "Hawul"
 		
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

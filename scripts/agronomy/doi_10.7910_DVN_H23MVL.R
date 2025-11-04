@@ -194,6 +194,8 @@ carob_script <- function(path) {
 	#fixing land prep method
 	d$land_prep_method <- ifelse(grepl("Conventional tillage", d$land_prep_method),"conventional", "none")  
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, d, path=path)
   
 }

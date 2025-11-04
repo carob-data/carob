@@ -74,6 +74,8 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
 	d$row_spacing <- ifelse(grepl("Moleti|Mlali", d$location), 90, 75)
 	d$plant_spacing <- 60 
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

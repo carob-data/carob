@@ -74,6 +74,8 @@ Data was taken in 40 fields (replications), for the two years of research we too
 	#duplicates in crop=="cotton"
 	d <- unique(d)
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

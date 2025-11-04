@@ -186,6 +186,8 @@ AFSIS has data for five countries, each with one or two sites. Sites have subsit
 	zz$irrigated <- NA
 	zz <- unique(zz)
 	
+	zz$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, zz, path=path)
 ##	affao <- carobiner::bindr(afsis_data, zz)
 ##	carobiner::write_files(meta, affao, path=path)

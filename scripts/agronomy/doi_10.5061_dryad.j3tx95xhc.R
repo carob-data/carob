@@ -142,5 +142,7 @@ carob_script <- function(path) {
 	x$planting_date <- as.character(NA)
 
 	x <- unique(x)
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, x, path=path)
 }

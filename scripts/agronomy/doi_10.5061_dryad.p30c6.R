@@ -41,7 +41,7 @@ carob_script <- function(path) {
                      ifelse(grepl("drybean", r1$`prev. Crop`), "common bean", r1$`prev. Crop`)),
       soil_SOM= r1$`SOM (%)`,
       soil_pH= r1$pH,
-      soil_P_available= r1$`Br.P (ppm)`,
+      soil_P= r1$`Br.P (ppm)`,
       soil_K= r1$`K (ppm)`,
       irrigated= ifelse(grepl("yes" , r1$`Irrig. Amount`), TRUE, FALSE),
       irrigation_amount=  r1$`Irrigation mm`,

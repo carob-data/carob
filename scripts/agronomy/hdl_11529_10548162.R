@@ -183,6 +183,8 @@ carob_script <- function(path) {
 	wd <- merge(wd, geo, by="location")
     wd$geo_from_source <- FALSE
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d, wth = wd)
 }
 

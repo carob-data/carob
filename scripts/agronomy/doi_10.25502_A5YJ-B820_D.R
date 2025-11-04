@@ -74,6 +74,8 @@ The data support a research article which is under review “Increased cassava g
 	d$yield_part <- "roots" 
 	d$planting_date <- ifelse(d$season == "LR2014", "2014", "2015")
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 	
 }

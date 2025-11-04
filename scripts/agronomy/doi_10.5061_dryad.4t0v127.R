@@ -118,6 +118,8 @@ carob_script <- function(path) {
    ### removing duplicate rows ( occur probably during the data collection)  
    d <- unique(d)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d)
    
 }

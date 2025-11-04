@@ -71,6 +71,8 @@ carob_script <- function(path) {
 message("should also process soil and weather data")
 
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
    
 }

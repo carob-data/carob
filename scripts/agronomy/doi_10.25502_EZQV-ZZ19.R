@@ -151,6 +151,8 @@ carob_script <- function(path){
 	d$geo_from_source[i] <- FALSE
 	d$irrigated <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

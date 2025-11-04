@@ -292,6 +292,22 @@ carob_script <- function(path) {
    # so that you can specify the price per fertilizer type
    d$fertilizer_price <- as.character(d$fertilizer_price)
    
+   
+   i <- grep("^42", d$flowering_date)
+   d$flowering_date[i] <- as.character(as.Date("1900-01-01") +  as.numeric(d$flowering_date[i]) -2 )
+	d$flowering_date[d$flowering_date == "02-29-16"] <- "2016-02-29"
+
+	i <- which(is.na(d$planting_date))
+	d$planting_date[i] <- substr(d$season[i], 6, 9)
+
+	i <- which(is.na(d$harvest_date))
+	d$harvest_date[i] <- paste0("20", substr(d$season[i], 11, 12))
+	
+	d$season <- "rabi"
+	 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
+
    carobiner::write_files(path, meta, d)
 }
 

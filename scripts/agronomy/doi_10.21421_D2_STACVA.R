@@ -61,6 +61,8 @@ Despite the recent release of several improved varieties of groundnut in Nigeria
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

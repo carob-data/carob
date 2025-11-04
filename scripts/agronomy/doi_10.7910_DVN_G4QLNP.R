@@ -42,7 +42,7 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 		soil_pH = r2[["pH"]],
 		soil_CEC = r2[["CEC"]],
 		soil_SOC = r2[["OC"]],
-		soil_P_available = r2[["Avl_P"]],
+		soil_P = r2[["Avl_P"]],
 		soil_sand = r2[["Sand"]],
 		soil_silt = r2[["Silt"]],
 		soil_clay = r2[["Clay"]]
@@ -124,6 +124,8 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 	d$K_fertilizer <- as.numeric(NA)
 	d$irrigated <- FALSE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 
 }

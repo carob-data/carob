@@ -134,6 +134,8 @@ carob_script <- function(path){
 	q$planting_date[i] <- "2012-08-23"
 		
 	# all scripts should end like this
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, q, path=path)
 }  
   

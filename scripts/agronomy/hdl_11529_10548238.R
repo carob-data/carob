@@ -222,6 +222,8 @@ carob_script <- function(path) {
 	## maize is not harvested more than 1 year after planting
 	d$harvest_date <- gsub("2017-09-30", "2016-09-30", d$harvest_date) 
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 	
 }

@@ -64,6 +64,8 @@ carob_script <- function(path) {
    d$land_prep_method <- gsub("Labranza Convencional", "conventional", d$land_prep_method)
    d$land_prep_method <- gsub("Camas Permanentes Angostas", "permanent beds", d$land_prep_method)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(meta, d, path=path)
 }
 

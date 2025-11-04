@@ -27,6 +27,8 @@ carob_script <- function(path) {
 	)
 	
 	meta$dataset_id <- paste0(meta$dataset_id, "_nodata")
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta)
 }
 

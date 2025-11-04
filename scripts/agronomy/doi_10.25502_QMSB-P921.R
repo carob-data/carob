@@ -219,6 +219,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   z$on_farm <- TRUE
   z$irrigated <- NA
   
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, z, path=path)
 }
 

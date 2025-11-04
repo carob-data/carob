@@ -55,7 +55,7 @@ carob_script <- function(path) {
       #soil_ECE= r2$Ece,
       soil_SOM= r2$OM,
       soil_N= r2$N...18,
-      soil_P_available= r2$P,
+      soil_P= r2$P,
       soil_K= r2$K...21*200, ## 1meq/100g = 200mg/kg
       soil_Zn= r2$Zn,
       soil_Cu= r2$Cu,
@@ -92,6 +92,8 @@ carob_script <- function(path) {
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d)
 }
 

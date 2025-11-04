@@ -69,7 +69,7 @@ carob_script <- function(path) {
 		soil_clay = 35.2,
 		soil_silt = 12.4,
 		soil_CEC = 15.40,
-		soil_P_available = 0.06,
+		soil_P = 0.06,
 		soil_SOC = 1.90,
 		soil_N = 1100,
 		soil_sample_top = 15
@@ -122,7 +122,7 @@ carob_script <- function(path) {
 	  soil_clay = 8.9,
 	  soil_silt = 3.6,
 	  soil_CEC = 1.78,
-	  soil_P_available = 0.30,
+	  soil_P = 0.30,
 	  soil_SOC = 2.05,
 	  soil_N = 1800,
 	  soil_sample_top = 15
@@ -154,6 +154,8 @@ carob_script <- function(path) {
 	wth <- do.call(rbind, wh)
 	
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path, wth = wth)
 }
 

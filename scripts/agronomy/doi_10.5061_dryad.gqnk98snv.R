@@ -70,7 +70,7 @@ carob_script <- function(path) {
       soil_EC= c(0.43, 0.34),
       soil_type= c(rep("clay loam", 2)),
       soil_N= c(0.11, 0.16),
-      soil_P_available= c(42, 36),
+      soil_P= c(42, 36),
       soil_K= c(213, 181)
    )
    
@@ -91,6 +91,8 @@ carob_script <- function(path) {
    d$plantD <- NULL       
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

@@ -114,6 +114,8 @@ carob_script <- function(path) {
 	d <- unique(d[!is.na(d$yield), ])
 	d$plant_density[d$plant_density < 1] <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

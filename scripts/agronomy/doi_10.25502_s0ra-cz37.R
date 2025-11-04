@@ -211,5 +211,7 @@ carob_script <- function(path) {
   d$location <- as.character(d$location)
   d$yield_part <- "seed"
   d$planting_date <- as.character(NA)
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, d, path=path)
 }

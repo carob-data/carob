@@ -97,7 +97,7 @@ Result of a multi-location study across Africa and Asia where different varietie
 		ID = r2$Environment,
 		season = tolower(r2$Season),
 		soil_pH = as.numeric(r2$pH),
-		soil_P_available = as.numeric(r2[,"Bray-P (mg kg-1)"]),
+		soil_P = as.numeric(r2[,"Bray-P (mg kg-1)"]),
 		N_fertilizer = as.numeric(r2$N),
 		P_fertilizer = as.numeric(r2$P),
 		K_fertilizer = as.numeric(r2$K),
@@ -134,6 +134,8 @@ Result of a multi-location study across Africa and Asia where different varietie
 	d$irrigated[d$country %in% c("Gambia", "Burkina Faso")] <- FALSE
 	d$ID <- d$design <- NULL
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

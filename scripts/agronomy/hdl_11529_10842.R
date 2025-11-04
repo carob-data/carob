@@ -99,6 +99,8 @@ T10: Crop rotation B2 (B2S): direct seeding with animal drawn seeder, maize-sunf
 	d$geo_from_source <- FALSE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta,d)
 }
 

@@ -55,8 +55,8 @@ carob_script <- function(path) {
       soil_K_2020= r1$X_20X_20.1,
       soil_N_2019= r1$X_2019.2,
       soil_N_2020= r1$X_20X_20.2,
-      soil_sample_top= 0,
-      soil_sample_bottom= 20
+      depth_top= 0,
+      depth_bottom= 20
    ) 
    d1$trt <- 1:nrow(d1)
    d1$rep <- ifelse(d1$trt <= 6,1L,
@@ -64,7 +64,7 @@ carob_script <- function(path) {
   
     d1 <- reshape(d1, varying = list(c("soil_pH_2019", "soil_pH_2020"), c("soil_P_available_2019", "soil_P_available_2020"),
                                     c("soil_SOC_2019","soil_SOC_2020"), c("soil_K_2019", "soil_K_2020"), c("soil_N_2019", "soil_N_2020")),
-                 v.names = c("soil_pH", "soil_P_available", "soil_SOC", "soil_K", "soil_N"),
+                 v.names = c("soil_pH", "soil_P", "soil_SOC", "soil_K", "soil_N"),
                  timevar ="planting_date",
                  times =  c(2019,2020) ,
                  direction = "long")
@@ -128,5 +128,7 @@ carob_script <- function(path) {
    d$K_fertilizer <- 150
    
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(meta, d, path=path)
 }

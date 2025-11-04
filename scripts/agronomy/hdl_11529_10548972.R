@@ -89,6 +89,8 @@ carob_script <- function(path) {
 	i <- which(d$plant_height < 1)
 	d$plant_height[i] <- d$plant_height[i] * 100
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

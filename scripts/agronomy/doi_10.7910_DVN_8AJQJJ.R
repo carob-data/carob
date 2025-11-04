@@ -139,7 +139,7 @@ carob_script <- function(path) {
 	d$soil_sand <- as.numeric(rr$Sand)
 	d$soil_clay <- as.numeric(rr$Clay)
 	# Seems to be in mg/kg, but the range of values in carob do not fit the observations here
-	d$soil_P_available <- rr$`Avail P` 
+	d$soil_P <- rr$`Avail P` 
 	
 	#### OTHER ######
 	 # coerced NAs due to character types. Could be suppressed.
@@ -184,11 +184,12 @@ carob_script <- function(path) {
 	d$longitude[i] <- -d$longitude[i]
 	d$geo_from_source[i] <- FALSE
 	  
-  	d$soil_P_available[d$soil_P_available > 200] <- NA
-	
-	d <- d[!is.na(d$yield), ]
+ # 	d$soil_P[d$soil_P > 200] <- NA
+ #	d <- d[!is.na(d$yield), ]
 	d$on_farm <- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

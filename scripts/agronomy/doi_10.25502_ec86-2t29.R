@@ -108,5 +108,7 @@ carob_script <- function(path) {
   
   d$yield[which(d$yield > 25000)] <- NA
   
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
   carobiner::write_files(meta, dd, path=path)
 }

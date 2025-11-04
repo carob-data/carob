@@ -119,6 +119,8 @@ Growing maize (Zea mays) in association with legume tree in agroforestry arrange
 	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

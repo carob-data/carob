@@ -34,10 +34,8 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 	f <- ff[basename(ff) == "maize-nutritional-data.csv"]
 	#f1 <- ff[basename(ff) == "data_dictionary.csv"]
 	
-	r <- read.csv(f, fileEncoding = "latin1", na= "")
-	#r1 = read.csv(f1)
+	rr <- read.csv(f, fileEncoding = "latin1", na= "")
 	
-### processing
 
 	Process <- function(d){
 	   if(is.null(d$FYM_Cnt)) d$FYM_Cnt <- NA
@@ -60,7 +58,7 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 	   return(df)
 	}
 	
-	r <- Process(r)
+	r <- Process(rr)
 	
 #### Process
 	
@@ -104,15 +102,17 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       soil_SOC = r$SOC,
       soil_SOM = r$SOM,
       soil_N = r$Tot_N,
-      soil_P = ifelse(!grepl("Mehlich", r$AveP_method), r$Avail_P, NA) ,
-      soil_P_method = ifelse(!grepl("Mehlich", r$AveP_method), r$AveP_method, NA),
-      soil_P_mehlich3 = ifelse(grepl("Mehlich", r$AveP_method) & is.na(r$Avail_P_Mehlich), r$Avail_P, r$Avail_P_Mehlich),
-      soil_P_method_Mch3 = "Mehlich3",
+#      soil_P = ifelse(!grepl("Mehlich", r$AveP_method), r$Avail_P, NA) ,
+#      soil_P_method = ifelse(!grepl("Mehlich", r$AveP_method), r$AveP_method, NA),
+#     soil_P_mehlich3 = ifelse(grepl("Mehlich", r$AveP_method) & is.na(r$Avail_P_Mehlich), r$Avail_P, r$Avail_P_Mehlich),
+#      soil_P_method_Mch3 = "Mehlich3",
+	  soil_P = r$Avail_P,
+	  soil_P_method = r$AveP_method,
       soil_K = r$Soil_K,
       soil_Zn = r$Soil_Zn,
       soil_Zn_method= r$Zn_method,
       soil_Fe = r$Soil_Fe,
-      record_id = as.integer(1:nrow(r)),
+      #record_id = as.integer(1:nrow(r)),
       trial_id = paste(r$TrialSite, r$Yr_experiment, sep = "-"), 
       on_farm = ifelse(grepl("Surveys", r$Data_source), FALSE, NA), ## 
       is_survey = grepl("Surveys", r$Data_source), 
@@ -123,143 +123,144 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       fertilizer_used = TRUE
    )	
 	
-###  Fixing fertilizer
-d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
-d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
-d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
+	###  Fixing fertilizer
+	d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
+	d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
+	d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
 
 
-soil <- d[, grepl("soil_P|soil_Zn|record_id", names(d))]   
-  
-### We transform soil_P and soil_Zn  into a long format to capture different method of extraction
-## This need to be check( can we have a value insight var_meta ?)
-##
-soilmeta <- reshape(soil, varying = list(c("soil_P", "soil_P_mehlich3", "soil_Zn"), c("soil_P_method", "soil_P_method_Mch3", "soil_Zn_method")),
-          v.names = c("value", "method") , 
-          timevar = "variable",
-          times = c("P", "P", "Zn"),
-         direction = "long")
-soilmeta <- soilmeta[!is.na(soilmeta$value),]  
-soilmeta$method <- ifelse(is.na(soilmeta$method), "unspecified", soilmeta$method)
-soilmeta$id <- d$soil_P_method <- d$soil_P_method_Mch3 <- d$soil_Zn_method <- d$soil_P_mehlich3 <- d$soil_P <- d$soil_Zn <- NULL
- 
+	#soil <- d[, grepl("soil_P|soil_Zn|record_id", names(d))]   
+	  
+	### We transform soil_P and soil_Zn  into a long format to capture different method of extraction
+	## This need to be check( can we have a value inside var_meta ?)
+    
+## No, we cannot.
+#	soilmeta <- reshape(soil, varying = list(c("soil_P", "soil_P_mehlich3", "soil_Zn"), c("soil_P_method", "soil_P_method_Mch3", "soil_Zn_method")),
+#			  v.names = c("value", "method") , 
+#			  timevar = "variable",
+#			  times = c("P", "P", "Zn"),
+#			 direction = "long")
+#	soilmeta <- soilmeta[!is.na(soilmeta$value),]  
+#	soilmeta$method <- ifelse(is.na(soilmeta$method), "unspecified", soilmeta$method)
+#	soilmeta$id <- d$soil_P_method <- d$soil_P_method_Mch3 <- d$soil_Zn_method <- d$soil_P_mehlich3 <- d$soil_P <- d$soil_Zn <- NULL
+	 
 
-### Fixing country
-d$country <- gsub("USA", "United States" , d$country)
+	### Fixing country
+	d$country <- gsub("USA", "United States" , d$country)
 
-### Fixing longitude and latitude
-x <- d$longitude
-y <- gsub("28°38'S;77°10'E", "28°38'S", d$latitude)
+	### Fixing longitude and latitude
+	x <- d$longitude
+	y <- gsub("28°38'S;77°10'E", "28°38'S", d$latitude)
 
-convert_to_decimal <- function(x) {
-   
-   # normalize Unicode symbols
-   x <- gsub("[˚ºᵒ]|°", "°", x)    
-   x <- gsub("[’′ʹ]|'", "'", x)    
-   x <- gsub("″|”|“|''", "\"", x) 
-   x <- gsub("[?]|''|“|”|\u0091|\u0092", "'", x)    # replace ? and odd quotes with '
-   x <- gsub("°", " ", x)                           # replace ° with space
-   x <- gsub("'", " ", x)                           # replace ' with space
-   x <- gsub("\"", " ", x)                          # replace " with space
-   x <- gsub("\\s+", " ", x)
-   
-   # Extract direction (N/S/E/W)
-   dir <- ifelse(grepl("[NnSsEeWw]$", x), substr(x, nchar(x), nchar(x)) , "")
-   x <- trimws(substr(x, 1, nchar(x)-1))
-   
-   # Split into D M S (degrees, minutes, seconds)
-   parts <- strsplit(x, " ")
-   result <- sapply(parts, function(p) {
-      p <- p[p != ""]  # remove empty parts
-      d <- as.numeric(p[1])
-      m <- ifelse(length(p) >= 2, as.numeric(p[2]), 0)
-      s <- ifelse(length(p) >= 3, as.numeric(p[3]), 0)
-      d + m/60 + s/3600
-   })
-   # Apply sign for South and West
-   result[dir %in% c("S", "W")] <- -result[dir %in% c("S", "W")]
-   
-   return(result)
-}
-
-
-# get long and lat in decimal
-
-d$lon <- suppressWarnings(convert_to_decimal(x))
-d$lat <- suppressWarnings(convert_to_decimal(y))
-
-i <- !is.na(d$lon)
-d$longitude[i] <- d$lon[i]
-P <- carobiner::fix_name(d$longitude)
-P[grepl("79°15", P)] <- as.character(79+ 15/60)
-d$longitude <-  as.numeric(P)
+	convert_to_decimal <- function(x) {
+	   
+	   # normalize Unicode symbols
+	   x <- gsub("[˚ºᵒ]|°", "°", x)    
+	   x <- gsub("[’′ʹ]|'", "'", x)    
+	   x <- gsub("″|”|“|''", "\"", x) 
+	   x <- gsub("[?]|''|“|”|\u0091|\u0092", "'", x)    # replace ? and odd quotes with '
+	   x <- gsub("°", " ", x)                           # replace ° with space
+	   x <- gsub("'", " ", x)                           # replace ' with space
+	   x <- gsub("\"", " ", x)                          # replace " with space
+	   x <- gsub("\\s+", " ", x)
+	   
+	   # Extract direction (N/S/E/W)
+	   dir <- ifelse(grepl("[NnSsEeWw]$", x), substr(x, nchar(x), nchar(x)) , "")
+	   x <- trimws(substr(x, 1, nchar(x)-1))
+	   
+	   # Split into D M S (degrees, minutes, seconds)
+	   parts <- strsplit(x, " ")
+	   result <- sapply(parts, function(p) {
+		  p <- p[p != ""]  # remove empty parts
+		  d <- as.numeric(p[1])
+		  m <- ifelse(length(p) >= 2, as.numeric(p[2]), 0)
+		  s <- ifelse(length(p) >= 3, as.numeric(p[3]), 0)
+		  d + m/60 + s/3600
+	   })
+	   # Apply sign for South and West
+	   result[dir %in% c("S", "W")] <- -result[dir %in% c("S", "W")]
+	   
+	   return(result)
+	}
 
 
-i <- !is.na(d$lat)
-d$latitude[i] <- d$lat[i]
-P <- carobiner::fix_name(d$latitude)
-P[grepl("32°6'37", P)] <- as.character(32 + 6/60 + 37/3600)
-P[grepl("28°38'", P)] <- as.character(28 + 38/60)
-d$latitude <- as.numeric(P)
-d$lon <- d$lat <- NULL
+	# get long and lat in decimal
 
-### Fixing geo coordinate
-geo <- data.frame(
-   location= c("Faisalabad", "Delhi", "Oaxaca", "Research Station of Safiabad Dezful", "New Delhi", "Bilecik Seyh Edebali University", "Palampur", "Kiboko", "Nyankpala", "Ismailia Governorate", "Karnataka"),
-   long= c(73.1181, 77.2121, -96.728, 48.4190, 77.2121, 29.9696, 76.5372, 37.70000, -0.97833, 32.237, 75.647),
-   lat= c(31.43635, 28.7161, 17.072439, 32.263, 28.7161, 40.1950, 32.112, -2.220, 9.3966, 30.577, 14.7621),
-   country= c("Pakistan", "India", "Mexico", "Iran", "India", "Turkey", "India", "Kenya", "Ghana", "Egypt", "India"),
-   geo_from= FALSE
-)
+	d$lon <- suppressWarnings(convert_to_decimal(x))
+	d$lat <- suppressWarnings(convert_to_decimal(y))
 
-d <- merge(d, geo, by= c("location", "country"), all.x = TRUE)
-d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
-d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
-d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
-d$long <- d$lat <- d$geo_from <- NULL 
-
-### Fixing mistake on latitude and longitude
+	i <- !is.na(d$lon)
+	d$longitude[i] <- d$lon[i]
+	P <- carobiner::fix_name(d$longitude)
+	P[grepl("79°15", P)] <- as.character(79+ 15/60)
+	d$longitude <-  as.numeric(P)
 
 
-### Gabura and Tulatuli is not located in India but in Bangladesh
-i <- grepl("India", d$country) & grepl("Gabura|Tulatuli", d$location)
-d$country[i] <- "Bangladesh"
+	i <- !is.na(d$lat)
+	d$latitude[i] <- d$lat[i]
+	P <- carobiner::fix_name(d$latitude)
+	P[grepl("32°6'37", P)] <- as.character(32 + 6/60 + 37/3600)
+	P[grepl("28°38'", P)] <- as.character(28 + 38/60)
+	d$latitude <- as.numeric(P)
+	d$lon <- d$lat <- NULL
 
-i <- grepl("Zimbabwe", d$country) & grepl("Hwedza|Mutasa", d$location)
-d$latitude[i] <- - abs(d$latitude[i])
+	### Fixing geo coordinate
+	geo <- data.frame(
+	   location= c("Faisalabad", "Delhi", "Oaxaca", "Research Station of Safiabad Dezful", "New Delhi", "Bilecik Seyh Edebali University", "Palampur", "Kiboko", "Nyankpala", "Ismailia Governorate", "Karnataka"),
+	   long= c(73.1181, 77.2121, -96.728, 48.4190, 77.2121, 29.9696, 76.5372, 37.70000, -0.97833, 32.237, 75.647),
+	   lat= c(31.43635, 28.7161, 17.072439, 32.263, 28.7161, 40.1950, 32.112, -2.220, 9.3966, 30.577, 14.7621),
+	   country= c("Pakistan", "India", "Mexico", "Iran", "India", "Turkey", "India", "Kenya", "Ghana", "Egypt", "India"),
+	   geo_from= FALSE
+	)
 
-i <- grepl("United States", d$country) & grepl("Mississippi State University|Sampson County", d$location)
-d$longitude[i] <- - abs(d$longitude[i])
+	d <- merge(d, geo, by= c("location", "country"), all.x = TRUE)
+	d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
+	d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
+	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
+	d$long <- d$lat <- d$geo_from <- NULL 
 
-
-i <- grepl("Bosnia and Herzegovina", d$country) & grepl("Northwest", d$location)
-d$longitude[i] <-  abs(d$longitude[i])
-
-
-i <- grepl("Argentina", d$country) & grepl("Pampas", d$location)
-d$longitude[i] <- - abs(d$longitude[i])
-d$latitude[i] <- - abs(d$latitude[i])
-
-
-## Fixing soil texture
-d$soil_texture <- gsub("_", " ", d$soil_texture)
-d$soil_texture <- gsub("^silty$", "silt", d$soil_texture)
-
-## Fixing country names
-P <- carobiner::fix_name(d$country, "title")
-P[grepl("China", P)] <- "China"
-P[grepl("Serbia", P)] <- "Serbia"
-P <- gsub("Phillipines", "Philippines", P)
-P <- gsub("Korea", "South Korea", P)
-d$country <- P
+	### Fixing mistake on latitude and longitude
 
 
-### drop rows with missing yield
-d <- d[!is.na(d$yield),]
+	### Gabura and Tulatuli is not located in India but in Bangladesh
+	i <- grepl("India", d$country) & grepl("Gabura|Tulatuli", d$location)
+	d$country[i] <- "Bangladesh"
 
-## The missing values in longitude and latitude are due to the missing location in the raw data 
+	i <- grepl("Zimbabwe", d$country) & grepl("Hwedza|Mutasa", d$location)
+	d$latitude[i] <- - abs(d$latitude[i])
 
-carobiner::write_files(path, meta, d, var_meta = soilmeta)
+	i <- grepl("United States", d$country) & grepl("Mississippi State University|Sampson County", d$location)
+	d$longitude[i] <- - abs(d$longitude[i])
+
+
+	i <- grepl("Bosnia and Herzegovina", d$country) & grepl("Northwest", d$location)
+	d$longitude[i] <-  abs(d$longitude[i])
+
+
+	i <- grepl("Argentina", d$country) & grepl("Pampas", d$location)
+	d$longitude[i] <- - abs(d$longitude[i])
+	d$latitude[i] <- - abs(d$latitude[i])
+
+
+	## Fixing soil texture
+	d$soil_texture <- gsub("_", " ", d$soil_texture)
+	d$soil_texture <- gsub("^silty$", "silt", d$soil_texture)
+
+	## Fixing country names
+	P <- carobiner::fix_name(d$country, "title")
+	P[grepl("China", P)] <- "China"
+	P[grepl("Serbia", P)] <- "Serbia"
+	P <- gsub("Phillipines", "Philippines", P)
+	P <- gsub("Korea", "South Korea", P)
+	d$country <- P
+
+
+	### drop rows with missing yield
+	d <- d[!is.na(d$yield),]
+
+	## The missing values in longitude and latitude are due to the missing location in the raw data 
+
+	carobiner::write_files(path, meta, d)
 
 }
 

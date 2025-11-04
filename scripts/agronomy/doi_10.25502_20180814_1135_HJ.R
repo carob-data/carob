@@ -82,5 +82,7 @@ carob_script <- function(path) {
 	d$irrigated <- NA
 	d$planting_date <- as.character(NA)
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }

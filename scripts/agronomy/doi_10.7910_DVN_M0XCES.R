@@ -98,7 +98,7 @@ carob_script <- function(path) {
 		rep = as.integer(r2$Reps),
 		soil_pH = r2$pH, 
 		soil_EC = r2$X.EC.Salts.uS.cm, 
-		soil_P_available = r2$X.Phosphorus.Olsen.ppm, 
+		soil_P = r2$X.Phosphorus.Olsen.ppm, 
 		soil_K = r2$Potassium.ppm, 
 		soil_Ca = r2$Calcium.ppm, 
 		soil_Mg = r2$Magnesium.ppm, 
@@ -133,6 +133,8 @@ carob_script <- function(path) {
 	
 	## dw needs lon/lat as well
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d, wth=dw)   
 }
 

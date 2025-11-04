@@ -194,6 +194,8 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$irrigated <- NA
 	d <- unique(d)
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

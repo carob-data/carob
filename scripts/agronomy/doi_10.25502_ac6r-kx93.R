@@ -247,7 +247,7 @@ carob_script <- function(path){
   
 
 	d1$country <- d1$country
-	d1$adm2 <- d1$district
+	d1$adm2 <- trimws(d1$district)
 	d1$adm3 <- d1$sector_ward
 	d1$adm3 <- carobiner::fix_name(d1$adm3)
 	d1$location <- d1$village
@@ -339,9 +339,6 @@ carob_script <- function(path){
 	omit <- which(colnames(d) %in% c('SN', 'ssid', 'farm_id', 'plot', 'fertilizer'))
 	d <- d[,-omit]
 	
-	# remove whitespace in trial_id
-	#d$trial_id <- gsub("[[:space:]]", "", d$trial_id)
-	d$trial_id <- ifelse (d$trial_id == "",NA, d$trial_id)
 	d$crop = "soybean"
 	d$yield_part <- "seed"
 	
@@ -350,6 +347,8 @@ carob_script <- function(path){
 	d$is_survey <- NA 
 	d$irrigated	<- NA
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

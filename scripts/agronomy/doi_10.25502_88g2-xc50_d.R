@@ -63,6 +63,8 @@ carob_script <- function(path) {
    
    d <- merge(d, geo, by="location", all.x = TRUE)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
  carobiner::write_files(path, meta, d)
  
 }

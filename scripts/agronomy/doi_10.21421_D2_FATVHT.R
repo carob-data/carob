@@ -68,6 +68,8 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 	d$location[d$location == "BUK"] <- "Bayero University, Kano"
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 
 }

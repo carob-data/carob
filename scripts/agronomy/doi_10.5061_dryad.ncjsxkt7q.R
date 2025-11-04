@@ -97,7 +97,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		soil_SOM= (c( 34, 33, 37, 42, 34, 32))/10, ## in %
 		soil_CEC= c( 16.6, 13.9, 17.4, 19.5, 22, 14.8),
 		soil_pH= c( 7, 5, 6.9, 5.9, 5.8, 7.2),
-		soil_P_available= c( 164, 36, 18, 85, 25, 35),
+		soil_P= c( 164, 36, 18, 85, 25, 35),
 		soil_K= c( 590, 99, 125, 155, 165, 163),
 		soil_Ca= c( 2250, 1100, 2400, 2300, 2500, 1800),
 		soil_Mg= c(455, 260, 575, 340, 515, 645)
@@ -105,6 +105,8 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 
 	d	<- merge(d, soil, by="location", all.x = TRUE)
  
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

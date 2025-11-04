@@ -72,7 +72,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
       land_prep_method= tolower(r2$tillage),
       depth= r2$`depth, inches`,
       #soil_P_available1= r2$Bray1,
-      soil_P_available= r2$Olsen,
+      soil_P = r2$Olsen,
       soil_P_Mehlich= r2$Mehlich3,
       country= "United States"
    )

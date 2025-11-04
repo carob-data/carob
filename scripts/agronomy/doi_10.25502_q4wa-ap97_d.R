@@ -135,6 +135,8 @@ carob_script <- function(path){
 	s$geo_from_source <- FALSE
 	
   # all scripts should end like this
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, s, path=path)
 
 }

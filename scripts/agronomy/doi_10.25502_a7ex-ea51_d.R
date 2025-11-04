@@ -119,6 +119,8 @@ carob_script <- function(path){
 	e$irrigated <- NA
 	
 	# all scripts should end like this
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, e, path=path)
 }
 

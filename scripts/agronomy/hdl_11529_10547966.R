@@ -141,6 +141,8 @@ carob_script <- function(path) {
 	d$fertilizer_type[d$fertilizer_type == ""] <- "unknown"
 	d <- unique(d)
   
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)	
 }
 

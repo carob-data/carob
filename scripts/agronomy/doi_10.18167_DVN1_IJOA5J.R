@@ -131,6 +131,8 @@ carob_script <- function(path) {
 	f$previous_crop <- carobiner::replace_values(f$previous_crop,c("sweet_potatoes", "groundnuts","velvet_beans","fallow"), c("sweetpotato","groundnut","velvet bean",NA))
 	f <- f[-1:-9]
   
+	f$yield_moisture <- as.numeric(NA) #needs to be checked
+
     carobiner::write_files(meta, f, path=path)
 }
 

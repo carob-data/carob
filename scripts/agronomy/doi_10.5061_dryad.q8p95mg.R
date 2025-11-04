@@ -183,6 +183,8 @@ Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 

@@ -132,6 +132,8 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	d$geo_from_source <- TRUE
 	d$planting_date <- "2018-02"
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files (path, meta, d)
 }
 

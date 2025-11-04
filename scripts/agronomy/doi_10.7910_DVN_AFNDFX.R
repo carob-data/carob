@@ -64,6 +64,8 @@ carob_script <- function(path) {
    
 #   d$harvest_index[d$harvest_index > 100] <- NA
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d)
 }
 

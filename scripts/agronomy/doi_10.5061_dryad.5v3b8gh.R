@@ -125,7 +125,7 @@ carob_script <- function(path) {
 		soil_pH = c(6.48, 5.96, 5.91, 7.73, 5.53, 5.45),
 		soil_SOC = c(1.60, 1.26, 1.57, 4.76, 2.80, 3.80),
 		soil_N = c(0.27, 0.11, 0.17, 0.35, 0.22, 0.35),
-		soil_P_available  = c(87.6, 14.4, 32.3, 8.13, 12.9, 13.5),
+		soil_P  = c(87.6, 14.4, 32.3, 8.13, 12.9, 13.5),
 		soil_K = c(0.19, 0.14, 0.20, 0.37, 0.19, 0.16),
 		soil_Ca = c(4.70, 1.07, 1.26, 13.2, 1.22, 1.35),
 		soil_Mg = c(1.30, 0.41, 0.46, 0.30, 0.53, 0.48),
@@ -141,6 +141,8 @@ carob_script <- function(path) {
 
 
  
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
     carobiner::write_files(path, meta, d)
    
 }

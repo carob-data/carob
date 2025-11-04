@@ -353,5 +353,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$is_survey <- d$pratice == "CONVENTIONAL"
 	d$geo_from_source <- TRUE
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }

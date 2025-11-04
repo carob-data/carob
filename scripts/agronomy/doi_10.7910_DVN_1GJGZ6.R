@@ -147,8 +147,8 @@ The cropping system physiological characteristic datasheet contains data on maiz
 	)
 
 	soilmeta <- data.frame(
-	   soil_element = "P",
-	   soil_method = "Olsen"
+	   variable = "soil_P",
+	   method = "Olsen"
 	)
 
 	### merge d3 with d

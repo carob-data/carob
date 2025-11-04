@@ -88,6 +88,8 @@ carob_script <- function(path) {
 	d$date <- d$weed_biomass <- NULL
 	d <- unique(d)
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d, long=x)
 }
 

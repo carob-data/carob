@@ -93,6 +93,8 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
   	d$irrigated <- FALSE
 	d <- d[!is.na(d$yield), ]
 
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, d, path=path)
 }
 

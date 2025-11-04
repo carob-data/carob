@@ -159,7 +159,7 @@ Soil samples were collected before the trials and after the trials. Data collect
       soil_Fe= r5$Fe.mg.kg,
       soil_N= r5$TN.Kjeld..,
       soil_SOC= r5$OC.BlkW..,
-      soil_P_available= r5$P.Olsen.Bray.mg.kg,
+      soil_P= r5$P.Olsen.Bray.mg.kg,
       soil_S= r5$S.mg.kg,
       soil_CEC= r5$CEC.cmolc.kg,
       soil_ex_Ca= r5$exch..Ca2.,
@@ -218,6 +218,8 @@ Soil samples were collected before the trials and after the trials. Data collect
    d <- merge(d, geo, by="location", all.x = TRUE)   
    
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

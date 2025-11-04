@@ -82,6 +82,8 @@ carob_script <- function(path) {
    # the plant_height values are very low. The unit is given in cm, but I suppose this is probably an error.
    # assuming it was in dm and convert into cm
    d$plant_height <- d$plant_height * 10
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(meta, d, path=path)	
 }
 

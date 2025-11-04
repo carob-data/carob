@@ -73,6 +73,8 @@ Abstract: Low soil fertility and water shortage are major constraints to food pr
 
 	e$irrigated <- FALSE
 	
+	e$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(meta, e, path=path)
 
 }

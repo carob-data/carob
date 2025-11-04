@@ -74,6 +74,8 @@ affect the variation in the yield of maize. The dataset was created through a co
 	d$planting_date[is.na(d$planting_date)] <- "2015"
 	d$yield_part <- "grain"
 	
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 }
 
