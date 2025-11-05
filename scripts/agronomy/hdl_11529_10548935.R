@@ -148,8 +148,8 @@ carob_script <- function(path) {
 	d$adm1 <- "México"
 	d$adm2 <- "Texcoco"
 	d$elevation <- 2257 
-	d$longitude <- -98.8806
-	d$latitude <- 19.517
+	d$longitude <- -98.8498
+	d$latitude <- 19.5289
 	d$geo_from_source <- FALSE
 	d$crop <- tolower(d$crop)
 	d$rep <- as.integer(d$rep)

@@ -250,8 +250,14 @@ process_cassava <- function(ff, location=NULL, adm1=NULL) {
 	}
 	d$dmy_storage <- r$dry.yield.CO_334.0000014
 	if (!is.null(r$dry.matter.content.percentage.CO_334.0000092)) {
-		yield_moisture <- 100 - r$dry.matter.content.percentage.CO_334.0000092
+		d$yield_moisture <- 100 - r$dry.matter.content.percentage.CO_334.0000092
+	} else if (!is.null(d$dmy_storage)) {
+		d$yield <- d$dmy_storage
+		d$yield_moisture <- 0
+	} else {
+		d$yield_moisture <- as.numeric(NA)
 	}
+	
 	d$harvest_index <- r$harvest.index.variable.CO_334.0000015
 	d$country[grepl("Tanzania|United Republic", d$country, ignore.case=TRUE)] <- "Tanzania"
 	d$country[d$country == "DRC"] <- "Democratic Republic of the Congo"
@@ -285,16 +291,16 @@ process_cassava <- function(ff, location=NULL, adm1=NULL) {
 		if (!is.na(d$planting_date[1])) {
 			dates <- as.character(as.Date(d$planting_date[1]) + DAP)
 		}
-		diseases <- rep("mosaic", length(vnms))
-		diseases[grep("blight", vnms)] <- "bacterial blight"
+		disease <- rep("mosaic", length(vnms))
+		disease[grep("blight", vnms)] <- "bacterial blight"
 		incidence <- severity <- NULL
 		sev <- grepl("severity", names(dd))	
 		if (any(sev)) {
 			ddi <- dd[, c("record_id", names(dd)[sev])]
 			severity <- reshape(ddi, direction="long", varying=vnms[sev], v.names="disease_severity", timevar="step")
-			severity$time <- dates[sev][severity$step]
+			severity$date <- dates[sev][severity$step]
 			severity$DAP <- DAP[sev][severity$step]
-			severity$diseases <- diseases[sev]
+			severity$disease <- disease[sev]
 			severity$disease_severity <- as.character(severity$disease_severity)
 			severity$severity_scale <- as.character(NA) #perhaps "1-4?  
 			severity <- na.omit(severity)
@@ -304,9 +310,9 @@ process_cassava <- function(ff, location=NULL, adm1=NULL) {
 		if (any(inc)) {
 			ddi <- dd[, c("record_id", names(dd)[inc])]
 			incidence <- reshape(ddi, direction="long", varying=vnms[inc], v.names="disease_incidence", timevar="step")
-			incidence$time <- dates[inc][incidence$step]
+			incidence$date <- dates[inc][incidence$step]
 			incidence$DAP <- DAP[inc][incidence$step]
-			incidence$diseases <- diseases[inc]
+			incidence$disease <- disease[inc]
 			incidence$disease_incidence <- as.character(incidence$disease_incidence)
 			incidence <- na.omit(incidence)
 			if (nrow(incidence) == 0) incidence <- NULL
