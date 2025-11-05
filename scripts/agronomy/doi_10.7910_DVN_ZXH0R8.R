@@ -14,7 +14,7 @@ carob_script <- function(path) {
 		carob_contributor="Siyabusa Mkuhlani; Eduardo Garcia Bendito",
 		carob_date="2022-02-16",
 		data_type="on-farm experiment",
-		project="Africa Rising",	   
+		project="AfricaRISING",	   
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer"
  	)

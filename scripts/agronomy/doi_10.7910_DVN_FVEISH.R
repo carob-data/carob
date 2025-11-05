@@ -14,7 +14,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	ff	<- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
-	  project="Africa Rising",
+	  project="AfricaRISING",
 	  publication= NA,
 	  data_organization = "CIMMYT;ZARI;GT;CRS",
 	  data_type="experiment", 

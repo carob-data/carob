@@ -67,6 +67,8 @@ carob_script <- function(path) {
    d$rep <- as.integer(d$rep)
    d$harvest_date <- as.character(NA)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(meta, d, path=path)
    
 }

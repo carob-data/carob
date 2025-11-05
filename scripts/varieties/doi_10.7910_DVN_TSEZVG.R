@@ -60,6 +60,8 @@ carob_script <- function(path) {
 	i = which(d$variety == "M\x92sole")
 	d$variety[i] <- "M'sole"
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

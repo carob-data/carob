@@ -23,7 +23,7 @@ carob_script <- function(path) {
    ff <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
-      project="Africa Rising", 
+      project="AfricaRISING", 
       publication= NA, 
       data_organization = "ABC", 
       carob_contributor="Cedric Ngakou", 

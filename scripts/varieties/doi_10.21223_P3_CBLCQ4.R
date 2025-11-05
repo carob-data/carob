@@ -81,6 +81,8 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 	## keep rows with yield > 0  
 	#d <- d[d$yield>0, ]
 		
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 	carobiner::write_files(path, meta, d)
 
 }

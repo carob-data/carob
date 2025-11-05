@@ -86,6 +86,8 @@ carob_script <- function(path) {
    d$K_fertilizer <- 70/1.2051
 	d$season <- NULL
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d)
 }
 

@@ -235,6 +235,8 @@ The data set has on-station advanced yield trials for 2005 to 2006 for Kachwekan
    
    d$trial_id <- trimws(d$trial_id)
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files (path, meta, d)
 }
 

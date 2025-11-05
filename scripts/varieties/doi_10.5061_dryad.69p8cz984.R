@@ -70,6 +70,8 @@ carob_script <- function(path) {
    ## removing 3 rows with negative yield value 
    d <- d[which(d$yield != -1250), ]
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

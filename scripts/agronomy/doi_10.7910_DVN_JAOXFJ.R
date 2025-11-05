@@ -12,7 +12,7 @@ carob_script <- function(path) {
    meta <- carobiner::get_metadata(uri, path, group, major=3, minor=1, 
       data_organization = "ILRI", 
       publication = NA,
-      project ="Africa RISING", 
+      project ="AfricaRISING", 
       data_type = "experiment",
       response_vars = "yield;fwy_total",
       treatment_vars = "variety;intercrops;weeding_times", 

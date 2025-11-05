@@ -12,7 +12,7 @@ carob_script <- function(path) {
    meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1, 
       data_organization ="IWMI", 
       publication= "doi: 10.1002/ird.2454", 
-      project= "Africa RISING", 
+      project= "AfricaRISING", 
       data_type= "experiment", 
       response_vars= "yield", 
       treatment_vars = "irrigation_amount; N_fertilizer; P_fertilizer; K_fertilizer", 

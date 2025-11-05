@@ -31,7 +31,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "IITA",
 		publication = "doi:10.1016/j.fcr.2021.108225",
-		project = "Africa RISING",
+		project = "AfricaRISING",
 		data_type = "experiment",
 		carob_contributor= "Eduardo Garcia Bendito",
 		carob_date="2024-05-07",

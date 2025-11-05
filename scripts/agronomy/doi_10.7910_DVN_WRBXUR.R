@@ -12,7 +12,7 @@ carob_script <- function(path) {
     data_organization = "ICRAF;CIAT;LUANAR",
     #Mzumara, E. 2016. Phosphorus use effiiency and productivity of pigeonpea (Cajanus cajan (l.) millsp.) and soybean (glycine max (l.) merrill) on smallholder farms in different agro-ecological zones of central Malawi. MSc thesis in Agronomy. Lilongwe, Malawi. Lilongwe University of Agriculture and Natural Resources.
     publication="hdl:10568/125473", 
-    project="AfricaRising", 
+    project="AfricaRISING", 
     data_type= "experiment", 
     response_vars= "yield;BNF", 
     treatment_vars = "intercrops;P_fertilizer", 

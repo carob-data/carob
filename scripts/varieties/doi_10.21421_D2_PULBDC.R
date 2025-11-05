@@ -63,6 +63,8 @@ carob_script <- function(path) {
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    d$plant_height[d$plant_height > 500] <- NA
    
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
    carobiner::write_files(path, meta, d)
 }
 

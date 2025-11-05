@@ -106,6 +106,8 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
  d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
  
     
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
 carobiner::write_files(path, meta, d)
    
 }

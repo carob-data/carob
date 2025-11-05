@@ -19,7 +19,7 @@ Using appropriate fertilizer recommendations and effective fertilizer materials 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "ICRAF;SUA",
 		publication = "NA",
-		project = "Africa RISING",
+		project = "AfricaRISING",
 		carob_date = "2025-07-30",
 		design = "RCBD",
 		data_type = "experiment",

@@ -18,7 +18,7 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "ICRAF; SUA", #"World Agroforestry Center (ICRAF); Sokoine University of Agriculture",
 		publication = NA,
-		project = NA,
+		project = "AfricaRISING",
 		carob_date = "2025-07-29",
 		design = "RCBD",
 		data_type ="experiment",
