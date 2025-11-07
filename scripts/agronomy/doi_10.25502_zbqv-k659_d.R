@@ -42,16 +42,16 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 ### process
 	
 	d <- data.frame(
-	   record_id = r$ID,
+		record_id = r$ID,
 		country = r$Country,
 		location = r$Site,
 		plot_id = as.character(r$Plot_no),
 		rep = r$Rep,
 		treatment = r$Plough,
 		land_prep_method = ifelse(grepl("No/Ridge", r$Sec_tillage), "ridge tillage", 
-		                   ifelse(grepl("Harrow/No", r$Sec_tillage), "harrow", 
-		                   ifelse(grepl("Harrow/Ridge", r$Sec_tillage), "harrow;ridge tillage", 
-		                   ifelse(grepl("Harrow/Harrow", r$Sec_tillage), "harrow", "none")))),
+		                   ifelse(grepl("Harrow/No", r$Sec_tillage), "harrowing", 
+		                   ifelse(grepl("Harrow/Ridge", r$Sec_tillage), "harrowing;ridge tillage", 
+		                   ifelse(grepl("Harrow/Harrow", r$Sec_tillage), "harrowing", "none")))),
 		plant_density = r$plants_m2*10000,# plant/ha
 		fwy_leaves = r$Leaf_mass_fresh_m2*10000,
 		fwy_stems = r$Stem_mass_fresh_m2*10000,
@@ -77,24 +77,24 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 
 ### Fixing long and lat 
 	
- P <- carobiner::fix_name(d$latitude)	
- P <- gsub("N 7o 34' 30''", 7.575, P)
- P <- gsub("N 7o 34' 22''", 7.572, P)
- P <- gsub("N 8o 37' 4''", 8.617, P)
- P <- gsub("N 8o 35' 44''", 8.585, P)
- d$latitude <- as.numeric(P)
+	P <- carobiner::fix_name(d$latitude)	
+	P <- gsub("N 7o 34' 30''", 7.575, P)
+	P <- gsub("N 7o 34' 22''", 7.572, P)
+	P <- gsub("N 8o 37' 4''", 8.617, P)
+	P <- gsub("N 8o 35' 44''", 8.585, P)
+	d$latitude <- as.numeric(P)
 
- P <- carobiner::fix_name(d$longitude)	
- P <- gsub("E 2o 51' 27''", 2.85 , P)
- P <- gsub("E 2o 51' 48''", 2.863, P)
- P <- gsub("E 3o 33' 10''", 3.552, P)
- P <- gsub("E 3o 36' 24''", 3.606, P)
- d$longitude <- as.numeric(P)		
+	P <- carobiner::fix_name(d$longitude)	
+	P <- gsub("E 2o 51' 27''", 2.85 , P)
+	P <- gsub("E 2o 51' 48''", 2.863, P)
+	P <- gsub("E 3o 33' 10''", 3.552, P)
+	P <- gsub("E 3o 36' 24''", 3.606, P)
+	d$longitude <- as.numeric(P)		
 
- d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
- 
- 
-carobiner::write_files(path, meta, d)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	 
+	 
+	carobiner::write_files(path, meta, d)
 
 }
 
