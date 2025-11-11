@@ -5,29 +5,29 @@
 
 carob_script <- function(path) {
   
-  
-  "Replication Data for: Management of maize‑legume conservation agriculture systems rather than varietal choice fosters human nutrition in Malawi
+"
+Replication Data for: Management of maize‑legume conservation agriculture systems rather than varietal choice fosters human nutrition in Malawi
   
 This study evaluated the impact of cropping systems (conventional ploughing, no-tillage, and conservation agriculture) and maize varieties on agricultural productivity and nutritional outcomes across multiple districts in Malawi.
 Results indicated that conservation agriculture significantly enhanced crop yields and nutritional outputs compared to conventional methods, suggesting its potential to improve food security and climate resilience for smallholder farmers.
-  "
+"
   
-  uri <- "doi:10.71682/10549314"
-  group <- "agronomy"
-  ff  <- carobiner::get_data(uri, path, group)
+	uri <- "doi:10.71682/10549314"
+	group <- "agronomy"
+	ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "SLU;CIMMYT",
-                                  publication = "doi.org/10.1007/s12571-024-01479-4",
-                                  project = NA,
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "land_prep_method;variety;intercrops",
-                                  response_vars = "yield", 
-                                  completion = 100,
-                                  carob_contributor = "Blessing Dzuda",
-                                  carob_date = "2025-10-30",
-                                  notes = NA, 
-                                  design = "Randomized Complete Block"
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+		data_organization = "SLU;CIMMYT",
+		publication = "doi.org/10.1007/s12571-024-01479-4",
+		project = NA,
+		data_type = "on-farm experiment",
+		treatment_vars = "land_prep_method;variety;intercrops",
+		response_vars = "yield", 
+		completion = 100,
+		carob_contributor = "Blessing Dzuda",
+		carob_date = "2025-10-30",
+		notes = NA, 
+		design = "Randomized Complete Block"
   )
   
   f <- ff[basename(ff) == "Data_Muoni et al. 20250410.xlsx"]
@@ -75,7 +75,7 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$yield_moisture <- ifelse(d$crop=="maize",12.5,9)
   d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
   d$land_prep_method <- "none;minimum tillage;conventional"#raw dataset has no distinct tillage column, publication states CA, which i standardized as "minimum tillage"
-  d$intercrops <- "maize_legume"
+#  d$intercrops <- "maize_legume"
   
   carobiner::write_files(path, meta, d)
 }

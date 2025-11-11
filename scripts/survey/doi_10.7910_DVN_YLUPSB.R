@@ -17,7 +17,7 @@ Inland valleys are becoming increasingly important agricultural production areas
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "AfricaRice; SARI",
+		data_organization = "AfricaRice; SLARI",
 		publication = "doi:10.1371/journal.pone.0180059",
 		project = NA,
 		carob_date = "2025-10-23",
