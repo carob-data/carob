@@ -215,7 +215,7 @@
 
 process_cassava <- function(ff, location=NULL, adm1=NULL) {
 
-	f <- grep("\\.csv$", ff, value=TRUE)
+	f <- grep("\\.csv$", ff, value=TRUE)[!grepl("metadata", ff)]
 	r <- read.csv(f) |> unique()
 	fd <- dirname(f)
 	fj <- file.path(fd, paste0(basename(fd), ".json"))
