@@ -1,30 +1,32 @@
 # R script for "carob"
 
-carobiner::on_github(uri="hdl:11529/10547999")
 carob_script <- function(path) {
   
-  "Farmer participatory on-farm trials with CA technologies comparing with farmers’ practices (CT), were conducted in several fields in each community. Likewise, farmer-participatory alternative cropping systems trials were conducted comparing to exiting systems and to find out suitable and more profitable cropping systems, prioritized to increase visibility and to avoid implementation and management problems that emerge when utilizing small plots with significant edge effects. Most trials were replicated in several fields within each community and were farmer-managed with backstopping from project staff and NARES partners. Project partners and staff coordinated monitoring and data acquisition. Where possible, collaborating farmers were selected by the community, and the project worked with existing farmer groups, with groups of both men and women farmers."
-  
+"
+Farmer participatory on-farm trials with CA technologies comparing with farmers’ practices (CT), were conducted in several fields in each community. Likewise, farmer-participatory alternative cropping systems trials were conducted comparing to exiting systems and to find out suitable and more profitable cropping systems, prioritized to increase visibility and to avoid implementation and management problems that emerge when utilizing small plots with significant edge effects. Most trials were replicated in several fields within each community and were farmer-managed with backstopping from project staff and NARES partners. Project partners and staff coordinated monitoring and data acquisition. Where possible, collaborating farmers were selected by the community, and the project worked with existing farmer groups, with groups of both men and women farmers.
+"
   
   uri <- "hdl:11529/10547999"
   group <- "agronomy"
   ff <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-                                  data_organization = "CIMMYT",
-                                  publication = NA,
-                                  project = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "crop_rotation",
-                                  response_vars = "yield;fwy_total", 
-                                  completion = 100,
-                                  carob_contributor = "Mitchelle Njukuya",
-                                  carob_date = "2025-11-12",
-                                  notes = NA, 
-                                  design = NA
+		data_organization = "CIMMYT",
+		publication = NA,
+		project = NA,
+		data_type = "experiment",
+		treatment_vars = "crop_rotation",
+		response_vars = "yield;fwy_total", 
+		completion = 100,
+		carob_contributor = "Mitchelle Njukuya",
+		carob_date = "2025-11-12",
+		notes = NA, 
+		design = NA
   )
   
-  process <- function(f){
+
+  f <- ff[basename(ff) == "1-Rabi 2015-16-ACS- all nodes -Malda.xlsx"]
+
     ## site information  
     r <- carobiner::read.excel.hdr(f, sheet="2 - Site information", skip=4, fix_names = TRUE)
     d1 <- data.frame(
@@ -36,7 +38,6 @@ carob_script <- function(path) {
       treatment= r$Tmnt.Short.abbreviation.as.mentioned.in.protocol,
       plot_area= r$Plot.size.m2.each.plot,
       soil_texture= as.character(r$Soil.texture.sand.silt.clay.etc)
-      
     )
     ## removing empty rows 
     d1 <- d1[!is.na(d1$year),] 
@@ -51,8 +52,8 @@ carob_script <- function(path) {
       crop_sys= r1$Cropping.System,
       farmer_name= r1$Farmer.s.name,
       treatment= r1$Tmnt.Short.abbreviation.as.mentioned.in.protocol,
-      planting_method= r1$Operation.1.Name.of.operation,
-      land_prep_implement= r1$X0peration.1.Implement.used,
+      planting_method= "direct seeding", # r1$Operation.1.Name.of.operation, 
+      planting_implement= "seed drill", #r1$X0peration.1.Implement.used,
       planting_date=r1$planting_date
       
     )
@@ -111,12 +112,11 @@ carob_script <- function(path) {
       fertilizer_type= paste(r4$Fertilizer.1.Application_Product.used, r4$Fertilizer.2.Application_Product.used, r4$Fertilizer.3.Application_Product.used, sep =";"),
       fertilizer_amount= rowSums(r4[,c("DAP.kg.ha", "Calculation_Urea.kg.ha", "MOP.kg.ha","ZnSO4.kg.ha")]),
       fertilizer_price = r4$Fertilizer.cost.Tk.ha / rowSums(r4[, c("DAP.kg.ha", "Calculation_Urea.kg.ha", "MOP.kg.ha","ZnSO4.kg.ha")]), ##Tk/ha
-      currency= "Tk",
+      currency= "BDT",
       N_fertilizer= r4$N.kg.ha,
       P_fertilizer= r4$P.kg.ha,
       K_fertilizer= r4$K.kg.ha,
       Zn_fertilizer= r4$Zn.kg.ha
-    
     )
     
     d <- merge(d,d5,by=c("location", "crop_sys", "treatment", "year", "season", "farmer_name"), all.x = TRUE)
@@ -156,10 +156,7 @@ carob_script <- function(path) {
     )
     
     d <- merge(d, d7, by=c("location", "crop_sys", "treatment", "year", "season", "farmer_name", "plot_area"), all.x = TRUE)
-  }
   
-  f <- ff[basename(ff) == "1-Rabi 2015-16-ACS- all nodes -Malda.xlsx"]
-  d <- process(f)
 
   d$trial_id <- paste0(d$farmer_name, "_", d$location)
   
@@ -183,6 +180,7 @@ carob_script <- function(path) {
   ## Fixing fertilizer type
   d$fertilizer_type <- gsub("Muriate", "KCl", d$fertilizer_type)
   d$fertilizer_type <- gsub("Urea", "urea", d$fertilizer_type)
+  d$fertilizer_type <- gsub("NA;", "", d$fertilizer_type)
   
   ## Fixing insecticide variables 
   d$herbicide_implement <- gsub("SPRAY", "backpack sprayer", d$herbicide_implement)  
@@ -206,12 +204,8 @@ carob_script <- function(path) {
   
   # Clean up and convert correctly
   d$planting_date <- gsub(" UTC", "", d$planting_date)
-  d$planting_method <- gsub("Seeding", "direct seeding", d$planting_method)
   d$crop <- gsub("BLACK CUMIN","cumin",d$crop) 
-  d$crop <- gsub("CORIANDER","coriander",d$crop)
-  d$crop <- gsub("LENTIL","lentil",d$crop)
-  d$crop <- gsub("MUSTARD","mustard",d$crop)
-  d$crop <- gsub("WHEAT","wheat",d$crop)
+  d$crop <- tolower(d$crop)
   
   d$yield_moisture <- 0
   d$season <- "rabi"
