@@ -74,8 +74,10 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$yield_part <- "grain"
   d$yield_moisture <- ifelse(d$crop=="maize",12.5,9)
   d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
-  d$land_prep_method <- "none;minimum tillage;conventional"#raw dataset has no distinct tillage column, publication states CA, which i standardized as "minimum tillage"
-  d$intercrops <- "maize_legume"
+  d$land_prep_method <- ifelse(r$Treatment=="Check","conventional",
+                               ifelse(r$Treatment=="CA+Mz","none","minimum tillage"))
+  d$intercrops <- ifelse(r$`sole/intercrop`==0,"maize","maize_legume")
+
   
   carobiner::write_files(path, meta, d)
 }
