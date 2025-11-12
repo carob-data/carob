@@ -61,7 +61,7 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$is_survey <- FALSE
   d$irrigated <- FALSE
   d$crop_rotation <- ifelse(d$treatment %in% c("Check", "CA+Mz"), "maize", "maize;legume")
-  d$crop <- ifelse(d$crop_rotation=="maize","maize","legume")
+  d$crop <- ifelse(d$crop_rotation=="maize", "maize", "legume")
   d$geo_from_source <- FALSE
   d$planting_date <- r$`Harvest Year`-1
   d$harvest_date  <- as.character(d$harvest_date)
@@ -74,10 +74,10 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$yield_part <- "grain"
   d$yield_moisture <- ifelse(d$crop=="maize",12.5,9)
   d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
-  d$land_prep_method <- ifelse(r$Treatment=="Check","conventional",
-                               ifelse(r$Treatment=="CA+Mz","none","minimum tillage"))
-  d$intercrops <- ifelse(r$`sole/intercrop`==0,"maize","maize_legume")
+  d$land_prep_method <- ifelse(r$Treatment=="Check", "conventional",
+                               ifelse(r$Treatment=="CA+Mz", "none", "minimum tillage"))
+  d$intercrops <- ifelse(r$`sole/intercrop`==0, "none", 
+					ifelse(d$crop == "maize", "legume", "maize"))
 
-  
   carobiner::write_files(path, meta, d)
 }

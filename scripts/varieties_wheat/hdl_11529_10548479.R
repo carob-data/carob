@@ -2,10 +2,10 @@
 
 carob_script <- function(path) {
   
-"21st Karnal Bunt Screening Nursery
+"
+21st Karnal Bunt Screening Nursery
   
 The Karnal Bunt Screening Nursery is a single replicate nursery that contains diverse spring bread wheat (Triticum aestivum) germplasm adapted to ME1 (Optimally irrigated, low rainfall environment) with total 50-100 entries and white/red grain color. (2019)
-  
 "
 
   uri <- "hdl:11529/10548479"
