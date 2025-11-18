@@ -4,6 +4,9 @@
 ## ISSUES
 ### The planthealth file still contains some variables that probably need to be captured.
 
+# dataABC_V2 and planthealth_V2 have not been processed because the information in planthealth_V2 is already included in the data_field_clean file, and dataABC_V2 does not contain useful information for this carob version.
+
+
 carob_script <- function(path) {
 
 "
@@ -12,12 +15,12 @@ Data of on-farm assessment of cropping practices in a 'one health' perspective, 
 Data measured in 44 farms covering a range of cropping practices, soil and production parameters under contrasted types of crop management: conventional and conservation agriculture. Eighty-six winter wheat fields located in Northwestern France were monitored for two growing seasons (2021/2022 and 2022/2023). The dataset encompasses data about cropping practices (tillage, soil cover, rotation, pesticides use, nutrition), soils (chemical, biological and physical parameters, including texture), and grain production (nutritional, technological and sanitary indicators).
 "
 
-   uri <- "doi:10.18167/DVN1/SI026U"
-	group <- "agronomy"
+	uri <- "doi:10.18167/DVN1/SI026U"
+	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-		data_organization = "CIRAD; PUADV;CRBE",          #  PUADV : Pour une Agriculture du Vivant
+		data_organization = "CIRAD; PUADV; ENSAT",
 		publication = NA,
 		project = NA,
 		carob_date = "2025-11-17",
@@ -27,7 +30,7 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 75,	
-		notes = "dataABC_V2 and planthealth_V2 have not been processed because the information in planthealth_V2 is already included in the data_field_clean file, and dataABC_V2 does not contain useful information for this carob version."
+		notes = NA
 	)
 	
 
@@ -143,7 +146,6 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 	P <- gsub("rapeseed \\+ legumes", "rapeseed", P)
 	d1$previous_crop <- P
 	
-carobiner::write_files(path, meta, d1)
-
+	carobiner::write_files(path, meta, d1)
 }
 
