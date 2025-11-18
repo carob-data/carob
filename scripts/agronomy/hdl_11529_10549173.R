@@ -1,12 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# I could not find the full meaning of IFC institute, or any info about Joon, Rajeev
-
 carob_script <- function(path) {
-
-
 
 "Data on performance of machine-led direct seeded rice (DSR) techniques compared to conventional rice transplanting in eastern India
   
@@ -34,6 +29,13 @@ Direct Seeded Rice (DSR) using seed-cum-fertilizer drill is an emerging rice est
 	f <- ff[basename(ff) == "CSISA_IND_DSR_Trial_2017-21_Data.xlsx"]
 	r <- carobiner::read.excel(f)
 
+	remove_second_dot <- function(x) {
+		char= "\\."
+		pattern <- paste0("((?:[^", char, "]*", char, "){1}.*?)", char)
+		sub(pattern, "\\1", x, perl = TRUE)
+	}
+
+
 	d <- data.frame(
 		country = "India",
 		planting_date=as.character(r$Year),
@@ -53,34 +55,26 @@ Direct Seeded Rice (DSR) using seed-cum-fertilizer drill is an emerging rice est
 		harvest_date=as.character(r$HarvestDate),
 		dmy_total=r$BiomassYield,
 		yield=r$GrainYield*1000,
-		fertilizer_dap=as.character(r$TotalDAP),
-		N_fertilizer=r$TotalNitrogen,
-		P_fertilizer=r$TotalPhosphorus,
-		K_fertilizer=r$TotalPotas,
-		seed_weight=as.numeric(r$TestWeight)
-		)
+		#fertilizer_dap=as.character(r$TotalDAP),
+		N_fertilizer=r$TotalNitrogen, # r$TotalUrea * .46 + r$TotalDAP *.18
+		P_fertilizer=r$TotalDAP * .2, # r$TotalPhosphorus is P2O5
+		K_fertilizer=r$TotalPotas * 0.83, #K2O to K (== (r$TotaMoP*0.60)/1.2051)
+		seed_weight=as.numeric(remove_second_dot(r$TestWeight))
+	)
 		
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
 	d$geo_from_source <- TRUE
 
-#Not sure if the below conversions will be double counting	
-#extracting elemental K from MOP
-	elem_k <- (r$TotaMoP*0.60)/1.2051
-  d$K_fertilizer <- r$TotalPotas+elem_k
-#extracting elemental N from Urea
-  d$N_fertilizer <- (r$TotalUrea*0.46)+ r$TotalNitrogen
-  
-  d$S_fertilizer <- d$lime <- as.numeric(NA)
 	d$yield_part <- "grain"
-	d$yield_moisture <- 0 #rice grain moisture is not stated in the dataset...how proceed?
+	d$yield_moisture <- as.numeric(NA) #rice grain moisture is not stated in the dataset...how proceed?
 	d$land_prep_method <- ifelse(d$treatment=="PTR(Check)","conventional","none")
 	d$planting_method <- ifelse(d$treatment=="PTR(Check)","transplanted","direct seeding")
-  d$latitude <- ifelse(d$adm4=="Ekamba",25.64,d$latitude)
-  d$longitude<- ifelse(d$adm4=="Ekamba",86.14,d$longitude)
-  d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
-  d <- unique(d)
+	d$latitude <- ifelse(d$adm4=="Ekamba", 25.64, d$latitude)
+	d$longitude<- ifelse(d$adm4=="Ekamba", 86.14, d$longitude)
+	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
+	d <- unique(d)
   
 	carobiner::write_files(path, meta, d)
 }
