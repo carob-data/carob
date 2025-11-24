@@ -88,6 +88,7 @@ Results from this project showed that with appropriate weed management couple wi
 		crop = "cassava", 
 		yield_part = "roots", 
 		yield_moisture = as.numeric(NA), 
+		yield_isfresh = TRUE,
 		irrigated = NA, 
 		geo_from_source = TRUE
 	)
@@ -152,11 +153,11 @@ Results from this project showed that with appropriate weed management couple wi
 	
 	d$year <- d$crop_system <- d$herbicide1 <- d$herbicide2 <- NULL
 	
-  d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
   ## Fixing geo-coordinate errors 
   
-  i <- grepl("Otukpo_Ogboju", d$location) & grepl("Benue", d$adm1)
+	i <- grepl("Otukpo_Ogboju", d$location) & grepl("Benue", d$adm1)
 	d$longitude[i] <- 8.133
 	d$latitude[i] <- 7.1909
 	d$geo_from_source[i] <- FALSE
@@ -172,7 +173,7 @@ Results from this project showed that with appropriate weed management couple wi
 	d$geo_from_source[i] <- FALSE
 	
 
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 
