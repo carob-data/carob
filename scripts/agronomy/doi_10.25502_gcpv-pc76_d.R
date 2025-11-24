@@ -87,7 +87,7 @@ Results from this project showed that with appropriate weed management couple wi
 		is_survey = FALSE, 
 		crop = "cassava", 
 		yield_part = "roots", 
-		yield_moisture = 100, 
+		yield_moisture = as.numeric(NA), 
 		yield_isfresh = TRUE,
 		irrigated = NA, 
 		geo_from_source = TRUE
