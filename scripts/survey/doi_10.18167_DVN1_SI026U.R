@@ -2,10 +2,12 @@
 # license: GPL (>=3)
 
 ## ISSUES
-### The planthealth file still contains some variables that probably need to be captured.
 
-# dataABC_V2 and planthealth_V2 have not been processed because the information in planthealth_V2 is already included in the data_field_clean file, and dataABC_V2 does not contain useful information for this carob version.
 
+
+# The planthealth_V2 and dataABC_V2.xlsx files have not been processed because
+# the information in the planthealth_V2 file is already included in the data_field_clean file
+#  and the dataABC_V2 file does not contain relevant information for carob.
 
 carob_script <- function(path) {
 
@@ -74,6 +76,7 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		insecticide_used = ifelse(r1$nbIns_n >0, TRUE, FALSE),
 		variety = r1$Wheatvar,
 		yield = r1$ExpYield_n*100,
+		seed_weight = r1$TKW,
 		soil_pH = r1$pH,
 		soil_P = r1$s.AP,
 		soil_CEC = r1$CEC,
@@ -111,6 +114,7 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		### plant health
 		disease = "rust",
 		septoria_intensity = r1$intSept,
+		septoria_number = as.integer(r1$fqSept),
 		powdery_mildew = r1$intMil,
 		rust_intensity = r1$intRust,
 		pest_number = as.integer(r1$fqPests), 
