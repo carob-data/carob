@@ -63,7 +63,9 @@ carob_script <- function(path) {
 	d$harvest_date[grepl("1718", d$season)] <- as.Date("2017-11-24") + (17*7) # As indicated in publication
 	d$harvest_date[grepl("1819", d$season)] <- as.Date("2018-11-27") + (17*7) # As indicated in publication
 	   
-	d$location <- "Vakinankaratra"
+	d$location <- "Ivory station" # As indicated in publication
+	d$adm1 <- "Vakinankaratra"
+	d$adm2 <- "Mandoto"
 	d$longitude <- 46.415 # As indicated in publication
 	d$latitude <- -19.555 # As indicated in publication
 	d$elevation <- 930 # As indicated in publication
