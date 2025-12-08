@@ -10,21 +10,22 @@ carob_script <- function(path) {
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		publication= NA,
+		publication= "doi:10.1016/j.agee.2021.107576",
 		data_organization = "CIRAD;FOFIFA;IRD",
 		carob_contributor="Cedric Ngakou",
 		carob_date="2023-10-15",
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "crop_rotation"		
+		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic"		
 	)
    
 	r1 <- carobiner::read.excel(ff[basename(ff)=="DonneesDATAVERSE_F1.xlsx"], sheet="DataBiomassYieldN")  
 	d1 <- data.frame(
-		crop = "rice", 
+		crop = "rice",
+		variety = "NERICA 4",  # As indicated in publication
 		country = "Madagascar",
-		season = as.character(r1$Season),
+		season = "rainy", # As indicated in publication
 		crop_rotation = r1$Rotation, 
 		yield = 1000 * r1$`Yield (14% moisture content)`,
 		weed_biomass = 1000 * r1$TotalWeedBiomass,
@@ -53,14 +54,21 @@ carob_script <- function(path) {
 	d$crop_rotation[d$crop_rotation=="RSC"] <- "rice;cereal"
 
  
-	d$planting_date <- paste0("20", substr(d$season, 1, 2))
-	d$harvest_date <- paste0("20", substr(d$season, 3, 4))
+	d$planting_date[grep("1516", d$season)] <- "2015-12-02" # As indicated in publication
+	d$planting_date[grepl("1617", d$season)] <- "2016-11-23" # As indicated in publication
+	d$planting_date[grepl("1718", d$season)] <- "2017-11-24" # As indicated in publication
+	d$planting_date[grepl("1819", d$season)] <- "2018-11-27" # As indicated in publication
+	d$harvest_date[grepl("1516", d$season)] <- as.Date("2015-12-02") + (16*7) # As indicated in publication
+	d$harvest_date[grepl("1617", d$season)] <- as.Date("2016-11-23") + (17*7) # As indicated in publication
+	d$harvest_date[grepl("1718", d$season)] <- as.Date("2017-11-24") + (17*7) # As indicated in publication
+	d$harvest_date[grepl("1819", d$season)] <- as.Date("2018-11-27") + (17*7) # As indicated in publication
 	   
 	d$location <- "Vakinankaratra"
-	d$longitude <- 46.836
-	d$latitude <- -19.711
+	d$longitude <- 46.415 # As indicated in publication
+	d$latitude <- -19.555 # As indicated in publication
+	d$elevation <- 930 # As indicated in publication
 	d$geo_from_source <- FALSE
-	d$trial_id <- "1"
+	d$trial_id <- as.integer(as.factor(d$season))
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE
 	d$irrigated <- FALSE
@@ -70,10 +78,8 @@ carob_script <- function(path) {
 
 message("should also process soil and weather data")
 
-	
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_moisture <- 14 # As indicated in publication
 
 	carobiner::write_files(path, meta, d)
    
 }
-
