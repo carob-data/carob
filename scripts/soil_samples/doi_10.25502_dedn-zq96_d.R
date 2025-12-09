@@ -22,8 +22,8 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		project = "ACAI",
 		carob_date = "2025-12-03",
 		design = NA,
-   	data_type = "experiment",
-		treatment_vars = "land_prep_method",
+		#data_type = "experiment",
+		#treatment_vars = "land_prep_method",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 100,	
@@ -44,9 +44,9 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		country = r$Country,
 		location = r$Site,
 		rep = r$REP,
-		crop = "cassava",
-		land_prep_method = ifelse(grepl("DP", r$TRT), "deep ploughing",
-		                    ifelse(grep("SP", r$TRT), "reduced tillage", "none")) ,
+		#crop = "cassava",
+		#land_prep_method = ifelse(grepl("DP", r$TRT), "deep ploughing",
+		#                    ifelse(grep("SP", r$TRT), "reduced tillage", "none")) ,
 		depth_top = as.numeric(gsub("-| ", "", substr(r$DEPTH_CM, 1, 2))),
 		depth_bottom = as.numeric(gsub("-", "", substr(r$DEPTH_CM, 2, 5))),
 		soil_pH = r$pH_H20_1_2_5,
@@ -62,18 +62,18 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		soil_clay = r$Caly_perc
 	)
 
-	
+## RH: I am guessing there are 21 sites. Soil data needs high precision crds.	
 	##### fixing geo-coordinate 
-	geo <- data.frame(
-	   location = c("Abeokuta","Saki"),
-	   longitude = c(3.362, 3.392),
-	   latitude = c(7.147, 8.673),
-	   geo_from_source = FALSE
-	)
+#	geo <- data.frame(
+#	   location = c("Abeokuta","Saki"),
+#	   longitude = c(3.362, 3.392),
+#	   latitude = c(7.147, 8.673),
+#	   geo_from_source = FALSE
+#	)
 	
-	d <- merge(d, geo, by= "location", all.x = TRUE)
+#	d <- merge(d, geo, by= "location", all.x = TRUE)
 	
 	
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
