@@ -68,7 +68,9 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		yield_part = "roots", 
 		yield_moisture = as.numeric(NA),
 		irrigated = NA, 
-		geo_from_source = TRUE
+		geo_from_source = TRUE,
+		loc = gsub(" 1| 2", "", r$Site),
+		trt = trimws(r$Plough)
 	)
 
 	d$treatment <- ifelse(grepl("DP", trimws(d$treatment)), "double plough", 
@@ -93,8 +95,47 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	 
-	 
-	carobiner::write_files(path, meta, d)
+	### process soil data from doi:10.25502/dedn-zq96/d
+	
+	ff1  <- carobiner::get_data("doi:10.25502/dedn-zq96/d", path, group)
+	f <- ff1[basename(ff1) == "bpp5_soildata_forckan.csv"]
+	
+	r1 <- read.csv(f)
+	### process
+	
+	d1 <- data.frame(
+	   #record_id = r1$ID,
+	   country = r1$Country,
+	   rep= r1$REP,
+	   loc = r1$Site,
+	   trt = r1$TRT,
+	   depth_top = as.numeric(gsub("-| ", "", substr(r1$DEPTH_CM, 1, 2))),
+	   depth_bottom = as.numeric(gsub("-", "", substr(r1$DEPTH_CM, 2, 5))),
+	   soil_pH = r1$pH_H20_1_2_5,
+	   soil_SOC = r1$OC_perc,
+	   soil_N = r1$N_perc*10000,
+	   soil_P = r1$MehP_ppm,
+	   soil_P_method = "Mehlich3",
+	   soil_K_exch = r1$K_coml_kg,
+	   soil_Ca_exch = r1$Ca_coml_kg,
+	   soil_Mg_exch = r1$Mg_coml_kg,
+	   soil_sand = r1$Sand_perc,
+	   soil_silt = r1$Silt_perc,
+	   soil_clay = r1$Caly_perc
+	)
+	
+	agg <- aggregate(. ~ trt + rep + loc + country + soil_P_method, d1, 
+	                 function(x) mean(x))
+	
+
+	### merge soil data and yield data
+	
+	d <- merge(d, agg, by= c("country", "loc", "rep", "trt"), all.x  = TRUE)
+   
+	d$trt <- d$loc <- NULL
+	
+	
+carobiner::write_files(path, meta, d)
 
 }
 
