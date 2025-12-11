@@ -256,6 +256,7 @@ process_cassava <- function(ff, location=NULL, adm1=NULL) {
 		d$yield_moisture <- 0
 	} else {
 		d$yield_moisture <- as.numeric(NA)
+		d$yield_isfresh <- NA
 	}
 	
 	d$harvest_index <- r$harvest.index.variable.CO_334.0000015
