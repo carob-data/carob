@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## The data mention 4 site but just one is given 
 
 carob_script <- function(path) {
 
@@ -32,12 +32,9 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	
 	f <- ff[basename(ff) == "bbp4_harvestdata.csv"]
 	#f2 <- ff[basename(ff) == "treatment.csv"]
-	#f3 <- ff[basename(ff) == "column_dictionary_acai_bpp4_harvestdata.csv"]
-
+	
 	r <- read.csv(f)
 	#r1 <- read.csv(f1)
-	#r2 <- read.csv(f2)
-
 	
 ### process	
 
@@ -82,6 +79,39 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	
 	## remove 4 rows with yield == 0
 	d <- d[d$yield>0,]
+	
+	### process soil data from doi:10.25502/beqq-et80/d
+	
+	ff1  <- carobiner::get_data("doi:10.25502/beqq-et80/d", path, group)
+	f <- ff1[basename(ff1) == "bpp4_soildata_forckan.csv"]
+	
+	r1 <- read.csv(f)
+	
+	### process
+	d1 <- data.frame(
+	   country = r1$Country,
+	   location = r1$Site,
+	   rep = r1$REP,
+	   depth_top = as.numeric(gsub("-| ", "", substr(r1$DEPTH_CM, 1, 2))),
+	   depth_bottom = as.numeric(gsub("-", "", substr(r1$DEPTH_CM, 2, 5))),
+	   soil_pH = r1$pH_H20_1_2_5,
+	   soil_SOC = r1$OC_perc,
+	   soil_N = r1$N_perc*10000,
+	   soil_P = r1$MehP_ppm,
+	   soil_P_method = "Mehlich3",
+	   soil_K_exch = r1$K_coml_kg,
+	   soil_Ca_exch = r1$Ca_coml_kg,
+	   soil_Mg_exch = r1$Mg_coml_kg,
+	   soil_sand = r1$Sand_perc,
+	   soil_silt = r1$Silt_perc,
+	   soil_clay = r1$Caly_perc
+	)
+	
+	agg <- aggregate(. ~ rep + location + country+ soil_P_method , d1, function(x) mean(x))
+	
+	### merge soil data and yield data 
+  d <- merge(d, agg, by= c("rep", "location", "country"), all.x = TRUE)
+	
 
 carobiner::write_files(path, meta, d)
 
