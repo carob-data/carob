@@ -25,7 +25,7 @@ carob_script <- function(path) {
 		crop = "rice",
 		variety = "NERICA 4",  # As indicated in publication
 		country = "Madagascar",
-		season = "rainy", # As indicated in publication
+		season = r1$Season,
 		crop_rotation = r1$Rotation, 
 		yield = 1000 * r1$`Yield (14% moisture content)`,
 		weed_biomass = 1000 * r1$TotalWeedBiomass,
@@ -62,6 +62,7 @@ carob_script <- function(path) {
 	d$harvest_date[grepl("1617", d$season)] <- as.Date("2016-11-23") + (17*7) # As indicated in publication
 	d$harvest_date[grepl("1718", d$season)] <- as.Date("2017-11-24") + (17*7) # As indicated in publication
 	d$harvest_date[grepl("1819", d$season)] <- as.Date("2018-11-27") + (17*7) # As indicated in publication
+	d$season <- "rainy" # As indicated in publication
 	   
 	d$location <- "Ivory station" # As indicated in publication
 	d$adm1 <- "Vakinankaratra"
