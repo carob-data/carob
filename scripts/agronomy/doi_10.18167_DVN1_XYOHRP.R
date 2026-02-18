@@ -1,8 +1,8 @@
 # R script for "carob"
 
 
-# should also process soil and weather data, nematodes, macrofauna, residue, weed biomass over time.
-
+# should also process nematodes, macrofauna, weed biomass over time.
+# Code Date D1, D2 ... are not well defined
 
 carob_script <- function(path) {
    
@@ -23,18 +23,18 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic",
 		completion = 50,
-		notes = "not processed soil and weather data, nematodes, macrofauna, residue, weed biomass over time."
+		notes = "not processed nematodes and macrofauna"
 	)
 
 	f1 <- ff[basename(ff) == "DonneesDATAVERSE_F1.xlsx"]
    
-   	#r1a <- carobiner::read.excel(f1, sheet="DataSol")
+   r1a <- carobiner::read.excel(f1, sheet="DataSol", fix=TRUE)
 	r1b <- carobiner::read.excel(f1, sheet="DataFertilization", fix=TRUE)
 	r1c <- carobiner::read.excel(f1, sheet="DataBiomassYieldN", fix=TRUE)
-	#r1d <- carobiner::read.excel(f1, sheet="DataResidus")
+	r1d <- carobiner::read.excel(f1, sheet="DataResidus")
 	#r1e <- carobiner::read.excel(f1, sheet="Nminsoil")
 	#r1f <- carobiner::read.excel(f1, sheet="DataComposantes")
-	#r1g <- carobiner::read.excel(f1, sheet="DataClimat")
+	r1g <- carobiner::read.excel(f1, sheet="DataClimat", fix=TRUE)
 	#r1h <- carobiner::read.excel(f1, sheet="Nematodes")
 	#r1i <- carobiner::read.excel(f1, sheet="Macrofaune")
 	#r1j <- carobiner::read.excel(f1, sheet="VB")
@@ -66,7 +66,18 @@ carob_script <- function(path) {
 	)
 	
 	d <- merge(d1, d2, by="season")
-
+	
+	### process residue
+	d3 <- data.frame(
+	   dmy_residue = 1000 *r1d$Residus,
+	   season = r1d$Season,
+	   rep = as.integer(as.factor(r1d$Block)),
+	   crop_rotation = r1d$Rotation 
+	)
+ 
+	d3 <- d3[!duplicated(d3[, c("season", "rep", "crop_rotation")]),] 
+	d <- merge(d, d3, by=c("season", "rep", "crop_rotation"), all.x = TRUE)
+	
 	d$crop_rotation[d$crop_rotation=="RG"] <- "rice;groundnut"
 	d$crop_rotation[d$crop_rotation=="RR"] <- "rice;rice"
 	d$crop_rotation[d$crop_rotation=="RVC"] <- "rice;cereal;legume"
@@ -96,10 +107,45 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 	d$is_survey <- FALSE
 
+	
+	### Process soil data
+	ds <- data.frame(
+	   soil_P_method = "Olsen",
+	   soil_depth = as.numeric(gsub("-", "", substr(gsub(" ", "", r1a$Soil.Layer.cm), 3, 5))),
+	   soil_pH = as.numeric(stringr::str_extract(r1a$pH.H2O, "\\d+\\.?\\d*")),
+	   soil_P = as.numeric(stringr::str_extract(r1a$Olsen.P.mg.kg.1, "\\d+\\.?\\d*")),
+	   soil_CEC = as.numeric(stringr::str_extract(r1a$CEC.cmol.kg.1, "\\d+\\.?\\d*")),
+	   soil_C_total = as.numeric(stringr::str_extract(r1a$Total.C.pct, "\\d+\\.?\\d*")),
+	   soil_N = as.numeric(stringr::str_extract(r1a$N, "\\d+\\.?\\d*"))*1000,
+	   #soil_Mo = as.numeric(stringr::str_extract(r1a$MO.pct, "\\d+\\.?\\d*"))*10000,
+	   soil_clay = as.numeric(stringr::str_extract(r1a$Clay.pct, "\\d+\\.?\\d*")),
+	   soil_silt = as.numeric(stringr::str_extract(r1a$Silt.pct, "\\d+\\.?\\d*")),
+	   soil_sand = as.numeric(stringr::str_extract(r1a$Sand.pct, "\\d+\\.?\\d*"))
+	)
+	agg <- aggregate(. ~ soil_P_method , ds, function(x) mean(x))
+	
+	d <- cbind(d, agg)
+	### process climate data 
+	
+	dw <- data.frame(
+	   date = ifelse(nchar(r1g$Month) < 2, paste(r1g$Year, "-0", r1g$Month, sep = ""), paste(r1g$Year, r1g$Month, sep = "-")),
+	   prec = r1g$Monthly.rainfall.mm,
+	   tmax = r1g$Average.Monthly.Maximal.temperature.C,
+	   tmin = r1g$Average.Montlhy.Minimal.temperature.C,
+	   country = "Madagascar",
+	   location = "Ivory station", # As indicated in publication
+	   adm1 = "Vakinankaratra",
+	   adm2 = "Mandoto",
+	   longitude = 46.415, # As indicated in publication
+	   latitude = -19.555, # As indicated in publication
+	   elevation =  930, # As indicated in publication
+	   geo_from_source = FALSE
+	)
+	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-	d$season <- "wet" #rainy according to publication 
+	d$season <- "wet" #rainy according to publication
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth = dw)
    
 }
