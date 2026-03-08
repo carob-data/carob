@@ -58,10 +58,10 @@ carob_script <- function(path) {
 	  )
 	}
 
-	d1 <- sort_data("Drought.csv", "drought_stress")
-	d2 <- sort_data("Low-N.csv", "low_N")
-	d3 <- sort_data("Opt.csv", "high_N", nrows=1536)
-	d4 <- sort_data("Opt.csv", "high_N", skip=1538)  
+	d1 <- sort_data(tolower("Drought.csv"), "drought_stress")
+	d2 <- sort_data(tolower("Low-N.csv"), "low_N")
+	d3 <- sort_data(tolower("Opt.csv"), "high_N", nrows=1536)
+	d4 <- sort_data(tolower("Opt.csv"), "high_N", skip=1538)  
 
 	d <- rbind(d1, d2, d3, d4)
 	
