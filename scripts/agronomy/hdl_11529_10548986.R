@@ -30,12 +30,12 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	)
 	
 
-	f1 <- ff[basename(ff) == "1.-Farmer_Plot_Logbook_2012-2022_02.xlsx"]
-	f2 <- ff[basename(ff) == "2.-Sowing_harvest_yields_2012-2022_01.xlsx"]
-	f3 <- ff[basename(ff) == "3._Labor_harvest_activities_2012-2022_01.xlsx"]
+	f1 <- ff[basename(ff) == "1.-Farmer_Plot_Logbook_2012-2022_03.xlsx"]
+	f2 <- ff[basename(ff) == "2.-Sowing_harvest_yields_2012-2022_02.xlsx"]
+	f3 <- ff[basename(ff) == "3._Labor_harvest_activities_2012-2022_02.xlsx"]
 	f4 <- ff[basename(ff) == "4.-Agricultural supplies_2012-2022_01.xlsx"]
 	f5 <- ff[basename(ff) == "5.-Irrigacion_2012-2022_01.xlsx"]
-	f6 <- ff[basename(ff) == "6.-Costs and revenues_2012-2022_01.xlsx"]
+	f6 <- ff[basename(ff) == "6.-Costs and revenues_2012-2022_02.xlsx"]
 	f7 <- ff[basename(ff) == "Spanish-English Glossary.xlsx"]
 
 	r1 <- suppressWarnings(carobiner::read.excel(f1))
