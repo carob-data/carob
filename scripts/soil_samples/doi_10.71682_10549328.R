@@ -15,7 +15,7 @@ Selected soil properties were predicted from 232 topsoil samples subjected to sp
 
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT;CIRAD;EIAR;ICRAF;",
 		publication = NA,
 		project = "GAIA",
