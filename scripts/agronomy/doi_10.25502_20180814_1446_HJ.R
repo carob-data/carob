@@ -24,9 +24,9 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;lime;Ca_fertilizer;Zn_fertilizer;S_fertilizer;Mg_fertilizer;OM_amount;lime"
 	)
 	
-	ffield <- ff[basename(ff) == "Sidindi_LR2010_Field.csv"]
-	fplant <- ff[basename(ff) == "Sidindi_LR2010_plant.csv"]
-	fplot <- ff[basename(ff) == "Sidindi_LR2010_Plot.csv"]
+	ffield <- ff[basename(ff) == "sidindi_lr2010_field.csv"]
+	fplant <- ff[basename(ff) == "sidindi_lr2010_plant.csv"]
+	fplot <- ff[basename(ff) == "sidindi_lr2010_plot.csv"]
 
 	field <- read.csv(ffield, na.strings="")
 	plot <- read.csv(fplot, na.strings="")

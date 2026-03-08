@@ -22,8 +22,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;lime_used"
 	)
     
-	f1 <- ff[basename(ff) == "Tuchila_S2_Field.csv"] ## get Field dataset 
-	f2 <- ff[basename(ff) == "Tuchila_S2_Plot.csv"] ## get plot dataset
+	f1 <- ff[basename(ff) == "tuchila_s2_field.csv"] ## get Field dataset 
+	f2 <- ff[basename(ff) == "tuchila_s2_plot.csv"] ## get plot dataset
 	#fx <- ff[basename(ff) == "Tuchila_S2_Plant.csv"] ## get plant dataset
  
    # read the dataset

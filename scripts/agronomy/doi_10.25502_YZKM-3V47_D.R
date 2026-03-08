@@ -35,7 +35,7 @@ carob_script <- function(path) {
 
 
 
-	f <- ff[basename(ff) == "Staggered planting FUNNAB"]
+	f <- ff[basename(ff) ==  tolower("Staggered-planting-FUNNAB")]
 	r <- read.csv(f)
 	#f <- ff[basename(ff) == "Metadata for staggered planting data"]
 	#m <- read.csv(f)

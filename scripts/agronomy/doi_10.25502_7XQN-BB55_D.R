@@ -21,7 +21,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;B_fertilizer" 
 	)
 
-	f <- ff[basename(ff) == "ACAI_FR_forCKAN_2022.csv"]
+	f <- ff[basename(ff) == "acai_fr_forckan_2022.csv"]
 	r <- read.csv(f)
 
 	d <- data.frame(

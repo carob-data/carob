@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer"
 	)
 
-	f <- ff[basename(ff) == "N and P maize trial_2015_16.csv"]
+	f <- ff[basename(ff) == "n-and-p-maize-trial_2015_16.csv"]
 	r <- read.csv(f)
 	d <- data.frame(
 		location=r$loc,

@@ -21,9 +21,9 @@ carob_script <- function(path) {
 	)
 
 	## read data 
-	ffield <- ff[basename(ff) == "Kontela_DT2009_field.csv"]
-	fplant <- ff[basename(ff) == "Kontela_DT2009_Plant.csv"]
-	fplot <- ff[basename(ff) == "Kontela_DT2009_Plot.csv"]
+	ffield <- ff[basename(ff) == "kontela_dt2009_field.csv"]
+	fplant <- ff[basename(ff) == "kontela_dt2009_plant.csv"]
+	fplot <- ff[basename(ff) == "kontela_dt2009_plot.csv"]
 	
 	field <- read.csv(ffield, na.strings = "")
 	plot <- read.csv(fplot, na.strings = "")
