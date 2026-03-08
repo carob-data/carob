@@ -52,7 +52,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 
 	d1 <- data.frame(
 		hhid = r1[["FARMER ID"]],
-		logbook = r1[["LOGBOOK ID"]],
+		logbook = r1[["LOGBOOK ID...1"]],
 		adm1 = carobiner::fix_name(r1[["STATE WHERE THE FARMER LIVES"]], "title"),
 		adm2 = carobiner::fix_name(r1[["MUNICIPALITY WHERE THE FARMER LIVES"]], "title"),
 #		year = r1[["YEARS OF EXPERIENCE IN THE AGRICULTURAL SECTOR"]],
