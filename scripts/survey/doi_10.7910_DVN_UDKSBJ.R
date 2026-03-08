@@ -182,11 +182,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   farmland_rentedin = ifelse(grepl("No, we rent", r6$e4), 
 	                       ifelse(grepl("M2", r6$e3b), r6$e3a_HA/10000, r6$e3a_HA), NA),
 	   #cropland_used = r6$e8b,
-	   irrigation_method = ifelse(grepl("Surface", r6$e9), "surface", 
-	                        ifelse(grepl("Rain",r6$e9), "none",
-	                       ifelse(grepl("Groundwater|combination", r6$e9), "unknown", r6$e9))) ,
-	   irrigated = ifelse(!is.na(r6$e9), TRUE, FALSE),
-	   irrigation_source = ifelse(is.na(r6$e10), r6$e9,  r6$e10),
+	   irrigated = ifelse(!is.na(r6$e9) & r6$e9 != "Rain", TRUE, FALSE),
+	   irrigation_method = ifelse(r6$e9 == "Rain", "none", "unknown"),
+	   irrigation_source = ifelse(is.na(r6$e9) | r6$e9 == "Rain", "none", r6$e9),
 	   #r6$e11,
 	   soil_texture = tolower(r6$e12),
 	   soil_color = r6$e14,
@@ -394,6 +392,11 @@ d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
 d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
 d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
 d$id <- d$planting_area_pct <- d$long <-  d$lat <- d$geo_from <- d$convert_fact <- NULL 
+
+### Fixing irrigation_source
+d$irrigation_source[grep("Surface", d$irrigation_source)] <- "surface"
+d$irrigation_source[grep("Groundwater", d$irrigation_source)] <- "groundwater"
+d$irrigation_source[grep("A combination", d$irrigation_source)] <- "surface; groundwater"
 
 ### Fixing soil texture
 
