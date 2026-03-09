@@ -24,7 +24,7 @@ carob_script <- function(path) {
       treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer;B_fertilizer"
    )
    
-	r <- read.csv(ff[basename(ff)=="IAR_VT_yield harvest_summ.csv"])
+	r <- read.csv(ff[basename(ff)==tolower("IAR_VT_yield-harvest_summ.csv")])
 
 	d <- data.frame(
 		treatment = r$trt_name, 

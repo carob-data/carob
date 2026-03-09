@@ -25,14 +25,14 @@ carob_script <- function(path) {
 	bn <- basename(ff)
 	
 	# read Yellow_lines_BBA_DS dataset
-	r <- read.csv(ff[bn=="20181029aao_S1_Yellow_lines_BBA_DS.csv"])  
+	r <- read.csv(ff[bn==tolower("20181029aao_S1_Yellow_lines_BBA_DS.csv")])  
 	
 	d1 <- r[, c("ID", "Country", "Location", "Study", "Year", "Rep", "Entry", "Pedigree", "Yield", "ASI", "PLTH", "EHT", "PASP", "EASP", "DS", "HC")]#
 	colnames(d1) <- c("ID", "country", "location", "treatment", "planting_date", "rep", "variety_code", "variety", "yield", "asi", "plant_height", "ear_height", "p_asp", "e_asp", "silking_days", "husk")#, 
 	
 	
 	# read Yellow_lines_BBA_ww dataset
-	r1 <- read.csv(ff[bn=="20181029aao_S1_Yellow_lines_BBA_WW.csv"])  
+	r1 <- read.csv(ff[bn==tolower("20181029aao_S1_Yellow_lines_BBA_WW.csv")])  
 	
 	d2 <- r1[, c("ID", "country", "Location", "Study", "YEAR", "Rep", "Entry", "Pedigree", "YIELD", "ASI", "PLTH", "EHT", "PASP", "EASP", "DS", "HC")]#
 

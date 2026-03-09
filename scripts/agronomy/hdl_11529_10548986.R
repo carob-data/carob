@@ -15,7 +15,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=1,
+	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=0,
 		data_organization = "CIMMYT",
 		publication = "NA",
 		project = NA,
@@ -30,12 +30,12 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	)
 	
 
-	f1 <- ff[basename(ff) == "1.-Farmer_Plot_Logbook_2012-2022_02.xlsx"]
-	f2 <- ff[basename(ff) == "2.-Sowing_harvest_yields_2012-2022_01.xlsx"]
-	f3 <- ff[basename(ff) == "3._Labor_harvest_activities_2012-2022_01.xlsx"]
+	f1 <- ff[basename(ff) == "1.-Farmer_Plot_Logbook_2012-2022_03.xlsx"]
+	f2 <- ff[basename(ff) == "2.-Sowing_harvest_yields_2012-2022_02.xlsx"]
+	f3 <- ff[basename(ff) == "3._Labor_harvest_activities_2012-2022_02.xlsx"]
 	f4 <- ff[basename(ff) == "4.-Agricultural supplies_2012-2022_01.xlsx"]
 	f5 <- ff[basename(ff) == "5.-Irrigacion_2012-2022_01.xlsx"]
-	f6 <- ff[basename(ff) == "6.-Costs and revenues_2012-2022_01.xlsx"]
+	f6 <- ff[basename(ff) == "6.-Costs and revenues_2012-2022_02.xlsx"]
 	f7 <- ff[basename(ff) == "Spanish-English Glossary.xlsx"]
 
 	r1 <- suppressWarnings(carobiner::read.excel(f1))
@@ -52,7 +52,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 
 	d1 <- data.frame(
 		hhid = r1[["FARMER ID"]],
-		logbook = r1[["LOGBOOK ID"]],
+		logbook = r1[["LOGBOOK ID...1"]],
 		adm1 = carobiner::fix_name(r1[["STATE WHERE THE FARMER LIVES"]], "title"),
 		adm2 = carobiner::fix_name(r1[["MUNICIPALITY WHERE THE FARMER LIVES"]], "title"),
 #		year = r1[["YEARS OF EXPERIENCE IN THE AGRICULTURAL SECTOR"]],

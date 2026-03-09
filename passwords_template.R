@@ -5,7 +5,8 @@
 
 pwds <- function() {
 	list(
-		LSMS = c(username="name@email.com", password="password")
+		c(service=LSMS, username="name@email.com", password="password"),
+		c(service=DRYAD, username="Account ID", password="Secret")
 	)
 }
 

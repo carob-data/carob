@@ -20,9 +20,9 @@ carob_script <- function(path) {
 		treatment_vars="N_fertilizer;P_fertilizer;inoculated"				
 	)
 
-	f <- ff[basename(ff) == "Canon data.csv"]
+	f <- ff[basename(ff) == tolower("Canon-data.csv")]
 	r1 <- read.csv(f)
-	f <- ff[basename(ff) == "Biomass Analysis.csv"]
+	f <- ff[basename(ff) == tolower("Biomass-Analysis.csv")]
 	r2 <- read.csv(f)
 		
 	from1 <- c("Country", "Loc", "Treatment", "Variety", "pH_value", "Nitrogen", "Rep", "Yld_FW_kg_ha", "Harvested_Biomass_kg_ha", "Days_to_Flowering_R1", "Days_to_Full_Maturity_R8", "Days_to_Harvest", "Season")

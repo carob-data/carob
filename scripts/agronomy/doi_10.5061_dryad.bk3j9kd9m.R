@@ -42,6 +42,7 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
       trial_id= r$Field,
       plot_id= r$Plot,
       yield= r$Yield*1000, ## kg/ha
+	  yield_isfresh = NA,
       fwy_total= r$Biomass_plant*1000, ## kg/ha 
       soil_SOC= r$SOC_soil,
       soil_type= r$Topsoil_type,

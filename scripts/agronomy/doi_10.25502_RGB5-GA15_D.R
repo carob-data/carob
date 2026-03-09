@@ -22,9 +22,9 @@ carob_script <- function(path) {
   )
   
   
-  f1 <- ff[basename(ff) == "BUK_T1_VT_yieldatharvest_summ.csv"] # dataset from team1
-  f2 <- ff[basename(ff) == "BUK-T2_VT_yieldatharvest_summ.csv"] # dataset from team2
-  f3 <- ff[basename(ff) == "BUK_T3_VT_yieldatharvest_final.csv"]# dataset from team3
+  f1 <- ff[basename(ff) == tolower("BUK_T1_VT_yieldatharvest_summ.csv")] # dataset from team1
+  f2 <- ff[basename(ff) == tolower("BUK-T2_VT_yieldatharvest_summ.csv")] # dataset from team2
+  f3 <- ff[basename(ff) == tolower("BUK_T3_VT_yieldatharvest_final.csv")]# dataset from team3
   # read the dataset
   d1 <- read.csv(f1)
   d2 <- read.csv(f2)

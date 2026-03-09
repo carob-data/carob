@@ -20,7 +20,7 @@ carob_script <- function(path) {
       carob_date="2024-11-22"
    )
    
-   f <- ff[basename(ff)=="DMYield_ 2016_2017.csv"]
+   f <- ff[basename(ff)==tolower("DMYield_-2016_2017.csv")]
    
    r <- read.csv(f)
    ### Processing 

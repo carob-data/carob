@@ -8,7 +8,7 @@ carob_script <- function(path) {
    group <- "pest_disease"
    ff  <- carobiner::get_data(uri, path, group)
    
-   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
+   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
       data_organization = "CIP",
       publication= NA,
       project=NA,

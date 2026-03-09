@@ -20,9 +20,9 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer"
 	)
 	
-	f1 <- ff[basename(ff) == "Koloko_DT2009_field.csv"] # get Field dataset 
-	f2 <- ff[basename(ff) == "Koloko_DT2009_plant.csv"] # get plant dataset
-	f3 <- ff[basename(ff) == "Koloko_DT2009_plot.csv"] # get plot dataset
+	f1 <- ff[basename(ff) == "koloko_dt2009_field.csv"] # get Field dataset 
+	f2 <- ff[basename(ff) == "koloko_dt2009_plant.csv"] # get plant dataset
+	f3 <- ff[basename(ff) == "koloko_dt2009_plot.csv"] # get plot dataset
 	
 	# read the dataset
 	r1 <- read.csv(f1)

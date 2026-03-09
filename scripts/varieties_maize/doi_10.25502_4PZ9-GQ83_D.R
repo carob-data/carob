@@ -24,7 +24,7 @@ Cluster analysis separated the maize germplasm into five major groups, different
 		carob_date="2023-10-03"
    )
    
-   r <- read.csv(ff[basename(ff)=="Phenotypic characterization data.csv"])  
+   r <- read.csv(ff[basename(ff)==tolower("Phenotypic-characterization-data.csv")])  
     
    d <- data.frame(
 		variety = r$GENOTYPE,

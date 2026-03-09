@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		carob_date="2024-05-07"
 	)
 	
-	f <- ff[basename(ff) == "Phenotypic data of inbred lines evaluated under low-N conditions in 2017"]
+	f <- ff[basename(ff) == "phenotypic-data-of-inbred-lines-evaluated-under-low-n-conditions-in-2017.csv"]
 	r <- read.csv(f)
 
 	d <- data.frame(

@@ -18,7 +18,7 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
   group <- "varieties_maize"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
+  meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = "MasAgro",
@@ -32,7 +32,8 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
 		design = NA
   )
   
-  f <- ff[basename(ff) == "MasAgro_maize_seed_evaluation_network_2011-2019 yields.xlsx"]
+  f <- ff[basename(ff) == "MasAgro_maize_seed_evaluation_network_2011-2019_yields.xlsx"]
+
   r <- carobiner::read.excel(f, sheet="Data")
   
   d <- data.frame(
