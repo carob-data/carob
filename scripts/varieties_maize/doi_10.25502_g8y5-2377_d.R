@@ -7,7 +7,6 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.25502/g8y5-2377/d"
 	group <- "varieties_maize"
-
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
@@ -21,10 +20,9 @@ carob_script <- function(path) {
 		carob_date = "2024-07-11"
 	)
 	
-
-	f1 <- ff[basename(ff) == tolower("Drought-Stress.csv")]
-	f2 <- ff[basename(ff) == tolower("Optimum.csv")]
-	f3 <- ff[basename(ff) == tolower("Striga.csv")]
+	f1 <- ff[grep("Drought.Stress.csv", ff, ignore.case=TRUE)]
+	f2 <- ff[tolower(basename(ff)) == tolower("Optimum.csv")]
+	f3 <- ff[tolower(basename(ff)) == tolower("Striga.csv")]
 	
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)

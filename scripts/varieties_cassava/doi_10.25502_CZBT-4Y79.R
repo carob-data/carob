@@ -20,7 +20,7 @@ carob_script <- function(path) {
       carob_date = "2024-09-05"
    )
    
-   f <- ff[basename(ff)==tolower("2020-04-03T101459phenotype_download.csv")]
+   f <- ff[tolower(basename(ff))==tolower("2020-04-03T101459phenotype_download.csv")]
    
    r <- read.csv(f)  
    

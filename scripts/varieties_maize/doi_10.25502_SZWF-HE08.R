@@ -60,7 +60,8 @@ carob_script <- function(path) {
 
 	
 	#data for IKDS
-	f1 <- ff[basename(ff) %in% tolower(c("EARLY-Drought.csv", "Extra-Early-Drought.csv"))]
+	f1 <- ff[grep("EARLY.Drought.csv|Extra.Early.Drought.csv", basename(ff), ignore.case=TRUE)]
+	stopifnot(length(f1) == 2)
 	d1 <- do.call(rbind, lapply(f1, read_data))
 	d1$adm1 <- "Ogun"
 	d1$adm2 <- "Ikenne"
@@ -68,7 +69,10 @@ carob_script <- function(path) {
 	d1$latitude <- 6.872
 
 #data set2 Early Drought+Heat.csv
-	f2 <- ff[basename(ff) %in% tolower(c("Early-DroughtHeat.csv",  "Early-Heat.csv", "Extra-Early-DroughtHeat.csv"))] 
+
+	f2 <- ff[grep("Early.DroughtHeat.csv|Extra.Early.DroughtHeat.csv|Extra.Early.Drought.Heat.csv|Early.Heat.csv", basename(ff), ignore.case=TRUE)]
+	stopifnot(length(f2) == 3)
+
 	d2 <- do.call(carobiner::bindr, lapply(f2, read_data))
 
 	d2$adm1 <- "Kano"

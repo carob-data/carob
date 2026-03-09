@@ -21,7 +21,7 @@ carob_script <- function(path) {
 	)
   
 	
-	f <- ff[basename(ff) == tolower("OCP_Yld-datacovariates_complete.csv")] 
+	f <- ff[grep("^OCP_Yld.*covariates_complete.csv", basename(ff), ignore.case=TRUE)] 
 	
 	# read the dataset
 	r <- read.csv(f)

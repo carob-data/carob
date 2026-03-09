@@ -24,7 +24,7 @@ are developed that are tested on farmer's fields in validation trials in a large
       treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer;B_fertilizer"
    )
    
-	r <- read.csv(ff[basename(ff)==tolower("NAERLS_VT_yield_summ.csv")])
+	r <- read.csv(ff[tolower(basename(ff))==tolower("NAERLS_VT_yield_summ.csv")])
 	d <- data.frame(
 		treatment = r$trt_name, 
 		yield = r$yld.plot_kg.ha,

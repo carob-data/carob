@@ -3,6 +3,7 @@
 carob_script <- function(path) {
    
 "The use of mineral fertilizer and organic inputs with an improved and local variety of cassava allow firstly to identify nutrient limitations to cassava production, and secondly to investigate the effects of variety and combined application of mineral and organic inputs on cassava growth and yields in the highland conditions of the Democratic Republic of Congo (DR Congo). Data on growth parameters, yields and yield components of the improved and local varieties of cassava, economic analysis and soil parameters, collected during two growing cycles of cassava are presented. 
+
 The data support a research article which is under review “Increased cassava growth and yields through improved variety use and fertilizer application in the highlands of South Kivu, Democratic Republic of Congo” [1]. Data on plant height and diameter was measured throughout the growing period of the crop while the data on the storage root, stem, tradable storage root and non-tradable storage root was determined at 12 months after planting (MAP) of the field experiments. The economic analysis was performed using a simplified financial analysis where the additional benefits were calculated relative to the respective control treatments while the total costs included the purchasing prices of fertilizer and the additional net benefits, the revenue from the increased storage root yields due to fertilizer application. The value cost ratio (VCR) was calculated as the additional net benefits over the cost of fertilizer purchase."
    
 	uri <-  "doi:10.25502/A5YJ-B820/D"
@@ -22,8 +23,8 @@ The data support a research article which is under review “Increased cassava g
 	
 	
 	# read the dataset
-	r1 <- read.csv(ff[basename(ff)==tolower("VarietyFertilizer_Effect_Data.csv")])  
-	r2 <- read.csv(ff[basename(ff)==tolower("Nutrient-response_Data.csv")])  
+	r1 <- read.csv(ff[grep("Fertilizer_Effect_Data.csv", basename(ff), ignore.case=TRUE)])  
+	r2 <- read.csv(ff[grep("Nutrient.response_Data.csv", basename(ff), ignore.case=TRUE)])  
 	
 	### process Variety&Fertilizer file()
 	

@@ -22,7 +22,7 @@ carob_script <- function(path) {
 	)
 	
 	
-	bn <- basename(ff)
+	bn <- tolower(basename(ff))
 	
 	# read Yellow_lines_BBA_DS dataset
 	r <- read.csv(ff[bn==tolower("20181029aao_S1_Yellow_lines_BBA_DS.csv")])  

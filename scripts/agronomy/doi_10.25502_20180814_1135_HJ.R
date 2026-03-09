@@ -20,7 +20,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;lime_used"
  	)
 
-	f1 <- ff[basename(ff) == "kiberashi_dt2010_field.csv"]
+	f1 <- ff[tolower(basename(ff)) == "kiberashi_dt2010_field.csv"]
 	r1 <- read.csv(f1)
 
 	d1 <- data.frame(
@@ -49,7 +49,7 @@ carob_script <- function(path) {
 	d1$previous_crop <- p
 
 	# 2nd get agronomic data
-	f2 <- ff[basename(ff) == "kiberashi_dt2010_plot.csv"]
+	f2 <- ff[tolower(basename(ff)) == "kiberashi_dt2010_plot.csv"]
 	r2 <- read.csv(f2)
 	
 ## note that TGrainYld_adj (not used) is 25% higher than TGrainYld.	

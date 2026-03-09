@@ -6,9 +6,7 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.25502/7XQN-BB55/D"
 	group <- "agronomy"
-
 	ff <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		project="ACAI",
@@ -21,7 +19,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;B_fertilizer" 
 	)
 
-	f <- ff[basename(ff) == "acai_fr_forckan_2022.csv"]
+	f <- ff[tolower(basename(ff)) == "acai_fr_forckan_2022.csv"]
 	r <- read.csv(f)
 
 	d <- data.frame(

@@ -10,7 +10,6 @@ carob_script <- function(path) {
 	group <- "varieties_maize"	
 	ff <- carobiner::get_data(uri, path, group)
 		
-
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
  	    publication="doi:10.1016/j.jenvman.2017.06.058",
 		carob_contributor = "Robert Hijmans",
@@ -22,12 +21,10 @@ carob_script <- function(path) {
 		data_organization="IITA"
 	)
 
-
-
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	f <- grep("\\.csv$", basename(ff), value=TRUE)
+	d <- mzfun(ff, sf=f)	
 
-	d <- mzfun(ff, sf=tolower("Republic-of-Benin.csv"))
-		
 	d$country <- "Benin"
 	carobiner::write_files(meta, d, path=path)
 

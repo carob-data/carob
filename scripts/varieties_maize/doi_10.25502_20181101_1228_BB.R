@@ -19,8 +19,8 @@ carob_script <- function(path) {
 		data_organization="IITA"
  	)
 	
-	f1 <- ff[basename(ff) == tolower("20181029aao_Combd_BA15150_Final_WW_data.csv")]
-	f2 <- ff[basename(ff) == tolower("20181025aao_Combd_BA15150_Final_DS_data.csv")]
+	f1 <- ff[tolower(basename(ff)) == tolower("20181029aao_Combd_BA15150_Final_WW_data.csv")]
+	f2 <- ff[tolower(basename(ff)) == tolower("20181025aao_Combd_BA15150_Final_DS_data.csv")]
 	 
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)

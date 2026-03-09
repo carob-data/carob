@@ -25,7 +25,7 @@ carob_script <- function(path) {
 	
 	process_data <- function(file_name, id) {
 	  
-	  f <- ff[basename(ff) == file_name]
+	  f <- ff[tolower(basename(ff)) == tolower(file_name)]
 	  r <- read.csv(f) 
 	  
 	  d <- data.frame (
@@ -55,12 +55,12 @@ carob_script <- function(path) {
 	  
 	}
 	
-	d0 <- process_data(tolower("Ikenne_Infected.csv"), 1)
-	d1 <- process_data(tolower("Ikenne_Uninfected.csv"), 2)
-	d2 <- process_data(tolower("Ile_Ife_Infected.csv"), 3)
-	d3 <- process_data(tolower("Ile_Ife_Uninfected.csv"), 4)
-	d4 <- process_data(tolower("Zaria_Infected.csv"), 5)
-	d5 <- process_data(tolower("Zaria_Uninfected.csv"), 6)
+	d0 <- process_data("Ikenne_Infected.csv", 1)
+	d1 <- process_data("Ikenne_Uninfected.csv", 2)
+	d2 <- process_data("Ile_Ife_Infected.csv", 3)
+	d3 <- process_data("Ile_Ife_Uninfected.csv", 4)
+	d4 <- process_data("Zaria_Infected.csv", 5)
+	d5 <- process_data("Zaria_Uninfected.csv", 6)
 	
 	d <- rbind(d0, d1, d2, d3, d4, d5)
 	

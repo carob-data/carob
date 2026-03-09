@@ -8,10 +8,9 @@ carob_script <- function(path) {
 Cluster analysis separated the maize germplasm into five major groups, differentiated largely by phenology and overall phenotypic appeal, enabling identification of outstanding genotypes for further screening for stress tolerance. Wide genetic diversity was observed between Burkinabe and improved gene pools, suggesting that the original Sahelian gene pool might not have contributed much to modern cultivars. This gene pool offers opportunities for pre-breeding by providing novel alleles for enriching elite maize germplasm. Shannon-Weaver diversity index (H’) revealed high genetic variability among the landraces (H’ = 0.73) and a narrow genetic base in the improved populations and varieties (H’ = 0.46). These results provide new insights into the potential of tropical maize landraces for genetic improvement of maize."
 
    
-   uri <-  "doi:10.25502/4PZ9-GQ83/D"
-   group <- "varieties_maize" 
-
-   ff <- carobiner::get_data(uri, path, group)
+	uri <-  "doi:10.25502/4PZ9-GQ83/D"
+	group <- "varieties_maize" 
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		publication= "doi:10.1080/15427528.2019.1674760",
@@ -24,7 +23,7 @@ Cluster analysis separated the maize germplasm into five major groups, different
 		carob_date="2023-10-03"
    )
    
-   r <- read.csv(ff[basename(ff)==tolower("Phenotypic-characterization-data.csv")])  
+   r <- read.csv(ff[grep("Phenotypic.characterization.data.csv", basename(ff), ignore.case=TRUE)])  
     
    d <- data.frame(
 		variety = r$GENOTYPE,

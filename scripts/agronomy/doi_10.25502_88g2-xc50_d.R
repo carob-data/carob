@@ -7,7 +7,7 @@ carob_script <- function(path) {
    
    uri <- "doi:10.25502/88g2-xc50/d"
    group <- "agronomy"
-   ff  <- carobiner::get_data(uri, path, group)
+   ff <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA, 
       data_organization ="IITA", 
@@ -20,7 +20,7 @@ carob_script <- function(path) {
       carob_date="2024-11-22"
    )
    
-   f <- ff[basename(ff)==tolower("DMYield_-2016_2017.csv")]
+   f <- ff[grep("DMYield_.2016_2017.csv", tolower(basename(ff)), ignore.case=TRUE)]
    
    r <- read.csv(f)
    ### Processing 

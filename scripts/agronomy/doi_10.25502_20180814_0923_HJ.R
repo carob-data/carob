@@ -19,8 +19,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;lime"
     )
 
-	f1 <- ff[basename(ff) == "kasungu_dt2011_field.csv"]
-	f2 <- ff[basename(ff) == "kasungu_dt2011_plot.csv"]	
+	f1 <- ff[tolower(basename(ff)) == "kasungu_dt2011_field.csv"]
+	f2 <- ff[tolower(basename(ff)) == "kasungu_dt2011_plot.csv"]	
 #	fx <- ff[basename(ff) == "Kasungu_DT2011_plant.csv"]
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)

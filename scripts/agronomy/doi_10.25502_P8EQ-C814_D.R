@@ -22,8 +22,8 @@ carob_script <- function(path) {
     )
       
     # read the dataset
-    r1 <- read.csv(ff[basename(ff)==tolower("Agro2014_1stSeason_All_Locations_Cas_Datafile_Rft.csv")])
-    r2 <- read.csv(ff[basename(ff)==tolower("Agro2014_2ndSeason_All_Locations_Cas_Datafile_Rft.csv")])
+    r1 <- read.csv(ff[tolower(basename(ff))==tolower("Agro2014_1stSeason_All_Locations_Cas_Datafile_Rft.csv")])
+    r2 <- read.csv(ff[tolower(basename(ff))==tolower("Agro2014_2ndSeason_All_Locations_Cas_Datafile_Rft.csv")])
     
     sel <- c('UniqueID', 'Season', 'Loc', 'Site', 'Rep', 'Tillage', 'cropSystem', 'Fertilizer', 'Variety', 'Density', 'YLDOKfr_kgm2', 'Lat', 'Long', 'Date_Planted_Cas', 'Date_Harvested_Cas')
     d1 <- r1[,sel]

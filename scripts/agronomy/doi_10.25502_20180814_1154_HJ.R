@@ -7,7 +7,7 @@ carob_script <- function(path) {
   
 	uri <- "doi:10.25502/20180814/1154/HJ"
 	group <- "agronomy"
-	ff	 <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		publication=NA,#  10.1016/j.agee.2016.05.012
@@ -20,9 +20,9 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer"
 	)
 	
-	f1 <- ff[basename(ff) == "koloko_dt2009_field.csv"] # get Field dataset 
-	f2 <- ff[basename(ff) == "koloko_dt2009_plant.csv"] # get plant dataset
-	f3 <- ff[basename(ff) == "koloko_dt2009_plot.csv"] # get plot dataset
+	f1 <- ff[tolower(basename(ff)) == "koloko_dt2009_field.csv"] # get Field dataset 
+	f2 <- ff[tolower(basename(ff)) == "koloko_dt2009_plant.csv"] # get plant dataset
+	f3 <- ff[tolower(basename(ff)) == "koloko_dt2009_plot.csv"] # get plot dataset
 	
 	# read the dataset
 	r1 <- read.csv(f1)

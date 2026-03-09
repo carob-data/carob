@@ -18,7 +18,6 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.25502/YZKM-3V47/D"
 	group <- "agronomy"
-
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
@@ -35,7 +34,7 @@ carob_script <- function(path) {
 
 
 
-	f <- ff[basename(ff) ==  tolower("Staggered-planting-FUNAAB.csv")]
+	f <- ff[grep("^Staggered.planting.FUN", basename(ff), ignore.case=TRUE)]
 	r <- read.csv(f)
 	#f <- ff[basename(ff) == "Metadata for staggered planting data"]
 	#m <- read.csv(f)

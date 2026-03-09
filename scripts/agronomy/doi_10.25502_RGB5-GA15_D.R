@@ -5,7 +5,6 @@ carob_script <- function(path) {
   
 "Developing efficient and affordable fertilizer products for increased and sustained yields in the maize belt of Nigeria. Maize belt of Nigeria that covers 8 states: Bauchi, Kaduna, Kano, Katsina, Nasarawa, Niger, Plateau and Taraba"
 
-
   uri <- "doi:10.25502/RGB5-GA15/D"
   group <- "agronomy"
   ff <- carobiner::get_data(uri, path, group)
@@ -20,11 +19,10 @@ carob_script <- function(path) {
 	response_vars = "yield",
 	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer"
   )
-  
-  
-  f1 <- ff[basename(ff) == tolower("BUK_T1_VT_yieldatharvest_summ.csv")] # dataset from team1
-  f2 <- ff[basename(ff) == tolower("BUK-T2_VT_yieldatharvest_summ.csv")] # dataset from team2
-  f3 <- ff[basename(ff) == tolower("BUK_T3_VT_yieldatharvest_final.csv")]# dataset from team3
+
+  f1 <- ff[tolower(basename(ff)) == tolower("BUK_T1_VT_yieldatharvest_summ.csv")] # dataset from team1
+  f2 <- ff[tolower(basename(ff)) == tolower("BUK-T2_VT_yieldatharvest_summ.csv")] # dataset from team2
+  f3 <- ff[tolower(basename(ff)) == tolower("BUK_T3_VT_yieldatharvest_final.csv")]# dataset from team3
   # read the dataset
   d1 <- read.csv(f1)
   d2 <- read.csv(f2)
