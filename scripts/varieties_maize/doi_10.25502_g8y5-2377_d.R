@@ -22,7 +22,7 @@ carob_script <- function(path) {
 	)
 	
 
-	f1 <- ff[basename(ff) == tolower("Drought Stress.csv")]
+	f1 <- ff[basename(ff) == tolower("Drought-Stress.csv")]
 	f2 <- ff[basename(ff) == tolower("Optimum.csv")]
 	f3 <- ff[basename(ff) == tolower("Striga.csv")]
 	

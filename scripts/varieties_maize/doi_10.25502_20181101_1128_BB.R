@@ -32,7 +32,7 @@ carob_script <- function(path) {
 	
 	
 	# read Yellow_lines_BBA_ww dataset
-	r1 <- read.csv(ff[bn=="20181029aao_S1_Yellow_lines_BBA_WW.csv"])  
+	r1 <- read.csv(ff[bn==tolower("20181029aao_S1_Yellow_lines_BBA_WW.csv")])  
 	
 	d2 <- r1[, c("ID", "country", "Location", "Study", "YEAR", "Rep", "Entry", "Pedigree", "YIELD", "ASI", "PLTH", "EHT", "PASP", "EASP", "DS", "HC")]#
 

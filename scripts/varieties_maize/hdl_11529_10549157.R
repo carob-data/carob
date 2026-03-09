@@ -32,7 +32,8 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
 		design = NA
   )
   
-  f <- ff[basename(ff) == "MasAgro_maize_seed_evaluation_network_2011-2019 yields.xlsx"]
+  f <- ff[basename(ff) == "MasAgro_maize_seed_evaluation_network_2011-2019_yields.xlsx"]
+
   r <- carobiner::read.excel(f, sheet="Data")
   
   d <- data.frame(
