@@ -83,6 +83,7 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		is_survey = FALSE, 
 		yield_part = "grain", 
 		yield_moisture = as.numeric(NA), 
+		yield_isfresh = NA,
 		irrigated = NA,
 		soil_clay = 52, ## from publication
 		soil_sand = 26,

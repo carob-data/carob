@@ -55,7 +55,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		fwy_roots = rowSums(r[, c("mass_ok_roots_kg_m2", "mass_bad_roots_kg_m2")])*10000,
 		yield_marketable = r$DM_ok_roots_Mg_ha*1000,
 		yield = rowSums(r[, c("DM_bad_roots_Mg_ha", "DM_ok_roots_Mg_ha")])*1000 ,
-		dmy_total = r$DM_above*1000,
+		dmy_total = (r$DM_above + r$DM_bad_roots_Mg_ha + r$DM_ok_roots_Mg_ha) * 1000,
 		harvest_index = r$HI_total,
 		latitude = 7.378,
 		longitude = 3.955,
@@ -110,10 +110,9 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	agg <- aggregate(. ~ rep + location + country+ soil_P_method , d1, function(x) mean(x))
 	
 	### merge soil data and yield data 
-  d <- merge(d, agg, by= c("rep", "location", "country"), all.x = TRUE)
+	d <- merge(d, agg, by= c("rep", "location", "country"), all.x = TRUE)
 	
-
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 

@@ -4,7 +4,6 @@
 #Fertiliser amount are given as ratios 
 # ....
 
-
 carob_script <- function(path) {
   
 "This study contains data originated from on-farm trials that were conducted to test and demonstrate the crop yield and economic benefits derived from manual and animal traction conservation agriculture (CA) systems on smallholder farms where the ridge and furrow tillage system is the traditional practice. The farm trials were conducted at six farms in Chipata, Lundazi, and Sinda districts of the eastern province of Zambia. In each site, the trials were replicated four times and had two general treatment sets:1) manual CA; and 2) animal traction CA.

@@ -3,7 +3,6 @@
 
 ## ISSUES
 
-
 carob_script <- function(path) {
 
 "
@@ -27,7 +26,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 100,	
-		notes = NA
+		notes = "there also is soils data but it is not clear how to join it"
 	)
 	
 
@@ -47,16 +46,12 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		location = r$Site,
 		plot_id = as.character(r$Plot_no),
 		rep = r$Rep,
-		treatment = r$Plough,
-		land_prep_method = ifelse(grepl("No/Ridge", r$Sec_tillage), "ridge tillage", 
-		                   ifelse(grepl("Harrow/No", r$Sec_tillage), "harrowing", 
-		                   ifelse(grepl("Harrow/Ridge", r$Sec_tillage), "harrowing;ridge tillage", 
-		                   ifelse(grepl("Harrow/Harrow", r$Sec_tillage), "harrowing", "none")))),
 		plant_density = r$plants_m2*10000,# plant/ha
 		fwy_leaves = r$Leaf_mass_fresh_m2*10000,
 		fwy_stems = r$Stem_mass_fresh_m2*10000,
 		yield_marketable = r$mass_roots_fresh_m2*10000,
 		yield =  rowSums(r[, c("mass_roots_fresh_m2", "mass_bad_roots_fresh_m2")])*10000, 
+		yield_isfresh = TRUE,
 		latitude = r$Lat,
 		longitude = r$Long,
 		elevation = r$Altitude,
@@ -69,13 +64,20 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		yield_moisture = as.numeric(NA),
 		irrigated = NA, 
 		geo_from_source = TRUE,
-		loc = gsub(" 1| 2", "", r$Site),
+		#loc = gsub(" 1| 2", "", r$Site),
 		trt = trimws(r$Plough)
 	)
 
-	d$treatment <- ifelse(grepl("DP", trimws(d$treatment)), "double plough", 
-	                ifelse(grepl("SP", trimws(d$treatment)), "Single plough", "Zero plough"))
-	d$land_prep_method <- ifelse(grepl("Zero plough", d$treatment), d$land_prep_method, paste("ploughing", d$land_prep_method, sep = ";")) 
+	t1 <- ifelse(d$trt == "DP", "double ploughing", ifelse(d$trt == "SP", "single ploughing", ""))
+	t2 <- gsub("Ridge", "ridge tillage", gsub("Harrow", "harrowing", 
+			gsub("/", ";", gsub("No/No|No/|/No", "", r$Sec_tillage))))
+	t2[t2 == "harrowing;harrowing"] <- "double harrowing"
+	t12 <- apply(cbind(t1, t2), 1, \(x) paste(x, collapse=";"))
+	
+	t12[t12 == ";"] <- "none"
+	t12 <- gsub("^;|;$", "", t12)
+
+	d$land_prep_method <- t12 
 
 ### Fixing long and lat 
 	
@@ -95,7 +97,8 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	 
-	### process soil data from doi:10.25502/dedn-zq96/d
+### process soil data from doi:10.25502/dedn-zq96/d
+### this is a seperate URI that has the soils data for this experiment
 	
 	ff1  <- carobiner::get_data("doi:10.25502/dedn-zq96/d", path, group)
 	f <- ff1[basename(ff1) == "bpp5_soildata_forckan.csv"]
@@ -124,18 +127,18 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	   soil_clay = r1$Caly_perc
 	)
 	
-	agg <- aggregate(. ~ trt + rep + loc + country + soil_P_method, d1, 
-	                 function(x) mean(x))
+	# we need to keep the two soil depths
+	#agg <- aggregate(. ~ trt + rep + loc + country + soil_P_method, d1, 
+	#                 function(x) mean(x))
 	
-
-	### merge soil data and yield data
-	
-	d <- merge(d, agg, by= c("country", "loc", "rep", "trt"), all.x  = TRUE)
+	## there are four locations. We need to use them
+	# merge soil data and yield data
+	#d <- merge(d, agg, by= c("country", "loc", "rep", "trt"), all.x  = TRUE)
    
 	d$trt <- d$loc <- NULL
 	
 	
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 

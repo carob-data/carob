@@ -1,7 +1,6 @@
 # R script for "carob"
 
 
-
 carob_script <- function(path) {
   
 "Wheat productivity in eastern Indo-Gangetic plain is sub-optimal that can largely be attributed to delayed wheat sowing and use of late sown varieties. Ideal time of sowing wheat in eastern India is first fortnight of November but in general, it gets delayed by 15-25 days. This delay puts farmers in a situation where they tend to prefer late sown varieties whose potential yields are low. By 2020, more than half wheat farmers in Bihar more than one third in eastern Uttar Pradesh were using late sown wheat varieties. To validate the effect of timely sowing and comparative performance of long and short duration varieties, multi-location on-farm trials were conducted continuously over five years starting from 2016-17. Krishi Vigyan Kendras, district-level extension centre of national agriculture research and extension system were involved in the process of evidence generation. Ten districts so ten centres were selected in a way that all agro-climatic zones of this area is covered. There were five treatments of sowing windows – 01 to 10 November, 11 – 20 November, 21 to 30 November, 01 – 15 December and 16 – 31 December. Varietal performance was compared in T3, T4 and T5 as short duration varieties can’t be sown before 20 November. There is asymmetry in distribution of samples within treatments and over years. That happened as trial was in farmer’s participatory mode and numbers were dependent completely on willingness of farmers to participate. Altogether, the trial was conducted at 3735 sites and we captured 60 variables including yield and yield attributing traits. (2022-10-28)"
@@ -17,7 +16,7 @@ carob_script <- function(path) {
     data_type="experiment",
     carob_contributor ="Effie Ochieng'",
     carob_date="2023-09-18",
-	treatment_vars = "sowing_date;variety",
+	treatment_vars = "planting_date;variety",
 	response_vars="yield"
   )
 

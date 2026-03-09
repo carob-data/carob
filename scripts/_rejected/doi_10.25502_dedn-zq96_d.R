@@ -1,9 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-
-### This data is included in doi:10.25502/zbqv-k659/d
+# These soil data were collected as part of an experiment
+# the experimental data are in doi:10.25502/zbqv-k659/d 
+# and the soils data have been added to the script for that dataset
 
 carob_script <- function(path) {
 

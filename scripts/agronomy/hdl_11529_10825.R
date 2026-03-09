@@ -1,6 +1,7 @@
 0# R script for "carob"
 
 
+
 carob_script <- function(path) {
   
 "On-farm demonstration plots were set in Zambia to demonstrate the effects of conservation agriculture (CA) technologies as compared to the traditional farmers practice (ploughing with a mouldboard plough). The CA treatments included basins (BA), ripping (RI) and direct seeding with a direct seeder (DS) and direct seeding with a jab planter (JP). Also superimposed to the treatments are rotations and intercropping of maize with a grain legume (either soyabean or cowpea) and these are compared with continuous maize planting. The study is carried out in various communities of Zambia. Thus, the data set presents yields for maize and the legumes from these sites over 9 seasons (2006-2015). (2016-12-08)"
@@ -65,6 +66,7 @@ carob_script <- function(path) {
 	
 	p <- carobiner::fix_name(d$treatment)
 	p <- gsub("DS", "direct seeder", p)
+	## probably hand seeding?
 	p <- gsub("Control plot", "control", p)
 	p <- gsub("check", "control", p)
 	p <- gsub("dibble stick", "dibbling stick", p)
@@ -73,7 +75,7 @@ carob_script <- function(path) {
 
 	p[p=="basin"] <- "basins"
 
-	d$treatment <- p
+	d$planting_method <- p
 
 	pp <- sapply(strsplit(p, ","), \(i) i[1])
 

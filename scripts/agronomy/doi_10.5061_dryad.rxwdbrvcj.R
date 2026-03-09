@@ -43,7 +43,7 @@ carob_script <- function(path) {
 		variety_code = "WH403",
 		previous_crop = "maize",
 		plot_area = 10.82,
-		season = "Long",
+		season = "long rains",
 		planting_date = ifelse(rk$trt == 0 & rk$Year > 2011, paste0(rk$Year-1,"-10-15"), paste0(rk$Year,"-03-15")), # From publication: "In Yala, fertilized maize was cultivated during the long rains and unfertilized maize during the short rains"
 		harvest_date = ifelse(rk$trt == 0 & rk$Year > 2011, NA, paste0(rk$Year,"-08-25")),
 		fertilizer_used = TRUE,
@@ -59,7 +59,8 @@ carob_script <- function(path) {
 		irrigated = FALSE,
 		row_spacing = 75,
 		plant_spacing = 30,
-		fw_yield = rk$ke_grain*1000,
+		yield = rk$ke_grain*1000,
+		yield_isfresh = TRUE,
 		yield_part = "grain",
 		fwy_residue = rk$ke_stover*1000,
 		grain_N = 10 * rk$ke_grainN / rk$ke_grain, # maybe... seems too low
