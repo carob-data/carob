@@ -36,7 +36,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2, fileEncoding = "latin1", na= c(""))
-	r2$Soil_Ca <- gsub(r2$Soil_Ca, ",", "")
+	r2$Soil_Ca <- gsub(",", "", r2$Soil_Ca)
 
 	d1 <- data.frame(
 		trial_id = paste(r2$Trial_type, r2$Code, sep = "-"),
