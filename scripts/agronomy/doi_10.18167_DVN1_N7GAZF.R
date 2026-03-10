@@ -54,8 +54,9 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		soil_N = r1$Tot_Min_N_ppm,
 		soil_bd = r1$BD_g_cm3,
 		crop_rotation = ifelse(grepl("CTR|NTR|NTR", r1$Treatment_ID), "cowpea;maize", "none"),
+		
 		herbicide_used = TRUE,
-		herbicide_product = "glyphosate",
+		herbicide_product = "glyphosate", ### from publication
 		herbicide_amount = 1.025,
 		N_fertilizer = 116.6,
 		P_fertilizer = 10.6,
@@ -118,5 +119,4 @@ carobiner::write_files(path, meta, d, wth = dw)
 
 }
 
-git config --global user.email "you@example.com"
-git config --global user.name "Your Name"
+
