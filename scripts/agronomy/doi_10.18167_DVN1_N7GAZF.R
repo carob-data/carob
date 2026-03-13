@@ -61,7 +61,7 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		N_fertilizer = 116.6,
 		P_fertilizer = 10.6,
 		K_fertilizer = 9.6,
-		plant_density = 44.444,
+		plant_density = 44444,
 		plant_spacing = 25,
 		row_spacing = 90,
 		trial_id = paste(r1$Position, r1$Treatment_no, sep = "-"), 
@@ -69,9 +69,9 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		is_survey= FALSE, 
 		crop = "maize", 
 		yield_part = "grain", 
-		yield_moisture = as.numeric(NA),
-		yield_isfresh = as.logical(NA),
-		irrigated = NA, 
+		yield_moisture = as.numeric(12.5), # from publication
+		yield_isfresh = as.logical(FALSE), # from publication: "adjust the fresh weight to 12.5% standard maize grain moisture"
+		irrigated = FALSE, # No supplemental water as per publication
 		country = "Zimbabwe"
 	)
 
@@ -89,6 +89,10 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 
 	d	<- merge(d1, yd, by= c("season", "treatment_code", "location"), all.x = TRUE)
   d$location <- ifelse(grepl("DTC", d$location), "Domboshava Training Centre", "University of Zimbabwe Farm")
+  
+  # The data only reports maize yields (rows). Interrow treatments are reffered to cowpea, without reported yield, so could be dropped
+  d <- d[!grepl("interow", d$trial_id), ]
+  
 	### Adding longitude and latitude
 	
 	geo <- data.frame(
