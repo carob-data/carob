@@ -21,6 +21,7 @@ carob_script <- function(path) {
    )
    
    ff <- ff[grepl("-", basename(ff))]
+   ff <- ff[!grepl("data-dictionary.csv", basename(ff))]
    
    ## processing  data
    process <- function(f){
@@ -28,6 +29,8 @@ carob_script <- function(path) {
       d <- data.frame(
          location= r$Localité,
          variety= r$Variétés,
+         yield_isfresh = as.logical(TRUE),
+         yield_moisture = as.numeric(65), # Typical cassava fresh harvest moisture
          yield= r$Rdt_T_ha *1000,
          planting_date= as.character(as.Date(r$DP, "%m/%d/%Y")),
          harvest_date= as.character(as.Date(r$DR, "%m/%d/%Y")),
