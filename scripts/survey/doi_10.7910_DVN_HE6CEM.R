@@ -153,8 +153,9 @@ d7 <- data.frame(
 d <- merge(d, d7[!duplicated(d7$trial_id),], by = intersect(names(d), names(d7)), all.x = TRUE)
 
 d$crop_price <- ifelse(d$yield!=0, d$crop_price/d$yield, NA)  # KES/kg
-d$yield <- d$yield/d$plot_area
+d$yield <- d$yield/d$plot_area ##m2
 d$yield_marketable <- d$yield_marketable/d$plot_area
+d$plot_area <- d$plot_area*10000
 d$fertilizer_price <- as.character(d$fertilizer_cost/d$fertilizer_amount)
 d$fertilizer_cost <- NULL
 ### adding Lon and lat coordinate
