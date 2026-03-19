@@ -222,7 +222,7 @@ d$disease_severity <- as.character(d$disease_severity)
 
 
 d$country <- "Colombia"
-d$on_farm <- TRUE
+d$on_farm <- NA
 d$crop <- "cassava"
 d$is_survey <- FALSE
 d$geo_from_source <- TRUE
@@ -232,7 +232,6 @@ d$yield_isfresh <- TRUE
 d$irrigated <- NA
 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-"ANTRA" "BACTE" "SUPER" "CERCC" "CERCH" "CERCV" "ENFER" "CUESA"
 
 dis <- data.frame(matrix(c(
 	"ANTRA", "cassava anthracnose", "Glomerella manihotis;Collerortichum manihotis",
