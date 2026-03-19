@@ -60,12 +60,15 @@ dd$id <- NULL
 dd$record_id <- as.integer(1:nrow(dd))
 
 ###########
+# EGB:
+# # Household information: Keeping only the household head
+# # How do we keep also other household members but avoid duplicates?
 d2 <- data.frame(
-  hhid = as.character(r2$Household_Names),
-  farmer_gender = r2$Gender,
-  farmer_age = r2$Age,
-  farmer_education_level = r2$Education_Level,
-  trial_id = r2$KEY
+  hhid = as.character(r2$Household_Names[r2$HH_Relation == "Household Head"]),
+  farmer_gender = r2$Gender[r2$HH_Relation == "Household Head"],
+  farmer_age = r2$Age[r2$HH_Relation == "Household Head"],
+  farmer_education_level = r2$Education_Level[r2$HH_Relation == "Household Head"],
+  trial_id = r2$KEY[r2$HH_Relation == "Household Head"]
 )
 
 d <- merge(dd, d2, by = intersect(names(d2), names(dd)), all = TRUE) 
@@ -86,6 +89,34 @@ d3 <- data.frame(
   OM_price = r3$Manure_Price,
   trial_id = r3$KEY
 )
+
+# EGB:
+# # Remove trailing NA
+d3$fertilizer_type <- sapply(strsplit(d3$fertilizer_type, ";"), function(x) {
+  x <- x[x != "NA"]
+  paste(x, collapse = ";")
+})
+d3$N_fertilizer <- d3$P_fertilizer <- d3$N_fertilizer <- NA
+# # Based on the total fertilizer amount, we can make assumptions on the application per fertilizer_type
+d3$n <- ifelse(d3$fertilizer_type == "" | is.na(d3$fertilizer_type), 0, lengths(strsplit(d3$fertilizer_type, ";")))
+d3$bag_wgt <- d3$fertilizer_amount / d3$n
+d3$N_fertilizer[!grepl("NPK", d3$fertilizer_type)] <- d3$bag_wgt 
+# # If only single source, we can calculate the elemental N, P and K
+d3$N_fertilizer[d3$fertilizer_type == "Urea"] <- d3$bag_wgt[d3$fertilizer_type == "Urea"] * 0.46
+d3$N_fertilizer[d3$fertilizer_type == "CAN"] <- d3$bag_wgt[d3$fertilizer_type == "CAN"] * 0.26
+d3$N_fertilizer[d3$fertilizer_type == "DAP"] <- d3$bag_wgt[d3$fertilizer_type == "DAP"] * 0.18
+d3$P_fertilizer[d3$fertilizer_type == "DAP"] <- d3$bag_wgt[d3$fertilizer_type == "DAP"] * 0.2
+# # For multiple fertilizers
+d3$N_fertilizer[d3$fertilizer_type == "CAN;DAP;Urea"] <- (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea"] * 0.26) + (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea"] * 0.18) + (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea"] * 0.46)
+d3$N_fertilizer[d3$fertilizer_type == "CAN;DAP;Urea;Liming"] <- (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea;Liming"] * 0.26) + (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea;Liming"] * 0.18) + (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP;Urea;Liming"] * 0.46)
+d3$N_fertilizer[d3$fertilizer_type == "CAN;DAP"] <- (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP"] * 0.26) + (d3$bag_wgt[d3$fertilizer_type == "CAN;DAP"] * 0.18)
+d3$N_fertilizer[d3$fertilizer_type == "DAP;Urea"] <- (d3$bag_wgt[d3$fertilizer_type == "DAP;Urea"] * 0.18) + (d3$bag_wgt[d3$fertilizer_type == "DAP;Urea"] * 0.46)
+d3$N_fertilizer[d3$fertilizer_type == "CAN;Urea"] <- (d3$bag_wgt[d3$fertilizer_type == "CAN;Urea"] * 0.26) + (d3$bag_wgt[d3$fertilizer_type == "CAN;Urea"] * 0.46)
+# # Lime
+d3$lime_used <- grepl("Lim", d3$fertilizer_type)
+d3$lime[d3$lime_used == TRUE] <- d3$bag_wgt[d3$lime_used == TRUE]
+# # Remove unneeded cols
+d3$n <- d3$bag_wgt <- NULL
 
 ### merge d and d3
 
@@ -209,7 +240,6 @@ d$yield_moisture <- as.numeric(NA)
 d$yield_isfresh <- NA
 d$irrigated <- NA
 d$trial_id <- paste(d$trial_id, d$season, sep = "-")
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 d$season <- NULL 
 #### remove rows with missing location (adm1,adm2, adm3, location)
 
