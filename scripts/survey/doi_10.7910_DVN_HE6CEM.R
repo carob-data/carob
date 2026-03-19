@@ -18,7 +18,7 @@ The survey data on soil carbon enhancing practices in western Kenya is systemati
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIAT; UNR",# University of Nairobi
+		data_organization = "CIAT; UNOBI",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-12",
@@ -100,7 +100,8 @@ d3$N_fertilizer <- d3$P_fertilizer <- d3$N_fertilizer <- NA
 # # Based on the total fertilizer amount, we can make assumptions on the application per fertilizer_type
 d3$n <- ifelse(d3$fertilizer_type == "" | is.na(d3$fertilizer_type), 0, lengths(strsplit(d3$fertilizer_type, ";")))
 d3$bag_wgt <- d3$fertilizer_amount / d3$n
-d3$N_fertilizer[!grepl("NPK", d3$fertilizer_type)] <- d3$bag_wgt 
+i <- !grepl("NPK", d3$fertilizer_type)
+d3$N_fertilizer[i] <- d3$bag_wgt[i] 
 # # If only single source, we can calculate the elemental N, P and K
 d3$N_fertilizer[d3$fertilizer_type == "Urea"] <- d3$bag_wgt[d3$fertilizer_type == "Urea"] * 0.46
 d3$N_fertilizer[d3$fertilizer_type == "CAN"] <- d3$bag_wgt[d3$fertilizer_type == "CAN"] * 0.26
