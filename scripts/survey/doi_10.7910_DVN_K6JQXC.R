@@ -32,23 +32,23 @@ This household survey was conducted among 88 respondents by CIAT in three counti
 	)
 	
 
-	f1 <- ff[basename(ff) == "03.01 Question 1_8 Codebook.xls"]
-	f2 <- ff[basename(ff) == "03.02 Question 9 _Table 1 Codebook.xls"]
-	f3 <- ff[basename(ff) == "03.03 Question 10_11 _Table 2_3 Codebook.xlsx"]
-	f4 <- ff[basename(ff) == "03.04 Question 12_Table 4 Codebook.xlsx"]
-	f5 <- ff[basename(ff) == "03.05 Question 13_14 Table 5 Codebook.xlsx"]
-	f6 <- ff[basename(ff) == "03.06 Question 15 Table 6 Codebook.xlsx"]
-	f7 <- ff[basename(ff) == "03.07 Question 15_17 Table 71_72 Codebook.xlsx"]
-	f8 <- ff[basename(ff) == "03.08 Question 18 Table 8_1 Codebook.xlsx"]
-	f9 <- ff[basename(ff) == "03.09 Question 19 Table 8_2 Codebook.xlsx"]
-	f10 <- ff[basename(ff) == "03.10 Question 20 Table 9_1 Codebook.xls"]
-	f11 <- ff[basename(ff) == "03.11 Question 20 Table 9_2 Codebook.xls"]
-	f12 <- ff[basename(ff) == "03.12 Question 21 Table 10_1 Codebook.xls"]
-	f13 <- ff[basename(ff) == "03.13 Question 22 Table 10_2 Codebook.xls"]
-	f14 <- ff[basename(ff) == "03.14 Question 23 Table 11 Codebook.xlsx"]
-	f15 <- ff[basename(ff) == "03.15 Question 24 Table 12 Codebook.xls"]
-	f16 <- ff[basename(ff) == "03.16 Question 26_30 Codebook.xls"]
-	f17 <- ff[basename(ff) == "03.17 Question 31_32 Codebook.xls"]
+	# f1 <- ff[basename(ff) == "03.01 Question 1_8 Codebook.xls"]
+	# f2 <- ff[basename(ff) == "03.02 Question 9 _Table 1 Codebook.xls"]
+	# f3 <- ff[basename(ff) == "03.03 Question 10_11 _Table 2_3 Codebook.xlsx"]
+	# f4 <- ff[basename(ff) == "03.04 Question 12_Table 4 Codebook.xlsx"]
+	# f5 <- ff[basename(ff) == "03.05 Question 13_14 Table 5 Codebook.xlsx"]
+	# f6 <- ff[basename(ff) == "03.06 Question 15 Table 6 Codebook.xlsx"]
+	# f7 <- ff[basename(ff) == "03.07 Question 15_17 Table 71_72 Codebook.xlsx"]
+	# f8 <- ff[basename(ff) == "03.08 Question 18 Table 8_1 Codebook.xlsx"]
+	# f9 <- ff[basename(ff) == "03.09 Question 19 Table 8_2 Codebook.xlsx"]
+	# f10 <- ff[basename(ff) == "03.10 Question 20 Table 9_1 Codebook.xls"]
+	# f11 <- ff[basename(ff) == "03.11 Question 20 Table 9_2 Codebook.xls"]
+	# f12 <- ff[basename(ff) == "03.12 Question 21 Table 10_1 Codebook.xls"]
+	# f13 <- ff[basename(ff) == "03.13 Question 22 Table 10_2 Codebook.xls"]
+	# f14 <- ff[basename(ff) == "03.14 Question 23 Table 11 Codebook.xlsx"]
+	# f15 <- ff[basename(ff) == "03.15 Question 24 Table 12 Codebook.xls"]
+	# f16 <- ff[basename(ff) == "03.16 Question 26_30 Codebook.xls"]
+	# f17 <- ff[basename(ff) == "03.17 Question 31_32 Codebook.xls"]
 	f18 <- ff[basename(ff) == "02.01 Question 1_8.dta"]
 	f19 <- ff[basename(ff) == "02.02 Question 9 _Table 1.dta"]
 	f20 <- ff[basename(ff) == "02.03 Question 10_11 _Table 2_3.dta"]
@@ -67,40 +67,40 @@ This household survey was conducted among 88 respondents by CIAT in three counti
 	f33 <- ff[basename(ff) == "02.16 Question 26_30.dta"]
 	f34 <- ff[basename(ff) == "02.17 Question 31_32.dta"]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
-	r7 <- carobiner::read.excel(f7)
-	r8 <- carobiner::read.excel(f8)
-	r9 <- carobiner::read.excel(f9)
-	r10 <- carobiner::read.excel(f10)
-	r11 <- carobiner::read.excel(f11)
-	r12 <- carobiner::read.excel(f12)
-	r13 <- carobiner::read.excel(f13)
-	r14 <- carobiner::read.excel(f14)
-	r15 <- carobiner::read.excel(f15)
-	r16 <- carobiner::read.excel(f16)
-	r17 <- carobiner::read.excel(f17)
+	#r1 <- carobiner::read.excel(f1)
+	#r2 <- carobiner::read.excel(f2)
+	#r3 <- carobiner::read.excel(f3)
+	#r4 <- carobiner::read.excel(f4)
+	#r5 <- carobiner::read.excel(f5)
+	#r6 <- carobiner::read.excel(f6)
+	#r7 <- carobiner::read.excel(f7)
+	#r8 <- carobiner::read.excel(f8)
+	#r9 <- carobiner::read.excel(f9)
+	#r10 <- carobiner::read.excel(f10)
+	#r11 <- carobiner::read.excel(f11)
+	#r12 <- carobiner::read.excel(f12)
+	#r13 <- carobiner::read.excel(f13)
+	#r14 <- carobiner::read.excel(f14)
+	#r15 <- carobiner::read.excel(f15)
+	#r16 <- carobiner::read.excel(f16)
+	#r17 <- carobiner::read.excel(f17)
 	r18 <- haven::read_dta(f18) |> carobiner:::unlabel()
 	r19 <- haven::read_dta(f19) |> carobiner:::unlabel()
 	r20 <- haven::read_dta(f20) |> carobiner:::unlabel()
-	r21 <- haven::read_dta(f21) |> carobiner:::unlabel()
-	r22 <- haven::read_dta(f22) |> carobiner:::unlabel()
+	#r21 <- haven::read_dta(f21) |> carobiner:::unlabel()
+	#r22 <- haven::read_dta(f22) |> carobiner:::unlabel()
 	r23 <- haven::read_dta(f23) |> carobiner:::unlabel()
 	r24 <- haven::read_dta(f24) |> carobiner:::unlabel()
-	r25 <- haven::read_dta(f25) |> carobiner:::unlabel()
-	r26 <- haven::read_dta(f26) |> carobiner:::unlabel()
+	#r25 <- haven::read_dta(f25) |> carobiner:::unlabel()
+	#r26 <- haven::read_dta(f26) |> carobiner:::unlabel()
 	r27 <- haven::read_dta(f27) |> carobiner:::unlabel()
-	r28 <- haven::read_dta(f28) |> carobiner:::unlabel()
-	r29 <- haven::read_dta(f29) |> carobiner:::unlabel()
-	r30 <- haven::read_dta(f30) |> carobiner:::unlabel()
-	r31 <- haven::read_dta(f31) |> carobiner:::unlabel()
-	r32 <- haven::read_dta(f32) |> carobiner:::unlabel()
-	r33 <- haven::read_dta(f33) |> carobiner:::unlabel()
-	r34 <- haven::read_dta(f34) |> carobiner:::unlabel()
+	# r28 <- haven::read_dta(f28) |> carobiner:::unlabel()
+	# r29 <- haven::read_dta(f29) |> carobiner:::unlabel()
+	# r30 <- haven::read_dta(f30) |> carobiner:::unlabel()
+	# r31 <- haven::read_dta(f31) |> carobiner:::unlabel()
+	# r32 <- haven::read_dta(f32) |> carobiner:::unlabel()
+	# r33 <- haven::read_dta(f33) |> carobiner:::unlabel()
+	# r34 <- haven::read_dta(f34) |> carobiner:::unlabel()
 
  #### process
 
