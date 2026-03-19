@@ -237,9 +237,9 @@ dis <- data.frame(matrix(c(
 	"ANTRA", "cassava anthracnose", "Glomerella manihotis;Collerortichum manihotis",
 	"BACTE", "cassava bacterial blight", "Xanthomonas axonopodis pv. manihotis",
 	"SUPER", "superelongation disease", "Sphaceloma manihoticola", 
-	"CERCC", "cassava brown leaf spot", "Cercospora Caribea",
-	"CERCH", "cassava brown leaf spot", "Cercospora Henningsi",
-	"CERCV", "diffuse leaf spot", "Cercospora Vicosae",
+	"CERCC", "cassava brown leaf spot", "Cercospora caribea",
+	"CERCH", "cassava brown leaf spot", "Cercospora henningsi",
+	"CERCV", "diffuse leaf spot", "Cercospora vicosae",
 	"CUESA", "cassava frogskin disease", "Candidatus phytoplasma",
 	"ENFER", NA, NA), # probably "enfermedad"; perhaps an unknown disease?
 	ncol=3, byrow=TRUE))
