@@ -17,7 +17,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-		data_organization = "CIAT; IITA; DPBBM-AABU",# Department of Plant Biology and Biodiversity Management, Addis Ababa University
+		data_organization = "CIAT; IITA; AAU",# Addis Ababa University
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-05",

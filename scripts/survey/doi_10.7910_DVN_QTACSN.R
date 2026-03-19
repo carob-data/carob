@@ -17,7 +17,7 @@ The survey data on soil carbon enhancing practices in Ethiopia is systematically
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
-		data_organization = "CIAT; HU",# HU : Haramaya University 
+		data_organization = "CIAT;HARAU",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-11",

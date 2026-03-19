@@ -21,7 +21,7 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		project = NA,
 		carob_date = "2026-03-10",
 		design = "component omission trial",
-		data_type = "experiment",
+				data_type = "experiment",
 		treatment_vars = "land_prep_method;crop_rotation",
 		response_vars = "yield;soil_NH4;soil_NO3", 
 		carob_contributor = "Cedric Ngakou",
