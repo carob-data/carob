@@ -19,11 +19,23 @@ The overall conclusion of the evaluations is that few landrace varieties combine
 
 The principal diseases attacking the crop are:
 
-SUPER - Superelongation disease (SED; Sphaceloma manihoticola)   BACTE - Bacterial blight, Cassava bacterial blight (Xanthomonas axonopodis pv. manihotis).  Cassava brown streak disease (CBSD; an ipomovirus)   CUESA - Cassava frogskin disease (CFSD; Candidatus phytoplasma, Cfdp of the 16SrIII-L and rpIII-H subgroups)  ANTRA - Antracnosis de la yuca – Glomerella manihotis Chev., Collerortichum manihotis Henn, Cassava anthracnose.  DIPLO, DPLD – Diploidia manihotis, Necrosamiento del tallo, Dry rot of stem and root.  OIDIM – Oidium Manihotis, Ceniza de la yuca Cassava ash.  PHOMA – Phoma sp, Mancha de anillos circulares, Concentric ring leaf spot.  CERCV - Cercospora Vicosae, Añublo pardo fungoso, Diffuse leaf spot.  CERCH - Cercospora Henningsi, Brown leaf spot.  CERCC - Cercospora Caribea.  CERCO - Complex of several Cercospores.  MOSAI - Common Mosaic, Cassava mosaic disease (CMD; begomovirus complex).
+SUPER - Superelongation disease (SED; Sphaceloma manihoticola)   
+BACTE - Bacterial blight, Cassava bacterial blight (Xanthomonas axonopodis pv. manihotis).  
+Cassava brown streak disease (CBSD; an ipomovirus)  
+CUESA - Cassava frogskin disease (CFSD; Candidatus phytoplasma, Cfdp of the 16SrIII-L and rpIII-H subgroups)  
+ANTRA - Antracnosis de la yuca – Glomerella manihotis Chev., Collerortichum manihotis Henn, Cassava anthracnose.  
+DIPLO, DPLD – Diploidia manihotis, Necrosamiento del tallo, Dry rot of stem and root.  
+OIDIM – Oidium Manihotis, Ceniza de la yuca Cassava ash.  
+PHOMA – Phoma sp, Mancha de anillos circulares, Concentric ring leaf spot.  
+CERCV - Cercospora Vicosae, Añublo pardo fungoso, Diffuse leaf spot.  
+CERCH - Cercospora Henningsi, Brown leaf spot.  
+CERCC - Cercospora Caribea.  
+CERCO - Complex of several Cercospores.  
+MOSAI - Common Mosaic, Cassava mosaic disease (CMD; begomovirus complex).
 "
 
 	uri <- "doi:10.7910/DVN/WEA83N"
-	group <- "pest_disease"
+	group <- "varieties_cassava"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
@@ -106,8 +118,9 @@ SUPER - Superelongation disease (SED; Sphaceloma manihoticola)   BACTE - Bacteri
 	
 	d2b <- data.frame(
 	  trial_id = r6$TRIAL,
-	  disease = r6$Diseases,
-	  variety = r6$DESIGNATION,
+	  # note the mistake in variable names in the original data
+	  disease = r6$DESIGNATION,
+	  variety = r6$Diseases, 
 	  rep = r6$REPETITION,
 	  disease_severity = r6$SEVERITY,
 	  severity_scale = "1-5"
@@ -182,8 +195,9 @@ SUPER - Superelongation disease (SED; Sphaceloma manihoticola)   BACTE - Bacteri
 d5 <- merge(d5a, d5b, by = "trial_id", all = TRUE)
 
 ### combine d1, d2, d3, d4 and d5
-
 d <- carobiner::bindr(d1, d2, d3, d4, d5)
+#### remove duplicate records
+d <- unique(d)
 
 ### Fixing Lon and lat coordinate 
 d$longitude <- -(as.numeric(substr(d$longitude, 1, 2)) + as.numeric(substr(d$longitude, 4, 5))/60)
@@ -194,9 +208,7 @@ d$latitude <- as.numeric(substr(d$latitude, 1, 2)) + as.numeric(substr(d$latitud
 # convert month names to numeric once
 pd <- carobiner::eng_months_to_nr(d$planting_date)
 hd <- carobiner::eng_months_to_nr(d$harvest_date)
-
 pd <- ifelse(nchar(pd) < 8, paste0(substr(pd,1,3),"0",substr(pd,4,8)), pd)
-
 hd <- ifelse(nchar(hd) < 8, paste0(substr(hd,1,3),"0",substr(hd,4,8)), hd)
 
 # convert to Date
@@ -220,9 +232,24 @@ d$yield_isfresh <- TRUE
 d$irrigated <- NA
 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-#### remove duplicate records
+"ANTRA" "BACTE" "SUPER" "CERCC" "CERCH" "CERCV" "ENFER" "CUESA"
 
-d <- unique(d)
+dis <- data.frame(matrix(c(
+	"ANTRA", "cassava anthracnose", "Glomerella manihotis;Collerortichum manihotis",
+	"BACTE", "cassava bacterial blight", "Xanthomonas axonopodis pv. manihotis",
+	"SUPER", "superelongation disease", "Sphaceloma manihoticola", 
+	"CERCC", "cassava brown leaf spot", "Cercospora Caribea",
+	"CERCH", "cassava brown leaf spot", "Cercospora Henningsi",
+	"CERCV", "diffuse leaf spot", "Cercospora Vicosae",
+	"CUESA", "cassava frogskin disease", "Candidatus phytoplasma",
+	"ENFER", NA, NA), # probably "enfermedad"; perhaps an unknown disease?
+	ncol=3, byrow=TRUE))
+	
+colnames(dis) <- c("code", "disease", "pathogen")
+i <- match(d$disease, dis$code)
+d$disease <- dis$disease[i]
+d$pathogen <- dis$pathogen[i]
+d <- d[!is.na(d$disease), ]
 
 carobiner::write_files(path, meta, d)
 
