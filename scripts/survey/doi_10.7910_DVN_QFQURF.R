@@ -37,7 +37,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	
 #r1 <- haven::read_dta(paste(f1, "_CONVFAC_area.dta", sep = "/"))|> carobiner:::unlabel()
 #r2 <- haven::read_dta(paste(f1, "_CONVFAC_crop.dta", sep = "/")) |> carobiner:::unlabel()
-#r3 <- haven::read_dta(paste(f1, "_Cover.dta", sep = "/")) |> carobiner:::unlabel()
+r3 <- haven::read_dta(paste(f1, "_Cover.dta", sep = "/")) |> carobiner:::unlabel()
 r4 <- haven::read_dta(paste(f1, "A_hhroster_employment.dta", sep = "/")) |> carobiner:::unlabel()
 r5 <- haven::read_dta(paste(f1, "C_parcelid.dta", sep = "/")) |> carobiner:::unlabel()
 r6 <- haven::read_dta(paste(f1, "D1_crop_main.dta", sep = "/")) |> carobiner:::unlabel()
@@ -96,6 +96,7 @@ d4 <- data.frame(
  plot_area = r6$cropareaha,
  seed_type = r6$seedtype,
  #seed_source = trimws(r6$seed_source),
+ seed_rate = rowSums(r6[, c("seed_pur_kg", "seed_free_kg")], na.rm = TRUE),
  seed_price = r6$seed_value,
  OM_used = grepl("yes", r6$organicfert_use),
  OM_type = r6$organic_fertilizer,
@@ -259,7 +260,7 @@ P <- gsub("NA;|;NA", NA, P)
 P <- gsub("Foliar feeds", "foliar", P)
 P <- gsub("D.compound", "D-compound", P)
 P <- gsub("S.compound", "S-compound", P)
-P <- gsub("Super D", "S-compound", P)
+P <- gsub("Super D", "DSP", P)
 P <- gsub("Yara and other blended brands", "unknown", P)
 P <- gsub("Urea", "urea", P)
 d$fertilizer_type <- P
