@@ -14,7 +14,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 
 	uri <- "doi:10.7910/DVN/QFQURF"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "IFPRI",
@@ -31,20 +31,18 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	)
 	
 
-	f1 <- ff[basename(ff) == "Data"]
-	f2 <- ff[basename(ff) == "Documentation"]
-
-	
+	#f1 <- ff[basename(ff) == "Data"]
 	#r1 <- haven::read_dta(paste(f1, "_CONVFAC_area.dta", sep = "/"))|> carobiner:::unlabel()
 	#r2 <- haven::read_dta(paste(f1, "_CONVFAC_crop.dta", sep = "/")) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(paste(f1, "_Cover.dta", sep = "/")) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(paste(f1, "A_hhroster_employment.dta", sep = "/")) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(paste(f1, "C_parcelid.dta", sep = "/")) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(paste(f1, "D1_crop_main.dta", sep = "/")) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(paste(f1, "D2_crop_minor.dta", sep = "/")) |> carobiner:::unlabel()
-	r8 <- haven::read_dta(paste(f1, "D3_crop_12m.dta", sep = "/")) |> carobiner:::unlabel()
-	r9 <- haven::read_dta(paste(f1, "F2_livestockprod.dta", sep = "/")) |> carobiner:::unlabel()
-	r10 <- haven::read_dta(paste(f1, "G_NPS.dta", sep = "/")) |> carobiner:::unlabel()
+
+	r3 <- haven::read_dta(ff[basename(ff) == "_Cover.dta"]) |> carobiner:::unlabel()
+	r4 <- haven::read_dta(ff[basename(ff) == "A_hhroster_employment.dta"]) |> carobiner:::unlabel()
+	r5 <- haven::read_dta(ff[basename(ff) == "C_parcelid.dta"]) |> carobiner:::unlabel()
+	r6 <- haven::read_dta(ff[basename(ff) == "D1_crop_main.dta"]) |> carobiner:::unlabel()
+	r7 <- haven::read_dta(ff[basename(ff) == "D2_crop_minor.dta"]) |> carobiner:::unlabel()
+	r8 <- haven::read_dta(ff[basename(ff) == "D3_crop_12m.dta"]) |> carobiner:::unlabel()
+	r9 <- haven::read_dta(ff[basename(ff) == "F2_livestockprod.dta"]) |> carobiner:::unlabel()
+	r10 <- haven::read_dta(ff[basename(ff) == "G_NPS.dta"]) |> carobiner:::unlabel()
 
 
 
