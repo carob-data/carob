@@ -75,11 +75,27 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 
 	d3 <- data.frame(
 	  hhid = as.character(r5$hhid),
-	  plot_id = as.character(r5$parcelid),
-	  farmland = r5$areaha
+	  field_id = as.character(r5$parcelid),
+	  field_size = as.numeric(r5$areaha),
+	  # EGB:
+	  # # Could be added to terminag/variables/variables_survey.csv? Maybe time in minutes?
+	  # field_distance = as.character(r5$timeto_parcel),
+	  plot_id = as.character(r5$parcelid)
 	  #soil_erosion = r5$soil_erosion
 	)
 	### merge d and d3
+	
+	# # EGB:
+	# # # Maybe time in minutes?
+	# d3$field_distance[grep("Adjacent", d3$field_distance)] <- 0
+	# d3$field_distance[grep("Less than 10 minutes", d3$field_distance)] <- 10
+	# d3$field_distance[grep("10-30 minutes", d3$field_distance)] <- 20
+	# d3$field_distance[grep("30-60 minutes", d3$field_distance)] <- 45
+	# d3$field_distance[grep("More than 1 hour", d3$field_distance)] <- 60
+
+	d3 <- merge(d3, aggregate(areaha ~ hhid, data = r5, FUN = sum, na.rm = TRUE), by = "hhid")
+	colnames(d3) <- c("hhid", "field_id", "field_size", "plot_id", "cropland_total")
+	
 
 	d <- merge(d, d3[!duplicated(d3$hhid),], by=intersect(names(d), names(d3)), all.x = TRUE)
 
@@ -92,7 +108,8 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 		variety = r6$crop_variety,
 		intercrops = r6$intercrop,
 		plot_area = r6$cropareaha,
-		seed_type = r6$seedtype,
+		cropland_used = r6$cropareaha,
+		variety_type = r6$seedtype,
 		#seed_source = trimws(r6$seed_source),
 		seed_rate = rowSums(r6[, c("seed_pur_kg", "seed_free_kg")], na.rm = TRUE),
 		seed_price = r6$seed_value,
@@ -134,7 +151,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 		variety_code = as.character(r7$varietyid),
 		variety = r7$crop_variety_minor,
 		plot_area = r7$cropareaha,
-		seed_type = r7$seedtype_minor,
+		variety_type = r7$seedtype_minor,
 		#seed_source = trimws(r7$seed_source_minor),
 		seed_rate = rowSums(r7[, c("seed_pur_kg", "seed_free_kg")], na.rm = TRUE),
 		seed_price = r7$seed_value,
@@ -171,7 +188,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 		variety_code = as.character(r8$varietyid),
 		variety = r8$crop_variety_12m,
 		plot_area = r8$cropareaha,
-		seed_type = r8$seedtype_12m,
+		variety_type = r8$seedtype_12m,
 		#seed_source = trimws(r8$seed_source_12m),
 		seed_rate = rowSums(r8[, c("seed_pur_kg", "seed_free_kg")], na.rm = TRUE),
 		seed_price = r8$seed_value,
