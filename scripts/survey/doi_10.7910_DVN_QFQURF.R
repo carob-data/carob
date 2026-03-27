@@ -328,7 +328,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	d$geo_from_source <- FALSE
 	d$yield_part <- "none"
 	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- NA
+	d$yield_isfresh <- TRUE
 	d$planting_date <- as.character(NA) 
 	d$trial_id <- paste(d$location, d$hhid, d$intercrops, sep="-")
 	d$intercrops <- NULL
