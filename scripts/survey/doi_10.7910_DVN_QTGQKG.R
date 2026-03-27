@@ -98,6 +98,10 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	  adm2 = r4$A2_SubCluster,
 	  location = r4$A3_Block,
 	  treatment = r4$A5_VillageType,
+	  #EGB:
+	  # # Field = Plot in this dataset (?)
+	  field_id = as.character(r4$Parcel_id),
+	  field_size = as.numeric(r4$f5_Quantity*0.4047),
 	  plot_id = as.character(r4$Parcel_id),
 	  crop = tolower(r4$crop_name),
 	  variety = r4$variety_name,
@@ -105,6 +109,9 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	  plot_area = r4$f5_Quantity*0.4047,## ha 
 	  season = tolower(r4$season)
 	)
+	
+	d4 <- merge(d4, aggregate(f5_Quantity*0.4047 ~ hhid, data = r4, FUN = sum, na.rm = TRUE), by = "hhid")
+	colnames(d4)[ncol(d4)] <- "cropland_total"
 
 	  ## merge d and d4
 	d <- merge(d, d4, intersect(names(d), names(d4)), all = TRUE)
