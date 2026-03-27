@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-### The raw data contain many unrecognized pesticide and herbicide names.
+### The raw data contain many unrecognized insecticide and herbicide names.
 
 carob_script <- function(path) {
 
@@ -181,10 +181,10 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	  fertilizer_type = r8$k16,
 	  fertilizer_amount = r8$k17,
 	  fertilizer_price = r8$k18,
-	  pesticide_used = grepl("Yes",r8$k19),
-	  pesticide_product = r8$k20,
-	  pesticide_amount = r8$k21,
-	  pesticide_price = r8$k22,
+	  insecticide_used = grepl("Yes",r8$k19),
+	  insecticide_product = r8$k20,
+	  insecticide_amount = r8$k21,
+	  insecticide_price = r8$k22,
 	  herbicide_used = grepl("Yes", r8$k23),
 	  herbicide_product = r8$k24,
 	  herbicide_amount = r8$k25,
@@ -209,12 +209,19 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	 ### drop with missing crop 
 	d <- d[!is.na(d$crop),]
 	d$farmland_owned <- ifelse(grepl("Yes", d$owner), d$plot_area, NA) 
-	 
-
-	d$yield <- d$yield/d$plot_area
+ 
+	###	 
+   d$crop_price <- d$crop_price/d$yield_marketable
+	d$yield <- d$yield/d$plot_area ## kg/ha
 	d$yield_marketable <- d$yield_marketable/d$plot_area
 	d$fertilizer_price <- as.character(d$fertilizer_price/d$fertilizer_amount)
 	d$fertilizer_amount <- d$fertilizer_amount/d$plot_area
+	d$OM_price <- d$OM_price/d$OM_amount 
+	d$OM_amount <- d$OM_amount/d$plot_area 
+	d$herbicide_price <- d$herbicide_price/d$herbicide_amount
+	d$herbicide_amount <- d$herbicide_amount/d$plot_area
+	d$insecticide_price <- d$insecticide_price/d$insecticide_amount
+	d$insecticide_amount <- d$insecticide_amount/d$plot_area
 	d$plot_area <- d$plot_area*10000 # m2
 	d$season <- ifelse(grepl("perennials", d$season), "kharif", d$season) 
 	d$owner <- NULL
@@ -281,9 +288,9 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	P <- gsub("ZINC|TARKASUPER|TANNASHK|SWATI|SUPER FAST", "unknown", P)
 	d$herbicide_product <- trimws(P)
 	 
-	P <- carobiner::fix_name(d$pesticide_product)
+	P <- carobiner::fix_name(d$insecticide_product)
 	P[P=="NA"] <- NA
-	d$pesticide_product <- tolower(P)
+	d$insecticide_product <- tolower(P)
 	 
 	d$country <- "India"
 	d$currency = "INR"

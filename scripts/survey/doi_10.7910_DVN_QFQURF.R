@@ -146,10 +146,10 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 		fertilizer_type = paste(r7$inorganic_fert1, r7$inorganic_fert2, r7$inorganic_fert3,r7$inorganic_fert4, sep = ";"),
 		fertilizer_amount = r7$inorgfert_kg,
 		fertilizer_price = r7$inorganic_value,
-		pesticide_used = grepl("yes", r7$pesticide_use),
-		pesticide_price = r7$pesticide_value,
-		pesticide_product = paste(r7$pesticide1, r7$pesticide2,r7$pesticide3,r7$pesticide4, sep = ";"),
-		pesticide_amount = r7$pest_kg,
+		insecticide_used = grepl("yes", r7$pesticide_use),
+		insecticide_price = r7$pesticide_value,
+		insecticide_product = paste(r7$pesticide1, r7$pesticide2,r7$pesticide3,r7$pesticide4, sep = ";"),
+		insecticide_amount = r7$pest_kg,
 		herbicide_used = grepl("yes", r7$herbicide_use),
 		herbicide_price = r7$herbicide_value,
 		herbicide_product = r7$herbicide1,
@@ -183,10 +183,10 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 		fertilizer_type = r8$inorganic_fert1,
 		fertilizer_amount = r8$inorgfert_kg,
 		fertilizer_price = r8$inorganic_value,
-		pesticide_used = grepl("yes", r8$pesticide_use),
-		pesticide_price = r8$pesticide_value,
-		pesticide_product = r8$pesticide1,
-		pesticide_amount = r8$pest_kg,
+		insecticide_used = grepl("yes", r8$pesticide_use),
+		insecticide_price = r8$pesticide_value,
+		insecticide_product = r8$pesticide1,
+		insecticide_amount = r8$pest_kg,
 		herbicide_used = grepl("yes", r8$herbicide_use),
 		yield = r8$harvest_kgs_12m,
 		yield_marketable = r8$harvest_sold_kg,
@@ -204,11 +204,20 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 
 	d <- merge(d, geo, by= "location", all = TRUE)
 
-	d$yield <- d$yield/(d$plot_area*0.4047)
+	
+	d$yield <- d$yield/(d$plot_area*0.4047) ## kg/ha
 	d$yield_marketable <- d$yield_marketable/(d$plot_area*0.4047)
+	d$seed_price <- d$seed_price/d$seed_rate ## KES/kg
+	d$seed_rate <- d$seed_rate/(d$plot_area*0.4047) #kg/ha
 	d$fertilizer_price <- as.character(d$fertilizer_price/d$fertilizer_amount)
 	d$fertilizer_amount <- d$fertilizer_amount/d$plot_area ## kg/ha
-	d$plot_area <- d$plot_area*4046.86
+	d$OM_price <- d$OM_price/d$OM_amount 
+	d$OM_amount <- d$OM_amount/(d$plot_area *0.4047)
+	d$herbicide_price <- d$herbicide_price/d$herbicide_amount
+	d$herbicide_amount <- d$herbicide_amount/(d$plot_area*0.4047)
+	d$insecticide_price <- d$insecticide_price/d$insecticide_amount
+	d$insecticide_amount <- d$insecticide_amount/(d$plot_area*0.4047)
+	d$plot_area <- d$plot_area*4046.86  # m2
 	### Fixing crop names 
 
 	P <- carobiner::fix_name(d$crop)
@@ -288,11 +297,11 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	P <- gsub("Escort", "metsulfuron", P)
 	P[P==""| P=="NA"] <- NA
 	d$herbicide_product <- trimws(P)
-
-	P <- carobiner::fix_name(d$pesticide_product)
+	
+	P <- carobiner::fix_name(d$insecticide_product)
 	P <- gsub("NA;|;NA", "", P)
 	P[P=="NA"] <- NA
-	d$pesticide_product <- tolower(P)
+	d$insecticide_product <- tolower(P)
 
 
 	d$country <- "Kenya"
