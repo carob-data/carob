@@ -393,10 +393,10 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	
 	### Fixing OM_type
 	P <- carobiner::fix_name(d$OM_type)
-	P <- gsub("A combination of organic inputs", "minimum tillage", "unknown", P)
+	P <- gsub("A combination of organic inputs|minimum tillage", "unknown", P)
 	P <- gsub("Crop residue from other farms|Crop residue from this farm", "unknown", P)
 	P <- gsub("Household refuse|Other", "unknown", P)
-	P <- gsub("Mulch/compost", "ploughing", P)
+	P <- gsub("Mulch/compost", "compost", P)
 	P <- gsub("None", "none", P)
 	d$OM_type <- P
 	
