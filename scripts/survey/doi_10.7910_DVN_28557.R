@@ -183,7 +183,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	   irrigation_method = ifelse(is.na(r10$e10a), r10$e10b, r10$e10a),
 	   irrigated = grepl("irrigation|Multiple",ifelse(is.na(r10$e10a), r10$e10b, r10$e10a) ),
 	   irrigation_source = r10$e11,
-	   soil_type = r10$e13,
+	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r10$e13)),
 	   soil_color = r10$e15,
 	   plot_slope = r10$e16
 	   
@@ -381,7 +381,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	P <- gsub("Urea", "urea", P)
 	P <- gsub("Other|A combination", "unknown", P)
 	d$fertilizer_type <- P
-
+	d$soil_texture <- gsub("other", NA, d$soil_texture)
 	###
 	
 	P <- carobiner::fix_name(d$land_prep_method)
