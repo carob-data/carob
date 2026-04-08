@@ -2,7 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## Some units do not have a converter from local to standard units.
+## Some plot areas are too small compared to the crop weight harvested, resulting in very high yield values (kg/ha).
+## There are probably some erroneous values that occurred during the data recording process (especially for crop prices).
 
 carob_script <- function(path) {
 
@@ -185,12 +187,15 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	   irrigation_source = r10$e11,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r10$e13)),
 	   soil_color = r10$e15,
-	   plot_slope = r10$e16
+	   plot_slope = r10$e16,
+	   unit_area = r10$e3b
 	   
 	)
 	
 	#### merge d and d3 
-	
+	d3 <- d3[!grepl("Footbal field|Other", d3$unit_area),]
+	d3 <- d3[!is.na(d3$unit_area),]
+	d3$unit_area <- NULL
 	d <- merge(d, d3[!duplicated(d3$hhid),], by= intersect(names(d), names(d3)), all = TRUE)
 	
 	####
@@ -203,7 +208,8 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                      ifelse(grepl("Plate", r12$f9b), r12$f9a*0.32, 
 	                      ifelse(grepl("Bucket/Tin", r12$f9b), r12$f9a*16.5,
 	                      ifelse(grepl("Heap", r12$f9b), r12$f9a*0.10,
-	                      ifelse(grepl("Cane/Basket", r12$f9b), r12$f9a*0.14, r12$f9a)))))),
+	                      ifelse(grepl("Cane/Basket", r12$f9b), r12$f9a*0.14, 
+	                      ifelse(grepl("Kilogram", r12$f9b), r12$f9a, NA))))))),
 	   OM_type = ifelse(!is.na(r12$f9a), paste("farmyard manure", r12$f12a, sep = ";"), r12$f12a) ,
 	   OM_amount = ifelse(grepl("50kg", r12$f12c), r12$f12b*50,
 	               ifelse(grepl("90kg", r12$f12c), r12$f12b*90, 
@@ -211,7 +217,9 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	               ifelse(grepl("Bucket/Tin", r12$f12c), r12$f12b*16.5,
 	               ifelse(grepl("Heap", r12$f12c), r12$f12b*0.10,
 	               ifelse(grepl("Cane/Basket", r12$f12c), r12$f12b*0.14, 
-	               ifelse(grepl("Gram", r12$f12c), r12$f12b/1000, r12$f12b)))))))
+	               ifelse(grepl("Gram", r12$f12c), r12$f12b/1000, 
+	               ifelse(grepl("Kilogram", r12$f12c), r12$f12b, NA))))))))
+	   
 	)
 	
 	### merge d and d4
@@ -236,10 +244,17 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	           ifelse(grepl("Heap", r14$g1_7b), r14$g1_7a*0.10,
 	           ifelse(grepl("Sachet/tube", r14$g1_7b), r14$g1_7a*0.025,
 	           ifelse(grepl("Cup", r14$g1_7b), r14$g1_7a*0.06,
-	           ifelse(grepl("Bale", r14$g1_7b), r14$g1_7a*0.1, r14$g1_7a))))))))) 
+	           ifelse(grepl("Bale", r14$g1_7b), r14$g1_7a*0.1,
+	           ifelse(grepl("Kilogram", r14$g1_7b), r14$g1_7a , NA)))))))))),
+	   unit_area = r14$g1_6b
+	   #unit_yield = r14$g1_7b
 	   
 	)
 	
+	
+	d5 <- d5[!grepl("Footbal field|Other", d5$unit_area),]
+	d5 <- d5[!is.na(d5$unit_area),]
+	d5$unit_area <- NULL
 	gg <- aggregate(. ~ hhid + season + field_id +crop, d5, function(x) mean(x))
 	
 	### merge d and gg
@@ -261,7 +276,8 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                       ifelse(grepl("Bucket/Tin", r16$g2_13b), r16$g2_13a*16.5,
 	                       ifelse(grepl("Plate", r16$g2_13b), r16$g2_13a*0.32,
 	                       ifelse(grepl("Cup", r16$g2_13b), r16$g2_13a*0.06, 
-	                       ifelse(grepl("Gram", r16$g2_13b), r16$g2_13a/1000, r16$g2_13a))))),
+	                       ifelse(grepl("Gram", r16$g2_13b), r16$g2_13a/1000, 
+	                       ifelse(grepl("Kilogram", r16$g2_13b), r16$g2_13a, NA)))))),
 	   fertilizer_price = r16$g2_13c
 	   
 	)
@@ -274,7 +290,8 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
                    ifelse(grepl("Heap", d6$unit1), d6$seed_rate*0.10,
                    ifelse(grepl("Sachet/tube", d6$unit1), d6$seed_rate*0.025,
                    ifelse(grepl("Cup", d6$unit1), d6$seed_rate*0.06,
-                   ifelse(grepl("Bale", d6$unit1), d6$seed_rate*0.1, d6$seed_rate)))))))))	
+                   ifelse(grepl("Bale", d6$unit1), d6$seed_rate*0.1, 
+                   ifelse(grepl("Kilogram", d6$unit1), d6$seed_rate,NA))))))))))	
 	d6$unit1 <- NULL
    
 	d6 <- d6[d6$seed_rate>0, ]
@@ -309,7 +326,8 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                 ifelse(grepl("Heap", r22$h6b), r22$h6a*0.10,
 	                 ifelse(grepl("Sachet/tube", r22$h6b), r22$h6a*0.025,
 	                 ifelse(grepl("Cup", r22$h6b), r22$h6a*0.06,
-	                 ifelse(grepl("Bale", r22$h6b), r22$h6a*0.1, r22$h6a))))))))),
+	                 ifelse(grepl("Bale", r22$h6b), r22$h6a*0.1, 
+	                 ifelse(grepl("Kilogram", r22$h6b), r22$h6a, NA)))))))))),
 	   
 	   residue_prevcrop = ifelse(grepl("50kg", r22$h8b), r22$h8a*50,
 	                      ifelse(grepl("90kg", r22$h8b), r22$h8a*90, 
@@ -317,9 +335,19 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                      ifelse(grepl("Unit or Piece", r22$h8b), r22$h8a*0.40, 
 	                      ifelse(grepl("Bucket/Tin", r22$h8b), r22$h8a*16.5,
 	                      ifelse(grepl("Heap", r22$h8b), r22$h8a*0.10,
-	                      ifelse(grepl("Bale", r22$h8b), r22$h6a*0.1, r22$h8a))))))),
+	                      ifelse(grepl("Bale", r22$h8b), r22$h6a*0.1, 
+	                      ifelse(grepl("Kilogram", r22$h8b), r22$h6a,NA)))))))),
 	  
-	   crop_price = r22$h16,
+	   crop_price = ifelse(grepl("50kg", r22$h15b), r22$h16/50, ## price/kg
+	                ifelse(grepl("90kg", r22$h15b), r22$h16/90, 
+	                ifelse(grepl("Gram", r22$h15b), r22$h16*1000, 
+	                ifelse(grepl("Unit or Piece", r22$h15b), r22$h16/0.40, 
+	                ifelse(grepl("Bucket/Tin", r22$h15b), r22$h16/16.5,
+	                ifelse(grepl("Heap", r22$h15b),r22$h16/0.10,
+	                ifelse(grepl("Plate", r22$h15b),r22$h16/0.32,
+	                ifelse(grepl("Cane/Basket", r22$h15b),r22$h16/0.14,
+	                ifelse(grepl("Bale", r22$h15b), r22$h16/0.1, 
+	                ifelse(grepl("Kilogram", r22$h15b), r22$h16, NA)))))))))),
 	   yield_marketable = ifelse(grepl("50kg", r22$h15b), r22$h15a*50,
 	                      ifelse(grepl("90kg", r22$h15b), r22$h15a*90, 
 	                      ifelse(grepl("Gram", r22$h15b), r22$h15a/1000, 
@@ -328,7 +356,8 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                      ifelse(grepl("Heap", r22$h15b),r22$h15a*0.10,
 	                      ifelse(grepl("Plate", r22$h15b),r22$h15a*0.32,
 	                      ifelse(grepl("Cane/Basket", r22$h15b),r22$h15a*0.14,
-	                      ifelse(grepl("Bale", r22$h15b), r22$h6a*0.1, r22$h15a))))))))),
+	                      ifelse(grepl("Bale", r22$h15b), r22$h6a*0.1, 
+	                      ifelse(grepl("Kilogram", r22$h15b), r22$h6a, NA)))))))))),
 	   market_type = r22$h17
 	)
 	
@@ -341,7 +370,6 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	d$fertilizer_price <- as.character(d$fertilizer_price/d$fertilizer_amount)
 	d$fertilizer_amount <- d$fertilizer_amount/d$plot_area
 	d$OM_amount <- d$OM_amount/d$plot_area
-	d$crop_price <- ifelse(d$yield_marketable !=0, d$crop_price/d$yield_marketable, d$crop_price) 
 	d$yield <- d$yield/d$plot_area
 	d$yield_marketable <- d$yield_marketable/d$plot_area
 	d$residue_prevcrop <- d$residue_prevcrop/d$plot_area
@@ -379,6 +407,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	P <- carobiner::fix_name(d$fertilizer_type)
 	P <- gsub("D. Compound", "D-compound", P)
 	P <- gsub("Urea", "urea", P)
+	P <- gsub("Super D", "DSP", P)
 	P <- gsub("Other|A combination", "unknown", P)
 	d$fertilizer_type <- P
 	d$soil_texture <- gsub("other", NA, d$soil_texture)
@@ -418,6 +447,10 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d <- d[!is.na(d$hhid),]
+	
+	#### remove the extremely high value
+	d <- d[which(d$plot_area >= 1),]
+	
 	### drop duplicate records 
 	
 	d <- unique(d)
