@@ -2,9 +2,7 @@
 # license: GPL (>=3)
 
 #ISSUES
-#1. Added Odisha University of Agriculture and Technology (OUAT)
-#2. I could not find coordinates for most of the adm3 places, so i filled in coordinates for adm2(Mayurbhanj)
-#3. some dates have a full date format, and some only have a year and carobiner is expecting a full date,not sure how to proceed
+#1. Added a location reference csv for correct location names
 
 carob_script <- function(path) {
 
@@ -100,7 +98,24 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	d$planting_method <- gsub("machine", "mechanized", d$planting_method)
 	
 	d$treatment <- gsub("\u0092", "", d$treatment)
-
+	
+	#fixing location
+	g <- data.frame(
+	  adm3 =c("Singarpur", "Barbill", "Baria", 
+	           "Bagdofa", "Rasamtala", "Labda", "Batupondugandi", "Tisira", 
+	           "Jashipur", "Deogaon", "Sarangarh", "Tikarpara"),
+	latitude = c(20.691, 21.656, 21.833, 21.498, 21.771, 20.916, 22.029, 21.996, 21.969, 
+	             21.164, 20.523, 20.607),
+	longitude = c(86.507, 85.643, 85.684, 
+	              87.086, 86.003, 86.1, 86.135, 86.002, 86.079, 86.049, 86.02, 
+	              84.792),stringsAsFactors = FALSE)
+	
+	d<- merge(d,g,by="adm3",all.x=TRUE)
+	
+	#using adm2 coordinates where adm3 is unavailable
+	d$latitude[is.na(d$latitude)] <- 21.75
+	d$longitude[is.na(d$longitude)] <- 86.5
+	
 	carobiner::write_files(path, meta, d)
 }
 
