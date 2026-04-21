@@ -72,6 +72,7 @@ IRRI_LTE <- function(f) {
 	x$season <- c("dry", "early wet", "late wet")[i]
 
 	x <- x[!is.na(x$yield), ]
+	x$yield_isfresh <- NA
 	x
 }
 
