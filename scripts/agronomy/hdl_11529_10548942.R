@@ -77,7 +77,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	           "Pagad"="Pagadabili",
 	           "Sankerka"="Sankerko",
 	           "Khirasahi"="Khorasahi",
-	           "Bada Brahmanamora"="Bradbrahmanmara",
+	           "Bada Brahmanamora"="Badbrahmanmara",
 	           "Sulgadia"="Salugadia",
 	           "Athanagaon"="Athangaon",
 	           "Napang"="Napanga",
@@ -89,14 +89,18 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	
 	loc <- data.frame(location = c("Narayan Pur","Todanga","Khorasahi","Chhuruni","Bishnupur","Renugan","Belpal","Chilbasa","Neulia",
 	                               "Kandagadia","Adiapada","Odang","Pagadabili","Chandigaon","Bahudarada","Haridapal","Sikarghati",
-	                               "Bradbrahmanmara","Palli","Sankilo","Kansapal","Telibila","Dhanpur","Sankerko","Salugadia",
+	                               "Badbrahmanmara","Palli","Sankilo","Kansapal","Telibila","Dhanpur","Sankerko","Salugadia",
 	                               "Athangaon","Tikarpada","Amdubi","Napanga","Jaganathpur","Nandoor","Bankisul","Pc Pur","Gundihudi","Mayurbhanj","Cuttack","Bhadrak"),
-  longitude =c(84.0916,86.4046,86.6119,86.6755,87.3149,86.8347,86.6963,86.8611,86.2561,85.3263,85.3130,86.4212,83.7817,72.7198,86.4290,
-               86.1517,86.8203,86.8013,85.6725,86.2244,86.5548,86.6864,86.6730,86.6817,86.6934,86.5668,84.7916,87.2357,86.4179,85.9147,
-               76.8824,86.7727,86.9028,86.6546,86.4144,85.8801,86.5019),
-	latitude=  c(25.4715,21.0021,21.0849,21.7094,23.0736,21.7358,20.6344,21.8022,20.3287,19.9165,19.8870,20.4132,19.0619,19.9286,21.0074,
-	             21.1637,21.9242,21.9770,19.8960,20.4691,22.1914,21.9294,21.9198,21.8422,21.9695,21.5789,20.6100,23.9042,20.2482,20.3333,
-	             17.2616,21.9940,21.7795,21.8996,21.9224,20.4711,21.0580))         
+  longitude =c(83.702, 86.404, 86.614, 86.675, 86.828, 86.834, 
+               86.588, 86.861, 86.256, 85.326, 85.313, 86.421, 83.781, 86.579, 
+               86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 
+               86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 
+               83.007, 86.772, 86.902, 86.654, 86.414, 85.88, 86.501),
+	latitude=  c(20.835, 21.002, 21.084, 21.709, 21.268, 
+	             21.735, 21.625, 21.802, 20.328, 19.916, 19.887, 20.413, 19.062, 
+	             21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 
+	             21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 
+	             19.803, 19.931, 21.994, 21.779, 21.899, 21.922, 20.471, 21.058))         
 	       
 	d <- merge(d,loc, by="location", all.x=TRUE)
 	#d$location <- ifelse(is.na(d$location), d$adm2, d$location)
