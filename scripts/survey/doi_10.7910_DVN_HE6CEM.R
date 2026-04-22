@@ -32,15 +32,14 @@ The survey data on soil carbon enhancing practices in western Kenya is systemati
 	)
 	
 
-	f1 <- ff[basename(ff) == "Adoption_of_Soil_Carbon_Practices"]
 
-	r1 <- haven::read_dta(paste(f1, "Stata Data", "Crop_Output.dta", sep = "/"))|> carobiner:::unlabel()
-	r2 <- haven::read_dta(paste(f1, "Stata Data", "Demographic.dta", sep = "/"))|> carobiner:::unlabel()
-	r3 <- haven::read_dta(paste(f1, "Stata Data", "Input_Usage.dta", sep = "/"))|> carobiner:::unlabel()
-	r4 <- haven::read_dta(paste(f1, "Stata Data", "Main_File.dta", sep = "/"))|> carobiner:::unlabel()
-	r5 <- haven::read_dta(paste(f1, "Stata Data", "Marketing.dta", sep = "/"))|> carobiner:::unlabel()
-	r6 <- haven::read_dta(paste(f1, "Stata Data", "Plot_Information.dta", sep = "/"))|> carobiner:::unlabel()
-	r7 <- haven::read_dta(paste(f1, "Stata Data", "Residue_Use.dta", sep = "/"))|> carobiner:::unlabel()
+	r1 <- haven::read_dta(ff[basename(ff) == "Crop_Output.dta"]) |> carobiner:::unlabel()
+	r2 <- haven::read_dta(ff[basename(ff) == "Demographic.dta"]) |> carobiner:::unlabel()
+	r3 <- haven::read_dta(ff[basename(ff) == "Input_Usage.dta"]) |> carobiner:::unlabel()
+	r4 <- haven::read_dta(ff[basename(ff) == "Main_File.dta"]) |> carobiner:::unlabel()
+	r5 <- haven::read_dta(ff[basename(ff) == "Marketing.dta"]) |> carobiner:::unlabel()
+	r6 <- haven::read_dta(ff[basename(ff) == "Plot_Information.dta"]) |> carobiner:::unlabel()
+	r7 <- haven::read_dta(ff[basename(ff) == "Residue_Use.dta"]) |> carobiner:::unlabel()
 
 ### process files	
 		

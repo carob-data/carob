@@ -5,11 +5,9 @@ carob_script <- function(path) {
 
 "Ethiopia: Socioeconomic Survey 2018-2019"
 
-	up <- carobiner::usr_pwd(path, "LSMS")
-
 	uri <- "doi:10.48529/k739-c548"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
+	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS")
 	if (is.null(ff)) return(TRUE)
 
 

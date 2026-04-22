@@ -5,10 +5,9 @@ carob_script <- function(path) {
 
 "Mali: Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017"
 
-	up <- carobiner::usr_pwd(path, "LSMS")
 	uri <- "doi:10.48529/0v50-h966"
 	group <- "survey"
-	ff <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
+	ff <- carobiner::get_data(uri, path, group, protocol="LSMS")
 	if (is.null(ff)) return(TRUE)
 	
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,

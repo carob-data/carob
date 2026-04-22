@@ -36,13 +36,13 @@ Tanzania Africa RISING follow-up evaluation survey was implemented in 2022. The 
 	f1 <- ff[basename(ff) == "Community"]
 	f2 <- ff[basename(ff) == "Household"]
 
-	r1 <- haven::read_dta(paste(f2, "Data/Interview.dta", sep = "/")) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(paste(f2, "Data/Section_B.dta", sep = "/")) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(paste(f2, "Data/Section_E.dta", sep = "/")) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(paste(f2, "Data/Section_F.dta", sep = "/")) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(paste(f2, "Data/Section_G1.dta", sep = "/")) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(paste(f2, "Data/Section_G2.dta", sep = "/")) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(paste(f2, "Data/Section_H.dta", sep = "/")) |> carobiner:::unlabel()
+	r1 <- haven::read_dta(ff[basename(ff) == "Interview.dta"]) |> carobiner:::unlabel()
+	r2 <- haven::read_dta(ff[basename(ff) == "Section_B.dta"]) |> carobiner:::unlabel()
+	r3 <- haven::read_dta(ff[basename(ff) == "Section_E.dta"]) |> carobiner:::unlabel()
+	r4 <- haven::read_dta(ff[basename(ff) == "Section_F.dta"]) |> carobiner:::unlabel()
+	r5 <- haven::read_dta(ff[basename(ff) == "Section_G1.dta"]) |> carobiner:::unlabel()
+	r6 <- haven::read_dta(ff[basename(ff) == "Section_G2.dta"]) |> carobiner:::unlabel()
+	r7 <- haven::read_dta(ff[basename(ff) == "Section_H.dta"]) |> carobiner:::unlabel()
 	
 	#### process
 	
