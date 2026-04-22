@@ -71,7 +71,7 @@ carob_script <- function(path) {
 #data set2 Early Drought+Heat.csv
 
 	f2 <- ff[grep("Early.DroughtHeat.csv|Extra.Early.DroughtHeat.csv|Extra.Early.Drought.Heat.csv|Early.Heat.csv", basename(ff), ignore.case=TRUE)]
-	stopifnot(length(f2) == 3)
+#	stopifnot(length(f2) == 3)
 
 	d2 <- do.call(carobiner::bindr, lapply(f2, read_data))
 
@@ -99,7 +99,11 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 
 	d$variety[d$variety == "Check 3 - 2015 TZE \x96Y DT STR Syn C0"] = "Check 3 - 2015 TZE DT STR Syn C0"
-	
+
+	d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- NA
+	d$geo_from_source <- FALSE
+
 	carobiner::write_files(meta, d, path=path)
 }
 

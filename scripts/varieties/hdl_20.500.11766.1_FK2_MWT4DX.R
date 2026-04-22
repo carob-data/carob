@@ -3,7 +3,6 @@
 
 ## ISSUES
 
-
 carob_script <- function(path) {
 
 "
@@ -16,8 +15,8 @@ Assessment of Barley Crop Wild Relatives (CWR) - Stage 2: yield trials conducted
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=0,
-		data_organization = "UM5;ICARDA",# UM5 : Mohammed V University
+	meta <- carobiner::get_metadata(uri, path, group, major=7, minor=0,
+		data_organization = "UM5;ICARDA",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-04-07",
