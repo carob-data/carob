@@ -69,7 +69,7 @@ Peanut (Arachis hypogaea L.) genotypes with superior and stable agronomic perfor
 	      on_farm = TRUE, 
 	      is_survey = FALSE, 
 	      yield_part = "pod", 
-	      yield_moisture = as.numeric(NA)
+	      yield_moisture = as.numeric(NA),
 		  yield_isfresh = NA
 	   )
 	}
