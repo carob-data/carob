@@ -70,17 +70,18 @@ Peanut (Arachis hypogaea L.) genotypes with superior and stable agronomic perfor
 	      is_survey = FALSE, 
 	      yield_part = "pod", 
 	      yield_moisture = as.numeric(NA)
-	      
+		  yield_isfresh = NA
 	   )
-	   
 	}
 
 	dd <- lapply(ff, process)
 	d <- do.call(rbind, dd)	
-	d$planting_date <- ifelse(grepl("post", d$trial_id), paste0(substr(gsub("post rainy ", "", d$trial_id), 1, 4), "-11"), paste0(substr(gsub("rainy ", "", d$trial_id), 1, 4), "-06") )
+	d$planting_date <- ifelse(grepl("post", d$trial_id), 
+			paste0(substr(gsub("post rainy ", "", d$trial_id), 1, 4), "-11"), 
+			paste0(substr(gsub("rainy ", "", d$trial_id), 1, 4), "-06") )
  
 
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 
