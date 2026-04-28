@@ -16,15 +16,6 @@ Phenotypic dataset of all the evaluation trials of diverse sorghum varieties car
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 	
-	jmeta <- paste0(yuri::simpleURI(uri), ".json")
-	json_paths <- ff[grepl("\\.json$", ff, ignore.case=TRUE)]
-	json_paths <- json_paths[!tolower(basename(json_paths)) %in% tolower(c(jmeta, "metadata.json"))]
-	json_list <- if (length(json_paths) > 0) {
-		stats::setNames(lapply(json_paths, jsonlite::fromJSON), basename(json_paths))
-	} else {
-		list()
-	}
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
 		publication = "doi:10.1017/S001447970999041X",
@@ -60,6 +51,7 @@ Phenotypic dataset of all the evaluation trials of diverse sorghum varieties car
 	   variety = trimws(r1$genotype_name),
 	   treatment =ifelse(is.na(r1$trial_treatment), "treatment", r1$trial_treatment) ,
 	   planting_date = r1$sowing_date,
+	   harvest_date = r1$harvest_date,
 	   #planting_method = r1$sowing_mode,
 	   flowering_date = as.character(as.Date(r1$flowering_date, "%d/%m/%y")),
 	   flowering_days = r1$days_to_flowering,
@@ -69,7 +61,6 @@ Phenotypic dataset of all the evaluation trials of diverse sorghum varieties car
 	   bird_damage = gsub("?", "", r1$Birds_damage....),
 	   #midge_damage = r1$midge_damage....,
 	   #midge_severity = r1$midge_severity..1.9.scale.,
-	   harvest_date = as.character(as.Date(r1$harvest_date, "%d/%m/%y")),
 	   plot_area = r1$harvested_area..m..,
 	   yield_moisture = r1$grain_moisture_content_harvest.time....,
 	   yield = r1$grain_yield_14...kg.ha.,
@@ -84,21 +75,22 @@ Phenotypic dataset of all the evaluation trials of diverse sorghum varieties car
 	   geo_from_source = FALSE
 	)
 
+	### Fixing dates
+	d1$planting_date <- gsub("mai", "05", d1$planting_date)
+	d1$planting_date <- gsub("juin", "06", d1$planting_date)
+	d1$planting_date <- gsub("août", "08", d1$planting_date)
+	d1$planting_date <- gsub("sept\\.", "09", d1$planting_date)
+	d1$planting_date <- gsub("-", "/", d1$planting_date)
+	d1$planting_date <- gsub("/03$", "/2003", d1$planting_date)
+	d1$planting_date <- gsub("/04$", "/2004", d1$planting_date)	
+	d1$planting_date <- as.character(as.Date(d1$planting_date, "%d/%m/%Y"))
+
+	for (y in 2:9) {
+		d1$harvest_date <- gsub(paste0("/0", y, "$"), paste0("/200", y), d1$harvest_date)	
+	}
+	d1$harvest_date <- as.character(as.Date(d1$harvest_date, "%d/%m/%Y"))
 	
-	### Fixing planting date
-	
-	french_to_english <- c(
-	   "janv\\."="Jan", "févr\\."="Feb", "mars"="Mar",
-	   "avr\\."="Apr", "mai"="May", "juin"="Jun",
-	   "juil\\."="Jul", "août"="Aug", "sept\\."="Sep",
-	   "oct\\."="Oct", "nov\\."="Nov", "déc\\."="Dec"
-	)
-	
-	d1$planting_date <- stringr::str_replace_all(d1$planting_date, french_to_english)
-	d1$planting_date <- as.character(as.Date( gsub("-", "/", carobiner::eng_months_to_nr(d1$planting_date)), "%d/%m/%y"))
-	
-	### Adding longitude and latitude
-	
+	### Adding longitude and latitude	
 	geo <- data.frame(
 	   location = c("La_ceiba", "Aguas_calientes", "Sol_seco", "El_rosario", "Dulce Nombre De Jesus", "La_esperanza", "El_mamel", "Musuli", "San_ramon", "La_concepcion", "La_grama", "Los_laureles", "Cayanlipe", "Quebrada_grande", "El_jobo", "Santa_isabel", "Quilan", "Jamaili", "Cofradia", "Lalamia", "La_carreta", "Jabillito", "La_unión", "Sontole", "Caldera", "El_socorro", "Chilca2", "Mango_solo", "El_ Jobo"),
 	   longitude = c(-86.81547, -86.63071, -86.692, -86.5434, -86.3454, -86.4031, -86.444, -86.4070, -85.8406, -86.1885, -86.3969, -86.20414, -86.9170, -86.5069, -86.0706, -86.140, -86.446, -86.477, -86.124, -86.4806, -86.274, -86.13436, -86.3153, -86.7284, -86.448, -86.4553, -86.4153, -86.5138, -86.501),
