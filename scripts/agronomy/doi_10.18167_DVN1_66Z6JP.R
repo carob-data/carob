@@ -19,7 +19,7 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIRAD;MAFF;ETHZ; RUA; KSU", # MAFF: Ministry of Agriculture, Forestry and Fisheries #ETHZ: Ecole polytechnique fédérale de Zurich 
+		data_organization = "CIRAD;MAFFKH;ETH;RUA;KSU",
 		publication = "doi:10.1016/j.agee.2026.110363",
 		project = NA,
 		carob_date = "2026-04-21",
