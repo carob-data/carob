@@ -66,7 +66,7 @@ d2 <- data.frame(
   hhid = as.character(r2$Household_Names[r2$HH_Relation == "Household Head"]),
   farmer_gender = r2$Gender[r2$HH_Relation == "Household Head"],
   farmer_age = r2$Age[r2$HH_Relation == "Household Head"],
-  farmer_education_level = r2$Education_Level[r2$HH_Relation == "Household Head"],
+  farmer_education = r2$Education_Level[r2$HH_Relation == "Household Head"],
   trial_id = r2$KEY[r2$HH_Relation == "Household Head"]
 )
 
@@ -237,7 +237,7 @@ d$is_survey <- TRUE
 d$geo_from_source <- FALSE
 d$yield_part <- "none"
 d$yield_moisture <- as.numeric(NA)
-d$yield_isfresh <- NA
+d$yield_isfresh <- TRUE
 d$irrigated <- NA
 d$trial_id <- paste(d$trial_id, d$season, sep = "-")
 d$season <- NULL 

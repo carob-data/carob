@@ -61,7 +61,7 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	  treatment = r2$A5_VillageType,
 	  farmer_gender = r2$b1,
 	  farmer_age = r2$b3,
-	  farmer_education_level = r2$b4
+	  farmer_education = r2$b4
 	) 
 	
 	 ### merge d1 and d2 

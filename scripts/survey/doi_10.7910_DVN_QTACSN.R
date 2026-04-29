@@ -104,8 +104,8 @@ A total of 379 households were sampled, the households were randomly drawn from 
 d4 <- data.frame(
 	  farmer_age = r9$age,
 	  farmer_gender = r9$gender3,
-	  famer_marital_status = r9$marital,
-	  farmer_education_level = r9$education,
+	  farmer_civil_status = r9$marital,
+	  farmer_education = r9$education,
 	  trial_id = r9$PARENT_KEY
 	)
 	
@@ -208,7 +208,7 @@ d4 <- data.frame(
 	d$geo_from_source <- FALSE
 	d$yield_part <- "none"
 	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- NA
+	d$yield_isfresh <- TRUE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
 	### drop all rows with missing location (adm1, adm2, location)

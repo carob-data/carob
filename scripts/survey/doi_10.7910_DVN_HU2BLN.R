@@ -191,8 +191,8 @@ The data originate from a panel of households established in 2016, enabling a lo
 	   hhid = as.character(r8$hhid),
 	   farmer_gender = r8$b11,
 	   farmer_age = r8$b14,
-	   farmer_marital_status = r8$b13,
-	   farmer_education_level = r8$b15,
+	   farmer_civil_status = r8$b13,
+	   farmer_education = r8$b15,
 	   #key = r8$key,
 	   parent = r8$parent_key,
 	   ward_num = r8$ward_num,
@@ -214,7 +214,7 @@ The data originate from a panel of households established in 2016, enabling a lo
 	               ifelse(grepl("50", r9$e18_unit), r9$e18_qty*50,
 	               ifelse(grepl("90", r9$e18_unit), r9$e18_qty*90,
 	               ifelse(grepl("Ton", r9$e18_unit), r9$e18_qty*1000, r9$e18_qty)))),
-	   organic_fertilizer_cost = r9$e18_cost,
+	   OM_price = r9$e18_cost,
 	   #herbicide_used = r9$e19_0,
 	   #herbicide_names = r9$e19_0,
 	   herbicide_amount1 = ifelse(grepl("Millitre|Gram", r9$e19_unit1), r9$e19_qty1/1000, r9$e19_qty1),
@@ -335,6 +335,7 @@ The data originate from a panel of households established in 2016, enabling a lo
 	d$is_survey <- TRUE
 	d$yield_part <- "none"
 	d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- TRUE
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	

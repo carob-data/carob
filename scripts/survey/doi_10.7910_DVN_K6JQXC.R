@@ -107,7 +107,7 @@ This household survey was conducted among 88 respondents by CIAT in three counti
  d1	<- data.frame(
   hhid =  as.character(r18$unique_hhqid),
   location = r18$county,
-  farmer_education_level = r18$q3_2,
+  farmer_education = r18$q3_2,
   farmer_gender = r18$q3_3,
   field_size = r18$q_7*0.4047,
   farmland_owned = r18$q_8owned*0.4047,
@@ -287,7 +287,7 @@ d$is_survey <- TRUE
 d$geo_from_source <- FALSE
 d$yield_part <- "none"
 d$yield_moisture <- as.numeric(NA)
-d$yield_isfresh <- NA
+d$yield_isfresh <- TRUE
 d$irrigated <- NA
 d$trial_id <- paste(d$location, d$hhid, sep="-")
 

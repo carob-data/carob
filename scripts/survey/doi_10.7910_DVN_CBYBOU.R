@@ -59,8 +59,8 @@ Tanzania Africa RISING follow-up evaluation survey was implemented in 2022. The 
 	   hhid = as.character(r2$hhid),
 	   farmer_gender = r2$b3,
 	   farmer_age = r2$b4a,
-	   farmer_education_level = r2$b6,
-	   farmer_marital_status = r2$b10
+	   farmer_education = r2$b6,
+	   farmer_civil_status = r2$b10
 	) 
 	
 	### merge d1 and d2

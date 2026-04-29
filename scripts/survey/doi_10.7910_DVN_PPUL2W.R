@@ -145,8 +145,8 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   hhid = as.character(r5$hhid),
 	   farmer_gender = r5$b3,
 	   farmer_age = r5$b4a,
-	   farmer_education_level = r5$b6,
-	   farmer_marital_status = r5$b10
+	   farmer_education = r5$b6,
+	   farmer_civil_status = r5$b10
 	)
 	
 	### merge d1 and d2

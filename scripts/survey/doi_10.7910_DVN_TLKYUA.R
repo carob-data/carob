@@ -49,8 +49,8 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 	   hhid = as.character(r2$hhid),
 	   farmer_gender = r2$b3,
 	   farmer_age = r2$b4a,
-	   farmer_marital_status = r2$b6,
-	   farmer_education_level = r2$b7
+	   farmer_civil_status = r2$b6,
+	   farmer_education = r2$b7
 	)
 	
 	
