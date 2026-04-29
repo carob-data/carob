@@ -422,6 +422,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	 d$is_survey <- TRUE
 	 d$yield_part <- "none"
 	 d$yield_moisture <- as.numeric(NA)
+	 yield_isfresh <- TRUE
 	 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
 	### remove duplicate 

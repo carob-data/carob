@@ -141,8 +141,8 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   location = r3$a3,
 	   farmer_gender = r3$b3,
 	   farmer_age = r3$b4a,
-	   farmer_marital_stutus = r3$b6,
-	   farmer_education_level = trimws(r3$b7),
+	   farmer_civil_status = r3$b6,
+	   farmer_education = trimws(r3$b7),
 	   treatment = r3$treat
 	)
 	
@@ -239,7 +239,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   residue_prevcrop = r12$h7a_KG,
 	   yield_marketable = r12$h12a_KG,
 	   crop_price = r12$h13_KG,
-	   treament = r12$treat
+	   treatment = r12$treat
 	)
 	
 	#### merge d and d7

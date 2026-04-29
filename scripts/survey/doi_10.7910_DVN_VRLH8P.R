@@ -53,10 +53,10 @@ This dataset aims to assess farmers' access to digital tool, and adoption constr
 		yield = r1$ral_yield_kgha,
 		#yield_no = r1$No_ral_yield_kgha,
 		trial_id = r1$barcode_household,
-		farmer_age = r1$age_HH_head,
+		farmer_age = as.numeric(r1$age_HH_head),
 		farmer_gender = r1$gender_HH_head,
 		farmland_owned = ifelse(grepl("owned", r1$land_tenure) ,r1$rice_land_size, NA),
-		farmer_education_level = r1$HH_education,
+		farmer_education = r1$HH_education,
 		irrigated = grepl("irrigated", r1$production_env),
 		planting_method = r1$planting_method,
 		farmland = r1$rice_land_size,
@@ -77,7 +77,8 @@ This dataset aims to assess farmers' access to digital tool, and adoption constr
 		is_survey = TRUE, 
 		yield_part= "none", 
 		yield_moisture = as.numeric(NA), 
-		geo_from_source = TRUE
+		geo_from_source = TRUE,
+		yield_isfresh = TRUE
 		
 	)
 

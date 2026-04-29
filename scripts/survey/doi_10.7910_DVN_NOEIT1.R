@@ -52,8 +52,8 @@ Mali Africa RISING follow-up evaluation survey was implemented in 2022. The surv
 	   hhid = as.character(r1$a4),
 	   farmer_gender = r1$b3,
 	   farmer_age = r1$b4,
-	   farmer_marital_status = r1$b6,
-	   farmer_education_level = r1$b7
+	   farmer_civil_status = r1$b6,
+	   farmer_education = r1$b7
 	)
 	
 	d2 <- data.frame(

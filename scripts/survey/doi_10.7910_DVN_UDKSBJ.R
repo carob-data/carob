@@ -155,9 +155,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   weight = r3$weight,
 	   field_id = as.character(r3$pid),
 	   farmer_gender = r3$b3,
-	   farmer_age = r3$b4a,
-	   farmer_marital_status = r3$b6,
-	   farmer_education_level = r3$b7,
+	   farmer_age = as.numeric(r3$b4a),
+	   farmer_civil_status = r3$b6,
+	   farmer_education = r3$b7,
 	   #previous_activity = r3$b9,
 	   treatment = r3$treat
 	)
@@ -221,7 +221,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   #r7$f6,
 	   OM_amount1 = r7$f7a ,
 	   OM_amount2 = r7$f13a,
-	   Organic_fertilizer_price = rowSums(r7[, c("f8", "f13d")]),
+	   OM_price = rowSums(r7[, c("f8", "f13d")]),
 	   fertilizer_type = tolower(r7$f10a),
 	   #fertilizer_date = r7$f10b,
 	   OM_type = r7$f12,
@@ -486,6 +486,7 @@ d$on_farm <- FALSE
 d$is_survey <- TRUE
 d$yield_part <- "none"
 d$yield_moisture <- as.numeric(NA)
+d$yield_isfresh <- TRUE
 
 
 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
