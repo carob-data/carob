@@ -75,7 +75,16 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		d$rAUDPC <- as.numeric(r$rAUDPC)
 	    d$pathogen <- "Phytophthora infestans"
 	}
-
+	if (!is.null(r$plot)) {
+		d$plot_id = as.character(r$plot)
+	} else {
+		d$plot_id = as.character(NA)	
+	}
+	if (!is.null(r$block)) {
+		d$block_id = as.character(r$block)
+	} else {
+		d$block_id = as.character(NA)
+	}
 
 	if ("Soil_analysis" %in% sheets) {
 		soil <- carobiner::read.excel(filename, sheet="Soil_analysis")
@@ -89,6 +98,9 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
     d$irrigated <- FALSE
     d$crop <- "potato"
     d$yield_part <- "tubers"
+    d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- TRUE
+	
     d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d
 }

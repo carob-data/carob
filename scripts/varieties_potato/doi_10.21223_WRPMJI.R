@@ -8,7 +8,7 @@ carob_script <- function(path) {
   uri <- "doi:10.21223/WRPMJI"
   group <- "varieties_potato"
   ff  <- carobiner::get_data(uri, path, group)
-  meta <- carobiner::get_metadata(uri, path, group, major=7, minor=1,
+  meta <- carobiner::get_metadata(uri, path, group, major=7, minor=0,
       data_organization = "CIP",
       publication = NA,
       project = NA,
@@ -21,6 +21,7 @@ carob_script <- function(path) {
   )
   
   f <- ff[grep("Result", basename(ff))]
+  f <- f[grep("^0._|_Data_dictionary", basename(f), invert=TRUE)]
   r <- read.csv(f, sep = ";")
   
   d <- data.frame(  

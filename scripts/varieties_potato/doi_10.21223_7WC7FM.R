@@ -12,7 +12,7 @@ carob_script <- function(path) {
   group <- "varieties_potato"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=4, minor=1,
+  meta <- carobiner::get_metadata(uri, path, group, major=5, minor=0,
       data_organization = "CIP",
       publication = NA,
       project = NA,
@@ -24,16 +24,15 @@ carob_script <- function(path) {
       notes = "rAUDPC needs to be fixed"
   )
   
+  
   process <- carobiner::get_function("process_cip_lbvars", path, group)
   
   f <- ff[grep("_PT", basename(ff))]
+  f <- f[grep("0._", basename(f), invert=TRUE)]
+  
   d <- lapply(f, process, addvars=c("AUDPC","rAUDPC"))
   d <- do.call(rbind, d)
 
-### needs to be fixed
-	d$rAUDPC <- NULL
-  
   carobiner::write_files(path = path, metadata = meta, wide=d)
-
 }
 

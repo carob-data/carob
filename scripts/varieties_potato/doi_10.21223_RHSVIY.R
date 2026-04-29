@@ -8,7 +8,7 @@ carob_script <- function(path) {
     group <- "varieties_potato"
     ff  <- carobiner::get_data(uri, path, group)
 
-    meta <- carobiner::get_metadata(uri, path, group, major=4, minor=1,
+    meta <- carobiner::get_metadata(uri, path, group, major=5, minor=0,
         data_organization = "CIP",
         publication = NA,
         project = NA,
@@ -23,6 +23,7 @@ carob_script <- function(path) {
     process <- carobiner::get_function("process_cip_lbvars", path, group)
     
     f <- ff[grep("PTYield", basename(ff))]
+    f <- f[grep("^0._|_Data_dictionary", basename(f), invert=TRUE)]
     d <- lapply(f, process, addvars=c("AUDPC", "rAUDPC"))
     d <- do.call(rbind, d)
  
