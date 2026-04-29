@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-#1. Added other Institutions absent from terminag/values/organisations
 carob_script <- function(path) {
 
 
@@ -13,8 +11,8 @@ carob_script <- function(path) {
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-		data_organization = "Montanna State University;Institute of Terrestrial Ecosystems;UCB;HARAU;University of California Merced;ROTH;BAU;ILRI;UCD;Norwegian University of Life Sciences;Yale University;International Soil Reference and Information Centre",
-		publication = "doi.org/10.1111/gcb.17089",
+		data_organization = "MONTSU;ETH;UCB;HARAU;UCM;ROTH;BAU;ILRI;UCD;NMBU;Yale;ISRIC",
+		publication = "doi:10.1111/gcb.17089",
 		project = NA,
 		data_type = "survey",
 		treatment_vars = "none",
@@ -25,7 +23,6 @@ carob_script <- function(path) {
 		notes = "none", 
 		design = NA
 	)
-	
 
 	f <- ff[basename(ff) == "AfSIS_data_all.csv"]
 	r <- read.csv(f)
@@ -47,8 +44,9 @@ carob_script <- function(path) {
 	d$depth_bottom <- as.numeric(d$depth_bottom)
 	d$depth_top <- as.numeric(d$depth_top)
 	soilmeta <- data.frame(
-	  variable = c("soil_Al", "soil_Ca", "soil_Fe"),
-	  method = c("X-ray Power Diffraction"))
+		variable = c("soil_Al", "soil_Ca", "soil_Fe"),
+		method = c("X-ray Power Diffraction")
+	)
 	
 	d$country <-gsub("SAfrica","South Africa",d$country)
 	
