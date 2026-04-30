@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## Some plot areas are either too high or too low compared to the weight of the crop harvested resulting to a high or low yield value(Kg/ha).
 
 carob_script <- function(path) {
 
@@ -154,8 +154,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   field_id = as.character(r6$parcid),
 	   farmland = r6$e3a_HA,
 	   irrigated = grepl("Rain", r6$e9),
-	   irrigation_method = ifelse(grepl("Surface", r6$e9), "surface",
-	                       ifelse(grepl("Groundwater", r6$e9), "groundwater", "unknown")) ,
+	   irrigation_method = ifelse(grepl("Surface", r6$e9), "surface", "unknown"),
 	   irrigation_source = r6$e10,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r6$e12)),
 	   soil_color = r6$e14,
@@ -348,6 +347,9 @@ As part of the US government's Feed the Future initiative that aims to address g
    d$yield_isfresh <- TRUE
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+   
+   #### remove some extremely high values 
+   d <- d[which(d$plot_area >= 1),]
    
    ### remove duplicate rows
    d <- unique(d)
