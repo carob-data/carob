@@ -184,7 +184,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	                                                 ifelse(grepl("M2", r10$e3b), r10$e3a/10000, r10$e3a)), NA) ,
 	   irrigation_method = ifelse(is.na(r10$e10a), r10$e10b, r10$e10a),
 	   irrigated = grepl("irrigation|Multiple",ifelse(is.na(r10$e10a), r10$e10b, r10$e10a) ),
-	   irrigation_source = r10$e11,
+	   irrigation_source = gsub("ground water", "groundwater", tolower(r10$e11)),
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r10$e13)),
 	   soil_color = r10$e15,
 	   plot_slope = r10$e16,
@@ -374,7 +374,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	d$yield_marketable <- d$yield_marketable/d$plot_area
 	d$residue_prevcrop <- d$residue_prevcrop/d$plot_area
 	d$fwy_residue <- d$fwy_residue/d$plot_area
-	seed_price <- d$seed_price/d$seed_rate
+	d$seed_price <- d$seed_price/d$seed_rate
 	d$seed_rate <- d$seed_rate/d$plot_area
 	d$plot_area <- d$plot_area*10000 # m2
 	
@@ -431,8 +431,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	
 	### fixing irrigation
 	
-	d$irrigation_method <- ifelse(grepl("Groundwater", d$irrigation_method), "groundwater",
-	                       ifelse(grepl("Surface", d$irrigation_method), "surface", "none"))
+	d$irrigation_method <- ifelse(grepl("Surface", d$irrigation_method), "surface","none")
 	
 	d$country <- "Malawi"
 	d$currency = "MWK"
@@ -450,6 +449,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	
 	#### remove the extremely high value
 	d <- d[which(d$plot_area >= 1),]
+	#d <- d[which(d$fertilizer_amount<=1000),]
 	
 	### drop duplicate records 
 	
