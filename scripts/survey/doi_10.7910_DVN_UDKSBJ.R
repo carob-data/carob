@@ -14,6 +14,7 @@ Mali Africa Research in Sustainable Intensification for the Next Generation (Afr
 
 As part of the US government's Feed the Future initiative that aims to address global hunger and food security issues in sub-Saharan Africa, the US Agency for International Development is supporting three multi-stakeholder agricultural research projects under Africa Research In Sustainable Intensification for the Next Generation (Africa RISING - AR) program. The overall aim of the program is to transform agricultural systems through sustainable intensification projects in Ghana, Ethiopia, Tanzania, Malawi, Mali, and (potentially) Zambia. In West Africa, IITA works with multi-disciplinary R4D partners in selected communities located in Northern Ghana and Southern Mali. More particularly, in Southern Mali the AR-WA project focuses on sorghum-millet-legume-vegetable-livestock systems in the Bougouni, Yanfolila and Koutiala districts, which are situated in the Sikasso region. The Africa RISING partners in Mali include several international institutions: the International Crops Research Institute for the Semi-Arid Tropics (ICRISAT), the International Livestock Research Institute (ILRI), the Asian Vegetable Research and Development Center (AVRDC), the International Center for Research in Agroforestry or World Agroforestry Center (ICRAF); as well as local partners: L'Association Malienne d'Eveil et de Développement Durable (AMEDD), L'Association Malienne pour la Sécurité et la Souveraineté Alimentaires (AMASSA), Mouvement Biologique du Mali (MOBIOM).
 "
+
 	uri <- "doi:10.7910/DVN/UDKSBJ"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -138,7 +139,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 		adm3 = r1$a2,
 		location = r1$a3,
 		#relalationship_hh = r1$a15,
-		translator_used = grepl("Yes", r1$a16),
+		#translator_used = grepl("Yes", r1$a16),
 		farmer_religion = r1$a18,
 		#bean_method_used= r1$a25,
 		treatment = r1$treat
@@ -208,8 +209,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   field_id = as.character(r7$parcid),
 	   plot_id = as.character(r7$plotid),
 	   #plot_nbr = r7$f1b,
-	   croping_system  = ifelse(grepl("Yes",  r7$f3), "rotation",
-	                     ifelse(grepl("No", r7$f3), "none", r7$f3)),
+	   #crop_rotation  = grepl("Yes",  r7$f3)
 	   #fallow_used = ifelse(grepl("Yes", r7$f4a), TRUE, 
 	                 #ifelse(grepl("No", r7$f4a), FALSE, r7$f4a)) ,
 	   land_prep_method = r7$f5a,
@@ -336,165 +336,165 @@ As part of the US government's Feed the Future initiative that aims to address g
 	
 	d	<- merge(d, d10, by= intersect(names(d), names(d10)), all = TRUE)
 
- d$weight <- NULL
- 
- d$yield <- d$yield/d$plot_area
- d$dmy_residue <- d$dmy_residue/d$plot_area
- d$dmy_storage <- d$dmy_storage/d$plot_area
- d$yield_marketable <- d$yield_marketable/d$plot_area
- d$residue_prevcrop <- d$residue_prevcrop/d$plot_area
- d$seed_rate <- d$seed_rate/d$plot_area
- d$plot_area <- d$plot_area *10000 # to m2
- d$fertilizer_price <- as.character(d$fertilizer_price/d$fertilizer_amount) ## XOF/kg
- ## add OM_amount
- cols <- grep("^OM_amount", names(d), value = TRUE)
- d[cols] <- d[cols] * d$convert_fact
- d$OM_amount <- rowSums(d[cols], na.rm = TRUE)
- d$convert_fact <- d$OM_amount1 <- d$OM_amount2 <-  NULL
- ### remove rows with the planting_area_pct equal to Zero
- d <- d[which(d$planting_area_pct!=0),]
- 
- 
- ### adding long and lat coordinate 
- d11 <- data.frame(
-    id = r32$cid,
-    adm2 = r32$ca1,
-    adm3 = r32$ca2,
-    location = r32$ca3
-   # treatment = ifelse(!grepl("control", r32$site), "Treatment", r32$site)
- )
- 
- geo <- data.frame(
-    id = r31$cid,
-    latitude = r31$ca4a1 +r31$ca4a2/60+ r31$ca4a3/3600,
-    longitude = r31$ca4b1 + r31$ca4b2/60 + r31$ca4b3/3600,
-    elevation = r31$ca4c,
-    geo_from_source = TRUE
- )
+	d$weight <- NULL
+	
+	d$yield <- d$yield/d$plot_area
+	d$dmy_residue <- d$dmy_residue/d$plot_area
+	d$dmy_storage <- d$dmy_storage/d$plot_area
+	d$yield_marketable <- d$yield_marketable/d$plot_area
+	d$residue_prevcrop <- d$residue_prevcrop/d$plot_area
+	d$seed_rate <- d$seed_rate/d$plot_area
+	d$plot_area <- d$plot_area *10000 # to m2
+	d$fertilizer_price <- as.character(d$fertilizer_price/d$fertilizer_amount) ## XOF/kg
+	## add OM_amount
+	cols <- grep("^OM_amount", names(d), value = TRUE)
+	d[cols] <- d[cols] * d$convert_fact
+	d$OM_amount <- rowSums(d[cols], na.rm = TRUE)
+	d$convert_fact <- d$OM_amount1 <- d$OM_amount2 <-  NULL
+	### remove rows with the planting_area_pct equal to Zero
+	d <- d[which(d$planting_area_pct!=0),]
+	
+	
+	### adding long and lat coordinate 
+	d11 <- data.frame(
+		id = r32$cid,
+		adm2 = r32$ca1,
+		adm3 = r32$ca2,
+		location = r32$ca3
+	  # treatment = ifelse(!grepl("control", r32$site), "Treatment", r32$site)
+	)
+	
+	geo <- data.frame(
+		id = r31$cid,
+		latitude = r31$ca4a1 +r31$ca4a2/60+ r31$ca4a3/3600,
+		longitude = r31$ca4b1 + r31$ca4b2/60 + r31$ca4b3/3600,
+		elevation = r31$ca4c,
+		geo_from_source = TRUE
+	)
 
- dd <- merge(d11, geo, by= "id", all = TRUE)
- 	
-d <- merge(d, dd, by = intersect(names(d), names(dd)), all.x = TRUE) 
+	dd <- merge(d11, geo, by= "id", all = TRUE)
+		
+	d <- merge(d, dd, by = intersect(names(d), names(dd)), all.x = TRUE) 
 
-### 
+	### 
 
-### Fixing conflict coordinate errors 
+	### Fixing conflict coordinate errors 
 
-geo <-  data.frame(
-   location = c("Tiere", "Zansoni", "Konseguela", "M'Pessoba", "N'golonianasso", "Bobola-Zangasso"),
-   long = c(-5.406, -5.569, -5.880, -5.7169, -5.6832, -4.991),
-   lat = c(11.899, 12.6090, 12.4068, 12.666, 12.4229, 12.539),
-   geo_from = FALSE
-)
+	geo <-  data.frame(
+	  location = c("Tiere", "Zansoni", "Konseguela", "M'Pessoba", "N'golonianasso", "Bobola-Zangasso"),
+	  long = c(-5.406, -5.569, -5.880, -5.7169, -5.6832, -4.991),
+	  lat = c(11.899, 12.6090, 12.4068, 12.666, 12.4229, 12.539),
+	  geo_from = FALSE
+	)
 
-d <- merge(d, geo, by = "location", all.x = TRUE) 
-d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
-d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
-d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
-d$id <- d$planting_area_pct <- d$long <-  d$lat <- d$geo_from <- d$convert_fact <- NULL 
+	d <- merge(d, geo, by = "location", all.x = TRUE) 
+	d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
+	d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
+	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
+	d$id <- d$planting_area_pct <- d$long <-  d$lat <- d$geo_from <- d$convert_fact <- NULL 
 
-### Fixing irrigation_source
-d$irrigation_source[grep("Surface", d$irrigation_source)] <- "surface"
-d$irrigation_source[grep("Groundwater", d$irrigation_source)] <- "groundwater"
-d$irrigation_source[grep("A combination", d$irrigation_source)] <- "surface; groundwater"
+	### Fixing irrigation_source
+	d$irrigation_source[grep("Surface", d$irrigation_source)] <- "surface"
+	d$irrigation_source[grep("Groundwater", d$irrigation_source)] <- "groundwater"
+	d$irrigation_source[grep("A combination", d$irrigation_source)] <- "surface; groundwater"
 
-### Fixing soil texture
+	### Fixing soil texture
 
-P <- carobiner::fix_name(d$soil_texture)
-P <- gsub("sand/loam", "sandy loam", P)
-P <- gsub("sand and clay", "sandy clay", P)
-P <- gsub("^rocky soil$", "coarse", P)
-P <- gsub("clay and rocky soil", "clay coarse", P)
-P <- gsub("other|don't know", NA, P)
-d$soil_texture <- P
+	P <- carobiner::fix_name(d$soil_texture)
+	P <- gsub("sand/loam", "sandy loam", P)
+	P <- gsub("sand and clay", "sandy clay", P)
+	P <- gsub("^rocky soil$", "coarse", P)
+	P <- gsub("clay and rocky soil", "clay coarse", P)
+	P <- gsub("other|don't know", NA, P)
+	d$soil_texture <- P
 
-### Fixing land_prep_method
+	### Fixing land_prep_method
 
-P <- carobiner::fix_name(d$land_prep_method)
-P <- gsub("Animal, mouldboard plough|Animal, disc plough", "ploughing", P)
-P <- gsub("Mixed method|Other", "unknown", P)
-P <- gsub("Hand hoe", "hoeing", P)
-P <- gsub("Zero/minimum tillage", "minimum tillage", P)
-P <- gsub("Tractor, mouldboard plough|Tractor, disc plough", "ploughing", P)
-P <- gsub("Planting pits", "unknown", P)
-P <- gsub("Ripping", "ripping", P)
-P <- gsub("Strip/zonal tillage", "strip tillage", P)
+	P <- carobiner::fix_name(d$land_prep_method)
+	P <- gsub("Animal, mouldboard plough|Animal, disc plough", "ploughing", P)
+	P <- gsub("Mixed method|Other", "unknown", P)
+	P <- gsub("Hand hoe", "hoeing", P)
+	P <- gsub("Zero/minimum tillage", "minimum tillage", P)
+	P <- gsub("Tractor, mouldboard plough|Tractor, disc plough", "ploughing", P)
+	P <- gsub("Planting pits", "unknown", P)
+	P <- gsub("Ripping", "ripping", P)
+	P <- gsub("Strip/zonal tillage", "strip tillage", P)
 
-d$land_prep_method <- P
+	d$land_prep_method <- P
 
-### fixing fertilizer type
+	### fixing fertilizer type
 
-P <- carobiner::fix_name(d$fertilizer_type)
-P <- gsub("uree", "urea", P)
-P <- gsub("other|cotton complex|cereal complex|a combination|organic manure|compost", "unknown", P)
-P <- gsub("dap", "DAP", P)
-P <- gsub("npk", "NPK", P)
-d$fertilizer_type <- P
+	P <- carobiner::fix_name(d$fertilizer_type)
+	P <- gsub("uree", "urea", P)
+	P <- gsub("other|cotton complex|cereal complex|a combination|organic manure|compost", "unknown", P)
+	P <- gsub("dap", "DAP", P)
+	P <- gsub("npk", "NPK", P)
+	d$fertilizer_type <- P
 
-## Fixing crop names
-d$crop <- ifelse(grepl("other", d$crop), "none", d$crop)
-P <- carobiner::fix_name(d$crop)
-P <- gsub("african aubergine|aubergine european", "eggplant", P)
-P <- gsub("amaranthus", "amaranth", P)
-P <- gsub("bambara nut|bambara nuts|nuts", "bambara groundnut", P)
-P <- gsub("betterave/betterave sucre", "beetroot", P)
-P <- gsub("bitter leaves", "vegetable", P) # bitter leaf
-P <- gsub("carrots", "carrot", P)
-P <- gsub("chick-peas", "chickpeas", P)
-P <- gsub("coffe", "coffee", P)
-P <- gsub("courge/courgette", "zucchini", P)
-P <- gsub("cowpeas|cow-peas", "cowpea", P)
-P <- gsub("echalotte", "shallot", P)
-P <- gsub("garden eggs", "eggplant", P)
-P <- gsub("green paper|green pepper", "pepper", P)
-P <- gsub("guinean sorrel", "sorrel", P)
-P <- gsub("iganme|igname", "yam", P)
-P <- gsub("irish potato", "potato", P)
-P <- gsub("natural trees", "none", P)
-P <- gsub("planted fodder|tubers", "none", P)
-P <- gsub("palm tree", "palm tree", P)
-P <- gsub("pasture/grazing|fallow", "none", P)
-P <- gsub("pawpaw/papaya", "pawpaw", P)
-P <- gsub("peas", "pea", P)
-P <- gsub("pigeonpeas|^pigeonpea$", "pigeon pea", P)
-P <- gsub("planted trees", "none", P)
-P <- gsub("red paper|red pepper", "pepper", P)
-P <- gsub("soyabean", "soybean", P)
-P <- gsub("sugar cane", "sugarcane", P)
-P <- gsub("sweet potato", "sweetpotato", P)
-P <- gsub("tomatoes", "tomato", P)
-P <- gsub("^bean$", "common bean", P)
-d$crop <- P
+	## Fixing crop names
+	d$crop <- ifelse(grepl("other", d$crop), "none", d$crop)
+	P <- carobiner::fix_name(d$crop)
+	P <- gsub("african aubergine|aubergine european", "eggplant", P)
+	P <- gsub("amaranthus", "amaranth", P)
+	P <- gsub("bambara nut|bambara nuts|nuts", "bambara groundnut", P)
+	P <- gsub("betterave/betterave sucre", "beetroot", P)
+	P <- gsub("bitter leaves", "vegetable", P) # bitter leaf
+	P <- gsub("carrots", "carrot", P)
+	P <- gsub("chick-peas", "chickpeas", P)
+	P <- gsub("coffe", "coffee", P)
+	P <- gsub("courge/courgette", "zucchini", P)
+	P <- gsub("cowpeas|cow-peas", "cowpea", P)
+	P <- gsub("echalotte", "shallot", P)
+	P <- gsub("garden eggs", "eggplant", P)
+	P <- gsub("green paper|green pepper", "pepper", P)
+	P <- gsub("guinean sorrel", "sorrel", P)
+	P <- gsub("iganme|igname", "yam", P)
+	P <- gsub("irish potato", "potato", P)
+	P <- gsub("natural trees", "none", P)
+	P <- gsub("planted fodder|tubers", "none", P)
+	P <- gsub("palm tree", "palm tree", P)
+	P <- gsub("pasture/grazing|fallow", "none", P)
+	P <- gsub("pawpaw/papaya", "pawpaw", P)
+	P <- gsub("peas", "pea", P)
+	P <- gsub("pigeonpeas|^pigeonpea$", "pigeon pea", P)
+	P <- gsub("planted trees", "none", P)
+	P <- gsub("red paper|red pepper", "pepper", P)
+	P <- gsub("soyabean", "soybean", P)
+	P <- gsub("sugar cane", "sugarcane", P)
+	P <- gsub("sweet potato", "sweetpotato", P)
+	P <- gsub("tomatoes", "tomato", P)
+	P <- gsub("^bean$", "common bean", P)
+	d$crop <- P
 
-## fixing OM_type
+	## fixing OM_type
 
-P <- carobiner::fix_name(d$OM_type)
-P <- gsub("A combination of organic inputs|Other", "unknown", P)
-P <- gsub("Crop residue from this farm", "unknown", P)
-P <- gsub("Household waste", "unknown", P)
-P <- gsub("Mulch/compost", "compost", P)
-P <- gsub("None", "none", P)
-d$OM_type <- P
-##### 
-
-
-d$country <- "Mali"
-d$adm1 <- "Sikasso"
-d$trial_id <- paste(d$location, d$hhid, sep = "-")
-d$planting_date <- as.character(NA)
-d$on_farm <- FALSE 
-d$is_survey <- TRUE
-d$yield_part <- "none"
-d$yield_moisture <- as.numeric(NA)
-d$yield_isfresh <- TRUE
+	P <- carobiner::fix_name(d$OM_type)
+	P <- gsub("A combination of organic inputs|Other", "unknown", P)
+	P <- gsub("Crop residue from this farm", "unknown", P)
+	P <- gsub("Household waste", "unknown", P)
+	P <- gsub("Mulch/compost", "compost", P)
+	P <- gsub("None", "none", P)
+	d$OM_type <- P
+	##### 
 
 
-d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$country <- "Mali"
+	d$adm1 <- "Sikasso"
+	d$trial_id <- paste(d$location, d$hhid, sep = "-")
+	d$planting_date <- as.character(NA)
+	d$on_farm <- FALSE 
+	d$is_survey <- TRUE
+	d$yield_part <- "none"
+	d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- TRUE
 
-### remove duplicate records
-d <- unique(d)
 
-carobiner::write_files(path, meta, d)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+
+	### remove duplicate records
+	d <- unique(d)
+
+	carobiner::write_files(path, meta, d)
 }
 
 
