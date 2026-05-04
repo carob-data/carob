@@ -12,13 +12,12 @@ Replication Data for: Food and nutrition security merits of intercropping maize,
 This database comprises grain and nutritional yield data from on-farm trials implemented in the Dedza and Mzimba districts of Malawi over three growing seasons (2017/18 to 2019/20). The study was designed to evaluate yields resulting from treatments involving different cereals and legumes within intercropping systems. The complete dataset supported the findings published in: 'Small grains for small farms? Food and nutrition security from maize, sorghum, and millet cropping systems in Southern Africa.
 "
 
-
 	uri <- "doi:10.71682/10549345"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIMMYT; COAHAU", # CAHAU: College of Agronomy, Hebei Agriculture University
+		data_organization = "CIMMYT;HEBAU",
 		publication = "doi:10.1007/s12571-025-01556-2",
 		project = NA,
 		carob_date = "2026-05-04",
@@ -45,10 +44,9 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 		location = r2$village,
 		trial_id = paste(r2$farm_id, r2$site_name, sep = "-"),
 		planting_date = substr(r2$year, 1, 4),
-		plot_area = r2$land_size*10000,#m2
+		cropland_owned = r2$land_size*10000,#m2
 		rain = r2$rainfall,
-		#plot_type = r2$plot_type,
-		#cropping_system = r2$cropping_system,
+		is_survey = r2$plot_type != "demo_plot", 
 		land_prep_method = gsub("no-till", "none", r2$land_preparation),
 		intercrops_c = r2$legume,
 		intercrops_l = r2$cereal,
@@ -63,19 +61,16 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 		#grain_protein = r2$protein, given in kg/ha instead of % or related unit
 		country = "Malawi",
 		on_farm = TRUE, 
-		is_survey = FALSE, 
 		yield_part = "grain", 
 		yield_moisture = as.numeric(NA), 
 		irrigated = NA, 
 		geo_from_source = FALSE,
-		yield_isfresh = TRUE
-		
-		
+		yield_isfresh = TRUE	
 	)
 
 	d <- reshape(d1, varying = list(c("yield_c", "yield_l"), c("fwy_residue_c", "fwy_residue_l"), c("fwy_total_c", "fwy_total_l"), c("crop_c", "crop_l"), c("intercrops_c", "intercrops_l")), 
-	         v.names = c("yield", "fwy_residue", "fwy_total", "crop", "intercrops"),
-	         direction = "long")
+	    v.names = c("yield", "fwy_residue", "fwy_total", "crop", "intercrops"), 
+		direction = "long")
 	
 	d$id <- d$time <- NULL
 	
@@ -110,10 +105,7 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 	d$lat <- d$lon <- NULL 
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)  
-	
-	### remove duplicate records
-	
-	d <- unique(d)
+
 	
 	carobiner::write_files(path, meta, d)
 }
