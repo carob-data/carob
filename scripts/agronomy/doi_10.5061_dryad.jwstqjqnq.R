@@ -40,8 +40,7 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	### process
 	
 	d <- data.frame(
-	  harvest_date = paste(substr(r1$Environment..E., 1, 4), carobiner::eng_months_to_nr(r1$Harvest.time), sep = "-") ,
-	  location = substr(r1$Environment..E., 5, 11),
+	  location = substr(r1$E, 5, 11),
 	  seed_density = r1$Seeding..S..rate,
 	  rep = r1$Block..B.,
 	  dmy_total = r1$Dry.matter.yield..Mg.ha.*1000,
@@ -69,9 +68,7 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	  yield_isfresh = TRUE
 		
 	)
-	
-	d$harvest_date <- gsub("-8", "-08", d$harvest_date)
-	d$harvest_date <- gsub("-9", "-09", d$harvest_date)
+
 	
 	### Adding longitude and latitude coordinate
 	
