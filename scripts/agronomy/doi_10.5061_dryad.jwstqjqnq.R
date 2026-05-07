@@ -17,7 +17,7 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-		data_organization = "SIU; VPI",#Virginia Polytechnic Institute
+		data_organization = "SIU; VT",
 		publication = "doi:10.1038/s41598-026-41418-1",
 		project = NA,
 		carob_date = "2026-05-06",
@@ -61,7 +61,7 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	  trial_id = paste(r1$Environment..E., r1$Block..B.), 
 	  on_farm = TRUE, 
 	  is_survey = FALSE, 
-	  yield_part = "grain", 
+	  yield_part = "aboveground biomass", 
 	  yield_moisture = as.numeric(NA), 
 	  geo_from_source = FALSE,
 	  irrigated = NA,
