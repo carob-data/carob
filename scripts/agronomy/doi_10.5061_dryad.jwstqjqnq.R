@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## The amounts of fertilizer used are not specified (NPK as a dry bulk blend broadcasted and lime) 
 
 carob_script <- function(path) {
 
@@ -51,7 +51,8 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Holland", r1$E), "2018-06-09",
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2019Holland", r1$E), "2019-05-24",
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2017Hare", r1$E), "2017-06-09",
-	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Hare", r1$E), "2018-06-07", "2019-05-23")))))))), # from publication
+	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Hare", r1$E), "2018-06-07", "2019-05-23")))))))), # from publication,
+	  harvest_date = paste(substr(r1$E, 1, 4), carobiner::eng_months_to_nr(r1$Harvest.time), sep = "-"),
 	  yield = r1$Yield..Mg.ha.*1000,
 	  plant_height = r1$Plant.height..cm.,
 	  disease_severity = as.character(r1$Disease.severity....),
@@ -59,6 +60,8 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	  country ="United States",
 	  soil_texture = ifelse(grepl("Holland", r1$E), "loam", "loamy sand"),
 	  trial_id = paste(r1$Environment..E., r1$Block..B.), 
+	  fertilizer_type = "lime;NPK;AS", # (AS ; 24-0-0-2) from reference
+	  S_fertilizer = 2,
 	  on_farm = TRUE, 
 	  is_survey = FALSE, 
 	  yield_part = "aboveground biomass", 
@@ -69,7 +72,8 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 		
 	)
 
-	
+	d$harvest_date <- gsub("-8", "-08", d$harvest_date)
+	d$harvest_date <- gsub("-9", "-09", d$harvest_date)
 	### Adding longitude and latitude coordinate
 	
 	geo <- data.frame(
