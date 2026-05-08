@@ -73,10 +73,9 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 		direction = "long")
 	
 	d$id <- d$time <- NULL
-	
 	d <- d[!is.na(d$yield),]
-	### fixing crop and intercrops names
 	
+	### fixing crop and intercrops names	
 	d$intercrops <- gsub("bambara nut", "bambara groundnut", d$intercrops)
 	d$intercrops <- gsub("French bean", "common bean", d$intercrops)
 	d$crop <- gsub("French bean", "common bean", d$crop)
@@ -101,11 +100,9 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 	d <- merge(d, geo1, by= "adm2", all.x = TRUE)
 	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
 	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
-	
-	d$lat <- d$lon <- NULL 
-	
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)  
+	d$lat <- d$lon <- NULL 	
 
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)  
 	
 	carobiner::write_files(path, meta, d)
 }
