@@ -41,7 +41,7 @@ carob_script <- function(path) {
     flowering_days=as.integer(r$Days.from.sowing_to.flowering),
     seed_weight=as.numeric(r$X100pct.seed_weight.g),
     yield=as.numeric(r$Total_Kgs)*2500,#converting to kg/ha since weight recorded was from 2m by 2m plots
-    yield_part="grain"
+    yield_part="seed"
   )
     
     
