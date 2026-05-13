@@ -113,19 +113,19 @@ Recent studies highlight conservation management practices as an effective strat
 	
 	P <- carobiner::fix_name(d$cover_crop)
 	P <- gsub("^cereal rye$", "rye", P)
-	P <- gsub("^black oats$", "oats", P)
+	P <- gsub("^black oats$", "black oats", P)
 	P <- gsub("austrian winter pea", "pea", P)
-	P <- gsub("hairy vetch", "vetch", P)
-	P <- gsub("mix 1 \\(cereal rye, crimson clover, seven-top turnip\\)", "rye;clover;turnip", P)
-	P <- gsub("mix 2 \\(black oats and austrian winter peas\\)", "oats;pea", P)
+	#P <- gsub("hairy vetch", "hairy vetch", P)
+	P <- gsub("mix 1 \\(cereal rye, crimson clover, seven-top turnip\\)", "rye;crimson clover;turnip", P)
+	P <- gsub("mix 2 \\(black oats and austrian winter peas\\)", "black oats;pea", P)
 	P <- gsub("no", "none", P)
 	P <- gsub("^winter cereal$", "cereal", P)
 	P <- gsub("winter legume", "legume", P)
-	P <- gsub("winter cereal before soybean", "cereal;soybean", P)
+	P <- gsub("winter cereal before soybean", "cereal", P)
 	P <- gsub("medium red clover", "red clover", P)
-	P <- gsub("red clover", "red clover", P)
+	#P <- gsub("red clover", "red clover", P)
 	P <- gsub("mix \\(winter wheat, cereal rye, and camelina\\)", "wheat;rye;camelina", P)
-	P <- gsub("mix 2 \\(black oats and peas\\)", "oats;pea", P)
+	P <- gsub("mix 2 \\(black oats and peas\\)", "black oats;pea", P)
 	d$cover_crop <- P
 	
 	
