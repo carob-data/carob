@@ -49,7 +49,7 @@ Recent studies highlight conservation management practices as an effective strat
 	  treatment = paste(r2$meta_mgm,r2$cover_crop_species, sep = "-"),
 	  #drainage = r2$drainage,
 	  cover_crop_used = grepl("yes", r2$cover_crop),
-	  cover_crop = r2$cover_crop_species, 
+	  cover_crop = tolower(r2$cover_crop_species), 
 	  OM_used = !grepl("no",r2$manure),
 	  fertilizer_used = grepl("yes", r2$fertilizer),
 	  soil_type = r2$soil_order,
@@ -108,6 +108,26 @@ Recent studies highlight conservation management practices as an effective strat
 	P <- gsub("corn-wheat", "maize;wheat", P)
 	P <- gsub("corn-soybean-oat-alfalfa", "maize;soybean;oats;lucerne", P)
 	d$crop_rotation <- P
+	
+	#### Fixing crop_cover
+	
+	P <- carobiner::fix_name(d$cover_crop)
+	P <- gsub("^cereal rye$", "rye", P)
+	P <- gsub("^black oats$", "oats", P)
+	P <- gsub("austrian winter pea", "pea", P)
+	P <- gsub("hairy vetch", "vetch", P)
+	P <- gsub("mix 1 \\(cereal rye, crimson clover, seven-top turnip\\)", "rye;clover;turnip", P)
+	P <- gsub("mix 2 \\(black oats and austrian winter peas\\)", "oats;pea", P)
+	P <- gsub("no", "none", P)
+	P <- gsub("^winter cereal$", "cereal", P)
+	P <- gsub("winter legume", "legume", P)
+	P <- gsub("winter cereal before soybean", "cereal;soybean", P)
+	P <- gsub("medium red clover", "red clover", P)
+	P <- gsub("red clover", "red clover", P)
+	P <- gsub("mix \\(winter wheat, cereal rye, and camelina\\)", "wheat;rye;camelina", P)
+	P <- gsub("mix 2 \\(black oats and peas\\)", "oats;pea", P)
+	d$cover_crop <- P
+	
 	
 	### Fixing soil texture 
 	
