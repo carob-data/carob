@@ -5,13 +5,12 @@ carob_script <- function(path) {
 
 "Mali: Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017"	
 
-	up <- carobiner::usr_pwd(path, "LSMS")
-	if (is.null(up)) return(TRUE)	
-	
+	if (is.null(carobiner::usr_pwd(path, "LSMS"))) return(TRUE)
+
 	uri <- "doi:10.48529/e39g-m952"
 
 	group <- "LSMS"
-	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS", username=up$username, password=up$password)
+	ff  <- carobiner::get_data(uri, path, group, protocol="LSMS")
 	if (is.null(ff)) {
 		stop("these files need to be downloaded by hand")
 	}
