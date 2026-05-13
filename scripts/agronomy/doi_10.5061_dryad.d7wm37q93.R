@@ -36,58 +36,52 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	f2 <- ff[basename(ff) == "2._Grain_yield_of_maize__wheat_and_soybean_no_terms.csv"]
 	f3 <- ff[basename(ff) == "3._stover_yield_of_wheat_no_terms.csv"]
 	f4 <- ff[basename(ff) == "4._Plant_tissue_phosphorus_concentration.csv"]
-	f5 <- ff[basename(ff) == "5._drainage.csv"]
-	f6 <- ff[basename(ff) == "6._Dissolved_P_concentration.csv"]
+	#f5 <- ff[basename(ff) == "5._drainage.csv"]
+	#f6 <- ff[basename(ff) == "6._Dissolved_P_concentration.csv"]
 	f7 <- ff[basename(ff) == "7._Soil_test_phosphorus_concentration_no_terms.csv"]
-	f8 <- ff[basename(ff) == "README.md"]
+	#f8 <- ff[basename(ff) == "README.md"]
 
 	
-	r1 <- read.csv(f1, na="")
-	r2 <- read.csv(f2)
-	r3 <- read.csv(f3)
-	r4 <- read.csv(f4)
-	r5 <- read.csv(f5)
-	r6 <- read.csv(f6)
-	r7 <- read.csv(f7)
+	r1 <- read.csv(f1, na="", skip=17)
+	r2 <- read.csv(f2, skip=21)[-1, ]
+	r3 <- read.csv(f3, skip=12)[-1, ]
+	r4 <- read.csv(f4, skip=1)
+	#r5 <- read.csv(f5)
+	#r6 <- read.csv(f6)
+	r7 <- read.csv(f7, skip=10)
 	
 ## process
-	names(r1) <- r1[17,]
-	r1 <- r1[-c(1:17),]
 	
+	r1$source <- NULL
+	r1 <- unique(r1)
 	d1 <- data.frame(
 	  date = as.character(as.Date(r1$obs_date, "%m/%d/%Y")),
 	  treatment = r1$treatment,
 	  rep = as.integer(substr(r1$replicate, 2, 2)),
 	  trial_id = r1$plot,
-	  fertilizer_type = r1$material,
-	  fertilizer_amount = as.numeric(r1$rate_kg_ha),
-	  N_fertilizer = as.numeric(r1$n_rate_kg_ha),
-	  P_fertilizer = as.numeric(r1$p_rate_kg_ha),
-	  K_fertilizer = as.numeric(r1$k_rate_kg_ha),
-	  planting_date = substr(as.Date(r1$obs_date, "%m/%d/%Y"), 1, 4)
+	  application = r1$material,
+	  amount = r1$rate_kg_ha,
+	  N_fertilizer = r1$n_rate_kg_ha,
+	  P_fertilizer = r1$p_rate_kg_ha,
+	  K_fertilizer = r1$k_rate_kg_ha
 	)
+    d1$planting_date = substr(d1$date, 1, 4)
 	
-	names(r2) <- r2[21,]
-	r2 <- r2[-c(1:22),]
 	d2 <- data.frame(
 	  harvest_date =  as.character(as.Date(r2$Date, "%m/%d/%Y")),
 	  treatment = r2$Treatment,
 	  rep = as.integer(substr(r2$Replicate, 2, 2)),
-	  crop = ifelse(grepl("Triticum aestivum L.",  r2$Crop), "wheat", 
-	                ifelse(grepl("Zea mays L.",  r2$Crop), "maize", "soybean")),
+	  crop = ifelse(r2$Crop == "Triticum aestivum L.", "wheat", 
+	         ifelse(r2$Crop == "Zea mays L.", "maize",
+			 ifelse(r2$Crop == "Glycine max L.", "soybean", NA))),
 	  yield = as.numeric(r2$crop_only_yield_kg_ha),
 	  dmy_total = as.numeric(r2$whole_plot_yield_kg_ha),
 	  yield_moisture = 15.5,
 	  planting_date = r2$Year
 	)
 	
-	### merge d1 and d2
-	
-	d <- merge(d1, d2, by= intersect(names(d1), names(d2)), all = TRUE)
-	
-	
-	names(r3) <- r3[12,]
-	r3 <- r3[-c(1:13),]
+	d <- merge(d1, d2, all = TRUE)
+		
 	d3 <- data.frame(
 	  harvest_date = as.character(as.Date(r3$date, "%m/%d/%Y")),
 	  treatment = r3$treatment,
@@ -98,18 +92,14 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  planting_date = r3$year
 	)
 	
-	### merge d and d3
+	d <- merge(d, d3, all = TRUE)  
 	
-	d <- merge(d, d3, by = intersect(names(d), names(d3)), all = TRUE)  
-	
-	names(r4) <- r4[1,]
-	r4 <- r4[-c(1),]
 	d41 <- data.frame(
 	  planting_date = r4$year,
 	  treatment = r4$treatment,
 	  crop=trimws(gsub("corn", "maize", tolower(r4$Crop))),
 	  rep = as.integer(substr(r4$replicate, 2, 2)),
-	  grain_P = ifelse(grepl("grain", r4$fraction), as.numeric(r4$`P (ppm)`), NA)/1000 ## to mg/g
+	  grain_P = ifelse(grepl("grain", r4$fraction), as.numeric(r4$P..ppm), NA)/1000 ## to mg/g
 	)
 	
 	d42 <- data.frame(
@@ -117,17 +107,14 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  treatment = r4$treatment,
 	  crop=trimws(gsub("corn", "maize", tolower(r4$Crop))),
 	  rep = as.integer(substr(r4$replicate, 2, 2)),
-	  residue_P = ifelse(grepl("stover", r4$fraction), as.numeric(r4$`P (ppm)`), NA)/1000  ## to mg/g
+	  residue_P = ifelse(grepl("stover", r4$fraction), as.numeric(r4$P..ppm), NA)/1000  ## to mg/g
 	)
 	
-	d4 <- merge(d41[!is.na(d41$grain_P),], d42[!is.na(d42$residue_P),], by= intersect(names(d41), names(d42)), all=TRUE)
-	### merge d and d4
+	d4 <- merge(d41[!is.na(d41$grain_P),], d42[!is.na(d42$residue_P),], all=TRUE)
+
+	d <- merge(d, d4, all = TRUE)  
 	
-	d <- merge(d, d4, by = intersect(names(d), names(d4)), all = TRUE)  
-	
-	names(r7) <- r7[10,]
-	r7 <- r7[-c(1:10),]
-	d5 <- data.frame(
+	d7 <- data.frame(
 	  planting_date = substr(as.Date(r7$Sample_Date, "%m/%d/%Y"), 1, 4),
 	  treatment = r7$Treatment,
 	  crop = r7$crop,
@@ -135,28 +122,30 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  depth_top = 0,
 	  depth_bottom = 25,
 	  soil_P = as.numeric(r7$phosphorus_milligramsPerGram),
-	  soil_P_method = "Bray I"
-	  
+	  soil_P_method = "Bray I"	  
 	)
 
-	### merge d and d5
+	### merge d and d7
 	
-	d <- merge(d, d5, by = intersect(names(d), names(d5)), all = TRUE)  
+	d <- merge(d, d7, all = TRUE)  
   
-	d <- d[!is.na(d$yield),]
 	### Fixing fertilizer type
 	
-	d$fertilizer_type <- ifelse(grepl("Fertilizer 19-17-0|0-46-0", d$fertilizer_type), "NPK",
-	                     ifelse(grepl("UAN", d$fertilizer_type), "AN",
-	                     ifelse(grepl("Ammonium sulfate", d$fertilizer_type), "AS", 
-	                     ifelse(grepl("monoammonium phosphate", d$fertilizer_type), "MAP",
-	                     ifelse(grepl("potash fertilizer", d$fertilizer_type), "KCl", 
-	                     ifelse(grepl("lime", d$fertilizer_type), "lime",
-	                     ifelse(grepl("Fertilizer|Sulfur|Herbicide|H2O|Dual|custom mix", d$fertilizer_type),"unknown", d$fertilizer_type)))))))
+	d$fertilizer_type <- ifelse(grepl("Fertilizer 19-17-0|0-46-0", d$application), "unknown",
+	                     ifelse(grepl("UAN", d$application), "AN",
+	                     ifelse(grepl("Ammonium sulfate", d$application), "AS", 
+	                     ifelse(grepl("monoammonium phosphate", d$application), "MAP",
+	                     ifelse(grepl("potash fertilizer", d$application), "KCl", 
+	                     ifelse(grepl("lime", d$application), "lime",
+	                     ifelse(grepl("Fertilizer|Sulfur", d$application), "unknown",
+	                     ifelse(grepl("Herbicide|H2O|Dual|custom mix", d$application), "", 
+						 d$application)))))))
+
 	
 	d$land_prep_method <- ifelse(grepl("reduced input", d$treatment), "reduced tillage",
-	                             ifelse(grepl("no-till", d$treatment), "none", 
-	                             ifelse(grepl("biologically based", d$treatment), "unknown", d$treatment)))
+                          ifelse(grepl("no-till", d$treatment), "none", 
+                          ifelse(grepl("biologically based", d$treatment), "unknown", d$treatment)))
+
 	d$P_fertilizer <- ifelse(is.na(d$P_fertilizer), 0, d$P_fertilizer)
 	
 	d$country <- "United States" 
@@ -170,10 +159,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	d$irrigated <- NA 
 	d$geo_from_source <- TRUE # From publication
 	
-	### remove duplicate rows
-	
-	d <- unique(d)
-	
+	#d <- d[!is.na(d$yield),]
 	
 	carobiner::write_files(path, meta, d)
 }
