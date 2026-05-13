@@ -49,6 +49,7 @@ Recent studies highlight conservation management practices as an effective strat
 	  treatment = paste(r2$meta_mgm,r2$cover_crop_species, sep = "-"),
 	  #drainage = r2$drainage,
 	  cover_crop_used = grepl("yes", r2$cover_crop),
+	  cover_crop = r2$cover_crop_species, 
 	  OM_used = !grepl("no",r2$manure),
 	  fertilizer_used = grepl("yes", r2$fertilizer),
 	  soil_type = r2$soil_order,
