@@ -2,10 +2,13 @@
 # license: GPL (>=3)
 
 ## ISSUES
-#1.errors left have to do with how the raw data was collected
+# crop not specified
+
 carob_script <- function(path) {
   
-  "In order to assess the impact of the Land Restoration Program, understanding what land restoration options work, where and for whom, there is need to identify the context-specific variables that may influence the performance of the restoration options as well as their uptake. In addition to monitoring the performance of the restoration option being implemented, a registration of the farmers involved in the project was conducted. A standard household survey was used, assessing both the socio-economic and biophysical characteristics of the households. The farmers were from four district of Ethiopia: Boset, Gursum, Samre and Tsaeda Emba. The present dataset includes socio-economical data about 173 households, including general information about the farms. Specific data about agricultural operations, crops, trees and the experimental plots developed inside the project, are part of a separated dataset. NOTE: The coordinates were removed from the dataset in May 2021, in order to comply with GDPR standards. The location details are available on request: please contact the author and explain the purpose of your research."
+"
+In order to assess the impact of the Land Restoration Program, understanding what land restoration options work, where and for whom, there is need to identify the context-specific variables that may influence the performance of the restoration options as well as their uptake. In addition to monitoring the performance of the restoration option being implemented, a registration of the farmers involved in the project was conducted. A standard household survey was used, assessing both the socio-economic and biophysical characteristics of the households. The farmers were from four district of Ethiopia: Boset, Gursum, Samre and Tsaeda Emba. The present dataset includes socio-economical data about 173 households, including general information about the farms. Specific data about agricultural operations, crops, trees and the experimental plots developed inside the project, are part of a separated dataset. NOTE: The coordinates were removed from the dataset in May 2021, in order to comply with GDPR standards. The location details are available on request: please contact the author and explain the purpose of your research.
+"
   
   uri <- "doi:10.25502/dqaw-f631"
   group <- "survey"
@@ -26,13 +29,13 @@ carob_script <- function(path) {
   )
   
   f <- ff[basename(ff) == "a_general.csv"]
-  f1<- ff[basename(ff) == "a_inputs.csv"]
-  f2<- ff[basename(ff) == "d_cropping_calendar.csv"]
-  f3<- ff[basename(ff) == "e_harvest.csv"]
-  r <- read.csv(f)
-  r1<- read.csv(f1)
-  r2<- read.csv(f2)
-  r3<- read.csv(f3)
+  f1 <- ff[basename(ff) == "a_inputs.csv"]
+  f2 <- ff[basename(ff) == "d_cropping_calendar.csv"]
+  f3 <- ff[basename(ff) == "e_harvest.csv"]
+  r  <- read.csv(f)
+  r1 <- read.csv(f1)
+  r2 <- read.csv(f2)
+  r3 <- read.csv(f3)
   
   d <- data.frame(
     hhid=as.character(r$id),
@@ -44,8 +47,9 @@ carob_script <- function(path) {
     farmer_age=as.numeric(r$age),
     field_size=r$farm_size_ha,
     farmer_education=trimws(r$highest_education_household),
-    crop="legume",
-    yield_part="seed")
+    #crop="legume",
+    yield_part="seed"
+  )
   
     d$on_farm <- TRUE
     d$is_survey <- TRUE
@@ -63,14 +67,12 @@ carob_script <- function(path) {
   
   crop_cols <- names(crop_map)
   d$crop_rotation <- apply(r[, crop_cols], 1, function(x) {
-    crops <- crop_map[x == "Y"]
-  
-    if(length(crops) == 0) {
-      NA
-    } else {
-      paste(crops, collapse = ";")
-    }
-    
+      crops <- crop_map[x == "Y"]
+      if (length(crops) == 0) {
+		NA
+      } else {
+        paste(crops, collapse = ";")
+      }
   })
   
   d$adm2 <- trimws(tolower(d$adm2))
@@ -79,12 +81,11 @@ carob_script <- function(path) {
   d$adm2 <- tools::toTitleCase(d$adm2)
 
   #fixing coordinates
-  loc<- data.frame(
-    adm2 = c("Goromonzi", "Makoni", 
-               "Wedza", "Chegutu", "Mudzi", "Mbire", "Guruve", "Murehwa", 
-               "Mabika"),
-  longitude = c(31.3724, 32.1372, 31.6844, 30.3976, 32.5494, 30.2237, 30.629, 31.8388, 29.9024),
-  latitude = c(-17.8183, -18.3849, -18.7677, -18.1868, -17.0517, -16.062, -16.3432, -17.8044, -20.7331))
+  loc <- data.frame(
+    adm2 = c("Goromonzi", "Makoni", "Wedza", "Chegutu", "Mudzi", "Mbire", "Guruve", "Murehwa", "Mabika"),
+    longitude = c(31.3724, 32.1372, 31.6844, 30.3976, 32.5494, 30.2237, 30.629, 31.8388, 29.9024),
+    latitude = c(-17.8183, -18.3849, -18.7677, -18.1868, -17.0517, -16.062, -16.3432, -17.8044, -20.7331)
+  )
   
   #merging coordinates
   d <- merge(d, loc, by = "adm2", all.x = TRUE)
@@ -115,60 +116,28 @@ carob_script <- function(path) {
   
   #Cleaning values
   #AN
-  r1$N_fertilizer[r1$input == "an"] <-
-    r1$quantity[r1$input == "an"] * 0.345
+  r1$N_fertilizer[r1$input == "an"] <- r1$quantity[r1$input == "an"] * 0.345
   #Urea
-  r1$N_fertilizer[r1$input == "urea"] <-
-    r1$quantity[r1$input == "urea"] * 0.46
+  r1$N_fertilizer[r1$input == "urea"] <- r1$quantity[r1$input == "urea"] * 0.46
   #SSP
-  r1$P_fertilizer[r1$input == "ssp"] <-
-    (r1$quantity[r1$input == "ssp"] * 0.18) / 2.29
+  r1$P_fertilizer[r1$input == "ssp"] <- (r1$quantity[r1$input == "ssp"] * 0.18) / 2.29
   #Comp.D(NPK)
-  r1$N_fertilizer[r1$input == "compound d"] <-
-    r1$quantity[r1$input == "compound d"] * 0.07
-  
-  r1$P_fertilizer[r1$input == "compound d"] <-
-    (r1$quantity[r1$input == "compound d"] * 0.14) / 2.29
-  
-  r1$K_fertilizer[r1$input == "compound d"] <-
-    (r1$quantity[r1$input == "compound d"] * 0.07) / 1.2051
+  r1$N_fertilizer[r1$input == "compound d"] <- r1$quantity[r1$input == "compound d"] * 0.07
+  r1$P_fertilizer[r1$input == "compound d"] <- (r1$quantity[r1$input == "compound d"] * 0.14) / 2.29
+  r1$K_fertilizer[r1$input == "compound d"] <- (r1$quantity[r1$input == "compound d"] * 0.07) / 1.2051
   #Comp.L(NPK)
-  r1$N_fertilizer[r1$input == "compound l"] <-
-    r1$quantity[r1$input == "compound l"] * 0.05
-  
-  r1$P_fertilizer[r1$input == "compound l"] <-
-    (r1$quantity[r1$input == "compound l"] * 0.18) / 2.29
-  
-  r1$K_fertilizer[r1$input == "compound l"] <-
-    (r1$quantity[r1$input == "compound l"] * 0.10) / 1.2051
+  r1$N_fertilizer[r1$input == "compound l"] <- r1$quantity[r1$input == "compound l"] * 0.05
+  r1$P_fertilizer[r1$input == "compound l"] <- (r1$quantity[r1$input == "compound l"] * 0.18) / 2.29
+  r1$K_fertilizer[r1$input == "compound l"] <- (r1$quantity[r1$input == "compound l"] * 0.10) / 1.2051
   #Comp.C
-  r1$N_fertilizer[r1$input == "compound c"] <-
-    r1$quantity[r1$input == "compound c"] * 0.06
-  
-  r1$P_fertilizer[r1$input == "compound c"] <-
-    (r1$quantity[r1$input == "compound c"] * 0.15) / 2.29
-  
-  r1$K_fertilizer[r1$input == "compound c"] <-
-    (r1$quantity[r1$input == "compound c"] * 0.12) / 1.2051
+  r1$N_fertilizer[r1$input == "compound c"] <- r1$quantity[r1$input == "compound c"] * 0.06
+  r1$P_fertilizer[r1$input == "compound c"] <- (r1$quantity[r1$input == "compound c"] * 0.15) / 2.29  
+  r1$K_fertilizer[r1$input == "compound c"] <- (r1$quantity[r1$input == "compound c"] * 0.12) / 1.2051
   
   
-  fert_sum <- aggregate(
-    cbind(
-      N_fertilizer,
-      P_fertilizer,
-      K_fertilizer
-    ) ~ field_id,
-    data = r1,
-    sum,
-    na.rm = TRUE
-  )
+  fert_sum <- aggregate(r1[, c("N_fertilizer", "P_fertilizer", "K_fertilizer")], r1["field_id"], sum, na.rm = TRUE)
   #merging fertilizer values
-  d <- merge(
-    d,
-    fert_sum,
-    by = "field_id",
-    all.x = TRUE
-  )
+  d <- merge(d, fert_sum, by = "field_id", all.x = TRUE)
   
   #fixing planting date
   # rename columns
@@ -193,12 +162,7 @@ carob_script <- function(path) {
   )
   
   # merge into main dataset
-  d <- merge(
-    d,
-    plant_year,
-    by = "field_id",
-    all.x = TRUE
-  )
+  d <- merge(d, plant_year, by = "field_id", all.x = TRUE)
   
   d$planting_date <- as.character(d$planting_date)
   d$trial_id <- paste(d$country, d$hhid, sep = "-")
@@ -206,23 +170,13 @@ carob_script <- function(path) {
   #standardizing yield
   names(r3)[names(r3) == "farm_id"] <- "field_id"
   
-  r3$yield <-
-    (r3$weight_kg / r3$area_harvested_m2) * 10000
+  r3$yield <- (r3$weight_kg / r3$area_harvested_m2) * 10000
   
   #aggregation
-  yield_sum <- aggregate(
-    yield ~ field_id,
-    data = r3,
-    mean,
-    na.rm = TRUE
-  )
+  yield_sum <- aggregate(yield ~ field_id, data = r3, mean, na.rm = TRUE)
   
-  d <- merge(
-    d,
-    yield_sum,
-    by = "field_id",
-    all.x = TRUE
-  ) 
+  d <- merge(d, yield_sum, by = "field_id", all.x = TRUE) 
   
   carobiner::write_files(path, meta, d)
 }
+
