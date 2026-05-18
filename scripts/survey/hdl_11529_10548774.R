@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-### some plot area are too high 
+
 
 
 carob_script <- function(path) {
