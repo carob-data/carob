@@ -61,6 +61,7 @@ A large database of individual farmer field data (n = 4,107) for rice production
 	  cropland_total = ifelse(grepl("Acre",r1$Main_Group.consent_yes.land_units.unit), r1$Main_Group.consent_yes.land_units.total_land *0.4047, NA),
 	  cropland_used = ifelse(grepl("Acre",r1$Main_Group.consent_yes.land_units.unit), r1$Main_Group.consent_yes.land_units.total_culitland*0.4047, NA),
 	  plot_area =  ifelse(grepl("Acre",r1$Main_Group.consent_yes.land_units.unit), r1$Main_Group.consent_yes.land_units.total_riceArea*0.4047, NA)*10000, #m2
+	  crop_cut = grepl("Yes", r1$Main_Group.consent_yes.cropcut_info),
 	  #land_type = r1$Main_Group.consent_yes.land_info_1.land_type,
 	  soil_type = r1$Main_Group.consent_yes.land_info_1.soil_type,
 	  previous_crop = tolower(r1$Main_Group.consent_yes.land_info_1.crop_beforeRice),
