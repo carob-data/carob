@@ -3,8 +3,6 @@
 
 ## ISSUES
 
-
-
 carob_script <- function(path) {
 
 "
@@ -47,7 +45,7 @@ Survey at multiple locations in Tanzania  (680 to 2100 m)  to establish baseline
 		country = r4$Country,
 		location_id = r4$District,
 		hhid = r4$HHID,
-		trial_id = paste(r4$`Farmer Name`, r5$QID, sep = "-"),
+		trial_id = paste(r4$`Farmer Name`, r4$QID, sep = "-"),
 		latitude = r4$Latitude,
 		longitude = r4$Longitude,
 		elevation = r4$Altitude,
