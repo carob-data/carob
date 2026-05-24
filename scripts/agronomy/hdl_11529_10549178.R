@@ -75,6 +75,7 @@ The key objectives of the study included assessing the interactions between geno
 	d$lime <- as.numeric(NA)
 	d$yield_moisture <- 12.5
 	
+	d <- d[d$yield > 0, ]
 	
 	carobiner::write_files(path, meta, d)
 }

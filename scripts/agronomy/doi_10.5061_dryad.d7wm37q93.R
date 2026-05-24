@@ -139,7 +139,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	                     ifelse(grepl("lime", d$application), "lime",
 	                     ifelse(grepl("Fertilizer|Sulfur", d$application), "unknown",
 	                     ifelse(grepl("Herbicide|H2O|Dual|custom mix", d$application), "", 
-						 d$application)))))))
+						 d$application))))))))
 
 	
 	d$land_prep_method <- ifelse(grepl("reduced input", d$treatment), "reduced tillage",

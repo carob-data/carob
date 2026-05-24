@@ -158,5 +158,7 @@ carob_script <- function(path) {
 	d <- unique(d)
 	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- NA
+	
 	carobiner::write_files(meta, d, path=path)
 }

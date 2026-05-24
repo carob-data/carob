@@ -11,6 +11,7 @@ carob_script <- function(path) {
 The integrated BEM and e-Agrology dataset encompasses historical data from 2012 to 2022, compiled in Mexico. This dataset contains detailed information on farmers' field data, plots, and specific details of plots related to various crops grouped in nearly five hundred variables, covering different stages of the agronomic cycle. By sharing it with the community, invaluable insights can be extracted, aiding in the dissemination of knowledge. Additionally, it supports farmers in improving their production practices
 "
 
+
 	uri <- "hdl:11529/10548986"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -354,6 +355,9 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$geo_from_source <- TRUE
 	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
+# remove some of the crazy numbers
+	d <- d[d$yield > 15000, ]
 
 	carobiner::write_files(path, meta, d)
 }

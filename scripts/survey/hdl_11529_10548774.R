@@ -3,8 +3,6 @@
 
 ## ISSUES
 
-
-
 carob_script <- function(path) {
 
 "
@@ -17,9 +15,8 @@ A large database of individual farmer field data (n = 4,107) for rice production
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "ICAR;IARI; CIMMYT; CSSRI;BISA",#  BISA: Borlaug Institute for South Asia, #IARI: Indian Agricultural Research Institute #  CSSRI: Central Soil Salinity Research Institute
+		data_organization = "ICAR;IARI;CIMMYT;CSSRI",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-05-15",

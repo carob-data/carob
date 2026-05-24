@@ -8,7 +8,7 @@
 
 carob_script <- function(path) {
   
-  "Datasets from the Area-Based Farm Household Survey in 11 provinces from the Mekong Delta River in Vietnam. The Metrics and Indicators for Tracking in GRiSP (MISTIG) main objective is to collect quantitative data from rice farm households in South and South East Asia for the purpose of monitoring progress towards Global Rice Science Partnership (GRiSP) intermediate development outcomes (IDOs). Other objectives • To provide insight into constraints to adoption, adoption, technology targeting, evaluation, and impact assessment. • To make data available for scientists at social sciences and other departments of IRRI for research and publication purposes (2024-07-02)"
+"Datasets from the Area-Based Farm Household Survey in 11 provinces from the Mekong Delta River in Vietnam. The Metrics and Indicators for Tracking in GRiSP (MISTIG) main objective is to collect quantitative data from rice farm households in South and South East Asia for the purpose of monitoring progress towards Global Rice Science Partnership (GRiSP) intermediate development outcomes (IDOs). Other objectives • To provide insight into constraints to adoption, adoption, technology targeting, evaluation, and impact assessment. • To make data available for scientists at social sciences and other departments of IRRI for research and publication purposes (2024-07-02)"
   
   uri <- "doi:10.7910/DVN/6LSM9X"
   group <- "survey"
@@ -232,6 +232,7 @@ land_num <- aggregate(land[, c("farmland_owned","farmland_rentedin","farmland_re
    hhid=r9$hhid,
    labour_days=r9$hired_day
  )
+
  
  #aggregate
  lab <- aggregate(lab[, "labour_days", drop = FALSE],

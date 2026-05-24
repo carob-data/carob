@@ -44,6 +44,7 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 		rain = r$Rainfall,
 		reference = r$Dataset
 	)
+	
 	d$SiteID = carobiner::fix_name(r$`Site ID`, "title")
 	d <- cbind(d,  r[,  c("Abs_Control",  "NK", "NP", "NPK", "NPK+S+Ca+Mg+Zn+B", "PK", "NPK+Lime", "NPK+Manure")])
 
@@ -154,9 +155,9 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$id <- NULL
 	
 	i <- d$treatment == "Abs_Control"
-	d$N_fertilizer[i] <- 0
-	d$P_fertilizer[i] <- 0
-	d$K_fertilizer[i] <- 0
+	d$N_fertilizer[!grepl("N", d$treatment)] <- 0
+	d$P_fertilizer[!grepl("P", d$treatment)] <- 0
+	d$K_fertilizer[!grepl("K", d$treatment)] <- 0
 		
 	# drop yield with NAs
 	d <- d[!is.na(d$yield), ]
@@ -164,6 +165,7 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$lime <- 0	
 	# this number (500) needs to be checked!
 	d$lime[d$treatment == "NPK+Lime"] <- NA
+	d$lime_used[d$treatment == "NPK+Lime"] <- TRUE
 	d$OM_used <- FALSE
 	d$OM_used[d$treatment == "NPK+Manure"] <- TRUE
 	
@@ -195,6 +197,7 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d <- unique(d)
 	
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- NA
 
 	carobiner::write_files(meta, d, path=path)
 }
