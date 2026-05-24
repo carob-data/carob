@@ -3,19 +3,17 @@
 
 ## ISSUES
 #1. Could not find the crop "Lekua"
-#2 Added a new crop yellow rocket (Barbarea vulgaris)
 
 carob_script <- function(path) {
   
-
-  "In order to assess the impact of the Land Restoration Program, understanding what land restoration options work, where and for whom, there is need to identify the context-specific variables that may influence the performance of the restoration options as well as their uptake. In addition to monitoring the performance of the restoration option being implemented, a registration of the farmers involved in the project was conducted. A standard household survey was used, assessing both the socio-economic and biophysical characteristics of the households. The farmers were from four district of Ethiopia: Boset, Gursum, Samre and Tsaeda Emba. The present dataset includes socio-economical data about 173 households, including general information about the farms. Specific data about agricultural operations, crops, trees and the experimental plots developed inside the project, are part of a separated dataset. NOTE: The coordinates were removed from the dataset in May 2021, in order to comply with GDPR standards. The location details are available on request: please contact the author and explain the purpose of your research."
+"In order to assess the impact of the Land Restoration Program, understanding what land restoration options work, where and for whom, there is need to identify the context-specific variables that may influence the performance of the restoration options as well as their uptake. In addition to monitoring the performance of the restoration option being implemented, a registration of the farmers involved in the project was conducted. A standard household survey was used, assessing both the socio-economic and biophysical characteristics of the households. The farmers were from four district of Ethiopia: Boset, Gursum, Samre and Tsaeda Emba. The present dataset includes socio-economical data about 173 households, including general information about the farms. Specific data about agricultural operations, crops, trees and the experimental plots developed inside the project, are part of a separated dataset. NOTE: The coordinates were removed from the dataset in May 2021, in order to comply with GDPR standards. The location details are available on request: please contact the author and explain the purpose of your research."
   
   uri <- "hdl:20.500.11766.1/FK2/LU99IW"
   group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=11, minor=0,
-    data_organization = "ICRAF;World Vision International;University of Copenhagen",
+    data_organization = "ICRAF;WVI;KUDK",
     publication = NA,
     project = NA,
     data_type = "survey",
@@ -42,7 +40,8 @@ carob_script <- function(path) {
     field_size=r$Farm_Size,
     cropland_used=r$Cultivated_Area,
     farmer_education=r$HH_Head_Edu,
-    crop_rotation=tolower(r$Rotation_Type))
+    crop_rotation=tolower(r$Rotation_Type)
+   )
   
   d$adm3 <- trimws(d$adm3)
   d$trial_id <- d$trial_id <- paste(d$hhid, d$adm3, sep = "_")
