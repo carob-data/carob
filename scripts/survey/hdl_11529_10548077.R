@@ -17,7 +17,7 @@ Household survey was conducted by International Maize and Wheat Improvement Cent
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
-		data_organization = "CIMMYT; CCAFS", ## CCAFS: Climate Change Agriculture and Food Security
+		data_organization = "CIMMYT", 
 		publication = "doi:10.1007/s11027-017-9752",
 		project = NA,
 		carob_date = "2026-05-25",
@@ -46,13 +46,15 @@ Household survey was conducted by International Maize and Wheat Improvement Cent
 		location = r1$Village,
 		latitude = r1$Lat,
 		longitude = r1$Lon,
-		water_regime = gsub("rainfed, wet season", "rainfed", tolower(r1$Water_Regime)),
+		#water_regime = gsub("rainfed, wet season", "rainfed", tolower(r1$Water_Regime)),
+		irrigated = !grepl("rainfed", r1$Water_Regime, ignore.case=TRUE), 
 		crop = gsub("rice_paddy", "rice", tolower(r1$crop)),
 		land_prep_method = r1$tillage_level,
-		soil_N2O = r1$`Total_N20 emission (kgCO2)`,
-		soil_CO2 = r1$`Total_CO2 emission (kgCO2)`,
-		soil_CH4 = r1$`Total_CH4 emission (kgCO2)`,
-		soil_GHG = r1$`Total_GHG emission (kgCO2)`,
+		# these are estimates, not measured data
+		#soil_N2O = r1$`Total_N20 emission (kgCO2)`,
+		#soil_CO2 = r1$`Total_CO2 emission (kgCO2)`,
+		#soil_CH4 = r1$`Total_CH4 emission (kgCO2)`,
+		#soil_GHG = r1$`Total_GHG emission (kgCO2)`,
 		N_fertilizer = r1$`total_N(inorg)`,
 		N_organic = r1$`total_n(org)`,
 		yield = r1$yield,
@@ -62,18 +64,19 @@ Household survey was conducted by International Maize and Wheat Improvement Cent
 		trial_id = paste(r1$Water_Regime, r1$ID, sep = "-"), 
 		planting_date = as.character(NA), 
 		soil_texture = "medium",
-		soil_pH = ifelse(grepl("Karnal", d$adm2), 7.3, 7),
-		soil_SOC = ifelse(grepl("Karnal", d$adm2), 0.565, 0.7),
 		soil_bd =  1.5,
-		soil_CEC = ifelse(grepl("Karnal", d$adm2), 21.4945, 20.122),
 		on_farm = FALSE, 
 		is_survey = TRUE, 
 		yield_part = "grain", 
 		yield_moisture = as.numeric(NA),
-		irrigated = NA, 
 		yield_isfresh = TRUE,
 		geo_from_source = TRUE
 	)
+
+# where is this from?
+	d$soil_pH = ifelse(grepl("Karnal", d$adm2), 7.3, 7)
+	d$soil_SOC = ifelse(grepl("Karnal", d$adm2), 0.565, 0.7)
+	d$soil_CEC = ifelse(grepl("Karnal", d$adm2), 21.4945, 20.122)
 
 	### Fixing land preparation method
 	
@@ -91,13 +94,12 @@ Household survey was conducted by International Maize and Wheat Improvement Cent
 	  geo_from = FALSE
 	)
 	
-	d <- merge(d, geo , by= "location", all.x = TRUE)
+	d <- merge(d, geo, by= "location", all.x = TRUE)
 	d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
 	d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
 	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
 	d$lat <- d$long <- d$geo_from <- NULL
-	
-	
+		
 	carobiner::write_files(path, meta, d)
 }
 
