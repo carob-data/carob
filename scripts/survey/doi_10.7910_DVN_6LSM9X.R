@@ -233,7 +233,6 @@ land_num <- aggregate(land[, c("farmland_owned","farmland_rentedin","farmland_re
    labour_days=r9$hired_day
  )
 
- 
  #aggregate
  lab <- aggregate(lab[, "labour_days", drop = FALSE],
                        by = list(hhid = lab$hhid),FUN = function(x) 

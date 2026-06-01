@@ -12,7 +12,7 @@ carob_script <- function(path) {
   
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=4,
 		publication= NA,
-		data_organization = "CIP;YANAPAI",
+		data_organization = "CIP;Yanapai",
 		carob_contributor="Cedric Ngakou",
 		data_type="experiment",
 		response_vars = "yield",
