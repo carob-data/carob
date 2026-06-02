@@ -135,7 +135,7 @@ carob_script <- function(path) {
                16.0965, 16.7075, 19.1008, 19.2036, 20.2375, 19.823, 
                16.9323, 16.685, 16.8803, 18.5017, 28.1912))
   
-  d <- merge(d,loc,by="adm2", all.x = TRUE)
+  d <- merge(d, loc, by="adm2", all.x = TRUE)
   
   #manual fixes of lat_lon
   manual_adm2 <- data.frame(
