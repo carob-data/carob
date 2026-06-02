@@ -8,16 +8,16 @@ carob_script <- function(path) {
   "This dataset provides a detailed, plot-level record of rice agronomic practices collected through the validation trial of the RiceAdvice Lite decision-support tool across diverse countries. It captures the full production cycle from field preparation to harvest, including land clearing, tillage intensity, planting density, crop establishment method, and exact sowing and transplanting dates. The dataset comprehensively documents fertilizer management practices such as the type of NPK fertilizer applied, application rates of nitrogen (N), phosphorus (P₂O₅), and potassium (K₂O), and total fertilizer investment cost per hectare alongside crop performance indicators including grain yield at 14% moisture content and nutrient-use efficiency metrics (NUE, PUE, KUE). It also includes spatially referenced production system information (latitude, longitude), variety used, and experimental treatments. Finally, the dataset quantifies economic data such as gross revenue and return on fertilizer investment, enabling rigorous evaluation of profitability and agronomic effectiveness. (2025-10-25)"
   
   uri <- "doi:10.7910/DVN/BBKJH0"
-  group <- "survey"
+  group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
    data_organization = "AfricaRice",
    publication = NA,
    project = "EiA",
-   data_type = "survey",
-   treatment_vars = "none",
-   response_vars = "none", 
+   data_type = "on-farm experiment",
+   treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+   response_vars = "yield", 
    completion = 100,
    carob_contributor = "Blessing Dzuda",
    carob_date = "2025-05-30",
@@ -35,6 +35,7 @@ carob_script <- function(path) {
       season=r$season,
       variety=r$variety_used,
       rep=as.integer(r$replicate),
+      treatment=r$experimental_treatment_name,
       planting_method=tolower(r$planting_method),
       planting_date=r$sowing_date,
       transplanting_date=r$transplanting_date,
@@ -77,10 +78,10 @@ carob_script <- function(path) {
     d$country <- gsub("Cote d'Ivoire","Côte d'Ivoire",d$country)
     d$trial_id <- paste(d$adm1,d$planting_date, sep = "_")
     d$on_farm <- TRUE
-    d$is_survey <- TRUE
+    d$is_survey <- FALSE
     d$irrigated <- TRUE
-    d$geo_from_source <- TRUE
-    d$yield_isfresh <- FALSE
+    d$geo_from_source <- FALSE
+    d$yield_isfresh <- TRUE
     d$crop <- "rice"
     d$yield_part <- "grain"
     d$yield_moisture <- 14
