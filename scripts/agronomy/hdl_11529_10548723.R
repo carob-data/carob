@@ -27,11 +27,24 @@ carob_script <- function(path) {
   
   f <- ff[basename(ff) == "BD Ensayos Omision VF.xlsx"]
   
+  clean_num <- function(x) {
+    x <- as.character(x)
+    x <- gsub(",", ".", x)            
+    x <- gsub("^ND$", NA, x)          
+    x <- gsub("^\\.$", NA, x)       
+    x <- gsub("[^0-9\\.\\-]", "", x)  
+    x <- gsub("^\\s*$", NA, x)         
+    as.numeric(x)
+  }
+  
   read_omision_sheet <- function(f, sheet) {
     r <- carobiner::read.excel.hdr(f, sheet = sheet, skip = 3, hdr = 3, fix_names = TRUE, lower = F)
     
-    # remove repeated header rows and empty rows
+    
     r <- r[!(r$ID.Exp == "ID Exp" | is.na(r$ID.Exp)), ]
+    
+    r <- r[!grepl("[A-Za-z/()]", r$Rendimiento.14pct.hum._.kg.ha) & 
+             !is.na(r$Rendimiento.14pct.hum._.kg.ha), ]
     
     P_col <- if ("P2O5.kg.ha.aplicado.como.superfosfato.triple" %in% names(r)) {
       r$P2O5.kg.ha.aplicado.como.superfosfato.triple
@@ -40,22 +53,24 @@ carob_script <- function(path) {
     }
     
     d <- data.frame(
-      country = "Mexico",
+      country= "Mexico",
       adm1 = r$Estado,
-      adm2 = r$Municipio,
-      adm3 = r$Localidad,
+      adm2= r$Municipio,
+      adm3= r$Localidad,
       land_prep_method = r$Labranza,
-      planting_date = r$Fecha.de.siembra,
-      crop = "maize",
+      planting_date= r$Fecha.de.siembra,
+      crop= "maize",
       variety = r$Híbrido,
-      plant_density = as.numeric(r$Densidad.de.siembra_plantas.ha),
-      rep = as.integer(r$Reps_),
-      treatment = r$Descripción.de.tratamiento,
-      yield = as.numeric(r$Rendimiento.14pct.hum._.kg.ha),
-      N_fertilizer = as.numeric(r$Nutrientes.evaluados_N.kg.ha.aplicado.como.urea),
-      P_fertilizer = as.numeric(P_col) / 2.29,
-      K_fertilizer = as.numeric(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051
+      plant_density= clean_num(r$Densidad.de.siembra_plantas.ha),
+      rep= as.integer(clean_num(r$Reps_)),
+      treatment= r$Descripción.de.tratamiento,
+      yield= clean_num(r$Rendimiento.14pct.hum._.kg.ha),
+      N_fertilizer= clean_num(r$Nutrientes.evaluados_N.kg.ha.aplicado.como.urea),
+      P_fertilizer = clean_num(P_col) / 2.29,
+      K_fertilizer = clean_num(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051
     )
+    
+    return(d)
   }
   
   d2011 <- read_omision_sheet(f, sheet = "2011")
@@ -69,8 +84,9 @@ carob_script <- function(path) {
   d$planting_date[d$planting_date == "5/8/13"] <- as.character(
     as.Date("5/8/13", format = "%m/%d/%y"))
   
-  d$planting_date <- ifelse(is.na(d$planting_date)
-                            ,NA,as.character(as.Date(as.numeric(d$planting_date), origin = "1899-12-30")))
+  d$planting_date <- sapply(d$planting_date, function(x) {
+    if (is.na(x)) {NA} else if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x)) {
+      x} else {as.character(as.Date(as.numeric(x), origin = "1899-12-30"))}}) 
   
   d$adm2 <- trimws(d$adm2)  
   
@@ -134,7 +150,7 @@ carob_script <- function(path) {
     d$longitude[idx] <- manual_adm2$longitude[i]
   }
   
-  # fix adm1 level (where adm2 was NA)
+  # fix adm1 level 
   for (i in 1:nrow(manual_adm1)) {
     idx <- d$adm1 == manual_adm1$adm1[i] & is.na(d$latitude)
     d$latitude[idx]  <- manual_adm1$latitude[i]
