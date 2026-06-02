@@ -6,14 +6,14 @@
 
 carob_script <- function(path) {
   
-  "Published data on soil tillage systems for cassava were systematized in an electronic spreadsheet. The tillage systems were implemented in different regions, climates, soils, land uses, cover crops, and crop management. This spreadsheet allows you to filter data by topics of interest, facilitating access, understanding, and use of information from the studies included in this systematization. (2023-06-26)"
+"Published data on soil tillage systems for cassava were systematized in an electronic spreadsheet. The tillage systems were implemented in different regions, climates, soils, land uses, cover crops, and crop management. This spreadsheet allows you to filter data by topics of interest, facilitating access, understanding, and use of information from the studies included in this systematization. (2023-06-26)"
  
   uri <- "doi:10.7910/DVN/IDHBYF"
   group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-   data_organization = "Brazilian Agricultural Research Corporation",
+   data_organization = "Embrapa",
    publication = NA,
    project = NA,
    data_type = "survey",

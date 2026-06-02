@@ -40,7 +40,6 @@ Survey at multiple locations in Tanzania  (680 to 2100 m)  to establish baseline
 	r4 <- carobiner::read.excel(f1, sheet="Corrected-Raw-Data", na = c("n/a", "`"))
 
 
-
 	d1 <- data.frame(
 		country = r4$Country,
 		location_id = r4$District,
