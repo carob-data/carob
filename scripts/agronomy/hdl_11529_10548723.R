@@ -5,7 +5,7 @@
 
 carob_script <- function(path) {
   
-  "Nutrient omission experiments aim to identify nutritional deficiencies in maize production systems in different regions of Mexico. (2022-07-06)"
+"Nutrient omission experiments aim to identify nutritional deficiencies in maize production systems in different regions of Mexico. (2022-07-06)"
   
   uri <- "hdl:11529/10548723"
   group <- "agronomy"
@@ -40,23 +40,24 @@ carob_script <- function(path) {
   read_omision_sheet <- function(f, sheet) {
     r <- carobiner::read.excel.hdr(f, sheet = sheet, skip = 3, hdr = 3, fix_names = TRUE, lower = F)
     
-    
     r <- r[!(r$ID.Exp == "ID Exp" | is.na(r$ID.Exp)), ]
     
-    r <- r[!grepl("[A-Za-z/()]", r$Rendimiento.14pct.hum._.kg.ha) & 
-             !is.na(r$Rendimiento.14pct.hum._.kg.ha), ]
+#    r <- r[!grepl("[A-Za-z/()]", r$Rendimiento.14pct.hum._.kg.ha) & 
+#             !is.na(r$Rendimiento.14pct.hum._.kg.ha), ]
     
-    P_col <- if ("P2O5.kg.ha.aplicado.como.superfosfato.triple" %in% names(r)) {
-      r$P2O5.kg.ha.aplicado.como.superfosfato.triple
+    if ("P2O5.kg.ha.aplicado.como.superfosfato.triple" %in% names(r)) {
+		P_col <- r$P2O5.kg.ha.aplicado.como.superfosfato.triple
+		P_type <- "TSP"
     } else {
-      r$P2O5.kg.ha.aplicado.como.DAP
+		P_col <- r$P2O5.kg.ha.aplicado.como.DAP
+		P_type <- "DAP"
     }
     
     d <- data.frame(
       country= "Mexico",
       adm1 = r$Estado,
       adm2= r$Municipio,
-      adm3= r$Localidad,
+      location = r$Localidad,
       land_prep_method = r$Labranza,
       planting_date= r$Fecha.de.siembra,
       crop= "maize",
@@ -67,7 +68,8 @@ carob_script <- function(path) {
       yield= clean_num(r$Rendimiento.14pct.hum._.kg.ha),
       N_fertilizer= clean_num(r$Nutrientes.evaluados_N.kg.ha.aplicado.como.urea),
       P_fertilizer = clean_num(P_col) / 2.29,
-      K_fertilizer = clean_num(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051
+      K_fertilizer = clean_num(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051,
+	  fertilizer_type=P_type
     )
     
     return(d)
@@ -81,12 +83,17 @@ carob_script <- function(path) {
   d <- unique(d)
   d[d == "."] <- NA
   
-  d$planting_date[d$planting_date == "5/8/13"] <- as.character(
-    as.Date("5/8/13", format = "%m/%d/%y"))
+  d$planting_date[d$planting_date == "5/8/13"] <- "2013-05-08"
   
   d$planting_date <- sapply(d$planting_date, function(x) {
-    if (is.na(x)) {NA} else if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x)) {
-      x} else {as.character(as.Date(as.numeric(x), origin = "1899-12-30"))}}) 
+		if (is.na(x)) {
+			NA
+		} else if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x)) {
+			x
+		} else {
+			as.character(as.Date(as.numeric(x), origin = "1899-12-30"))
+		}
+	}) 
   
   d$adm2 <- trimws(d$adm2)  
   
@@ -109,6 +116,7 @@ carob_script <- function(path) {
             "Temamatla", "Metepec", "Álvaro Obregón", "Zaachila", 
             "Ayoquezco de Aldama", "Santa Catarina Quiane", "Othón P. Blanco", 
             "Delicias"),
+
     
     longitude=c(-102.7629, -102.5459, -100.8183, 
                 -100.9682, -98.6682, -98.8346, -98.3456, -100.1443, 
@@ -157,20 +165,26 @@ carob_script <- function(path) {
     d$longitude[idx] <- manual_adm1$longitude[i]
   }
   
-  d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
-  d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
-  d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
-  d$adm3 <- tools::toTitleCase(tolower(d$adm3))
+# Why set NA to zero? If that is correct, you need to comment in that.  
+#  d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
+#  d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
+#  d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
+
+##wrong. Some of these are abbrevations
+##  d$location <- tools::toTitleCase(tolower(d$location))
   d$land_prep_method <- ifelse(d$land_prep_method=="Convencional","conventional","none")
-  d$trial_id <- paste(d$adm3,d$planting_date, sep = "_")
+  d$trial_id <- paste(d$location, d$planting_date, sep = "_")
   d$on_farm <- FALSE
   d$is_survey <- FALSE
   d$irrigated <- FALSE
   d$geo_from_source <- FALSE
   d$yield_part <- "grain"
+  # how do you know? If there is a source, mention that
+  # if not, remove it (do not guess)
   d$yield_moisture <- 14
-  d$yield_isfresh <- FALSE
-  d<- unique(d)
+  # yield_mosture > 0, so isfresh must be TRUE
+  d$yield_isfresh <- TRUE
+  d <- unique(d)
  
   carobiner::write_files(path, meta, d)
 }
