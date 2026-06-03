@@ -78,8 +78,6 @@ carob_script <- function(path) {
       K_fertilizer = clean_num(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051,
       Zn_fertilizer=clean_num(r$Zn.kg.ha.aplicado.como.sulfato.de.zinc),
       B_fertilizer=clean_num(B_col),
-      Fe_fertilizer=clean_num(r$Fe),
-      S_fertilizer=clean_num(r$S),
       fertilizer_type=P_type
     )
     
