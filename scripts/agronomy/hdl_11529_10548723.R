@@ -7,7 +7,7 @@
 #3. yield raw data contains empty values
 carob_script <- function(path) {
   
-  "Nutrient omission experiments aim to identify nutritional deficiencies in maize production systems in different regions of Mexico. (2022-07-06)"
+"Nutrient omission experiments aim to identify nutritional deficiencies in maize production systems in different regions of Mexico. (2022-07-06)"
   
   uri <- "hdl:11529/10548723"
   group <- "agronomy"
@@ -42,6 +42,7 @@ carob_script <- function(path) {
   
   
   read_omision_sheet <- function(f, sheet) {
+<<<<<<< HEAD
     r <- carobiner::read.excel.hdr(f, sheet = "2012", skip = 3, hdr = 3, fix_names = TRUE, lower = F)
     
     r <- r[!(r$ID.Exp == "ID Exp" | is.na(r$ID.Exp)), ]
@@ -57,6 +58,21 @@ carob_script <- function(path) {
     } else {
       P_col <- r$P2O5.kg.ha.aplicado.como.DAP
       P_type <- "DAP"
+=======
+    r <- carobiner::read.excel.hdr(f, sheet = sheet, skip = 3, hdr = 3, fix_names = TRUE, lower = F)
+    
+    r <- r[!(r$ID.Exp == "ID Exp" | is.na(r$ID.Exp)), ]
+    
+#    r <- r[!grepl("[A-Za-z/()]", r$Rendimiento.14pct.hum._.kg.ha) & 
+#             !is.na(r$Rendimiento.14pct.hum._.kg.ha), ]
+    
+    if ("P2O5.kg.ha.aplicado.como.superfosfato.triple" %in% names(r)) {
+		P_col <- r$P2O5.kg.ha.aplicado.como.superfosfato.triple
+		P_type <- "TSP"
+    } else {
+		P_col <- r$P2O5.kg.ha.aplicado.como.DAP
+		P_type <- "DAP"
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
     }
     
     d <- data.frame(
@@ -75,6 +91,7 @@ carob_script <- function(path) {
       N_fertilizer= clean_num(r$Nutrientes.evaluados_N.kg.ha.aplicado.como.urea),
       P_fertilizer = clean_num(P_col) / 2.29,
       K_fertilizer = clean_num(r$K2O.kg.ha.aplicado.como.cloruro.de.potasio) / 1.2051,
+<<<<<<< HEAD
       Zn_fertilizer=clean_num(r$Zn.kg.ha.aplicado.como.sulfato.de.zinc),
       B_fertilizer=clean_num(r$B.kg.ha.aplicado.como.bórax),
       Fe_fertilizer=clean_num(r$Fe),
@@ -102,6 +119,9 @@ carob_script <- function(path) {
         frost, "frost",
         ifelse(drought, "drought", NA_character_)
       )
+=======
+	  fertilizer_type=P_type
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
     )
     
     return(d)
@@ -118,6 +138,7 @@ carob_script <- function(path) {
   d$planting_date[d$planting_date == "5/8/13"] <- "2013-05-08"
   
   d$planting_date <- sapply(d$planting_date, function(x) {
+<<<<<<< HEAD
     if (is.na(x)) {
       NA
     } else if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x)) {
@@ -126,6 +147,16 @@ carob_script <- function(path) {
       as.character(as.Date(as.numeric(x), origin = "1899-12-30"))
     }
   }) 
+=======
+		if (is.na(x)) {
+			NA
+		} else if (grepl("^\\d{4}-\\d{2}-\\d{2}$", x)) {
+			x
+		} else {
+			as.character(as.Date(as.numeric(x), origin = "1899-12-30"))
+		}
+	}) 
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
   
   d$adm2 <- trimws(d$adm2)  
   
@@ -137,19 +168,52 @@ carob_script <- function(path) {
   d$adm2[d$adm2 == "Tepatitlan"] <- "Tepatitlán de Morelos"
   
   loc <- data.frame(
+<<<<<<< HEAD
     location = c("Indaparapeo", "Atotonilco", "Charo", "Huatabampo", "Jecopaco", "Bacame", "Iguala",
                  "San Pablo Huixtepec", "San Andrés Sinaxtla", "Tlacolula de Matamoros",
                  "Espinal de Morelos", "Muna", "Xoy", "Valle Hermoso", "Metepec", "Zaachila",
                  "Ayoquezco de Aldama", "Chocani", "Xul-Ha", "Ejido Juan Sarabia", "Guadalupe Septien",
                  "Sitio Experimental Ébano", "Campo Experimental Centro Altos de Jalisco", "San Andres Sinaxtla"),
+=======
+    adm2= c("Tepatitlán de Morelos", "La Barca", "Celaya", 
+            "Indaparapeo", "Atotonilco el Grande", "Ayapango", 
+            "Tlaltenango", "Pedro Escobedo", "Etchojoa", "Benito Juárez", 
+            "Huatabampo", "La Trinitaria", "Iguala de la Independencia", 
+            "Cocula", "San Pablo Huixtepec", "San Andrés Sinaxtla", 
+            "Tlacolula de Matamoros", "Tulancingo", "Texcoco", 
+            "Huamantla", "Cocotitlán", "Muna", "Peto", "Ébano", 
+            "Tamuín", "La Concordia", "Chiapa de Corzo", "Juchitepec", 
+            "Temamatla", "Metepec", "Álvaro Obregón", "Zaachila", 
+            "Ayoquezco de Aldama", "Santa Catarina Quiane", "Othón P. Blanco", 
+            "Delicias"),
+
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
     
     longitude = c(-100.9722, -100.7955, -101.0442, -109.6419, -109.7671, -109.5925, -99.5397, -96.7842,
                   -97.2830, -96.4723, -93.4278, -89.7131, -88.9711, -97.8159, -99.5986, -96.7518, -96.8431,
                   -97.5024, -88.4639, -88.4863, -100.1119, -98.4660, -102.7127, -97.2830),
     
+<<<<<<< HEAD
     latitude = c(19.7921, 21.0056, 19.7467, 26.8271, 27.1979, 27.1585, 18.3448, 16.8211, 17.4670, 16.9552,
                  16.7083, 20.4849, 20.1230, 25.6684, 19.2529, 16.9487, 16.6842, 17.6658, 18.5517, 18.5172,
                  20.5284, 22.1725, 20.8733, 17.4670)
+=======
+    latitude=c(20.8014, 
+               20.2861, 20.5239, 19.7889, 20.2867, 19.1216, 19.1714, 
+               20.5029, 26.9106, 31.3186, 26.8248, 16.1382, 18.3466, 
+               18.2388, 16.8197, 17.4668, 16.9558, 20.0981, 19.4779, 
+               19.3134, 19.2308, 20.4916, 20.1224, 22.2175, 22.0059, 
+               16.0965, 16.7075, 19.1008, 19.2036, 20.2375, 19.823, 
+               16.9323, 16.685, 16.8803, 18.5017, 28.1912))
+  
+  d <- merge(d, loc, by="adm2", all.x = TRUE)
+  
+  #manual fixes of lat_lon
+  manual_adm2 <- data.frame(
+    adm2 = c("Acaxochitlán", "Cajeme", "Los Salates", "Ocozocoautla de Espinoza", "Santiago Mixac"),
+    latitude  = c(20.158133, 28.625013, 24.2619, 16.757440, 19.220699),
+    longitude = c(-98.202394, -111.539185, -107.0228, -93.373955, -98.338848)
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
   )
   
   d <- merge(d, loc, by="location", all.x = TRUE)
@@ -173,6 +237,7 @@ carob_script <- function(path) {
   lon_values <- setNames(loc2$longitude, loc2$adm2)
   lat_values  <- setNames(loc2$latitude,  loc2$adm2)
   
+<<<<<<< HEAD
   d$longitude[is.na(d$longitude)] <- lon_values[d$adm2[is.na(d$longitude)]]
   d$latitude[is.na(d$latitude)]   <- lat_values[d$adm2[is.na(d$latitude)]]
   
@@ -198,13 +263,35 @@ carob_script <- function(path) {
     
   d$land_prep_method <- ifelse(d$land_prep_method=="Convencional","conventional","none")
   d$trial_id <- paste(d$location, d$planting_date, sep = "_")
+=======
+# Why set NA to zero? If that is correct, you need to comment in that.  
+#  d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
+#  d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
+#  d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
+
+##wrong. Some of these are abbrevations
+##  d$location <- tools::toTitleCase(tolower(d$location))
+  d$land_prep_method <- ifelse(d$land_prep_method=="Convencional","conventional","none")
+  d$trial_id <- paste(d$location, d$planting_date, sep = "_")
+  d$on_farm <- FALSE
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
   d$is_survey <- FALSE
   d$irrigated <- TRUE
   d$geo_from_source <- FALSE
   d$yield_part <- "grain"
+<<<<<<< HEAD
   d$yield_moisture <- 14# from original variable name r$Rendimiento.14pct.hum._.kg.ha
   d$yield_isfresh <- TRUE
   d <- unique(d)
   
+=======
+  # how do you know? If there is a source, mention that
+  # if not, remove it (do not guess)
+  d$yield_moisture <- 14
+  # yield_mosture > 0, so isfresh must be TRUE
+  d$yield_isfresh <- TRUE
+  d <- unique(d)
+ 
+>>>>>>> c986f4fe0fe816fb79a22700518aa0c367e6e1ca
   carobiner::write_files(path, meta, d)
 }
