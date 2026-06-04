@@ -8,14 +8,12 @@ carob_script <- function(path) {
 
 "This dataset contains soil health data set from multiple agronomic trials conducted in different regions in Kenya. It captures information on crop yield responses to cropping systems, field management practices, fertilizer regimes, manure, crop residues, and lime, across different agro-ecological conditions, seasons, and years. The data is suitable for soil health related analysis, yield modelling, and evaluation of sustainable land management practices."
 
-
 	uri <- "doi:10.7910/DVN/OTFXKE"
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
 	
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "IITA",
+		data_organization = "CIAT;IITA",
 		publication = NA,
 		project = NA,
 		data_type = "experiment",
@@ -31,9 +29,10 @@ carob_script <- function(path) {
 	f <- ff[basename(ff) == "02a. Kenya soil health data.csv"]
 	r <- read.csv(f, sep = ";")
 	r[r == ""] <- NA
-	r <- as.data.frame(lapply(r, function(x) {
-	  if (is.character(x)) gsub(",", ".", x) else x}))
-	
+	r <- as.data.frame(
+		lapply(r, function(x) {
+			if (is.character(x)) gsub(",", ".", x) else x
+		}))
 	
 	d <- data.frame(
 		country = "Kenya",
@@ -50,17 +49,49 @@ carob_script <- function(path) {
 		crop_rotation=r$crop_rotation,
 		yield=r$Grain_yield.kg.ha.,
 		fertilizer_type=r$fertilizer_type,
-		N_fertilizer=r$N_fertilizer,
-		P_fertilizer=r$P_fertilizer,
-		K_fertilizer=r$K_fertilizer,
+		N_fertilizer=as.numeric(r$N_fertilizer),
+		P_fertilizer=as.numeric(r$P_fertilizer),
+		K_fertilizer=as.numeric(r$K_fertilizer),
 		inoculated=r$inoculated,
 		irrigated=r$irrigated,
-    land_prep_method=r$land_prep_method,
+		land_prep_method=r$land_prep_method,
 		mulch=r$mulch,
 		mulch_type=r$mulch_type,
 		soil_texture=r$soil_texture,
-		soil_pH=r$soil_pH)
-		
+		soil_pH=as.numeric(r$soil_pH),
+		reference = r$Study_Source,
+		lime = r$lime.t.ha.,
+		treatment = trimws(r$treatment)
+
+# missed variables 
+		#soil_type 
+		#Manure 
+		#Manure_amt.t.ha. 
+		#Residue 
+		#Residue_amount.t.ha
+
+### the below should have been included in the original script, but they can be omitted 
+## as the *new* data (not the data taken from Carob) does not have them; and we remove the Carob data anyway
+		#Zn_fertilizer 
+		#S_fertilizer 
+		#B_fertilizer 
+		#Ca_fertilizer 
+		#Mg_fertilizer 
+		#Fe_fertilizer 
+		#Mn_fertilizer 
+		#N_organic 
+		#P_organic 
+		#K_organic 
+		#Ca_organic 
+		#Mg_organic 
+		#OM_used 
+		#OM_amount 
+		#irrigation_amount 
+		#irrigation_dates 
+	)
+
+	i <- is.na(d$yield)
+	d$yield[i] <- r$fw_yield[i]
 
 	#cleaning location names
 	location_lookup <- c(
@@ -118,48 +149,49 @@ carob_script <- function(path) {
 	             0.9800, 1.0000, 0.8935, 0.9500, -0.7194, 0.5000, 1.0597, 0.9700, -0.2261, 0.1031, -0.0304,  # Tinderet
 	             0.2035, 0.1444))
 	
-	d <- merge(d,loc,by="location", all.x = TRUE)
+	d <- merge(d, loc, by="location", all.x = TRUE)
 	
 #cleaning the planting date column
-	clean_date <- function(x) {
-	  x[x == ""] <- NA
-	  
-	  year_only <- grepl("^\\d{4}$", x) & !is.na(x)
-	  x[year_only] <- paste0("01/01/", x[year_only])
-	  
-	  year_month <- grepl("^\\d{4}-\\d{2}$", x) & !is.na(x)
-	  x[year_month] <- paste0("01/", sub("\\d{4}-(\\d{2})", "\\1", x[year_month]), 
-	                          "/", sub("(\\d{4})-\\d{2}", "\\1", x[year_month]))
-	  
-	  as.Date(x, format = "%d/%m/%Y")}
+### wrong! year only and year_month are accepted, and should not
+### be falsely represented as a complete date.
+#	clean_date <- function(x) {
+#	  x[x == ""] <- NA
+#	  
+#	  year_only <- grepl("^\\d{4}$", x) & !is.na(x)
+#	  x[year_only] <- paste0("01/01/", x[year_only])
+#	  
+#	  year_month <- grepl("^\\d{4}-\\d{2}$", x) & !is.na(x)
+#	  x[year_month] <- paste0("01/", sub("\\d{4}-(\\d{2})", "\\1", x[year_month]), 
+#	                          "/", sub("(\\d{4})-\\d{2}", "\\1", x[year_month]))
+#	  
+#	  as.Date(x, format = "%d/%m/%Y")
+#	 }
 	
-	d$planting_date <- clean_date(d$planting_date)
-	d$harvest_date <-clean_date(d$harvest_date)
-	d$planting_date <- as.character(d$planting_date)
-	d$harvest_date <- as.character(d$harvest_date)
-	
-	
-	d$trial_id <- paste0(d$location,d$planting_date, sep="_")
-	d$lime <- r$lime.t.ha.
+#	d$planting_date <- clean_date(d$planting_date)
+#	d$harvest_date <- clean_date(d$harvest_date)
+#	d$planting_date <- as.character(d$planting_date)
+#	d$harvest_date <- as.character(d$harvest_date)
+
+	i <- grep("/", d$planting_date)
+	d$planting_date[i] <- as.character(as.Date(d$planting_date[i], "%d/%m/%Y"))
+	i <- grep("/", d$harvest_date)
+	d$harvest_date[i] <- as.character(as.Date(d$harvest_date[i], "%d/%m/%Y"))
+
 	d$lime[d$lime==500] <- 0.5
 	d$lime <- as.numeric(d$lime) * 1000
 	
-	d$on_farm <- TRUE
+	d$on_farm <- TRUE  # do you know that??
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
-	d$geo_from_source <- TRUE
-	d$yield_isfresh <- TRUE
+	d$geo_from_source <- TRUE # not for your georeferencing!!
+	d$yield_isfresh <- TRUE  
 	d$yield_moisture <- as.numeric(NA)
-	d$season <- ifelse(d$season=="SR","short rains","long rains")
-	d$crop <- gsub("vegetables","vegetable",d$crop)
+	d$season <- ifelse(d$season=="SR", "short rains", "long rains")
+	d$crop <- gsub("vegetables", "vegetable", d$crop)
 	d$crop_rotation[d$crop_rotation == "s"] <- NA
-	d$yield <- gsub(",",".",d$yield)
+	d$yield <- as.numeric(gsub(",",".",d$yield))
 	d$adm3 <- trimws(d$adm3)
 	d$soil_pH <- as.numeric(d$soil_pH)
-	d$N_fertilizer <- as.numeric(d$N_fertilizer)
-	d$P_fertilizer <- as.numeric(d$P_fertilizer)
-	d$K_fertilizer <- as.numeric(d$K_fertilizer)
-	d$yield <- as.numeric(d$yield)
 	
 	crop_yield_part <- c(
 	  "common bean"   = "seed",
@@ -185,6 +217,14 @@ carob_script <- function(path) {
 	d$yield_part[is.na(d$yield_part)] <- "none"
   
 	d <- unique(d)
+
+	in_carob <- c("doi_10.5061_dryad.fg15tg2", "doi_10.18167_DVN1_DLTQWR", "doi_10.25502_20180814_1446_HJ", "doi_10.25502_6G5B-RM44_D", "doi_10.25502_DGQZ-YP49_D", "doi_10.25502_s0ra-cz37", "doi_10.25502_VMVB-SN23_D", "doi_10.5061_dryad.3692hh9", "doi_10.5061_dryad.j3tx95xhc", "doi_10.5061_dryad.rxwdbrvcj", "doi_10.7910_DVN_8AJQJJ", "doi_10.7910_DVN_GXUNAZ", "doi_10.7910_DVN_SOAWL6")
+ 
+	d <- d[!(d$reference %in% in_carob), ]
+
+	d$trial_id <- substr(d$reference, 1, 12)
+	
+
 	carobiner::write_files(path, meta, d)
 }
 
