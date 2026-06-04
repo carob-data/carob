@@ -26,20 +26,17 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		treatment_vars = "planting_method;N_fertilizer;P_fertilizer;K_fertilizer;herbicide_used",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		completion = 100,	# how is it 100% if you do not process most variables???
 		notes = NA
 	)
 	
 
-	ff1 <- ff[grepl("Data", basename(ff))]
-	f1 <- ff[basename(ff) == "Experiment_Info_Sheet.csv"]
-	f2 <- ff[basename(ff) == "Experiment_Variables_Detail.csv"]
-	#f6 <- ff[basename(ff) == "Experiment_I_R_Markdown.html"]
-	#f7 <- ff[basename(ff) == "Experiment_II_R_Markdown.html"]
-	#f8 <- ff[basename(ff) == "Experiment_III_R_Markdown.html"]
+	#f1 <- ff[basename(ff) == "Experiment_Info_Sheet.csv"]
+	#f2 <- ff[basename(ff) == "Experiment_Variables_Detail.csv"]
+	#r1 <- read.csv(f1)
+	#r2 <- read.csv(f2)
 
-	r1 <- read.csv(f1)
-	r2 <- read.csv(f2)
+	ff1 <- ff[grepl("Data", basename(ff))]
 	
 
 	proc <- function(f){
@@ -47,7 +44,7 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 	  names(r) <- gsub("Treatment.Description", "Treatment.descripton", names(r))
 	  if(is.null(r$SdDate)) r$SdDate <- as.character(r$Year)
 	  if(is.null(r$Treatment.descripton)) r$Treatment.descripton <- NA
-	 data.frame(
+	  data.frame(
 	    adm1 = carobiner::fix_name(r$STATE, "title"),
 		  location = carobiner::fix_name(r$District, "title"),
 		  planting_method = gsub("drill-dsr", "direct seeding", tolower(r$CropEst)),
@@ -63,7 +60,8 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		                            ifelse(grepl("Bispyribac", r$Treatment.descripton), 0.04, 
 		                            ifelse(grepl("^0$", r$Herbi_cost), 0, NA))),
 		  herbicide_used = !grepl("^0$",r$Herbi_cost),
-		  herbicide_price = r$Herbi_cost,
+		  herbicide_cost = r$Herbi_cost,
+
 		  #pesticide_price = r$Pest_cost,
 		  #pesticide_used = !grepl("^0$", r$Pest_cost),
 		  weeding_done = !grepl("^0$",r$Weedmgt_cost),
@@ -82,15 +80,17 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		  yield_moisture = as.numeric(NA),
 		  yield_isfresh = NA,
 		  irrigated = NA
-	)
-	  
+	   )
 	}
-	
-	d1 <- lapply(ff1, proc)
-	d <- do.call(rbind, d1)
-	
-	
-	
+
+		
+	d <- lapply(ff1, proc)
+	d <- do.call(rbind, d)
+
+    i <- d$planting_method == "bueshening"
+	d$planting_method[i] <- "direct seeding"
+	d$land_prep_method[i] <- "post-emergence tillage" #beushening
+		
 	### Adding long and lat coordinate
 	geo <- data.frame(
 	  location = c("Bhadrak", "Mayurbhanj", "Cuttack","Puri" ),
