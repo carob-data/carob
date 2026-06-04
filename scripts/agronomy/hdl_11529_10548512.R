@@ -1,0 +1,107 @@
+# R script for "carob"
+# license: GPL (>=3)
+
+## ISSUES
+
+
+carob_script <- function(path) {
+
+"
+Dry-direct seeded rice experiments in Odisha
+
+On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (Mayurbhanj, Cuttack, Bhadrak, and Puri to evaluate the potential of dry-direct seeding of rice (DSR) in combination with integrated weed management (IWM) to reduce the yield gap and increase the income of rice farmers in Odisha where traditional practice of beushening has been practiced. The experiments were conducted in collaboration with Odisha University of Agriculture and Technology (OUAT), and National Rice Research Institute (NRRI). Agronomic data were collected manually from the treatments in each experiment and processed in excel file. Data on labour use, seed, cost of cultivation, grain yield, straw yield, gross income, net benefit and benefit cost ration were collected or calculated for each experiment and presented in excel file.
+"
+
+	uri <- "hdl:11529/10548512"
+	group <- "agronomy"
+	ff  <- carobiner::get_data(uri, path, group)
+
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+		data_organization = "CIMMYT; IRRI; OUAT; CU",
+		publication = NA,
+		project = NA,
+		carob_date = "2026-06-04",
+		design = NA,
+		data_type = "on-farm experiment",
+		treatment_vars = "planting_method;N_fertilizer;P_fertilizer;K_fertilizer;herbicide_used",
+		response_vars = "yield", 
+		carob_contributor = "Cedric Ngakou",
+		completion = 100,	
+		notes = NA
+	)
+	
+
+	ff1 <- ff[grepl("Data", basename(ff))]
+	f1 <- ff[basename(ff) == "Experiment_Info_Sheet.csv"]
+	f2 <- ff[basename(ff) == "Experiment_Variables_Detail.csv"]
+	#f6 <- ff[basename(ff) == "Experiment_I_R_Markdown.html"]
+	#f7 <- ff[basename(ff) == "Experiment_II_R_Markdown.html"]
+	#f8 <- ff[basename(ff) == "Experiment_III_R_Markdown.html"]
+
+	r1 <- read.csv(f1)
+	r2 <- read.csv(f2)
+	
+
+	proc <- function(f){
+	  r <- unique(read.csv(f))
+	  names(r) <- gsub("Treatment.Description", "Treatment.descripton", names(r))
+	  if(is.null(r$SdDate)) r$SdDate <- as.character(r$Year)
+	  if(is.null(r$Treatment.descripton)) r$Treatment.descripton <- NA
+	 data.frame(
+	    adm1 = carobiner::fix_name(r$STATE, "title"),
+		  location = carobiner::fix_name(r$District, "title"),
+		  planting_method = gsub("drill-dsr", "direct seeding", tolower(r$CropEst)),
+		  variety = trimws(r$Var),
+		  planting_date = ifelse(grepl("/", r$SdDate), as.character(as.Date(r$SdDate, "%Y/%m/%d")), r$SdDate),
+		  seed_rate = r$SdRate,
+		  seed_price = r$SdCost,
+		  treatment = trimws(r$Treatment.descripton),
+		  herbicide_product = ifelse(grepl("pretilachlor", r$Treatment.descripton), "pretilachlor",
+		                             ifelse(grepl("Bispyribac", r$Treatment.descripton), "bispyribac-sodium;pyrazosulfuron", 
+		                             ifelse(grepl("^0$",r$Herbi_cost), "none", "unknown"))),
+		  herbicide_amount = ifelse(grepl("pretilachlor", r$Treatment.descripton), 0.5,
+		                            ifelse(grepl("Bispyribac", r$Treatment.descripton), 0.04, 
+		                            ifelse(grepl("^0$", r$Herbi_cost), 0, NA))),
+		  herbicide_used = !grepl("^0$",r$Herbi_cost),
+		  herbicide_price = r$Herbi_cost,
+		  #pesticide_price = r$Pest_cost,
+		  #pesticide_used = !grepl("^0$", r$Pest_cost),
+		  weeding_done = !grepl("^0$",r$Weedmgt_cost),
+		  N_fertilizer = r$FN_amt,
+		  P_fertilizer = r$FP_amt,
+		  K_fertilizer = r$FK_amt,
+		  fertilizer_price = r$Fert_cost,
+		  yield = r$GY* 1000,
+		  dmy_total = r$StDM*1000,
+		  trial_id = gsub(".csv", "", basename(f)),
+		  crop = "rice",
+		  country = "India",
+		  on_farm = TRUE, 
+		  is_survey = FALSE, 
+		  yield_part = "grain", 
+		  yield_moisture = as.numeric(NA),
+		  yield_isfresh = NA,
+		  irrigated = NA
+	)
+	  
+	}
+	
+	d1 <- lapply(ff1, proc)
+	d <- do.call(rbind, d1)
+	
+	
+	
+	### Adding long and lat coordinate
+	geo <- data.frame(
+	  location = c("Bhadrak", "Mayurbhanj", "Cuttack","Puri" ),
+	  longitude = c(86.497, 86.3389,  85.883, 85.8306),
+	  latitude = c(21.0574, 21.936, 20.4621, 19.8136),
+	  geo_from_source = FALSE
+	  )
+	
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+	
+	carobiner::write_files(path, meta, d)
+}
+
+
