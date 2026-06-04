@@ -12,7 +12,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 "
 
 	uri <- "doi:10.7910/DVN/KKLVAD"
-	group <- "agronomy"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -48,8 +48,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		yield=as.numeric(r$YieldKgHa)
 	)
 	
-	d$planting_date <- as.Date(d$planting_date, format = "%d/%m/%Y")
-	d$planting_date <- as.character(d$planting_date)
+	d$planting_date <- as.character(as.Date(d$planting_date, format = "%d/%m/%Y"))
 	d$trial_id <- paste0(d$location,d$planting_date, sep="_")
 	d$on_farm <- FALSE #dataset says "...4 OPV checks at Mieso", not in Mieso, so assumption is the experiment was conducted at Mieso Agricultural Research Sub-Center
 	d$is_survey <- FALSE 
@@ -57,7 +56,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	d$longitude <- 40.750
 	d$latitude <- 9.233
 	d$geo_from_source <- FALSE
-  d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
+	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
