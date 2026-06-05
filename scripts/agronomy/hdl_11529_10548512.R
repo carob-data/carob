@@ -44,6 +44,8 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 	  names(r) <- gsub("Treatment.Description", "Treatment.descripton", names(r))
 	  if(is.null(r$SdDate)) r$SdDate <- as.character(r$Year)
 	  if(is.null(r$Treatment.descripton)) r$Treatment.descripton <- NA
+	  if(is.null(r$Weeder_cost)) r$Weeder_cost <- NA
+	  if(is.null(r$IR_cost)) r$IR_cost <- NA
 	  data.frame(
 	    adm1 = carobiner::fix_name(r$STATE, "title"),
 		  location = carobiner::fix_name(r$District, "title"),
@@ -51,7 +53,7 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		  variety = trimws(r$Var),
 		  planting_date = ifelse(grepl("/", r$SdDate), as.character(as.Date(r$SdDate, "%Y/%m/%d")), r$SdDate),
 		  seed_rate = r$SdRate,
-		  seed_price = r$SdCost,
+		  seed_cost = r$SdCost,
 		  treatment = trimws(r$Treatment.descripton),
 		  herbicide_product = ifelse(grepl("pretilachlor", r$Treatment.descripton), "pretilachlor",
 		                      ifelse(grepl("Bispyribac", r$Treatment.descripton), "bispyribac-sodium;pyrazosulfuron", 
@@ -68,8 +70,8 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		  N_fertilizer = r$FN_amt,
 		  P_fertilizer = r$FP_amt,
 		  K_fertilizer = r$FK_amt,
-		  fertilizer_price = r$Fert_cost,
-		  yield = r$GY * 1000,
+		  fertilizer_cost = r$Fert_cost,
+		  yield = r$GY* 1000,
 		  dmy_total = r$StDM*1000,
 		  trial_id = gsub(".csv", "", basename(f)),
 		  crop = "rice",
@@ -79,7 +81,15 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		  yield_part = "grain", 
 		  yield_moisture = as.numeric(NA),
 		  yield_isfresh = NA,
-		  irrigated = NA
+		  irrigation_cost = r$IR_cost,
+		  irrigated = ifelse(!is.na(r$IR_cost), !grepl("^0$", r$IR_cost), NA),
+		  net_benefit = r$Net_benefit,
+		  planting_cost = r$CropEst_cost,
+		  variable_cost = r$Variable_cost,
+		  harvest_cost = r$Harvest_cost,
+		  weeding_cost= r$Weedmgt_cost,
+		  weeding_equiment_cost = r$Weeder_cost,
+		  weeding_labour = r$Lab_nm
 	   )
 	}
 
@@ -87,7 +97,7 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 	d <- lapply(ff1, proc)
 	d <- do.call(rbind, d)
 
-    i <- d$planting_method == "bueshening"
+  i <- d$planting_method == "bueshening"
 	d$planting_method[i] <- "direct seeding"
 	d$land_prep_method[i] <- "post-emergence tillage" #beushening
 		
