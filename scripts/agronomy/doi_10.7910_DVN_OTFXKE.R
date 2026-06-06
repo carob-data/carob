@@ -58,17 +58,13 @@ carob_script <- function(path) {
 		mulch=r$mulch,
 		mulch_type=r$mulch_type,
 		soil_texture=r$soil_texture,
+		soil_type=r$soil_type,
+		previous_crop_residue_management=tolower(r$Residue),
+		residue_prevcrop=as.numeric(r$Residue_amount.t.ha.)*1000,
 		soil_pH=as.numeric(r$soil_pH),
 		reference = r$Study_Source,
 		lime = r$lime.t.ha.,
 		treatment = trimws(r$treatment)
-
-# missed variables 
-		#soil_type 
-		#Manure 
-		#Manure_amt.t.ha. 
-		#Residue 
-		#Residue_amount.t.ha
 
 ### the below should have been included in the original script, but they can be omitted 
 ## as the *new* data (not the data taken from Carob) does not have them; and we remove the Carob data anyway
@@ -152,26 +148,6 @@ carob_script <- function(path) {
 	d <- merge(d, loc, by="location", all.x = TRUE)
 	
 #cleaning the planting date column
-### wrong! year only and year_month are accepted, and should not
-### be falsely represented as a complete date.
-#	clean_date <- function(x) {
-#	  x[x == ""] <- NA
-#	  
-#	  year_only <- grepl("^\\d{4}$", x) & !is.na(x)
-#	  x[year_only] <- paste0("01/01/", x[year_only])
-#	  
-#	  year_month <- grepl("^\\d{4}-\\d{2}$", x) & !is.na(x)
-#	  x[year_month] <- paste0("01/", sub("\\d{4}-(\\d{2})", "\\1", x[year_month]), 
-#	                          "/", sub("(\\d{4})-\\d{2}", "\\1", x[year_month]))
-#	  
-#	  as.Date(x, format = "%d/%m/%Y")
-#	 }
-	
-#	d$planting_date <- clean_date(d$planting_date)
-#	d$harvest_date <- clean_date(d$harvest_date)
-#	d$planting_date <- as.character(d$planting_date)
-#	d$harvest_date <- as.character(d$harvest_date)
-
 	i <- grep("/", d$planting_date)
 	d$planting_date[i] <- as.character(as.Date(d$planting_date[i], "%d/%m/%Y"))
 	i <- grep("/", d$harvest_date)
@@ -179,12 +155,58 @@ carob_script <- function(path) {
 
 	d$lime[d$lime==500] <- 0.5
 	d$lime <- as.numeric(d$lime) * 1000
+
+	#adding fertilizer based on treatment names
+	# Farmers_Practice NAs are intentionally left as-is (unknown management).
 	
-	d$on_farm <- TRUE  # do you know that??
+	# Parse N, P, K values encoded directly in treatment name e.g. "90N22.5P30K"
+	parse_npk <- function(trt, nutrient) {
+	  pattern <- paste0("([0-9.]+)", nutrient)
+	  m <- regmatches(trt, regexpr(pattern, trt))
+	  ifelse(length(m) == 0, NA_real_, as.numeric(sub(nutrient, "", m)))
+	}
+	npk_pattern <- grepl("^[0-9]+N[0-9.]+P[0-9]+K", d$treatment)
+	d$N_fertilizer[npk_pattern & is.na(d$N_fertilizer)] <-
+	  sapply(d$treatment[npk_pattern & is.na(d$N_fertilizer)], parse_npk, "N")
+	d$P_fertilizer[npk_pattern & is.na(d$P_fertilizer)] <-
+	  sapply(d$treatment[npk_pattern & is.na(d$P_fertilizer)], parse_npk, "P")
+	d$K_fertilizer[npk_pattern & is.na(d$K_fertilizer)] <-
+	  sapply(d$treatment[npk_pattern & is.na(d$K_fertilizer)], parse_npk, "K")
+	
+	# DAP: supplies N and P only, K and lime are zero
+	dap <- !is.na(d$treatment) & grepl("^DAP$", d$treatment, ignore.case = TRUE)
+	d$K_fertilizer[dap & is.na(d$K_fertilizer)] <- 0
+	d$lime[dap         & is.na(d$lime)]          <- 0
+	
+	# NPK (exact match only): no lime
+	npk <- !is.na(d$treatment) & grepl("^NPK$", d$treatment, ignore.case = TRUE)
+	d$lime[npk & is.na(d$lime)] <- 0
+	
+	# NP, NK, PK: missing nutrient is zero, lime is zero
+	d$K_fertilizer[!is.na(d$treatment) & d$treatment == "NP" & is.na(d$K_fertilizer)] <- 0
+	d$lime[!is.na(d$treatment)         & d$treatment == "NP" & is.na(d$lime)]          <- 0
+	d$P_fertilizer[!is.na(d$treatment) & d$treatment == "NK" & is.na(d$P_fertilizer)] <- 0
+	d$lime[!is.na(d$treatment)         & d$treatment == "NK" & is.na(d$lime)]          <- 0
+	d$N_fertilizer[!is.na(d$treatment) & d$treatment == "PK" & is.na(d$N_fertilizer)] <- 0
+	d$lime[!is.na(d$treatment)         & d$treatment == "PK" & is.na(d$lime)]          <- 0
+	
+	# Control treatments
+	d$N_fertilizer[!is.na(d$treatment) & d$treatment == "Control 0N"   & is.na(d$N_fertilizer)] <- 0
+	d$P_fertilizer[!is.na(d$treatment) & d$treatment == "Control 0N"   & is.na(d$P_fertilizer)] <- 0
+	d$K_fertilizer[!is.na(d$treatment) & d$treatment == "Control 0N"   & is.na(d$K_fertilizer)] <- 0
+	d$lime[!is.na(d$treatment)         & d$treatment == "Control 0N"   & is.na(d$lime)]          <- 0
+	d$N_fertilizer[!is.na(d$treatment) & d$treatment == "Control 120N" & is.na(d$N_fertilizer)] <- 120
+	d$P_fertilizer[!is.na(d$treatment) & d$treatment == "Control 120N" & is.na(d$P_fertilizer)] <- 0
+	d$K_fertilizer[!is.na(d$treatment) & d$treatment == "Control 120N" & is.na(d$K_fertilizer)] <- 0
+	d$lime[!is.na(d$treatment)         & d$treatment == "Control 120N" & is.na(d$lime)]          <- 0
+  d$N_fertilizer <- as.numeric(d$N_fertilizer)
+  d$K_fertilizer <- as.numeric(d$K_fertilizer)
+	d$P_fertilizer <- as.numeric(d$P_fertilizer)
+  
+  d$on_farm <- FALSE 
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
-	d$geo_from_source <- TRUE # not for your georeferencing!!
-	d$yield_isfresh <- TRUE  
+	d$geo_from_source <- FALSE
 	d$yield_moisture <- as.numeric(NA)
 	d$season <- ifelse(d$season=="SR", "short rains", "long rains")
 	d$crop <- gsub("vegetables", "vegetable", d$crop)
@@ -215,6 +237,10 @@ carob_script <- function(path) {
 	
 	d$yield_part <- crop_yield_part[d$crop]
 	d$yield_part[is.na(d$yield_part)] <- "none"
+	
+	# yield_isfresh: TRUE only for fresh-weight crops (tubers, roots, leaves)
+	fresh_parts <- c("tubers", "roots", "leaves")
+	d$yield_isfresh  <- d$yield_part %in% fresh_parts
   
 	d <- unique(d)
 
