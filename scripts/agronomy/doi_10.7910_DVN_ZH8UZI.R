@@ -1,9 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
+## NOTES
+# Only NorthernRegion file contains crop data; 
+# Upper West and Upper East contain only demographic and livestock data. 
+# Data is at subplot level (D2 section): each row is one household-subplot combination with up to 6 subplots per household. 
+# Subplot area used for yield calculation (not total plot area). 
+# Harvest converted to kg: bags multiplied by 50 (standard 50kg bag, per codebook p.11); 
+# kg values used directly; bare numbers set to NA. Fertilizer from free-text field: NPK 15-15-15 (confirmed in data); 
+# SA = 21% N; UREA = 46% N; unmarked numbers assumed bags. 
+# Crop residue management (D4) not included as subplot numbering does not align with D2. 
+# Variety spelling standardized: obatanpa, akomasa, afife, chekopag, laribako, gbena, topsii.
+
+
+## A lot more could be done. E.g. livestock data. Household characteristics. Labour use...
+
 carob_script <- function(path) {
   
-  "Baseline household and community survey conducted under the Africa RISING 
+"Baseline household and community survey conducted under the Africa RISING 
 project in northern Ghana (Northern Region, Upper West and Upper East) in 2013,
 covering the 2012 cropping season. Data includes crop production across multiple 
 plots per household, land use, livestock, labor and household demographics. 
@@ -12,35 +27,27 @@ crop in the Northern Region, which also includes groundnut, rice, soybean,
 cowpea, yam and cassava in a mixed farming system."
   
   uri <- "doi:10.7910/DVN/ZH8UZI"
-  group <- "agronomy"
+  group <- "survey"
   
   ff <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-                                  publication = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-06-09",
-                                  data_type = "survey",
-                                  data_organization = "WUR",
-                                  project = "Africa RISING",
-                                  treatment_vars = "none",
-                                  response_vars = "yield",
-                                  notes = "Only NorthernRegion file contains crop data; 
-                                  Upper West and Upper East contain only demographic and livestock data. 
-                                  Data is at subplot level (D2 section): each row is one household-subplot combination with up to 6 subplots per household. 
-                                  Subplot area used for yield calculation (not total plot area). 
-                                  Harvest converted to kg: bags multiplied by 50 (standard 50kg bag, per codebook p.11); 
-                                  kg values used directly; bare numbers set to NA. Fertilizer from free-text field: NPK 15-15-15 (confirmed in data); 
-                                  SA = 21% N; UREA = 46% N; unmarked numbers assumed bags. 
-                                  Crop residue management (D4) not included as subplot numbering does not align with D2. 
-                                  Variety spelling standardized: obatanpa, akomasa, afife, chekopag, laribako, gbena, topsii.",
-                                  design = NA,
-                                  completion = 80
+      publication = NA,
+      carob_contributor = "Stella Muthoni",
+      carob_date = "2026-06-09",
+      data_type = "survey",
+      data_organization = "WUR",
+      project = "Africa RISING",
+      treatment_vars = "none",
+      response_vars = "yield",
+      notes = "",
+      design = NA,
+      completion = 30
   )
   
   #Load only Northern Region file that contains crop data
-  f <- ff[basename(ff) == "NorthernRegion.tab"]
-  nr <- read.delim(f)
+  f <- ff[basename(ff) == "NorthernRegion.csv"]
+  nr <- read.csv(f)
   
   # convert harvest text to kg; standard 50kg bag confirmed in survey codebook
   parse_harvest <- function(x) {
@@ -55,7 +62,7 @@ cowpea, yam and cassava in a mixed farming system."
     result
   }
   
-  # extract fertilizer quantities and convert to N, P, K kg/ha
+  # extract fertilizer quantities and convert to N, P, K, S kg/ha
   # NPK formulation 15-15-15 confirmed from "NPK 15 15 15" entry in data
   # SA (sulphate of ammonia) = 21% N; UREA = 46% N
   # bag weight assumed 50kg where no unit specified
@@ -114,40 +121,49 @@ cowpea, yam and cassava in a mixed farming system."
     
     # calculate N P K only where at least one quantity is known
     has_any  <- !is.na(npk_kg) | !is.na(sa_kg) | !is.na(urea_kg)
-    npk_kg0  <- ifelse(is.na(npk_kg),  0, npk_kg)
+    npk_kg0  <- ifelse(is.na(npk_kg),  0, npk_kg) * 0.15  # assuming 15-15-15
     sa_kg0   <- ifelse(is.na(sa_kg),   0, sa_kg)
-    urea_kg0 <- ifelse(is.na(urea_kg), 0, urea_kg)
+    urea_kg0 <- ifelse(is.na(urea_kg), 0, urea_kg)  * 0.46
     
-    N <- P <- K <- rep(NA_real_, length(x))
-    N[has_any] <- (npk_kg0[has_any] * 0.15 + sa_kg0[has_any] * 0.21 + urea_kg0[has_any] * 0.46) / area_ha[has_any]
-    P[has_any] <- (npk_kg0[has_any] * 0.15) / area_ha[has_any]
-    K[has_any] <- (npk_kg0[has_any] * 0.15) / area_ha[has_any]
-    
-    data.frame(N_fertilizer = N, P_fertilizer = P, K_fertilizer = K)
+    N <- P <- K <- S <- rep(NA_real_, length(x))
+    N[has_any] <- (npk_kg0[has_any] + sa_kg0[has_any] * 0.21 + urea_kg0[has_any]) / area_ha[has_any]
+    P[has_any] <- (npk_kg0[has_any] * 0.436) / area_ha[has_any]
+    K[has_any] <- (npk_kg0[has_any] * 0.83) / area_ha[has_any]
+    S[has_any] <- sa_kg0[has_any] * 0.24
+
+	ft <- ifelse(npk_kg0 > 0, "NPK", "")
+	## there is no urea with amount
+	ft <- ifelse(urea_kg0 > 0, paste0(ft, ";urea"), ft)
+	ft <- ifelse(sa_kg0 > 0, paste0(ft, ";AS"), ft)
+	ft <- gsub("^;", "", ft)
+	ft[ft == ""] <- NA
+
+	# todo:  fertilizer_type
+    data.frame(N_fertilizer = N, P_fertilizer = P, K_fertilizer = K, S_fertilizer = S, fertilizer_type=ft)
   }
   
   # standardize crop names to terminag vocabulary
   clean_crop <- function(x) {
-    x <- trimws(tolower(x))
-    x[x == "corn"]     <- "maize"
-    x[x == "g nut"]    <- "groundnut"
-    x[x == "g nuts"]   <- "groundnut"
-    x[x == "gnut"]     <- "groundnut"
+	x <- tolower(trimws(x))
+    x[x == "corn"] <- "maize"
+    x[grep("g nut|gnut", x)] <- "groundnut"
     x[x == "soyabean"] <- "soybean"
-    x[x == "soya"]     <- "soybean"
-    x[x == "b beans"]  <- "cowpea"
-    x[x == "beans"]    <- "cowpea"
-    x[x == "g pepper"] <- "pepper"
+    x[x == "b beans"]  <- "bambara groundnut"
+    x[x == "g pepper"] <- "chili pepper" # green pepper
     x[x == "casava"]   <- "cassava"
     x[x == "okro"]     <- "okra"
     x[x == "watermel"] <- "watermelon"
+    x[x == "own"]  <- NA
+    x <- gsub(" 30%", "", x)
+    x[x == ""] <- NA	
     x
   }
+
   
   # standardize variety names
   # spelling variations confirmed by crop context
   clean_variety <- function(x) {
-    x <- trimws(tolower(x))
+	x <- tolower(trimws(x))
     x[x %in% c("obaatapa", "obataapa", "obatampa", "0batampa")] <- "obatanpa"
     x[x == "okomasa"]                          <- "akomasa"
     x[x %in% c("afefe", "afifi")]              <- "afife"
@@ -160,72 +176,67 @@ cowpea, yam and cassava in a mixed farming system."
     x[x == ""]      <- NA
     x
   }
-  
-  # standardize intercrop names to terminag vocabulary
-  clean_intercrop <- function(x) {
-    x <- trimws(tolower(x))
-    x[x %in% c("g nut", "g nuts", "gnut")] <- "groundnut"
-    x[x %in% c("soyabean", "soya")]         <- "soybean"
-    x[x %in% c("b beans", "beans")]         <- "cowpea"
-    x[grepl("maize", x)]  <- "maize"
-    x[x == "own"]         <- NA
-    x[grepl("%", x)]      <- NA
-    x[x == ""] <- NA
-    x
-  }
+ 
   
   # reshape from wide to long format
   # each household has up to 6 subplots recorded as separate column groups (D2 section)
   # subplot numbering uses numbers (1,2,3) for separate plots and letters (1a,1b) for subplots
-  plot_list <- lapply(1:6, function(i) {
-    crop       <- nr[[paste0("MAIN_CROP.", i)]]
-    harvest    <- parse_harvest(nr[[paste0("TOTAL_HARVEST.", i)]])
-    # subplot area in local units (acres), converted to hectares
-    area_ha    <- nr[[paste0("SIZE_OF_SUB_PLOT.", i)]] * 0.405
-    variety    <- nr[[paste0("INDICATE_VARIETY.", i)]]
-    intercrop  <- nr[[paste0("MAJOR_INTERCROP.", i)]]
-    fert_text  <- nr[[paste0("QUANTITY_AND_TYPE.", i)]]
-    subplot_id <- nr[[paste0("SUB_PLOT.", i)]]
-    
-    fert <- parse_fertilizer(fert_text, area_ha)
-    
-    # only keep rows where crop is recorded
-    keep <- !is.na(crop) & trimws(crop) != ""
-    
-    data.frame(
-      trial_id = trimws(paste0(nr$QUESTIONNAIRE_ID[keep], "-", subplot_id[keep])),
-      crop            = clean_crop(crop[keep]),
-      variety         = clean_variety(variety[keep]),
-      intercrops      = clean_intercrop(intercrop[keep]),
-      yield           = harvest[keep] / area_ha[keep],
-      yield_part      = "grain",
-      yield_moisture = NA_real_,
-      yield_isfresh   = FALSE,
-      N_fertilizer    = fert$N_fertilizer[keep],
-      P_fertilizer    = fert$P_fertilizer[keep],
-      K_fertilizer    = fert$K_fertilizer[keep],
-      farmer_gender   = nr$A2[keep],
-      country         = "Ghana",
-      adm1            = "Northern",
-      location        = "Northern Region",
-      # coordinates are approximate for Northern Region centroid
-      # GPS fields in survey were not captured digitally
-      longitude       = -1.0,
-      latitude        = 9.5,
-      geo_from_source = FALSE,
-      planting_date   = "2012",
-      harvest_date    = "2012",
-      on_farm         = TRUE,
-      is_survey       = TRUE,
-      irrigated       = FALSE
-    )
-  })
+
+  ### RH: this is not what I see, and not consistent with the data. 
+  ### We seem to have data on plots OR subplots, I do not see how we can tell
+
+  ## RH first combine, to make it easier to understand processing needs. 
+	plot_list <- lapply(1:6, function(i) {
+		pattern <- paste0("\\.", i, "$")
+		d <- nr[, grep(pattern, names(nr))]
+		names(d) <- gsub(pattern, "", names(d))
+		cbind(nr[, c("NAME_OF_INTERVIEWER", "QUESTIONNAIRE_ID", "A2")], 
+			plot_id=i, d)
+	})
+	
+	r <- do.call(carobiner::bindr, plot_list)
+
+	d <- data.frame(
+		trial_id = apply(r[, c("NAME_OF_INTERVIEWER", "QUESTIONNAIRE_ID", "plot_id")], 1, \(x) paste(trimws(x), collapse="-")),
+		crop = clean_crop(r$MAIN_CROP),
+		maj_crop = clean_crop(r$MAJOR_CROP),
+		harvest = parse_harvest(r$TOTAL_HARVEST),
+		# subplot area in local units (acres), converted to hectares
+		field_size = r$SIZE_OF_SUB_PLOT * 0.405,
+		variety = clean_variety(r$INDICATE_VARIETY),
+		intercrops = clean_crop(r$MAJOR_INTERCROP),
+		fert_text = trimws(r$QUANTITY_AND_TYPE),
+		farmer_gender   = r$A2,
+		country  = "Ghana",
+		adm1 = "Northern Region",
+		# coordinates are approximate for Northern Region centroid
+		# GPS fields in survey were not captured digitally
+		longitude       = -1.0,
+		latitude        = 9.5,
+		geo_from_source = FALSE,
+		planting_date   = "2012",
+		harvest_date    = "2012",
+		on_farm         = TRUE,
+		is_survey       = TRUE,
+		irrigated       = FALSE,
+		yield_part = "grain",
+		yield_moisture = NA_real_,
+		yield_isfresh = TRUE
+	)
+
+	d <- d[(!is.na(d$crop)) & (trimws(d$crop) != ""), ]
+	d$yield <- d$harvest / d$field_size
   
-  d <- do.call(rbind, plot_list)
+    fert <- parse_fertilizer(d$fert_text, d$field_size)
+    d <- cbind(d, fert)
   
   # assign correct yield_part for non-grain crops
-  d$yield_part[d$crop %in% c("yam", "cassava")] <- "tubers"
-  d$yield_part[d$crop == "groundnut"]            <- "pod"
-  
+  d$yield_part[d$crop == "yam"] <- "tubers"
+  d$yield_part[d$crop == "cassava"] <- "roots"
+  d$yield_part[d$crop == "groundnut"] <- "pod"
+
+
+	d$maj_crop <- d$harvest <- d$fert_text <- NULL
+
   carobiner::write_files(meta, d, path = path)
 }
