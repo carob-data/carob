@@ -94,7 +94,7 @@ carob_script <- function(path) {
     
     d$season_constraint <- ifelse(
       frost & drought, "frost;drought",
-      ifelse(frost, "frost", ifelse(drought, "drought", ""))
+      ifelse(frost, "frost", ifelse(drought, "drought", "none"))
     )    
     return(d)
   }
