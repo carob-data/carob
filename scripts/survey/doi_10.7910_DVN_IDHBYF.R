@@ -1,8 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## ISSUES
-#coordinates were extracted from google maps
+#1. missing variables originate from raw data
 
 carob_script <- function(path) {
   
@@ -39,8 +40,15 @@ carob_script <- function(path) {
     yield=as.numeric(r$`Yield (t/ha)`)*1000,
     soil_depth=r$`Depth  (cm)`,
     soil_sand=as.numeric(r$`Sand (g/kg)`)*0.1,
-    soil_silt=as.numeric(r$`Silt (g/kg)`)*0.1,
-    soil_clay=as.numeric(r$`Clay (g/kg)`)*0.1) 
+    soil_silt=as.numeric(r$`Silt (g/kg)`)*0.1)
+    
+  #cleaning non character values
+  d$soil_clay[r$`Clay (g/kg)`=="³ 350"] <- 350
+  d$soil_clay[d$soil_clay=="151-350"] <- 250.5 #since the clay content has a range, an average of the 2 has been calculated to give 250.5
+  
+  #converting to percentage
+  d$soil_clay <- as.numeric(d$soil_clay)*0.1
+
   
   d$cover_crop_used <- TRUE
   
@@ -74,12 +82,12 @@ carob_script <- function(path) {
     
     lat_lon <- data.frame(
       adm1=c("Bahia","Paraná","Tamil Nadu","Mato Grosso do Sul","São Paulo"),
-      longitude=c(-12.5983,-24.6817,11.0686,-20.1798,-23.5531),
-      latitude=c(-41.0698,-52.0502,78.3955,-5.5038,-46.6637))
-    
+      longitude=c(-41.280,-52.0502,78.3955,-55.361,-46.6637),
+      latitude=c(-11.409,-24.6817,11.0686,-20.215,-23.5531))
+
     d <- merge(d,lat_lon,by="adm1",all.x=TRUE)
     
-    d$yield_part <- "tubers"
+    d$yield_part <- "roots"
     d$yield_isfresh <- NA
     d$trial_id <- paste(d$adm1, d$crop, sep = "_")
     d$soil_depth <- as.numeric(gsub(".*-", "", d$soil_depth))
