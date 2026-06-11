@@ -3,7 +3,8 @@
 
 
 ## ISSUES
-#1. missing variables originate from raw data
+#TBD: variables: Spacing, "Planting depth (cm)", "Harvest\r\n(months)" (= season length)  
+
 
 carob_script <- function(path) {
   
@@ -40,8 +41,19 @@ carob_script <- function(path) {
     yield=as.numeric(r$`Yield (t/ha)`)*1000,
     soil_depth=r$`Depth  (cm)`,
     soil_sand=as.numeric(r$`Sand (g/kg)`)*0.1,
-    soil_silt=as.numeric(r$`Silt (g/kg)`)*0.1)
+    soil_silt=as.numeric(r$`Silt (g/kg)`)*0.1,
+	reference = trimws(r$Reference),
+	soil_bd = r[["Bulk density\r\n(kg/dm3)"]],
+	soil_SOC = r[["OC (g/kg)"]] * 10
+  )
+
+  
+	soild <- r$`Depth (cm)...25`
+	soild[soild == "na"] <- NA
+	soild <- sapply(soild, \(i) as.numeric(strsplit(i, "-")[[1]][1:2])) |> t()
+	names(soild) <- c("depth_top", "depth_bottom")
     
+	
   #cleaning non character values
   d$soil_clay[r$`Clay (g/kg)`=="³ 350"] <- 350
   d$soil_clay[d$soil_clay=="151-350"] <- 250.5 #since the clay content has a range, an average of the 2 has been calculated to give 250.5
@@ -86,6 +98,14 @@ carob_script <- function(path) {
       latitude=c(-11.409,-24.6817,11.0686,-20.215,-23.5531))
 
     d <- merge(d,lat_lon,by="adm1",all.x=TRUE)
+
+## from d$reference[nrow(d)]
+## "Ohiri, AC; Ezumah, HC., 1990. Tillage effects on cassava (Manihot esculenta) production and some soil properties. Soil and Tillage Research 17:221-229"
+	i <- which(d$country == "Nigeria")
+	d$location[i] <- "National Root Crops Research Institute, Umudike"
+	d$longitude[i] <-  5.476
+	d$latitude[i] <- 7.548 # publication had error: 70°30'E 
+##
     
     d$yield_part <- "roots"
     d$yield_isfresh <- NA
