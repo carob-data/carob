@@ -39,7 +39,7 @@ cowpea, yam and cassava in a mixed farming system."
       data_organization = "WUR",
       project = "Africa RISING",
       treatment_vars = "none",
-      response_vars = "yield",
+      response_vars = "none",
       notes = "",
       design = NA,
       completion = 30

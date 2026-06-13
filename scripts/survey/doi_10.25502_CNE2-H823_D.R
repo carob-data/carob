@@ -28,6 +28,8 @@ carob_script <- function(path) {
    d$dmy_storage <- d$yield * 1000 
    d$yield <- d$yield * 1000 * 1.18 #fresh weight
    d$dmy_residue <- d$dmy_residue * 1000 
+   d$yield_moisture <- NA_real_ 
+   d$yield_isfresh <- TRUE
    
    # plant/ha
    d$plant_density <- d$plant_density * 10000
