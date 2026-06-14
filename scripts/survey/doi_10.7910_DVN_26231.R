@@ -56,6 +56,10 @@ carob_script <- function(path) {
    d$yield_part <- "grain"
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+
+	d$yield_moisture <- NA_real_
+	d$yield_isfresh <- TRUE
+
    
    carobiner::write_files (path, meta, d)
 }

@@ -91,8 +91,12 @@ BSF finger millet crowdsourcing data for Hoima Uganda
 	
 	### drop on row with missing yield
 	d <- d[!is.na(d$yield), ]
+
+	d$yield_moisture <- NA_real_
+	d$yield_isfresh <- TRUE
+
 	
-carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d)
 
 }
 

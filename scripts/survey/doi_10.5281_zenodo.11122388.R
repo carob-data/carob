@@ -24,7 +24,7 @@ carob_script <- function(path) {
 		yield_part= "grain",
 		variety_type = ifelse(r$hybrid, "hybrid", "not hybrid"),
 		country = carobiner::fix_name(r$country, "title"),
-		season=r$season,
+		season=gsub(" season", "", r$season),
 		planting_date=r$plant_date,
 		harvest_date=r$harvest_date,
 		plant_density = r$pl_m2 * 10000,
@@ -65,7 +65,11 @@ carob_script <- function(path) {
 				paste(c("not", ""), "rust resistant")[r$hyb_tol_rust+1], 
 				paste(c("not", ""), "ear rot resistant")[r$hyb_tol_ear_rot+1]), 
 			1, \(i) paste(i, collapse=";")
-		)
+		) |> trimws()
+	d$variety_traits[d$variety_traits == "NA;NA;NA;NA;NA;NA"] <- NA
+
+	d$yield_moisture <- NA_real_
+	d$yield_isfresh <- TRUE
 
 	carobiner::write_files(path, meta, d) 
 }
