@@ -30,7 +30,7 @@ This database provides a comprehensive, field-level record of rice management pr
 		carob_contributor = "Blessing Dzuda",
 		completion = 100,	
 		notes = NA
-		)
+	)
 	
 
 	f <- ff[basename(ff) == "Data.xls"]
@@ -38,6 +38,7 @@ This database provides a comprehensive, field-level record of rice management pr
 
 	d <- data.frame(
 		hhid = r$barcode_household,
+		date = r$`survey date`,
 		country = r$Country,
 		adm1 = r$Region,
 		adm2=r$State,
@@ -46,7 +47,8 @@ This database provides a comprehensive, field-level record of rice management pr
 		field_size=r$`Field size (ha)`,
 		season = r$Season,
 		age=as.numeric(r$`Farmer age`),
-		farmer_education=r$`Farmer education`,
+		sex=r$`Gender`,
+		education=r$`Farmer education`,
 		land_ownedby=r$`Land ownership`,
 		crop="rice",
 		yield=r$`Paddy yield (kg/ha)`,
@@ -56,28 +58,29 @@ This database provides a comprehensive, field-level record of rice management pr
 		planting_date=as.character(r$`planting date`),
 		seed_quantity=r$`Quantity of seed used (kg/ha)`,
 		planting_method=r$`Crop establishement method`,
-		land_prep_implement=r$`Tillage method`,
+		land_prep_traction=r$`Tillage method`,
 		OM_amount=r$`Quantity of organic input applied (kg/ha)`,
 		weeding_times=as.integer(r$`Number of weeding`),
 		N_fertilizer=r$`Quanity of N applied (kg/ha)`,
 		P_fertilizer=r$`Quantity of P2O5 applied (kg/ha)`/2.29,
-		K_fertilizer=r$`Quantity of K2O applied (kg/ha)`/1.2051)
+		K_fertilizer=r$`Quantity of K2O applied (kg/ha)`/1.2051
+	)
+	
 	
 	d$trial_id <- paste(d$hhid,d$adm2,sep = "_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
-	d$irrigated <-ifelse(r$`Production system`=="irrigated",TRUE,FALSE)
+	d$irrigated <- ifelse(r$`Production system`=="irrigated",TRUE,FALSE)
 	d$geo_from_source <- TRUE
 	d$yield_part <- "grain"
-  d$yield_moisture <- as.numeric(NA)
-  d$yield_isfresh <- TRUE
-  d$season <- ifelse(d$season=="Wet season","wet","dry")
-  d$longitude[d$adm2=="Kano"] <- 11.992
-  d$planting_method <- gsub("line_seeding","line sowing", d$planting_method)
-  d$land_prep_implement <- gsub("4wheel_tractor","4 wheel tractor", d$land_prep_implement)
-  d$land_prep_implement <- gsub("2wheel_tractor","2 wheel tractor", d$land_prep_implement)
-  d$land_prep_implement <- gsub("mechanical","disc plough", d$land_prep_implement)#implement was not specified,
-  #but assuming the small piece of land, and since they use tractors, its possible implent mounted to tractors is a disc plough
+	d$yield_moisture <- as.numeric(NA)
+	d$yield_isfresh <- TRUE
+	d$season <- ifelse(d$season=="Wet season","wet","dry")
+	d$longitude[d$adm2=="Kano"] <- 11.992
+	d$geo_from_source[d$adm2=="Kano"] <- FALSE
+	d$planting_method <- gsub("line_seeding","line sowing", d$planting_method)
+	d$land_prep_traction <- gsub("4wheel_tractor","4 wheel tractor", d$land_prep_traction)
+	d$land_prep_traction <- gsub("2wheel_tractor","2 wheel tractor", d$land_prep_traction)
   
 	carobiner::write_files(path, meta, d)
 }
