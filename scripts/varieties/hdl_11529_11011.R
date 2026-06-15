@@ -13,7 +13,7 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 "
 
 	uri <- "hdl:11529/11011"
-	group <- "varieties"
+	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
 
@@ -24,8 +24,8 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 		carob_date = "2026-06-11",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "variety",
-		response_vars = "yield", 
+		treatment_vars = "planting_date;variety",
+		response_vars = "emergence_date;flowering_date;maturity_date;yield", 
 		carob_contributor = "Cedric Ngakou",
 		completion = 100,	
 		notes = NA
@@ -34,10 +34,10 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 
 	f1 <- ff[basename(ff) == "TAMASA_ET_VT_2016F.xlsx"]
 
-	r1 <- carobiner::read.excel(f1, sheet="Metadata")
-	r2 <- carobiner::read.excel(f1, sheet="Protocol")
-	r3 <- carobiner::read.excel(f1, sheet="GxE Layout")
-	r4 <- carobiner::read.excel(f1, sheet="Variables_modified")
+	#r1 <- carobiner::read.excel(f1, sheet="Metadata")
+	#r2 <- carobiner::read.excel(f1, sheet="Protocol")
+	#r3 <- carobiner::read.excel(f1, sheet="GxE Layout")
+	#r4 <- carobiner::read.excel(f1, sheet="Variables_modified")
 	r5 <- carobiner::read.excel(f1, sheet="Raw-Data")
 	#r6 <- carobiner::read.excel(f1, sheet="Corrected Data")
 	#r7 <- carobiner::read.excel(f1, sheet="Summary")
@@ -85,7 +85,11 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
-	d <- d[which(d$yield > 0),]
+	## do not remove records if at least some of the response_vars are present.
+	##d <- d[which(d$yield > 0),]
+	## there are none: 
+	## rowSums((is.na(d[ ,c("emergence_date", "flowering_date", "maturity_date", "yield")]))) == 4
+
 	
 	carobiner::write_files(path, meta, d)
 }
