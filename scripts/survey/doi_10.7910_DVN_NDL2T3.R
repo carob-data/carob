@@ -70,7 +70,7 @@ This database provides a comprehensive, field-level record of rice management pr
 	d$trial_id <- paste(d$hhid,d$adm2,sep = "_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
-	d$irrigated <- ifelse(r$`Production system`=="irrigated",TRUE,FALSE)
+	d$irrigated <- r$`Production system`=="irrigated"
 	d$geo_from_source <- TRUE
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
