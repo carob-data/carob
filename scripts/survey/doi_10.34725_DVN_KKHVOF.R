@@ -32,7 +32,6 @@ researchInstrument: Structured questionnaire and interviews
 		publication = NA,
 		project = NA,
 		carob_date = "2025-12-08",
-		design = "",
 		data_type = "compilation",
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -48,6 +47,8 @@ researchInstrument: Structured questionnaire and interviews
 	
 
 	r1 <- read.csv(f1, na= c("", "NA", "<llq"))
+	r1 <- r1[!is.na(r1$County), ] # remove empty rows
+
 	#r2 <- read.csv(f2)
 	#r3 <- read.csv(f3)
 	#r4 <- read.csv(f4)
@@ -119,11 +120,9 @@ researchInstrument: Structured questionnaire and interviews
 	   residue_Ti = r1$Ti_Pl/1000,
 	   residue_C = r1$TC_Pl/1000,
 	   residue_N = r1$TN_Pl/1000,
-	   residue_Br = r1$Br_Pl/1000,
 	   residue_Ca = r1$Ca_Pl/1000,
 	   residue_Cd = r1$Cd_Pl/1000,
 	   residue_Cl = r1$Cl_Pl/1000,
-	   residue_Co = r1$Co_Pl/1000,
 	   residue_Cu = r1$Cu_Pl/1000,
 	   residue_K = r1$K_Pl/1000,
 	   residue_Mg = r1$Mg_Pl/1000,
@@ -132,7 +131,6 @@ researchInstrument: Structured questionnaire and interviews
 	   residue_Pb = r1$Pb_Pl/1000,
 	   residue_Rb = r1$Rb_Pl/1000,
 	   residue_S = r1$S_Pl/1000,
-	   residue_Hg = r1$Hg_Pl/1000,
 	   #r1$m3_P_Gr,
 	   #r1$m3_K_Gr,
 	   #r1$m3_B_Gr,
@@ -149,22 +147,17 @@ researchInstrument: Structured questionnaire and interviews
 	   grain_Fe = r1$Fe_Gr/1000,
 	   grain_Mn = r1$Mn_Gr/1000,
 	   grain_P = r1$P_Gr/1000,
-	   grain_Ti = r1$Ti_Gr/1000,
 	   grain_C = r1$TC_Gr/1000,
 	   grain_Zn = r1$Zn_Gr/1000,
 	   grain_N = r1$TN_Gr/1000,
 	   grain_Rb = r1$Rb_Gr/1000,
-	   grain_Hg = r1$Hg_Gr/1000,
-	   #r1$Ba_Gr,
-	   grain_Br = r1$Br_Gr/1000,
 	   grain_Cd = r1$Cd_Gr/1000,
 	   grain_Co = r1$Co_Gr/1000,
 	   grain_K = r1$K_Gr/1000,
-	   grain_Cl = r1$Cl_Gr/1000,
 	   grain_Mg = r1$Mg_Gr/1000,
 	   grain_Mo = r1$Mo_Gr/1000,
-	   grain_Pb = r1$Pb_Gr/1000,
 	   grain_S = r1$S_Gr/1000,
+	   
 	   soil_texture = r1$Soil.Texture,
 	   soil_color = r1$color,
 	   planting_date = "2017", 
@@ -173,6 +166,7 @@ researchInstrument: Structured questionnaire and interviews
 	   crop = "maize", 
 	   yield_part = "grain", 
 	   yield_moisture = as.numeric(NA), 
+	   yield_isfresh = TRUE,
 	  geo_from_source = FALSE
 		
 	)
@@ -219,7 +213,6 @@ researchInstrument: Structured questionnaire and interviews
 	d$lon <- d$lat <- NULL
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-	
 	
 	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 
