@@ -112,66 +112,48 @@ carob_script <- function(path) {
 	  r3[, c("crop_1", "crop_2", "crop_3", "crop_4")],1,
 	  function(x) paste(na.omit(x[x != ""]), collapse = " : "))
 	
-	d3$land_prep_cost <- ifelse(
-	  trimws(tolower(d3$activity)) == "land preparation",d3$cost,0)
-	
-	d3$planting_cost <- ifelse(d3$activity == "Planting",d3$cost,0)
-	
-	d3$weeding_cost <- ifelse(d3$activity == "Weeding",d3$cost,0)
-	
-	d3$weeding_labour <- ifelse(d3$activity == "Weeding",d3$plot_labour,0)
-	
-	d3$irrigation_cost <- ifelse(d3$activity == "Watering",d3$cost,0)
-	
-	d3$OM_cost <- ifelse(d3$activity %in% c("Transport of farmyard manure",
-	                     "Transport of manure"),d3$cost,0)
-	
-	d3$fertilizer_cost <- ifelse(d3$activity == "FERTERLIZER APPLICATION",d3$cost,0)
-	
-	d3$fertilizer_labour <- ifelse(d3$activity == "FERTERLIZER APPLICATION",d3$plot_labour,0)
-	
-	d3$harvest_cost <- ifelse(d3$activity == "Harvesting",d3$cost,0)
+	d3$activity <- tolower(d3$activity)
+	d3$land_prep_cost <- ifelse(d3$activity)) == "land preparation", d3$cost, 0)
+	d3$planting_cost <- ifelse(d3$activity == "planting", d3$cost, 0)	
+	d3$weeding_cost <- ifelse(d3$activity == "weeding", d3$cost, 0)
+	d3$weeding_labour <- ifelse(d3$activity == "weeding", d3$plot_labour, 0)
+	d3$irrigation_cost <- ifelse(d3$activity == "watering", d3$cost, 0)
+	## OM_cost would be when you buy it. This seems to be the cost of moving your own OM around
+	d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure"),d3$cost,0)
+	## cost for fertilizer _application_ is not the same as the cost of "fertilizer"
+	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost,0)
+	d3$fertilizer_labour <- ifelse(d3$activity == "fertilizer application",d3$plot_labour,0)
+	d3$harvest_cost <- ifelse(d3$activity == "harvesting",d3$cost,0)
 	
 	d4 <- data.frame(
 	  hhid = r4$id,
 	  field_id = r4$farm_id,
-	  floor_quality = r4$type)	
+	  floor_quality = r4$type
+	)  # on new line 	
 	
 	d5 <- data.frame(
 	  hhid = r5$id,
 	  field_id = r5$farm_id,
-	  roof_quality = r5$type)
+	  roof_quality = r5$type
+	)
 	
 	d6 <- data.frame(
 	  hhid = r6$id,
 	  field_id = r6$farm_id,
-	  wall_quality = r6$type)
+	  wall_quality = r6$type
+	)
 
 #Aggregating done to carter for lack of a one-to-one correspondence between records across the three files.
-	d4a <- aggregate(
-	  floor_quality ~ field_id,
-	  data = d4,
-	  FUN = function(x) paste(unique(x), collapse = ";")
-	)
-	
-	d5a <- aggregate(
-	  roof_quality ~ field_id,
-	  data = d5,
-	  FUN = function(x) paste(unique(x), collapse = ";")
-	)
-	
-	d6a <- aggregate(
-	  wall_quality ~ field_id,
-	  data = d6,
-	  FUN = function(x) paste(unique(x), collapse = ";")
-	)
+	fagg <- function(x) paste(unique(x), collapse = ";")
+	d4a <- aggregate(floor_quality ~ field_id, d4, FUN = fagg)
+	d5a <- aggregate(roof_quality ~ field_id, d5, FUN = fagg)
+	d6a <- aggregate(wall_quality ~ field_id, d6, FUN = fag)
 	
 	d7 <- merge(d4a, d5a, by = "field_id", all = TRUE)
 	d7 <- merge(d7, d6a, by = "field_id", all = TRUE)
 	
 	d7$housing_quality <- apply(
-	  d7[, c("floor_quality", "roof_quality", "wall_quality")],
-	  1,
+	  d7[, c("floor_quality", "roof_quality", "wall_quality")],  1,
 	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
 	)
 
@@ -473,7 +455,7 @@ carob_script <- function(path) {
 	
 	d <- merge(d, d2,by = c("hhid","field_id"), all = TRUE)
 	
-	d <- merge(d,d3a, by = c("hhid","field_id"),all = TRUE)
+	d <- merge(d, d3a, by = c("hhid","field_id"),all = TRUE)
 	
 	d <- merge(d, d8, by = c("hhid","field_id"),all = TRUE)
 	
@@ -548,79 +530,38 @@ carob_script <- function(path) {
 	
 	#fixing crop names
 	d$crop <- tolower(trimws(d$crop))
-	d$crop[grepl("common bean|bush bean|beans, bush beans|string bean|voluble beans|wax bean|w.bean|n.bean|o.bean|j.bean|m.bean|creeper bean|sugarbeans",
-	             d$crop)] <- "kidney bean"
+	d$crop[grepl("common bean|bush bean|beans, bush beans|string bean|voluble beans|wax bean|w.bean|n.bean|o.bean|j.bean|m.bean|creeper bean|sugarbeans", d$crop)] <- "kidney bean"
 	
 	d$crop[grepl("climbing bean", d$crop)] <- "runner bean"
-	
 	d$crop[grepl("^soybeans?$|^soja$", d$crop)] <- "soybean"
-	
 	d$crop[grepl("^cowpeas?$", d$crop)] <- "cowpea"
-	
 	d$crop[grepl("^groundnuts?$", d$crop)] <- "groundnut"
-	
-	d$crop[grepl("bambara nuts|bambara groundnut|bambara groundnuts|bambara beans|b.bean|b.bena",
-	             d$crop)] <- "bambara groundnut"
-	
+	d$crop[grepl("bambara nuts|bambara groundnut|bambara groundnuts|bambara beans|b.bean|b.bena", d$crop)] <- "bambara groundnut"
 	d$crop[grepl("greengram|greengrams", d$crop)] <- "mung bean"
-	
 	d$crop[grepl("garden peas|green peas|petit pois", d$crop)] <- "pea"
-	
 	d$crop[grepl("pigeonpeas|nandolo", d$crop)] <- "pigeon pea"
-	
-	d$crop[grepl("nhemba bean|boer bean|fava bean|macaco bean",
-	             d$crop)] <- "bean"
-	
+	d$crop[grepl("nhemba bean|boer bean|fava bean|macaco bean", d$crop)] <- "bean"
 	d$crop[grepl("^maize$", d$crop)] <- "maize"
-	
 	d$crop[grepl("^rice$", d$crop)] <- "rice"
-	
 	d$crop[grepl("^wheat$", d$crop)] <- "wheat"
-	
-	d$crop[grepl("sorghum|sorhum|soghun|guinea corn",
-	             d$crop)] <- "sorghum"
-	
+	d$crop[grepl("sorghum|sorhum|soghun|guinea corn", d$crop)] <- "sorghum"
 	d$crop[grepl("millet/sorghum", d$crop)] <- "millet"
-	
-	d$crop[grepl("millet|milllet|pearl millet|rapoko|mapfunde",
-	             d$crop)] <- "millet"
-	
-	d$crop[grepl("^cassava$|^manioc$|^mashava$",
-	             d$crop)] <- "cassava"
-	
-	d$crop[grepl("sweet potato|wweet potato",
-	             d$crop)] <- "sweetpotato"
-	
-	d$crop[grepl("irish potato|irish patato|irish poatato|^potato$|^irish$",
-	             d$crop)] <- "potato"
-	
-	d$crop[grepl("^yam$|^yams$|^igname$",
-	             d$crop)] <- "yam"
-	
-	d$crop[grepl("cocoyam|colocase|colocasse|taro|madhumbe",
-	             d$crop)] <- "cocoyam"
+	d$crop[grepl("millet|milllet|pearl millet|rapoko|mapfunde", d$crop)] <- "millet"
+	d$crop[grepl("^cassava$|^manioc$|^mashava$", d$crop)] <- "cassava"
+	d$crop[grepl("sweet potato|wweet potato", d$crop)] <- "sweetpotato"
+	d$crop[grepl("irish potato|irish patato|irish poatato|^potato$|^irish$", d$crop)] <- "potato"
+	d$crop[grepl("^yam$|^yams$|^igname$", d$crop)] <- "yam"
+	d$crop[grepl("cocoyam|colocase|colocasse|taro|madhumbe", d$crop)] <- "cocoyam"
 	d$crop[d$crop=="cocoyam"] <- "yam"
-	d$crop[grepl("^sunflower$|^tournesol$",
-	             d$crop)] <- "sunflower"
-	
+	d$crop[grepl("^sunflower$|^tournesol$", d$crop)] <- "sunflower"
 	d$crop[grepl("^sesame$", d$crop)] <- "sesame"
-	
 	d$crop[grepl("^cotton$", d$crop)] <- "cotton"
-	
 	d$crop[grepl("^tomato$", d$crop)] <- "tomato"
-	
 	d$crop[grepl("^onion$", d$crop)] <- "onion"
-	
 	d$crop[grepl("^carrot$|^carrots$", d$crop)] <- "carrot"
-	
-	d$crop[grepl("eggplant|egglplant|aubergine",
-	             d$crop)] <- "eggplant"
-	
-	d$crop[grepl("^cabbage$|^cavage$|^choux$",
-	             d$crop)] <- "cabbage"
-	
-	d$crop[grepl("^okra$|^okfro$",
-	             d$crop)] <- "okra"
+	d$crop[grepl("eggplant|egglplant|aubergine", d$crop)] <- "eggplant"
+	d$crop[grepl("^cabbage$|^cavage$|^choux$", d$crop)] <- "cabbage"
+	d$crop[grepl("^okra$|^okfro$", d$crop)] <- "okra"
 	
 	d$crop[grepl("^pepper$|^piment$",
 	             d$crop)] <- "pepper"
@@ -732,35 +673,12 @@ carob_script <- function(path) {
 	d$yield_part[d$crop == "tobacco"] <- "leaves"
 	d$yield_part[d$crop == "onion"] <- "tubers"
 	d$yield_part[d$crop == "garlic"] <- "tubers"
-	d$yield_part[d$crop %in% c(
-	  "kidney bean",
-	  "runner bean",
-	  "cowpea",
-	  "pea",
-	  "soybean",
-	  "bambara groundnut",
-	  "pigeon pea",
-	  "lentil"
-	)] <- "seed"
-	d$yield_part[d$crop %in% c(
-	  "maize",
-	  "sorghum",
-	  "millet",
-	  "rice",
-	  "wheat"
-	)] <- "grain"
-	d$yield_part[d$crop %in% c(
-	  "cassava",
-	  "sweetpotato",
-	  "carrot",
-	  "turnip"
-	)] <- "roots"
-	
-	d$yield_part[d$crop %in% c(
-	  "potato",
-	  "yam",
-	  "ginger"
-	)] <- "tubers"
+	d$yield_part[d$crop %in% c("kidney bean", "runner bean", "cowpea", "pea", "soybean", "bambara groundnut", 
+						"pigeon pea","lentil")] <- "seed"
+	d$yield_part[d$crop %in% c("maize", "sorghum", "millet", "rice", "wheat")] <- "grain"
+	d$yield_part[d$crop %in% c("cassava","sweetpotato", "carrot", "turnip")] <- "roots"
+	d$yield_part[d$crop %in% c("potato", "yam")] <- "tubers"
+	d$yield_part[d$crop == "ginger"] <- "rhizome"
 	d$yield_part[d$crop %in% c(
 	  "kale",
 	  "amaranth",
@@ -821,29 +739,18 @@ carob_script <- function(path) {
 	)
 	
 	#products
-	d$insecticide_product <- trimws(tolower(d$insecticide_product))
+	ins <- trimws(tolower(d$insecticide_product))
 	
-	d$insecticide_product[
-	  d$insecticide_product %in% c(
-	    "", "-88", "0", "1", "2", "3", "4", "5", "6", "7", "8",
-	    "18", "22", "45","n o", "nn", "nlo", "nol", "non","no", "yes",
-	    "name unknown","ddt")] <- NA
+	ins[tolower(ins) %in% c("n o", "nn", "nlo", "nol", "non", "no")] <- "none"
+	ins[ins %in% c("yes", "name unknown")] <- "unknown"
+	ins[ins %in% c("", "-88", "0", "1", "2", "3", "4", "5", "6", "7", "8", "18", "22", "45") <- NA
 	
-	d$insecticide_product[
-	  tolower(trimws(d$insecticide_product)) %in%
-	    c("", "-88", "0",
-	      "n o", "nlo", "nn", "no", "nol", "non",
-	      "yes", "yes chumba 400g")
-	] <- NA
+#	"ddt" is DDT, and instecticide
 	
-	d$insecticide_product[
-	  grepl(
-	    "atraz|gramaz|gramoz|grammaz|paraquat|paraforce|round-up|
-     butach|butaforce|weed|herbicide|habicide|harbicide|
-     selective weedicide|stamp|condem|kombat",
-	    d$insecticide_product
-	  )
-	] <- NA
+## some of these are herbicides and could be used for that (as below?). 
+## also, could there be an insecticide as well? 
+	ins[grepl("atraz|gramaz|gramoz|grammaz|paraquat|paraforce|round-up|butach|butaforce|weed|herbicide|habicide|harbicide|
+     selective weedicide|stamp|condem|kombat", ins)] <- NA
 	
 	herb <- grepl(
 	  "atraz|afrazine|adrazone|attrazine|attazine|atrizine|
@@ -852,52 +759,52 @@ carob_script <- function(path) {
    butoforce|butter force|butters|
    dara force|gram|sarosate|stump|
    selective|kondem|caliherb",
-	  tolower(d$insecticide_product)
+	  tolower(ins)
 	)
 
-	d$insecticide_product[herb] <- NA
+	ins[herb] <- NA
 	
 	fung <- grepl(
 	  "benlate|benbte|
    dethan|dethane|distane|
    cooper|copper",
-	  tolower(d$insecticide_product)
+	  tolower(ins)
 	)
 	
-	d$insecticide_product[fung] <- NA
+	ins[fung] <- NA
 	
-	d$insecticide_product[
-	  grepl("actellic", tolower(d$insecticide_product))
+	ins[
+	  grepl("actellic", tolower(ins))
 	] <- "unknown"
 	
-	d$insecticide_product[
+	ins[
 	  grepl("cipenetrin|cipetrin|cyper|cymetherine|
          dymetherine|sipmethlane",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "cypermethrin"
 	
-	#d$insecticide_product[
-	  #grepl("^ddt$", tolower(d$insecticide_product))
+	#ins[
+	  #grepl("^ddt$", tolower(ins))
 	#] <- "ddt"
 	
-	d$insecticide_product[
-	  grepl("diptex", tolower(d$insecticide_product))
+	ins[
+	  grepl("diptex", tolower(ins))
 	] <- "trichlorfon"
 	
-	d$insecticide_product[
-	  grepl("^seven$", tolower(d$insecticide_product))
+	ins[
+	  grepl("^seven$", tolower(ins))
 	] <- "carbaryl"
 	
-	d$insecticide_product[
+	ins[
 	  grepl("lipcord|lipicod|cypamethin lipcod",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "cypermethrin"
 	
-	d$insecticide_product[
-	  grepl("sumicombi", tolower(d$insecticide_product))
+	ins[
+	  grepl("sumicombi", tolower(ins))
 	] <- "fenvalerate"
 	
-	d$insecticide_product[
+	ins[
 	  grepl(
 	    "insecticide|hercides|power|propanol|
      bloodtex|bugus|bullet|bulletin|
@@ -909,61 +816,61 @@ carob_script <- function(path) {
      ultrachlo|ultrachlor|ultrachol|ultrachor|
      carbohydrates|npk|urea|
      85% w.p an|3 grain\\*|best",
-	    tolower(d$insecticide_product)
+	    tolower(ins)
 	  )
 	] <- "unknown"
 	
-	d$insecticide_product[
+	ins[
 	  grepl(
 	    "dithane|dithan|ridomil|ridonul|ridanie|
      benlate|bentale|shavit|mildrex",
-	    d$insecticide_product)] <- NA
-	d$insecticide_product[
+	    ins)] <- NA
+	ins[
 	  grepl(
 	    "pesticide|pestcides|pesrcides|
      insecticide|insectant|biocides",
-	    d$insecticide_product
+	    ins
 	  )
 	] <- "unknown"
 	
-	d$insecticide_product[
-	  grepl("carbaryl|cabaryl|cabary|caborly", d$insecticide_product)
+	ins[
+	  grepl("carbaryl|cabaryl|cabary|caborly", ins)
 	] <- "carbaryl"
 	
-	d$insecticide_product[
-	  grepl("deltamet", d$insecticide_product)
+	ins[
+	  grepl("deltamet", ins)
 	] <- "deltamethrin"
 	
-	d$insecticide_product[
-	  grepl("dimothaete", d$insecticide_product)
+	ins[
+	  grepl("dimothaete", ins)
 	] <- "dimethoate"
 	
-	d$insecticide_product[
-	  grepl("durbuban", d$insecticide_product)
+	ins[
+	  grepl("durbuban", ins)
 	] <- "chlorpyrifos"
 	
-	d$insecticide_product[
-	  grepl("thiodan|tioda|tiode|theodan", d$insecticide_product)
+	ins[
+	  grepl("thiodan|tioda|tiode|theodan", ins)
 	] <- "endosulfan"
 	
-	d$insecticide_product[
-	  grepl("methodidate", d$insecticide_product)
+	ins[
+	  grepl("methodidate", ins)
 	] <- "methidathion"
 	
-	d$insecticide_product[
-	  grepl("lannet", d$insecticide_product)
+	ins[
+	  grepl("lannet", ins)
 	] <- "methomyl"
 	
-	d$insecticide_product[
-	  grepl("^karate$", d$insecticide_product)
+	ins[
+	  grepl("^karate$", ins)
 	] <- "lambda-cyhalothrin"
 	
-	d$insecticide_product[
-	  grepl("^roga$|^roger$", d$insecticide_product)
+	ins[
+	  grepl("^roga$|^roger$", ins)
 	] <- "dimethoate"
 	
-	d$insecticide_product[
-	  grepl("^ash$|^soap$", d$insecticide_product)
+	ins[
+	  grepl("^ash$|^soap$", ins)
 	] <- "unknown"
 	
 	valid <- c(
@@ -981,37 +888,40 @@ carob_script <- function(path) {
 	  "unknown"
 	)
 	
-	d$insecticide_product[
-	  !is.na(d$insecticide_product) &
-	    !(d$insecticide_product %in% valid)
+	ins[
+	  !is.na(ins) &
+	    !(ins %in% valid)
 	] <- "unknown"
+
+	d$insecticide_product <- ins
+
 	
 	d$herbicide_product <- NA
 	d$fungicide_product <- NA
 	
 	d$herbicide_product[
 	  grepl("atraz|afrazine|atrazil|atrazin|atrazone|attrazine|attazine",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "atrazine"
 	
 	d$herbicide_product[
 	  grepl("gramaz|gramoz|grammaz|gramazoe|gramazone|gramozone",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "paraquat"
 	
 	d$herbicide_product[
 	  grepl("paraquat|paraforce|para force|para fprce",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "paraquat"
 	
 	d$herbicide_product[
 	  grepl("round-up|sarosate",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "glyphosate"
 	
 	d$herbicide_product[
 	  grepl("butach|butaforce|buta force|butter force|butoforce",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "butachlor"
 	
 	d$herbicide_product[d$herbicide_product=="butachlor"] <- "unknown"
@@ -1019,27 +929,27 @@ carob_script <- function(path) {
 	
 	d$fungicide_product[
 	  grepl("dithane|dithan|dithone",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "mancozeb"
 	
 	d$fungicide_product[
 	  grepl("ridomil|ridonul|ridanie|rhidanie|rhidonue|lidomil",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "metalaxyl"
 	
 	d$fungicide_product[
 	  grepl("benlate|bentale",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "benomyl"
 	
 	d$fungicide_product[
 	  grepl("shavit",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "shavit"
 	
 	d$fungicide_product[
 	  grepl("copper|cooper",
-	        tolower(d$insecticide_product))
+	        tolower(ins))
 	] <- "copper fungicide"
 	
 	d$fungicide_product[d$fungicide_product =="copper fungicide"]  <- "copper"
