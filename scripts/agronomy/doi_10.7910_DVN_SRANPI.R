@@ -2,7 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
 
 
 carob_script <- function(path) {
@@ -37,21 +36,23 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
-	  country="Senegal",
-	  planting_date=as.character(r$year),
-	  location=r$site,
-	  latitude=r$lat,
-	  longitude=r$long,
-	  season=r$season,
+	  country= "Senegal",
+	  planting_date= as.character(r$year),
+	  location= r$site,
+	  latitude= r$lat,
+	  longitude= r$long,
+	  season= r$season,
 	  crop="rice",
-	  soil_EC=r$soil_EC_dS_m,
-	  treatment=r$treatment,
-	  variety=r$variety,
-	  N_fertilizer=r$nitrogen_applied_kg_ha,
-	  P_fertilizer=r$phosphorus_applied_kg_ha,
-	  K_fertilizer=r$potassium_applied_kg_ha,
-	  Zn_fertilizer=r$zinc_applied_kg_ha,
-	  yield=r$paddy_yield_t_ha*1000
+	  soil_EC= r$soil_EC_dS_m,
+	  treatment= r$treatment,
+	  variety= r$variety,
+	  N_fertilizer= r$nitrogen_applied_kg_ha,
+	  P_fertilizer= r$phosphorus_applied_kg_ha,
+	  K_fertilizer= r$potassium_applied_kg_ha,
+	  Zn_fertilizer= r$zinc_applied_kg_ha,
+	  gypsum = r$gypsum_applied_kg_ha,
+	  yield= r$paddy_yield_t_ha*1000,
+	  trial_id = paste(r$site,r$treatment_name,sep = "-")
 	)
 	
 	fert_type <- c(
@@ -70,16 +71,16 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	
 	d$fertilizer_type <- fert_type[d$treatment]
 	d$season <- ifelse(d$season=="DS","dry","wet")
-	d$latitude[is.na(d$latitude) & d$name == "Thilène"] <- 16.2712
-	d$longitude[is.na(d$longitude) & d$name == "Thilène"] <- -16.1629
-	d$trial_id <- paste(d$planting_date,d$location,sep = "-") 
+	d$latitude[is.na(d$latitude) & d$location == "Thilène"] <- 16.2712
+	d$longitude[is.na(d$longitude) & d$location == "Thilène"] <- -16.1629
+	 
 	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- TRUE
 	d$yield_part <- "grain"
-	d$yield_moisture <- as.numeric(NA)
+	d$yield_moisture <- NA_real_
 	d$yield_isfresh <- TRUE
 	
 	carobiner::write_files(path, meta, d)
