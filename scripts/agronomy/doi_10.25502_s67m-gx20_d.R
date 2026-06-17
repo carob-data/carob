@@ -1,10 +1,10 @@
 # R script for "carob"
 #This study had different variables published under different doi's
-#this script (doi:10.25502/s67m-gx20/d) is for photosynthetic active radiation
-# script (doi_10.25502_qm2j-4q10_d) is for biomass
-# script (10.25502/zbqv-k659/d) land_prep_method
-#script doi:10.25502/88g2-xc50/d dry matter yield
-#script 10.25502/vgf3-aj58/d soil data
+#this script (doi:10.25502/s67m-gx20/d) has photosynthetic active radiation
+# doi:10.25502/qm2j-4q10_d) has biomass
+# doi:10.25502/zbqv-k659/d) has land_prep_method
+# doi:10.25502/88g2-xc50/d has dry matter yield
+# doi:10.25502/vgf3-aj58/d has soil data
 
 carob_script <- function(path) {
 
@@ -25,7 +25,7 @@ carob_script <- function(path) {
 		response_vars = "none", 
 		carob_contributor = "Mitchelle Njukuya",
 		completion = 100,	
-		effort = 2,	
+		carob_effort = NA,	
 		notes = NA
 	)
 	
