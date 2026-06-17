@@ -27,65 +27,69 @@ carob_script <- function(path) {
   )
   
   f <- ff[basename(ff) == "data.xls"]
-  r <- carobiner::read.excel(f)
+  r <- carobiner::read.excel(f, na= c("n/a", "no data"))
 
     d <- data.frame(
-      hhid=as.character(r$HHID),
-      country=r$country_name,
-      adm1=r$first_level_administrative_unit,
-      season=r$season,
-      variety=r$variety_used,
+      hhid= as.character(r$HHID),
+      country= r$country_name,
+      adm1= r$first_level_administrative_unit,
+      longitude = round(as.numeric(gsub(",", ".", r$longitude)), 4),
+      latitude = round(as.numeric(gsub(",", ".", r$latitude)), 4),
+      geo_from_source = TRUE,
+      season= r$season,
+      variety= r$variety_used,
       rep=as.integer(r$replicate),
-      treatment=r$experimental_treatment_name,
-      planting_method=tolower(r$planting_method),
-      planting_date=r$sowing_date,
-      transplanting_date=r$transplanting_date,
-      harvest_date=r$harvest_date,
-      N_fertilizer=r$n_applied_kg_ha,
-      P_fertilizer=r$p_applied_kg_ha,
-      K_fertilizer=r$k_applied_kg_ha,
-      yield=r$`yield_at_14%_moisture_content_kg_ha`
+      treatment= r$experimental_treatment_name,
+      planting_method= tolower(r$planting_method),
+      planting_date= as.character(r$sowing_date),
+      transplanting_date= as.character(r$transplanting_date),
+      harvest_date= as.character(r$harvest_date),
+      N_fertilizer= r$n_applied_kg_ha,
+      P_fertilizer= r$p_applied_kg_ha,
+      K_fertilizer= r$k_applied_kg_ha,
+      yield = r$`yield_at_14%_moisture_content_kg_ha`,
+      herbicide_used = grepl("herbicide", r$land_preparation_clearing),
+      weeding_times = as.integer(r$number_weeding),
+      irrigated = grepl("irrigated", tolower(r$production_system)),
+      fertilizer_cost = r$total_fertilizer_cost_usd_ha,
+      fertilizer_used = !grepl("No fertilizer", r$type_npk_fertilizer_used),
+      fertilizer_type ="NPK;urea",
+      trial_id = paste(r$use_case_name, r$activity_name, r$activity_type, sep = "-")
     ) 
-    
-    #planting date
-    d$planting_date[d$planting_date %in% c("n/a", "no data")] <- NA
-    d$planting_date <- as.Date(as.numeric(d$planting_date), origin = "1899-12-30")
-    d$planting_date <- as.character(d$planting_date)
-    
-    #transplanting date
-    d$transplanting_date[d$transplanting_date %in% c("n/a", "no data")] <- NA
-    d$transplanting_date <- as.Date(as.numeric(d$transplanting_date), origin = "1899-12-30")
-    d$transplanting_date <- as.character(d$transplanting_date)
-    
-    #harvesting date
-    d$harvest_date[d$harvest_date %in% c("n/a", "no data")] <- NA
-    d$harvest_date <- as.Date(as.numeric(d$harvest_date), origin = "1899-12-30")
-    d$harvest_date <- as.character(d$harvest_date)
    
-    #lat_lon data
-    loc <- data.frame(
-      adm1 = c("Jigawa", "Kano", "Kebbi", "Nasarawa", 
-               "Bama", "Koulikoro", "Sikasso", "Anambra", "Yamoussoukro", 
-               "North West", "Southern", "Northern", "Savannah"),
-      longitude=c(8.9879, 8.3791, 4.2687, 7.7503, -4.4294, -7.3654, -5.6778, 6.893,
-                  -5.2776, -13.2015, -12.178, -0.8419, -0.2663),
-      latitude=c(12.6515, 11.7554, 12.4729, 8.3301, 11.3996, 13.2359, 11.3166, 6.3147,
-                 6.82, 8.6157, 7.601, 9.4287, 9.1323))
     
-    d <- merge(d,loc,by="adm1", all.x = TRUE)
+    #lat_lon data
+    
+    geo <- data.frame(
+      country = c("Burkina Faso", "Mali", rep("Sierra Leone", 2), "Ghana", "Nigeria"),
+      adm1 = c("Bama", "Sikasso", "North West", "Southern", "Northern", "Nasarawa"),
+      lon = c(-4.4129, -5.667, -12.520, -11.753, -0.181, 7.7115),
+      lat = c(11.375, 11.315, 9.367, 8.564,9.549 , 8.547),
+      geo_from = FALSE
+    )
+  
+    d <- merge(d, geo, by= c("adm1", "country"), all.x = TRUE)
+    
+    d$longitude[!is.na(d$lon)] <- d$lon[!is.na(d$lon)]
+    d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
+    d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
+    
+    d$lat <- d$lon <- d$geo_from <- NULL
+    
+    
     
     d$season <- ifelse(d$season=="dry season","dry","wet")
     d$planting_method <- ifelse(d$planting_method=="direct","direct seeding","transplanted")
     d$country <- gsub("Cote d'Ivoire","Côte d'Ivoire",d$country)
-    d$trial_id <- paste(d$adm1,d$planting_date, sep = "_")
     d$on_farm <- TRUE
     d$is_survey <- FALSE
-    d$irrigated <- TRUE
-    d$geo_from_source <- FALSE
     d$yield_isfresh <- TRUE
     d$crop <- "rice"
     d$yield_part <- "grain"
     d$yield_moisture <- 14
+    
+    ### Set ambiguous harvest dates to NA (10 rows)
+    d$harvest_date[(as.Date(d$harvest_date) -as.Date(d$planting_date))< 40] <-  NA
     
   carobiner::write_files(path, meta, d)
 }
