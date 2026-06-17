@@ -18,13 +18,14 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 		data_organization = "ICRISAT",
 		publication = "doi:10.3389/fpls.2021.643192",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-07",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety;N_fertilizer",
 		response_vars = "yield;fwy_stems;dmy_stems", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -85,6 +86,7 @@ A set of sixty diverse Sorghum genotypes including parents of several genetic po
 	)
 	 
 	 d <- rbind(d1, d2)
+	 d$yield_isfresh <- as.numeric(NA)
 	 d$yield_moisture <- as.numeric(NA)
 	 
 	 d$country <- "India"

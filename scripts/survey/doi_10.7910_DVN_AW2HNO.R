@@ -23,12 +23,13 @@ The dataset consist of 178 farmers who irrigated at least one of their plots in 
 		publication = "http://ebrary.ifpri.org/cdm/ref/collection/p15738coll2/id/131437",
 		project = NA,
 		carob_date = "2026-03-26",
+		carob_effort = NA,
 		design = "unitOfAnalysis",	
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

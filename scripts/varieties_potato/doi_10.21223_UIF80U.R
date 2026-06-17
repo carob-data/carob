@@ -16,6 +16,7 @@ carob_script  = function(path) {
       treatment_vars = "variety",
       response_vars = "AUDPC", 
       carob_contributor = "Henry Juarez",
+      carob_effort = NA,
       carob_date = "2024-05-12",
       notes = NA
   )

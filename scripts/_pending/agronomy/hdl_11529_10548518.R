@@ -21,6 +21,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;lime_used",
 		response_vars = "yield", 
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2024-09-05"
 	)
 	

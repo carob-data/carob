@@ -21,13 +21,14 @@ The dataset comprises information from 5,689 wheat fields, capturing crop manage
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-26",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

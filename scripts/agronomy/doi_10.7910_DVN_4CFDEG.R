@@ -21,13 +21,14 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 		data_organization = "AfricaRice",
 		publication = "doi:10.1016/S0378-4290(03)00153-9; doi:10.1016/S0378-4290(02)00117-X",
 		project = "WARDA LTE",
+		carob_effort = NA,
 		carob_date = "2025-07-15",
 		design = NA,		
 		data_type = "experiment",
 		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer",		
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
-		completion = 100
+		carob_completion = 100
 	)
 	
 

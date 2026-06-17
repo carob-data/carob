@@ -28,6 +28,7 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
          treatment_vars= "N_fertilizer; variety; land_prep_method", 
          response_vars = "yield; fwy_total", 
          carob_contributor= "Cedric Ngakou", 
+         carob_effort = NA,
          carob_date="2025-07-03",
          completion=100,
          design = "Field data was collected in 2014 during repeated sampling campaigns. Additional data was acquired from soil maps, GIS data bases and farm management surveys. Please refer to main paper for details.",
@@ -77,6 +78,7 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
    d$previous_crop <- gsub("sugarbeet", "sugar beet", d$previous_crop)
    d$previous_crop <- gsub("osr", "rapeseed", d$previous_crop)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

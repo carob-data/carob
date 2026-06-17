@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		response_vars= "fwy_total; dmy_leaves; fwy_leaves", 
 		treatment_vars = "plant_spacing; row_spacing", 
 		carob_contributor= "Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date="2025-06-10",
 		notes=NA
    )
@@ -156,6 +157,7 @@ carob_script <- function(path) {
     wth$year <-  wth$id <- NULL
     
     
+	dd$yield_isfresh <- as.numeric(NA) #needs to be checked
 	dd$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(path, meta, dd, wth = wth)

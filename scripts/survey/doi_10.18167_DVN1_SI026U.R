@@ -23,12 +23,13 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		publication = NA,
 		project = NA,
 		carob_date = "2025-11-17",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 75,	
+		carob_completion = 75,	
 		notes = NA
 	)
 	

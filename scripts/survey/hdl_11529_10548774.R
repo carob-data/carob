@@ -20,12 +20,13 @@ A large database of individual farmer field data (n = 4,107) for rice production
 		publication = NA,
 		project = NA,
 		carob_date = "2026-05-15",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

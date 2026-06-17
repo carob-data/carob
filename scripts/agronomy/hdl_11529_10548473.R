@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
 		data_type="experiment", 
 		carob_contributor="Fredy Chimire",
+		carob_effort = NA,
 		carob_date="2024-03-24",
 		treatment_vars="land_preparation;irrigation_fulfilment",
 		response_vars="yield"
@@ -60,6 +61,7 @@ carob_script <- function(path) {
 	d$is_survey <- FALSE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

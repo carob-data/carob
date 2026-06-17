@@ -20,13 +20,14 @@ Bean root rot improvement
 		data_organization = "ABC",
 		publication = "doi:10.4314/acsj.v28i3.5",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-09-15",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 90,	
+		carob_completion = 90,	
 		notes = "NE_BL_Set3 root rot.xlsx file has not been processed as its content is not suitable for carob."
 	)
 	

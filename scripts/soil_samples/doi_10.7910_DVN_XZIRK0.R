@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		treatment_vars = "none",
 		response_vars = "none",
 		carob_contributor= "Andrew Sila",
+		carob_effort = NA,
 		carob_date="2024-07-29"
 	)
   

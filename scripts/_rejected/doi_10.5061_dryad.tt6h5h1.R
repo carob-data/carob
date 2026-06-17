@@ -28,7 +28,7 @@ The profit potential for a given investment in fertilizer use can be estimated u
 		treatment_vars = "N_fertilizer;P_fertilizer; K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

@@ -20,6 +20,7 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-10-29",
 		notes = NA, 
 		design = "16×9 lattice"

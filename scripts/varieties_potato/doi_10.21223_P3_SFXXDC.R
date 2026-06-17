@@ -18,6 +18,7 @@ B3C0 is the initial cycle of recombination of group B3- Population B. This popul
     treatment_vars = "variety",
     response_vars = "yield;yield_marketable;AUDPC;rAUDPC", 
     carob_contributor = "Henry Juarez",
+    carob_effort = NA,
     carob_date = "2024-09-13",
     notes = NA
   )

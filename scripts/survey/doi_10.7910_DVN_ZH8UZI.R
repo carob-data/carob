@@ -35,6 +35,7 @@ cowpea, yam and cassava in a mixed farming system."
       publication = NA,
       carob_contributor = "Stella Muthoni",
       carob_date = "2026-06-09",
+      carob_effort = NA,
       data_type = "survey",
       data_organization = "WUR",
       project = "Africa RISING",
@@ -42,7 +43,7 @@ cowpea, yam and cassava in a mixed farming system."
       response_vars = "none",
       notes = "",
       design = NA,
-      completion = 30
+      carob_completion = 30
   )
   
   #Load only Northern Region file that contains crop data

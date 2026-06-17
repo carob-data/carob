@@ -21,13 +21,14 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 		data_organization = "CIMMYT; EIAR",
 		publication = NA,
 		project = "TAMASA",
+		carob_effort = NA,
 		carob_date = "2026-06-11",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "planting_date;variety",
 		response_vars = "emergence_date;flowering_date;maturity_date;yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

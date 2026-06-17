@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "variety",
 		carob_contributor="Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2023-01-30",
 		modified_by="Robert Hijmans"
 	)

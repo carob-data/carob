@@ -17,6 +17,7 @@ The Harvest Plus Advanced Nursery (HPAN) contains spring bread wheat (Triticum a
     project="Harvest Plus Advanced Nursery",
     data_type= "experiment",
     carob_contributor= "Blessing Dzuda",
+    carob_effort = NA,
     carob_date="2025-11-12",
     response_vars = "yield",
     treatment_vars = "variety_code"

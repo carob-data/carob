@@ -20,13 +20,14 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 		data_organization = "IITA; CIAT; IRRI; AfricaRice; ICARDA",
 		publication = "doi:10.1007/s12571-024-01478-5",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-01",
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "Zn_fertilizer;Fe_fertilizer;N_fertilizer;K_fertilizer;P_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

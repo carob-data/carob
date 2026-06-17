@@ -22,13 +22,14 @@ The Africa RISING program adopts the mother-baby trial approach to test, validat
 		data_organization = "ICRAF; SUA",
 		publication = NA,
 		project = "Africa RISING",
+		carob_effort = NA,
 		carob_date = "2025-11-12",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;variety",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

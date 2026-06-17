@@ -19,8 +19,9 @@ The Acid-Soils Wheat Screening Nursery (ASWSN) contains spring bread wheat germp
 		response_vars = "yield",
 		treatment_vars = "variety_code",
 		carob_contributor= "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2025-09-01",
-		completion = 100,	
+		carob_completion = 100,	
 		design=NA,
 		notes = NA
   )

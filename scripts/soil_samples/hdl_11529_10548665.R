@@ -21,8 +21,9 @@ Soil sampling with 1x1 km grid in the agricultural area of the Coroneo Municipal
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor= "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2025-09-11",
-		completion = 100,	
+		carob_completion = 100,	
 		design=NA,
 		notes = NA
   )

@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		project="AfSIS",
 		data_organization = "IITA;ICRISAT;ABC",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-02-19",
 		data_type="experiment"
 	)

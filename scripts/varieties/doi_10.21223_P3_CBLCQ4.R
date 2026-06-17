@@ -21,13 +21,14 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 		data_organization ="CIP;NCSU", #"International Potato Center; North Carolina State University",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-28",
 		design = "alpha lattice experimental",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;fwy_total;yield_marketable;fwy_leaves", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -81,6 +82,7 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 	## keep rows with yield > 0  
 	#d <- d[d$yield>0, ]
 		
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

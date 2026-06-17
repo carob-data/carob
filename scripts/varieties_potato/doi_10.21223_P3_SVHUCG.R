@@ -20,13 +20,14 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 		data_organization = "CIP; Yanapai",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-03-11",
 		design = "RCB",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "tuber_Zn;tuber_Fe", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

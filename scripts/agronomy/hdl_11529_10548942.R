@@ -19,8 +19,9 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-10-09",
 		notes = NA, 
 		design = NA

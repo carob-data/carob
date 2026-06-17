@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		treatment_vars="land_prep_method;variety" , 
 		response_vars="yield",
 		carob_contributor= "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2024-05-16"
 	)
 
@@ -88,6 +89,7 @@ carob_script <- function(path) {
 	i <- which(d$plant_height < 1)
 	d$plant_height[i] <- d$plant_height[i] * 100
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

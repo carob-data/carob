@@ -14,6 +14,7 @@ carob_script <- function(path) {
     data_organization = "CIRAD",
     carob_contributor="Cedric Ngakou",
     carob_date="2023-10-18",
+    carob_effort = NA,
     data_type="survey",
 	response_vars = "yield",
 	# perhaps this is stratification (-like)?

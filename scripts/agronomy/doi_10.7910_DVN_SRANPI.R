@@ -21,13 +21,14 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-06-09",
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Blessing Dzuda",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA)
 	
 

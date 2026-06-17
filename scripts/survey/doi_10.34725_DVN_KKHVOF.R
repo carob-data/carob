@@ -32,11 +32,12 @@ researchInstrument: Structured questionnaire and interviews
 		publication = NA,
 		project = NA,
 		carob_date = "2025-12-08",
+		carob_effort = NA,
 		data_type = "compilation",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

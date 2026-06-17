@@ -23,12 +23,13 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-30",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "we process only files with useful information for carob"
 	)
 	

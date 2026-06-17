@@ -20,13 +20,14 @@ Recent studies highlight conservation management practices as an effective strat
 		data_organization = "UAKS; NDSU; UKY; NCSU;UAR; OHSU; MSU; IASU; CLU; UMINN",  
 		publication = "doi:10.1016/j.agee.2025.109950",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-12",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;crop_rotation;cover_crop_used",
 		response_vars = "soil_pH;soil_N_total;soil_SOC;soil_C_total;soil_P;soil_K;soil_protein", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

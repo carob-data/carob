@@ -19,13 +19,14 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		data_organization = "UZIM; CIRAD; ETH; CIMMYT",
 		publication ="doi:10.1016/j.agee.2022.108207",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-03-10",
 		design = "component omission trial",
 				data_type = "experiment",
 		treatment_vars = "land_prep_method;crop_rotation",
 		response_vars = "yield;soil_NH4;soil_NO3", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

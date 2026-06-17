@@ -20,13 +20,14 @@ Peanut (Arachis hypogaea L.) genotypes with superior and stable agronomic perfor
 		data_organization = "ICRISAT",
 		publication = "doi:10.2135/cropsci2016.01.0005",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-29",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

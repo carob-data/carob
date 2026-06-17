@@ -20,13 +20,14 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 		data_organization = "SSSA; CIRAD; FOFIFA",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-12-04",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 75,	
+		carob_completion = 75,	
 		notes = NA
 	)
 	

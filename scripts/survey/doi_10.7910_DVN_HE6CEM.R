@@ -22,12 +22,13 @@ The survey data on soil carbon enhancing practices in western Kenya is systemati
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-12",
+		carob_effort = NA,
 		design = "universe: The survey was carried out in the Western Kenya in Kakamega and Vihiga counties. The counties are characterized as high agricultural area but are of low agricultural productivity as a result of poor farming techniques, low soil fertility, soil erosion and degradation. The counties are also classified by high population density and high poverty rates. Vihiga is the most densely populated county in Kenya with 1044 persons per km2 and Kakamega county at 682 persons per km2. Approximately 51% and 41% of the population live below the poverty line in Kakamega and Vihiga county respectively compared to an average of 39%. The main source of livelihood is agriculture. Cropping is also widely practiced in the region with most farmers owning between 1-2 acres of land or less. Some of the crop species grown include maize, beans, sweet potatoes, local vegetables, cassava, sorghum, millet, sugarcane and tea. The snowballing technique was used to generate a sample of 334 farmers.",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = NA
 	)
 	

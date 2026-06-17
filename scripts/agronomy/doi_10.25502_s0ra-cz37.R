@@ -13,6 +13,7 @@ carob_script <- function(path) {
     publication= NA, 
     data_organization = "IITA;ICRAF;WUR",
     carob_contributor="Cedric Ngakou",
+    carob_effort = NA,
     carob_date="2023-08-20",
     data_type="experiment",
     project=NA,
@@ -211,6 +212,7 @@ carob_script <- function(path) {
   d$location <- as.character(d$location)
   d$yield_part <- "seed"
   d$planting_date <- as.character(NA)
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

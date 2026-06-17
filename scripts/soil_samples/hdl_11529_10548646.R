@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "CIMMYT",
 		carob_contributor="Andrew Sila",
+		carob_effort = NA,
 		carob_date="2023-09-28",
 		data_type = "survey",
 		response_vars = "none",

@@ -18,8 +18,9 @@ carob_script <- function(path) {
 		data_type = "experiment",
 		treatment_vars = "variety_pedigree",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2025-09-15",
 		notes = NA,
 		design = NA

@@ -14,6 +14,7 @@ The data support a research article which is under review “Increased cassava g
 		publication= "doi:10.1016/j.fcr.2023.109056",
 		data_organization = "IITA",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-10-01",
 		data_type="experiment",
 		project=NA, 
@@ -76,6 +77,7 @@ The data support a research article which is under review “Increased cassava g
 	d$planting_date <- ifelse(d$season == "LR2014", "2014", "2015")
 	
 	d$season <- "long rains"
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

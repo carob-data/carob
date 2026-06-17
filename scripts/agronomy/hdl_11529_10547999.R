@@ -17,8 +17,9 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		data_type = "experiment",
 		treatment_vars = "crop_rotation",
 		response_vars = "yield;fwy_total", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2025-11-12",
 		notes = NA, 
 		design = NA

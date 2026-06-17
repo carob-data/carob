@@ -20,6 +20,7 @@ Cluster analysis separated the maize germplasm into five major groups, different
 		response_vars = "yield",
 		treatment_vars = "variety",
 		project=NA,
+		carob_effort = NA,
 		carob_date="2023-10-03"
    )
    

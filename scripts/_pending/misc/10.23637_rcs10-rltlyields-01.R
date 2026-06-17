@@ -25,6 +25,7 @@ Period 1 (1962-1980): four lime levels with and without fertilizer P and K. Magn
 		publication=NA,
 		data_organization = "Rothamsted",
 		carob_contributor="Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2024-04-23",
 		data_type="experiment"
 	)

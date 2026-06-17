@@ -21,12 +21,13 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-24",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = NA
 	)
 	

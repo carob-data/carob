@@ -17,13 +17,14 @@ carob_script <- function(path) {
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date = "2024-09-20",
 		notes = NA
 	)
 
 	process_cowpea <- carobiner::get_function("process_cowpea", path, group)
 	d <- process_cowpea(ff)
-	d$location <- "Kano"
+	d$location <- "Kano"
 	carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

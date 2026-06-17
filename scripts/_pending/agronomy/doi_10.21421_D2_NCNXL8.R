@@ -21,6 +21,7 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 		treatment_vars = "variety",
 		response_vars = "grain_Zn, grain_Fe,yield", 
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2024-08-15",
 		notes = "the irrigated trial had no irrigation data"
 	)

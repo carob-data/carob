@@ -14,6 +14,7 @@ carob_script <- function(path) {
         publication= NA, #"DOI:10.1564/v27_oct_04"
         data_organization = "IITA",
         carob_contributor="Cedric Ngakou",
+        carob_effort = NA,
         carob_date="2023-09-19",
         data_type="experiment",
         project=NA,
@@ -116,6 +117,7 @@ carob_script <- function(path) {
 	d$land_prep_method <- tolower(d$land_prep_method)
 	d$uid <- NULL
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

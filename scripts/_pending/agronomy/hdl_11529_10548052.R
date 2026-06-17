@@ -27,6 +27,7 @@ carob_script <- function(path) {
     data_organization = "CIMMYT",
     data_type="on_station",
     carob_contributor="Fredy Chimire",
+    carob_effort = NA,
     carob_date="2023-09-30"
   )
   

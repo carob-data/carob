@@ -18,13 +18,14 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		data_organization ="OHSU;PSU;USDA-ARS;ILSU;WIU;UMINN;UWP", 
 		publication = "doi:10.3389/fagro.2023.1205259",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-22",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars ="seed_treatment;variety",
 		response_vars ="yield;plant_density", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed."
 	)
 	
@@ -105,6 +106,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 
 	d	<- merge(d, soil, by="location", all.x = TRUE)
  
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

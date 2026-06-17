@@ -13,6 +13,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "IITA;ICRISAT;ABC",
 		carob_contributor="Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2021-10-06",
 		data_type="on-farm experiment",
 		project="AFSIS",
@@ -82,6 +83,7 @@ carob_script <- function(path) {
 	d$irrigated <- NA
 	d$planting_date <- as.character(NA)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

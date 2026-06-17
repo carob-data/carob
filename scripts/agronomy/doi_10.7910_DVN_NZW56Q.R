@@ -21,6 +21,7 @@ carob_script <- function(path) {
     treatment_vars= "variety",
     response_vars= "yield;fwy_residue",
     carob_contributor="Mitchelle Njukuya",
+    carob_effort = NA,
     carob_date="2024-01-16",
     notes="cropping systems need to be captured"
   )
@@ -96,6 +97,7 @@ carob_script <- function(path) {
 	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d$irrigated <- FALSE
       
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(meta, d, path=path)

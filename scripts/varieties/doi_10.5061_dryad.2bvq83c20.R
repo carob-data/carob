@@ -17,6 +17,7 @@ carob_script <- function(path) {
       treatment_vars= "variety", 
       response_vars = "growth_stage;node_count;yield", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2025-06-16",
       completion=90,
       notes="data on seed composition (protein, oil, lysine, etc.) not processed"

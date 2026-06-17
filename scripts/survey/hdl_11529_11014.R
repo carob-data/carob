@@ -21,9 +21,10 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2025-08-05",
+		carob_effort = NA,
 		notes = NA,
 		design = NA
 	)

@@ -29,7 +29,7 @@ Traditional tropical japonica (Oryza sativa) and Oryzaglaberrimacultivars are ty
 		treatment_vars = "",
 		response_vars = "", 
 		carob_contributor = "Aniruddha Gosh",
-		completion = 0,	
+		carob_completion = 0,	
 		notes = ""
 	)
 	

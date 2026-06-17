@@ -16,6 +16,7 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 		publication= NA,
 		data_organization = "CIAT",
 		carob_contributor="Rachel Mukami",
+		carob_effort = NA,
 		carob_date="2023-05-29",
 		data_type="compilation",
 		response_vars = "yield",

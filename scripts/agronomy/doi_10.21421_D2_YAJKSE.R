@@ -13,6 +13,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication="doi:10.12692_ijb_9.1.291-302",
 		carob_contributor="Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2022-09-12",
 		data_type="experiment",
 		data_organization="ICRISAT",
@@ -61,6 +62,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	d$yield_part <- "pod"
 	d$irrigated <- FALSE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

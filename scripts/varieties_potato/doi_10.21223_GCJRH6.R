@@ -19,6 +19,7 @@ carob_script <- function(path) {
       treatment_vars = "variety",
       response_vars = "yield;yield_marketable;AUDPC", 
       carob_contributor = "Henry Juarez",
+      carob_effort = NA,
       carob_date = "2024-04-12",
       notes = NA
   )

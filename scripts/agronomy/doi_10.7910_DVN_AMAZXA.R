@@ -34,13 +34,14 @@ Result of a multi-location study across Africa and Asia where different varietie
 		data_organization = "AfricaRice; JIRCAS; SCU; NARI; INERA; UPE; RRDI; IRRI",
 		publication = "doi:10.3389/fpls.2016.01435",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-15",
 		design = "RCBD; Alpha lattice",
 		data_type = "experiment",
 		treatment_vars = "P_fertilizer; variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
-		completion = 0
+		carob_completion = 0
 	)
 	
 	f1 <- ff[basename(ff) == "216077_supplementary-materials_datasheets_1.xlsx"]
@@ -134,6 +135,7 @@ Result of a multi-location study across Africa and Asia where different varietie
 	d$irrigated[d$country %in% c("Gambia", "Burkina Faso")] <- FALSE
 	d$ID <- d$design <- NULL
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

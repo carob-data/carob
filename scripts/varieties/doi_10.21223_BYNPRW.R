@@ -24,6 +24,7 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
          treatment_vars= "variety", 
          response_vars = "yield;yield_marketable", 
          carob_contributor= "Cedric Ngakou", 
+         carob_effort = NA,
          carob_date="2025-08-01",
          completion=100,
          notes=NA
@@ -106,6 +107,7 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
  d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
  
     
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 carobiner::write_files(path, meta, d)

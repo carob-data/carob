@@ -12,6 +12,7 @@ carob_script <- function(path) {
     publication=NA,
     data_organization = "CIMMYT",
     carob_contributor="Hope Mazungunye",
+    carob_effort = NA,
     carob_date="2024-05-28",
     data_type="on-station experiment",
     response_vars = "yield",

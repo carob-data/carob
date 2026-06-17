@@ -24,12 +24,13 @@ As part of the US government's Feed the Future initiative that aims to address g
 		publication = NA,
 		project = "Africa RISING",
 		carob_date = "2026-02-20",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "only files with useful information for carob have been process"
 	)
 	

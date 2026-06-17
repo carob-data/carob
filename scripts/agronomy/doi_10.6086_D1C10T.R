@@ -19,13 +19,14 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 		data_organization = "UCR; CSUEB; UIA", ##University of California, Riverside; California State University, East Bay; University of Iowa
 		publication = "doi:10.1016/j.agee.2022.107944",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-06",
 		design =NA, 
 		data_type = "experiment",
 		treatment_vars = "irrigation_method; N_fertilizer",
 		response_vars = "fw_yield; fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 
@@ -98,6 +99,7 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 	
 	d$crop <- gsub("sudangrass", "sudan grass", d$crop)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

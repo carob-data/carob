@@ -22,6 +22,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
 		data_type="experiment",
 		carob_contributor="Fredy Chimire",
+		carob_effort = NA,
 		carob_date="2023-09-10"
 		modified_by="Robert Hijmans (on-going)",
 		last_modified="2023-11-04"

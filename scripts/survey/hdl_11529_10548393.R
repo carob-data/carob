@@ -18,6 +18,7 @@ Replicated crop-cuts from farmers' fields at harvest at multiple locations in Ta
 		response_vars = "yield", 
 		carob_contributor = "Shumirai Manzvera",
 		carob_date = "2024-08-22",
+		carob_effort = NA,
 		notes = NA
 	)
 	

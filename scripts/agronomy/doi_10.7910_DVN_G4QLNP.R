@@ -20,13 +20,14 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 		project="AfricaRISING",
 		data_type= "experiment",
 		carob_contributor= "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2024-04-09",
 		response_vars= "yield",
 		treatment_vars="intercrops"
 	)
 
 	#use grep because the filename has a space on linux	
-	f1 <- ff[grep("006_siDom_droughtResistance.csv", basename(ff))]
+	f1 <- ff[basename(ff) == "006_siDom_droughtResistance.csv"]
 	r1 <- read.csv(f1)
 	f2 <- ff[basename(ff) == "007_siteCharacterization_droughtResistance.csv"]
 	r2 <- colMeans(read.csv(f2))
@@ -124,6 +125,7 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 	d$K_fertilizer <- as.numeric(NA)
 	d$irrigated <- FALSE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

@@ -18,6 +18,7 @@ B3C1 is the first cycle of recombination of advanced B3C0 potato clones. These c
     treatment_vars = "variety",
     response_vars = "yield;yield_marketable;AUDPC;rAUDPC", 
     carob_contributor = "Henry Juarez",
+    carob_effort = NA,
     carob_date = "2024-09-13",
     notes = NA
   )

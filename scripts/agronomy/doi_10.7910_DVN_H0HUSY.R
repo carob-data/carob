@@ -15,6 +15,7 @@ Description: This dataset contains information of experiments carried out upland
 		publication= NA,
 		data_organization = "CIAT;ICDF",
 		carob_contributor="Jean-Martial Johnson",
+		carob_effort = NA,
 		carob_date="2022-12-09",
 		data_type="experiment",
 		project=NA,
@@ -90,6 +91,7 @@ Description: This dataset contains information of experiments carried out upland
 	d$planting_date <- "2019"
 	d$irrigated <- NA
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

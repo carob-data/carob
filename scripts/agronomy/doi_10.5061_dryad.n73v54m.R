@@ -17,6 +17,7 @@ carob_script <- function(path) {
       treatment_vars= "land_prep_method; row_spacing; plant_density", 
       response_vars = "yield", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2025-06-19",
       completion=100,
       notes="N_fertilizer applied is not recorded."
@@ -202,6 +203,7 @@ carob_script <- function(path) {
    ### Duplicate rows; original data also has duplicates
    d <- unique(d)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

@@ -13,10 +13,11 @@ carob_script <- function(path) {
 	
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date = "2025-05-14",
 		data_organization = "xxx;WB",
 		data_citation = "",		
-		completion = 0
+		carob_completion = 0
 	)
 	
 	

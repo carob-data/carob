@@ -19,8 +19,9 @@ carob_script <- function(path) {
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "yield", 
-		completion = 99,
+		carob_completion = 99,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2026-04-01",
 		notes = NA,
 		design = NA

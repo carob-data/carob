@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;lime;OM_amount",
 		carob_contributor = "Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-02-15"
 	)
 
@@ -84,6 +85,7 @@ carob_script <- function(path) {
 	d$emergence_date <- as.character(as.Date(r$EmDate))
 	
 	d <- d[!is.na(d$yield), ]
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

@@ -22,8 +22,9 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2025-07-31",
 		notes = NA,
 		design = NA

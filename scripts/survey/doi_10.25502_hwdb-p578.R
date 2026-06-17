@@ -14,6 +14,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 		publication = NA,
 		carob_contributor = "Effie Ochieng'",
 		carob_date="2022-09-07",
+		carob_effort = NA,
 		data_type = "survey",
 		response_vars = "none",
 		treatment_vars = "none",

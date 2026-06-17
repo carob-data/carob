@@ -28,7 +28,7 @@ Sorghum bicolor, sub-race margaritiferum trial conducted by ICRISAT-Mali and IER
 		treatment_vars = "variety",
 		response_vars = "yield;dmy_storage", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

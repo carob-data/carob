@@ -23,12 +23,13 @@ Mali Africa RISING follow-up evaluation survey was implemented in 2022. The surv
 		publication = NA,
 		project = NA,
 		carob_date = "2026-04-09",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We process only useful files for carob"
 	)
 	

@@ -25,8 +25,9 @@ The dataset includes: Grain yield data for maize and wheat, Biomass production m
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;residue_prevcrop_used",
 		response_vars = "yield", 
-		completion = 90,
+		carob_completion = 90,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-11",
 		notes = NA,
 		design = NA

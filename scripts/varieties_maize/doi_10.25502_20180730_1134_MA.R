@@ -18,6 +18,7 @@ This dataset contains output of the research for Republic of Benin.
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
  	    publication="doi:10.1016/j.jenvman.2017.06.058",
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2023-07-03",
 		data_type = "experiment",
 		response_vars = "yield",

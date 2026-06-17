@@ -23,8 +23,9 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;variety;intercrops",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-10-30",
 		notes = NA, 
 		design = "Randomized Complete Block"

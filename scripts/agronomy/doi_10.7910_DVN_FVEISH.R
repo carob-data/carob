@@ -21,6 +21,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	  treatment_vars = "intercrops; land_prep_method; N_fertilizer; P_fertilizer; K_fertilizer",
 	  response_vars="yield",
 	  carob_contributor="Siyabusa Mkuhlani",
+	  carob_effort = NA,
 	  carob_date="2024-07-23"
 	)
 	
@@ -336,6 +337,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	
 	d <- d[!is.na(d$yield), ]
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

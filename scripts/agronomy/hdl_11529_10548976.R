@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		treatment_vars="land_prep_method;variety" , 
 		response_vars="yield",
 		carob_contributor= "Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2024-03-14",
 		modified_by= "Cedric Ngakou",
 		last_modified= "2024-09-26"
@@ -63,6 +64,7 @@ carob_script <- function(path) {
 	d$land_prep_method <- gsub("Labranza Convencional", "conventional", d$land_prep_method)
 	d$land_prep_method <- gsub("Camas Permanentes Angostas", "permanent beds", d$land_prep_method)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(meta, d, path=path)

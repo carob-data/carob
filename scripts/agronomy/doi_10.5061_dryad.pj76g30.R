@@ -26,6 +26,7 @@ Bean (Phaseolus vulgaris L.), maize and rice (Oryza sativa L.) grain concentrati
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
 		carob_contributor = "Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date = "2024-06-29"
 	)
    
@@ -145,6 +146,7 @@ Bean (Phaseolus vulgaris L.), maize and rice (Oryza sativa L.) grain concentrati
 
 	d <- d[!is.na(d$treatment), ]
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

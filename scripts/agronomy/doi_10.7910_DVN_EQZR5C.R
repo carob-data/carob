@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		treatment_vars = "intercrops; crop_rotation",
 		data_type= "on-farm experiment",
 		carob_contributor= "Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2024-02-29",
 		modified_by = "Siyabusa Mkuhlani",
 		last_modified = "2024-07-07"
@@ -67,6 +68,7 @@ carob_script <- function(path) {
 	d$P_fertilizer <- (20/100 * 100) * 0.437
 	d$K_fertilizer <- (10/100 * 100) * 0.83
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

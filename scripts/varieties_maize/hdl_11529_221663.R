@@ -21,6 +21,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "variety;plant_density", 
 		carob_contributor = "Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date = "2024-07-09"
 	)
 	

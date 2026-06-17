@@ -17,6 +17,7 @@ carob_script <- function(path) {
       treatment_vars = "variety", 
       response_vars = "dmy_storage",
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-08-01"
    )
    
@@ -58,6 +59,7 @@ f <- ff[basename(ff)=="Data file of Medium duration lines for agronomic traits i
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files (path, meta, d)    

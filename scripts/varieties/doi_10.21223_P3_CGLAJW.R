@@ -19,6 +19,7 @@ The data set has on-station advanced yield trials for 2005 to 2006 for Kachwekan
       response_vars = "yield;yield_marketable",
       treatment_vars = "variety", 
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-09-24",
       notes="beta-carotene content data is missing and dry matter data is missing in some location"
    )
@@ -235,6 +236,7 @@ The data set has on-station advanced yield trials for 2005 to 2006 for Kachwekan
    
    d$trial_id <- trimws(d$trial_id)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files (path, meta, d)

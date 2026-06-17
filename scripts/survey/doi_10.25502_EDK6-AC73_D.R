@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		data_organization = "IITA;BOKU;MAK",
 		carob_contributor="Cedric Ngakou", 
 		carob_date="2023-11-21", 
+		carob_effort = NA,
 		data_type="crop-cuts",
 		response_vars = "none",
 		treatment_vars = "none"

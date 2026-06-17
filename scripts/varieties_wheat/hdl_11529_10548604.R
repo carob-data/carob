@@ -14,6 +14,7 @@ carob_script <- function(path) {
     project="Wheat Yield Collaboration Yield Trial",
     data_type= "experiment",
     carob_contributor= "Fredy Chimire",
+    carob_effort = NA,
     carob_date="2024-08-25",
     response_vars = "yield",
     treatment_vars = "variety_code"

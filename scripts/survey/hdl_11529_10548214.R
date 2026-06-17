@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none", 
 		carob_contributor = "Shumirai Manzvera",
-		carob_date = "2024-05-23"
+		carob_date = "2024-05-23",
+		carob_effort = NA
 	)
 	
 	f1 <- ff[basename(ff) == "ET_BAko agronomy data.xlsx"]

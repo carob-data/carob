@@ -12,6 +12,7 @@ carob_script <- function(path) {
 		publication= NA,
 		data_organization = "CIMMYT",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-09-27",
 		data_type="experiment",
 		response_vars= "yield",

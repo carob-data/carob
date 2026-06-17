@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars= "yield", 
       treatment_vars = "variety", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2024-10-22"
    )
    
@@ -60,6 +61,7 @@ carob_script <- function(path) {
 	i = which(d$variety == "M\x92sole")
 	d$variety[i] <- "M'sole"
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

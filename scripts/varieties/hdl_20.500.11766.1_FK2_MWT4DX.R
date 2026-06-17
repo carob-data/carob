@@ -19,13 +19,14 @@ Assessment of Barley Crop Wild Relatives (CWR) - Stage 2: yield trials conducted
 		data_organization = "UM5;ICARDA",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-04-07",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety_code",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

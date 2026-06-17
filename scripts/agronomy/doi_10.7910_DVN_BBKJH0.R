@@ -18,8 +18,9 @@ carob_script <- function(path) {
    data_type = "on-farm experiment",
    treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
    response_vars = "yield", 
-   completion = 100,
+   carob_completion = 100,
    carob_contributor = "Blessing Dzuda",
+   carob_effort = NA,
    carob_date = "2025-05-30",
    notes = NA, 
    design = NA

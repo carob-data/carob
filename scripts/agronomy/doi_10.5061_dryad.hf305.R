@@ -19,13 +19,14 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 		data_organization ="UCB", #University of California, Berkeley
 		publication = "doi:10.1098/rspb.2014.1396",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-06",
 		design = NA,
 		data_type ="compilation",
 		treatment_vars = "OM_used; N_fertilizer; P_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -226,6 +227,7 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 	d$lon <- d$lat <- d$geo_from <- NULL
 	
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

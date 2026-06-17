@@ -13,6 +13,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
  	    publication="doi:10.1186/s12870-019-1740-z",
 		carob_contributor = "Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2024-01-17",
 		data_type = "experiment",
 		response_vars = "yield",

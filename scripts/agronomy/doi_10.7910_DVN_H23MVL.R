@@ -14,6 +14,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "IRRI",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-06-02",
 		data_type="compilation",
 		project=NA,
@@ -194,6 +195,7 @@ carob_script <- function(path) {
 	#fixing land prep method
 	d$land_prep_method <- ifelse(grepl("Conventional tillage", d$land_prep_method),"conventional", "none")  
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

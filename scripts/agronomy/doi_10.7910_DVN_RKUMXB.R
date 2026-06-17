@@ -29,6 +29,7 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 	   publication=NA,
 	   carob_contributor="Camila Bonilla",
+	   carob_effort = NA,
 	   carob_date="2021-06-01",
 	   data_type="compilation",
 	   data_organization="CIAT",
@@ -357,6 +358,7 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	d$soil_pH[d$soil_pH < 3.5 | d$soil_pH > 8.5] <- NA
 	d$soil_P[d$soil_P > 500] <- NA
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

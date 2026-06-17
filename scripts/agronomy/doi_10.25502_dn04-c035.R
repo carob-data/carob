@@ -21,6 +21,7 @@ carob_script <- function(path){
 		treatment_vars = "inoculated; N_fertilizer; P_fertilizer; K_fertilizer; lime; gypsum",
 		data_organization="AfricaRice;IITA;ICRAF;WUR",
 		carob_contributor = "Effie Ochieng'",
+		carob_effort = NA,
 		carob_date="2022-09-09"
 	)
 	
@@ -169,6 +170,7 @@ carob_script <- function(path){
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path=path, meta, d)

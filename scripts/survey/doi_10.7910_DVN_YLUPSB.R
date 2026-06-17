@@ -21,12 +21,13 @@ Inland valleys are becoming increasingly important agricultural production areas
 		publication = "doi:10.1371/journal.pone.0180059",
 		project = NA,
 		carob_date = "2025-10-23",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

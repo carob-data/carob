@@ -18,6 +18,7 @@ carob_script <- function(path) {
          treatment_vars= "N_fertilizer; P_fertilizer; land_prep_method", 
          response_vars = "yield", 
          carob_contributor= "Cedric Ngakou", 
+         carob_effort = NA,
          carob_date="2025-06-02",
          completion=75,
          notes="The Encyclo.csv file has not been processed as it does not contain useful information."
@@ -219,6 +220,7 @@ carob_script <- function(path) {
    d$is_survey <- FALSE 
    d$yield_part <- "none"
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d, long = ds)

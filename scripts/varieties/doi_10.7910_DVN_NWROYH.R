@@ -20,13 +20,14 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		data_organization = "PURDUE",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-09-01",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;dmy_total;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

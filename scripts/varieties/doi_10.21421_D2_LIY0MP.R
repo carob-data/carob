@@ -21,8 +21,9 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
               data_type = "experiment",
               treatment_vars = "variety", 
               response_vars = "dmy_storage; dmy_residue",  
-              completion = 100,
+              carob_completion = 100,
               carob_contributor = "Gacheri Nturibi",
+              carob_effort = NA,
               carob_date = "2025-08-07",
               notes = NA,
               design = NA

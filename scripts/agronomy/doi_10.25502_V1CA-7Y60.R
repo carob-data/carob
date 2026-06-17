@@ -14,6 +14,7 @@ carob_script <- function(path) {
 		publication=NA, 
 		data_organization = "IITA;ICRAF;WUR", 
 		carob_contributor="Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date="2023-06-01",
 		data_type="experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer;inoculated",		
@@ -237,6 +238,7 @@ carob_script <- function(path) {
 	d$yield_part <- "seed"
 	d$yield_part[d$crop == "groundnut"] <- "pod"
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

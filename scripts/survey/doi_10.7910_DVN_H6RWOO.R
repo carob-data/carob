@@ -23,12 +23,13 @@ As part of the US government's Feed the Future initiative that aims to address g
 		publication = NA,
 		project = NA,
 		carob_date = "2026-02-23",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We only process files with useful information for carob"
 	)
 	
@@ -421,6 +422,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	 d$on_farm <- FALSE
 	 d$is_survey <- TRUE
 	 d$yield_part <- "none"
+	 d$yield_isfresh <- as.numeric(NA)
 	 d$yield_moisture <- as.numeric(NA)
 	 yield_isfresh <- TRUE
 	 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)

@@ -15,6 +15,7 @@ carob_script <- function(path) {
     data_organization = "CIMMYT;IRRI",
     data_type="experiment",
     carob_contributor ="Effie Ochieng'",
+    carob_effort = NA,
     carob_date="2023-09-18",
 	treatment_vars = "planting_date;variety",
 	response_vars="yield"
@@ -158,6 +159,7 @@ carob_script <- function(path) {
   
 	d$adm3 <- trimws(d$adm3)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

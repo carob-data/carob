@@ -17,6 +17,7 @@ carob_script <- function(path) {
     response_vars= "yield;BNF", 
     treatment_vars = "intercrops;P_fertilizer", 
     carob_contributor= "Cedric Ngakou", 
+    carob_effort = NA,
     carob_date="2024-08-17"
   )
   
@@ -119,6 +120,7 @@ carob_script <- function(path) {
   ## Remove duplicate rows ( This is due to NA in the BNF variable )
   d <- unique(d)
   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(path, meta, d)

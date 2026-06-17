@@ -21,8 +21,9 @@ Soil sampling with 1x1 km grid in the agricultural area of the Tlalquiltenango M
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor= "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2025-09-18",
-		completion = 100,	
+		carob_completion = 100,	
 		design=NA,
 		notes = NA
   )

@@ -23,13 +23,14 @@ Unless specified, all properties were predicted. When calculated from other pred
 		data_organization = "CIMMYT; TARI;ICRAF",
 		publication =NA,
 		project = "GAIA",
+		carob_effort = NA,
 		carob_date = "2025-08-30",
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Blessing Dzuda",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

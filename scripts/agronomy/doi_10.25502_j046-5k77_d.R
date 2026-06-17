@@ -25,13 +25,14 @@ Results from this project showed that with appropriate weed management couple wi
 		data_organization = "IITA",
 		publication = "doi:10.1017/wet.2020.26",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-11-19",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "herbicide_used",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

@@ -22,7 +22,7 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2025-06-15",
 		notes = NA, 

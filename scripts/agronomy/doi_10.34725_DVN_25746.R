@@ -20,6 +20,7 @@ Growing maize (Zea mays) in association with legume tree in agroforestry arrange
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication = "doi:10.2134/agronj2012.0063",
 		carob_contributor = "Camila Bonilla",
+		carob_effort = NA,
 		carob_date="2021-06-01",
 		data_type = "experiment",
 		data_organization = "ICRAF",
@@ -119,6 +120,7 @@ Growing maize (Zea mays) in association with legume tree in agroforestry arrange
 	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

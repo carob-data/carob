@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT;NARC",
 		data_type="on-farm experiment",
 		carob_contributor="Fredy Chimire",
+		carob_effort = NA,
 		carob_date="2023-10-31",
 		modified_by="Robert Hijmans",
 		last_modified="2023-11-04",
@@ -132,6 +133,7 @@ carob_script <- function(path) {
 
 	dd$on_farm <- TRUE
 	dd$is_survey <- FALSE
+	dd$yield_isfresh <- as.numeric(NA) #needs to be checked
 	dd$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, dd, path=path)

@@ -22,8 +22,9 @@ Selected soil properties were predicted from 232 topsoil samples subjected to sp
 		data_type="survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-29",
 		notes = NA, 
 		design = NA

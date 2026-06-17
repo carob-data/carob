@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		data_organization = "IITA",
 		data_type="on-farm experiment", 
 		carob_contributor="Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2024-01-09",
 		response_vars = "yield",
 		treatment_vars = NA
@@ -62,6 +63,7 @@ carob_script <- function(path) {
 	d <- merge(d, geo, by="location", all.x=TRUE)   
 	d$irrigated <- FALSE
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(meta, d, path=path)

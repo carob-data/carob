@@ -21,6 +21,7 @@ Data was taken in 40 fields (replications), for the two years of research we too
 		treatment_vars = "land_prep_method",
 		response_vars = "none", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-07-23"
 	)
 	
@@ -74,6 +75,7 @@ Data was taken in 40 fields (replications), for the two years of research we too
 	#duplicates in crop=="cotton"
 	d <- unique(d)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

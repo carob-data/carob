@@ -37,7 +37,7 @@ carob_script <- function(path) {
 		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variable that describe management for all treatments or other observations that were not related to the aim of the trial (e.g. the presence of a disease).
 		response_vars = "", 
 		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		completion = 0,
+		carob_completion = 0,
 		carob_contributor = "Your Name",
 		# The day the script was first written
 		carob_date = "2025-06-08",

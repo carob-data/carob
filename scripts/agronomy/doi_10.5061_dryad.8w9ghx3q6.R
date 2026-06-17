@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars= "yield", 
       treatment_vars = "variety;intercrops", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2024-08-10",
       notes="30-60cm soil data not yet processed"	  
    )
@@ -172,6 +173,7 @@ carob_script <- function(path) {
 	d$soil_pH[d$soil_pH < 1] <- NA
 	d$geo_from_source <- TRUE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d, wth = dw)

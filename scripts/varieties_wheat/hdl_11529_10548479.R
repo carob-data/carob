@@ -18,6 +18,7 @@ The Karnal Bunt Screening Nursery is a single replicate nursery that contains di
     project="Karnal Bunt Screening Nursery",
     data_type= "experiment",
     carob_contributor= "Blessing Dzuda",
+    carob_effort = NA,
     carob_date="2025-11-11",
     response_vars = "yield",
     treatment_vars = "variety_code"

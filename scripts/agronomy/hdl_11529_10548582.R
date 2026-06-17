@@ -15,6 +15,7 @@ Randomized complete block design for four environments (ENV) that combined tilla
 		publication="doi:10.1016/j.fcr.2021.108310",
 		data_organization = "CIMMYT;ZALF;CAU",
 		carob_contributor="Effie Ochieng'",
+		carob_effort = NA,
 		carob_date="2021-07-26",
 		data_type="experiment",
 		response_vars = "yield",
@@ -95,6 +96,7 @@ Randomized complete block design for four environments (ENV) that combined tilla
 	d$yield_part <- "grain"
 	d$geo_from_source <- TRUE
 	d <- d[!is.na(d$yield), ]
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

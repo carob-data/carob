@@ -20,13 +20,14 @@ To address the decline in crop productivity in the drylands ofWest Africa, many 
 		data_organization ="ICRAF", #"World Agroforetry Centre",
 		publication = "doi:10.1016/j.jaridenv.2011.10.011",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-22",
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "xxx",
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 50, # explain in notes why 50%, what is missing
+		carob_completion = 50, # explain in notes why 50%, what is missing
 		notes = ""
 	)
 	

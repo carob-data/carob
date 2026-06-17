@@ -16,6 +16,7 @@ carob_script <- function(path) {
       response_vars= "dmy_storage;fwy_total", 
       treatment_vars = "variety;land_prep_method;crop_rotation", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2024-08-26"
    )
    
@@ -305,6 +306,7 @@ carob_script <- function(path) {
 	
 	d$season <- "rabi"
 	 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 

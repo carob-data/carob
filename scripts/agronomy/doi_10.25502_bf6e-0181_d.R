@@ -20,13 +20,14 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		data_organization = "IITA",
 		publication = "doi:10.1016/j.fcr.2023.109056",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-20",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 50,
+		carob_completion = 50,
 		notes = "VCR files were not processed because they were deemed less relevant for data reuse"
 	)
 	

@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
    		data_type="survey",
 		carob_contributor="Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2023-08-24"
 	)
 

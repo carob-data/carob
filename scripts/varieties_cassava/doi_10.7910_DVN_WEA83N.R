@@ -42,13 +42,14 @@ MOSAI - Common Mosaic, Cassava mosaic disease (CMD; begomovirus complex).
 		data_organization = "CIAT",
 		publication = "handle:10568/56417",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-03-13",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "disease_severity", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

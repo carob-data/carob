@@ -24,13 +24,14 @@ This dataset contains information of experiments carried out beans in two region
 		data_organization = "CIAT",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-06-13",
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;B_fertilizer;Mg_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Blessing Dzuda",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

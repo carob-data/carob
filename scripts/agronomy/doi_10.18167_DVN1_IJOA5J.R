@@ -14,6 +14,7 @@ carob_script <- function(path) {
 		data_organization = "UZIM;CIRAD;IRD",
 		data_type="experiment", 
 		carob_contributor="Effie Ochieng'",
+		carob_effort = NA,
 		carob_date="2023-10-23",
 		project=NA,
 		response_vars= "yield",
@@ -131,6 +132,7 @@ carob_script <- function(path) {
 	f$previous_crop <- carobiner::replace_values(f$previous_crop,c("sweet_potatoes", "groundnuts","velvet_beans","fallow"), c("sweetpotato","groundnut","velvet bean",NA))
 	f <- f[-1:-9]
   
+	f$yield_isfresh <- as.numeric(NA) #needs to be checked
 	f$yield_moisture <- as.numeric(NA) #needs to be checked
 
     carobiner::write_files(meta, f, path=path)

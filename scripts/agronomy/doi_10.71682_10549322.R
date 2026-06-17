@@ -34,8 +34,9 @@ The dataset is divided into three parts:
 		data_type = "on-farm experiment",
 		treatment_vars = "crop_rotation;fertilizer_used",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-26",
 		notes = NA,
 		design = NA

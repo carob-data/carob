@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars = "yield;dmy_roots;disease_severity",
       treatment_vars = "variety_code", 
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-09-05"
    )
    

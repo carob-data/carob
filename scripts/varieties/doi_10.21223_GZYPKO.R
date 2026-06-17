@@ -20,13 +20,14 @@ The dataset contains data about a participatory variety trial on selected clones
    	data_organization = "CIP",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-13",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

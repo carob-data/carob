@@ -18,6 +18,7 @@ years, the crop must respond appropriately (water responsive) with higher yields
 		response_vars = "yield",
 		treatment_vars = "variety_code",
 		carob_contributor= "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2024-04-25"
 	)
 	

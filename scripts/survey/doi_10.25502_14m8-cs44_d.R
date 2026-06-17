@@ -21,6 +21,7 @@ carob_script <- function(path) {
 		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Rachel Mukami",
 		carob_date="2022-09-26",
+		carob_effort = NA,
 		data_type = "survey",
 		response_vars = "none",
 		treatment_vars = "none"

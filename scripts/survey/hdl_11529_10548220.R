@@ -15,7 +15,8 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor="Fredy Chimire",
-		carob_date="2024-04-06"
+		carob_date="2024-04-06",
+		carob_effort = NA
 	)
   
 	f <- ff[basename(ff) == "TZ_TAMASA_APS_2016_Yield_MetaData.xlsx"]

@@ -21,12 +21,13 @@ BSF finger millet crowdsourcing data for Hoima Uganda
 		publication = NA,
 		project = NA,
 		carob_date = "2025-09-15",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

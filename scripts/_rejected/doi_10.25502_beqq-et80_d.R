@@ -26,7 +26,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

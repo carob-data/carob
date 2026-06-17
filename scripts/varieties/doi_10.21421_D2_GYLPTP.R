@@ -21,13 +21,14 @@ This database includes the research work carried out to assess the variability a
 		data_organization = "ICRISAT",
 		publication = "https://www.researchgate.net/publication/325094273",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-09",
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

@@ -35,13 +35,14 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 		data_organization = "ANU",
 		publication = "doi:10.1038/s41597-021-00898-8; doi:10.1038/s41477-021-01001-0",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-07-01",
 		design = NA,	
 		data_type = "on-farm experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
-		completion = 25,	
+		carob_completion = 25,	
 		notes = NA
 	)
 
@@ -117,6 +118,7 @@ Any person wishing to conduct research using National Variety Trials (NVT) data 
 
 	d <- unique(d[!is.na(d$yield), ])
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

@@ -20,6 +20,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 		publication=NA,
 		data_organization = "ICARDA",
 		carob_contributor="Samar Attaher",
+		carob_effort = NA,
 		carob_date="2023-04-05",
 		response_vars= "yield",
 		treatment_vars="intercrops",
@@ -132,6 +133,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	d$geo_from_source <- TRUE
 	d$planting_date <- "2018-02"
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files (path, meta, d)

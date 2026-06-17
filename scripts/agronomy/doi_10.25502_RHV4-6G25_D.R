@@ -18,6 +18,7 @@ are developed that are tested on farmer's fields in validation trials in a large
       publication= NA, 
       data_organization = "IITA", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2024-06-04", 
       data_type="experiment",
       response_vars = "yield",
@@ -74,6 +75,7 @@ are developed that are tested on farmer's fields in validation trials in a large
    d$harvest_date <- "2017-11-01"
 
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)   

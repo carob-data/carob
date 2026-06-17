@@ -20,13 +20,14 @@ Samples of 310 potato landraces were collected and analyzed for iron and zinc co
 		data_organization = "CIP; Yanapai",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-03-11",
 		design = NA,
 		data_type ="experiment",
 		treatment_vars = "variety",
 		response_vars = "tuber_Fe;tuber_Zn", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

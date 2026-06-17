@@ -21,9 +21,10 @@ carob_script <- function(path) {
      data_type = "survey",
      treatment_vars = "none",
      response_vars = "yield",  
-     completion = 100,
+     carob_completion = 100,
      carob_contributor = "Mitchelle Njukuya",
      carob_date = "2026-06-08",
+     carob_effort = NA,
      notes = NA, 
      design = NA
   )

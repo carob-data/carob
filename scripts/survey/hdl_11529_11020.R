@@ -14,6 +14,7 @@ carob_script <- function(path) {
 	   data_organization = "CIMMYT;EIAR",
 	   carob_contributor="Eduardo Garcia Bendito",
 	   carob_date="2022-11-02",
+	   carob_effort = NA,
 	   data_type= "crop cuts",
 	   response_vars = "none",
 	   treatment_vars = "none",

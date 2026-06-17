@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars = "yield",
       treatment_vars = "variety", 
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-08-14",
       notes="Germination and Spad Chlorophyll Meter Reading variables are not yet processed"
    )

@@ -20,13 +20,14 @@ Phenotypic dataset of all the evaluation trials of diverse sorghum varieties car
 		data_organization = "CIRAD",
 		publication = "doi:10.1017/S001447970999041X",
 		project = "Cirad-Ciat project 2002-2008",
+		carob_effort = NA,
 		carob_date = "2026-04-23",
 		design = "unitOfAnalysis" ,
 		data_type = "experiment",
 		treatment_vars = "variety;intercrops",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

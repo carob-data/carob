@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
 		data_type="experiment", 
 		carob_contributor="Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2023-02-06",
 		response_vars = "yield",
 		treatment_vars = "land_prep_method;irrigation"
@@ -88,6 +89,7 @@ carob_script <- function(path) {
 	d <- merge(d, d1, by= "GID", all.x=TRUE)
 	d$GID <- NULL
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

@@ -18,13 +18,14 @@ Participatory upland rice seed determination for row method of sowing
 		data_organization = "EIAR",
 		publication = "doi:10.5897/AJAR2019.14343",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-31",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "seed_rate",
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

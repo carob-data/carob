@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		data_organization = "USDA-ARS",
    		data_type="experiment", 
 		carob_contributor="Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2023-10-06" 
 	)
 

@@ -25,6 +25,7 @@ Farmers’ participatory researchers managed long-term trails aimed to improve t
     data_organization = "CIMMYT",
     data_type="on-farm experiment",
     carob_contributor="Fredy Chimire",
+    carob_effort = NA,
     carob_date="2023-11-22"
   )
   

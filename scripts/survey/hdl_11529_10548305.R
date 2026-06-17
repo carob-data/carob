@@ -21,12 +21,13 @@ Tamasa APS Ethiopia  2016 Agronomy Panel Survey
 		publication = "NA",
 		project ="Tamasa",
 		carob_date = "2025-08-05",
+		carob_effort = NA,
 		design = NA,
 		data_type = "crop-cuts",
 		treatment_vars = "none",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 75,	
+		carob_completion = 75,	
 		notes = "Two files (TAMASA_ET_APS_ALL, TAMASA_ET_APS_FOCAL) have not been processed as the data seem to be unsuitable for carob."
 	)
 	

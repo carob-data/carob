@@ -14,13 +14,14 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-13",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
   
@@ -79,6 +80,7 @@ carob_script <- function(path) {
 	d$is_survey <- FALSE
 	d$irrigated <- as.logical(NA)
 	d$geo_from_source <- FALSE
+	d$yield_isfresh <- as.numeric(NA)
 	d$yield_moisture <- as.numeric(NA)
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)

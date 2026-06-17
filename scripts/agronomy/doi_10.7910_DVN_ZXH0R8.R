@@ -12,6 +12,7 @@ carob_script <- function(path) {
 		publication="doi:10.1017/S1742170519000504",
 		data_organization = "ICRISAT; ARARI; GIZ; ILRI",
 		carob_contributor="Siyabusa Mkuhlani; Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2022-02-16",
 		data_type="on-farm experiment",
 		project="AfricaRISING",	   
@@ -159,6 +160,7 @@ carob_script <- function(path) {
 
 	d$irrigated <- NA
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

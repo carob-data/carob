@@ -19,6 +19,7 @@ carob_script <- function(path) {
       response_vars = "yield;fwy_total;fwy_residue",
       treatment_vars = "farming_technique", 
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-09-14"
    )
    

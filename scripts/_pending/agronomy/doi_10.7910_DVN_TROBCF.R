@@ -21,13 +21,14 @@ This data study contains data on pigeonpea and soybean intensification through p
 		data_organization = "LUANAR;MSU",
 		publication = NA,
 		project = "Africa RISING",
+		carob_effort = NA,
 		carob_date = "2025-08-28",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "intercrops;P_fert_level",
 		response_vars = "yield;dmy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes =NA
 	)
 	

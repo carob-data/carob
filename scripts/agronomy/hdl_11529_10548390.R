@@ -22,13 +22,14 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-06-08",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 80,	
+		carob_completion = 80,	
 		notes = "Some files have not been processed because the fertilizer rate information is missing."
 	)
 	

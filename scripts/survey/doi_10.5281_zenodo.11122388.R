@@ -14,7 +14,8 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor= "Robert Hijmans",
-		carob_date="2024-06-23"
+		carob_date="2024-06-23",
+		carob_effort = NA
 	)
 
 	r <- read.csv(ff[basename(ff)=="One_Acre_Fund_MEL_maize_survey_data_2016-2022.csv"], na.strings = c("", "NA"))

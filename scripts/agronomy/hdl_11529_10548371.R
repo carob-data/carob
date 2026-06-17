@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		response_vars= "yield;fwy_total", 
 		treatment_vars = "variety;land_prep_method;crop_rotation", 
 		carob_contributor= "Mitchelle Njukuya", 
+		carob_effort = NA,
 		carob_date="2025-10-31"
   )
   

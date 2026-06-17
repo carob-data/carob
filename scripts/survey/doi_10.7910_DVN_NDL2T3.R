@@ -18,12 +18,13 @@ This database provides a comprehensive, field-level record of rice management pr
      publication = NA,
      project = NA,
      carob_date = "2026-06-15",
+     carob_effort = NA,
      design = NA,
      data_type = "survey",
      treatment_vars = "none",
      response_vars = "none", 
      carob_contributor = "Blessing Dzuda",
-     completion = 100,	
+     carob_completion = 100,	
      notes = NA
   )
   

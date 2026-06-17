@@ -19,13 +19,14 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
 		data_organization = "ICRAF; SUA", #"World Agroforestry Center (ICRAF); Sokoine University of Agriculture",
 		publication = NA,
 		project = "AfricaRISING",
+		carob_effort = NA,
 		carob_date = "2025-07-29",
 		design = "RCBD",
 		data_type ="experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -74,6 +75,7 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
 	d$row_spacing <- ifelse(grepl("Moleti|Mlali", d$location), 90, 75)
 	d$plant_spacing <- 60 
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

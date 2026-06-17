@@ -13,6 +13,7 @@ Abstract: Low soil fertility and water shortage are major constraints to food pr
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication=NA,#"issn-2315-5094", https://oar.icrisat.org/10842/
 		carob_contributor="Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2022-09-12",
 		data_type="experiment",
 		data_organization = "ICRISAT",
@@ -73,6 +74,7 @@ Abstract: Low soil fertility and water shortage are major constraints to food pr
 
 	e$irrigated <- FALSE
 	
+	e$yield_isfresh <- as.numeric(NA) #needs to be checked
 	e$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, e, path=path)

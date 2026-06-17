@@ -20,13 +20,14 @@ Dataset for: Assessment of at least 200 lines from LBHT x LTVR population in two
    	data_organization = "CIP",
 		publication =NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-13",
 		design ="Augmented block design",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -107,6 +108,7 @@ Dataset for: Assessment of at least 200 lines from LBHT x LTVR population in two
 	d$is_survey <- FALSE
 	d$on_farm <- TRUE
 	d$irrigated <- NA
+	d$yield_isfresh <- as.numeric(NA)
 	d$yield_moisture <- as.numeric(NA)
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)

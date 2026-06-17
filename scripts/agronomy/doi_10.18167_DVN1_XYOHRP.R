@@ -17,12 +17,13 @@ carob_script <- function(path) {
 		publication= "doi:10.1016/j.agee.2021.107576",
 		data_organization = "CIRAD;FOFIFA;IRD",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-10-15",
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
 		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic",
-		completion = 50,
+		carob_completion = 50,
 		notes = "not processed nematodes and macrofauna"
 	)
 
