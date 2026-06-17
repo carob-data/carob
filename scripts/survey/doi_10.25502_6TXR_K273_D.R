@@ -119,7 +119,8 @@ carob_script <- function(path) {
 	d3$weeding_labour <- ifelse(d3$activity == "weeding", d3$plot_labour, 0)
 	d3$irrigation_cost <- ifelse(d3$activity == "watering", d3$cost, 0)
 	## OM_cost would be when you buy it. This seems to be the cost of moving your own OM around
-	d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure", d3$cost, 0)
+	#d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure", d3$cost, 0)
+	d3$OM_transport_cost <- ifelse(d3$activity %in% c("Transport of farmyard manure","Transport of manure"),d3$cost,0)
 	## cost for fertilizer _application_ is not the same as the cost of "fertilizer"
 	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost, 	 	0)
 	d3$fertilizer_labour <- ifelse(d3$activity == "fertilizer application",d3$plot_labour,0)
@@ -147,7 +148,7 @@ carob_script <- function(path) {
 	fagg <- function(x) paste(unique(x), collapse = ";")
 	d4a <- aggregate(floor_quality ~ field_id, d4, FUN = fagg)
 	d5a <- aggregate(roof_quality ~ field_id, d5, FUN = fagg)
-	d6a <- aggregate(wall_quality ~ field_id, d6, FUN = fag)
+	d6a <- aggregate(wall_quality ~ field_id, d6, FUN = fagg)
 	
 	d7 <- merge(d4a, d5a, by = "field_id", all = TRUE)
 	d7 <- merge(d7, d6a, by = "field_id", all = TRUE)
@@ -160,12 +161,14 @@ carob_script <- function(path) {
 	d8 <- data.frame(
 	  hhid = r8$id,
 	  field_id = r8$farm_id,
-	  irrigation_method = r8$type)
+	  irrigation_method = r8$type
+	  )
 	
 	d9 <- data.frame(
 	  hhid = r9$id,
 	  field_id = r9$farm_id,
-	  power_supply = r9$type)
+	  power_supply = r9$type
+	  )
 	
 	d9$electricity <- grepl(
 	  "electric|solar|generator|battery|batteries|bulb|pile|cell|torch|flash light|lamp",
@@ -175,7 +178,8 @@ carob_script <- function(path) {
 	d10 <- data.frame(
 	  hhid = r10$id,
 	  field_id = r10$farm_id,
-	  water_source = r10$type)
+	  water_source = r10$type
+	  )
 	
 	d11 <- data.frame(
 	  hhid = r11$id,
@@ -241,31 +245,16 @@ carob_script <- function(path) {
 	  na.rm = TRUE
 	)
 	
-	d13$OM_type <- apply(
-	  r13[, c("o_fert_1", "o_fert_2", "o_fert_3")],
-	  1,
-	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
-	)
+	d13$OM_type <- apply(r13[, c("o_fert_1", "o_fert_2", "o_fert_3")],
+	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
-	d13$OM_amount <- rowSums(
-	  r13[, c("o_fert_1_amount",
-	          "o_fert_2_amount",
-	          "o_fert_3_amount")],
-	  na.rm = TRUE
-	)
+	d13$OM_amount <- rowSums(r13[, c("o_fert_1_amount","o_fert_2_amount","o_fert_3_amount")],na.rm = TRUE)
 	
-	d13$inoculated <- !(
-	  is.na(r13$inoculant) |
-	    trimws(tolower(r13$inoculant)) %in%
-	    c("", "0", "-9999", "no")
-	)
+	d13$inoculated <- !(is.na(r13$inoculant) |trimws(tolower(r13$inoculant)) %in% c("", "0", "-9999", "no"))
 	
 	d13$inoculant <- r13$inoculant
 	
-	d13$inoculant[
-	  trimws(tolower(d13$inoculant)) %in%
-	    c("", "0", "-9999", "no")
-	] <- NA
+	d13$inoculant[trimws(tolower(d13$inoculant)) %in% c("", "0", "-9999", "no")] <- NA
 	
 	d14 <- data.frame(
 	  hhid = r14$id,
@@ -278,28 +267,20 @@ carob_script <- function(path) {
 	d15 <- data.frame(
 	  hhid = r15$id,
 	  field_id = r15$farm_id,
-	  crop = r15$crop)
+	  crop = r15$crop
+	  )
 	
 	# Fertilizer type
-	d15$fertilizer_type <- apply(
-	  r15[, c("m_fert_1", "m_fert_2", "m_fert_3")],
-	  1,
-	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
-	)
+	d15$fertilizer_type <- apply(r15[, c("m_fert_1", "m_fert_2", "m_fert_3")],
+	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	# Organic matter type
-	d15$OM_type <- apply(
-	  r15[, c("o_fert_1", "o_fert_2", "o_fert_3")],
-	  1,
-	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
-	)
+	d15$OM_type <- apply(r15[, c("o_fert_1", "o_fert_2", "o_fert_3")],
+	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	# Insecticide product
-	d15$insecticide_product <- apply(
-	  r15[, c("bio_pest_1", "bio_pest_2", "bio_pest_3")],
-	  1,
-	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
-	)
+	d15$insecticide_product <- apply(r15[, c("bio_pest_1", "bio_pest_2", "bio_pest_3")],
+	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	d16 <- data.frame(
 	  hhid = r16$id,
@@ -321,7 +302,8 @@ carob_script <- function(path) {
 	  field_id = r18$farm_id,
 	  market_type = r18$market_kind,
 	  market_access = r18$place_name,
-	  market_distance = r18$distance)
+	  market_distance = r18$distance
+	  )
 	
 	d19 <- data.frame(
 	  hhid = r19$id,
@@ -395,8 +377,8 @@ carob_script <- function(path) {
 	        weeding_cost,
 	        weeding_labour,
 	        irrigation_cost,
-	        OM_cost,
-	        fertilizer_cost,
+	        OM_transport_cost,
+	        fertilizer_app_cost,
 	        fertilizer_labour,
 	        harvest_cost) ~ hhid + field_id,
 	  data = d3,
@@ -531,7 +513,6 @@ carob_script <- function(path) {
 	#fixing crop names
 	d$crop <- tolower(trimws(d$crop))
 	d$crop[grepl("common bean|bush bean|beans, bush beans|string bean|voluble beans|wax bean|w.bean|n.bean|o.bean|j.bean|m.bean|creeper bean|sugarbeans", d$crop)] <- "kidney bean"
-	
 	d$crop[grepl("climbing bean", d$crop)] <- "runner bean"
 	d$crop[grepl("^soybeans?$|^soja$", d$crop)] <- "soybean"
 	d$crop[grepl("^cowpeas?$", d$crop)] <- "cowpea"
@@ -565,51 +546,32 @@ carob_script <- function(path) {
 	
 	d$crop[grepl("^pepper$|^piment$",
 	             d$crop)] <- "pepper"
-	
 	d$crop[grepl("^lettuce$", d$crop)] <- "lettuce"
-	
 	d$crop[grepl("^cucumber$", d$crop)] <- "cucumber"
-	
 	d$crop[grepl("^turnips$", d$crop)] <- "turnip"
-	
 	d$crop[grepl("^garlic$", d$crop)] <- "garlic"
-	
 	d$crop[grepl("^amaranth$|^amarenth$|^amarante$|green amarantha",
 	             d$crop)] <- "amaranth"
-	
 	d$crop[grepl("sukuma", d$crop)] <- "kale"
-	
 	d$crop[grepl("^banana$", d$crop)] <- "banana"
-	
 	d$crop[grepl("^mango$|^mangoes$", d$crop)] <- "mango"
-	
 	d$crop[grepl("^pineapples$", d$crop)] <- "pineapple"
-	
 	d$crop[grepl("^water melon$|^watermelon$",
 	             d$crop)] <- "watermelon"
 	
 	d$crop[grepl("^coffee$", d$crop)] <- "coffee"
-	
 	d$crop[grepl("^tea$", d$crop)] <- "tea"
-	
 	d$crop[grepl("^cocoa$", d$crop)] <- "cocoa"
-	
 	d$crop[grepl("^sugarcane$", d$crop)] <- "sugarcane"
-	
 	d$crop[grepl("^ginger$", d$crop)] <- "ginger"
-	
 	d$crop[grepl("fodder legume|lucina",
 	             d$crop)] <- "forage legume"
-	
 	#d$crop[grepl("^desmodium$",
 	             #d$crop)] <- "desmodium"
-	
 	d$crop[grepl("^caliandra$",
 	             d$crop)] <- "forage crop"
-	
 	d$crop[grepl("nappier|naipper",
 	             d$crop)] <- "napier grass"
-	
 	d$crop[grepl("hay grass|rusena|canada|cameroun",
 	             d$crop)] <- "forage crop"
 
@@ -655,6 +617,7 @@ carob_script <- function(path) {
 	d$OM_type[d$OM_type == ""] <- NA
 	d$country[d$country=="D.R. Congo"] <- "Democratic Republic of the Congo"
 	
+	#fixing data_types
 	d$hhid <- as.character(d$hhid)
 	d$is_head <- ifelse(d$is_head=="Yes", TRUE,FALSE)
 	d$age <- as.numeric(d$age)
@@ -674,46 +637,22 @@ carob_script <- function(path) {
 	d$yield_part[d$crop == "onion"] <- "tubers"
 	d$yield_part[d$crop == "garlic"] <- "tubers"
 	d$yield_part[d$crop %in% c("kidney bean", "runner bean", "cowpea", "pea", "soybean", "bambara groundnut", 
-						"pigeon pea","lentil")] <- "seed"
+						                 "pigeon pea","lentil")] <- "seed"
 	d$yield_part[d$crop %in% c("maize", "sorghum", "millet", "rice", "wheat")] <- "grain"
 	d$yield_part[d$crop %in% c("cassava","sweetpotato", "carrot", "turnip")] <- "roots"
 	d$yield_part[d$crop %in% c("potato", "yam")] <- "tubers"
 	d$yield_part[d$crop == "ginger"] <- "rhizome"
-	d$yield_part[d$crop %in% c(
-	  "kale",
-	  "amaranth",
-	  "cabbage",
-	  "lettuce",
-	  "forage legume",
-	  "forage crop",
-	  "napier grass"
-	)] <- "leaves"
-	d$yield_part[d$crop %in% c(
-	  "banana",
-	  "tomato",
-	  "watermelon",
-	  "pineapple",
-	  "mango",
-	  "eggplant",
-	  "pepper",
-	  "okra",
-	  "pumpkin",
-	  "cucumber"
-	)] <- "fruit"
-	d$yield_part[d$crop %in% c(
-	  "groundnut",
-	  "sunflower",
-	  "sesame"
-	)] <- "seed"
-	d$yield_part[d$crop %in% c(
-	  "coffee",
-	  "cocoa"
-	)] <- "seed"
+	d$yield_part[d$crop %in% c("kale","amaranth","cabbage","lettuce",
+	                           "forage legume","forage crop","napier grass")] <- "leaves"
+	
+	d$yield_part[d$crop %in% c("banana","tomato","watermelon","pineapple","mango",
+	                           "eggplant","pepper","okra","pumpkin","cucumber")] <- "fruit"
+	
+	d$yield_part[d$crop %in% c("groundnut","sunflower","sesame")] <- "seed"
+	d$yield_part[d$crop %in% c("coffee","cocoa")] <- "seed"
 	d$yield_part[d$crop == "tea"] <- "leaves"
 	d$yield_part[d$crop == "cotton"] <- "fruit"
 	d$yield_part[d$crop == "sugarcane"] <- "stems"
-	
-	
 	
 	#trim vars
 	vars <- c(
@@ -730,9 +669,7 @@ carob_script <- function(path) {
 	sapply(vars, function(v)
 	  sum(d[[v]] != trimws(d[[v]]), na.rm = TRUE)
 	)
-	
 	char_cols <- sapply(d, is.character)
-	
 	d[char_cols] <- lapply(
 	  d[char_cols],
 	  function(x) trimws(x)
@@ -772,36 +709,24 @@ carob_script <- function(path) {
 	
 	ins[fung] <- NA
 	
-	ins[
-	  grepl("actellic", tolower(ins))
-	] <- "unknown"
+	ins[grepl("actellic", tolower(ins))] <- "unknown"
 	
-	ins[
-	  grepl("cipenetrin|cipetrin|cyper|cymetherine|
+	ins[grepl("cipenetrin|cipetrin|cyper|cymetherine|
          dymetherine|sipmethlane",
-	        tolower(ins))
-	] <- "cypermethrin"
+	        tolower(ins))] <- "cypermethrin"
 	
 	#ins[
 	  #grepl("^ddt$", tolower(ins))
 	#] <- "ddt"
 	
-	ins[
-	  grepl("diptex", tolower(ins))
-	] <- "trichlorfon"
+	ins[grepl("diptex", tolower(ins))] <- "trichlorfon"
 	
-	ins[
-	  grepl("^seven$", tolower(ins))
-	] <- "carbaryl"
+	ins[grepl("^seven$", tolower(ins))] <- "carbaryl"
 	
-	ins[
-	  grepl("lipcord|lipicod|cypamethin lipcod",
-	        tolower(ins))
-	] <- "cypermethrin"
+	ins[grepl("lipcord|lipicod|cypamethin lipcod",
+	        tolower(ins))] <- "cypermethrin"
 	
-	ins[
-	  grepl("sumicombi", tolower(ins))
-	] <- "fenvalerate"
+	ins[grepl("sumicombi", tolower(ins))] <- "fenvalerate"
 	
 	ins[
 	  grepl(
@@ -815,62 +740,33 @@ carob_script <- function(path) {
      ultrachlo|ultrachlor|ultrachol|ultrachor|
      carbohydrates|npk|urea|
      85% w.p an|3 grain\\*|best",
-	    tolower(ins)
-	  )
-	] <- "unknown"
+	    tolower(ins))] <- "unknown"
 	
-	ins[
-	  grepl(
-	    "dithane|dithan|ridomil|ridonul|ridanie|
-     benlate|bentale|shavit|mildrex",
-	    ins)] <- NA
-	ins[
-	  grepl(
-	    "pesticide|pestcides|pesrcides|
+	ins[grepl("dithane|dithan|ridomil|ridonul|ridanie|
+      benlate|bentale|shavit|mildrex",ins)] <- NA
+	ins[grepl("pesticide|pestcides|pesrcides|
      insecticide|insectant|biocides",
-	    ins
-	  )
-	] <- "unknown"
+	ins )] <- "unknown"
 	
-	ins[
-	  grepl("carbaryl|cabaryl|cabary|caborly", ins)
-	] <- "carbaryl"
+	ins[grepl("carbaryl|cabaryl|cabary|caborly", ins)] <- "carbaryl"
 	
-	ins[
-	  grepl("deltamet", ins)
-	] <- "deltamethrin"
+	ins[grepl("deltamet", ins)] <- "deltamethrin"
 	
-	ins[
-	  grepl("dimothaete", ins)
-	] <- "dimethoate"
+	ins[grepl("dimothaete", ins)] <- "dimethoate"
 	
-	ins[
-	  grepl("durbuban", ins)
-	] <- "chlorpyrifos"
+	ins[grepl("durbuban", ins)] <- "chlorpyrifos"
 	
-	ins[
-	  grepl("thiodan|tioda|tiode|theodan", ins)
-	] <- "endosulfan"
+	ins[grepl("thiodan|tioda|tiode|theodan", ins)] <- "endosulfan"
 	
-	ins[
-	  grepl("methodidate", ins)
-	] <- "methidathion"
+	ins[grepl("methodidate", ins)] <- "methidathion"
 	
-	ins[
-	  grepl("lannet", ins)
-	] <- "methomyl"
+	ins[grepl("lannet", ins)] <- "methomyl"
 	
-	ins[
-	  grepl("^karate$", ins)
-	] <- "lambda-cyhalothrin"
+	ins[grepl("^karate$", ins)] <- "lambda-cyhalothrin"
 	
-	ins[
-	  grepl("^roga$|^roger$", ins)
-	] <- "dimethoate"
+	ins[grepl("^roga$|^roger$", ins)] <- "dimethoate"
 	
-	ins[
-	  grepl("^ash$|^soap$", ins)
-	] <- "unknown"
+	ins[grepl("^ash$|^soap$", ins)] <- "unknown"
 	
 	valid <- c(
 	  "carbaryl",
@@ -887,10 +783,7 @@ carob_script <- function(path) {
 	  "unknown"
 	)
 	
-	ins[
-	  !is.na(ins) &
-	    !(ins %in% valid)
-	] <- "unknown"
+	ins[!is.na(ins) & !(ins %in% valid)] <- "unknown"
 
 	d$insecticide_product <- ins
 
@@ -900,109 +793,76 @@ carob_script <- function(path) {
 	
 	d$herbicide_product[
 	  grepl("atraz|afrazine|atrazil|atrazin|atrazone|attrazine|attazine",
-	        tolower(ins))
-	] <- "atrazine"
+	        tolower(ins))] <- "atrazine"
 	
 	d$herbicide_product[
 	  grepl("gramaz|gramoz|grammaz|gramazoe|gramazone|gramozone",
-	        tolower(ins))
-	] <- "paraquat"
+	        tolower(ins))] <- "paraquat"
 	
 	d$herbicide_product[
 	  grepl("paraquat|paraforce|para force|para fprce",
-	        tolower(ins))
-	] <- "paraquat"
+	        tolower(ins))	] <- "paraquat"
 	
 	d$herbicide_product[
 	  grepl("round-up|sarosate",
-	        tolower(ins))
-	] <- "glyphosate"
+	        tolower(ins))] <- "glyphosate"
 	
 	d$herbicide_product[
 	  grepl("butach|butaforce|buta force|butter force|butoforce",
-	        tolower(ins))
-	] <- "butachlor"
+	        tolower(ins))] <- "butachlor"
 	
 	d$herbicide_product[d$herbicide_product=="butachlor"] <- "unknown"
 	d$herbicide_product[d$herbicide_product=="paraquat"] <- "paraquat dichloride"
 	
 	d$fungicide_product[
 	  grepl("dithane|dithan|dithone",
-	        tolower(ins))
-	] <- "mancozeb"
+	        tolower(ins))] <- "mancozeb"
 	
 	d$fungicide_product[
 	  grepl("ridomil|ridonul|ridanie|rhidanie|rhidonue|lidomil",
-	        tolower(ins))
-	] <- "metalaxyl"
+	        tolower(ins))] <- "metalaxyl"
 	
 	d$fungicide_product[
 	  grepl("benlate|bentale",
-	        tolower(ins))
-	] <- "benomyl"
+	        tolower(ins))] <- "benomyl"
 	
 	d$fungicide_product[
 	  grepl("shavit",
-	        tolower(ins))
-	] <- "shavit"
+	        tolower(ins))] <- "shavit"
 	
 	d$fungicide_product[
 	  grepl("copper|cooper",
-	        tolower(ins))
-	] <- "copper fungicide"
+	        tolower(ins))] <- "copper fungicide"
 	
 	d$fungicide_product[d$fungicide_product =="copper fungicide"]  <- "copper"
 	
 	#Irrigation methods
 	d$irrigation_method[
-	  grepl(
-	    "bucket|bucet|watering|sprinkling|handsprinkling|
-     hand sprinkler|hand sprinkling|watering can|
-     watering cane|calabash|perforated bowl|
-     perforated calabash|hand sprinkler",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "sprinkler"
+	  grepl("bucket|bucet|watering|sprinkling|handsprinkling|hand sprinkler|hand sprinkling
+           |watering can|watering cane|calabash|perforated bowl|perforated calabash|hand sprinkler"
+           ,tolower(d$irrigation_method))] <- "sprinkler"
 	
 	d$irrigation_method[
-	  grepl(
-	    "canal|channel irrigation|canalization",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "surface"
+	  grepl("canal|channel irrigation|canalization",
+	    tolower(d$irrigation_method))] <- "surface"
 	
 	d$irrigation_method[
-	  grepl(
-	    "drip irrigation",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "drip"
+	  grepl("drip irrigation",tolower(d$irrigation_method))] <- "drip"
 	
 	d$irrigation_method[
-	  grepl(
-	    "diesel pump|treadle pump|water pump|
-     dug well|surface water|water$",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "surface"
+	  grepl("diesel pump|treadle pump|water pump|
+     dug well|surface water|water$",tolower(d$irrigation_method))] <- "surface"
 	
 	d$irrigation_method[
-	  grepl(
-	    "domestic bassin|basin",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "basin"
+	  grepl("domestic bassin|basin",
+	    tolower(d$irrigation_method))] <- "basin"
 	
 	d$irrigation_method[
-	  grepl(
-	    "dam|irrigated dam|irrigation dam",
-	    tolower(d$irrigation_method)
-	  )
-	] <- "flood"
+	  grepl("dam|irrigated dam|irrigation dam",
+	    tolower(d$irrigation_method))] <- "flood"
 	
 	d$irrigation_method[
-	  grepl(
-	    "^rain$|rain water",
+	  grepl("^rain$|rain water",
 	    tolower(d$irrigation_method))] <- "none"
 	
 	d$irrigation_method[
@@ -1015,203 +875,63 @@ carob_script <- function(path) {
 	#fertilizer_type
 	d$fertilizer_type <- trimws(tolower(d$fertilizer_type))
 	
-	d$fertilizer_type[
-	  d$fertilizer_type %in% c(
-	    "", "-88", "-9999", "`","0", "n0", "nio", "nn",
-	    "no", "noi", "yes","inknown")] <- NA
+	d$fertilizer_type[d$fertilizer_type %in% c("", "-88", "-9999", "`","0", "n0", "nio", "nn",
+	                                           "no", "noi", "yes","inknown")] <- NA
 	
-	d$fertilizer_type[
-	  grepl("urea|uera|^u$",
-	        d$fertilizer_type)
-	] <- "urea"
+	d$fertilizer_type[grepl("urea|uera|^u$",d$fertilizer_type)] <- "urea"
+	d$fertilizer_type[grepl("^an$|ammonium nitrate|ammonia",d$fertilizer_type)] <- "AN"
+	d$fertilizer_type[grepl("sulphate of ammonia|sulphate of amonia",d$fertilizer_type)] <- "AS"
+	d$fertilizer_type[grepl("chitowe", d$fertilizer_type)] <- "NPS"
+	d$fertilizer_type[grepl("23:21|32:21:0\\+4s|nps",d$fertilizer_type)] <- "NPS"
+	d$fertilizer_type[grepl("can.*chitowe|chitowe.*can",d$fertilizer_type)] <- "CAN;NPS"
+	d$fertilizer_type[grepl("urea.*chitowe|chitowe.*urea",d$fertilizer_type)] <- "urea;NPS"
+	d$fertilizer_type[grepl("^dap$|dap -|dap,|dap|d p a/",d$fertilizer_type)] <- "DAP"
+	d$fertilizer_type[grepl("^map$", d$fertilizer_type)] <- "MAP"
+	d$fertilizer_type[grepl("npk|15-15-15|15 15 15|17-17-17|17\\.17\\.17|23:21|23\\+21|
+                           23:21\\+0|23:21:0|n p k",d$fertilizer_type)] <- "NPK"
+	d$fertilizer_type[grepl("^ssp$|^spp$|^sss$|s\\.s\\.p",d$fertilizer_type)] <- "SSP"
+	d$fertilizer_type[grepl("^tsp$|^t/s$",d$fertilizer_type)] <- "TSP"
+	d$fertilizer_type[grepl("^gypsum$",d$fertilizer_type)] <- "gypsum"
+	d$fertilizer_type[grepl("compound c|d-compound cianate",d$fertilizer_type)] <- "C-compound"
+	d$fertilizer_type[grepl("compound d",d$fertilizer_type)] <- "D-compound"
+	d$fertilizer_type[grepl("compound l",d$fertilizer_type)] <- "L-compound"
+	d$fertilizer_type[grepl("rhizatex",d$fertilizer_type)] <- NA
 	
-	d$fertilizer_type[
-	  grepl(
-	    "^an$|ammonium nitrate|ammonia",
-	    d$fertilizer_type)] <- "AN"
-	
-	d$fertilizer_type[
-	  grepl(
-	    "sulphate of ammonia|sulphate of amonia",
-	    d$fertilizer_type)] <- "AS"
-	
-	d$fertilizer_type[
-	  grepl("chitowe", d$fertilizer_type)
-	] <- "NPS"
-	
-	d$fertilizer_type[
-	  grepl(
-	    "23:21|32:21:0\\+4s|nps",
-	    d$fertilizer_type
-	  )
-	] <- "NPS"
-	
-	d$fertilizer_type[
-	  grepl("can.*chitowe|chitowe.*can",
-	        d$fertilizer_type)
-	] <- "CAN;NPS"
-	
-	d$fertilizer_type[
-	  grepl("urea.*chitowe|chitowe.*urea",
-	        d$fertilizer_type)
-	] <- "urea;NPS"
-	
-	d$fertilizer_type[
-	  grepl(
-	    "^dap$|dap -|dap,|dap|d p a/",
-	    d$fertilizer_type
-	  )
-	] <- "DAP"
-	
-	d$fertilizer_type[
-	  grepl("^map$", d$fertilizer_type)
-	] <- "MAP"
-	
-	d$fertilizer_type[
-	  grepl(
-	    "npk|15-15-15|15 15 15|17-17-17|
-     17\\.17\\.17|23:21|23\\+21|
-     23:21\\+0|23:21:0|n p k",
-	    d$fertilizer_type
-	  )
-	] <- "NPK"
-	
-	d$fertilizer_type[
-	  grepl(
-	    "^ssp$|^spp$|^sss$|s\\.s\\.p",
-	    d$fertilizer_type
-	  )
-	] <- "SSP"
-	
-	d$fertilizer_type[
-	  grepl("^tsp$|^t/s$",
-	        d$fertilizer_type)
-	] <- "TSP"
-	
-	d$fertilizer_type[
-	  grepl("^gypsum$",
-	        d$fertilizer_type)
-	] <- "gypsum"
-	
-	d$fertilizer_type[
-	  grepl("compound c|d-compound cianate",
-	        d$fertilizer_type)
-	] <- "C-compound"
-	
-	d$fertilizer_type[
-	  grepl("compound d",
-	        d$fertilizer_type)
-	] <- "D-compound"
-	
-	d$fertilizer_type[
-	  grepl("compound l",
-	        d$fertilizer_type)
-	] <- "L-compound"
-	
-	d$fertilizer_type[
-	  grepl("rhizatex",
-	        d$fertilizer_type)
-	] <- NA
-	
-	om_idx <- grepl(
-	  "animal manure|cattle manure|cow dung|
-   goat manure|farm yard manure|
-   manure|composte|composite manure|
-   poultry drop|organic",
-	  d$fertilizer_type
-	)
+	om_idx <- grepl("animal manure|cattle manure|cow dung|goat manure|farm yard manure|
+                   manure|composte|composite manure|poultry drop|organic",d$fertilizer_type)
 	
 	d$OM_type[om_idx] <- "manure"
 	d$fertilizer_type[om_idx] <- NA
-	
-	d$fertilizer_type[
-	  grepl(
-	    "chemical|chemicals|top dressing|
-     mavuno|golden|majimaji|ero",
-	    d$fertilizer_type
-	  )
-	] <- "unknown"
-	
-	d$fertilizer_type[
-	  grepl("dap.*can|can.*dap",
-	        d$fertilizer_type)
-	] <- "DAP;CAN"
-	
-	d$fertilizer_type[
-	  grepl("npk.*urea|urea.*npk",
-	        d$fertilizer_type)
-	] <- "NPK;urea"
-	
-	d$fertilizer_type[
-	  grepl("ssp.*urea|urea.*ssp",
-	        d$fertilizer_type)
-	] <- "SSP;urea"
-	
-	d$fertilizer_type[
-	  grepl("npk.*ssp.*urea",
-	        d$fertilizer_type)
-	] <- "NPK;SSP;urea"
-	
-	d$fertilizer_type[d$fertilizer_type %in% c(
-	  "-88;-88;-88",
-	  "-9999;-9999",
-	  "-9999;-9999;-9999",
-	  "0;0;0",
-	  "n0;no;no",
-	  "no;n0;n0",
-	  "no;nn;no",
-	  "no;no",
-	  "no;no;nio",
-	  "no;no;noi",
-	  "no;no;no",
-	  "no;yes;no",
-	  "yes;no;no"
-	)] <- NA
-	
+	d$fertilizer_type[grepl("chemical|chemicals|top dressing|mavuno|golden|majimaji|ero",d$fertilizer_type)] <- "unknown"
+	d$fertilizer_type[grepl("dap.*can|can.*dap",d$fertilizer_type)] <- "DAP;CAN"
+	d$fertilizer_type[grepl("npk.*urea|urea.*npk",d$fertilizer_type)] <- "NPK;urea"
+	d$fertilizer_type[grepl("ssp.*urea|urea.*ssp",d$fertilizer_type)] <- "SSP;urea"
+	d$fertilizer_type[grepl("npk.*ssp.*urea",d$fertilizer_type)] <- "NPK;SSP;urea"
+	d$fertilizer_type[d$fertilizer_type %in% c("-88;-88;-88","-9999;-9999","-9999;-9999;-9999","0;0;0","n0;no;no",
+	                                           "no;n0;n0","no;nn;no","no;no","no;no;nio","no;no;noi","no;no;no","no;yes;no","yes;no;no")] <- NA
 	d$fertilizer_type[d$fertilizer_type == "can"] <- "CAN"
-	
 	d$fertilizer_type[d$fertilizer_type == "can;can"] <- "CAN"
-	
 	d$fertilizer_type[d$fertilizer_type == "can;no;no"] <- "CAN"
-	
 	d$fertilizer_type[d$fertilizer_type == "dap;0;0"] <- "DAP"
-	
 	d$fertilizer_type[d$fertilizer_type == "dap;ssp"] <- "DAP;SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "dap;mavuno"] <- "DAP;unknown"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp;ssp"] <- "SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp;"] <- "SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp; ;"] <- "SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp;goat manure"] <- "SSP"
-	
 	d$OM_type[grepl("ssp;goat manure", d$fertilizer_type)] <- "manure"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp;npl"] <- "SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "ssp;oganic manual"] <- "SSP"
-	
 	d$OM_type[grepl("ssp;oganic manual", d$fertilizer_type)] <- "manure"
-	
 	d$OM_type[d$fertilizer_type == "animal farming"] <- "manure"
 	d$fertilizer_type[d$fertilizer_type == "animal farming"] <- NA
-	
 	d$OM_type[d$fertilizer_type == "manure refuse"] <- "manure"
 	d$fertilizer_type[d$fertilizer_type == "manure refuse"] <- NA
-	
 	d$fertilizer_type[d$fertilizer_type == "mavuno"] <- "unknown"
-	
 	d$fertilizer_type[d$fertilizer_type == "mavuno;can"] <- "CAN;unknown"
-	
 	d$fertilizer_type[d$fertilizer_type == "n.p.k, 50kg"] <- "NPK"
-	
 	d$fertilizer_type[d$fertilizer_type == "npl"] <- "NPK"
-	
 	d$fertilizer_type[d$fertilizer_type == "super"] <- "SSP"
-	
 	d$fertilizer_type[d$fertilizer_type == "super"] <- "SSP"
 	d$fertilizer_type[d$fertilizer_type == "super"] <- "SSP"
 	d$fertilizer_type[d$fertilizer_type == "super"] <- "SSP"
@@ -1219,250 +939,54 @@ carob_script <- function(path) {
 	d$fertilizer_type[d$fertilizer_type %in% c("manure","cypermethyline")] <- NA
 	d$fertilizer_type[d$fertilizer_type %in% c("compound g","compound x")] <- "unknown"
 	d$fertilizer_type[d$fertilizer_type == "d p a"] <- "DAP"
-	
 	d$fertilizer_type[d$fertilizer_type=="gypsum;compound g"] <- "gypsum;unknown"
+	
 	#OM_type
 	d$OM_type <- trimws(tolower(d$OM_type))
-	
-	d$OM_type[
-	  d$OM_type %in% c(
-	    "", "-77", "-88", "-9999",
-	    "0", "1", "100", "200", "500",
-	    "650", "760", "1300",
-	    "3 wheebarrow",
-	    "no", "yes"
-	  )
-	] <- NA
-	
-	d$OM_type[
-	  grepl(
-	    "compost|composite|composte|dechet|dechets|
-     debris des menanges",
-	    d$OM_type
-	  )
-	] <- "compost"
-	
-	d$OM_type[
-	  grepl(
-	    "farm.?yard manure|ffarmyard manure|
-     kraal manure|organic manure|
-     livestock manure|manure$|fumier",
-	    d$OM_type
-	  )
-	] <- "farmyard manure"
-	
-	d$OM_type[
-	  grepl(
-	    "cattle dung|catlle dung|
-     cattle manure|cow dung|
-     cowdung|murakwani cowdung",
-	    d$OM_type
-	  )
-	] <- "cattle dung"
-	
-	d$OM_type[
-	  grepl(
-	    "animal dung|animal manure|
-     dung$|dung manure|
-     bouse|ordure|ordures",
-	    d$OM_type
-	  )
-	] <- "animal dung"
-	
-	d$OM_type[
-	  grepl(
-	    "chicken manure|
-     fowl droppings|
-     poultry dropping",
-	    d$OM_type
-	  )
-	] <- "poultry manure"
-	
-	d$OM_type[
-	  grepl(
-	    "woodland litter|
-     woodlands litter|
-     litter manure|
-     little manure",
-	    d$OM_type
-	  )
-	] <- "leaf litter"
-	
-	d$OM_type[
-	  grepl(
-	    "engrais vert|
-     angrais vert|
-     green$|
-     crop residues|
-     fodder|
-     hauls|hault|haults|
-     paillage",
-	    d$OM_type
-	  )
-	] <- "foliage"
-	
-	d$OM_type[
-	  grepl(
-	    "pig manure|
-     fumier de porcs",
-	    d$OM_type
-	  )
-	] <- "animal dung"
-	
-	d$OM_type[
-	  grepl(
-	    "goat manure|
-     goat dung|
-     giat manure|
-     fumier de chevre",
-	    d$OM_type
-	  )
-	] <- "animal dung"
-	
-	d$OM_type[
-	  grepl(
-	    "guinea pig manure|
-     fumier de cobaye",
-	    d$OM_type
-	  )
-	] <- "animal dung"
-	
-	d$OM_type[
-	  grepl(
-	    "ash|cendres",
-	    d$OM_type
-	  )
-	] <- "unknown"
-	
-	d$OM_type[
-	  grepl(
-	    "anthill|ant hill|
-     termitaria|termitalia|
-     woodland termitaria",
-	    d$OM_type
-	  )
-	] <- "unknown"
-	
-	d$OM_type[
-	  grepl(
-	    "cabaryl|cabaryl|
-     gramazoe|grammazoe|
-     kombat|para force|
-     copper dimethylin|
-     drogon|dao",
-	    d$OM_type
-	  )
-	] <- NA
-	
-	d$OM_type[
-	  grepl(
-	    "animal feed|
-     maize seed|
-     milled seed|
-     mineral|
-     local|
-     buntu|
-     lame|
-     farill",
-	    d$OM_type
-	  )
-	] <- NA
-	
-	d$OM_type[d$OM_type %in% c(
-	  "-9999;-9999",
-	  "-9999;-9999;-9999",
-	  ";",
-	  "0;0",
-	  "0;0;0",
-	  "1300;0;0",
-	  "no;no",
-	  "no;no;no",
-	  "yes;no;no",
-	  "yes mulch;no;no"
-	)] <- NA
-	
-	d$OM_type[d$OM_type %in% c(
-	  "bouse et compste",
-	  "debris des menanges"
-	)] <- "compost"
-	
-	d$OM_type[grepl(
-	  "^farmyard  manure, 300kg$|^manure [0-9]+kg$|^manure,[0-9 ]+kg$",
-	  d$OM_type
-	)] <- "farmyard manure"
-	
+	d$OM_type[d$OM_type %in% c("", "-77", "-88", "-9999","0", "1", "100", "200", "500",
+	                           "650", "760", "1300","3 wheebarrow","no", "yes")] <- NA
+	d$OM_type[grepl("compost|composite|composte|dechet|dechets|debris des menanges",d$OM_type)] <- "compost"
+	d$OM_type[grepl("farm.?yard manure|ffarmyard manure|kraal manure|organic manure|livestock manure|manure$|fumier",d$OM_type)] <- "farmyard manure"
+	d$OM_type[grepl("cattle dung|catlle dung|cattle manure|cow dung|
+                   cowdung|murakwani cowdung", d$OM_type)] <- "cattle dung"
+	d$OM_type[grepl("animal dung|animal manure|dung$|dung manure|
+                   bouse|ordure|ordures",d$OM_type)] <- "animal dung"
+	d$OM_type[grepl("chicken manure|fowl droppings|poultry dropping",d$OM_type)] <- "poultry manure"
+	d$OM_type[grepl("woodland litter|woodlands litter|litter manure|little manure",d$OM_type)] <- "leaf litter"
+	d$OM_type[grepl("engrais vert|angrais vert|green$|crop residues|fodder|hauls|hault|haults|paillage",d$OM_type)] <- "foliage"
+	d$OM_type[grepl("pig manure|fumier de porcs",d$OM_type)] <- "animal dung"
+	d$OM_type[grepl("goat manure|goat dung|giat manure|fumier de chevre",d$OM_type)] <- "animal dung"
+  d$OM_type[grepl("guinea pig manure|fumier de cobaye",d$OM_type)] <- "animal dung"
+	d$OM_type[grepl("ash|cendres",d$OM_type)] <- "unknown"
+	d$OM_type[grepl("anthill|ant hill|termitaria|termitalia|woodland termitaria",d$OM_type)] <- "unknown"
+	d$OM_type[grepl("cabaryl|cabaryl|gramazoe|grammazoe|kombat|para force|copper dimethylin|drogon|dao",d$OM_type)] <- NA
+	d$OM_type[grepl("animal feed|maize seed|milled seed|mineral|local|buntu|lame|farill",d$OM_type)] <- NA
+	d$OM_type[d$OM_type %in% c("-9999;-9999","-9999;-9999;-9999",";","0;0","0;0;0","1300;0;0","no;no","no;no;no","yes;no;no","yes mulch;no;no")] <- NA
+	d$OM_type[d$OM_type %in% c("bouse et compste","debris des menanges")] <- "compost"
+	d$OM_type[grepl("^farmyard  manure, 300kg$|^manure [0-9]+kg$|^manure,[0-9 ]+kg$",d$OM_type)] <- "farmyard manure"
 	d$OM_type[d$OM_type == "livestock"] <- "farmyard manure"
-	
 	d$OM_type[d$OM_type == "murakwani"] <- "farmyard manure"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "bouse",
-	  "dung",
-	  "goat dung"
-	)] <- "animal dung"
-	
-	d$OM_type[grepl(
-	  "^dung;manure",
-	  d$OM_type
-	)] <- "animal dung"
-	
+	d$OM_type[d$OM_type %in% c("bouse","dung","goat dung")] <- "animal dung"
+	d$OM_type[grepl("^dung;manure",d$OM_type)] <- "animal dung"
 	d$OM_type[d$OM_type == "manure;dung"] <- "animal dung"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "cowdung murakwani",
-	  "manure, cowdung",
-	  "little manure;cowdung"
-	)] <- "cattle dung"
-	
+	d$OM_type[d$OM_type %in% c("cowdung murakwani","manure, cowdung","little manure;cowdung")] <- "cattle dung"
 	d$OM_type[d$OM_type == "fowl droppings"] <- "poultry manure"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "angrais vert",
-	  "crop residues",
-	  "fodder",
-	  "hauls",
-	  "green;0;0",
-	  "paillage"
-	)] <- "foliage"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "woodlands litter",
-	  "litter manure;maize seed",
-	  "litter manure;milled seed"
-	)] <- "leaf litter"
-	
+	d$OM_type[d$OM_type %in% c("angrais vert","crop residues","fodder","hauls","green;0;0","paillage")] <- "foliage"
+	d$OM_type[d$OM_type %in% c("woodlands litter","litter manure;maize seed","litter manure;milled seed")] <- "leaf litter"
 	d$OM_type[d$OM_type == "cattle manure;termitaria"] <- "cattle dung"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "termitaria",
-	  "woodland termitaria"
-	)] <- "unknown"
-	
-	d$OM_type[d$OM_type %in% c(
-	  "copper dimethylin",
-	  "gramazoe atrazine",
-	  "kombat",
-	  "drogon"
-	)] <- NA
-	
-	d$OM_type[d$OM_type %in% c(
-	  "buntu",
-	  "farill",
-	  "lame",
-	  "local",
-	  "mineral"
-	)] <- "unknown"
-	
+	d$OM_type[d$OM_type %in% c("termitaria","woodland termitaria")] <- "unknown"
+	d$OM_type[d$OM_type %in% c("copper dimethylin","gramazoe atrazine","kombat","drogon")] <- NA
+	d$OM_type[d$OM_type %in% c("buntu","farill","lame","local","mineral")] <- "unknown"
 	d$OM_type[d$OM_type == "manure from toilet"] <- "sludge"
 	d$OM_type[d$OM_type == "maize seed"] <- "unknown"
 	d$OM_type[d$OM_type == "poultry dropping"] <- "poultry manure"
 	d$OM_type[d$OM_type %in% c("manure","manure;maize seed") ] <- "unknown"
 	
+	#out of bounds
 	d$fertilizer_amount[d$fertilizer_amount < 0 |
 	    d$fertilizer_amount > 1000] <- NA
 	
 	d$hh_size[d$hh_size < 0 | d$hh_size > 50] <- NA
-	
 	d$yield[d$yield < 0 | d$yield > 150000] <- NA
 	
 	crops_tonnes <- c(
