@@ -6,10 +6,8 @@ carob_script <- function(path) {
 
 "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uganda and Ethiopia) and six other countries (DR Congo, Malawi, Rwanda, Mozambique, Kenya & Zimbabwe) as tier one countries."
 
-return(TRUE)
-
 	
-  uri <- "doi:10.25502/6TXR-K273/D"
+	uri <- "doi:10.25502/6TXR-K273/D"
 	group <- "survey"
 
 ## Download data 
@@ -242,22 +240,15 @@ return(TRUE)
 	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
 	)
 	
-	d13$fertilizer_amount <- rowSums(
-	  r13[, c("m_fert_1_amount",
-	          "m_fert_2_amount",
-	          "m_fert_3_amount")],
-	  na.rm = TRUE
-	)
+	d13$fertilizer_amount <- rowSums(r13[, grep("m_fert_,_amount", names(r13))],  na.rm = TRUE)
 	
-	d13$OM_type <- apply(r13[, c("o_fert_1", "o_fert_2", "o_fert_3")],
-	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
+	d13$OM_type <- apply(r13[, c("o_fert_1", "o_fert_2", "o_fert_3")], 1, 
+				function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	d13$OM_amount <- rowSums(r13[, c("o_fert_1_amount","o_fert_2_amount","o_fert_3_amount")],na.rm = TRUE)
 	
 	d13$inoculated <- !(is.na(r13$inoculant) |trimws(tolower(r13$inoculant)) %in% c("", "0", "-9999", "no"))
-	
 	d13$inoculant <- r13$inoculant
-	
 	d13$inoculant[trimws(tolower(d13$inoculant)) %in% c("", "0", "-9999", "no")] <- NA
 	
 	d14 <- data.frame(
@@ -275,16 +266,16 @@ return(TRUE)
 	  )
 	
 	# Fertilizer type
-	d15$fertilizer_type <- apply(r15[, c("m_fert_1", "m_fert_2", "m_fert_3")],
-	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
+	d15$fertilizer_type <- apply(r15[, c("m_fert_1", "m_fert_2", "m_fert_3")], 1,
+				function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	# Organic matter type
-	d15$OM_type <- apply(r15[, c("o_fert_1", "o_fert_2", "o_fert_3")],
-	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
+	d15$OM_type <- apply(r15[, c("o_fert_1", "o_fert_2", "o_fert_3")], 1,
+				function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	# Insecticide product
-	d15$insecticide_product <- apply(r15[, c("bio_pest_1", "bio_pest_2", "bio_pest_3")],
-	  1,function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
+	d15$insecticide_product <- apply(r15[, c("bio_pest_1", "bio_pest_2", "bio_pest_3")], 1,
+			function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	d16 <- data.frame(
 	  hhid = r16$id,
@@ -375,37 +366,16 @@ return(TRUE)
 	#merging data
 	##Labour
 	d3a <- aggregate(
-	  cbind(plot_labour,
-	        land_prep_cost,
-	        planting_cost,
-	        weeding_cost,
-	        weeding_labour,
-	        irrigation_cost,
-	        OM_transport_cost,
-	        fertilizer_app_cost,
-	        fertilizer_labour,
-	        harvest_cost) ~ hhid + field_id,
-	  data = d3,
-	  FUN = sum,
-	  na.rm = TRUE
-	)
+		cbind(plot_labour, land_prep_cost, planting_cost, weeding_cost, weeding_labour, irrigation_cost, OM_transport_cost, fertilizer_app_cost, fertilizer_labour, harvest_cost) ~ hhid + field_id,  
+		data = d3, sum, na.rm = TRUE )
 	
 	##Livestock
-	d11a <- aggregate(
-	  livestock ~ hhid + field_id,
-	  data = d11,
-	  FUN = function(x) paste(unique(x), collapse = ";")
-	)
+	d11a <- aggregate(livestock ~ hhid + field_id, d11, FUN = function(x) paste(unique(x), collapse = ";"))
 	
-	d11b <- aggregate(
-	  purpose ~ hhid + field_id,
-	  data = d11,
-	  FUN = function(x) paste(unique(na.omit(x)), collapse = ";")
-	)
+	d11b <- aggregate(purpose ~ hhid + field_id, data = d11,
+			FUN = function(x) paste(unique(na.omit(x)), collapse = ";"))
 	
-	d11a <- merge(d11a, d11b,
-	              by = c("hhid","field_id"),
-	              all = TRUE)
+	d11a <- merge(d11a, d11b, by = c("hhid","field_id"), all = TRUE)
 	
 	##Markets
 	d18a <- aggregate(
@@ -428,31 +398,18 @@ return(TRUE)
 	d <- d13
 	
 	d <- merge(d, d12, by = c("hhid","field_id"), all = TRUE)
-	
 	d <- merge(d, d14,by = c("hhid","field_id","crop"), all = TRUE)
-	
 	d <- merge(d, d15, by = c("hhid","field_id","crop"), all = TRUE)
-	
 	d <- merge(d, d16,by = c("hhid","field_id","crop"), all = TRUE)
-	
 	d <- merge(d, d17, by = c("hhid","field_id","crop"),all = TRUE)
-	
 	d <- merge(d, d1, by = c("hhid","field_id"),all = TRUE)
-	
 	d <- merge(d, d2,by = c("hhid","field_id"), all = TRUE)
-	
 	d <- merge(d, d3a, by = c("hhid","field_id"),all = TRUE)
-	
 	d <- merge(d, d8, by = c("hhid","field_id"),all = TRUE)
-	
 	d <- merge(d, d9[, c("hhid","field_id","electricity")],by = c("hhid","field_id"), all = TRUE)
-	
 	d <- merge(d, d10, by = c("hhid","field_id"),all = TRUE)
-	
 	d <- merge(d, d11a, by = c("hhid","field_id"), all = TRUE)
-	
 	d <- merge(d, d18a, by = c("hhid","field_id"), all = TRUE)
-	
 	d <- merge(d,d19, by = c("hhid","field_id"), all = TRUE)
 	
 	d$field_size <- ifelse(
@@ -526,7 +483,7 @@ return(TRUE)
 	d$crop[grepl("garden peas|green peas|petit pois", d$crop)] <- "pea"
 	d$crop[grepl("pigeonpeas|nandolo", d$crop)] <- "pigeon pea"
 	d$crop[grepl("nhemba bean|boer bean|fava bean|macaco bean", d$crop)] <- "bean"
-	d$crop[grepl("^maize$", d$crop)] <- "maize"
+	d$crop[grepl("^maize$|msize", d$crop)] <- "maize"
 	d$crop[grepl("^rice$", d$crop)] <- "rice"
 	d$crop[grepl("^wheat$", d$crop)] <- "wheat"
 	d$crop[grepl("sorghum|sorhum|soghun|guinea corn", d$crop)] <- "sorghum"
@@ -536,8 +493,8 @@ return(TRUE)
 	d$crop[grepl("sweet potato|wweet potato", d$crop)] <- "sweetpotato"
 	d$crop[grepl("irish potato|irish patato|irish poatato|^potato$|^irish$", d$crop)] <- "potato"
 	d$crop[grepl("^yam$|^yams$|^igname$", d$crop)] <- "yam"
-	d$crop[grepl("cocoyam|colocase|colocasse|taro|madhumbe", d$crop)] <- "cocoyam"
-	d$crop[d$crop=="cocoyam"] <- "yam"
+	d$crop[grepl("cocoyam|colocase|colocasse|taro|madhumbe", d$crop)] <- "taro"
+	## that is wrong (cocoyam is taro, not yam) : d$crop[d$crop=="cocoyam"] <- "yam"
 	d$crop[grepl("^sunflower$|^tournesol$", d$crop)] <- "sunflower"
 	d$crop[grepl("^sesame$", d$crop)] <- "sesame"
 	d$crop[grepl("^cotton$", d$crop)] <- "cotton"
@@ -548,37 +505,27 @@ return(TRUE)
 	d$crop[grepl("^cabbage$|^cavage$|^choux$", d$crop)] <- "cabbage"
 	d$crop[grepl("^okra$|^okfro$", d$crop)] <- "okra"
 	
-	d$crop[grepl("^pepper$|^piment$",
-	             d$crop)] <- "pepper"
+	d$crop[grepl("^pepper$|^piment$", d$crop)] <- "pepper"
 	d$crop[grepl("^lettuce$", d$crop)] <- "lettuce"
 	d$crop[grepl("^cucumber$", d$crop)] <- "cucumber"
 	d$crop[grepl("^turnips$", d$crop)] <- "turnip"
 	d$crop[grepl("^garlic$", d$crop)] <- "garlic"
-	d$crop[grepl("^amaranth$|^amarenth$|^amarante$|green amarantha",
-	             d$crop)] <- "amaranth"
+	d$crop[grepl("^amaranth$|^amarenth$|^amarante$|green amarantha", d$crop)] <- "amaranth"
 	d$crop[grepl("sukuma", d$crop)] <- "kale"
 	d$crop[grepl("^banana$", d$crop)] <- "banana"
 	d$crop[grepl("^mango$|^mangoes$", d$crop)] <- "mango"
 	d$crop[grepl("^pineapples$", d$crop)] <- "pineapple"
-	d$crop[grepl("^water melon$|^watermelon$",
-	             d$crop)] <- "watermelon"
-	
+	d$crop[grepl("^water melon$|^watermelon$", d$crop)] <- "watermelon"
 	d$crop[grepl("^coffee$", d$crop)] <- "coffee"
 	d$crop[grepl("^tea$", d$crop)] <- "tea"
 	d$crop[grepl("^cocoa$", d$crop)] <- "cocoa"
 	d$crop[grepl("^sugarcane$", d$crop)] <- "sugarcane"
 	d$crop[grepl("^ginger$", d$crop)] <- "ginger"
-	d$crop[grepl("fodder legume|lucina",
-	             d$crop)] <- "forage legume"
-	#d$crop[grepl("^desmodium$",
-	             #d$crop)] <- "desmodium"
-	d$crop[grepl("^caliandra$",
-	             d$crop)] <- "forage crop"
-	d$crop[grepl("nappier|naipper",
-	             d$crop)] <- "napier grass"
-	d$crop[grepl("hay grass|rusena|canada|cameroun",
-	             d$crop)] <- "forage crop"
-
+	d$crop[grepl("fodder legume|lucina", d$crop)] <- "forage legume"
+	#d$crop[grepl("^desmodium$", #d$crop)] <- "desmodium"
+	d$crop[grepl("^caliandra$", d$crop)] <- "forage crop"
+	d$crop[grepl("nappier|naipper", d$crop)] <- "napier grass"
+	d$crop[grepl("hay grass|rusena|canada|cameroun", d$crop)] <- "forage crop"
 	d$crop[d$crop %in% c("bean", "beans")] <- "kidney bean"
 	d$crop[d$crop == "butternuts"] <- "pumpkin"
 	d$crop[d$crop == "coals"] <- NA
@@ -590,18 +537,10 @@ return(TRUE)
 	d$crop[d$crop == "lentils"] <- "lentil"
 	#d$crop[d$crop == "tigernut"] <- "tigernut"
 	
-	d$crop[d$crop %in% c(
-	  "", " ", "other (specify)",
-	  "soil", "crop", "trees", "fruits",
-	  "vegetables", "straws",
-	  "kanannado", "kanan nabo",
-	  "mbande", "dek", "moti", "mito",
-	  "spya", "msize", "sota",
-	  "arbre", "cana", "mexoeira",
-	  "mallaqueta", "mallauqeta",
-	  "malaguetta","tigernut","desmodium","cocoyam",
-	  "no crop legume planted last season"
-	)] <- NA
+	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees", "fruits",
+	  "straws", "kanannado", "kanan nabo", "mbande", "dek", "moti", "mito",
+	  "spya", "sota", "arbre", "cana", "mexoeira", "mallaqueta", "mallauqeta",
+	  "malaguetta","tigernut","desmodium", "no crop legume planted last season")] <- NA
 	
 	#empty character values
 	d$sex[d$sex == ""] <- NA
@@ -755,43 +694,21 @@ return(TRUE)
 	ins[grepl("carbaryl|cabaryl|cabary|caborly", ins)] <- "carbaryl"
 	
 	ins[grepl("deltamet", ins)] <- "deltamethrin"
-	
 	ins[grepl("dimothaete", ins)] <- "dimethoate"
-	
 	ins[grepl("durbuban", ins)] <- "chlorpyrifos"
-	
 	ins[grepl("thiodan|tioda|tiode|theodan", ins)] <- "endosulfan"
-	
 	ins[grepl("methodidate", ins)] <- "methidathion"
-	
 	ins[grepl("lannet", ins)] <- "methomyl"
-	
 	ins[grepl("^karate$", ins)] <- "lambda-cyhalothrin"
-	
 	ins[grepl("^roga$|^roger$", ins)] <- "dimethoate"
-	
 	ins[grepl("^ash$|^soap$", ins)] <- "unknown"
 	
-	valid <- c(
-	  "carbaryl",
-	  "cypermethrin",
-	  "ddt",
-	  "trichlorfon",
-	  "fenvalerate",
-	  "dimethoate",
-	  "deltamethrin",
-	  "chlorpyrifos",
-	  "endosulfan",
-	  "methomyl",
-	  "lambda-cyhalothrin",
-	  "unknown"
-	)
+	valid <- c("carbaryl", "cypermethrin", "ddt", "trichlorfon", "fenvalerate", "dimethoate",
+	  "deltamethrin", "chlorpyrifos", "endosulfan", "methomyl", "lambda-cyhalothrin",  "unknown")
 	
 	ins[!is.na(ins) & !(ins %in% valid)] <- "unknown"
 
 	d$insecticide_product <- ins
-
-	
 	d$herbicide_product <- NA
 	d$fungicide_product <- NA
 	
