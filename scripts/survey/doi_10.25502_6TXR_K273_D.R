@@ -113,15 +113,15 @@ carob_script <- function(path) {
 	  function(x) paste(na.omit(x[x != ""]), collapse = " : "))
 	
 	d3$activity <- tolower(d3$activity)
-	d3$land_prep_cost <- ifelse(d3$activity)) == "land preparation", d3$cost, 0)
+	d3$land_prep_cost <- ifelse(d3$activity == "land preparation", d3$cost, 0)
 	d3$planting_cost <- ifelse(d3$activity == "planting", d3$cost, 0)	
 	d3$weeding_cost <- ifelse(d3$activity == "weeding", d3$cost, 0)
 	d3$weeding_labour <- ifelse(d3$activity == "weeding", d3$plot_labour, 0)
 	d3$irrigation_cost <- ifelse(d3$activity == "watering", d3$cost, 0)
 	## OM_cost would be when you buy it. This seems to be the cost of moving your own OM around
-	d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure"),d3$cost,0)
+	d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure", d3$cost, 0)
 	## cost for fertilizer _application_ is not the same as the cost of "fertilizer"
-	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost,0)
+	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost, 	 	0)
 	d3$fertilizer_labour <- ifelse(d3$activity == "fertilizer application",d3$plot_labour,0)
 	d3$harvest_cost <- ifelse(d3$activity == "harvesting",d3$cost,0)
 	
@@ -743,14 +743,13 @@ carob_script <- function(path) {
 	
 	ins[tolower(ins) %in% c("n o", "nn", "nlo", "nol", "non", "no")] <- "none"
 	ins[ins %in% c("yes", "name unknown")] <- "unknown"
-	ins[ins %in% c("", "-88", "0", "1", "2", "3", "4", "5", "6", "7", "8", "18", "22", "45") <- NA
+	ins[ins %in% c("", "-88", "0", "1", "2", "3", "4", "5", "6", "7", "8", "18", "22", "45")] <- NA
 	
 #	"ddt" is DDT, and instecticide
 	
 ## some of these are herbicides and could be used for that (as below?). 
 ## also, could there be an insecticide as well? 
-	ins[grepl("atraz|gramaz|gramoz|grammaz|paraquat|paraforce|round-up|butach|butaforce|weed|herbicide|habicide|harbicide|
-     selective weedicide|stamp|condem|kombat", ins)] <- NA
+	ins[grepl("atraz|gramaz|gramoz|grammaz|paraquat|paraforce|round-up|butach|butaforce|weed|herbicide|habicide|harbicide|selective weedicide|stamp|condem|kombat", ins)] <- NA
 	
 	herb <- grepl(
 	  "atraz|afrazine|adrazone|attrazine|attazine|atrizine|
