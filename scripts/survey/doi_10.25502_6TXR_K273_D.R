@@ -122,7 +122,7 @@ carob_script <- function(path) {
 	d3$irrigation_cost <- ifelse(d3$activity == "watering", d3$cost, 0)
 	## OM_cost would be when you buy it. This seems to be the cost of moving your own OM around
 	#d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure", d3$cost, 0)
-	d3$OM_transport_cost <- ifelse(d3$activity %in% c("Transport of farmyard manure","Transport of manure"),d3$cost,0)
+	d3$OM_transp_cost <- ifelse(d3$activity %in% c("Transport of farmyard manure","Transport of manure"),d3$cost,0)
 	## cost for fertilizer _application_ is not the same as the cost of "fertilizer"
 	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost, 	 	0)
 	d3$fertilizer_labour <- ifelse(d3$activity == "fertilizer application",d3$plot_labour,0)
@@ -310,53 +310,35 @@ carob_script <- function(path) {
 	
 	#latitude
 	convert_lat <- function(x) {
-	  
 	  x <- trimws(x)
-	  
 	  out <- rep(NA_real_, length(x))
-	  
 	  # format like S02,43450
 	  idx1 <- grepl("^S[0-9]{2},", x)
-	  
 	  deg <- as.numeric(substr(x[idx1], 2, 3))
 	  mins <- as.numeric(sub(",", ".", substr(x[idx1], 4, 100)))
-	  
 	  out[idx1] <- -(deg + mins/60)
-	  
 	  # format like S02 26,121
 	  idx2 <- grepl("^S[0-9]{2} ", x)
-	  
 	  deg <- as.numeric(substr(x[idx2], 2, 3))
 	  mins <- as.numeric(gsub(",", ".", sub("^S[0-9]{2} ", "", x[idx2])))
-	  
 	  out[idx2] <- -(deg + mins/60)
-	  
 	  out
 	}
 	
 	#longitude
 	convert_lon <- function(x) {
-	  
 	  x <- trimws(x)
-	  
 	  out <- rep(NA_real_, length(x))
-	  
 	  # format like E028,80788
 	  idx1 <- grepl("^E[0-9]{3},", x)
-	  
 	  deg <- as.numeric(substr(x[idx1], 2, 4))
 	  mins <- as.numeric(sub(",", ".", substr(x[idx1], 5, 100)))
-	  
 	  out[idx1] <- deg + mins/60
-	  
 	  # format like E028 48,365
 	  idx2 <- grepl("^E[0-9]{3} ", x)
-	  
 	  deg <- as.numeric(substr(x[idx2], 2, 4))
 	  mins <- as.numeric(gsub(",", ".", sub("^E[0-9]{3} ", "", x[idx2])))
-	  
 	  out[idx2] <- deg + mins/60
-	  
 	  out
 	}
 	
@@ -378,6 +360,8 @@ carob_script <- function(path) {
 	d11a <- merge(d11a, d11b, by = c("hhid","field_id"), all = TRUE)
 	
 	##Markets
+### this generates warnings, that is not allowed,
+### first clean the values 
 	d18a <- aggregate(
 	  cbind(market_distance) ~ hhid + field_id,
 	  data = d18,
@@ -608,7 +592,9 @@ carob_script <- function(path) {
 	  "fertilizer_type",
 	  "OM_type"
 	)
-	
+
+
+## why this? The output is not captured	
 	sapply(vars, function(v)
 	  sum(d[[v]] != trimws(d[[v]]), na.rm = TRUE)
 	)
