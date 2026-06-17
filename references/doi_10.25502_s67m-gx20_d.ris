@@ -1,0 +1,24 @@
+TY  - JOUR
+T1  - A recalibrated and tested LINTUL-Cassava simulation model provides insight into the high yield potential of cassava under rainfed conditions
+AU  - Adiele, J.G.
+AU  - Schut, A.G.T.
+AU  - van den Beuken, R.P.M.
+AU  - Ezui, K.S.
+AU  - Pypers, P.
+AU  - Ano, A.O.
+AU  - Egesi, C.N.
+AU  - Giller, K.E.
+JO  - European Journal of Agronomy
+VL  - 124
+SP  - 126242
+PY  - 2021
+DA  - 2021/03/01/
+SN  - 1161-0301
+DO  - https://doi.org/10.1016/j.eja.2021.126242
+UR  - https://www.sciencedirect.com/science/article/pii/S1161030121000149
+KW  - Light interception
+KW  - Radiation use efficiency
+KW  - Dry matter partitioning
+KW  - Crop growth models
+AB  - Accurate assessments of the yield potential of cassava are needed to analyse yield gaps, define yield targets and set benchmarks for actual yields in Nigeria. This study evaluated the crop model LINTUL-Cassava under assumed potential growth and water-limited conditions in Nigeria. On-farm experiments were conducted at six locations across the three major cassava growing agro-ecologies of Western Africa (Tropical Rainforest – Ogoja and Ikom in Cross River state, Rainforest Transition Savanna – Ekpoma in Edo state and Guinea Savanna – Otukpo in Benue state) during two subsequent seasons (2016 – 2018). Treatments included fertilizer rates calculated to support the assumed potential yields of 90 t fresh storage root yield ha−1 y−1 (equivalent to 32 t DM ha−1, produced in a growing season of 12 months). Light interception (LI) and leaf area index (LAI) were measured each month. The weights of leaves, stems and storage roots were measured at 4 and 8 months after planting and at harvest, and radiation use efficiency (RUE) calculated. The Edo experiment from 2016 was without drought stress and was used to parameterise LINTUL-Cassava and calibrate assimilate partitioning as function of temperature sums. The average fraction of light intercepted during the season was 80 %, with a light extinction coefficient of 0.67 and a RUE of 2.8 g DM MJ−1 intercepted photosynthetically active radiation (IPAR). After calibration, the LINTUL-Cassava model described the crop growth and observed patterns of LAI well in the experiments in Cross River and Edo (2017). Simulated and observed storage root yield at 4 MAP (vegetative period), 8 MAP (mid-season) and at harvest were strongly correlated (R2 of 0.92), with a RMSE of 4.93 t DM ha−1. We ascertained that RUE of cassava was much higher than previously observed in Africa, with an average storage root yield of 39 ± 7 t DM ha−1. Consequently, potential yields are greater and yield gaps larger than expected or previously reported. We conclude that the LINTUL-Cassava model can provide an adequate estimate of storage root yield across major cassava growing agroecological zones in Nigeria under rainfed conditions.
+ER  - 
