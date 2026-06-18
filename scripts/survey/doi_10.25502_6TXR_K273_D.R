@@ -348,7 +348,7 @@ carob_script <- function(path) {
 	#merging data
 	##Labour
 	d3a <- aggregate(
-		cbind(plot_labour, land_prep_cost, planting_cost, weeding_cost, weeding_labour, irrigation_cost, OM_transport_cost, fertilizer_app_cost, fertilizer_labour, harvest_cost) ~ hhid + field_id,  
+		cbind(plot_labour, land_prep_cost, planting_cost, weeding_cost, weeding_labour, irrigation_cost, OM_transp_cost, fertilizer_app_cost, fertilizer_labour, harvest_cost) ~ hhid + field_id,  
 		data = d3, sum, na.rm = TRUE )
 	
 	##Livestock
