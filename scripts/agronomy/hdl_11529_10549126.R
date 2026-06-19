@@ -35,7 +35,6 @@ Hybrid maize seed production in Africa can face reduced yields based on the dama
 	
 
 	f1 <- ff[basename(ff) == "Supplementary file_COGS.xlsx"]
-	f2 <- ff[basename(ff) == "COGS_analysis_script.R"]
 
 	r1 <- unique(carobiner::read.excel(f1, sheet="yield_data"))
 	#r2 <- carobiner::read.excel(f1, sheet="seed_grade_data") 
