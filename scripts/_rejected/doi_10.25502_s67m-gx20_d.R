@@ -1,10 +1,6 @@
 # R script for "carob"
-#This study had different variables published under different doi's
-#this script (doi:10.25502/s67m-gx20/d) has photosynthetic active radiation
-# doi:10.25502/qm2j-4q10_d) has biomass
-# doi:10.25502/zbqv-k659/d) has land_prep_method
-# doi:10.25502/88g2-xc50/d has dry matter yield
-# doi:10.25502/vgf3-aj58/d has soil data
+## This dataset is already included in doi:10.25502/s67m-gx20/d.
+
 
 carob_script <- function(path) {
 
