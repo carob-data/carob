@@ -12,10 +12,10 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 	
 	
 	uri <- "doi:10.7910/DVN/QVFRKM"
-	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	carob_group <- "survey"
+	ff  <- carobiner::get_data(uri, path, carob_group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, carob_group, major=1, minor=0,
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,
@@ -99,26 +99,25 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
   d$location[d$location == "Thiago"] <- "Thiagar"
   
   loc <- data.frame(
-    location = c("Mbagame", "Debi", "Mbilor", "Mboltogne", "Kassack Nord",
-                  "Ndiareme", "Ndieurba", "Diawar", "Ronkh", "Maka Diama",
-                  "Ndiatene", "Fanaye", "Rosso", "Kheune", "Ndelle",
-                  "Savoigne", "Keur Mbaye", "Lougue Demisse", "Ross-Bethio",
-                  "Bokhol", "Gaé", "Thiagar", "Thillene", "Wassoul",
-                  "Lampsar", "Ndombo", "Dagana", "Ndiol", "Mboundoum"),
-    latitude  = c(16.483,  16.467,  16.508,  16.160,  16.400,
-				  16.5549, 16.500,  15.023,  16.475,  16.200,
-                  16.500,  16.500,  16.420,  16.500,  16.267,
-                  16.200,  16.4959,  16.211,  16.267,  16.500,
-                  16.578,  16.500,  16.171,  16.478,  16.400,
-                  16.433,  16.483,  15.900,  16.400),
-    longitude = c(-15.783, -16.283, -15.584, -16.292, -16.000,
-                  -15.4406, -15.300, -12.544, -15.988, -16.400,
-                  -15.900, -15.200, -15.799, -16.100, -15.883,
-                  -16.300, -15.5995, -16.015, -16.133, -15.400,
-                  -15.450, -15.900, -15.697, -16.025, -16.100,
-                  -15.700, -15.600, -16.500, -16.100))
+    location = c("Mbagame", "Debi", "Mbilor", 
+                 "Mboltogne", "Kassack Nord", "Ndiareme", "Ndieurba", "Diawar", 
+                 "Ronkh", "Maka Diama", "Ndiatene", "Fanaye", "Rosso", "Kheune", 
+                 "Ndelle", "Savoigne", "Keur Mbaye", "Lougue Demisse", "Ross-Bethio", 
+                 "Bokhol", "Gaé", "Thiagar", "Thillene", "Wassoul", "Lampsar", 
+                 "Ndombo", "Dagana", "Ndiol", "Mboundoum"),
+     
+    latitude = c(16.49,16.467, 16.508, 16.474, 16.266, 16.558, 16.546, 15.027, 16.475, 
+                 16.2, 16.5, 16.534, 16.42, 16.5, 16.267, 16.2, 16.495, 16.484, 
+                 16.465, 16.532, 16.578, 16.5, 16.26, 16.478, 16.4, 16.433, 16.483, 
+                 16.399, 16.4),
+     
+    longitude = c(-16.145, -16.283, -15.584, -15.854,-16.283, -15.443, -15.318, -12.546,
+                  -15.988, -16.4, -15.9, -15.211, -15.799, -16.1, -15.883, -16.3, -15.599,
+                  -16.084, -16.295, -15.395, -15.45, -15.9, -16.307, -16.025, -16.1, -15.7,
+                  -15.6, -15.964, -16.1))
   
 	d <- merge(d, loc, by="location", all.x=T)
+	#Diawar/Diawara seems to be in an isolated locat
   
 	carobiner::write_files(path, meta, d)
 }
