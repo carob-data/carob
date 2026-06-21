@@ -14,8 +14,8 @@ Dataset for meta-analysis on sulfur fertilization effect on wheat protein and yi
 This dataset contains the spreadsheet, the study references, and an R code tutorial explaining how the study was analyzed. This dataset includes the compiled data from the 55 studies used in the meta-analysis, which were sourced from published literature. While the original data for each individual study falls under the purview of the respective authors, the curated dataset used for the meta-analysis in this study is made available to ensure transparency and reproducibility. The dataset contains information such as study location, soil characteristics, fertilization rates and source, wheat yield, and protein content responses, enabling other researchers to investigate further the effects of sulfur fertilization on wheat performance across diverse environments.
 "
 	uri <- "doi:10.7910/DVN/4RLPP1"
-	carob_group <- "agronomy"
-	ff  <- carobiner::get_data(uri, path, carob_group)
+	group <- "agronomy"
+	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=0,
 		data_organization = "KSU",
