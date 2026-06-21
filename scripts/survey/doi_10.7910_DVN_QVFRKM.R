@@ -12,10 +12,10 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 	
 	
 	uri <- "doi:10.7910/DVN/QVFRKM"
-	carob_group <- "survey"
-	ff  <- carobiner::get_data(uri, path, carob_group)
+	group <- "survey"
+	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, carob_group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,

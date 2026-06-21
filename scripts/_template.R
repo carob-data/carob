@@ -38,6 +38,8 @@ carob_script <- function(path) {
 		response_vars = "", 
 		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
 		carob_completion = 0,
+		# How many hours did it take to write this script?
+		carob_effort = 0,
 		carob_contributor = "Your Name",
 		# The day the script was first written
 		carob_date = "2025-06-08",
