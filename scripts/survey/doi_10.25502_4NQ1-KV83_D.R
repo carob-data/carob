@@ -1,6 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 carob_script <- function(path) {
 
 "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uganda and Ethiopia) and six other countries (DR Congo, Malawi, Rwanda, Mozambique, Kenya & Zimbabwe) as tier one countries."
@@ -92,7 +93,7 @@ carob_script <- function(path) {
 		crop             = r5$crop,
 		field_size       = as.numeric(r5$area_ha),
 		# sole_crop_or_intercrop: S = sole, I = intercrop
-		is_intercropped  = r5$sole_crop_or_intercrop == "I",
+		intercropped  = r5$sole_crop_or_intercrop == "I",
 		OM_used          = r5$animal_manure_applied == "y" | r5$other_organic_input == "y",
 		OM_type          = r5$other_organic_input_type
 	)
@@ -223,6 +224,9 @@ carob_script <- function(path) {
 	}
 
   ## need to keep upload /lowland distinction. It is lke a different crop
+  d$flooded <- NA 
+  d$flooded[d$crop == "rice - lowland"] <- TRUE
+  d$flooded[d$crop == "rice - upland"] <- FALSE
   d$crop[d$crop %in% c("rice - lowland","rice - upland")] <- "rice"
   
 	d$crop  <- standardise_crop(d$crop)
