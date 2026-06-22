@@ -25,7 +25,7 @@ An on-farm experiment was carried out to evaluate mungbean machine sowing compar
 		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "yield", 
 		notes = NA,
-		carob_contributor = "cedric Ngakou",
+		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-06-22",
 		carob_completion = 100,	
 		carob_effort = 2
