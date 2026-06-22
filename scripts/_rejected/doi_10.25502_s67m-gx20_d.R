@@ -1,5 +1,6 @@
 # R script for "carob"
-## This dataset is already included in doi:10.25502/s67m-gx20/d.
+
+## Reject because this dataset is already included in doi:10.25502/s67m-gx20/d.
 
 
 carob_script <- function(path) {
