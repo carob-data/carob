@@ -5,6 +5,10 @@ carob_script <- function(path) {
 
 "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uganda and Ethiopia) and six other countries (DR Congo, Malawi, Rwanda, Mozambique, Kenya & Zimbabwe) as tier one countries."
 
+
+# notes = "No per-household GPS coordinates in source data; dataset centroid (lat 6.42806, lon -9.42950) used for all records. Yield field in f_crop_production is a free-text string requiring parsing; non-kg units set to NA.",
+
+
 	uri   <- "doi:10.25502/4NQ1-KV83/D"
 	group <- "survey"
 
@@ -17,42 +21,32 @@ carob_script <- function(path) {
 		project = "N2Africa",
 		data_type = "survey",
 		treatment_vars = "none",
-		response_vars = "yield",
+		response_vars = "none",
 		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-06-22",
 		carob_effort = NA,
-		notes = "No per-household GPS coordinates in source data; dataset centroid (lat 6.42806, lon -9.42950) used for all records. Yield field in f_crop_production is a free-text string requiring parsing; non-kg units set to NA.",
 		design = NA
 	)
 
 	f1  <- ff[basename(ff) == "a_demographic.csv"]
 	r1  <- read.csv(f1)
-
 	f2  <- ff[basename(ff) == "c_labour.csv"]
 	r2  <- read.csv(f2)
-
 	f3  <- ff[basename(ff) == "d_livestock_ownership.csv"]
 	r3  <- read.csv(f3)
-
 	f4  <- ff[basename(ff) == "e4_e6_land_use.csv"]
 	r4  <- read.csv(f4)
-
 	f5  <- ff[basename(ff) == "f_crop_production.csv"]
 	r5  <- read.csv(f5)
-
 	f6  <- ff[basename(ff) == "g1_legume_utilisation.csv"]
 	r6  <- read.csv(f6)
-
 	f7  <- ff[basename(ff) == "g2_legume_utilisation.csv"]
 	r7  <- read.csv(f7)
-
 	f8  <- ff[basename(ff) == "h1_access_to_markets.csv"]
 	r8  <- read.csv(f8)
-
 	f9  <- ff[basename(ff) == "h2_h3_access_to_markets.csv"]
 	r9  <- read.csv(f9)
-
 
 	d1 <- data.frame(
 		hhid      = r1$id,
@@ -76,27 +70,14 @@ carob_script <- function(path) {
 	d3 <- data.frame(
 		hhid     = r3$id,
 		field_id = r3$farm_id,
-		livestock = trimws(tolower(r3$livestock))
+		animal = gsub("s$", "", trimws(tolower(r3$livestock)))
 	)
-
-	d3$livestock[d3$livestock == ""] <- NA
-
-	# Standardise livestock names
-	d3$livestock[grepl("^goats?$", d3$livestock)]             <- "goat"
-	d3$livestock[d3$livestock == "pigs"]                      <- "pig"
-	d3$livestock[d3$livestock == "sheep"]                     <- "sheep"
-	d3$livestock[grepl("^ducks?$", d3$livestock)]             <- "duck"
-	d3$livestock[d3$livestock == "chicken"]                   <- "chicken"
-	d3$livestock[d3$livestock == "rabbits"]                   <- "rabbit"
-	d3$livestock[grepl("^dogs?$", d3$livestock)]              <- "dog"
-	d3$livestock[grepl("guinea fowls?", d3$livestock)]        <- "guinea fowl"
-
-	d3a <- aggregate(
-		livestock ~ hhid + field_id,
-		data = d3,
-		FUN  = function(x) paste(unique(na.omit(x)), collapse = ";")
-	)
-	d3a$livestock[d3a$livestock == ""] <- NA
+	d3$animal[d3$animal == ""] <- NA
+	
+	#aggfun <- function(x) paste(unique(na.omit(x)), collapse = ";")
+	aggfun <- function(x) paste(unique(na.omit(x[x != ""])), collapse = ";")
+	d3a <- aggregate(animal ~ hhid + field_id, d3, aggfun)
+	d3a$animal[d3a$animal == ""] <- NA
 
 #	d4 <- data.frame(
 	#	hhid       = r4$id,
@@ -111,7 +92,7 @@ carob_script <- function(path) {
 		crop             = r5$crop,
 		field_size       = as.numeric(r5$area_ha),
 		# sole_crop_or_intercrop: S = sole, I = intercrop
-		#crop_system      = r5$sole_crop_or_intercrop,
+		is_intercropped  = r5$sole_crop_or_intercrop == "I",
 		OM_used          = r5$animal_manure_applied == "y" | r5$other_organic_input == "y",
 		OM_type          = r5$other_organic_input_type
 	)
@@ -136,63 +117,39 @@ carob_script <- function(path) {
 		out
 	}
 
-	d5$yield         <- parse_yield_kg(r5$yield)
-	d5$yield_isfresh <- TRUE
-	d5$yield_part    <- NA_character_
-
-	# crop_system: recode to carob convention
-	#d5$crop_system[d5$crop_system == "S"] <- "sole"
-	#d5$crop_system[d5$crop_system == "I"] <- "intercrop"
-	#d5$crop_system[d5$crop_system == ""] <- NA
+	d5$yield <- parse_yield_kg(r5$yield)
 
 	d6 <- data.frame(
 		hhid     = r6$id,
 		field_id = r6$farm_id,
 		crop     = r6$legume_type,
-		yield    = as.numeric(r6$total_prod_most_recent_season_kg),
-		yield_isfresh = TRUE
+		yield    = as.numeric(r6$total_prod_most_recent_season_kg)
 	)
-	# amount sold — kept as contextual variable
-	d6$amount_sold_kg <- as.numeric(r6$amount_used_for_sale)
+	d6$crop_amount_sold <- r6$amount_used_for_sale
 
 	d7 <- data.frame(
 		hhid     = r7$id,
 		field_id = r7$farm_id,
-		crop     = r7$legume_type,
-		previous_crop_residue_management = trimws(r7$haulms_usage)
+		crop     = r7$legume_type
 	)
-	d7$previous_crop_residue_management[d7$previous_crop_residue_management == ""] <- NA
+	
+	pcm <- trimws(r7$haulms_usage)
+	pcm[pcm == ""] <- NA
 
 	# Standardise haulm usage descriptions
-	d7$previous_crop_residue_management <- tolower(d7$previous_crop_residue_management)
-	d7$previous_crop_residue_management[
-		grepl("nothing|throw|thrown|dump|wasted|unused|no use|nothing", d7$previous_crop_residue_management)
-	] <- "discarded"
-	d7$previous_crop_residue_management[
-		grepl("composted|compost", d7$previous_crop_residue_management)
-	] <- "incorporated as compost"
-	d7$previous_crop_residue_management[
-		grepl("incorporated in the soil", d7$previous_crop_residue_management)
-	] <- "incorporated"
-	d7$previous_crop_residue_management[
-		grepl("feed|fodder|livestock", d7$previous_crop_residue_management)
-	] <- "fed to livestock"
-	d7$previous_crop_residue_management[
-		grepl("burnt|burned", d7$previous_crop_residue_management)
-	] <- "burned"
-	d7$previous_crop_residue_management[
-		grepl("sold", d7$previous_crop_residue_management)
-	] <- "sold"
-	d7$previous_crop_residue_management[
-		grepl("left out on field", d7$previous_crop_residue_management)
-	] <- "left on field"
+	pcm <- tolower(pcm)
+	pcm[grepl("nothing|throw|thrown|dump|wasted|unused|no use|nothing", pcm)] <- "discarded"
+	pcm[grepl("composted|compost", pcm)] <- "incorporated as compost"
+	pcm[grepl("incorporated in the soil", pcm)] <- "incorporated"
+	pcm[grepl("feed|fodder|livestock", pcm)] <- "fed to livestock"
+	pcm[grepl("burnt|burned", pcm)] <- "burned"
+	pcm[grepl("sold", pcm)] <- "sold"
+	pcm[grepl("left out on field", pcm)] <- "left on field"
 	# Local soda / soap — biomass used for traditional ash extraction; treated as removal
-	d7$previous_crop_residue_management[
-		grepl("soda|soap", d7$previous_crop_residue_management)
-	] <- "removed (other use)"
-	d7$previous_crop_residue_management[
-		grepl("give away", d7$previous_crop_residue_management)
-	] <- "given away"
+	pcm[grepl("soda|soap", pcm)] <- "removed (other use)"
+	pcm[grepl("give away", pcm)] <- "given away"
+
+	d7$previous_crop_residue_management <- pcm
 
 	d8 <- data.frame(
 		hhid            = r8$id,
@@ -229,20 +186,11 @@ carob_script <- function(path) {
 		out
 	}
 
-	d8$market_time_min <- parse_minutes(r8$time)
+	d8$market_timeto <- parse_minutes(r8$time)
 	d8$market_costs    <- as.numeric(r8$costs)
 
-	d8a <- aggregate(
-		cbind(market_time_min, market_costs) ~ hhid + field_id,
-		data    = d8,
-		FUN     = mean,
-		na.rm   = TRUE
-	)
-	tmp_mkt <- aggregate(
-		market_type ~ hhid + field_id,
-		data = d8,
-		FUN  = function(x) paste(unique(na.omit(x[x != ""])), collapse = ";")
-	)
+	d8a <- aggregate(cbind(market_timeto, market_costs) ~ hhid + field_id, d8, mean, na.rm = TRUE)
+	tmp_mkt <- aggregate(market_type ~ hhid + field_id, d8, FUN = aggfun)
 	d8a <- merge(d8a, tmp_mkt, by = c("hhid", "field_id"), all = TRUE)
 
 	d9 <- data.frame(
@@ -257,38 +205,32 @@ carob_script <- function(path) {
 
 	standardise_crop <- function(crop) {
 		x <- trimws(tolower(crop))
-		x[grepl("^maize$|^corn$", x)]                              <- "maize"
-		x[grepl("^rice$", x)]                                      <- "rice"
-		x[grepl("^cassava$", x)]                                   <- "cassava"
-		x[grepl("^plantain$|^banana$", x)]                        <- "banana"
-		x[grepl("^soybean$|^soya$", x)]                           <- "soybean"
-		x[grepl("^cowpea$|^cow pea$", x)]                         <- "cowpea"
-		x[grepl("^groundnut$|^peanut$|^ground nut$", x)]          <- "groundnut"
-		x[grepl("country bean|big bean|brown bean|long bean", x)] <- "bean"
-		x[grepl("mung bean|mung beans", x)]                       <- "mung bean"
-		x[grepl("^okra$", x)]                                     <- "okra"
-		x[grepl("^tomato$", x)]                                   <- "tomato"
-		x[grepl("^pumpkin$", x)]                                  <- "pumpkin"
+### this does not do anything!
+### x[grepl("^cassava$", x)]                                   <- "cassava"
+		x[x=="corn"]                    <- "maize"
+		x[grepl("country bean|big bean|brown bean|long bean", x)] <- "common bean"
+		x[grepl("mung beans", x)]       <- "mung bean"
 		x[grepl("^pepper$|^garden egg$|^bitterball$", x)]         <- "pepper"
-		x[grepl("^cucumber$", x)]                                 <- "cucumber"
-		x[grepl("^pineapple$", x)]                                <- "pineapple"
-		x[grepl("^oranges?$", x)]                                 <- "orange"
-		x[grepl("^potatoes?$|^sweet potato$", x)]                <- "sweetpotato"
-		x[grepl("^sugarcane$|^sugar cane$", x)]                  <- "sugarcane"
-		x[grepl("^coffee$", x)]                                   <- "coffee"
-		x[grepl("^oil palm$", x)]                                 <- "oil palm"
-		x[grepl("^rubber$", x)]                                   <- "rubber"
-		x[grepl("^cocoa$", x)]                                    <- "cocoa"
-		x[x %in% c("", " ")]                                      <- NA
+		x[x=="oranges"]                 <- "orange"
+		x[grepl("eddo?", x)]            <- "eddo"
+		x[grepl("potato?", x)]          <- "sweetpotato" ## assumption because this is Liberia
+		x[x=="sugar cane"]              <- "sugarcane"
+		x[x=="peppet"]                  <- "pepper"
+		x[x=="bitterbal"]               <- "bitterball"
+		x[x=="tomatoes"]                <- "tomato"
+		x[x=="other non-legume crop (specify)"] <- NA
 		x
 	}
- 
+
+  ## need to keep upload /lowland distinction. It is lke a different crop
+  d$crop[d$crop %in% c("rice - lowland","rice - upland")] <- "rice"
+  
 	d$crop  <- standardise_crop(d$crop)
 	d6$crop <- standardise_crop(d6$crop)
 	d7$crop <- standardise_crop(d7$crop)
 
 	# Merge legume production (g1) — crop-level merge
-	d <- merge(d, d6[, c("hhid", "field_id", "crop", "yield", "yield_isfresh", "amount_sold_kg")],
+	d <- merge(d, d6[, c("hhid", "field_id", "crop", "yield", "crop_amount_sold")],
 		by = c("hhid", "field_id", "crop"), all = TRUE)
 
 	# Resolve duplicate yield columns: prefer g1 (clean numeric) for legumes
@@ -296,20 +238,17 @@ carob_script <- function(path) {
 	d$yield.x <- NULL
 	d$yield.y <- NULL
 
-	d$yield_isfresh <- ifelse(!is.na(d$yield_isfresh.y), d$yield_isfresh.y, d$yield_isfresh.x)
-	d$yield_isfresh.x <- NULL
-	d$yield_isfresh.y <- NULL
 
 	# Merge haulm management (g2)
 	d <- merge(d, d7[, c("hhid", "field_id", "crop", "previous_crop_residue_management")],
 		by = c("hhid", "field_id", "crop"), all = TRUE)
 
 	# Household-level merges
-	d <- merge(d, d1,              by = c("hhid", "field_id"), all = TRUE)
-	d <- merge(d, d2,              by = c("hhid", "field_id"), all = TRUE)
-	d <- merge(d, d3a,             by = c("hhid", "field_id"), all = TRUE)
-	d <- merge(d, d8a,             by = c("hhid", "field_id"), all = TRUE)
-	d <- merge(d, d9,              by = c("hhid", "field_id"), all = TRUE)
+	d <- merge(d, d1, by = c("hhid", "field_id"), all = TRUE)
+	d <- merge(d, d2, by = c("hhid", "field_id"), all = TRUE)
+	d <- merge(d, d3a, by = c("hhid", "field_id"), all = TRUE)
+	d <- merge(d, d8a, by = c("hhid", "field_id"), all = TRUE)
+	d <- merge(d, d9, by = c("hhid", "field_id"), all = TRUE)
 
 
 	d$country   <- "Liberia"
@@ -318,27 +257,23 @@ carob_script <- function(path) {
 	d$latitude  <- 6.42806
 	d$longitude <- -9.42950
 	d$elevation <- NA_real_
-
-	d$on_farm       <- TRUE
-	d$is_survey     <- TRUE
-	d$irrigated     <- FALSE
+	d$on_farm    <- TRUE
+	d$is_survey  <- TRUE
+	d$irrigated  <- FALSE
 	d$geo_from_source <- FALSE
 
-	d$trial_id      <- d$trial_id <- as.character(as.integer(as.factor(1)))
-	d$treatment     <- NA_character_
-	d$planting_date <- NA_character_
-	d$harvest_date  <- NA_character_
+	d$trial_id   <- "1" ## d$trial_id <- as.character(as.integer(as.factor(1))) ????
+	d$treatment  <- d$planting_date <- d$harvest_date  <- NA_character_
 	d$yield_moisture<- NA_real_
 
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <-
-		d$S_fertilizer <- d$lime <- NA_real_
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- NA_real_
 
 	d$fertilizer_type <- trimws(tolower(d$fertilizer_type))
 	d$fertilizer_type[d$fertilizer_type %in% c("", "no", "n/a")] <- NA
 
-	d$fertilizer_type[grepl("^npk", d$fertilizer_type)]         <- "NPK"
-	d$fertilizer_type[grepl("nkp",  d$fertilizer_type)]         <- "NPK"
-	d$fertilizer_type[grepl("npk 15/15|15/15", d$fertilizer_type)] <- "NPK"
+	d$fertilizer_type[grepl("^npk|nkp", d$fertilizer_type)] <- "NPK"
+	d$fertilizer_type[grepl("nkp",  d$fertilizer_type)] <- "NPK"
+	#d$fertilizer_type[grepl("npk 15/15|15/15", d$fertilizer_type)] <- "NPK"
 	# "grass" entered as fertilizer type — reassign to OM
 	d$OM_type[grepl("^grass$", d$fertilizer_type) & is.na(d$OM_type)] <- "foliage"
 	d$fertilizer_type[grepl("^grass$", d$fertilizer_type)] <- NA
@@ -349,47 +284,26 @@ carob_script <- function(path) {
 	d$OM_type[grepl("chicken|poultry|chiken manure", d$OM_type)] <- "poultry manure"
 	d$OM_type[grepl("^grass$|rotten grass|bush trash", d$OM_type)] <- "foliage"
 
-	d$yield_part <- NA_character_
-	d$yield_part[d$crop %in% c("maize", "rice", "sorghum", "millet")]       <- "grain"
-	d$yield_part[d$crop %in% c("cowpea", "soybean", "groundnut", "mung bean",
-		"bean")] <- "seed"
-	d$yield_part[d$crop %in% c("cassava", "sweetpotato")]                    <- "roots"
-	d$yield_part[d$crop %in% c("tomato", "pepper", "okra", "pumpkin",
-		"cucumber", "garden egg")] <- "fruit"
-	d$yield_part[d$crop %in% c("banana", "orange", "pineapple")]            <- "fruit"
-	d$yield_part[d$crop == "sugarcane"]                                      <- "stems"
-	d$yield_part[d$crop %in% c("coffee", "cocoa")]                          <- "seed"
-
-	d$yield[d$yield < 0 | d$yield > 150000] <- NA
-	d$hh_size[d$hh_size < 0 | d$hh_size > 50] <- NA
-	d$age[d$age < 0 | d$age > 100] <- NA
+	d$yield_part <- "grain"
+	d$yield_part[d$crop %in% c("cowpea", "soybean", "groundnut", "mung bean", "bean")] <- "seed"
+	d$yield_part[d$crop %in% c("cassava", "sweetpotato")]   <- "roots"
+	d$yield_part[d$crop %in% c("tomato", "pepper", "okra", "pumpkin", "cucumber", "garden egg")] <- "fruit"
+	d$yield_part[d$crop %in% c("banana", "orange", "pineapple")]   <- "fruit"
+	d$yield_part[d$crop == "sugarcane"]                            <- "stems"
+	d$yield_part[d$crop %in% c("coffee", "cocoa")]                 <- "seed"
 
 	d$hhid                    <- as.character(d$hhid)
 	d$field_id                <- as.character(d$field_id)
 	d$sex[d$sex == "M"]       <- "male"
 	d$sex[d$sex == "F"]       <- "female"
 	d$hh_size                 <- as.integer(d$hh_size)
-	d$farm_labour_hired       <- as.logical(d$farm_labour_hired)
-	d$sell_at_farm_gate       <- as.logical(d$sell_at_farm_gate)
-	d$sell_at_home            <- as.logical(d$sell_at_home)
-	d$treatment               <- as.character(d$treatment)
-	d$planting_date           <- as.character(d$planting_date)
-	d$harvest_date            <- as.character(d$harvest_date)
 
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(d[char_cols], trimws)
 	
-	d$amount_sold_kg<-d$livestock<-d$market_time_min<-d$market_costs<-d$sell_at_farm_gate<- d$sell_at_home <- NULL
-  d$farm_labour_hired <- as.logical(d$farm_labour_hired)
-  
-  d$crop[d$crop=="bean"] <- "common bean"
-  d$crop[d$crop %in% c("rice - lowland","rice - upland")] <- "rice"
-  d$crop[d$crop=="tomatoes"] <- "tomato"
-  d$crop[d$crop=="peppet"] <- " bell pepper"
-  d$crop[d$crop%in% c("bitterbal","other non-legume crop (specify)")] <- NA
-  d$crop[d$crop %in% c("eddoe","eddoes")] <- "eggplant"
-  
-  d$yield[d$yield < 0 | d$yield > 150000] <- NA
-  
+#	d$market_costs <- d$sell_at_farm_gate <- d$sell_at_home <- NULL
+
+	d$yield_isfresh <- TRUE
+    
 	carobiner::write_files(path, meta, d)
 }
