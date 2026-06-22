@@ -14,8 +14,8 @@ This dataset consists of Soil Analysis for the 95 on-farm field trial sites. The
 "
 
 	uri <- "hdl:11529/280439"
-	carob_group <- "soil_samples"
-	ff  <- carobiner::get_data(uri, path, carob_group)
+	group <- "soil_samples"
+	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
 		data_organization = "BUK; IITA",
