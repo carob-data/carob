@@ -5,7 +5,6 @@
 # 1. some missing S_fertilizer data from raw csv.
 
 
-
 carob_script <- function(path) {
 
 "
@@ -22,8 +21,8 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 		publication = "doi_10.3390_nitrogen5030037",
 		project = NA,
 		carob_date = "2026-06-17",
-		design = "Randomised Complete Block",
-		data_type = "experiment",
+		design = NA,
+		data_type = "compilation",
 		treatment_vars = "S_fertilizer",
 		response_vars = "yield;grain_protein", 
 		carob_contributor = "Blessing Dzuda",
@@ -71,43 +70,43 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 	  "ammonium sulfate" = "AS",
 	  "ammonium sulfate (amidas®)" = "AS",
 	  "ammonium thiosulfate" = "ATS",
-	  "elemental s" = "unknown",      # elemental sulfur not in CAROB
-	  "elemental  s" = "unknown",
+	  "elemental s" = "S",      # elemental sulfur not in CAROB
+	  "elemental  s" = "S",
 	  "magnesium sulfate" = "MgSO4",
 	  "potassium sulfate" = "SOP",
 	  "copper sulfate" = "CuSO4",
-	  "water soluble sulfate" = "unknown",
-	  "sodium sulfate" = "unknown",
+	  "water soluble sulfate" = "SO4",
+	  "sodium sulfate" = "NaSO4",
 	  # Nitrogen fertilizers
 	  "urea" = "urea",
 	  "ammonium nitrate" = "AN",
 	  "ammonium  nitrate" = "AN",
-	  "urea ammonium nitrate" = "unknown",      # UAN not in CAROB
-	  "urea ammoniun nitrate" = "unknown",
+	  "urea ammonium nitrate" = "urea;AN",      # UAN not in CAROB
+	  "urea ammoniun nitrate" = "urea;AN",
 	  "calcium ammoniumnitrate" = "CAN",
 	  "dap" = "DAP",
 	  # Missing values
 	  "na" = "none",
 	  "none" = "none",
 	  # Commercial products requiring investigation
-	  "cosavet" = "unknown",
-	  "reap®90 wdg" = "unknown",
-	  "sulfan" = "unknown",
-	  "yv thiotrac" = "unknown",
-	  "axam super" = "unknown",
-	  "agrium plus" = "unknown",
-	  "bio sulphur" = "unknown",
+	  "cosavet" = "none",#this is a fungicide
+	  "reap®90 wdg" = "Reap® 90 WDG",
+	  "sulfan" = "YaraBela Sulfan",
+	  "yv thiotrac" = "YaraVita Thiotrac 300",
+	  "axam super" = "axam super",
+	  "agrium plus" = "Agrium Plus",
+	  "bio sulphur" = "Bio-sulphur",
 	  # Non-mineral amendments
 	  "soil mix" = "unknown",
 	  "blood meal" = "unknown",
 	  # Mixed products
-	  "ammonium nitrate & urea" = "unknown",
-	  "urea & ammonium nitrate" = "unknown",
-	  "sodium nitrate & supernitro" = "unknown",
-	  "ammonium nitrate & urea" = "unknown",
-	  "urea & dap" = "unknown",
-	  "dap & urea" = "unknown",
-	  "sulfan & yv thiotrac" = "unknown")
+	  "ammonium nitrate & urea" = "urea;AN",
+	  "urea & ammonium nitrate" = "urea;AN",
+	  "sodium nitrate & supernitro" = "NaNO3;Super Nitro",
+	  "ammonium nitrate & urea" = "urea;AN",
+	  "urea & dap" = "urea;DAP",
+	  "dap & urea" = "urea;DAP",
+	  "sulfan & yv thiotrac" = "YaraBela Sulfan;YaraVita Thiotrac 300")
 	
 	d$fertilizer_type <- gsub(" +", " ", d$fertilizer_type)
 	
