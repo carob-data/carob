@@ -65,9 +65,6 @@ Selected soil properties were predicted from 61 topsoil and 61 subsoil samples s
 	)
 	
 	d$geo_from_source=TRUE
-	d$planting_date=as.numeric(NA)
-	d$irrigated=FALSE
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
 	d$soil_texture <-gsub("clayloam","clay loam",d$soil_texture)
 	d$soil_texture <-gsub("sandyclayloam","sandy clay loam",d$soil_texture)
