@@ -12,6 +12,7 @@ Dataset for meta-analysis on sulfur fertilization effect on wheat protein and yi
 
 This dataset contains the spreadsheet, the study references, and an R code tutorial explaining how the study was analyzed. This dataset includes the compiled data from the 55 studies used in the meta-analysis, which were sourced from published literature. While the original data for each individual study falls under the purview of the respective authors, the curated dataset used for the meta-analysis in this study is made available to ensure transparency and reproducibility. The dataset contains information such as study location, soil characteristics, fertilization rates and source, wheat yield, and protein content responses, enabling other researchers to investigate further the effects of sulfur fertilization on wheat performance across diverse environments.
 "
+
 	uri <- "doi:10.7910/DVN/4RLPP1"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -70,7 +71,7 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 	  "ammonium sulfate" = "AS",
 	  "ammonium sulfate (amidas®)" = "AS",
 	  "ammonium thiosulfate" = "ATS",
-	  "elemental s" = "S",      # elemental sulfur not in CAROB
+	  "elemental s" = "S",     
 	  "elemental  s" = "S",
 	  "magnesium sulfate" = "MgSO4",
 	  "potassium sulfate" = "SOP",
@@ -81,8 +82,8 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 	  "urea" = "urea",
 	  "ammonium nitrate" = "AN",
 	  "ammonium  nitrate" = "AN",
-	  "urea ammonium nitrate" = "urea;AN",      # UAN not in CAROB
-	  "urea ammoniun nitrate" = "urea;AN",
+	  "urea ammonium nitrate" = "UAN",
+	  "urea ammoniun nitrate" = "UAN",
 	  "calcium ammoniumnitrate" = "CAN",
 	  "dap" = "DAP",
 	  # Missing values
@@ -90,10 +91,10 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 	  "none" = "none",
 	  # Commercial products requiring investigation
 	  "cosavet" = "none",#this is a fungicide
-	  "reap®90 wdg" = "Reap® 90 WDG",
+	  "reap®90 wdg" = "Reap 90 WDG",
 	  "sulfan" = "YaraBela Sulfan",
-	  "yv thiotrac" = "YaraVita Thiotrac 300",
-	  "axam super" = "axam super",
+	  "yv thiotrac" = "YaraVita Thiotrac",
+	  "axam super" = "unknown" # cannot find this
 	  "agrium plus" = "Agrium Plus",
 	  "bio sulphur" = "Bio-sulphur",
 	  # Non-mineral amendments
@@ -102,11 +103,11 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 	  # Mixed products
 	  "ammonium nitrate & urea" = "urea;AN",
 	  "urea & ammonium nitrate" = "urea;AN",
-	  "sodium nitrate & supernitro" = "NaNO3;Super Nitro",
+	  "sodium nitrate & supernitro" = "NaNO3;SuperNitro",
 	  "ammonium nitrate & urea" = "urea;AN",
 	  "urea & dap" = "urea;DAP",
 	  "dap & urea" = "urea;DAP",
-	  "sulfan & yv thiotrac" = "YaraBela Sulfan;YaraVita Thiotrac 300")
+	  "sulfan & yv thiotrac" = "YaraBela Sulfan;YaraVita Thiotrac")
 	
 	d$fertilizer_type <- gsub(" +", " ", d$fertilizer_type)
 	

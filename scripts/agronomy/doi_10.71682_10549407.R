@@ -49,7 +49,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	  crop=r$crop,
 	  treatment=r$treatment,
 	  lime=r$lime_tha,
-	  lime_source=r$lime_source,
+	  fertilizer_type= "calcitic-lime", # CaCO3
 	  liming_date=as.character(r$liming_date),
 	  planting_date=as.character(r$planting_date),
 	  on_farm=r$is_on_farm,
@@ -59,9 +59,9 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	  yield=r$yield_tha*1000
 	)
 
-	d$trial_id <- paste(d$planting_date,d$adm4,sep = "_")
-  d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
-	d$yield_part <- ifelse(d$crop=="beans","seed","grain")
+	d$trial_id <- paste(d$planting_date,d$adm4, sep = "_")
+	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
+	d$yield_part <- ifelse(d$crop=="beans", "seed", "grain")
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
 	d$crop <- gsub("beans","common bean", d$crop)
