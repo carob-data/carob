@@ -17,7 +17,6 @@ Selected soil properties were predicted from 366 topsoil samples subjected to sp
 	group <- "soil_samples"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIMMYT;CIRAD;ICRAF",
 		publication = NA,
@@ -33,18 +32,18 @@ Selected soil properties were predicted from 366 topsoil samples subjected to sp
 		carob_effort = 1
 	)
 	
-
 	f <- ff[basename(ff) == "GAIA_ZMB_on_farm_trials_soil_properties_v0.1.xlsx"]
 	r <- carobiner::read.excel(f, sheet="soil_data")
+	r <- unique(r) # reduces records from 366 to 279!
 	
 	d <- data.frame(
+	  sample_id = r$ssn,
 	  country=r$country,
 	  adm1=r$adm1,
 	  adm2=r$adm2,
 	  longitude=r$longitude,
 	  latitude=r$latitude,
-	  #trial_id=r$trial_id,
-	  #crop=r$crop,
+	  geo_from_source = TRUE,
 	  soil_depth=r$soil_depth,
 	  depth_top=r$soil_sample_top,
 	  depth_bottom=r$soil_sample_bottom,
@@ -65,21 +64,13 @@ Selected soil properties were predicted from 366 topsoil samples subjected to sp
 	  soil_Na=r$m3.Na,
 	  soil_ex_acidity=r$ExAc,
 	  soil_CEC=r$CEC
-	  )
+	)
 	
-	d$geo_from_source <- TRUE
-	d$irrigated <- FALSE
-	d$planting_date <- as.character(NA)
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$date <- "2024"
+	d$date[r$period == "after harvest"] <- "2025"
 	
-	 texture <- c(
-	   "clay loam"="clayloam",
-	   "sandy clay"="sandyclay",
-	   "sandy clay loam"="sandyclayloam",
-	   "sandy loam"="sandy loam"
-	 )
-	
-	d$soil_texture <- texture[as.character(d$soil_texture)]
+	d$soil_texture <- gsub("sandy", "sandy ", d$soil_texture)
+	d$soil_texture <- trimws(gsub("clay", "clay ", d$soil_texture))
 	 
 	 d <- unique(d)
 	
