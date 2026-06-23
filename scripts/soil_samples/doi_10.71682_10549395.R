@@ -72,7 +72,7 @@ Selected soil properties were predicted from 366 topsoil samples subjected to sp
 	d$soil_texture <- gsub("sandy", "sandy ", d$soil_texture)
 	d$soil_texture <- trimws(gsub("clay", "clay ", d$soil_texture))
 	 
-	 d <- unique(d)
+	 d <- unique(d) # because we drop "crop"
 	
 	carobiner::write_files(path, meta, d)
 }
