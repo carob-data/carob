@@ -22,7 +22,7 @@ This database compiles a globally representative, meta-analysis–ready collecti
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;land_prep_method;irrigated",
+		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;irrigated",
 		response_vars = "yield;grain_Zn;grain_protein;grain_Fe", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
