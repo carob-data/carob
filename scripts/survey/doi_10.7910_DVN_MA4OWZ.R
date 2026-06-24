@@ -7,7 +7,7 @@
 # Distance variables are in walking minutes, not km.
 # Economic variables (productionvalueca2, HHincomeca_w) are in Tanzanian Shillings (TZS).
 # Sexhh: 1=male, 0=female. District: 1=Kongwa (Dodoma Region), 0=Kiteto (Manyara Region).
-# No GPS coordinates in published dataset; district-level coordinates not assigned.
+# District level coordinates assigned from Google Earth;
 # hh_size likely transformed; Values range 0-3
 # crop_value skipped as 101 farms have zero farm size making per ha calculation unreliable.
 # New terminag terms proposed: livestock_tlu, dietary_diversity, household_income, household_size, credit_access.
@@ -58,8 +58,8 @@ livestock units."
     country            = "Tanzania",
     adm1               = ifelse(d$District == 1, "Dodoma", "Manyara"),
     adm2               = ifelse(d$District == 1, "Kongwa", "Kiteto"),
-    longitude          = NA_real_,
-    latitude           = NA_real_,
+    longitude          = ifelse(d$District == 1, 36.523, 36.850),
+    latitude           = ifelse(d$District == 1, -6.060, -5.866),
     geo_from_source    = FALSE,
     on_farm            = TRUE,
     is_survey          = TRUE,
