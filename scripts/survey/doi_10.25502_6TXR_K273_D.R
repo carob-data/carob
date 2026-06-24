@@ -10,7 +10,7 @@ carob_script <- function(path) {
 	uri <- "doi:10.25502/6TXR-K273/D"
 	group <- "survey"
 
-
+## Download data 
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
@@ -28,6 +28,8 @@ carob_script <- function(path) {
 		design = NA
 	)
 	
+## read data 
+
 	f1 <- ff[basename(ff) == "a1_a3_demographic.csv"]
 	r1 <- read.csv(f1)
 	
@@ -130,7 +132,7 @@ carob_script <- function(path) {
 	  hhid = r4$id,
 	  field_id = r4$farm_id,
 	  floor_quality = r4$type
-	)  
+	)  # on new line 	
 	
 	d5 <- data.frame(
 	  hhid = r5$id,
@@ -144,7 +146,7 @@ carob_script <- function(path) {
 	  wall_quality = r6$type
 	)
 
-  #Aggregating done to carter for lack of a one-to-one correspondence between records across the three files.
+#Aggregating done to carter for lack of a one-to-one correspondence between records across the three files.
 	fagg <- function(x) paste(unique(x), collapse = ";")
 	d4a <- aggregate(floor_quality ~ field_id, d4, FUN = fagg)
 	d5a <- aggregate(roof_quality ~ field_id, d5, FUN = fagg)
@@ -184,39 +186,39 @@ carob_script <- function(path) {
 	d11 <- data.frame(
 	  hhid = r11$id,
 	  field_id = r11$farm_id,
-	  animal = trimws(tolower(r11$livestock))
+	  livestock = trimws(tolower(r11$livestock))
 	)
 	
 	# Purpose first
 	d11$purpose <- NA
 	
-	d11$purpose[grepl("dairy|caows for dairy", d11$animal)] <- "milk"
-	d11$purpose[grepl("draft|oxen", d11$animal)] <- "draft-power"
-	d11$purpose[grepl("meat", d11$animal)] <- "meat"
-	d11$purpose[d11$animal == "broilers"] <- "meat"
-	d11$purpose[d11$animal == "bees"] <- "honey"
+	d11$purpose[grepl("dairy|caows for dairy", d11$livestock)] <- "milk"
+	d11$purpose[grepl("draft|oxen", d11$livestock)] <- "draft-power"
+	d11$purpose[grepl("meat", d11$livestock)] <- "meat"
+	d11$purpose[d11$livestock == "broilers"] <- "meat"
+	d11$purpose[d11$livestock == "bees"] <- "honey"
 	
 	# Standardize livestock names
-	d11$animal[grepl("cattle|cattke|dairy cows|caows for dairy|cows for meat|cows for draft|oxen|calves|^kid$|^kids$", d11$animal)] <- "cattle"
+	d11$livestock[grepl("cattle|cattke|dairy cows|caows for dairy|cows for meat|cows for draft|oxen|calves|^kid$|^kids$", d11$livestock)] <- "cattle"
 	
-	d11$animal[grepl("goats|goast|gaots", d11$animal)] <- "goat"
-	d11$animal[grepl("^sheep$", d11$animal)] <- "sheep"
-	d11$animal[grepl("chickens|broilers", d11$animal)] <- "chicken"
-	d11$animal[grepl("turkeys|turkey-cock", d11$animal)] <- "turkey"
-	d11$animal[grepl("ducks|canard", d11$animal)] <- "duck"
-	d11$animal[d11$animal == "goose"] <- "goose"
-	d11$animal[grepl("guinea fowls", d11$animal)] <- "guinea fowl"
-	d11$animal[grepl("doves/pigeons|doves\\|pigeons|doves/pigeons", d11$animal)] <- "pigeon"
-	d11$animal[d11$animal %in% c("pigs")] <- "pig"
-	d11$animal[d11$animal %in% c("rabbits")] <- "rabbit"
-	d11$animal[d11$animal %in% c("bees")] <- "bee"
-	d11$animal[grepl("fish", d11$animal)] <- "fish"
-	d11$animal[d11$animal == "donkeys"] <- "donkey"
-	d11$animal[d11$animal == "horse"] <- "horse"
-	d11$animal[d11$animal == "dogs"] <- "dog"
-	d11$animal[grepl("guinea pigs|cobay", d11$animal)] <- "guinea pig"
-	d11$animal[d11$animal == "pet rat"] <- NA
-	d11$animal[d11$animal == "uc"] <- NA
+	d11$livestock[grepl("goats|goast|gaots", d11$livestock)] <- "goat"
+	d11$livestock[grepl("^sheep$", d11$livestock)] <- "sheep"
+	d11$livestock[grepl("chickens|broilers", d11$livestock)] <- "chicken"
+	d11$livestock[grepl("turkeys|turkey-cock", d11$livestock)] <- "turkey"
+	d11$livestock[grepl("ducks|canard", d11$livestock)] <- "duck"
+	d11$livestock[d11$livestock == "goose"] <- "goose"
+	d11$livestock[grepl("guinea fowls", d11$livestock)] <- "guinea fowl"
+	d11$livestock[grepl("doves/pigeons|doves\\|pigeons|doves/pigeons", d11$livestock)] <- "pigeon"
+	d11$livestock[d11$livestock %in% c("pigs")] <- "pig"
+	d11$livestock[d11$livestock %in% c("rabbits")] <- "rabbit"
+	d11$livestock[d11$livestock %in% c("bees")] <- "bee"
+	d11$livestock[grepl("fish", d11$livestock)] <- "fish"
+	d11$livestock[d11$livestock == "donkeys"] <- "donkey"
+	d11$livestock[d11$livestock == "horse"] <- "horse"
+	d11$livestock[d11$livestock == "dogs"] <- "dog"
+	d11$livestock[grepl("guinea pigs|cobay", d11$livestock)] <- "guinea pig"
+	d11$livestock[d11$livestock == "pet rat"] <- "rat"
+	d11$livestock[d11$livestock == "uc"] <- NA
 	
 	d12 <- data.frame(
 	  hhid = r12$id,
@@ -350,7 +352,7 @@ carob_script <- function(path) {
 		data = d3, sum, na.rm = TRUE )
 	
 	##Livestock
-	d11a <- aggregate(animal ~ hhid + field_id, d11, FUN = function(x) paste(unique(x), collapse = ";"))
+	d11a <- aggregate(livestock ~ hhid + field_id, d11, FUN = function(x) paste(unique(x), collapse = ";"))
 	
 	d11b <- aggregate(purpose ~ hhid + field_id, data = d11,
 			FUN = function(x) paste(unique(na.omit(x)), collapse = ";"))
@@ -456,7 +458,7 @@ carob_script <- function(path) {
 	#fixing crop names
 	d$crop <- tolower(trimws(d$crop))
 	d$crop[grepl("common bean|bush bean|beans, bush beans|string bean|voluble beans|wax bean|w.bean|n.bean|o.bean|j.bean|m.bean|creeper bean|sugarbeans", d$crop)] <- "kidney bean"
-	d$crop[grepl("climbing bean", d$crop)] <- "common bean"
+	d$crop[grepl("climbing bean", d$crop)] <- "runner bean"
 	d$crop[grepl("^soybeans?$|^soja$", d$crop)] <- "soybean"
 	d$crop[grepl("^cowpeas?$", d$crop)] <- "cowpea"
 	d$crop[grepl("^groundnuts?$", d$crop)] <- "groundnut"
@@ -464,7 +466,7 @@ carob_script <- function(path) {
 	d$crop[grepl("greengram|greengrams", d$crop)] <- "mung bean"
 	d$crop[grepl("garden peas|green peas|petit pois", d$crop)] <- "pea"
 	d$crop[grepl("pigeonpeas|nandolo", d$crop)] <- "pigeon pea"
-	d$crop[grepl("nhemba bean|boer bean|fava bean|macaco bean", d$crop)] <- "common bean"
+	d$crop[grepl("nhemba bean|boer bean|fava bean|macaco bean", d$crop)] <- "bean"
 	d$crop[grepl("^maize$|msize", d$crop)] <- "maize"
 	d$crop[grepl("^rice$", d$crop)] <- "rice"
 	d$crop[grepl("^wheat$", d$crop)] <- "wheat"
@@ -517,7 +519,7 @@ carob_script <- function(path) {
 	d$crop[d$crop == "kales"] <- "kale"
 	d$crop[d$crop == "lengalenga"] <- "amaranth"
 	d$crop[d$crop == "lentils"] <- "lentil"
-	d$crop[d$crop == "vegetables"] <- NA
+	#d$crop[d$crop == "tigernut"] <- "tigernut"
 	
 	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees", "fruits",
 	  "straws", "kanannado", "kanan nabo", "mbande", "dek", "moti", "mito",
@@ -533,7 +535,7 @@ carob_script <- function(path) {
 	d$education[d$education == ""] <- NA
 	d$irrigation_method[d$irrigation_method == ""] <- NA
 	d$water_source[d$water_source == ""] <- NA
-	d$animal[d$animal == ""] <- NA
+	d$livestock[d$livestock == ""] <- NA
 	d$market_type[d$market_type == ""] <- NA
 	d$country[d$country == ""] <- NA
 	d$location[d$location == ""] <- NA
@@ -902,10 +904,6 @@ carob_script <- function(path) {
 	  "turnip",
 	  "watermelon"          #watermelon yields are 0
 	)
-	
-	d$previous_crop_residue_management[
-	  trimws(d$previous_crop_residue_management) == ""
-	] <- NA
 	
 	idx <- d$crop %in% crops_tonnes &
 	  !is.na(d$yield)
