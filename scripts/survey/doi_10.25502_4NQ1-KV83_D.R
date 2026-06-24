@@ -65,21 +65,36 @@ carob_script <- function(path) {
 	d2 <- data.frame(
 		hhid                  = r2$id,
 		field_id              = r2$farm_id,
-		farm_labour_hired     = r2$labour_hired == "y"
+		farm_labour_hired     = as.logical(r2$labour_hired == "y")
 	)
 
 	d3 <- data.frame(
-		hhid     = r3$id,
-		field_id = r3$farm_id,
-		animal = gsub("s$", "", trimws(tolower(r3$livestock)))
+	  hhid     = r3$id,
+	  field_id = r3$farm_id,
+	  heads    = r3$number_owned,
+	  animal   = gsub("s$", "", trimws(tolower(r3$livestock)))
 	)
+	
 	d3$animal[d3$animal == ""] <- NA
 	
-	#aggfun <- function(x) paste(unique(na.omit(x)), collapse = ";")
-	aggfun <- function(x) paste(unique(na.omit(x[x != ""])), collapse = ";")
-	d3a <- aggregate(animal ~ hhid + field_id, d3, aggfun)
-	d3a$animal[d3a$animal == ""] <- NA
-
+	animal_agg <- aggregate(
+	  animal ~ hhid + field_id,
+	  data = d3,
+	  FUN = aggfun
+	)
+	
+	heads_agg <- aggregate(
+	  heads ~ hhid + field_id,
+	  data = d3,
+	  FUN = function(x) sum(as.numeric(x), na.rm = TRUE)
+	)
+	
+	d3a <- merge(
+	  animal_agg,
+	  heads_agg,
+	  by = c("hhid", "field_id"),
+	  all = TRUE
+	)
 #	d4 <- data.frame(
 	#	hhid       = r4$id,
 	#	field_id   = r4$farm_id,
@@ -93,7 +108,7 @@ carob_script <- function(path) {
 		crop             = r5$crop,
 		field_size       = as.numeric(r5$area_ha),
 		# sole_crop_or_intercrop: S = sole, I = intercrop
-		intercropped  = r5$sole_crop_or_intercrop == "I",
+		intercrops  = r5$sole_crop_or_intercrop == "I",
 		OM_used          = r5$animal_manure_applied == "y" | r5$other_organic_input == "y",
 		OM_type          = r5$other_organic_input_type
 	)
@@ -188,9 +203,9 @@ carob_script <- function(path) {
 	}
 
 	d8$market_timeto <- parse_minutes(r8$time)
-	d8$market_costs    <- as.numeric(r8$costs)
+	d8$market_cost    <- as.numeric(r8$costs)
 
-	d8a <- aggregate(cbind(market_timeto, market_costs) ~ hhid + field_id, d8, mean, na.rm = TRUE)
+	d8a <- aggregate(cbind(market_timeto, market_cost) ~ hhid + field_id, d8, mean, na.rm = TRUE)
 	tmp_mkt <- aggregate(market_type ~ hhid + field_id, d8, FUN = aggfun)
 	d8a <- merge(d8a, tmp_mkt, by = c("hhid", "field_id"), all = TRUE)
 
@@ -213,11 +228,13 @@ carob_script <- function(path) {
 		x[grepl("mung beans", x)]       <- "mung bean"
 		x[grepl("^pepper$|^garden egg$|^bitterball$", x)]         <- "pepper"
 		x[x=="oranges"]                 <- "orange"
-		x[grepl("eddo?", x)]            <- "eddo"
+		x[x=="rice - lowland"]                 <- "rice"
+		x[x=="rice - upland"]                 <- "rice"
+		x[grepl("eddo?", x)]            <- NA
 		x[grepl("potato?", x)]          <- "sweetpotato" ## assumption because this is Liberia
 		x[x=="sugar cane"]              <- "sugarcane"
 		x[x=="peppet"]                  <- "pepper"
-		x[x=="bitterbal"]               <- "bitterball"
+		x[x=="bitterbal"]               <- NA
 		x[x=="tomatoes"]                <- "tomato"
 		x[x=="other non-legume crop (specify)"] <- NA
 		x
@@ -305,7 +322,7 @@ carob_script <- function(path) {
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(d[char_cols], trimws)
 	
-#	d$market_costs <- d$sell_at_farm_gate <- d$sell_at_home <- NULL
+  d$intercrops <- NULL  #raw data shows no information on crops in the intercrop
 
 	d$yield_isfresh <- TRUE
     
