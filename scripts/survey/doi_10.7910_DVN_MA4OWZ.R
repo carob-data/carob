@@ -9,7 +9,7 @@
 # Sexhh: 1=male, 0=female. District: 1=Kongwa (Dodoma Region), 0=Kiteto (Manyara Region).
 # hh_size likely transformed; Values range 0-3
 # crop_value skipped as 101 farms have zero farm size making per ha calculation unreliable.
-# New terminag terms proposed: dietary_diversity, credit_access.
+
 
 carob_script <- function(path) {
   
