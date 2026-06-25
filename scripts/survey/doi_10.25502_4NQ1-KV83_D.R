@@ -31,53 +31,55 @@ carob_script <- function(path) {
 	)
 
 	f1  <- ff[basename(ff) == "a_demographic.csv"]
-	r1  <- read.csv(f1, na ="")
+	r1  <- read.csv(f1)
 	f2  <- ff[basename(ff) == "c_labour.csv"]
-	r2  <- read.csv(f2, na ="")
+	r2  <- read.csv(f2)
 	f3  <- ff[basename(ff) == "d_livestock_ownership.csv"]
-	r3  <- read.csv(f3, na ="")
+	r3  <- read.csv(f3)
 	f4  <- ff[basename(ff) == "e4_e6_land_use.csv"]
-	r4  <- read.csv(f4, na ="")
+	r4  <- read.csv(f4)
 	f5  <- ff[basename(ff) == "f_crop_production.csv"]
-	r5  <- read.csv(f5, na ="")
+	r5  <- read.csv(f5)
 	f6  <- ff[basename(ff) == "g1_legume_utilisation.csv"]
-	r6  <- read.csv(f6, na ="")
+	r6  <- read.csv(f6)
 	f7  <- ff[basename(ff) == "g2_legume_utilisation.csv"]
-	r7  <- read.csv(f7, na ="")
+	r7  <- read.csv(f7)
 	f8  <- ff[basename(ff) == "h1_access_to_markets.csv"]
-	r8  <- read.csv(f8, na ="")
+	r8  <- read.csv(f8)
 	f9  <- ff[basename(ff) == "h2_h3_access_to_markets.csv"]
-	r9  <- read.csv(f9, na ="")
+	r9  <- read.csv(f9)
 
 	d1 <- data.frame(
-		hhid = r1$id,
-		field_id = r1$farm_id,
-		sex = r1$gender,
-		age = as.numeric(r1$age),
-		hh_size = as.numeric(r1$number_adults_children),
+		hhid      = r1$id,
+		field_id  = r1$farm_id,
+		sex       = r1$gender,
+		age       = as.numeric(r1$age),
+		hh_size   = as.numeric(r1$number_adults_children),
 		education = r1$highest_education_level
 	)
 
-	
+	d1$sex[d1$sex == ""]  <- NA
 	d1$education <- trimws(tolower(d1$education))
-	
+	d1$education[d1$education == ""] <- NA
+
 	d2 <- data.frame(
-		hhid = r2$id,
-		field_id = r2$farm_id,
-		is_farm_labour_hired = r2$labour_hired == "y"
+		hhid                  = r2$id,
+		field_id              = r2$farm_id,
+		farm_labour_hired     = r2$labour_hired == "y"
 	)
 
 	d3 <- data.frame(
-		hhid = r3$id,
+		hhid     = r3$id,
 		field_id = r3$farm_id,
 		animal = gsub("s$", "", trimws(tolower(r3$livestock)))
 	)
-	
+	d3$animal[d3$animal == ""] <- NA
 	
 	#aggfun <- function(x) paste(unique(na.omit(x)), collapse = ";")
 	aggfun <- function(x) paste(unique(na.omit(x[x != ""])), collapse = ";")
 	d3a <- aggregate(animal ~ hhid + field_id, d3, aggfun)
-	
+	d3a$animal[d3a$animal == ""] <- NA
+
 #	d4 <- data.frame(
 	#	hhid       = r4$id,
 	#	field_id   = r4$farm_id,
@@ -86,16 +88,14 @@ carob_script <- function(path) {
 	#)
 
 	d5 <- data.frame(
-		hhid = r5$id,
-		field_id = r5$farm_id,
-		crop = r5$crop,
-		field_size = as.numeric(r5$area_ha),
+		hhid             = r5$id,
+		field_id         = r5$farm_id,
+		crop             = r5$crop,
+		field_size       = as.numeric(r5$area_ha),
 		# sole_crop_or_intercrop: S = sole, I = intercrop
 		intercropped  = r5$sole_crop_or_intercrop == "I",
-		OM_used = r5$animal_manure_applied == "y" | r5$other_organic_input == "y",
-		OM_type = r5$other_organic_input_type,
-		fertilizer_used = as.logical(ifelse(!is.na(r5$mineral_fert_applied), r5$mineral_fert_applied=="y", r5$mineral_fert_applied)),
-		variety = ifelse(grepl("sweet potato|mung bean|no|n0", tolower(r5$variety)), "none",  tolower(r5$variety))
+		OM_used          = r5$animal_manure_applied == "y" | r5$other_organic_input == "y",
+		OM_type          = r5$other_organic_input_type
 	)
 
 	# Mineral fertiliser type
@@ -103,7 +103,7 @@ carob_script <- function(path) {
 	d5$fertilizer_type[!is.na(r5$mineral_fert_applied) & r5$mineral_fert_applied == "n"] <- NA
 
 	parse_yield_kg <- function(s) {
-		s <- trimws(tolower(s))
+		s   <- trimws(tolower(s))
 		out <- rep(NA_real_, length(s))
 		# plain kg: e.g. "600kg", "1500 kg"
 		m_kg   <- regmatches(s, regexpr("^([0-9]+\\.?[0-9]*)\\s*kg$", s, perl = TRUE))
@@ -121,24 +121,24 @@ carob_script <- function(path) {
 	d5$yield <- parse_yield_kg(r5$yield)
 
 	d6 <- data.frame(
-		hhid = r6$id,
+		hhid     = r6$id,
 		field_id = r6$farm_id,
-		crop = r6$legume_type,
-		yield_marketable = r6$amount_used_for_sale,
-		yield = as.numeric(r6$total_prod_most_recent_season_kg)
+		crop     = r6$legume_type,
+		yield    = as.numeric(r6$total_prod_most_recent_season_kg)
 	)
-	
+	d6$crop_amount_sold <- r6$amount_used_for_sale
+
 	d7 <- data.frame(
-		hhid = r7$id,
+		hhid     = r7$id,
 		field_id = r7$farm_id,
-		crop = r7$legume_type,
-		previous_crop_residue_management = trimws(r7$haulms_usage) # ?
+		crop     = r7$legume_type
 	)
 	
-	
+	pcm <- trimws(r7$haulms_usage)
+	pcm[pcm == ""] <- NA
 
 	# Standardise haulm usage descriptions
-	pcm <- tolower(d7$previous_crop_residue_management)
+	pcm <- tolower(pcm)
 	pcm[grepl("nothing|throw|thrown|dump|wasted|unused|no use|nothing", pcm)] <- "discarded"
 	pcm[grepl("composted|compost", pcm)] <- "incorporated as compost"
 	pcm[grepl("incorporated in the soil", pcm)] <- "incorporated"
@@ -153,21 +153,21 @@ carob_script <- function(path) {
 	d7$previous_crop_residue_management <- pcm
 
 	d8 <- data.frame(
-		hhid = r8$id,
-		field_id = r8$farm_id,
-		market_access = trimws(r8$market),
-		market_type = trimws(toupper(r8$how_f_mc_c)) 
+		hhid            = r8$id,
+		field_id        = r8$farm_id,
+		market_access   = trimws(r8$market),
+		market_type     = trimws(toupper(r8$how_f_mc_c))
 	)
 
 	# Normalise market_type codes: MC = market centre, C = cooperative, F = farmer group
 	d8$market_type <- trimws(toupper(d8$market_type))
 	d8$market_type[d8$market_type %in% c("MC", " MC")]  <- "market centre"
-	d8$market_type[d8$market_type == "C"] <- "cooperative"
-	d8$market_type[d8$market_type == "F"] <- "farmer group"
-	d8$market_type[d8$market_type == "V"] <- "village market"
+	d8$market_type[d8$market_type == "C"]               <- "cooperative"
+	d8$market_type[d8$market_type == "F"]               <- "farmer group"
+	d8$market_type[d8$market_type == "V"]               <- "village market"
 	# Non-standard entries
 	d8$market_type[d8$market_type %in% c("WHEELBARROW", "BICYCLE")] <- "unknown"
-
+	d8$market_type[d8$market_type == ""] <- NA
 
 	# Parse market time to minutes (for market_distance proxy)
 	parse_minutes <- function(x) {
@@ -187,7 +187,7 @@ carob_script <- function(path) {
 		out
 	}
 
-	d8$market_timeto <- parse_minutes(gsub(", ", "", r8$time))
+	d8$market_timeto <- parse_minutes(r8$time)
 	d8$market_costs    <- as.numeric(r8$costs)
 
 	d8a <- aggregate(cbind(market_timeto, market_costs) ~ hhid + field_id, d8, mean, na.rm = TRUE)
@@ -195,10 +195,10 @@ carob_script <- function(path) {
 	d8a <- merge(d8a, tmp_mkt, by = c("hhid", "field_id"), all = TRUE)
 
 	d9 <- data.frame(
-		hhid = r9$id,
-		field_id = r9$farm_id,
+		hhid              = r9$id,
+		field_id          = r9$farm_id,
 		sell_at_farm_gate = trimws(r9$sell_at_farm_gate) == "y",
-		sell_at_home = r9$sell_at_home == "y"
+		sell_at_home      = r9$sell_at_home == "y"
 	)
 
 	# Start from crop production (one row per crop per household)
@@ -208,17 +208,17 @@ carob_script <- function(path) {
 		x <- trimws(tolower(crop))
 ### this does not do anything!
 ### x[grepl("^cassava$", x)]                                   <- "cassava"
-		x[x=="corn"] <- "maize"
+		x[x=="corn"]                    <- "maize"
 		x[grepl("country bean|big bean|brown bean|long bean", x)] <- "common bean"
-		x[grepl("mung beans", x)] <- "mung bean"
-		x[grepl("^pepper$|^garden egg$|^bitterball$", x)] <- "pepper"
-		x[x=="oranges"] <- "orange"
-		x[grepl("eddo?", x)] <- "eddo"
-		x[grepl("potato?", x)] <- "sweetpotato" ## assumption because this is Liberia
-		x[x=="sugar cane"] <- "sugarcane"
-		x[x=="peppet"] <- "pepper"
-		x[x=="bitterbal"] <- "bitterball"
-		x[x=="tomatoes"] <- "tomato"
+		x[grepl("mung beans", x)]       <- "mung bean"
+		x[grepl("^pepper$|^garden egg$|^bitterball$", x)]         <- "pepper"
+		x[x=="oranges"]                 <- "orange"
+		x[grepl("eddo?", x)]            <- "eddo"
+		x[grepl("potato?", x)]          <- "sweetpotato" ## assumption because this is Liberia
+		x[x=="sugar cane"]              <- "sugarcane"
+		x[x=="peppet"]                  <- "pepper"
+		x[x=="bitterbal"]               <- "bitterball"
+		x[x=="tomatoes"]                <- "tomato"
 		x[x=="other non-legume crop (specify)"] <- NA
 		x
 	}
@@ -234,7 +234,7 @@ carob_script <- function(path) {
 	d7$crop <- standardise_crop(d7$crop)
 
 	# Merge legume production (g1) — crop-level merge
-	d <- merge(d, d6[, c("hhid", "field_id", "crop", "yield", "yield_marketable")],
+	d <- merge(d, d6[, c("hhid", "field_id", "crop", "yield", "crop_amount_sold")],
 		by = c("hhid", "field_id", "crop"), all = TRUE)
 
 	# Resolve duplicate yield columns: prefer g1 (clean numeric) for legumes
@@ -293,21 +293,18 @@ carob_script <- function(path) {
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato")]   <- "roots"
 	d$yield_part[d$crop %in% c("tomato", "pepper", "okra", "pumpkin", "cucumber", "garden egg")] <- "fruit"
 	d$yield_part[d$crop %in% c("banana", "orange", "pineapple")]   <- "fruit"
-	d$yield_part[d$crop == "sugarcane"] <- "stems"
-	d$yield_part[d$crop %in% c("coffee", "cocoa")] <- "seed"
+	d$yield_part[d$crop == "sugarcane"]                            <- "stems"
+	d$yield_part[d$crop %in% c("coffee", "cocoa")]                 <- "seed"
 
-	d$hhid <- as.character(d$hhid)
-	d$field_id <- as.character(d$field_id)
-	d$sex[d$sex == "M"] <- "male"
-	d$sex[d$sex == "F"] <- "female"
-	d$hh_size <- as.integer(d$hh_size)
+	d$hhid                    <- as.character(d$hhid)
+	d$field_id                <- as.character(d$field_id)
+	d$sex[d$sex == "M"]       <- "male"
+	d$sex[d$sex == "F"]       <- "female"
+	d$hh_size                 <- as.integer(d$hh_size)
 
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(d[char_cols], trimws)
 	
-	d$production_system <- ifelse(grepl("rice - upland", d$crop), "Upland",
-	                       ifelse(grepl("rice - lowland", d$crop), "lowland", "none"))
-	d$crop <- ifelse(grepl("rice", d$crop), "rice", d$crop)
 #	d$market_costs <- d$sell_at_farm_gate <- d$sell_at_home <- NULL
 
 	d$yield_isfresh <- TRUE
