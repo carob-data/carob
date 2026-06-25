@@ -1,6 +1,16 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+# "No GPS latitude/longitude in source data; altitude only.,
+# District-level centroids used (WGS84); geo_from_source = FALSE.,
+# Yield = harvest_amount / field_size (kg/ha); field_size derived from,
+# size_ha where > 0, else size_m2 / 10000.,
+# Non-numeric harvest entries ('100(rete)', '50 cofee', '200kg', '4000kg'",
+# cleaned by numeric extraction.,
+# g1 weight_unit values '115' and '345' treated as kg (data entry errors)."
+# c_labour.csv contains Togo farm IDs and is not used for this dataset.
+
+
 carob_script <- function(path) {
 
 "N2Africa is to contribute to increasing biological nitrogen fixation and
@@ -16,9 +26,10 @@ project. This dataset covers the Tanzania baseline survey conducted in 2013
 across four districts in the Northern Zone: Moshi Rural (Kilimanjaro),
 Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 
+
+
 	uri   <- "doi:10.25502/6W1Q-XJ07/D"
 	group <- "survey"
-  carobiner::draft(uri,path,group)
 
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -34,15 +45,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-06-24",
 		carob_effort = NA,
-		notes = paste(
-			"No GPS latitude/longitude in source data; altitude only.",
-			"District-level centroids used (WGS84); geo_from_source = FALSE.",
-			"Yield = harvest_amount / field_size (kg/ha); field_size derived from",
-			"size_ha where > 0, else size_m2 / 10000.",
-			"Non-numeric harvest entries ('100(rete)', '50 cofee', '200kg', '4000kg'",
-			"cleaned by numeric extraction.",
-			"g1 weight_unit values '115' and '345' treated as kg (data entry errors).",
-			"c_labour.csv contains Togo farm IDs and is not used for this dataset."),
+		notes = NA,
 		design = NA
 	)
 
@@ -82,12 +85,14 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^pigeon peas?$|^pegion peas?$|^pegeon peas?$|^pegeonpea$|^pepeion pea$|^pigeonpea$", x)] <- "pigeon pea"
 		x[grepl("^soybean$|^soya$", x)]                                 <- "soybean"
 		x[grepl("^groundnuts?$|^ground nuts?$", x)]                     <- "groundnut"
-		x[grepl("^bambara nut$|^bambaranati$|^bambara$", x)]            <- "bambara nut"
+		x[grepl("^bambara", x)]                           <- "bambara groundnut"
 		x[grepl("^chickpea$", x)]                                       <- "chickpea"
 		x[grepl("^green gram$|^greengram$|^green harm$", x)]            <- "mung bean"
 		x[grepl("^sunflower$|^sunflowes$|^sanflower$", x)]              <- "sunflower"
 		x[grepl("^sorghum$|^soughum$", x)]                              <- "sorghum"
 		x[grepl("^rice$|^raice$", x)]                                   <- "rice"
+
+### when we know it is finger millet, we should not call it millet
 		x[grepl("^millet$|^fingermillet$|^finger millet$", x)]         <- "millet"
 		x[grepl("^cassava$", x)]                                        <- "cassava"
 		x[grepl("^sweetpotato$|^sweet potato$|^sweet potatoes$", x)]   <- "sweetpotato"
@@ -100,7 +105,9 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^onion$", x)]                                          <- "onion"
 		x[grepl("^tea$", x)]                                            <- "tea"
 		x[grepl("^yam$|^yarms$", x)]                                    <- "yam"
+### not correct. sweet pepper and chili pepper need to be distinguished
 		x[grepl("^pepper$|^pili pili hoho$|^hoho$|^sweet pepper$|^chill$|^onex$", x)] <- "pepper"
+### "vegetables", "fruits", etc is better than NA. Only set to NA if you truly do not know what it is
 		x[grepl("^vegetable$|^vegetables$|^small veges$|^vegetable/tomato$", x)] <- NA
 		x[grepl("^various$|^fruits.*avoc|^trees$|^grasses$|^grazing$", x)] <- NA
 		x[x %in% c("", "na")]                                           <- NA
@@ -128,7 +135,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	district[grepl("arumeru", district)] <- "Arumeru"
 	district[grepl("^hai$", district)]   <- "Hai"
 
-	# District centroid coordinates (WGS84) — no per-household GPS available
+	# District centroid coordinates — no per-household GPS available
 	lat_map  <- c("Moshi Rural" = -3.350, "Lushoto" = -4.790,
 	              "Arumeru"     = -3.370, "Hai"     = -3.570)
 	lon_map  <- c("Moshi Rural" =  37.330, "Lushoto" =  38.290,
