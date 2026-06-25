@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars = "yield",
       treatment_vars = "variety;irrigated;N_fertilizer;P_fertilizer;K_fertilizer;row_spacing;insecticide_used", 
       carob_contributor = "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date = "2024-10-19"
    )
    
@@ -183,6 +184,7 @@ carob_script <- function(path) {
 	wd <- merge(wd, geo, by="location")
     wd$geo_from_source <- FALSE
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files (path, meta, d, wth = wd)

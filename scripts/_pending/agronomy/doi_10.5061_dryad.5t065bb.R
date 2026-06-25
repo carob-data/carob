@@ -23,13 +23,14 @@ Crop production in sub-Saharan Africa has numerous biotic and abiotic constraint
 		data_organization = "UNL; NARL; INRAN; RAB; IER; TARI; ABU; CSIR; KALRO;CARS; LUANAR; ZARI;IITA; INERA",
 		publication = "doi:10.1007/s10705-018-09968-7",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-27",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer; Mg_fertilizer; S_fertilizer; Zn_fertilizer; B_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 50,	
+		carob_completion = 50,	
 		notes = "Some files contain useful information but there are not suitable for this Carob version."
 	)
 	

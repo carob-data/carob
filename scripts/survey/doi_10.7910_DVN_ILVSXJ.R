@@ -25,12 +25,13 @@ This work was undertaken as part of, and funded by, the CGIAR Research Program o
 		publication = NA,
 		project = NA,
 		carob_date = "2025-10-05",
+		carob_effort = NA,
 		design = "unitOfAnalysis", 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 50,	
+		carob_completion = 50,	
 		notes = NA
 	)
 	
@@ -257,6 +258,7 @@ dd <- reshape(d2, varying = list(c("yield_maize", "yield_groundnut", "yield_cowp
   d$is_survey <- TRUE
   d$geo_from_source <- FALSE
   d$yield_part <- "grain"
+  d$yield_isfresh <- as.numeric(NA)
   d$yield_moisture <- as.numeric(NA)
   d$irrigated <-  NA
 

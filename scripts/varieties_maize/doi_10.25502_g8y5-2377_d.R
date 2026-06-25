@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "variety_code;striga_trial;season", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-07-11"
 	)
 	

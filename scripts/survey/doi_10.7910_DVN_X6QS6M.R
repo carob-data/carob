@@ -21,7 +21,8 @@ carob_script <- function(path) {
 		treatment_vars = "none", 
 		response_vars = "none", 
 		carob_contributor = "Mitchelle Njukuya", 
-		carob_date = "2024-07-18"
+		carob_date = "2024-07-18",
+		carob_effort = NA
 	)
 	
 	f <- ff[basename(ff) == "001_agronomic-surveybabatiyr2013.csv"]

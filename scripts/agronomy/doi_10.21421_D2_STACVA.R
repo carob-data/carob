@@ -13,6 +13,7 @@ Despite the recent release of several improved varieties of groundnut in Nigeria
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		publication=NA,
 		carob_contributor="Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2022-09-12",
 		data_type="experiment",
 		data_organization="ICRISAT",
@@ -61,6 +62,7 @@ Despite the recent release of several improved varieties of groundnut in Nigeria
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

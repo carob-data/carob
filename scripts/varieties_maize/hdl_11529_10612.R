@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-09-05",
 		notes = "not clear which entries were irrigated and which were under induced drought"
 	)

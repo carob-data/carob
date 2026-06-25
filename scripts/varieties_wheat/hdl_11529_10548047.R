@@ -15,6 +15,7 @@ carob_script <- function(path) {
     project="High Rainfall Wheat Screening Nursery",
     data_type= "experiment",
     carob_contributor= "Fredy Chimire",
+    carob_effort = NA,
     carob_date="2024-07-12",
     response_vars = "yield",
     treatment_vars = "variety_code"

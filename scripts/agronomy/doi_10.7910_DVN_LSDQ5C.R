@@ -22,6 +22,7 @@ affect the variation in the yield of maize. The dataset was created through a co
 		project=NA,
 		data_type= "experiment",
 		carob_contributor= "Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2024-04-02",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
@@ -74,6 +75,7 @@ affect the variation in the yield of maize. The dataset was created through a co
 	d$planting_date[is.na(d$planting_date)] <- "2015"
 	d$yield_part <- "grain"
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

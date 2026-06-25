@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Rachel Mukami",
+		carob_effort = NA,
 		carob_date="2022-08-07",
 		data_type = "on-farm experiment",
 		response_vars = "yield",
@@ -192,6 +193,7 @@ carob_script <- function(path) {
 	i <- (w$planting_date == "2010-03-04") & (w$harvest_date == "2010-03-18")
 	w$harvest_date[i] <- "2010-06-18"
     	
+	w$yield_isfresh <- as.numeric(NA) #needs to be checked
 	w$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, w, path=path)

@@ -20,13 +20,14 @@ P. coccineus interspecific lines (Agronomic quality, resistance levels in Fusari
 		data_organization = "CIAT",
 		publication = "doi:10.4314/acsj.v26i1.9",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-27",
 		design = NA,
 		data_type ="on-station experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 90,	
+		carob_completion = 90,	
 		notes = "ALB Fusarium_Pythium root rot file has not been processed as it does not contain suitable data for carob."
 	)
 	

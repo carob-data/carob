@@ -22,13 +22,14 @@ Yield stability assessment -- Rice and Pearl millet data
 		data_organization = "ICRISAT;AfricaRice",
 		publication ="doi:10.1371/journal.pone.0317170",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-20",
 		design = NA,
 		data_type ="experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;plant_density",
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

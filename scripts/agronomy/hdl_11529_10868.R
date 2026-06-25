@@ -17,8 +17,9 @@ carob_script <- function(path) {
 		data_type = "experiment",
 		treatment_vars = "fertilizer_used;land_prep_method;residue_prevcrop_used",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2025-08-29",
 		notes = NA,
 		design = NA
@@ -91,6 +92,7 @@ carob_script <- function(path) {
                       ifelse(d$treatment %in% c(2, 3), "D-compound;AN", NA))
 
 
+	d$yield_isfresh <- as.numeric(NA)
 	d$yield_moisture <- as.numeric(NA)
 	d$treatment <- as.character(d$treatment)
   

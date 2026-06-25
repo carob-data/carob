@@ -13,6 +13,7 @@ carob_script <- function(path) {
 		publication= NA,
 		data_organization = "IITA",
 		carob_contributor="Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2023-07-07",
 		data_type="on-farm experiment",
 		response_vars = "yield",

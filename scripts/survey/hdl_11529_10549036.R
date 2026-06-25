@@ -23,12 +23,13 @@ The objective of the Landscape Diagnostic Survey (LDS) for wheat is to bridge th
 		publication = NA,
 		project = NA,
 		carob_date = "2026-06-01",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

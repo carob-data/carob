@@ -14,6 +14,7 @@ carob_script <- function(path) {
     data_organization = "CIRAD",
     carob_contributor="Cedric Ngakou",
     carob_date="2023-10-18",
+    carob_effort = NA,
     data_type="survey",
 	response_vars = "yield",
 	# perhaps this is stratification (-like)?
@@ -27,7 +28,6 @@ carob_script <- function(path) {
   
   d <- data.frame(
     location = r$village,
-    season = r$crop_season,
     soil_type = r$soil,
     land_prep_method = r$tillage_system,
 	landscape_position = r$soil,
@@ -40,6 +40,8 @@ carob_script <- function(path) {
     P_fertilizer = (0.22 / 2.29) * r$npk,
     K_fertilizer = (0.16 / 1.2051) * r$npk,  
     yield = r$yield,
+	yield_moisture = NA_real_,
+	yield_isfresh = TRUE,
     rain = r$rain_cycle,
 	trial_id = r$id_field
   )
@@ -67,16 +69,14 @@ carob_script <- function(path) {
   d$herbicide_product <- "none"
   d$herbicide_product[d$herbicide_used] <- "glyphosate"
  
-  geo <- data.frame(location=c("Antsahamamy", "Ambohimiarina", "Ambohitsilaozana", "Ambongabe", "Ampitatsimo"),
-                    latitude=c(-18.9185, -21.3561, -17.7014, -17.7067, -18.6729),
-                    longitude=c(47.5592 , 47.5680 , 48.4657 , 48.1885 , 47.4564),
-					geo_from_source = FALSE
-					)
+  geo <- data.frame(
+		location=c("Antsahamamy", "Ambohimiarina", "Ambohitsilaozana", "Ambongabe", "Ampitatsimo"),
+		latitude=c(-18.9185, -21.3561, -17.7014, -17.7067, -18.6729),
+		longitude=c(47.5592 , 47.5680 , 48.4657 , 48.1885 , 47.4564),
+		geo_from_source = FALSE
+	)
   
   d <- merge(d, geo, by="location", all.x=TRUE)
-
-  d$season <- gsub("Y", "20", d$season)
-  d$season <- gsub("_", "-20", d$season)
   
   carobiner::write_files(meta, d, path=path)
   

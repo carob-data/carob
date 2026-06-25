@@ -22,8 +22,9 @@ The key objectives of the study included assessing the interactions between geno
 		data_type = "on-farm experiment",
 		treatment_vars = "variety; land_prep_method",
 		response_vars = "yield", 
-		completion = 80,
+		carob_completion = 80,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-20",
 		design = "split plot; RCB"
 	)

@@ -15,6 +15,7 @@ carob_script <- function(path) {
 	   publication=NA,
 	   data_organization = "CIMMYT",
 	   carob_contributor="Robert Hijmans",
+	   carob_effort = NA,
 	   carob_date="2023-06-30",
 	   data_type="on-station experiment",
 		response_vars = "yield",

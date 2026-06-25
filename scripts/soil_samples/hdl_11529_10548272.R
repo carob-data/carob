@@ -21,8 +21,9 @@ Data of soil samples (0-20, 20-50cm) as part of the Agronomy Panel Survey (APS) 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2025-08-18",
 		notes = "data has hhid for matching with crop cut data",
 		design = NA

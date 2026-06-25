@@ -15,6 +15,7 @@ Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for
 		project="Optimizing Fertilizer Use in Africa",
 		data_organization = "NARL;RAB;KALRO;TARI;ZARI;IIAM;UNL",
 		carob_contributor="Rachel Mukami",
+		carob_effort = NA,
 		carob_date="2023-07-06",
 		data_type="experiment",
 		response_vars= "yield",
@@ -183,6 +184,7 @@ Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

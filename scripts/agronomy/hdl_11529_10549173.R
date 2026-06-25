@@ -19,8 +19,9 @@ Direct Seeded Rice (DSR) using seed-cum-fertilizer drill is an emerging rice est
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-11-18",
 		notes = NA, 
 		design = NA
@@ -68,6 +69,7 @@ Direct Seeded Rice (DSR) using seed-cum-fertilizer drill is an emerging rice est
 	d$geo_from_source <- TRUE
 
 	d$yield_part <- "grain"
+	d$yield_isfresh <- as.numeric(NA) #rice grain moisture is not stated in the dataset...how proceed?
 	d$yield_moisture <- as.numeric(NA) #rice grain moisture is not stated in the dataset...how proceed?
 	d$land_prep_method <- ifelse(d$treatment=="PTR(Check)","conventional","none")
 	d$planting_method <- ifelse(d$treatment=="PTR(Check)","transplanted","direct seeding")

@@ -21,13 +21,14 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		data_organization = "CIRAD; UMPL",
 		publication = "doi:10.1016/j.fcr.2017.01.024",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-09-28",
         design = "unitOfAnalysis: Plot and pocket",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;land_prep_method",
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -116,6 +117,8 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	dr$on_farm <- TRUE 
 	dr$is_survey <-  FALSE 
 	dr$yield_part <- "grain" 
+	dr$yield_isfresh <- as.numeric(NA) 
+	d$yield_isfresh <- as.numeric(NA) 
 	dr$yield_moisture <- as.numeric(NA) 
 	dr$irrigated <- NA 
 	

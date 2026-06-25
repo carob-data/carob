@@ -31,13 +31,14 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		data_organization = "CIMMYT; CIRAD; RAB; ICRAF",
 		publication = NA,
 		project = "GAIA",
+		carob_effort = NA,
 		carob_date = "2026-04-28",
 		design = "unitOfAnalysis",
 		data_type = "experiment",
 		treatment_vars = "lime",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

@@ -21,13 +21,14 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 		data_organization = "WUR",
 		publication = "doi:10.18174/odjar.v10i0.18680",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-12-17",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;variety",
 		response_vars = "yield;dmy_roots;fwy_roots;dmy_total;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We process only files with useful information for carob"
 	)
 	

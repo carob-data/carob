@@ -16,6 +16,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=5) ,
 		publication=NA,
 		carob_contributor="Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2021-06-18",
 		data_type = "experiment",
 		data_organization="CIAT",

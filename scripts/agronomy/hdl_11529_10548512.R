@@ -20,13 +20,14 @@ On-farm trials were conducted from 2016 to 2018 in four districts of Odisha (May
 		data_organization = "CIMMYT; IRRI; OUAT; CU",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-06-04",
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "planting_method;N_fertilizer;P_fertilizer;K_fertilizer;herbicide_used",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	# how is it 100% if you do not process most variables???
+		carob_completion = 100,	# how is it 100% if you do not process most variables???
 		notes = NA
 	)
 	

@@ -12,6 +12,7 @@ carob_script <- function(path) {
 		project=NA, 
 		publication= NA, 
 		carob_contributor="Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date="2023-03-19", 
 		data_type="experiment", 
 		response_vars = "yield",

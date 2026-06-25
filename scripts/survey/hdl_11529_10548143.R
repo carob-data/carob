@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor = "Blessing Dzuda",
-		carob_date = "2024-06-04"
+		carob_date = "2024-06-04",
+		carob_effort = NA
 	)
 	
 	f <- ff[basename(ff) == "TAMASA_TZ_CC_Yield_2015.xlsx"]

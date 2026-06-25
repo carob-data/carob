@@ -46,6 +46,7 @@ The measured attributes are as follows:
 		project=NA,
 		data_type= "experiment",
 		carob_contributor= "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2024-03-26"
 	)
 	

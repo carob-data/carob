@@ -17,6 +17,7 @@ carob_script <- function(path) {
       treatment_vars= "N_fertilizer; biochar", 
       response_vars = "yield", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2025-06-03",
 	  completion=50, # % files f2-f5 were not porcessed
       notes=NA
@@ -75,6 +76,7 @@ carob_script <- function(path) {
 ##   i <- d$N_fertilizer != 0
 ##   d$N_fertilizer[i] <- d$N_fertilizer[i] + 150
   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

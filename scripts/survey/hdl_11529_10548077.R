@@ -21,12 +21,13 @@ Household survey was conducted by International Maize and Wheat Improvement Cent
 		publication = "doi:10.1007/s11027-017-9752",
 		project = NA,
 		carob_date = "2026-05-25",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "land_prep_method;N_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

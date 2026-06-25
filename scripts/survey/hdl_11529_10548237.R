@@ -22,12 +22,13 @@ Survey at multiple locations in Tanzania  (680 to 2100 m)  to establish baseline
 		publication = NA,
 		project = "TZ TAMASA APS",
 		carob_date = "2026-05-21",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "elevation",
 		response_vars = "dmy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

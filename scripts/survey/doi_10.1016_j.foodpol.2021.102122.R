@@ -19,7 +19,7 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 	meta <- data.frame(
 		dataset_id = yuri::simpleURI(uri),
 		uri = uri, 
-		group = group,
+		carob_group = group,
 		authors = "Frederic Kosmowski; Jordan Chamberlin; Hailemariam Ayalew; Tesfaye Sida; Kibrom Abay; Peter Craufurd",
 		title = "How accurate are yield estimates from crop cuts? Evidence from smallholder maize farms in Ethiopia",
 		description = "Agricultural statistics and applied analyses have benefitted from moving from farmer estimates of yield to crop cut based estimates, now regarded as a gold standard. However, in practice, crop cuts and other sample-based protocols vary widely in the details of their implementations and little empirical work has documented how alternative yield estimation methods perform. Here, we undertake a well-measured experiment of multiple yield estimation methods on 237 smallholder maize plots in Amhara region, Ethiopia. We compare yield from a full plot harvest with farmer assessments and with estimates from a variety of field sampling protocols: W-walk, transect, random quadrant, random octant, center quadrant, and 3 diagonal quadrants. We find that protocol choices are important: alternative protocols vary considerably in their accuracy relative to the whole plot, with absolute mean errors ranging from 23 (farmer estimates) to 10.6 (random octant). Furthermore, while most methods approximate the sample mean reasonably well, the divergence of individual measures from true plot-level values can be considerable. We find that randomly positioned quadrants outperform systematic sampling schemes: the random octant had the best accuracy and was the most cost-effective. The nature of bias is non-classical: bias is correlated with plot size as well as with plot management characteristics. In summary, our results advocate that even 'gold standard' crop cut measures should be interpreted cautiously, and more empirical work should be carried out to validate and extend our conclusions.",
@@ -32,9 +32,10 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 75,
+		carob_completion = 75,
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2025-08-08",
+		carob_effort = NA,
 		notes = NA,
 		design = NA
 	)

@@ -29,6 +29,7 @@ Conventional ridge and furrow with continuous sole maize (CRF);
     data_organization = "CIMMYT;ZARI",
     data_type="experiment",
     carob_contributor="Fredy Chimire",
+    carob_effort = NA,
     carob_date="2024-01-16",
 	response_vars = "yield",
 	treatment_vars = "land_prep_method"	
@@ -88,6 +89,7 @@ Conventional ridge and furrow with continuous sole maize (CRF);
 	d$trial_id <- "1"
 	
 	d <- d[!is.na(d$yield), ]
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(meta, d, path=path)

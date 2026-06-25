@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		## the source says "Gambia" but it is "Ghana", fixed
  	    publication="doi:10.1016/j.jenvman.2017.06.058",
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2023-07-03",
 		data_type = "experiment",
 		response_vars = "yield",

@@ -13,6 +13,7 @@ carob_script <- function(path){
 		project="N2Africa",
 		publication = "doi:10.1016/j.agee.2017.08.015",
 		carob_contributor = "Andrew Sila",
+		carob_effort = NA,
 		carob_date="2023-07-17",
 		data_type = "on-farm experiment",
 		data_organization="IITA;ICRAF;WUR",
@@ -154,6 +155,7 @@ carob_script <- function(path){
 	d$adm2 <- trimws(d$adm2)
 	d$location <- trimws(d$location)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

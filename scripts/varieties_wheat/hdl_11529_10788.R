@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "variety_code",
 		carob_contributor="Blessing Dzuda",
+		carob_effort = NA,
 		carob_date="2024-02-07"
 	)
 	

@@ -14,6 +14,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 		publication = NA,
 		carob_contributor = "Effie Ochieng'",
 		carob_date="2022-09-07",
+		carob_effort = NA,
 		data_type = "survey",
 		response_vars = "none",
 		treatment_vars = "none",
@@ -78,6 +79,9 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 	d$planting_date[is.na(d$planting_date)] <- "2012"
 	d$harvest_date[is.na(d$harvest_date)] <- "2013"
 	d$season <- NULL
+
+	d$yield_moisture <- NA_real_ 
+	d$yield_isfresh <- TRUE
 			
 	# all scripts should end like this
 	carobiner::write_files(meta, d, path=path)

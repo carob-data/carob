@@ -18,6 +18,7 @@ carob_script <- function(path) {
 	response_vars = "yield",
 	treatment_vars = "land_prep_method", #;irrigation_method
     carob_contributor= "Blessing Dzuda",
+    carob_effort = NA,
     carob_date="2024-05-10"
   )
   
@@ -79,6 +80,7 @@ carob_script <- function(path) {
   d$crop_price <- as.numeric(d$crop_price)/1000
   d$irrigation_number<- as.integer(d$irrigation_number)
   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(path, meta, d)

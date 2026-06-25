@@ -24,6 +24,7 @@ Soil samples were collected before the trials and after the trials. Data collect
       treatment_vars= "herbicide_used; crop_rotation; planting_method; land_prep_method; residue_prevcrop; residue_prevcrop_used", 
       response_vars = "yield; fwy_residue", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2025-05-30",
       notes=NA
    )
@@ -218,6 +219,7 @@ Soil samples were collected before the trials and after the trials. Data collect
    d <- merge(d, geo, by="location", all.x = TRUE)   
    
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

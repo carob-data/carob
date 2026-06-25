@@ -20,13 +20,14 @@ Using appropriate fertilizer recommendations and effective fertilizer materials 
 		data_organization = "ICRAF;SUA",
 		publication = "NA",
 		project = "AfricaRISING",
+		carob_effort = NA,
 		carob_date = "2025-07-30",
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes =NA
 	)
 	
@@ -129,6 +130,7 @@ Using appropriate fertilizer recommendations and effective fertilizer materials 
  
  d <- merge(d, geo, by="location", all.x = TRUE)	
  
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 carobiner::write_files(path, meta, d)

@@ -18,6 +18,7 @@ carob_script <- function(path) {
 	   publication="doi:10.1016/j.fcr.2020.107742",
 	   data_organization = "CIMMYT",
 	   carob_contributor="Eduardo Garcia Bendito",
+	   carob_effort = NA,
 	   carob_date="2023-02-06",
 	   data_type="on-station experiment",
 		response_vars = "yield",

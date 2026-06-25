@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-06-13"
 	)
 

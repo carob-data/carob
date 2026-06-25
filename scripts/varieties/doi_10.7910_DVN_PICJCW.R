@@ -18,13 +18,14 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		data_organization = "PURDUE", #Purdue University
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-22",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety_code",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

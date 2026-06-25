@@ -29,6 +29,7 @@ carob_script <- function(path) {
 		data_organization = "CIAT",
 		data_type="Multi-location trials",
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2024-03-02"
 	)
 ## read data

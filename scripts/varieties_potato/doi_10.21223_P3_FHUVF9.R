@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "variety",
 		project=NA,
+		carob_effort = NA,
 		carob_date="2023-12-12"
 	)  
    

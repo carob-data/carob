@@ -21,8 +21,9 @@ Conservation agriculture (CA) is based on minimal tillage, permanent soil cover 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-10-26",
 		notes = NA,
 		design = NA

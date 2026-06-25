@@ -12,6 +12,7 @@ carob_script <- function(path) {
 		publication= "doi:10.1016/j.fcr.2022.108578",
 		data_organization = "WUR;APNI;IFA",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-03-08",
 		data_type="compilation",
 		project=NA,
@@ -142,6 +143,7 @@ carob_script <- function(path) {
 	x$planting_date <- as.character(NA)
 
 	x <- unique(x)
+	x$yield_isfresh <- as.numeric(NA) #needs to be checked
 	x$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, x, path=path)

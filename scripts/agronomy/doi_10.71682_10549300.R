@@ -23,8 +23,9 @@ This database contains grain, biomasss and nutritional yield data from on-farm t
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;crop_rotation",
 		response_vars = "yield;dmy_total;grain_protein", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-14",
 		notes = NA, 
 		design ="Randomized Block"

@@ -17,6 +17,7 @@ Het biologisch systeem heeft opbrengsten die gemiddeld 6% onder het streven ligg
 		project=NA,
 		data_type= "experiment",
 		carob_contributor= "Robert Hijmans",
+		carob_effort = NA,
 		carob_date="2024-07-15",
 		response_vars = "yield",
 		treatment_vars = ""

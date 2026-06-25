@@ -20,13 +20,14 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 		data_organization = "CIRAD; IER",
 		publication = "doi:10.1016/j.fcr.2015.02.013",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-07",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data."
 	)
 	
@@ -186,6 +187,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
    df$is_survey <- FALSE
    df$irrigated <- NA
    df$yield_part <- "grain"
+   df$yield_isfresh <- as.numeric(NA)
    df$yield_moisture <- as.numeric(NA)
    
 

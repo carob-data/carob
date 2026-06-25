@@ -23,12 +23,13 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 		publication = NA,
 		project = NA,
 		carob_date = "2026-04-14",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We process only files with useful information for carob"
 	)
 	

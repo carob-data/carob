@@ -21,13 +21,14 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 		data_organization = "MSU",
 		publication = "doi:10.1002/jeq2.70000",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-11",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "P_fertilizer;land_prep_method",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

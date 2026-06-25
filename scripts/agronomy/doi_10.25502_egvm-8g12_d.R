@@ -22,13 +22,14 @@ The smallholder farmers’ agri-food system in Malawi faces persistent and new b
 		data_organization = "IITA",
 		publication = pub,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-13",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;intercrops",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

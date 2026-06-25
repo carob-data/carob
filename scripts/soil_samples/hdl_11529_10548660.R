@@ -18,8 +18,9 @@ Soil sampling with 1x1 km grid in the agricultural area of the Axochiapan Munici
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-09-16",
 		notes = NA, 
 		design = NA

@@ -17,6 +17,7 @@ carob_script <- function(path) {
       response_vars= "yield", 
       treatment_vars = "irrigation_amount; N_fertilizer; P_fertilizer; K_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2024-11-04",
       notes= "WFD= Use of the Fullstop wetting front detector;
              CWF=Irrigation requirement based on crop water requirement computation;
@@ -86,6 +87,7 @@ carob_script <- function(path) {
    d$geo_from_source <- FALSE
    
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

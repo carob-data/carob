@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date = "2024-09-20",
 		notes = NA
 	)
@@ -24,7 +25,7 @@ carob_script <- function(path) {
 	process_cowpea <- carobiner::get_function("process_cowpea", path, group)
 	d <- process_cowpea(ff)
 	d$country <- "Tanzania"
-	d$location <- "Ilonga"
+	d$location <- "Ilonga"
 	carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

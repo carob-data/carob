@@ -14,6 +14,7 @@ carob_script <- function(path) {
     project="Karnal Bunt Screening Nursery",
     data_type= "experiment",
     carob_contributor= "Robert Hijmans",
+    carob_effort = NA,
     carob_date="2024-09-22",
     response_vars = "yield",
     treatment_vars = "variety_code"

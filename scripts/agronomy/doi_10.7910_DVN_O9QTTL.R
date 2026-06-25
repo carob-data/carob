@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "season;variety_code;N_fertilizer",
 		carob_contributor = "Robert Hijmans",
+		carob_effort = NA,
 		carob_date = "2024-07-13"
 	)
 	
@@ -24,6 +25,7 @@ carob_script <- function(path) {
 	irri_lte <- carobiner::get_function("IRRI_LTE", path, group)
 	d <- irri_lte(ff)
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

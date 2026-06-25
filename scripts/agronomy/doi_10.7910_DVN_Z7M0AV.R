@@ -27,6 +27,7 @@ T10: Direct seeding maize (Maize-soybean rotation) (DS-SM), residue retention on
     data_organization = "CIMMYT;ZARI",
     data_type="experiment",
     carob_contributor="Fredy Chimire",
+    carob_effort = NA,
     carob_date="2024-01-16",
 	response_vars = "yield",
 	treatment_vars = "land_prep_method"
@@ -81,6 +82,7 @@ T10: Direct seeding maize (Maize-soybean rotation) (DS-SM), residue retention on
 	d$trial_id <- "1"
 	d$irrigated <- FALSE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

@@ -14,6 +14,7 @@ carob_script <- function(path) {
       data_organization = "ARARI", 
       data_type="on-farm experiment", 
       carob_contributor="Cedric Ngakou", 
+      carob_effort = NA,
       carob_date="2023-11-10",
 	  response_vars = "yield",
 	  treatment_vars = "N_fertilizer;N_splits"
@@ -81,6 +82,7 @@ carob_script <- function(path) {
    # the plant_height values are very low. The unit is given in cm, but I suppose this is probably an error.
    # assuming it was in dm and convert into cm
    d$plant_height <- d$plant_height * 10
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(meta, d, path=path)	

@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor="Robert Hijmans; Effie Ochieng'",
-		carob_date="2024-01-22"
+		carob_date="2024-01-22",
+		carob_effort = NA
 	)
   	
 	f <- ff[basename(ff) == "CSISA_IND_LDS_Whe_2018_Data.csv"]

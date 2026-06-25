@@ -20,6 +20,7 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 		treatment_vars = "crop_rotation;variety_code",
 		response_vars="yield",
 		carob_contributor= "Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2024-02-22",
 		modified_by="Siyabusa Mkuhlani",
 		last_modified = "2024-07-31"
@@ -95,6 +96,7 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 	d$K_fertilizer <- 0.06*200
 	d$K_fertilizer <- 0.01*200
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

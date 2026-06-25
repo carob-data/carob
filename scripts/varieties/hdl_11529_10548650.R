@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		treatment_vars ="variety",
 		response_vars ="yield", 
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2024-08-27",
 		notes = "1. Yield in the original dataset is in kg/ha and has got some high values.
 		         2. Coordinates extracted from CIMMYT station on google maps

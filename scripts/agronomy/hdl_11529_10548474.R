@@ -18,8 +18,9 @@ Agronomic systems based on zero tillage and residue retention are becoming more 
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-09-22",
 		notes = NA, 
 		design = NA)

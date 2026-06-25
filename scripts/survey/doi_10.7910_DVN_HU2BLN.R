@@ -27,12 +27,13 @@ The data originate from a panel of households established in 2016, enabling a lo
 		publication = NA,
 		project = NA,
 		carob_date = "2026-02-26",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We process only files with useful data for carob."
 	)
 	

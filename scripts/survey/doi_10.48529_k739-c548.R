@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		data_organization = "ESS;WB",
 		data_citation = "Central Statistics Agency of Ethiopia . (2020). Socioeconomic Survey 2018-2019 [Data set]. World Bank, Development Data Group. https://doi.org/10.48529/K739-C548",
 		carob_date = "2025-05-14",
-		completion = 0
+		carob_effort = NA,
+		carob_completion = 0
 	)
 
 	#fpgeo <- ff[basename(ff) == "ETH_PlotGeovariables_Y4.csv"]

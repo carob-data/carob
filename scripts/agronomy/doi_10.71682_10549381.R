@@ -19,13 +19,14 @@ This database contains weed density, weed biomass, crop biomass, richness, evenn
 		data_organization = "CIMMYT; UZIM",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-05",
 		design = NA,
 		data_type = "on-station experiment",
 		treatment_vars = "intercrops; crop_rotation",
 		response_vars = "fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

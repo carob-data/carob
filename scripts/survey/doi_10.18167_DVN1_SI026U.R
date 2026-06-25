@@ -2,9 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
-
-
 # The planthealth_V2 and dataABC_V2.xlsx files have not been processed because
 # the information in the planthealth_V2 file is already included in the data_field_clean file
 #  and the dataABC_V2 file does not contain relevant information for carob.
@@ -26,12 +23,13 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		publication = NA,
 		project = NA,
 		carob_date = "2025-11-17",
+		carob_effort = NA,
 		design = NA,
-		data_type = "experiment",
-		treatment_vars = "land_prep_method;N_fertilizer;P_fertilizer;K_fertilizer",
-		response_vars = "yield", 
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 75,	
+		carob_completion = 75,	
 		notes = NA
 	)
 	
@@ -49,7 +47,6 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 
 	d1 <- data.frame(
 		country = "France",
-		location = r1$Location,
 		soil_texture = gsub("_", " ", tolower(r1$Texture_USDA)), #  
 		crop = "wheat",
 		land_prep_method = ifelse(grepl("CONV", r1$Type), "conventional", "minimum tillage"),
@@ -57,8 +54,6 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		harvest_date = as.character(as.Date(r1$date_harvest, origin= "1899-12-31")),
 		harvest_days = r1$d.harv,
 		#field_size = r1$FieldSize,
-		longitude = round(r1$GPS_X, 3),
-		latitude = round(r1$GPS_Y, 3),
 		soil_clay = r1$Clay,
 		soil_silt = r1$Silt,
 		soil_sand = r1$Sand,
@@ -110,13 +105,6 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		grain_P = r1$g.P/100, # mg/100g to mg/g
 		grain_Zn = r1$g.Zn/1000,
 		GHG_emission = r1$GHGtotEmiss,
-		
-		### plant health
-		disease = "rust",
-		septoria_intensity = r1$intSept,
-		septoria_number = as.integer(r1$fqSept),
-		powdery_mildew = r1$intMil,
-		rust_intensity = r1$intRust,
 		pest_number = as.integer(r1$fqPests), 
 		pest_severity = as.character(r1$intPests),
 		pest_species = "beetles and slug",
@@ -126,13 +114,38 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 		is_survey = FALSE, 
 		yield_part = "grain", 
 		yield_moisture = as.numeric(NA), 
+		yield_isfresh = TRUE,
 		irrigated = NA, 
-		geo_from_source = TRUE
-		
+		geo_from_source = TRUE		
 	)
+	d1$record_id <- 1:nrow(d1)
 
+	loc <- data.frame(do.call(rbind, strsplit(r1$Location, " ")))
+	names(loc) <- c("ID", "quad")
+	loc$record_id <- d1$record_id
+	loc$longitude <- r1$GPS_X
+	loc$latitude <- r1$GPS_Y
+	adm <- data.frame(
+		code <- c("16", "17", "37", "49", "79", "86"),
+		adm2 <- c("Charente", "Charente-Maritime", "Indre-et-Loire", "Maine-et-Loire", "Deux-Sèvres", "Vienne")
+	)
+	loc$adm2 <- adm$adm2[match(loc$ID, adm$code)]
+	u <- aggregate(loc[, c("longitude", "latitude")], loc[, c("ID", "quad")], mean, na.rm=TRUE)
+	names(u)[3:4] <- c("lon", "lat")
+	loc <- merge(loc, u, by=c("ID", "quad"))
+	i <- is.na(loc$latitude)
+	loc$latitude[i] <- loc$lat[i]
+	loc$longitude[i] <- loc$lon[i]
+	loc <- loc[order(loc$record_id), ]
+	d1 <- cbind(d1, loc[, c("adm2", "longitude", "latitude")])
+	
+	### plant health (use long format)
+	dis <- data.frame(record_id=d1$record_id, disease = "septoria", disease_severity = r1$intSept)
+	dis <- rbind(dis, data.frame(record_id=d1$record_id, disease = "powdery mildew", disease_severity = r1$intMil))
+	dis <- rbind(dis, data.frame(record_id=d1$record_id, disease = "rust", disease_severity = r1$intRust))
+	dis$severity_scale="0-1"
 	### drop rows with NA in yield 
-	d1 <- d1[!is.na(d1$yield), ] 
+#	d1 <- d1[!is.na(d1$yield), ] 
 	
 	### Fixing soil type
 	d1$soil_texture <- gsub( "silt loam", "silty loam", d1$soil_texture)
@@ -150,6 +163,6 @@ Data measured in 44 farms covering a range of cropping practices, soil and produ
 	P <- gsub("rapeseed \\+ legumes", "rapeseed", P)
 	d1$previous_crop <- P
 	
-	carobiner::write_files(path, meta, d1)
+	carobiner::write_files(path, meta, d1, long=dis)
 }
 

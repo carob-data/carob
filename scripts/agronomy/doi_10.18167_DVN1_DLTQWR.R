@@ -15,6 +15,7 @@ carob_script <- function(path) {
 	   publication= "doi:10.1038_s43016-020-0114-x",
 	   data_organization = "CIRAD;ICRISAT;GAU",
 	   carob_contributor="Eduardo Garcia Bendito",
+	   carob_effort = NA,
 	   carob_date="2023-04-20",
 	   data_type="compilation",
 	   response_vars= "yield",

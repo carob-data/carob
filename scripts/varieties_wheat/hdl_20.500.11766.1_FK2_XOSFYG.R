@@ -13,6 +13,7 @@ carob_script <- function(path) {
 		publication="doi:20.500.11766/4516",
 		data_organization = "ICARDA;INAT;INRAMAR",
 		carob_contributor="Samar Attaher",
+		carob_effort = NA,
 		carob_date="2023-03-15",
 		data_type="experiment",
 		response_vars = "yield",

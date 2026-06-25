@@ -21,6 +21,7 @@ The survey data on soil carbon enhancing practices in Ethiopia is systematically
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-11",
+		carob_effort = NA,
 		design = "universe: The survey was carried out in two watersheds that is Yiser and Azugashube watershed. Yesir watershed and Azugashube watershed covers an area of 115.8km² with a population density of 158 persons per km² and 88.7km² with a population density of 502.13 persons per km² respectively.
 
 The population in this area practice a mixed system of crop and livestock keeping in which crop and livestock mutually benefit one another. The most common crops in the area includes teff, barley, wheat and horse beans (Bakela). These crops are grown mostly for subsistence purposes. Other important crops include; maize, sorghum, finger millet, enset, pulses and oil crops. Cattle, goats, sheep and poultry forms the major types of livestock kept. In addition to donkey, horses and mules are also common in these areas. The area experience bimodal type of rainfall with the main season (meher) between June and September while the short rainy season (belg) is experienced between February and April. The mean annual precipitation of Yesir is1500mm and Azugashube is 1656mm and with mean temperatures ranging between 20°C and 24°C.
@@ -31,7 +32,7 @@ A total of 379 households were sampled, the households were randomly drawn from 
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We only process files with useful information for carob"
 	)
 	

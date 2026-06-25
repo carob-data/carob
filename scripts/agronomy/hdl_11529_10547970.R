@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT;UBKV",
 		data_type="experiment", 
 		carob_contributor="Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date="2023-10-10",
 		response_vars= "yield",
 		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;B_fertilizer"				
@@ -134,6 +135,7 @@ carob_script <- function(path) {
 	d$crop <- gsub("kidneybean", "kidney bean", d$crop)
 	d$season <- "rabi"
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

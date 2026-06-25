@@ -17,6 +17,7 @@ We use the randomized complete blocks (RCB) statistical design, with three repet
 		response_vars = "yield",
 		treatment_vars = "variety",
 		project=NA,
+		carob_effort = NA,
 		carob_date="2023-12-12"
 	)
    

@@ -28,7 +28,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		treatment_vars = "N_fertilizer;variety",
 		response_vars = "yield; dmy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

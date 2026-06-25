@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "CIMMYT",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-08-02",
 		data_type="on-station experiment",
 		treatment_vars = "crop_rotation;planting_method;intercrops",
@@ -115,6 +116,7 @@ carob_script <- function(path) {
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

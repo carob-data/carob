@@ -20,13 +20,14 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 		data_organization = "CIMMYT",
 		publication = "NA",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-06-27",
 		design = "unitOfAnalysis: Plot",		
 		data_type = "survey",		
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Robert Hijmans",
-		completion = 15,	
+		carob_completion = 15,	
 		notes = NA
 	)
 	
@@ -354,6 +355,7 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$is_survey <- d$pratice == "CONVENTIONAL"
 	d$geo_from_source <- TRUE
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 # remove some of the crazy numbers

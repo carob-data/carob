@@ -22,8 +22,9 @@ This experiments were established with different rates of nitrogen in order to g
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield", 
-		completion = 99,
+		carob_completion = 99,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-10-17",
 		notes = NA, 
 		design = NA

@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		response_vars= "yield",
 		treatment_vars="N_fertilizer;P_fertilizer",
 		carob_contributor="Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2025-01-31"
 	)
 
@@ -155,6 +156,7 @@ carob_script <- function(path) {
 	wth <- do.call(rbind, wh)
 	
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path, wth = wth)

@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-09-23",
 		notes = "dataset has no planting dates, harvest dates and fertilizer rates"
 	)

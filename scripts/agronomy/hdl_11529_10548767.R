@@ -17,6 +17,7 @@ carob_script <- function(path) {
     response_vars = "yield",
     treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;irrigated;land_prep_method;residue_prevcrop_used;N_splits",
     carob_contributor="Hope Mazungunye",
+    carob_effort = NA,
     carob_date="2023-09-15",
     modified_by="Siyabusa Mkuhlani",
     last_modified = "2024-09-06"

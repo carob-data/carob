@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		data_organization = "IITA;BOKU;MAK",
 		carob_contributor="Cedric Ngakou", 
 		carob_date="2023-11-21", 
+		carob_effort = NA,
 		data_type="crop-cuts",
 		response_vars = "none",
 		treatment_vars = "none"
@@ -29,6 +30,9 @@ carob_script <- function(path) {
    d$yield <- d$yield * 1000 * 1.18 #fresh weight in kg/ha  
    d$dmy_residue <- d$dmy_residue * 1000 
    d$plant_density <- d$plant_density * 10000 # in plant/ha
+   d$yield_moisture <- NA_real_ 
+   d$yield_isfresh <- TRUE
+   
    
    #add columns
    ## the data says "millet". Given that this is in Uganda, 

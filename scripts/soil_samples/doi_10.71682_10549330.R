@@ -19,13 +19,14 @@ Selected soil properties were predicted from 375 topsoil samples subjected to sp
 		data_organization = "CIMMYT; CIRAD; TARI; ICRAF",
 		publication =NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-12",
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

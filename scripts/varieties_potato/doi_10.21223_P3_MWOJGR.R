@@ -18,6 +18,7 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     treatment_vars = "variety",
     response_vars = "yield;yield_marketable;AUDPC;rAUDPC", 
     carob_contributor = "Henry Juarez",
+    carob_effort = NA,
     carob_date = "2024-09-13",
     notes = NA
   )

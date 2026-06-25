@@ -16,7 +16,8 @@ carob_script <- function(path) {
 		carob_contributor = "Robert Hijmans",
 		data_organization = "xxx;WB",
 		data_citation = "",		
-		completion = 0,
+		carob_completion = 0,
+		carob_effort = NA,
 		carob_date = "2025-05-14"
 	)
 

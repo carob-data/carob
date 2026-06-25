@@ -20,13 +20,14 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		data_organization = "ICRISAT",
 		publication = "doi:10.1007/s13165-015-0099-1",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-12-20",
 		design = NA,
 		data_type = "on-station experiment",
 		treatment_vars = "seed_treatment",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

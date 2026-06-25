@@ -21,12 +21,13 @@ In this paper, we quantified five sustainability performance indicators (grain y
 		publication = "doi:10.1016/j.fcr.2021.108263",
 		project = "AfricaRice",
 		carob_date = "2025-09-07",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer",
 	   response_vars = "yield;crop_price", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
    	notes = NA
 	)
 	

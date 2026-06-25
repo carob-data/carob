@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		treatment_vars= "N_fertilizer; P_fertilizer; K_fertilizer; S_fertilizer; land_prep_method", 
 		response_vars = "fw_yield; dm_yield; dmy_total; dmy_residue", 
 		carob_contributor= "Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date="2025-06-12",
 		completion=75,
 		notes=NA

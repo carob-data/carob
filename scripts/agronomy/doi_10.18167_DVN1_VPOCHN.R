@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		data_organization = "CIRAD; UZIM; CIMMYT; ETH",
 		data_type = "experiment", 
 		carob_contributor = "Hope Mazungunye",
+		carob_effort = NA,
 		carob_date = "2024-02-15",
 		modified_by = "Eduardo Garcia Bendito",
 		last_modified = "2024-03-07",
@@ -100,6 +101,7 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 	
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

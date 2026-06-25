@@ -12,6 +12,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication="doi:10.1155/2018/7676058",
 		carob_contributor="Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2021-06-29",
 		data_type="experiment",
 		data_organization="ICRISAT",
@@ -68,6 +69,7 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 	d$location[d$location == "BUK"] <- "Bayero University, Kano"
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

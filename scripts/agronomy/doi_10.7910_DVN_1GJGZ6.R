@@ -22,13 +22,14 @@ The cropping system physiological characteristic datasheet contains data on maiz
 		data_organization = "ABC",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-15",
 		design = "unitOfAnalysis: Plot level experimental data; universe: Experimental trials located in farmer fields in three ecologies (Sabilo, Riroda and Gallapo villages) in Babati District of Northern Tanzania.; samplingProcedure: The experimental trials were designed using randomized complete block designs with three replicates and in five farmer fields. All measurements were conducted at random points at either plot or field level.",
 		data_type = "experiment",
 		treatment_vars = "intercrops",
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 75,	
+		carob_completion = 75,	
 		notes = "Seasonal Soil Conditions  and Soil Water Infiltration Trial have not been processed, as thier contents are not suitable for this Carob version."
 	)
 	

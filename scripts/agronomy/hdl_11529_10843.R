@@ -21,6 +21,7 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
     response_vars="yield",
     data_type="experiment",
     carob_contributor="Siyabusa Mkuhlani;Fredy Chimire", 
+    carob_effort = NA,
     carob_date="2024-07-20"
   )
   
@@ -155,6 +156,7 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
   d$treatment <- treatname[match(d$treatment,treatcode)]
 	d$geo_from_source <- FALSE
   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, d, path=path)

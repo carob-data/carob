@@ -20,7 +20,8 @@ carob_script <- function(path) {
       response_vars = "none",
       treatment_vars = "none", 
       carob_contributor = "Cedric Ngakou", 
-      carob_date = "2024-07-04"
+      carob_date = "2024-07-04",
+      carob_effort = NA
    )
    f <- ff[basename(ff) == "ET_Baseline_CSA_2015.xlsx"] 	
    r <- carobiner::read.excel(f, sheet = "Revised_data", na=c("", "."))

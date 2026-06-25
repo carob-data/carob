@@ -22,12 +22,13 @@ This household survey was conducted among 88 respondents by CIAT in three counti
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-13",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We only process files with useful information for carob"
 	)
 	

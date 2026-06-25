@@ -22,12 +22,13 @@ The CGIAR Initiative on Low-Emission Food Systems, also known as Mitigate+, work
 		publication = NA,
 		project = NA,
 		carob_date = "2026-04-18",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "soil_CO2;soil_N2O;soil_CH4", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

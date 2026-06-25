@@ -21,13 +21,14 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
        data_organization = "UNL", #University of Nebraska–Lincoln
        publication = "doi:10.2136/sssaj2018.02.0068",
        project = NA,
+       carob_effort = NA,
        carob_date = "2025-07-10",
        design = NA,
        data_type = "experiment",
        treatment_vars = "P_fertilizer",
        response_vars = "yield", 
        carob_contributor = "Cedric Ngakou",
-       completion = 100,	
+       carob_completion = 100,	
         notes = NA
    )
    

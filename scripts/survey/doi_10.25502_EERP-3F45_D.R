@@ -17,6 +17,7 @@ Herein we assessed the productivity and usage of biomass waste from: maize, sorg
 		data_organization = "IITA;BOKU;MAK",
 		carob_contributor="Cedric Ngakou", 
 		carob_date="2023-11-21", 
+		carob_effort = NA,
 		data_type="crop-cuts",
 		response_vars = "none",
 		treatment_vars = "none"
@@ -31,6 +32,8 @@ Herein we assessed the productivity and usage of biomass waste from: maize, sorg
 	
 	d$yield <- d$yield * 1000 * 1.18 #fresh weight in kg/ha 
 	d$dmy_residue <- d$dmy_residue * 1000 
+	d$yield_moisture <- NA_real_ 
+	d$yield_isfresh <- TRUE
 	
 	d$plant_density <- d$plant_density * 10000 # in plant/ha
 	

@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		response_vars= "yield",
 		treatment_vars="none",
 		carob_contributor="Fredy Chimire",
+		carob_effort = NA,
 		carob_date="2024-02-24"
 	)
 
@@ -178,6 +179,7 @@ carob_script <- function(path) {
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

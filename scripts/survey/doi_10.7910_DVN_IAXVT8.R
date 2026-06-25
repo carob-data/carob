@@ -21,12 +21,13 @@ The study was conducted in three SSA countries â€“ Benin, Cameroon, and Ghana â€
 		publication = NA,
 		project = NA,
 		carob_date = "2025-11-13",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

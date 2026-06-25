@@ -20,12 +20,13 @@ This dataset aims to assess farmers' access to digital tool, and adoption constr
 		publication =NA,
 		project = NA,
 		carob_date = "2026-03-04",
+		carob_effort = NA,
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

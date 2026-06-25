@@ -17,6 +17,7 @@ carob_script <- function(path) {
         treatment_vars= "variety; variety_type", 
         response_vars = "yield", 
         carob_contributor= "Cedric Ngakou", 
+        carob_effort = NA,
         carob_date="2025-06-24",
         completion=100,
         notes=NA
@@ -70,6 +71,7 @@ carob_script <- function(path) {
    ## removing 3 rows with negative yield value 
    d <- d[which(d$yield != -1250), ]
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(path, meta, d)

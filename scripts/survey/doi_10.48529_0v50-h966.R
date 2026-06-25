@@ -13,9 +13,10 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2025-05-14",
+		carob_effort = NA,
 		data_organization = "MAM;WB",
 		data_citation = "Cellule de Planification et de Statistiques, Institut National de la Statistique & Direction Nationale de l'Agriculture (2019). Enquête Agricole de Conjoncture Intégrée aux Conditions de Vie des Ménages 2017. World Bank. https://doi.org/10.48529/0V50-H966",		
-		completion = 5
+		carob_completion = 5
 	)
 
 

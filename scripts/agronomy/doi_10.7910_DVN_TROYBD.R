@@ -20,13 +20,14 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		data_organization = "ICRAF;UONBI;WUR",
 		publication = "doi:10.1007/s10705-018-9958-y",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-09-03",
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

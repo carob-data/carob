@@ -21,8 +21,9 @@ An experiment initiated in 1996 in the highlands of the state of San Luis Potos√
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-09-30",
 		notes = NA,
 		design = "Randomized Complete Block Design")

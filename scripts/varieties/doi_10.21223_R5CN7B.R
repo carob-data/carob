@@ -12,6 +12,7 @@ carob_script <- function(path) {
 		publication= NA,
 		data_organization = "CIP",
 		carob_contributor="Cedric Ngakou",
+		carob_effort = NA,
 		carob_date="2023-11-02",
 		data_type="experiment",
 		response_vars = "yield",
@@ -67,6 +68,7 @@ carob_script <- function(path) {
    d$rep <- as.integer(d$rep)
    d$harvest_date <- as.character(NA)
    
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
    carobiner::write_files(meta, d, path=path)

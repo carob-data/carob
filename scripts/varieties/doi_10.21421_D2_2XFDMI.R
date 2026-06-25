@@ -18,13 +18,14 @@ Grain Yield and Fodder Yield have been recorded in different villages
 		data_organization = "ICRISAT",
 		publication = NA,
 		project = "HOPE",
+		carob_effort = NA,
 		carob_date = "2025-08-20",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Gacheri Nturibi",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -43,6 +44,7 @@ Grain Yield and Fodder Yield have been recorded in different villages
 	  planting_date = "2010"
 	)
 	
+	d$yield_isfresh <- as.numeric(NA)
 	d$yield_moisture <- as.numeric(NA)
 
 	d$on_farm <- TRUE

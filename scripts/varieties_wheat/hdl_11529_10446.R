@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		project="International Bread Wheat Screening Nursery",
 		data_type= "experiment",
 		carob_contributor= "Fredy Chimire",
+		carob_effort = NA,
 		carob_date="2024-06-03",
 		response_vars = "yield",
 		treatment_vars = "variety_code"		

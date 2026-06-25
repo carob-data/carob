@@ -21,8 +21,9 @@ The study was carried out by the International Institute of Tropical Agriculture
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield", 
-		completion = 90,
+		carob_completion = 90,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2026-04-09",
 		notes = NA,
 		design = NA

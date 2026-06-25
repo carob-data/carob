@@ -11,7 +11,7 @@ carob_script <- function(path) {
 "
 Malawi Africa Research in Sustainable Intensification for the Next Generation (Africa RISING) Baseline Evaluation Survey
 
-As part of the US government&#39;s Feed the Future initiative that aims to address global hunger and food security issues in sub-Saharan Africa, the US Agency for International Development is supporting three multi-stakeholder agricultural research projects under Africa Research In Sustainable Intensification for the Next Generation (Africa RISING - AR) program. The overall aim of the program is to transform agricultural systems through sustainable intensification projects in Ghana, Tanzania, Malawi, Ethiopia and (potentially) Zambia. In Malawi, the project (led by IITA) will be supporting cereal-based Farming Systems.  The International Food Policy Research Institute (IFPRI) leads the monitoring and evaluation (M&#38;E) activities of the AR program. As part of the M&#38;E activities in Malawi, IFPRI contracted Invest in Knowledge Initiative (IKI) to conduct baseline household and community surveys in Ntcheu and Dedza districts.  Ntcheu and Dedza are the two districts in which participatory action research and adaptive experimentation is currently being conducted, led by researchers from Michigan State University (MSU). Interventions in these two districts involve &#34;mother and baby&#34; adaptive trials. Four intervention extension planning areas (EPAs) have been identified within the two districts to implement the research activities, with each EPA having 2 &#34;mother&#34; trials and about 110 &#34;baby&#34; farmers.  The main objective of this survey is to collect high-quality baseline household data to support the M&#38;E activities of the AR program in Malawi. More specifically, the survey aims to collect detailed information on the composition of the household, employment, health, agriculture, income and expenditures, credit, assets, subjective welfare and food security, shocks, and the anthropometric status of children and women.
+As part of the US government&#39;s Feed the Future initiative that aims to address global hunger and food security issues in sub-Saharan Africa, the US Agency for International Development is supporting three multi-stakeholder agricultural research projects under Africa Research In Sustainable Intensification for the Next Generation (Africa RISING - AR) program. The overall aim of the program is to transform agricultural systems through sustainable intensification projects in Ghana, Tanzania, Malawi, Ethiopia and (potentially) Zambia. In Malawi, the project (led by IITA) will be supporting cereal-based Farming Systems.  The International Food Policy Research Institute (IFPRI) leads the monitoring and evaluation (M&E) activities of the AR program. As part of the M&E activities in Malawi, IFPRI contracted Invest in Knowledge Initiative (IKI) to conduct baseline household and community surveys in Ntcheu and Dedza districts.  Ntcheu and Dedza are the two districts in which participatory action research and adaptive experimentation is currently being conducted, led by researchers from Michigan State University (MSU). Interventions in these two districts involve 'mother and baby' adaptive trials. Four intervention extension planning areas (EPAs) have been identified within the two districts to implement the research activities, with each EPA having 2 'mother' trials and about 110 'baby' farmers.  The main objective of this survey is to collect high-quality baseline household data to support the M&E activities of the AR program in Malawi. More specifically, the survey aims to collect detailed information on the composition of the household, employment, health, agriculture, income and expenditures, credit, assets, subjective welfare and food security, shocks, and the anthropometric status of children and women.
 "
 
 	uri <- "doi:10.7910/DVN/28557"
@@ -23,12 +23,13 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-30",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "we process only files with useful information for carob"
 	)
 	
@@ -165,10 +166,10 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	####
 	d2 <- data.frame(
 	   hhid = as.character(r4$hhid),
-	   farmer_gender = r4$b3,
-	   farmer_age = r4$b4a,
-	   farmer_education = r4$b6,
-	   farmer_civil_status = r4$b10
+	   sex = r4$b3,
+	   age = r4$b4a,
+	   education = r4$b6,
+	   civil_status = r4$b10
 	)
 	
 	### merge d1 and d2 
@@ -187,7 +188,7 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	   irrigation_source = gsub("ground water", "groundwater", tolower(r10$e11)),
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r10$e13)),
 	   soil_color = r10$e15,
-	   plot_slope = r10$e16,
+	   land_form = tolower(r10$e16),
 	   unit_area = r10$e3b
 	   
 	)
@@ -452,7 +453,6 @@ As part of the US government&#39;s Feed the Future initiative that aims to addre
 	#d <- d[which(d$fertilizer_amount<=1000),]
 	
 	### drop duplicate records 
-	
 	d <- unique(d)
 	
 	carobiner::write_files(path, meta, d)

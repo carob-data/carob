@@ -16,6 +16,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 		publication= NA,
 		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Rachel Mukami; Effie Ochieng'",
+		carob_effort = NA,
 		carob_date="2022-07-29",
 		data_type="on-farm experiment",
 		response_vars= "yield",
@@ -150,6 +151,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d$geo_from_source <- TRUE
 
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

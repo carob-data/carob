@@ -21,6 +21,7 @@ Effectiveness of 14 herbicides were compared during 2016 in El Batán, México. 
 		treatment_vars = "herbicide_product",
 		response_vars = "yield", 
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2024-08-20",
 		notes = NA
 	)

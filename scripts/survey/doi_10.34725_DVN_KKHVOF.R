@@ -11,6 +11,16 @@ carob_script <- function(path) {
 Dataset for supporting the net agronomic assessment of yield limiting factors in maize production in Machakos county, Kenya
 
 This dataset is used for a holistic analysis of the costs, benefits, and risks of on-farm soil and plant health management. The dataset was produced in 2017 by a combination of field measurements and farmer surveys. It was collected for a research study aimed at identifying and testing accurate, consistent, and cost-effective measurement tools and methodologies for evaluating the outcomes of agricultural projects. Soils data was analysed by wet spectral methods to generate estimates of the Nitrogen (N), Phosphorus (K), and Potassium (P) levels in the soils which was then used as inputs for a stochastic crop production model. The decision model consisted of two main sections targeting interactions between biotic factors (rainfall variability, availability of soil nutrients, risk of drought and temperature) and abiotic factors (farm management practices/intensity of farm management). With the two datasets, we ran a risk-return model to project the productivity of maize production and highlight yield-limiting factors.  The project was funded by Bill & Melinda Gates Foundation and TechnoServe under the Innovation in Outcome Measurement (IOM) program
+
+
+unitOfAnalysis: Farm scale; 
+dataCollector: World Agroforestry (ICRAF); 
+
+samplingProcedure: We conducted a household survey to collect primary qualitative and quantitative information. A structured questionnaire which was pretested to evaluate the questions that covered a wide range of relevant agronomic and soil management topics was dispensed. A total of 134 households, comprising 58 females (43%) and 76 males (57%) were interviewed.; 
+
+collectionMode: To clarify the decision problem and identify variables of interest in soil and plant health management, stakeholder engagement targeted Machakos county government officials, officials from fertilizer companies, agricultural research organizations and other development partners in a stakeholder workshop held in Nairobi on the 8-9 march, 2017. We used the insights generated during this workshop to design both the household survey used to collect sample data and the conceptual model used to project the decision’s outcomes.  The model was scripted in R programming language and ran using the ‘decisionSupport’ package. We ran 100,000 monte carlo iterations to produce distributions of output variables i.e. actual yield, projected yield and farm profits.; 
+
+researchInstrument: Structured questionnaire and interviews
 "
 
 	uri <- "doi:10.34725/DVN/KKHVOF"
@@ -22,12 +32,12 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 		publication = NA,
 		project = NA,
 		carob_date = "2025-12-08",
-		design = "unitOfAnalysis: Farm scale; dataCollector: World Agroforestry (ICRAF); samplingProcedure: We conducted a household survey to collect primary qualitative and quantitative information. A structured questionnaire which was pretested to evaluate the questions that covered a wide range of relevant agronomic and soil management topics was dispensed. A total of 134 households, comprising 58 females (43%) and 76 males (57%) were interviewed.; collectionMode: To clarify the decision problem and identify variables of interest in soil and plant health management, stakeholder engagement targeted Machakos county government officials, officials from fertilizer companies, agricultural research organizations and other development partners in a stakeholder workshop held in Nairobi on the 8-9 march, 2017. We used the insights generated during this workshop to design both the household survey used to collect sample data and the conceptual model used to project the decision’s outcomes.  The model was scripted in R programming language and ran using the ‘decisionSupport’ package. We ran 100,000 monte carlo iterations to produce distributions of output variables i.e. actual yield, projected yield and farm profits.; researchInstrument: Structured questionnaire and interviews",
+		carob_effort = NA,
 		data_type = "compilation",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
@@ -38,6 +48,8 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	
 
 	r1 <- read.csv(f1, na= c("", "NA", "<llq"))
+	r1 <- r1[!is.na(r1$County), ] # remove empty rows
+
 	#r2 <- read.csv(f2)
 	#r3 <- read.csv(f3)
 	#r4 <- read.csv(f4)
@@ -109,11 +121,9 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	   residue_Ti = r1$Ti_Pl/1000,
 	   residue_C = r1$TC_Pl/1000,
 	   residue_N = r1$TN_Pl/1000,
-	   residue_Br = r1$Br_Pl/1000,
 	   residue_Ca = r1$Ca_Pl/1000,
 	   residue_Cd = r1$Cd_Pl/1000,
 	   residue_Cl = r1$Cl_Pl/1000,
-	   residue_Co = r1$Co_Pl/1000,
 	   residue_Cu = r1$Cu_Pl/1000,
 	   residue_K = r1$K_Pl/1000,
 	   residue_Mg = r1$Mg_Pl/1000,
@@ -122,7 +132,6 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	   residue_Pb = r1$Pb_Pl/1000,
 	   residue_Rb = r1$Rb_Pl/1000,
 	   residue_S = r1$S_Pl/1000,
-	   residue_Hg = r1$Hg_Pl/1000,
 	   #r1$m3_P_Gr,
 	   #r1$m3_K_Gr,
 	   #r1$m3_B_Gr,
@@ -139,22 +148,17 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	   grain_Fe = r1$Fe_Gr/1000,
 	   grain_Mn = r1$Mn_Gr/1000,
 	   grain_P = r1$P_Gr/1000,
-	   grain_Ti = r1$Ti_Gr/1000,
 	   grain_C = r1$TC_Gr/1000,
 	   grain_Zn = r1$Zn_Gr/1000,
 	   grain_N = r1$TN_Gr/1000,
 	   grain_Rb = r1$Rb_Gr/1000,
-	   grain_Hg = r1$Hg_Gr/1000,
-	   #r1$Ba_Gr,
-	   grain_Br = r1$Br_Gr/1000,
 	   grain_Cd = r1$Cd_Gr/1000,
 	   grain_Co = r1$Co_Gr/1000,
 	   grain_K = r1$K_Gr/1000,
-	   grain_Cl = r1$Cl_Gr/1000,
 	   grain_Mg = r1$Mg_Gr/1000,
 	   grain_Mo = r1$Mo_Gr/1000,
-	   grain_Pb = r1$Pb_Gr/1000,
 	   grain_S = r1$S_Gr/1000,
+	   
 	   soil_texture = r1$Soil.Texture,
 	   soil_color = r1$color,
 	   planting_date = "2017", 
@@ -163,11 +167,12 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	   crop = "maize", 
 	   yield_part = "grain", 
 	   yield_moisture = as.numeric(NA), 
+	   yield_isfresh = TRUE,
 	  geo_from_source = FALSE
 		
 	)
 	
-	d1 <- d1[!is.na(d1$yield),]
+	##d1 <- d1[!is.na(d1$yield),]
 	
 	soilmeta <- data.frame(
 	   variable= c("soil_P", "soil_B" , "soil_Cu", "soil_S" , "soil_Mn", "soil_Zn", "soil_Fe", "soil_Al", 
@@ -210,8 +215,7 @@ This dataset is used for a holistic analysis of the costs, benefits, and risks o
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
-	
-carobiner::write_files(path, meta, d, var_meta=soilmeta)
+	carobiner::write_files(path, meta, d, var_meta=soilmeta)
 
 }
 

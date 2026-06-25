@@ -15,6 +15,7 @@ Lower GWP under CSAPs resulted in 36–44% lower emission intensity (383 kg CO2 
 		data_organization = "HAU;ICAR;CIMMYT",
 		data_type="is_experiment", 
 		carob_contributor="Shumirai Manzvera",
+		carob_effort = NA,
 		carob_date="2023-12-12"
 	)
 
@@ -68,6 +69,7 @@ Lower GWP under CSAPs resulted in 36–44% lower emission intensity (383 kg CO2 
 
 message("need to figure out what the 'control yield' refers to") 
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

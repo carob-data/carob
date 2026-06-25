@@ -17,6 +17,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "seed_treatment", 
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2024-05-21"
 	)
 
@@ -166,6 +167,7 @@ carob_script <- function(path) {
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

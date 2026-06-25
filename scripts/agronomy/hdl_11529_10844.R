@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		# If trial_id == 1 for all, then planting_date needs to be added here
 		treatment_vars = "land_prep_method; intercrops; residue_prevcrop_used; planting_method; previous_crop",
 		response_vars = "yield; dmy_total",
+		carob_effort = NA,
 		carob_date = "2024-05-03",
 		last_modified = "2024-07-31"
 	)
@@ -134,6 +135,7 @@ carob_script <- function(path) {
 
 	d <- d[!is.na(d$yield), ]
 		
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

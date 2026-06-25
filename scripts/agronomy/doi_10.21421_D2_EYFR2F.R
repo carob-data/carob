@@ -13,6 +13,7 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication="https://oar.icrisat.org/10842/",
 		carob_contributor="Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2022-09-12",
 		data_type="experiment",
 		data_organization="ICRISAT",
@@ -71,6 +72,7 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
 	d <- merge(d, ss, by = "trial_id", all.x = TRUE)
 	d$irrigated <- NA
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

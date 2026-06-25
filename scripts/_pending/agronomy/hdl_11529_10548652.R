@@ -18,6 +18,7 @@ carob_script <- function(path) {
 		data_organization = "CIMMYT",
    		data_type="experiment",
 		carob_contributor="Blessing Dzuda", 
+		carob_effort = NA,
 		carob_date = "2023-11-02"
 	)
 

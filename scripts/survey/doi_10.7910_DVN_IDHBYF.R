@@ -3,7 +3,8 @@
 
 
 ## ISSUES
-#coordinates were extracted from google maps
+#TBD: variables: Spacing, "Planting depth (cm)", "Harvest\r\n(months)" (= season length)  
+
 
 carob_script <- function(path) {
   
@@ -20,9 +21,10 @@ carob_script <- function(path) {
    data_type = "survey",
    treatment_vars = "none",
    response_vars = "none", 
-   completion = 100,
+   carob_completion = 100,
    carob_contributor = "Blessing Dzuda",
    carob_date = "2025-05-27",
+   carob_effort = NA,
    notes = NA,
    design = NA
   )
@@ -41,7 +43,25 @@ carob_script <- function(path) {
     soil_depth=r$`Depth  (cm)`,
     soil_sand=as.numeric(r$`Sand (g/kg)`)*0.1,
     soil_silt=as.numeric(r$`Silt (g/kg)`)*0.1,
-    soil_clay=as.numeric(r$`Clay (g/kg)`)*0.1) 
+	reference = trimws(r$Reference),
+	soil_bd = r[["Bulk density\r\n(kg/dm3)"]],
+	soil_SOC = r[["OC (g/kg)"]] * 10
+  )
+
+  
+	soild <- r$`Depth (cm)...25`
+	soild[soild == "na"] <- NA
+	soild <- sapply(soild, \(i) as.numeric(strsplit(i, "-")[[1]][1:2])) |> t()
+	names(soild) <- c("depth_top", "depth_bottom")
+    
+	
+  #cleaning non character values
+  d$soil_clay[r$`Clay (g/kg)`=="³ 350"] <- 350
+  d$soil_clay[d$soil_clay=="151-350"] <- 250.5 #since the clay content has a range, an average of the 2 has been calculated to give 250.5
+  
+  #converting to percentage
+  d$soil_clay <- as.numeric(d$soil_clay)*0.1
+
   
   d$cover_crop_used <- TRUE
   
@@ -75,12 +95,20 @@ carob_script <- function(path) {
     
     lat_lon <- data.frame(
       adm1=c("Bahia","Paraná","Tamil Nadu","Mato Grosso do Sul","São Paulo"),
-      longitude=c(-12.5983,-24.6817,11.0686,-20.1798,-23.5531),
-      latitude=c(-41.0698,-52.0502,78.3955,-5.5038,-46.6637))
-    
+      longitude=c(-41.280,-52.0502,78.3955,-55.361,-46.6637),
+      latitude=c(-11.409,-24.6817,11.0686,-20.215,-23.5531))
+
     d <- merge(d,lat_lon,by="adm1",all.x=TRUE)
+
+## from d$reference[nrow(d)]
+## "Ohiri, AC; Ezumah, HC., 1990. Tillage effects on cassava (Manihot esculenta) production and some soil properties. Soil and Tillage Research 17:221-229"
+	i <- which(d$country == "Nigeria")
+	d$location[i] <- "National Root Crops Research Institute, Umudike"
+	d$longitude[i] <-  5.476
+	d$latitude[i] <- 7.548 # publication had error: 70°30'E 
+##
     
-    d$yield_part <- "tubers"
+    d$yield_part <- "roots"
     d$yield_isfresh <- NA
     d$trial_id <- paste(d$adm1, d$crop, sep = "_")
     d$soil_depth <- as.numeric(gsub(".*-", "", d$soil_depth))

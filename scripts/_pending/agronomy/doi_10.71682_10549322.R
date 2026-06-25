@@ -26,13 +26,14 @@ The trials tested maize monocropping, maize-legume rotations, and intercropping 
 		data_organization = "CIMMYT",
 		publication =NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-11",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "fertilizer_used;crop_rotation;intercrops",
 		response_vars = "yield;dmy_total", 
 		carob_contributor = "Cedric Ngakou",
-   	completion = 50,	
+   	carob_completion = 50,	
 		notes = "The data on radar_plot_data and system_data sheets are not suitable for carob"
 	)
 	

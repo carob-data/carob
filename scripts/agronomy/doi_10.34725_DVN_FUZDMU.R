@@ -13,6 +13,7 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=0,
 		publication = "doi:10.1016/j.agwat.2011.04.002",
 		carob_contributor = "Camila Bonilla",
+		carob_effort = NA,
 		carob_date="2021-06-01",
 		data_type = "experiment",
 		data_organization ="ICRAF;KEU",
@@ -131,6 +132,7 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	d$irrigated <- FALSE
 	d$geo_from_source <- FALSE
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

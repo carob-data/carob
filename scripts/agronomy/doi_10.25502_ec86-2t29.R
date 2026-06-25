@@ -17,6 +17,7 @@ carob_script <- function(path) {
     treatment_vars = "variety; fertilizer_date; weeding_dates; weeding_dates; insecticide_dates",
     response_vars = "flowering_date; maturity_date; yield",
     carob_contributor= "Mitchelle Njukuya",
+    carob_effort = NA,
     carob_date="2024-03-19",
     notes="Need to clarify the intercropping with banana situation" 
   )
@@ -108,6 +109,7 @@ carob_script <- function(path) {
   
   dd$yield[which(dd$yield > 25000)] <- NA
   
+	dd$yield_isfresh <- as.numeric(NA) #needs to be checked
 	dd$yield_moisture <- as.numeric(NA) #needs to be checked
 
   carobiner::write_files(meta, dd, path=path)

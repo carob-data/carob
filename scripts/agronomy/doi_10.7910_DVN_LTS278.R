@@ -11,6 +11,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication=NA,
 		carob_contributor="Siyabusa Mkuhlani",
+		carob_effort = NA,
 		carob_date="2021-08-26",
 		data_type="experiment",
 		response_vars = "yield",
@@ -120,6 +121,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	dv$geo_from_source <- FALSE
 	dv$yield_part <- "grain"
 
+	dv$yield_isfresh <- as.numeric(NA) #needs to be checked
 	dv$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, dv, path=path)

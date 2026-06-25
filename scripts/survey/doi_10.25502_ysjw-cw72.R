@@ -14,6 +14,7 @@ carob_script <- function(path) {
     data_organization = "IITA;ICRAF;WUR",
     carob_contributor="Cedric Ngakou",
     carob_date="2023-09-18",
+    carob_effort = NA,
     data_type="survey",
 	response_vars= "none",
 	treatment_vars="none",
@@ -72,7 +73,7 @@ carob_script <- function(path) {
   
   ## Extract Relevant columns 
   
-  d <- d[,c("trial_id", "country","season","adm2","adm3", "crop","variety","yield","inoculated","OM_amount","fertilizer_type","fertilizer_amount","row_spacing","plant_spacing","planting_date")]
+  d <- d[,c("trial_id", "country","adm2","adm3", "crop","variety","yield","inoculated","OM_amount","fertilizer_type","fertilizer_amount","row_spacing","plant_spacing","planting_date")]
   
   # Add columns
   
@@ -81,6 +82,7 @@ carob_script <- function(path) {
   d$irrigated <- FALSE
   d$adm2 <- carobiner::fix_name(d$adm2, "title")
   d$adm3 <- carobiner::fix_name(d$adm2, "title")
+	d$variety <- trimws(d$variety)
 
   # fix lon and Lat 
  #RH: not correct. georeferencing should be done with adm3, not with adm2! 
@@ -146,10 +148,17 @@ carob_script <- function(path) {
 				)
   d <- merge(d, ll, by.x = c("country", "adm3"), by.y = c("country", "location"))
 
+  d$yield_moisture <- NA_real_ 
+  d$yield_isfresh <- TRUE
+
   ### fix crop yield
 #  d$yield[d$crop=="common bean" & d$yield > 9000] <- NA
 #  d$yield[d$crop=="groundnut" & d$yield > 8500] <- NA
 #  d$yield[d$crop=="cowpea" & d$yield > 5000] <- NA
+
+	d <- unique(d)
+	d$row_spacing[d$row_spacing==0] <- NA
+	d$plant_spacing[d$plant_spacing==0] <- NA
 
   carobiner::write_files(meta, d, path=path)
 }

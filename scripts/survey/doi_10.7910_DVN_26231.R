@@ -18,7 +18,8 @@ carob_script <- function(path) {
       response_vars = "none",
       treatment_vars = "none", 
       carob_contributor = "Cedric Ngakou", 
-      carob_date = "2024-10-11"
+      carob_date = "2024-10-11",
+      carob_effort = NA
    )
    
    f <- ff[basename(ff)=="CRPSYS.xls"]
@@ -56,6 +57,10 @@ carob_script <- function(path) {
    d$yield_part <- "grain"
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+
+	d$yield_moisture <- NA_real_
+	d$yield_isfresh <- TRUE
+
    
    carobiner::write_files (path, meta, d)
 }

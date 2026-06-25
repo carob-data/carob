@@ -1,18 +1,18 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
 
 carob_script <- function(path) {
 
-"Soil properties predicted from mid-infrared spectral (MIRS) analysis of soil samples collected in 2022 before establishing on-farm trials on yield response to lime rates in Tanzania
+"
+Soil properties predicted from mid-infrared spectral (MIRS) analysis of soil samples collected in 2022 before establishing on-farm trials on yield response to lime rates in Tanzania
   
 Selected soil properties were predicted from 71 topsoil samples subjected to spectral analysis (MIRS).
 
 A subset of samples were also subjected to wet chemistry analysis, and results were used to calibrate a machine-learning algorithm developed by the International Centre for Research in Agroforestry (ICRAF) in Kenya. Coordinates were truncated to protect farmer's privacy.
 
-Unless specified, all properties were predicted. When calculated from other predicted properties, the variable name contained the string: Estmated"
-
+Unless specified, all properties were predicted. When calculated from other predicted properties, the variable name contained the string: Estmated
+"
 
 	uri <- "hdl:11529/10549139"
 	group <- "soil_samples"
@@ -23,13 +23,14 @@ Unless specified, all properties were predicted. When calculated from other pred
 		data_organization = "CIMMYT; TARI;ICRAF",
 		publication =NA,
 		project = "GAIA",
+		carob_effort = NA,
 		carob_date = "2025-08-30",
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Blessing Dzuda",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

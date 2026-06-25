@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "season;land_prep_method;crop_rotation;OM_used", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2024-06-24"
 	)
 	
@@ -85,6 +86,7 @@ carob_script <- function(path) {
 	#d$planting_date <- as.character(as.Date(   ))
 	#d$harvest_date  <- as.character(as.Date(    ))
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d)

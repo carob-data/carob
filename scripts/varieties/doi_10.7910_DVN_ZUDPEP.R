@@ -20,13 +20,14 @@ Field evaluation of breeding lines developed for drought tolerance for adaptatio
 		data_organization = "CIAT;TARI",
 		publication = "doi:10.5539/jas.v11n13p81",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-08-25",
 		design = NA,
 		data_type = "on-station experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

@@ -20,7 +20,8 @@ Landscape Diagnostic Survey (LDS) for rice contains farmer's data on current pro
 		response_vars = "none",
 		treatment_vars = "none",
 		carob_contributor="Robert Hijmans",
-		carob_date="2024-01-27"
+		carob_date="2024-01-27",
+		carob_effort = NA
 	)
   
 	f <- ff[basename(ff)=="CSISA_IND_LDS_Rice_2017_Data.csv"]

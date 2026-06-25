@@ -15,6 +15,7 @@ carob_script <- function(path) {
 		publication=NA,
 		data_organization = "IITA;ICRAF;WUR",
 		carob_contributor="Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2023-08-21",
 		data_type="experiment",
 		response_vars= "yield",
@@ -201,6 +202,7 @@ carob_script <- function(path) {
 	d <- d[!is.na(d$yield), ]
 	d <- d[!is.na(d$N_fertilizer), ]
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	d$treatment <- trimws(d$treatment)

@@ -16,6 +16,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "none",  # many
 		carob_contributor="Robert Hijmans", 
+		carob_effort = NA,
 		carob_date="2024-07-16"
 	)
 	

@@ -13,6 +13,7 @@ This is an international study that contains data on yield and other agronomic t
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
  	    publication="doi:10.1016/j.jenvman.2017.06.058",
 		carob_contributor = "Camila Bonilla",
+		carob_effort = NA,
 		carob_date="2021-06-03",
 		data_type = "experiment",
 		response_vars = "yield",

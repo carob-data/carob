@@ -25,8 +25,9 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
 		data_type = "experiment",
 		treatment_vars = "variety_type",
 		response_vars = "yield", 
-		completion = 100,
+		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
+		carob_effort = NA,
 		carob_date = "2025-08-05",
 		notes =NA, 
 		design = NA

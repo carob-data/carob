@@ -14,6 +14,7 @@ Phosphorus was applied at rate of 0 or 20 kg P ha-1. P fertilizer application in
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		publication = "doi:10.12692/ijb/9.1.291-302",
 		carob_contributor = "Effie Ochieng'",
+		carob_effort = NA,
 		carob_date = "2021-07-06",
 		data_type = "experiment",
 		data_organization = "ICRISAT",
@@ -78,6 +79,7 @@ Phosphorus was applied at rate of 0 or 20 kg P ha-1. P fertilizer application in
 	
 	d$irrigated <- NA
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta,  d,  path=path)

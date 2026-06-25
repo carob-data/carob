@@ -17,16 +17,18 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "IFPRI",
+		data_organization = "IFPRI;KVC",
+		authors = "",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-11",
+		carob_effort = NA,
 		design = "unitOfAnalysis",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 70,	
+		carob_completion = 70,	
 		notes = "We only process file with useful information for Carob"
 	)
 	

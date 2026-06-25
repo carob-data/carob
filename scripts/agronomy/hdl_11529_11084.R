@@ -26,6 +26,7 @@ Considering all cultivars and environments, ECa at sowing, flowering and grain f
 		data_organization = "CIMMYT; UMELB",
 		data_type = "experiment", 
 		carob_contributor = "Mitchelle Njukuya",
+		carob_effort = NA,
 		carob_date = "2023-12-18",
 		treatment_vars = "planting_date;variety;N_fertilizer",
 		response_vars="yield",
@@ -141,6 +142,7 @@ Considering all cultivars and environments, ECa at sowing, flowering and grain f
 	d$season <- "rabi"
 	d <- d[!is.na(d$planting_date), ]
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

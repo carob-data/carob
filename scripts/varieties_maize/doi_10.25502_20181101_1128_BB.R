@@ -14,6 +14,7 @@ carob_script <- function(path) {
 		publication= NA, # 
 		data_organization = "IITA", 
 		carob_contributor="Cedric Ngakou", 
+		carob_effort = NA,
 		carob_date="2023-10-11", 
 		data_type="experiment", 
 		response_vars = "yield",

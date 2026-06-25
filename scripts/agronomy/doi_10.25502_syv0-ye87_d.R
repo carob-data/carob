@@ -20,13 +20,14 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		data_organization = "CIAT; IITA; AAU",# Addis Ababa University
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-03-05",
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

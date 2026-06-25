@@ -19,6 +19,7 @@ carob_script <- function(path) {
 		data_organization = "IITA;ICRISAT;ABC",
 		data_type="on-farm experiment",
 		carob_contributor = "Eduardo Garcia Bendito",
+		carob_effort = NA,
 		carob_date="2024-02-28",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;lime;Ca_fertilizer;Zn_fertilizer;S_fertilizer;Mg_fertilizer;OM_amount;lime"
@@ -124,6 +125,7 @@ carob_script <- function(path) {
 	d <- d[!is.na(d$yield), ]
 	d$seed_weight[d$seed_weight > 600] <- NA
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

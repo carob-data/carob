@@ -20,13 +20,14 @@ These are the raw data of the paper 'Intra-seasonal rainfall patterns and extrem
 		data_organization = "CIRAD; INRAE; URCA; UZIM",
 		publication = "doi:10.1016/j.fcr.2025.110126",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-10-14",
 		design = NA,
 		data_type ="experiment",
 		treatment_vars = "N_fertilizer;mulch",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

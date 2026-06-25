@@ -24,13 +24,14 @@ The data were collected in the frame of the EiA Sasakawa Nigeria  Use Case in th
 		data_organization = "AfricaRice; IITA",
 		publication = NA,
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2025-09-24",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 	   response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-   	completion = 100,	
+   	carob_completion = 100,	
 		notes = NA
 	)
 	

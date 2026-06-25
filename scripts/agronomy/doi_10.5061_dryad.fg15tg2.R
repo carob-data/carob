@@ -19,6 +19,7 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 		publication= "doi:10.2134/agronj2018.04.0268", 
 		data_organization = "UNL;TARI;RAB;ZARI;CARS;LUANAR;IITA;NARL", 
 		carob_contributor="Effie Ochieng';Rachel Mukami", 
+		carob_effort = NA,
 		carob_date="2023-03-20", 
 		data_type="experiment",
 		response_vars = "yield",
@@ -246,6 +247,7 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 	# one spurious outlier
 	d$seed_weight[d$seed_weight == 34210] <- 342.1
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

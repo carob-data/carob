@@ -20,13 +20,14 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 		data_organization = "CIMMYT;HEBAU",
 		publication = "doi:10.1007/s12571-025-01556-2",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-04",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "intercrops",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

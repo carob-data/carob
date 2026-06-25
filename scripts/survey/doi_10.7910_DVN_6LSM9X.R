@@ -21,9 +21,10 @@ carob_script <- function(path) {
    data_type = "survey",
    treatment_vars = "none",
    response_vars = "none", 
-   completion = 0,
+   carob_completion = 0,
    carob_contributor = "Blessing Dzuda",
    carob_date = "2026-05-22",
+   carob_effort = NA,
    notes = NA, 
    design = NA
   )

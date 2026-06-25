@@ -18,8 +18,9 @@ carob_script <- function(path) {
    data_type = "on-station experiment",
    treatment_vars = "variety",
    response_vars = "yield", 
-   completion = 100,
+   carob_completion = 100,
    carob_contributor = "Blessing Dzuda",
+   carob_effort = NA,
    carob_date = "2026-05-03",
    notes = "NA", 
    design = "Randomised Block"

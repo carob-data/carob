@@ -29,6 +29,7 @@ carob_script <- function(path) {
       carob_contributor="Cedric Ngakou", 
       treatment_vars="variety;intercrops",
       response_vars= "yield;fwy_residue",
+      carob_effort = NA,
       carob_date="2024-05-14", 
       data_type="experiment"
    )
@@ -133,6 +134,7 @@ carob_script <- function(path) {
 	
 	## dw needs lon/lat as well
 	
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(path, meta, d, wth=dw)   

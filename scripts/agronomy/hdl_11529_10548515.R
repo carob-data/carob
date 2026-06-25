@@ -22,13 +22,14 @@ In sub-Saharan Africa, maize is a staple crop but yields remain sub-optimal. A n
 		data_organization = "CIMMYT;KALRO;ARC",
 		publication = "doi:10.1038/s42003-022-03680-7",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-28",
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "seed_treatment",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

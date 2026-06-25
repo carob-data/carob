@@ -30,6 +30,7 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
     data_organization = "CIMMYT;ZARI;TLC",
     data_type="experiment",
     carob_contributor="Fredy Chimire",
+    carob_effort = NA,
     carob_date="2024-01-16",
 	response_vars = "yield",
 	treatment_vars = "land_prep_method"
@@ -92,6 +93,7 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
   	d$irrigated <- FALSE
 	d <- d[!is.na(d$yield), ]
 
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

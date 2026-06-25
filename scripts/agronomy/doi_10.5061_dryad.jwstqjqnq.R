@@ -20,13 +20,14 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 		data_organization = "SIU; VT",
 		publication = "doi:10.1038/s41598-026-41418-1",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-05-06",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "seed_density",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	

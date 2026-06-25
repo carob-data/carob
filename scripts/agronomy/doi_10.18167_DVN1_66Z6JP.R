@@ -22,13 +22,14 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 		data_organization = "CIRAD;MAFFKH;ETH;RUA;KSU",
 		publication = "doi:10.1016/j.agee.2026.110363",
 		project = NA,
+		carob_effort = NA,
 		carob_date = "2026-04-21",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;N_fertilizer;intercrops;crop_rotation",
 		response_vars = "yield;soil_N2O;soil_CH4", 
 		carob_contributor = "Cedric Ngakou",
-		completion = 100,	
+		carob_completion = 100,	
 		notes = NA
 	)
 	
