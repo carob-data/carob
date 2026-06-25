@@ -31,24 +31,24 @@ carob_script <- function(path) {
   r <- carobiner::read.excel(f)
   
   d <- data.frame(
-    id=r$Number,
+    id = r$Number,
     country = "Mali",
-    adm2=r$District,
-    adm3=r$village,
-    farmer_education=as.character(r$Education),
-    field_size=r$Farmsize)
+    adm2 = r$District,
+    adm3 = r$village,
+    education = as.character(r$Education),
+    field_size = r$Farmsize)
     
     
   crop <- data.frame(
-    id=r$Number,
+    id = r$Number,
     country = "Mali",
-    adm2=r$District,
-    adm3=r$village,
-    sorghum=r$Sorghumclass,
-    maize=r$Maizeclass,
-    millet=r$Milletclass,
-    cotton=r$Cottonclass,
-    groundnut=r$Groundnutclass)
+    adm2 = r$District,
+    adm3 = r$village,
+    sorghum = r$Sorghumclass,
+    maize = r$Maizeclass,
+    millet = r$Milletclass,
+    cotton = r$Cottonclass,
+    groundnut = r$Groundnutclass)
   
   crop_vars <- c("sorghum", "maize", "millet", "cotton", "groundnut")
   
@@ -81,13 +81,11 @@ carob_script <- function(path) {
   d$hhid <- as.character(d$hhid)
   
   lat_lon <- data.frame(
-    country= c("Mali","Mali","Mali","Mali","Mali"),
-    adm2= c("Bougouni", "Bougouni", "Bougouni", "Bougouni", "Koutiala"),
     adm3= c("Madina", "Flola", "Dieba", "Sibirila", "M'pessoba"),
     longitude= c(-7.6803, -7.6426, -7.9308, -7.7701, -5.7207),
     latitude= c(11.3472, 11.4201, 11.5132, 11.4265, 12.6655))
   
-  d <- merge(d,lat_lon,by=c("country","adm2","adm3"),all.x=T)
+  d <- merge(d, lat_lon, by= "adm3" , all.x =TRUE)
   
   d$trial_id <- paste(d$hhid, d$adm3, sep = "_")
   d$on_farm <- TRUE
