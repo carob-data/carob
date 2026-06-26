@@ -90,9 +90,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^sunflower$|^sunflowes$|^sanflower$", x)]              <- "sunflower"
 		x[grepl("^sorghum$|^soughum$", x)]                              <- "sorghum"
 		x[grepl("^rice$|^raice$", x)]                                   <- "rice"
-
-### when we know it is finger millet, we should not call it millet
-		x[grepl("^millet$|^fingermillet$|^finger millet$", x)]         <- "millet"
+		x[grepl("^fingermillet$|^finger millet$", x)]         <- "finger millet"
 		x[grepl("^cassava$", x)]                                        <- "cassava"
 		x[grepl("^sweetpotato$|^sweet potato$|^sweet potatoes$", x)]   <- "sweetpotato"
 		x[grepl("^irish potato$|^irish potatoes$|^irishpotatoes$|^potatoes?$|^pottato$", x)] <- "potato"
@@ -104,11 +102,10 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^onion$", x)]                                          <- "onion"
 		x[grepl("^tea$", x)]                                            <- "tea"
 		x[grepl("^yam$|^yarms$", x)]                                    <- "yam"
-### not correct. sweet pepper and chili pepper need to be distinguished
-		x[grepl("^pepper$|^pili pili hoho$|^hoho$|^sweet pepper$|^chill$|^onex$", x)] <- "pepper"
-### "vegetables", "fruits", etc is better than NA. Only set to NA if you truly do not know what it is
-		x[grepl("^vegetable$|^vegetables$|^small veges$|^vegetable/tomato$", x)] <- NA
-		x[grepl("^various$|^fruits.*avoc|^trees$|^grasses$|^grazing$", x)] <- NA
+		x[grepl("^pepper$|^sweet pepper$", x)] <- "bell pepper"
+		x[grepl("^pili pili hoho$|^hoho$|^chill$|^onex$", x)] <- "chili pepper"
+		x[grepl("^vegetable$|^vegetables$|^small veges$|^vegetable/tomato$", x)] <- "vegetables"
+		x[grepl("^various$|^fruits.*avoc|^trees$", x)] <- "fruits"
 		x[x %in% c("", "na")]                                           <- NA
 		x
 	}
@@ -294,7 +291,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	d7_list <- lapply(seq_len(nrow(r7)), function(i) {
 		row <- r7[i, ]
 		farm  <- row$farm_id
-		field <- as.character(row$field)
+		field <- as.character(row$farm_id)
 		size  <- get_field_size(row$size_ha, row$size_m2)
 
 		# Primary crop = crop_1; remaining crops = intercrop
@@ -328,7 +325,6 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		} else NA_real_
 
 		data.frame(
-			farm_id         = farm,
 			field_id        = field,
 			crop            = primary,
 			intercrops       = intercrop,
@@ -367,7 +363,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	d7$fertilizer_type[grepl("so4|dap.*so4|so4.*dap", d7$fertilizer_type)] <- "DAP;SO4"
 	# Complex multi-product entries: keep as compound with ";"
 	d7$fertilizer_type[grepl("minjingu.*urea.*npk|urea.*npk.*dap", d7$fertilizer_type)] <-
-		"MOHP;Urea;NPK;DAP"
+		"MOHP;urea;NPK;DAP"
 	d7$fertilizer_type[grepl("npk.*organic", d7$fertilizer_type)] <- "NPK"
 
 	# All production values are numeric; weight units are kg variants
@@ -475,7 +471,7 @@ d9 <- data.frame(
 
 	d$yield_part[d$crop %in% c("maize", "sorghum", "rice", "millet")]    <- "grain"
 	d$yield_part[d$crop %in% c("common bean", "cowpea", "pigeon pea",
-		"soybean", "groundnut", "bambara nut", "chickpea", "mung bean")]  <- "seed"
+		"soybean", "groundnut", "bambara groundnut", "chickpea", "mung bean")]  <- "seed"
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato", "potato", "yam")] <- "roots"
 	d$yield_part[d$crop %in% c("tomato", "pepper", "cabbage", "onion")]  <- "fruit"
 	d$yield_part[d$crop == "sunflower"]                                   <- "seed"
@@ -496,17 +492,16 @@ d9 <- data.frame(
 	d$geo_from_source   <- as.logical(d$geo_from_source)
 
 	#fix fertilizer_type
-	d$fertilizer_type[d$fertilizer_type %in% c("booster","SO4")] <- NA
+	d$fertilizer_type[d$fertilizer_type %in% c("booster","SO4")] <- "SO4"
 	d$fertilizer_type[d$fertilizer_type == "npk/minjungu"] <- "NPK;MOHP"
 	d$fertilizer_type[d$fertilizer_type == "urea/boosier"] <- "urea"
 	d$fertilizer_type[d$fertilizer_type == "DAP;SO4"] <- "DAP"
 	
 	#fix intercrops
-	d$intercrops[d$intercrops=="fruits(eg ovacado,sandarose0"] <- "none"
+	d$intercrops[d$intercrops=="fruits(eg ovacado,sandarose0"] <- "fruits"
 	d$intercrops[d$intercrops=="yams"] <- "yam"
 	d$intercrops[d$intercrops=="coffee;yams;maize"] <- "coffee;yam;maize"
 	d$intercrops[d$intercrops=="bambara nut"] <- "bambara groundnut"
-	#d$crop[d$crop=="bambara nut"] <- "bambara groundnut"
 	d$farm_id <- NULL
 	
 	char_cols <- sapply(d, is.character)
