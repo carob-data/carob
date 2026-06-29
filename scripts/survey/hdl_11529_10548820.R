@@ -2,7 +2,10 @@
 # license: GPL (>=3)
 
 ## ISSUES
-#1. outlier values in fertilizer amount and rainfall amount, originating from raw data
+#1. outliers in fertilizer amount and rainfall amount
+
+## also see https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/UIWQQH
+
 carob_script <- function(path) {
 
 "
@@ -36,8 +39,6 @@ Data from two CIMMYT and KALRO household surveys representative of six maize pro
 	
 	d <- data.frame(
 	  country="Kenya",
-	  longitude=37.908,
-	  latitude=0.177,#GADM not available for centroid points
 	  hhid= as.character(r$hhid_2013),#using 2013 hhid since it has no NAs 
 	  date=as.character(r$year),
 	  hh_income=r$total_income,
@@ -59,7 +60,9 @@ Data from two CIMMYT and KALRO household surveys representative of six maize pro
 	  agro_eco_zone=r$aez,
 	  currency="KES"
 	)
-	d$market_distance <- as.numeric(r$dismarket_km)#coercion error is converting character NA to true NA
+
+	r$dismarket_km[r$dismarket_km == "NA"] <- NA
+	d$market_distance <- as.numeric(r$dismarket_km)
 
 	d$fertilizer_used[r$fert_use=="0"] <- FALSE
 	d$certified_seed_used[r$hybrid=="0"] <- FALSE
@@ -67,9 +70,8 @@ Data from two CIMMYT and KALRO household surveys representative of six maize pro
 	d$is_survey<- TRUE
 	d$irrigated <- FALSE
 	d$on_farm <- TRUE
-	d$sex <- ifelse(d$sex == 1, "male","female")
-	                
-	
+	d$sex <- ifelse(d$sex == 1, "male", "female")
+	                	
 	#obtaining a midpoint for age
 	x <- strsplit(d$age, " to ")
 	
