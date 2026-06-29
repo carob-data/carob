@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
+## rejected for having no location data (country only)
+
 ## ISSUES
 #1. outliers in fertilizer amount and rainfall amount
 
