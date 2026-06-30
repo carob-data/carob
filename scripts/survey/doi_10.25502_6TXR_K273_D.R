@@ -502,10 +502,9 @@ carob_script <- function(path) {
 	d$crop[d$crop == "fruits"] <- "fruit"
 	d$crop[d$crop == "vegetables"] <- "vegetable"
 	
-	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees",
-	  "straws", "kanannado", "kanan nabo", "dek", "moti", "mito",
-	  "spya", "sota", "arbre", "cana", "mexoeira", "mallaqueta", "mallauqeta",
-	  "malaguetta","tigernut","desmodium", "no crop legume planted last season")] <- NA
+	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees", "straws", "kanannado",
+      "kanan nabo", "dek", "moti", "mito", "spya", "sota", "arbre", "cana", "mexoeira", 
+	  "mallaqueta", "mallauqeta", "malaguetta","tigernut","desmodium", "no crop legume planted last season")] <- NA
 	
 	#empty character values
 	d$sex[d$sex == ""] <- NA
@@ -521,6 +520,7 @@ carob_script <- function(path) {
 	d$country[d$country == ""] <- NA
 	d$location[d$location == ""] <- NA
 	d$elevation[d$elevation == ""] <- NA
+
 	d$fertilizer_type[d$fertilizer_type == ""] <- NA
 	d$OM_type[d$OM_type == ""] <- NA
 	d$country[d$country=="D.R. Congo"] <- "Democratic Republic of the Congo"
@@ -529,7 +529,10 @@ carob_script <- function(path) {
 	d$hhid <- as.character(d$hhid)
 	d$is_head <- ifelse(d$is_head=="Yes", TRUE,FALSE)
 	d$age <- as.numeric(d$age)
-	d$elevation <- as.numeric(d$elevation)
+	
+	## need to address units (m, ft ,...)
+##	d$elevation <- as.numeric(d$elevation)
+
 	d$treatment <- as.character(d$treatment)
 	d$planting_date <- as.character(d$planting_date)
 	d$harvest_date <- as.character(d$harvest_date)
@@ -562,22 +565,10 @@ carob_script <- function(path) {
 	d$yield_part[d$crop == "sugarcane"] <- "stems"
 	
 	#trim vars
-	vars <- c(
-	  "inoculant",
-	  "insecticide_product",
-	  "previous_crop_residue_management",
-	  "market_type",
-	  "country",
-	  "location",
-	  "fertilizer_type",
-	  "OM_type"
-	)
+	vars <- c("inoculant", "insecticide_product", "previous_crop_residue_management", "market_type", "country", "location","fertilizer_type", "OM_type")
 
 	char_cols <- sapply(d, is.character)
-	d[char_cols] <- lapply(
-	  d[char_cols],
-	  function(x) trimws(x)
-	)
+	d[char_cols] <- lapply(d[char_cols], function(x) trimws(x))
 	
 	#products
 	ins <- trimws(tolower(d$insecticide_product))
@@ -586,71 +577,37 @@ carob_script <- function(path) {
 	ins[ins %in% c("yes", "name unknown")] <- "unknown"
 	ins[ins %in% c("", "-88", "0", "1", "2", "3", "4", "5", "6", "7", "8", "18", "22", "45")] <- NA
 	
-#	"ddt" is DDT, and instecticide
 	
 ## some of these are herbicides and could be used for that (as below?). 
 ## also, could there be an insecticide as well? 
 	ins[grepl("atraz|gramaz|gramoz|grammaz|paraquat|paraforce|round-up|butach|butaforce|weed|herbicide|habicide|harbicide|selective weedicide|stamp|condem|kombat", ins)] <- NA
 	
-	herb <- grepl(
-	  "atraz|afrazine|adrazone|attrazine|attazine|atrizine|
-   para-force|para force|para fprce|
-   butachlor|butachcor|buta force|butta force|
-   butoforce|butter force|butters|
-   dara force|gram|sarosate|stump|
-   selective|kondem|caliherb",
-	  tolower(ins)
-	)
-
+	herb <- grepl("atraz|afrazine|adrazone|attrazine|attazine|atrizine|para-force|para force|
+	para fprce|butachlor|butachcor|buta force|butta force|butoforce|butter force|butters|dara force|gram|sarosate|stump|selective|kondem|caliherb", ins)
 	ins[herb] <- NA
 	
-	fung <- grepl(
-	  "benlate|benbte|
-   dethan|dethane|distane|
-   cooper|copper",
-	  tolower(ins)
-	)
-	
+	fung <- grepl("benlate|benbte|dethan|dethane|distane|cooper|copper", ins)
 	ins[fung] <- NA
 	
-	ins[grepl("actellic", tolower(ins))] <- "unknown"
+	ins[grepl("actellic", ins)] <- "unknown"
+	ins[grepl("cipenetrin|cipetrin|cyper|cymetherine|dymetherine|sipmethlane", ins)] <- "cypermethrin"
 	
-	ins[grepl("cipenetrin|cipetrin|cyper|cymetherine|
-         dymetherine|sipmethlane",
-	        tolower(ins))] <- "cypermethrin"
+	#ins[grepl("^ddt$", ins)] <- "ddt"
+	ins[ins=="ddt"] <- "DDT"
 	
-	#ins[
-	  #grepl("^ddt$", tolower(ins))
-	#] <- "ddt"
+	ins[grepl("diptex", ins)] <- "trichlorfon"
+	ins[grepl("^seven$", ins)] <- "carbaryl"
+	ins[grepl("lipcord|lipicod|cypamethin lipcod",  ins)] <- "cypermethrin"
 	
-	ins[grepl("diptex", tolower(ins))] <- "trichlorfon"
+	ins[grepl("sumicombi", ins)] <- "fenvalerate"
 	
-	ins[grepl("^seven$", tolower(ins))] <- "carbaryl"
+	ins[grepl("insecticide|hercides|power|propanol|bloodtex|bugus|bullet|bulletin|
+     carack|commando|fernkill|fernq|diasol|dimophylin|distabu cophidal|r and oryzum|seprinethelean|
+     simekombe|simocombe|tetan|themaron|ultrachlo|ultrachlor|ultrachol|ultrachor|
+     carbohydrates|npk|urea|85% w.p an|3 grain\\*|best", ins)] <- "unknown"
 	
-	ins[grepl("lipcord|lipicod|cypamethin lipcod",
-	        tolower(ins))] <- "cypermethrin"
-	
-	ins[grepl("sumicombi", tolower(ins))] <- "fenvalerate"
-	
-	ins[
-	  grepl(
-	    "insecticide|hercides|power|propanol|
-     bloodtex|bugus|bullet|bulletin|
-     carack|commando|fernkill|fernq|
-     diasol|dimophylin|distabu cophidal|
-     r and oryzum|seprinethelean|
-     simekombe|simocombe|
-     tetan|themaron|
-     ultrachlo|ultrachlor|ultrachol|ultrachor|
-     carbohydrates|npk|urea|
-     85% w.p an|3 grain\\*|best",
-	    tolower(ins))] <- "unknown"
-	
-	ins[grepl("dithane|dithan|ridomil|ridonul|ridanie|
-      benlate|bentale|shavit|mildrex",ins)] <- NA
-	ins[grepl("pesticide|pestcides|pesrcides|
-     insecticide|insectant|biocides",
-	ins )] <- "unknown"
+	ins[grepl("dithane|dithan|ridomil|ridonul|ridanie|benlate|bentale|shavit|mildrex",ins)] <- NA
+	ins[grepl("pesticide|pestcides|pesrcides|insecticide|insectant|biocides", ins )] <- "unknown"
 	
 	ins[grepl("carbaryl|cabaryl|cabary|caborly", ins)] <- "carbaryl"
 	
@@ -673,49 +630,18 @@ carob_script <- function(path) {
 	d$herbicide_product <- NA
 	d$fungicide_product <- NA
 	
-	d$herbicide_product[
-	  grepl("atraz|afrazine|atrazil|atrazin|atrazone|attrazine|attazine",
-	        tolower(ins))] <- "atrazine"
-	
-	d$herbicide_product[
-	  grepl("gramaz|gramoz|grammaz|gramazoe|gramazone|gramozone",
-	        tolower(ins))] <- "paraquat"
-	
-	d$herbicide_product[
-	  grepl("paraquat|paraforce|para force|para fprce",
-	        tolower(ins))	] <- "paraquat"
-	
-	d$herbicide_product[
-	  grepl("round-up|sarosate",
-	        tolower(ins))] <- "glyphosate"
-	
-	d$herbicide_product[
-	  grepl("butach|butaforce|buta force|butter force|butoforce",
-	        tolower(ins))] <- "butachlor"
-	
+	d$herbicide_product[grepl("atraz|afrazine|atrazil|atrazin|atrazone|attrazine|attazine", ins)] <- "atrazine"
+	d$herbicide_product[grepl("gramaz|gramoz|grammaz|gramazoe|gramazone|gramozone", ins)] <- "paraquat"
+	d$herbicide_product[grepl("paraquat|paraforce|para force|para fprce", ins)] <- "paraquat"
+	d$herbicide_product[grepl("round-up|sarosate", ins)] <- "glyphosate"
+	d$herbicide_product[grepl("butach|butaforce|buta force|butter force|butoforce", ins)] <- "butachlor"
 	d$herbicide_product[d$herbicide_product=="butachlor"] <- "unknown"
 	d$herbicide_product[d$herbicide_product=="paraquat"] <- "paraquat dichloride"
-	
-	d$fungicide_product[
-	  grepl("dithane|dithan|dithone",
-	        tolower(ins))] <- "mancozeb"
-	
-	d$fungicide_product[
-	  grepl("ridomil|ridonul|ridanie|rhidanie|rhidonue|lidomil",
-	        tolower(ins))] <- "metalaxyl"
-	
-	d$fungicide_product[
-	  grepl("benlate|bentale",
-	        tolower(ins))] <- "benomyl"
-	
-	d$fungicide_product[
-	  grepl("shavit",
-	        tolower(ins))] <- "shavit"
-	
-	d$fungicide_product[
-	  grepl("copper|cooper",
-	        tolower(ins))] <- "copper fungicide"
-	
+	d$fungicide_product[grepl("dithane|dithan|dithone",  ins)] <- "mancozeb"
+	d$fungicide_product[grepl("ridomil|ridonul|ridanie|rhidanie|rhidonue|lidomil", ins)] <- "metalaxyl"
+	d$fungicide_product[grepl("benlate|bentale", ins)] <- "benomyl"
+	d$fungicide_product[grepl("shavit", ins)] <- "shavit"
+	d$fungicide_product[grepl("copper|cooper", ins)] <- "copper"
 	d$fungicide_product[d$fungicide_product =="copper fungicide"]  <- "copper"
 	
 	#Irrigation methods
@@ -723,43 +649,21 @@ carob_script <- function(path) {
 	  grepl("bucket|bucet|watering|sprinkling|handsprinkling|hand sprinkler|hand sprinkling
            |watering can|watering cane|calabash|perforated bowl|perforated calabash|hand sprinkler"
            ,tolower(d$irrigation_method))] <- "sprinkler"
-	
-	d$irrigation_method[
-	  grepl("canal|channel irrigation|canalization",
-	    tolower(d$irrigation_method))] <- "surface"
-	
-	d$irrigation_method[
-	  grepl("drip irrigation",tolower(d$irrigation_method))] <- "drip"
-	
-	d$irrigation_method[
-	  grepl("diesel pump|treadle pump|water pump|
-     dug well|surface water|water$",tolower(d$irrigation_method))] <- "surface"
-	
-	d$irrigation_method[
-	  grepl("domestic bassin|basin",
-	    tolower(d$irrigation_method))] <- "basin"
-	
-	d$irrigation_method[
-	  grepl("dam|irrigated dam|irrigation dam",
-	    tolower(d$irrigation_method))] <- "flood"
-	
-	d$irrigation_method[
-	  grepl("^rain$|rain water",
-	    tolower(d$irrigation_method))] <- "none"
-	
-	d$irrigation_method[
-	  grepl("^axe$|^matering$|half can|neighbour's well|arosoir|dug well",
-	    tolower(d$irrigation_method))] <- "unknown"
-	
+
 	d$irrigation_method <- trimws(tolower(d$irrigation_method))
+	d$irrigation_method[grepl("canal|channel irrigation|canalization", d$irrigation_method)] <- "surface"
+	d$irrigation_method[grepl("drip irrigation", d$irrigation_method)] <- "drip"
+	d$irrigation_method[grepl("diesel pump|treadle pump|water pump|dug well|surface water|water$", d$irrigation_method)] <- "surface"
+	d$irrigation_method[grepl("domestic bassin|basin", d$irrigation_method)] <- "basin"
+	d$irrigation_method[grepl("dam|irrigated dam|irrigation dam", d$irrigation_method)] <- "flood"	
+	d$irrigation_method[grepl("^rain$|rain water", d$irrigation_method)] <- "none"
+	d$irrigation_method[grepl("^axe$|^matering$|half can|neighbour's well|arosoir|dug well", d$irrigation_method)] <- "unknown"
 	d$irrigation_method[d$irrigation_method == ""] <- NA
 	
 	#fertilizer_type
 	d$fertilizer_type <- trimws(tolower(d$fertilizer_type))
-	
 	d$fertilizer_type[d$fertilizer_type %in% c("", "-88", "-9999", "`","0", "n0", "nio", "nn",
 	                                           "no", "noi", "yes","inknown")] <- NA
-	
 	d$fertilizer_type[grepl("urea|uera|^u$",d$fertilizer_type)] <- "urea"
 	d$fertilizer_type[grepl("^an$|ammonium nitrate|ammonia",d$fertilizer_type)] <- "AN"
 	d$fertilizer_type[grepl("sulphate of ammonia|sulphate of amonia",d$fertilizer_type)] <- "AS"
@@ -872,26 +776,17 @@ carob_script <- function(path) {
 	d$previous_crop_residue_management <- tolower(trimws(d$previous_crop_residue_management))
 	d$location <- tolower(trimws(d$location))
 	
-	#out of bounds
-	d$fertilizer_amount[d$fertilizer_amount < 0 |
-	    d$fertilizer_amount > 1000] <- NA
 	
-	d$hh_size[d$hh_size < 0 | d$hh_size > 50] <- NA
-	d$yield[d$yield < 0 | d$yield > 150000] <- NA
+    #watermelon yields are 0
+	crops_tonnes <- c("forage legume", "garlic", "pea", "pumpkin", "turnip", "watermelon")
 	
-	crops_tonnes <- c(
-	  "forage legume",
-	  "garlic",
-	  "pea",
-	  "pumpkin",
-	  "turnip",
-	  "watermelon"          #watermelon yields are 0
-	)
-	
-	idx <- d$crop %in% crops_tonnes &
-	  !is.na(d$yield)
-	
+	idx <- d$crop %in% crops_tonnes & !is.na(d$yield)
 	d$yield[idx] <- d$yield[idx] * 1000
+
+	#out of bounds
+#	d$fertilizer_amount[d$fertilizer_amount < 0 d$fertilizer_amount > 1000] <- NA
+#	d$hh_size[d$hh_size < 0 | d$hh_size > 50] <- NA
+#	d$yield[d$yield < 0 | d$yield > 150000] <- NA
 	
 	carobiner::write_files(path, meta, d)
 }
