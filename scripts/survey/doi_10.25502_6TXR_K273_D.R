@@ -10,7 +10,6 @@ carob_script <- function(path) {
 	uri <- "doi:10.25502/6TXR-K273/D"
 	group <- "survey"
 
-## Download data 
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
@@ -27,8 +26,6 @@ carob_script <- function(path) {
 		notes = NA, 
 		design = NA
 	)
-	
-## read data 
 
 	f1 <- ff[basename(ff) == "a1_a3_demographic.csv"]
 	r1 <- read.csv(f1)
@@ -110,9 +107,9 @@ carob_script <- function(path) {
 	)
 	
 	#multiple crops recorded in the dataset,it is however not specified if the crop were grown as intercrops/in rotation
-	d3$crop <- apply(
-	  r3[, c("crop_1", "crop_2", "crop_3", "crop_4")],1,
-	  function(x) paste(na.omit(x[x != ""]), collapse = " : "))
+	#d3$crop <- apply(
+	  #r3[, c("crop_1", "crop_2", "crop_3", "crop_4")],1,
+	  #function(x) paste(na.omit(x[x != ""]), collapse = " : "))
 	
 	d3$activity <- tolower(d3$activity)
 	d3$land_prep_cost <- ifelse(d3$activity == "land preparation", d3$cost, 0)
@@ -121,7 +118,6 @@ carob_script <- function(path) {
 	d3$weeding_labour <- ifelse(d3$activity == "weeding", d3$plot_labour, 0)
 	d3$irrigation_cost <- ifelse(d3$activity == "watering", d3$cost, 0)
 	## OM_cost would be when you buy it. This seems to be the cost of moving your own OM around
-	#d3$OM_transport_cost <- ifelse(d3$activity == "Transport of farmyard manure", "Transport of manure", d3$cost, 0)
 	d3$OM_transp_cost <- ifelse(d3$activity %in% c("Transport of farmyard manure","Transport of manure"),d3$cost,0)
 	## cost for fertilizer _application_ is not the same as the cost of "fertilizer"
 	d3$fertilizer_app_cost <- ifelse(d3$activity == "fertilizer application", d3$cost, 	 	0)
@@ -132,7 +128,7 @@ carob_script <- function(path) {
 	  hhid = r4$id,
 	  field_id = r4$farm_id,
 	  floor_quality = r4$type
-	)  # on new line 	
+	)   	
 	
 	d5 <- data.frame(
 	  hhid = r5$id,
@@ -186,39 +182,40 @@ carob_script <- function(path) {
 	d11 <- data.frame(
 	  hhid = r11$id,
 	  field_id = r11$farm_id,
-	  livestock = trimws(tolower(r11$livestock))
+	  animal = trimws(tolower(r11$livestock)),
+	  heads = r11$total_no
 	)
 	
 	# Purpose first
 	d11$purpose <- NA
 	
-	d11$purpose[grepl("dairy|caows for dairy", d11$livestock)] <- "milk"
-	d11$purpose[grepl("draft|oxen", d11$livestock)] <- "draft-power"
-	d11$purpose[grepl("meat", d11$livestock)] <- "meat"
-	d11$purpose[d11$livestock == "broilers"] <- "meat"
-	d11$purpose[d11$livestock == "bees"] <- "honey"
+	d11$purpose[grepl("dairy|caows for dairy", d11$animal)] <- "milk"
+	d11$purpose[grepl("draft|oxen", d11$animal)] <- "draft-power"
+	d11$purpose[grepl("meat", d11$animal)] <- "meat"
+	d11$purpose[d11$animal == "broilers"] <- "meat"
+	d11$purpose[d11$animal == "bees"] <- "honey"
 	
 	# Standardize livestock names
-	d11$livestock[grepl("cattle|cattke|dairy cows|caows for dairy|cows for meat|cows for draft|oxen|calves|^kid$|^kids$", d11$livestock)] <- "cattle"
+	d11$animal[grepl("cattle|cattke|dairy cows|caows for dairy|cows for meat|cows for draft|oxen|calves|^kid$|^kids$", d11$animal)] <- "cattle"
 	
-	d11$livestock[grepl("goats|goast|gaots", d11$livestock)] <- "goat"
-	d11$livestock[grepl("^sheep$", d11$livestock)] <- "sheep"
-	d11$livestock[grepl("chickens|broilers", d11$livestock)] <- "chicken"
-	d11$livestock[grepl("turkeys|turkey-cock", d11$livestock)] <- "turkey"
-	d11$livestock[grepl("ducks|canard", d11$livestock)] <- "duck"
-	d11$livestock[d11$livestock == "goose"] <- "goose"
-	d11$livestock[grepl("guinea fowls", d11$livestock)] <- "guinea fowl"
-	d11$livestock[grepl("doves/pigeons|doves\\|pigeons|doves/pigeons", d11$livestock)] <- "pigeon"
-	d11$livestock[d11$livestock %in% c("pigs")] <- "pig"
-	d11$livestock[d11$livestock %in% c("rabbits")] <- "rabbit"
-	d11$livestock[d11$livestock %in% c("bees")] <- "bee"
-	d11$livestock[grepl("fish", d11$livestock)] <- "fish"
-	d11$livestock[d11$livestock == "donkeys"] <- "donkey"
-	d11$livestock[d11$livestock == "horse"] <- "horse"
-	d11$livestock[d11$livestock == "dogs"] <- "dog"
-	d11$livestock[grepl("guinea pigs|cobay", d11$livestock)] <- "guinea pig"
-	d11$livestock[d11$livestock == "pet rat"] <- "rat"
-	d11$livestock[d11$livestock == "uc"] <- NA
+	d11$animal[grepl("goats|goast|gaots", d11$animal)] <- "goat"
+	d11$animal[grepl("^sheep$", d11$animal)] <- "sheep"
+	d11$animal[grepl("chickens|broilers", d11$animal)] <- "chicken"
+	d11$animal[grepl("turkeys|turkey-cock", d11$animal)] <- "turkey"
+	d11$animal[grepl("ducks|canard", d11$animal)] <- "duck"
+	d11$animal[d11$animal == "goose"] <- "goose"
+	d11$animal[grepl("guinea fowls", d11$animal)] <- "guinea fowl"
+	d11$animal[grepl("doves/pigeons|doves\\|pigeons|doves/pigeons", d11$livestock)] <- "pigeon"
+	d11$animal[d11$animal %in% c("pigs")] <- "pig"
+	d11$animal[d11$animal %in% c("rabbits")] <- "rabbit"
+	d11$animal[d11$animal %in% c("bees")] <- "bee"
+	d11$animal[grepl("fish", d11$animal)] <- "fish"
+	d11$animal[d11$animal == "donkeys"] <- "donkey"
+	d11$animal[d11$animal == "horse"] <- "horse"
+	d11$animal[d11$animal == "dogs"] <- "dog"
+	d11$animal[grepl("guinea pigs|cobay", d11$animal)] <- "guinea pig"
+	d11$animal[d11$animal == "pet rat"] <- "rat"
+	d11$animal[d11$animal == "uc"] <- NA
 	
 	d12 <- data.frame(
 	  hhid = r12$id,
@@ -230,7 +227,7 @@ carob_script <- function(path) {
 	d13 <- data.frame(
 	  hhid = r13$id,
 	  field_id = r13$farm_id,
-	  crop = r13$legume_type,
+	  crop = trimws(tolower(r13$legume_type)),
 	  field_size = r13$area
 	)
 	
@@ -257,7 +254,7 @@ carob_script <- function(path) {
 	  crop = r14$legume,
 	  yield_isfresh = TRUE,
 	  yield = r14$total_production       #moisture content not recorded
-	)
+	)                                    #yield was recorded as kg (mentioned in N2Africa report)
 	
 	d15 <- data.frame(
 	  hhid = r15$id,
@@ -352,7 +349,7 @@ carob_script <- function(path) {
 		data = d3, sum, na.rm = TRUE )
 	
 	##Livestock
-	d11a <- aggregate(livestock ~ hhid + field_id, d11, FUN = function(x) paste(unique(x), collapse = ";"))
+	d11a <- aggregate(animal ~ hhid + field_id, d11, FUN = function(x) paste(unique(x), collapse = ";"))
 	
 	d11b <- aggregate(purpose ~ hhid + field_id, data = d11,
 			FUN = function(x) paste(unique(na.omit(x)), collapse = ";"))
@@ -360,8 +357,6 @@ carob_script <- function(path) {
 	d11a <- merge(d11a, d11b, by = c("hhid","field_id"), all = TRUE)
 	
 	##Markets
-### this generates warnings, that is not allowed,
-### first clean the values 
 	d18a <- aggregate(
 	  cbind(market_distance) ~ hhid + field_id,
 	  data = d18,
@@ -381,7 +376,7 @@ carob_script <- function(path) {
 	
 	d <- d13
 	
-	d <- merge(d, d12, by = c("hhid","field_id"), all = TRUE)
+	d <- merge(d, d12, by = c("hhid","field_id","field_size"), all = TRUE)
 	d <- merge(d, d14,by = c("hhid","field_id","crop"), all = TRUE)
 	d <- merge(d, d15, by = c("hhid","field_id","crop"), all = TRUE)
 	d <- merge(d, d16,by = c("hhid","field_id","crop"), all = TRUE)
@@ -396,14 +391,14 @@ carob_script <- function(path) {
 	d <- merge(d, d18a, by = c("hhid","field_id"), all = TRUE)
 	d <- merge(d,d19, by = c("hhid","field_id"), all = TRUE)
 	
-	d$field_size <- ifelse(
-	  !is.na(d$field_size.y),
-	  d$field_size.y,
-	  d$field_size.x
-	)
+	#d$field_size <- ifelse(
+	 # !is.na(d$field_size.y),
+	  #d$field_size.y,
+	  #d$field_size.x
+	#)
 	
-	d$field_size.x <- NULL
-	d$field_size.y <- NULL
+	#d$field_size.x <- NULL
+	#d$field_size.y <- NULL
 	
 	d$fertilizer_type <- apply(
 	  d[, c("fertilizer_type.x", "fertilizer_type.y")],
@@ -458,11 +453,11 @@ carob_script <- function(path) {
 	#fixing crop names
 	d$crop <- tolower(trimws(d$crop))
 	d$crop[grepl("common bean|bush bean|beans, bush beans|string bean|voluble beans|wax bean|w.bean|n.bean|o.bean|j.bean|m.bean|creeper bean|sugarbeans", d$crop)] <- "kidney bean"
-	d$crop[grepl("climbing bean", d$crop)] <- "runner bean"
+	d$crop[grepl("climbing bean|climbing beans|beans|common beans/bush beans", d$crop)] <- "common bean"
 	d$crop[grepl("^soybeans?$|^soja$", d$crop)] <- "soybean"
 	d$crop[grepl("^cowpeas?$", d$crop)] <- "cowpea"
 	d$crop[grepl("^groundnuts?$", d$crop)] <- "groundnut"
-	d$crop[grepl("bambara nuts|bambara groundnut|bambara groundnuts|bambara beans|b.bean|b.bena", d$crop)] <- "bambara groundnut"
+	d$crop[grepl("bambara nuts|bambara groundnut|bambara groundnuts|bambara beans|mbande|b.bean|b.bena", d$crop)] <- "bambara groundnut"
 	d$crop[grepl("greengram|greengrams", d$crop)] <- "mung bean"
 	d$crop[grepl("garden peas|green peas|petit pois", d$crop)] <- "pea"
 	d$crop[grepl("pigeonpeas|nandolo", d$crop)] <- "pigeon pea"
@@ -470,15 +465,14 @@ carob_script <- function(path) {
 	d$crop[grepl("^maize$|msize", d$crop)] <- "maize"
 	d$crop[grepl("^rice$", d$crop)] <- "rice"
 	d$crop[grepl("^wheat$", d$crop)] <- "wheat"
-	d$crop[grepl("sorghum|sorhum|soghun|guinea corn", d$crop)] <- "sorghum"
-	d$crop[grepl("millet/sorghum", d$crop)] <- "millet"
-	d$crop[grepl("millet|milllet|pearl millet|rapoko|mapfunde", d$crop)] <- "millet"
+	d$crop[grepl("sorghum|sorhum|soghun|guinea corn|mapfunde", d$crop)] <- "sorghum"
+	d$crop[grepl("millet|milllet|pearl millet|millet", d$crop)] <- "millet"
+	d$crop[grepl("rapoko", d$crop)] <- "finger millet"
 	d$crop[grepl("^cassava$|^manioc$|^mashava$", d$crop)] <- "cassava"
 	d$crop[grepl("sweet potato|wweet potato", d$crop)] <- "sweetpotato"
 	d$crop[grepl("irish potato|irish patato|irish poatato|^potato$|^irish$", d$crop)] <- "potato"
 	d$crop[grepl("^yam$|^yams$|^igname$", d$crop)] <- "yam"
 	d$crop[grepl("cocoyam|colocase|colocasse|taro|madhumbe", d$crop)] <- "taro"
-	## that is wrong (cocoyam is taro, not yam) : d$crop[d$crop=="cocoyam"] <- "yam"
 	d$crop[grepl("^sunflower$|^tournesol$", d$crop)] <- "sunflower"
 	d$crop[grepl("^sesame$", d$crop)] <- "sesame"
 	d$crop[grepl("^cotton$", d$crop)] <- "cotton"
@@ -505,7 +499,7 @@ carob_script <- function(path) {
 	d$crop[grepl("^cocoa$", d$crop)] <- "cocoa"
 	d$crop[grepl("^sugarcane$", d$crop)] <- "sugarcane"
 	d$crop[grepl("^ginger$", d$crop)] <- "ginger"
-	d$crop[grepl("fodder legume|lucina", d$crop)] <- "forage legume"
+	d$crop[grepl("fodder legume|lucina", d$crop)] <- "forage crop"
 	#d$crop[grepl("^desmodium$", #d$crop)] <- "desmodium"
 	d$crop[grepl("^caliandra$", d$crop)] <- "forage crop"
 	d$crop[grepl("nappier|naipper", d$crop)] <- "napier grass"
@@ -519,10 +513,11 @@ carob_script <- function(path) {
 	d$crop[d$crop == "kales"] <- "kale"
 	d$crop[d$crop == "lengalenga"] <- "amaranth"
 	d$crop[d$crop == "lentils"] <- "lentil"
-	#d$crop[d$crop == "tigernut"] <- "tigernut"
+	d$crop[d$crop == "fruits"] <- "fruit"
+	d$crop[d$crop == "vegetables"] <- "vegetable"
 	
-	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees", "fruits",
-	  "straws", "kanannado", "kanan nabo", "mbande", "dek", "moti", "mito",
+	d$crop[d$crop %in% c("", " ", "other (specify)", "soil", "crop", "trees",
+	  "straws", "kanannado", "kanan nabo", "dek", "moti", "mito",
 	  "spya", "sota", "arbre", "cana", "mexoeira", "mallaqueta", "mallauqeta",
 	  "malaguetta","tigernut","desmodium", "no crop legume planted last season")] <- NA
 	
@@ -535,7 +530,7 @@ carob_script <- function(path) {
 	d$education[d$education == ""] <- NA
 	d$irrigation_method[d$irrigation_method == ""] <- NA
 	d$water_source[d$water_source == ""] <- NA
-	d$livestock[d$livestock == ""] <- NA
+	d$animal[d$animal == ""] <- NA
 	d$market_type[d$market_type == ""] <- NA
 	d$country[d$country == ""] <- NA
 	d$location[d$location == ""] <- NA
@@ -552,7 +547,6 @@ carob_script <- function(path) {
 	d$treatment <- as.character(d$treatment)
 	d$planting_date <- as.character(d$planting_date)
 	d$harvest_date <- as.character(d$harvest_date)
-	d$treatment <- as.character(d$treatment)
 	d$treatment <- as.character(d$treatment)
 	d$yield_moisture <- as.numeric(d$yield_moisture)
 	
@@ -593,11 +587,6 @@ carob_script <- function(path) {
 	  "OM_type"
 	)
 
-
-## why this? The output is not captured	
-	sapply(vars, function(v)
-	  sum(d[[v]] != trimws(d[[v]]), na.rm = TRUE)
-	)
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(
 	  d[char_cols],
@@ -888,6 +877,14 @@ carob_script <- function(path) {
 	d$OM_type[d$OM_type == "maize seed"] <- "unknown"
 	d$OM_type[d$OM_type == "poultry dropping"] <- "poultry manure"
 	d$OM_type[d$OM_type %in% c("manure","manure;maize seed") ] <- "unknown"
+	
+	d$country[d$country=="Ghana "] <- "Ghana"
+	d$country[d$country=="Zimbabwe "] <- "Zimbabwe"
+	d$country[d$country=="Nigeria "] <- "Nigeria"
+	
+	d$inoculant <- tolower(trimws(d$inoculant))
+	d$previous_crop_residue_management <- tolower(trimws(d$previous_crop_residue_management))
+	d$location <- tolower(trimws(d$location))
 	
 	#out of bounds
 	d$fertilizer_amount[d$fertilizer_amount < 0 |
