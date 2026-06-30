@@ -784,9 +784,9 @@ carob_script <- function(path) {
 	d$yield[idx] <- d$yield[idx] * 1000
 
 	#out of bounds
-#	d$fertilizer_amount[d$fertilizer_amount < 0 d$fertilizer_amount > 1000] <- NA
-#	d$hh_size[d$hh_size < 0 | d$hh_size > 50] <- NA
-#	d$yield[d$yield < 0 | d$yield > 150000] <- NA
+	d$fertilizer_amount[d$fertilizer_amount < 0] <- NA
+	d$hh_size[d$hh_size < 0] <- NA
+	d$yield[d$yield < 0] <- NA
 	
 	carobiner::write_files(path, meta, d)
 }
