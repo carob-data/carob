@@ -35,21 +35,21 @@ to NPK (no lime treatment at Pampaida)."
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-                                  data_organization = "IITA",
-                                  publication = "doi:10.1016/j.agee.2016.05.012",
-                                  project = "Africa Soil Information Service (AfSIS)",
-                                  design = "nutrient omission trial",
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;OM_used",
-                                  response_vars = "yield;dmy_residue;dmy_total",
-                                  notes = "Fertilizer N/P/K/Ca/Mg/S/Zn rates and manure amount per treatment code 
-                                  were not in the raw data; they were taken from the associated publication (Kihara et al. 2016, Table 2) for maize. 
-                                  Grain yield is on a 12.5% moisture basis per the publication. 
-                                  Planting date was back-calculated from measurement dates minus days-after-planting.",
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-06-30",
-                                  carob_completion = 90,
-                                  carob_effort = 5 #most time spent decoding the uniqueID linkage and other definition in publication
+      data_organization = "IITA",
+      publication = "doi:10.1016/j.agee.2016.05.012",
+      project = "Africa Soil Information Service (AfSIS)",
+      design = "nutrient omission trial",
+      data_type = "on-farm experiment",
+      treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;OM_used",
+      response_vars = "yield;dmy_residue;dmy_total",
+      notes = "Fertilizer N/P/K/Ca/Mg/S/Zn rates and manure amount per treatment code 
+      were not in the raw data; they were taken from the associated publication (Kihara et al. 2016, Table 2) for maize. 
+      Grain yield is on a 12.5% moisture basis per the publication. 
+      Planting date was back-calculated from measurement dates minus days-after-planting.",
+      carob_contributor = "Stella Muthoni",
+      carob_date = "2026-06-30",
+      carob_completion = 90,
+      carob_effort = 5 #most time spent decoding the uniqueID linkage and other definition in publication
   )
   
   f1 <- ff[basename(ff) == "pampaida_dt2010_field_plant_and_plot_metadata.xlsx"]
@@ -191,7 +191,7 @@ to NPK (no lime treatment at Pampaida)."
   )
   
   d$location[d$location == ""] <- NA
-  d <- d[!is.na(d$yield), ]
+##  d <- d[!is.na(d$yield), ]
   
   carobiner::write_files(path, meta, d)
 }
