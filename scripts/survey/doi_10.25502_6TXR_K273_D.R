@@ -231,11 +231,8 @@ carob_script <- function(path) {
 	  field_size = r13$area
 	)
 	
-	d13$fertilizer_type <- apply(
-	  r13[, c("m_fert_1", "m_fert_2", "m_fert_3")],
-	  1,
-	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";")
-	)
+	d13$fertilizer_type <- apply(r13[, c("m_fert_1", "m_fert_2", "m_fert_3")], 1,
+	  function(x) paste(x[!is.na(x) & x != ""], collapse = ";"))
 	
 	d13$fertilizer_amount <- rowSums(r13[, grep("m_fert_,_amount", names(r13))],  na.rm = TRUE)
 	
@@ -357,22 +354,9 @@ carob_script <- function(path) {
 	d11a <- merge(d11a, d11b, by = c("hhid","field_id"), all = TRUE)
 	
 	##Markets
-	d18a <- aggregate(
-	  cbind(market_distance) ~ hhid + field_id,
-	  data = d18,
-	  FUN = mean,
-	  na.rm = TRUE
-	)
-	
-	tmp <- aggregate(
-	  market_type ~ hhid + field_id,
-	  data = d18,
-	  FUN = function(x) paste(unique(x), collapse = ";")
-	)
-	
-	d18a <- merge(d18a, tmp,
-	              by = c("hhid","field_id"),
-	              all = TRUE)
+	d18a <- aggregate(market_distance ~ hhid + field_id,  data = d18, FUN = mean, na.rm = TRUE)
+	tmp <- aggregate(market_type ~ hhid + field_id, data = d18,  FUN = function(x) paste(unique(x), collapse = ";"))
+	d18a <- merge(d18a, tmp, by = c("hhid", "field_id"), all = TRUE)
 	
 	d <- d13
 	
