@@ -13,8 +13,6 @@
 # - Adj_StoverYld labelled "t/ha" in the metadata but confirmed (vs TStoverYld, and TGrainYld_adj + Adj_StoverYld/1000 ~= TPlntBiom) to already be kg/ha; not converted further
 # - cob fresh weight (CobFW/SSCobFW/AdjCobFW.kg.ha.) skipped - overlaps with grain/stover already captured
 # - harvest_date not set - growth measurements only go to 70 days after planting; too early for maize harvest.
-# - 6 plots have no TGrainYld_adj value in the raw data;
-#    since yield does not allow NA in the vocabulary, these rows are dropped from the final d
 
 carob_script <- function(path) {
   
@@ -37,7 +35,7 @@ to NPK (no lime treatment at Pampaida)."
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
       data_organization = "IITA",
       publication = "doi:10.1016/j.agee.2016.05.012",
-      project = "Africa Soil Information Service (AfSIS)",
+      project = "AfSIS",
       design = "nutrient omission trial",
       data_type = "on-farm experiment",
       treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;OM_used",
