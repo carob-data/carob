@@ -118,7 +118,7 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	dr$is_survey <-  FALSE 
 	dr$yield_part <- "grain" 
 	dr$yield_isfresh <- as.numeric(NA) 
-	d$yield_isfresh <- as.numeric(NA) 
+	dr$yield_isfresh <- as.numeric(NA) 
 	dr$yield_moisture <- as.numeric(NA) 
 	dr$irrigated <- NA 
 	
