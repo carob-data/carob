@@ -2,13 +2,12 @@
 # license: GPL (>=3)
 
 ## REJECTED
-## Upon investigation, this dataset cannot be standardized for carob.
+## because this dataset (https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10548039) might actually be the complete version of th
 ##
 ## File 1: TAMASA_TZ_APS_CS_2016.xlsx (42 communities, 205 columns)
 ## - Contains community-level market prices (cereals, legumes, horticulture, 
 ##   roots, fertilizers) and labor costs (clearing, hoeing, planting, weeding,
 ##   harvesting) in Tanzanian Shillings (TSH)
-## - No crop yield, fertilizer application rates or agronomic trial data
 ##
 ## File 2: TAMASA_TZ_APS_HH_2016.xlsx (607 households, 26 columns)
 ## - Contains only household location and ID variables
@@ -17,8 +16,6 @@
 ## - Column "MATCH_CODE" (described as "unique farm ID for matching to 
 ##   crop cut data") confirms this file is incomplete without the linked data
 ##
-## Neither file contains core carob variables (yield, fertilizer rates, 
-## planting dates, crop management). No standardization is possible.
 
 carob_script <- function(path) {
   
