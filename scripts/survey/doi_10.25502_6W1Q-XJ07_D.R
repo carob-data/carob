@@ -1,8 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-# "No GPS latitude/longitude in source data; altitude only.,
-# District-level centroids used (WGS84); geo_from_source = FALSE.,
+# "No GPS latitude/longitude in source data; altitude only,
 # Yield = harvest_amount / field_size (kg/ha); field_size derived from,
 # size_ha where > 0, else size_m2 / 10000.,
 # Non-numeric harvest entries ('100(rete)', '50 cofee', '200kg', '4000kg'",
@@ -91,9 +90,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^sunflower$|^sunflowes$|^sanflower$", x)]              <- "sunflower"
 		x[grepl("^sorghum$|^soughum$", x)]                              <- "sorghum"
 		x[grepl("^rice$|^raice$", x)]                                   <- "rice"
-
-### when we know it is finger millet, we should not call it millet
-		x[grepl("^millet$|^fingermillet$|^finger millet$", x)]         <- "millet"
+		x[grepl("^fingermillet$|^finger millet$", x)]         <- "finger millet"
 		x[grepl("^cassava$", x)]                                        <- "cassava"
 		x[grepl("^sweetpotato$|^sweet potato$|^sweet potatoes$", x)]   <- "sweetpotato"
 		x[grepl("^irish potato$|^irish potatoes$|^irishpotatoes$|^potatoes?$|^pottato$", x)] <- "potato"
@@ -105,59 +102,46 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		x[grepl("^onion$", x)]                                          <- "onion"
 		x[grepl("^tea$", x)]                                            <- "tea"
 		x[grepl("^yam$|^yarms$", x)]                                    <- "yam"
-### not correct. sweet pepper and chili pepper need to be distinguished
-		x[grepl("^pepper$|^pili pili hoho$|^hoho$|^sweet pepper$|^chill$|^onex$", x)] <- "pepper"
-### "vegetables", "fruits", etc is better than NA. Only set to NA if you truly do not know what it is
-		x[grepl("^vegetable$|^vegetables$|^small veges$|^vegetable/tomato$", x)] <- NA
-		x[grepl("^various$|^fruits.*avoc|^trees$|^grasses$|^grazing$", x)] <- NA
+		x[grepl("^pepper$|^sweet pepper$", x)] <- "bell pepper"
+		x[grepl("^pili pili hoho$|^hoho$|^chill$|^onex$", x)] <- "chili pepper"
+		x[grepl("^vegetable$|^vegetables$|^small veges$|^vegetable/tomato$", x)] <- "vegetables"
+		x[grepl("^various$|^fruits.*avoc|^trees$", x)] <- "fruits"
 		x[x %in% c("", "na")]                                           <- NA
 		x
 	}
-
-	# Extract district (first segment) and ward (third segment)
-	parse_site <- function(site) {
-		parts <- strsplit(trimws(site), "/")[[1]]
-		parts <- trimws(parts)
-		list(
-			district = if (length(parts) >= 1) parts[1] else NA_character_,
-			ward     = if (length(parts) >= 3) parts[3] else NA_character_
-		)
-	}
-
-	site_parsed <- lapply(r1$action_site, parse_site)
-	district_raw <- sapply(site_parsed, `[[`, "district")
-	ward_raw     <- sapply(site_parsed, `[[`, "ward")
-
-	# Normalise district names
-	district <- tolower(trimws(district_raw))
-	district[grepl("moshi", district)]   <- "Moshi Rural"
-	district[grepl("lushoto", district)] <- "Lushoto"
-	district[grepl("arumeru", district)] <- "Arumeru"
-	district[grepl("^hai$", district)]   <- "Hai"
-
-	# District centroid coordinates — no per-household GPS available
-	lat_map  <- c("Moshi Rural" = -3.350, "Lushoto" = -4.790,
-	              "Arumeru"     = -3.370, "Hai"     = -3.570)
-	lon_map  <- c("Moshi Rural" =  37.330, "Lushoto" =  38.290,
-	              "Arumeru"     =  36.830, "Hai"     =  37.150)
 
 	d1 <- data.frame(
 		field_id         = r1$farm_id,
 		country         = "Tanzania",
 		adm1            = "Northern Zone",
-		adm2            = district,
-		location        = tolower(trimws(ward_raw)),
-		adm3         = tolower(trimws(r1$village)),
-		latitude        = lat_map[district],
-		longitude       = lon_map[district],
-		elevation       = suppressWarnings(as.numeric(
-			ifelse(r1$gps_altitude_dec != "" & r1$gps_altitude_dec != "0",
-			       r1$gps_altitude_dec, r1$gps_altitude))),
-		year            = as.integer(r1$date_interview_yyyy),
+		adm2            = tolower(trimws(r1$action_site)),
+		adm3            = tolower(trimws(r1$village)),
+		elevation       = as.numeric (r1$gps_altitude),
+		year            = as.character(r1$date_interview_yyyy),
 		geo_from_source = FALSE,
 		stringsAsFactors = FALSE
 	)
 
+	geocodes <- data.frame(
+	  adm3 = c(
+	    "arisi", "ashira", "baga", "kiruweni", "kwembago", "kwemkwazu",
+	    "makiba", "kilimo makuyuni", "malibwi", "malula", "mbaaseni",
+	    "mbuguni", "mungushi", "ngu'ni", "rundugai", "tindigani"
+	  ),
+	  longitude = c(
+	    37.5141, 37.5093, 38.4167, 37.4850, 38.2806, 37.4800,
+	    36.8950, 37.5500, 38.2833, 37.0234, 37.2100,
+	    36.9186, 37.1308, 37.2000, 37.1942, 37.1950
+	  ),
+	  latitude = c(
+	    -3.2775, -3.2820, -4.7833, -3.3900, -4.7851, -3.3950,
+	    -3.5300, -3.3500, -4.7667, -3.3742, -3.5650,
+	    -3.5452, -3.3092, -3.3800, -3.4153, -3.5700
+	  )
+	)
+
+ d1 <- merge(d1,geocodes, by = "adm3", all.x = TRUE)
+ 
  d2 <- data.frame(
 		field_id        = r2$farm_id,
 		sex            = trimws(r2$sex_farmer),
@@ -307,7 +291,7 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	d7_list <- lapply(seq_len(nrow(r7)), function(i) {
 		row <- r7[i, ]
 		farm  <- row$farm_id
-		field <- as.character(row$field)
+		field <- as.character(row$farm_id)
 		size  <- get_field_size(row$size_ha, row$size_m2)
 
 		# Primary crop = crop_1; remaining crops = intercrop
@@ -341,7 +325,6 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		} else NA_real_
 
 		data.frame(
-			farm_id         = farm,
 			field_id        = field,
 			crop            = primary,
 			intercrops       = intercrop,
@@ -380,10 +363,9 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	d7$fertilizer_type[grepl("so4|dap.*so4|so4.*dap", d7$fertilizer_type)] <- "DAP;SO4"
 	# Complex multi-product entries: keep as compound with ";"
 	d7$fertilizer_type[grepl("minjingu.*urea.*npk|urea.*npk.*dap", d7$fertilizer_type)] <-
-		"MOHP;Urea;NPK;DAP"
+		"MOHP;urea;NPK;DAP"
 	d7$fertilizer_type[grepl("npk.*organic", d7$fertilizer_type)] <- "NPK"
 
-## --- d8: legume yield (g_legume_utilisation_1) --------------------------------
 	# All production values are numeric; weight units are kg variants
 	# weight_unit values '115' and '345' are data entry errors — treat as kg
 
@@ -401,14 +383,14 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 	d8$crop[d8$crop == "Pigeon pea"]   <- "pigeon pea"
 	d8$crop[d8$crop == "Soybean"]      <- "soybean"
 	d8$crop[d8$crop == "Groundnut"]    <- "groundnut"
-	d8$crop[d8$crop == "Bambara nut"]  <- "bambara nut"
+	d8$crop[d8$crop == "Bambara nut"]  <- "bambara groundnut"
 	d8$crop[d8$crop == "Chickpea"]     <- "chickpea"
 
 	d8$yield[d8$yield <= 0] <- NA
 
 	# Convert total kg to kg/ha using field size from d7 (mean legume plot size per farm)
 	legume_crops <- c("common bean", "cowpea", "pigeon pea", "soybean",
-		"groundnut", "bambara nut", "chickpea", "mung bean")
+		"groundnut", "bambara groundnut", "chickpea", "mung bean")
 	field_sizes <- d7[d7$crop %in% legume_crops & !is.na(d7$field_size),
 		c("field_id", "crop", "field_size")]
 	field_sizes_agg <- aggregate(
@@ -423,9 +405,8 @@ Lushoto (Tanga), Arumeru (Arusha), and Hai (Kilimanjaro)."
 		d8$yield / d8$field_size,
 		NA_real_
 	)
-	#d8$yield_g1_total <- NULL
+	
 	d8$field_size     <- NULL
-	#d8$yield[d8$yield > 150000] <- NA
 
 d9 <- data.frame(
 		field_id  = r9$farm_id,
@@ -438,7 +419,7 @@ d9 <- data.frame(
 	d9$crop[d9$crop == "Pigeon pea"]  <- "pigeon pea"
 	d9$crop[d9$crop == "Soybean"]     <- "soybean"
 	d9$crop[d9$crop == "Groundnut"]   <- "groundnut"
-	d9$crop[d9$crop == "Bambara nut"] <- "bambara nut"
+	d9$crop[d9$crop == "Bambara nut"] <- "bambara groundnut"
 
 	d9$previous_crop_residue_management[
 		d9$previous_crop_residue_management == ""] <- NA
@@ -490,7 +471,7 @@ d9 <- data.frame(
 
 	d$yield_part[d$crop %in% c("maize", "sorghum", "rice", "millet")]    <- "grain"
 	d$yield_part[d$crop %in% c("common bean", "cowpea", "pigeon pea",
-		"soybean", "groundnut", "bambara nut", "chickpea", "mung bean")]  <- "seed"
+		"soybean", "groundnut", "bambara groundnut", "chickpea", "mung bean")]  <- "seed"
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato", "potato", "yam")] <- "roots"
 	d$yield_part[d$crop %in% c("tomato", "pepper", "cabbage", "onion")]  <- "fruit"
 	d$yield_part[d$crop == "sunflower"]                                   <- "seed"
@@ -511,17 +492,16 @@ d9 <- data.frame(
 	d$geo_from_source   <- as.logical(d$geo_from_source)
 
 	#fix fertilizer_type
-	d$fertilizer_type[d$fertilizer_type %in% c("booster","SO4")] <- NA
+	d$fertilizer_type[d$fertilizer_type %in% c("booster","SO4")] <- "SO4"
 	d$fertilizer_type[d$fertilizer_type == "npk/minjungu"] <- "NPK;MOHP"
 	d$fertilizer_type[d$fertilizer_type == "urea/boosier"] <- "urea"
 	d$fertilizer_type[d$fertilizer_type == "DAP;SO4"] <- "DAP"
 	
 	#fix intercrops
-	d$intercrops[d$intercrops=="fruits(eg ovacado,sandarose0"] <- "none"
+	d$intercrops[d$intercrops=="fruits(eg ovacado,sandarose0"] <- "fruits"
 	d$intercrops[d$intercrops=="yams"] <- "yam"
 	d$intercrops[d$intercrops=="coffee;yams;maize"] <- "coffee;yam;maize"
 	d$intercrops[d$intercrops=="bambara nut"] <- "bambara groundnut"
-	d$crop[d$crop=="bambara nut"] <- "bambara groundnut"
 	d$farm_id <- NULL
 	
 	char_cols <- sapply(d, is.character)
