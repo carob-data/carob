@@ -354,9 +354,11 @@ carob_script <- function(path) {
 	d11a <- merge(d11a, d11b, by = c("hhid","field_id"), all = TRUE)
 	
 	##Markets
-	d18a <- aggregate(market_distance ~ hhid + field_id,  data = d18, FUN = mean, na.rm = TRUE)
+## for now:
+## 	d18a <- aggregate(market_distance ~ hhid + field_id,  data = d18, FUN = mean, na.rm = TRUE)
 	tmp <- aggregate(market_type ~ hhid + field_id, data = d18,  FUN = function(x) paste(unique(x), collapse = ";"))
-	d18a <- merge(d18a, tmp, by = c("hhid", "field_id"), all = TRUE)
+##	d18a <- merge(d18a, tmp, by = c("hhid", "field_id"), all = TRUE)
+    d18a <- tmp
 	
 	d <- d13
 	
