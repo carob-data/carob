@@ -2,7 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# NA values on yield
 
 carob_script <- function(path) {
 
@@ -100,7 +99,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		adm4 = c("Baban Anné", "Grpment Peulh Hardo Harouna", "Kodaou", "Akora-Idi", "Baban Kori", "Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Azzazala", "Guidan Tawayé Saboua", "Sarki Haoussa", "Azzazala", "Tabala", "Tabala Tondi T", "kampa Tegui", "Tchioubi", "Djioga", "Koubo", "seno Tiko", "Tchampanga", "Tiko", "Gochalo", "Kassari H")
 	)
 
-
+## merge with adm4 should be sufficient
 #    d <- merge(d, geo, by="adm4", all.x=TRUE)
  
 
