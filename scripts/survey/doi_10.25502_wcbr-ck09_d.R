@@ -93,6 +93,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
     x[grepl("^sorghum$", x)]          <- "sorghum"
     x[grepl("^fallow$", x)]           <- NA
     x[x %in% c("", "na", "NA")]       <- NA
+	x[x %in% c("pepper and tomato", "tomato and pepper")] <- "tomato;chili pepper"
     x
   }
   

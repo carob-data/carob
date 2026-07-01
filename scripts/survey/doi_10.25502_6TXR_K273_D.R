@@ -251,7 +251,7 @@ carob_script <- function(path) {
 	  crop = r14$legume,
 	  yield_isfresh = TRUE,
 	  yield = r14$total_production       #moisture content not recorded
-	)                                    #yield was recorded as kg (mentioned in N2Africa report)
+	)    #yield was recorded as kg (mentioned in N2Africa report)
 	
 	d15 <- data.frame(
 	  hhid = r15$id,
