@@ -285,8 +285,8 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d5 <- d5[!is.na(d5$year),]
 	  
 	  d5$N_fertilizer <- rowSums( apply(d5[, paste0("N_fertilizer", 1:9)],2, as.numeric),na.rm = TRUE)
-	  d5$P_fertilizer <- rowSums(apply(d5[, paste0("P_fertilizer", 1:9)], 2, as.numeric),na.rm = TRUE)
-	  d5$K_fertilizer <- rowSums(apply(d5[, paste0("K_fertilizer", 1:9)], 2, as.numeric),na.rm = TRUE)
+	  d5$P_fertilizer <- rowSums(apply(d5[, paste0("P_fertilizer", 1:9)], 2, as.numeric),na.rm = TRUE)/2.29
+	  d5$K_fertilizer <- rowSums(apply(d5[, paste0("K_fertilizer", 1:9)], 2, as.numeric),na.rm = TRUE)/1.2051
 	  d5$fertilizer_amount <- (rowSums( apply(d5[, paste0("fertilizer_amount", 1:8)],2, as.numeric),na.rm = TRUE)/d5$plot_area)*10 # kg/ha
 	  d5$fertilizer_price <- rowSums( apply(d5[, paste0("fertilizer_price", 1:8)],2, as.numeric),na.rm = TRUE) 
 	  d5$fertilizer_date <- d5$fertilizer_date <- apply(d5[, paste0("fertilizer_date", 2:8)], 1, function(x) {
