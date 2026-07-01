@@ -13,7 +13,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 "
 
 	uri <- "doi:10.7910/DVN/GT9OC4"
-	group <- "agronomy"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 	
 	
