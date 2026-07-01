@@ -132,8 +132,10 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    seed_rate =  suppressWarnings(as.numeric(r5$Seedrate..kg.ha.)),
 	    seed_price = suppressWarnings(as.numeric(r5$Cost.of.seed.per.kg)),
 	    emergence_date = r5$Date.of.100..plant.emergence..dd.mm.yy.,
-	    anthesis_date = r5$Date.of.50..anthesis..mm.dd.yy.,
-	    flowering_date = r5$Date.of.50..first.flower..dd.mm.yy.,
+	    ## anthesis = flowering
+		flowering_date = r5$Date.of.50..anthesis..mm.dd.yy.,
+	    ## first flower ... 
+		## flowering_date = r5$Date.of.50..first.flower..dd.mm.yy.,
 	    maturity_date = r5$Date.of.80..physiological.maturity..mm.dd.yy.,
 	    harvest_date = r5$Date.of.harvest..dd.mm.yy.,
 	    emergence_days =  suppressWarnings(as.numeric(r5$X100..emergence..DAS.)),
