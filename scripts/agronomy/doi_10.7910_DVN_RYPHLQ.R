@@ -21,7 +21,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "fertilizer_used;OM_used",
+		treatment_vars = "fertilizer_used",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Premrose Masunungure",
@@ -46,7 +46,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		field_size = as.numeric(r1$`Field area (ha)`),
 		#treatment = r1$`Production System`,
 		treatment = r1$`Treatment Groups`,
-		dmy_residue = r1$`Pearl millet Biomass Yield (kg/ha)`,
+		fwy_residue = r1$`Pearl millet Biomass Yield (kg/ha)`,
 		yield = r1$`Pearl millet grain yield (kg/ha)`,
 		crop = "pearl millet",
 		tree_density = r1$`Number of trees/ha`,	
@@ -62,7 +62,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
     adm4 = r2$Village,
     field_size = NA,
     treatment = r2$`Treatment Groups/ Production System`,
-    dmy_residue = r2$`Pearl millet stover yield/ha`,
+    fwy_residue = r2$`Pearl millet stover yield/ha`,
     yield = r2$`Pearl millet grain yield/ha`,
     crop = "pearl millet"
   )	
@@ -120,7 +120,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 	d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
-    d$fertilizer_type[d$treatment %in% c("Use of manure+Fertilizer (NPK)", "Manure +Fertilizer (NPK)")] <- "NPK"
+    d$fertilizer_type[d$fertilizer_used] <- "NPK"
 
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
