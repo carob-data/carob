@@ -56,8 +56,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		pest_severity = as.character(r$InsectScore),
 		drought_stress = as.character(r$DroughtScore),
 		drought_stress = as.character(r$DroughtScore),
-		plant_density = r$StandAtHarv / r$PlotArea,
-		head_density = r$`Heads/Plot` / r$PlotArea,
+		plant_density = 10000 * r$StandAtHarv / r$PlotArea,
+		spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 		crop = "sorghum"
 	)
 	
