@@ -10,12 +10,13 @@ A global meta-analysis of yield-scaled N2O emissions and its mitigation efforts 
 
 Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) emissions is necessary to reconcile food security and climate change, while the metric of yield-scaled N2O emission (i.e., N2O emissions per unit of crop yield) is at present poorly understood. Here we conducted a global meta-analysis with more than 6000 observations to explore the variation patterns and controlling factors of yield-scaled N2O emissions for maize, wheat, and rice and associated potential mitigation options. Our results showed that the average yield-scaled N2O emissions across all available data followed the order wheat (322 g N Mg-1, with the 95% confidence interval (CI): 301-346) &gt; maize (211 g N Mg-1, CI: 198-225) &gt; rice (153 g N Mg-1, CI: 144-163). Yield-scaled N2O emissions for individual crops were generally higher in tropical or subtropical zones than in temperate zones, and also showed a trend towards lower intensities from low to high latitudes. This global variation was better explained by climatic and edaphic factors than by N fertilizer management, while their combined effect predicted more than 70% of the variance. Furthermore, our analysis showed a significant decrease in yield-scaled N2O emissions with increasing N use efficiency or in N2O emissions for production systems with cereal yields &gt; 10 Mg ha-1 (maize), 6.6 Mg ha-1 (wheat) or 6.8 Mg ha-1 (rice), respectively. This highlights that N use efficiency indicators can be used as valuable proxies for reconciling trade-offs between crop production and N2O mitigation. For all three major staple crops, reducing N fertilization by up to 30%, optimizing the timing and placement of fertilizer application or using enhanced-efficiency N fertilizers significantly reduced yield-scaled N2O emissions at similar or even higher cereal yields. Our data-driven assessment provides some key guidance for developing effective and targeted mitigation and adaptation strategies for the sustainable intensification of cereal production.
 "
+
 	uri <- "doi:10.5061/dryad.cz8w9gj9v"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=5, minor=NA,
-		data_organization = "IOAP; KIOT",#IOAP: Institute of Atmospheric Physics; KIOT:Karlsruhe Institute of Technology
+		data_organization = "IOAP; KIOT",
 		publication = "doi:10.1111/gcb.17177",
 		project = NA,
 		design = NA,
@@ -25,7 +26,7 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-02",
-		carob_completion = 0,	
+		carob_completion = 0,	#????
 		carob_effort = 4
 	)
 	

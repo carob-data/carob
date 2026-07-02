@@ -56,7 +56,7 @@ livestock units.
     cooperative_member = r$hhmember_group == "Yes",
     market_timeto      = r$dist_districtmarket,
     currency           = "TZS",
-    livestock_TLU      = r$TLU,
+    TLU      = r$TLU,
     diet_diversity  = r$HDDS,
     hh_income       = r$HHincomeca_w,
     credit_access      = r$Any_credit == "Yes",
