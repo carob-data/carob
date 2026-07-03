@@ -16,7 +16,7 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=5, minor=NA,
-		data_organization = "IOAP; KIOT",
+		data_organization = "IAPC; KIOT",
 		publication = "doi:10.1111/gcb.17177",
 		project = NA,
 		design = NA,
