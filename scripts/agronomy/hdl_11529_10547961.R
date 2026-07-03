@@ -45,6 +45,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    x <- x[!is.na(x) & x != ""]
 	    if (length(x)) x[1] else NA_character_
 	  })
+	  r3 <- r3[-(1:5),] ### header
 	  names(r3) <- make.names(names(r3), unique = TRUE)
 	  names(r3) <- gsub("Cropping.systems|Cropping.system", "Cropping.System", names(r3))
 	  
@@ -56,17 +57,15 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    location = carobiner::fix_name(r3$Node, "title"),
 	    #site = as.character(r3$Site.No..Unique.farmer.ID.),
 	    treatment = r3$Tmnt..Short.abbreviation.as.mentioned.in.protocol.,
-	    plot_area = r3$Plot.size..m2...each.plot,
+	    plot_area = as.numeric(r3$Plot.size..m2...each.plot),
 	    land_type = r3$Land.type..land.topography..HL..MHL..MLL.LL.,
 	    soil_texture = r3$Soil.texture..sand..silt..clay.etc..,
 	    #r3$`Soil problem, if any (Flood, acidic soils etc.)`,
-	    latitude = suppressWarnings(as.numeric(r3$Latitude.North..Degree.and.decimal.format.only.)),
-	    longitude = suppressWarnings(as.numeric(r3$Longitude.East..Degree.and.decimal.format.only.)),
+	    latitude = as.numeric(r3$Latitude.North..Degree.and.decimal.format.only.),
+	    longitude = as.numeric(r3$Longitude.East..Degree.and.decimal.format.only.),
 	    farm_nm = r3$Farmer.s.name
 	  )
 	  
-	  d1 <- d1[-c(1:5),]
-	  d1$plot_area <- as.numeric(d1$plot_area)
 	  d1 <- d1[!is.na(d1$year),]
 	  ####
 	  if(grepl("2017-LT-All|2016-LT-All", f)){ r4 <- carobiner::read.excel(f, sheet="3-  Land Preparation Operations", skip=4)} else{ r4 <- carobiner::read.excel(f, sheet="3-  Land Prep Operations", skip=4)}
@@ -91,7 +90,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  )
 	  
 	  d2 <- d2[!is.na(d2$year),]
-	  ####
+	 
 	  ## merge d1 and d2 
 	  d <- merge(d1, d2, by=intersect(names(d1), names(d2)), all = TRUE)
 	  
@@ -102,7 +101,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    x <- x[!is.na(x) & x != ""]
 	    if (length(x)) x[1] else NA_character_
 	  })
-	  
+	  r5 <- r5[-c(1:4),] ### header
 	  names(r5) <- make.names(names(r5), unique = TRUE)
 	  names(r5) <- gsub("Cropping.systems|Cropping.system", "Cropping.System", names(r5))
 	  names(r5) <- gsub("Date.of.80..physiological.maturity..dd.mm.yy.", "Date.of.80..physiological.maturity..mm.dd.yy.", names(r5))
@@ -121,16 +120,16 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    country= "India",
 	    #site = as.character(r5$Site.No.),
 	    treatment = r5$Tmnt,
-	    plot_area = r5$Plot.size..m2.,
+	    plot_area = as.numeric(r5$Plot.size..m2.),
 	    crop = "rice",
 	    variety = r5$Variety,
-	    plant_height =  suppressWarnings(as.numeric(r5$Height.of.rice.stubble.in.plot..cm.)),
+	    plant_height =  as.numeric(r5$Height.of.rice.stubble.in.plot..cm.),
 	    planting_date = r5$Date.of.seeding..dd.mm.yy.,
 	    transplanting_date = r5$Date.of.transplanting..dd.mm.yy.,
 	    #planting_method = r5$`Row seeded/ transplanted (1) or B'cast/random (2)`,
-	    row_spacing =  suppressWarnings(as.numeric(r5$Row.spacing..cm.)),
-	    seed_rate =  suppressWarnings(as.numeric(r5$Seedrate..kg.ha.)),
-	    seed_price = suppressWarnings(as.numeric(r5$Cost.of.seed.per.kg)),
+	    row_spacing = as.numeric(r5$Row.spacing..cm.),
+	    seed_rate =  as.numeric(r5$Seedrate..kg.ha.),
+	    seed_price = as.numeric(r5$Cost.of.seed.per.kg),
 	    emergence_date = r5$Date.of.100..plant.emergence..dd.mm.yy.,
 	    ## anthesis = flowering
 		flowering_date = r5$Date.of.50..anthesis..mm.dd.yy.,
@@ -138,22 +137,20 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 		## flowering_date = r5$Date.of.50..first.flower..dd.mm.yy.,
 	    maturity_date = r5$Date.of.80..physiological.maturity..mm.dd.yy.,
 	    harvest_date = r5$Date.of.harvest..dd.mm.yy.,
-	    emergence_days =  suppressWarnings(as.numeric(r5$X100..emergence..DAS.)),
-	    flowering_days =  suppressWarnings(as.numeric(r5$X50..first.flowering..DAS.)),
-	    anthesis_days =  suppressWarnings(as.numeric(r5$X50..anthesis..DAS.)),
-	    maturity_days =  suppressWarnings(as.numeric(r5$X80..physiological.maturity..DAS.)),
-	    harvest_days =  suppressWarnings(as.numeric(r5$Harvesting..DAS.)),
-	    seed_cost =  suppressWarnings(as.numeric(r5$Seed.cost..INR.ha.)),
+	    emergence_days =  as.numeric(r5$X100..emergence..DAS.),
+	    flowering_days =  as.numeric(r5$X50..first.flowering..DAS.),
+	    anthesis_days =  as.numeric(r5$X50..anthesis..DAS.),
+	    maturity_days =  as.numeric(r5$X80..physiological.maturity..DAS.),
+	    harvest_days =  as.numeric(r5$Harvesting..DAS.),
+	    seed_cost =  as.numeric(r5$Seed.cost..INR.ha.),
 	    farm_nm = r5$Farmer.s.name
 	  )
 	  
-	  d3 <- d3[-c(1:4),]
-	  d3$plot_area <- as.numeric(d3$plot_area)
 	  d3 <- d3[!is.na(d3$year),]
 	  
 	  ### Fixing date 
 	  conv <- function(x) {
-	    x <- suppressWarnings(as.numeric(x))
+	    x <- as.numeric(x)
 	    ifelse(
 	      is.na(x) | x <= 0,
 	      NA_character_,
@@ -206,6 +203,8 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    x <- x[!is.na(x) & x != ""]
 	    if (length(x)) x[1] else NA_character_
 	  })
+	  
+	  r7 <- r7[-c(1:4),] ### header
 	  names(r7) <- make.names(names(r7), unique = TRUE)
 	  names(r7) <- gsub("Cropping.systems|Cropping.system", "Cropping.System", names(r7))
 	  if (is.null(r7$Date.of.application...dd.mm.yy..5))  r7$Date.of.application...dd.mm.yy..5 <- NA
@@ -218,7 +217,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    location = carobiner::fix_name(r7$Node, "title"),
 	    #site = as.character(r7$Site.No.),
 	    treatment = r7$Tmnt,
-	    plot_area = r7$Plot.size..m2.,
+	    plot_area = as.numeric(r7$Plot.size..m2.),
 	    #fertilizer_type1 = "basal",
 	    N_fertilizer1 = r7$Fert.Grade.N,
 	    P_fertilizer1 = r7$Fert.Grade.P2O5,
@@ -274,7 +273,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    fertilizer_amount8 = r7$Fertilizer.applied.g.plot.7,
 	    fertilizer_price8 = r7$Farm.gate.price.per.kg.7,
 	    N_fertilizer9 = r7$N....kg.ha.,
-	    fertilizer_cost = suppressWarnings(as.numeric(r7$Fertilizer.cost..INR.ha.)),
+	    fertilizer_cost = as.numeric(r7$Fertilizer.cost..INR.ha.),
 	    P_fertilizer9 = r7$P2O5..kg.ha.,
 	    K_fertilizer9 = r7$K2O..kg.ha.,
 	    fertilizer_type = "SSP;urea;KCl",
@@ -282,8 +281,6 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    
 	  )
 	  
-	  d5 <- d5[-c(1:4),]
-	  d5$plot_area <- as.numeric(d5$plot_area)
 	  d5 <- d5[!is.na(d5$year),]
 	  
 	  d5$N_fertilizer <- rowSums( apply(d5[, paste0("N_fertilizer", 1:9)],2, as.numeric),na.rm = TRUE)
@@ -310,6 +307,8 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    x <- x[!is.na(x) & x != ""]
 	    if (length(x)) x[1] else NA_character_
 	  })
+	  
+	  r10 <- r10[-c(1:4),]
 	  names(r10) <- make.names(names(r10), unique = TRUE)
 	  names(r10) <- gsub("Cropping.systems|Cropping.system", "Cropping.System", names(r10))
 	  
@@ -321,7 +320,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	   location = carobiner::fix_name(r10$Node, "title"),
 	   #site = as.character(r10$Site.No.),
 	   treatment = r10$Tmnt,
-	   plot_area = r10$Plot.size..m2.,
+	   plot_area = as.numeric(r10$Plot.size..m2.),
 	   pesticide_date1 = r10$Date.of.application..dd.mm.yy.,
 	   pesticide_date2 = gsub("8/8/116", NA, r10$Date.of.application..dd.mm.yy..1),
 	   herbicide_product = gsub("NA;NA", NA, paste(tolower(r10$Product.applied), tolower(r10$Product.applied.1), sep = ";")),
@@ -337,8 +336,6 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	   farm_nm = r10$Farmer.s.name
 	 )
 	  
-	 d6 <- d6[-c(1:4),]
-	 d6$plot_area <- as.numeric(d6$plot_area)
 	 d6 <- d6[!is.na(d6$year),]
 	 
 	 d6$pesticide_price2 <- (as.numeric(d6$pesticide_price2)/as.numeric(d6$Csize2))*1000 ## price/kg 
@@ -391,6 +388,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	   x <- x[!is.na(x) & x != ""]
 	   if (length(x)) x[1] else NA_character_
 	 })
+	 r14 <- r14[-c(1:4),]
 	 names(r14) <- make.names(names(r14), unique = TRUE)
 	 names(r14) <- gsub("Cropping.systems|Cropping.system", "Cropping.System", names(r14))
 	 names(r14) <- gsub("Grain.yield..t.ha.|Sun.dry.grain.yield..t.ha.|Sundry.grain.yield..t.ha", "grain.yield.t.ha.", names(r14))
@@ -404,15 +402,13 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	   location = carobiner::fix_name(r14$Node, "title"),
 	   #site = as.character(r14$Site.No.),
 	   treatment = r14$Tmnt,
-	   plot_area = r14$Plot.size..m2.,
-	   yield = suppressWarnings(as.numeric(r14$grain.yield.t.ha.))*1000,
-	   fwy_total =  suppressWarnings(as.numeric(r14$Biomass..t.ha.))*1000,
-	   harvest_index =  suppressWarnings(as.numeric(r14$HI)),
+	   plot_area = as.numeric(r14$Plot.size..m2.),
+	   yield = as.numeric(r14$grain.yield.t.ha.)*1000,
+	   fwy_total =  as.numeric(r14$Biomass..t.ha.)*1000,
+	   harvest_index =  as.numeric(r14$HI),
 	   farm_nm = r14$Farmer.s.name
 	 )
-	  
-	 d8 <- d8[-c(1:4),]
-	 d8$plot_area <- as.numeric(d8$plot_area)
+	 
 	 d8 <- d8[!is.na(d8$year),]
 	 
 	 ### merge d and d8
