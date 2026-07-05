@@ -11,6 +11,8 @@ carob_script <- function(path) {
 Maize Producers (Households Participated) in MCM Activities in Nepal
 
 The dataset used in this study was collected as part of the evaluation of the Maize Commercialization Model (MCM) in Nepal, implemented under the Nepal Seed and Fertilizer (NSAF) project led by CIMMYT and funded by USAID. The dataset comprises survey responses from 493 smallholder households across five districts—Banke, Bardiya, Kailali (MCM intervention areas), and Dang, Kanchanpur (non-MCM comparison areas). The survey utilized a multistage random sampling approach, ensuring adequate representation of both male- and female-headed households (MHH and FHH). Key variables include demographic characteristics, agricultural practices, access to resources, maize productivity, and market participation. The dataset enables gender-disaggregated analysis of the impact of bundled agricultural interventions on commercialization outcomes. Data collection was conducted through structured household interviews, ensuring consistency and reliability. The dataset is anonymized to protect respondent confidentiality and is available in CSV and STATA formats for further analysis.
+
+design: unitOfAnalysis: Household; targetSampleSize: list(targetSampleActualSize = list(typeName = targetSampleActualSize, multiple = FALSE, typeClass = primitive, value = 493)); collectionMode: Face to face interviews; researchInstrument: Survey questionnaire
 "
 
 	uri <- "hdl:11529/10549225"
@@ -21,7 +23,7 @@ The dataset used in this study was collected as part of the evaluation of the Ma
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = "NSFP",
-		design = "unitOfAnalysis: Household; targetSampleSize: list(targetSampleActualSize = list(typeName = targetSampleActualSize, multiple = FALSE, typeClass = primitive, value = 493)); collectionMode: Face to face interviews; researchInstrument: Survey questionnaire",
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -36,6 +38,8 @@ The dataset used in this study was collected as part of the evaluation of the Ma
 	f1 <- ff[basename(ff) == "MCM_Nepal_2022_NoPII.xlsx"]
 
 	r <- carobiner::read.excel(f1, sheet="Main Sheet")
+	#converting Nepal kattha to hactares 
+	r$area <- r$MainVar_Area * 0.03386 
 	
 	d <- data.frame(
 	  date=as.character(r$Date),
@@ -78,9 +82,8 @@ The dataset used in this study was collected as part of the evaluation of the Ma
 	  OM_amount=r$FertApp_FYM_Kg,
 	  farm_labour_hired=r$FemaleLab_Hired_Days+r$MaleLab_Hired_Days,
 	  previous_crop=tolower(r$Prev_Crop)
-	  )
+	)
 	
-	r$area <- r$MainVar_Area*0.03386 #converting Nepal kattha to hactares 
 	d$yield <- r$Prod_MainVar_Kg/r$area #calculating yield from production
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
@@ -90,74 +93,27 @@ The dataset used in this study was collected as part of the evaluation of the Ma
 	d[!is.na(d$OM_amount), "OM_type"] <- "farmyard manure"
 	d[!is.na(d$land_irrigated), "irrigated"] <- TRUE
 	
-	#cleaning fertilizer columns
-	fert_lookup <- c(
-	  DAP = "DAP",
-	  Urea = "urea",
-	  MOP = "KCl",
-	  Otherfertilizers = "unknown")
+	d$fertilizer_type <- gsub("Other ferilizers", "unknown", d$fertilizer_type)
+	d$fertilizer_type <- gsub("MOP", "KCl", d$fertilizer_type)
+	d$fertilizer_type <- gsub("Urea", "urea", d$fertilizer_type)
+	d$fertilizer_type <- gsub("None", "none", d$fertilizer_type)
+	d$fertilizer_type <- gsub(" ", ";", d$fertilizer_type)
 	
-	clean_fert <- function(x) {
-	  if (is.na(x)) return(NA_character_)
-	  if (x == "None") return("none")
-	  
-	  # collapse the two-word "Other ferilizers" into one token before splitting
-	  x2 <- gsub("Other ferilizers", "Otherfertilizers", x, fixed = TRUE)
-	  
-	  toks <- strsplit(x2, "\\s+")[[1]]
-	  mapped <- ifelse(toks %in% names(fert_lookup), fert_lookup[toks], "unknown")# "other" was not specified
-	  mapped <- unique(mapped)  
-	  
-	  paste(mapped, collapse = ";")}
-	
-	d$fertilizer_type <- sapply(d$fertilizer_type, clean_fert)
-	
-	#clening previous crop
-	crop_lookup <- c(rapeseed = "rapeseed", lentil = "lentil", 
-	                 potato = "potato", wheat = "wheat")
-	
-	canon_order <- c("rapeseed", "lentil", "potato", "wheat")
-	
-	clean_crop <- function(x) {
-	  if (is.na(x)) return(NA_character_)
-	  if (x == "none") return("none")
-	  
-	  x2 <- gsub("rape-\\s*seed", "rapeseed", x)
-	  x2 <- trimws(x2)
-	  
-	  toks <- strsplit(x2, "\\s+")[[1]]
-	  toks <- toks[toks != ""]
-	  
-	  mapped <- ifelse(toks %in% names(crop_lookup), crop_lookup[toks], toks)
-	  mapped <- mapped[mapped != ""]
-	  mapped <- unique(mapped)
-	  mapped <- mapped[order(match(mapped, canon_order))]
-	  
-	  paste(mapped, collapse = ";")
-	}
-	
-	d$previous_crop <- sapply(d$previous_crop, clean_crop)
+	d$previous_crop <- gsub(" ", ";", gsub("- ", "", d$previous_crop))
 
-	#cleaning livestock namess
-	d$row_id <- seq_len(nrow(d))
+
+	animal_cols <- c("cattle", "buffalo", "sheep", "goat", "pig", "chicken", "duck")	
+	x <- reshape(d[, c("hhid", animal_cols)], varying = animal_cols, v.names = "heads", 
+		timevar = "animal", times = animal_cols, idvar = "row_id", direction = "long")
+
+	rownames(x) <- NULL
+	x$row_id <- NULL  
+	d[, animal_cols] <- NULL
 	
-	animal_cols <- c("cattle", "buffalo", "sheep", "goat", "pig", "chicken", "duck")
 	
-	d <- reshape(d,
-	                  varying = animal_cols,
-	                  v.names = "heads",
-	                  timevar = "animal",
-	                  times = animal_cols,
-	                  idvar = "row_id",
-	                  direction = "long")
-	
-	rownames(d) <- NULL
-	d$row_id <- NULL  
-	
-	d$trial_id <- paste(d$hhid,d$adm2,sep = "_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- "grain"
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=x)
 }
