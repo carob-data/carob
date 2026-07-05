@@ -95,7 +95,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d <- merge(d1, d2, by=intersect(names(d1), names(d2)), all = TRUE)
 	  
 	  r5 <- carobiner::read.excel(f, sheet="4- Stand counts & Phenology")
-	  hdr <- rbind(r5[4, ], r5[3, ])
+	  hdr <- r5[4:3, ]
 	  names(r5) <- apply(hdr, 2, function(x) {
 	    x <- trimws(as.character(x))
 	    x <- x[!is.na(x) & x != ""]
@@ -281,8 +281,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    K_fertilizer9 = as.numeric(r7$K2O..kg.ha.),
 	    fertilizer_date9 = as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..6), origin = "1899-12-30")),
 	    fertilizer_type = "SSP;urea;KCl",
-	    farm_nm = r7$Farmer.s.name
-	    
+	    farm_nm = r7$Farmer.s.name	    
 	  )
 	  
 	  d5 <- d5[!is.na(d5$year),]
