@@ -480,12 +480,11 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	Nm <- names(d)[i]
 	
 	fert <- d[, Nm]
-	cols <- c(paste0("N_fertilizer", 1:9), paste0("P_fertilizer", 1:9), paste0("K_fertilizer", 1:9), paste0("fertilizer_amount", 1:9), paste0("fertilizer_price", 1:9))
-	date <- c(paste0("fertilizer_date", 1:9), paste0("fertilizer_date", 1:9), paste0("fertilizer_date", 1:9), paste0("fertilizer_date", 1:9), paste0("fertilizer_date", 1:9))
-	fert_long <- reshape( fert, varying = list (cols, date),
-	                     v.names = c("value", "date"),
-	                     direction = "long")
-	fert_long$variable <- c(rep("N_fertilizer", 9), rep("P_fertilizer", 9), rep("K_fertilizer", 9), rep("fertilizer_amount", 9), rep("fertilizer_price", 9))[fert_long$time]
+	vars <- paste0(rep(gsub("#", "fertilizer", c("N_#", "P_#", "K_#", "#_amount", "#_price")), each=9))
+	cols <- paste0(vars, rep(1:9, 5))
+	date <- rep(c(paste0("fertilizer_date", 1:9), 5)
+	fert_long <- reshape( fert, varying = list (cols, date), v.names = c("value", "date"), direction = "long")
+	fert_long$variable <- vars[fert_long$time]
 	fert_long <- fert_long[!is.na(fert_long$value),]
 	fert_long$time <- fert_long$id <- NULL
 	i <- grepl("^(N_|P_|K_)|date[1-9]$|amount[1-9]$|price[1-9]$",names(d))
