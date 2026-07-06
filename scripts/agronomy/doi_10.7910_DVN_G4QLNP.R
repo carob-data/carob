@@ -27,7 +27,7 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 	)
 
 	#use grep because the filename has a space on linux	
-	f1 <- ff[trimws(basename(ff)) == "006_siDom_droughtResistance.csv"]
+	f1 <- ff[trimws(basename(ff)) == "006_siDom_droughtResistance.csv"][1]
 	r1 <- read.csv(f1)
 	f2 <- ff[basename(ff) == "007_siteCharacterization_droughtResistance.csv"]
 	r2 <- colMeans(read.csv(f2))

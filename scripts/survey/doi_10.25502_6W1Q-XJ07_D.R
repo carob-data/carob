@@ -421,22 +421,17 @@ d9 <- data.frame(
 	d9$crop[d9$crop == "Groundnut"]   <- "groundnut"
 	d9$crop[d9$crop == "Bambara nut"] <- "bambara groundnut"
 
-	d9$previous_crop_residue_management[
-		d9$previous_crop_residue_management == ""] <- NA
+	d9$previous_crop_residue_management[d9$previous_crop_residue_management == ""] <- NA
 	mgmt <- tolower(d9$previous_crop_residue_management)
 	d9$previous_crop_residue_management[grepl(
-		"feed|feeds|animal|livestock|zero grazing", mgmt)]       <- "fed to livestock"
+		"feed|feeds|animal|livestock|zero grazing", mgmt)] <- "fed to livestock"
 	d9$previous_crop_residue_management[grepl(
-		"incorporat|incooperat|incoperat|incooprat", mgmt)]      <- "incorporated"
-	d9$previous_crop_residue_management[grepl(
-		"burn|burned", mgmt)]                                    <- "burned"
-	d9$previous_crop_residue_management[grepl(
-		"sale|sell", mgmt)]                                      <- "sold"
-	d9$previous_crop_residue_management[grepl(
-		"donate|give|friend|neighbour", mgmt)]                   <- "given away"
+		"incorporat|incooperat|incoperat|incooprat", mgmt)] <- "incorporated"
+	d9$previous_crop_residue_management[grepl("burn|burned", mgmt)] <- "burned"
+	d9$previous_crop_residue_management[grepl("sale|sell", mgmt)] <- "sold"
+	d9$previous_crop_residue_management[grepl("donate|give|friend|neighbour", mgmt)] <- "given away"
 	# Dual use: fed to livestock AND incorporated — use dominant/first mentioned
-	d9$previous_crop_residue_management[grepl(
-		"feed.*incorporat|incorporat.*feed", mgmt)]              <- "fed to livestock"
+	d9$previous_crop_residue_management[grepl("feed.*incorporat|incorporat.*feed", mgmt)] <- "fed to livestock"
 	#d9 <- d9[!duplicated(paste(d9$farm_id, d9$crop)), ]
   
 	d <- d7

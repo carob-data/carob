@@ -1,10 +1,16 @@
 
-#dataset can placed in pending folder as does not have location data yet
-#I have requested for the location data from the corresponding author and will update the script soon as they send
+
+"
+GPS coordinates recorded only for Kanungu action site in source data. Coordinates for remaining action sites (Kabale, Kapchorwa, Kibuku, Kole, Oyam, Palisa) assigned from known district centroids; geo_from_source set to FALSE for these records. Yield in f_crop_production_1 is the total field harvest in kg; conversion to kg/ha requires field_size which is present.
+
+I have requested for the location data from the corresponding author and will update the script soon as they send
+"
 
 carob_script <- function(path) {
   
-  "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers the Uganda baseline survey conducted in 2014 across even action sites: Kabale, Kanungu, Kapchorwa, Kibuku, Kole, Oyam, and Palisa."
+"
+N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers the Uganda baseline survey conducted in 2014 across even action sites: Kabale, Kanungu, Kapchorwa, Kibuku, Kole, Oyam, and Palisa.
+"
   
   uri   <- "doi:10.25502/wcbr-ck09/d"
   group <- "survey"
@@ -12,19 +18,19 @@ carob_script <- function(path) {
   ff <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group,
-                                  major = NA, minor = NA,
-                                  data_organization = "IITA",
-                                  publication = NA,
-                                  project = "N2Africa",
-                                  data_type = "survey",
-                                  treatment_vars = "none",
-                                  response_vars = "yield",
-                                  carob_completion = 100,
-                                  carob_contributor = "Mitchelle Njukuya",
-                                  carob_date = "2026-06-26",
-                                  carob_effort = 6,
-                                  notes = "GPS coordinates recorded only for Kanungu action site in source data. Coordinates for remaining action sites (Kabale, Kapchorwa, Kibuku, Kole, Oyam, Palisa) assigned from known district centroids; geo_from_source set to FALSE for these records. Yield in f_crop_production_1 is the total field harvest in kg; conversion to kg/ha requires field_size which is present.",
-                                  design = NA
+      major = NA, minor = NA,
+      data_organization = "IITA",
+      publication = NA,
+      project = "N2Africa",
+      data_type = "survey",
+      treatment_vars = "none",
+      response_vars = "yield",
+      carob_completion = 100,
+      carob_contributor = "Mitchelle Njukuya",
+      carob_date = "2026-06-26",
+      carob_effort = 6,
+      notes = NA,
+      design = NA
   )
   
 
@@ -60,10 +66,10 @@ carob_script <- function(path) {
     x[grepl("^maize$|^corn$|^mais$", x)]                          <- "maize"
     x[grepl("^cassava$|^manioc$", x)]                             <- "cassava"
     x[grepl("^yam$|^igname$|^kratchi|^katara|^lotossou", x)]      <- "yam"
-    x[grepl("^cowpea$", x)]                                       <- "cowpea"
+    x[grepl("^cowpea$", x)]           <- "cowpea"
     x[grepl("^soybean$|^soya$", x)]                               <- "soybean"
     x[grepl("^groundnut$|^arachide$", x)]                         <- "groundnut"
-    x[grepl("^rice$", x)]                                         <- "rice"
+    x[grepl("^rice$", x)]             <- "rice"
     x[grepl("cajanus|pigeon pea", x)]                             <- "pigeon pea"
     x[grepl("mucuna|Mucuna pluriens", x)]                         <- "velvet bean"
     x[grepl("^sweet pot|^sweet pat", x)]                          <- "sweetpotato"
@@ -73,20 +79,21 @@ carob_script <- function(path) {
     x[grepl("^pepper$|^pipper$", x)]                              <- "pepper"
     x[grepl("^eggplant$|^garden egg$|garden eggs", x)]           <- "eggplant"
     x[grepl("^okra$|^gombo$|^okro$|^occro$", x)]                 <- "okra"
-    x[grepl("^cabbage$", x)]                                      <- "cabbage"
-    x[grepl("^lettuce$", x)]                                      <- "lettuce"
+    x[grepl("^cabbage$", x)]          <- "cabbage"
+    x[grepl("^lettuce$", x)]          <- "lettuce"
     x[grepl("^green bean$|^kidney bean$", x)]                     <- "common bean"
-    x[grepl("^cocoa$", x)]                                        <- "cocoa"
+    x[grepl("^cocoa$", x)]            <- "cocoa"
     x[grepl("^coffee$|^cofee$", x)]                               <- "coffee"
     x[grepl("^palm oil$|^oil palm$", x)]                          <- "oilpalm"
-    x[grepl("^rubber$", x)]                                       <- "rubber"
+    x[grepl("^rubber$", x)]           <- "rubber"
     x[grepl("^sugarcane$|^sugar cane", x)]                        <- "sugarcane"
     x[grepl("eucalyptus|teck|techtona|techtonas", x)]             <- "eucalyptus"
-    x[grepl("^orange", x)]                                        <- "orange"
-    x[grepl("^avocado$", x)]                                      <- "avocado"
-    x[grepl("^sorghum$", x)]                                      <- "sorghum"
-    x[grepl("^fallow$", x)]                                       <- NA
-    x[x %in% c("", "na", "NA")]                                   <- NA
+    x[grepl("^orange", x)]            <- "orange"
+    x[grepl("^avocado$", x)]          <- "avocado"
+    x[grepl("^sorghum$", x)]          <- "sorghum"
+    x[grepl("^fallow$", x)]           <- NA
+    x[x %in% c("", "na", "NA")]       <- NA
+	x[x %in% c("pepper and tomato", "tomato and pepper")] <- "tomato;chili pepper"
     x
   }
   
@@ -178,11 +185,11 @@ carob_script <- function(path) {
   standardise_crop_name <- function(x) {
     x <- trimws(tolower(x))
     x <- gsub("\n", ";", x)
-    x[grepl("^maize", x)]                                   <- "maize"
-    x[grepl("sorghum", x)]                                  <- "sorghum"
-    x[grepl("millet", x)]                                   <- "millet"
-    x[grepl("rice", x)]                                     <- "rice"
-    x[grepl("cassava", x)]                                  <- "cassava"
+    x[grepl("^maize", x)]       <- "maize"
+    x[grepl("sorghum", x)]      <- "sorghum"
+    x[grepl("millet", x)]       <- "millet"
+    x[grepl("rice", x)]         <- "rice"
+    x[grepl("cassava", x)]      <- "cassava"
     x[grepl("sweet potato|sweetpotato", x)]                 <- "sweetpotato"
     x[grepl("irish potato|irish potatoes", x)]              <- "potato"
     x[grepl("banana|plantain", x)]                         <- "banana"
@@ -193,13 +200,13 @@ carob_script <- function(path) {
     x[grepl("^peas$|^pea$", x)]                           <- "pea"
     x[grepl("sunflower", x)]                               <- "sunflower"
     x[grepl("simsim|sesame", x)]                           <- "sesame"
-    x[grepl("coffee", x)]                                  <- "coffee"
-    x[grepl("cotton", x)]                                  <- "cotton"
+    x[grepl("coffee", x)]      <- "coffee"
+    x[grepl("cotton", x)]      <- "cotton"
     x[grepl("cabbage", x)]                                 <- "cabbage"
-    x[grepl("tomato", x)]                                  <- "tomato"
-    x[grepl("onion", x)]                                   <- "onion"
+    x[grepl("tomato", x)]      <- "tomato"
+    x[grepl("onion", x)]       <- "onion"
     x[grepl("pumpkin", x)]                                 <- "pumpkin"
-    x[grepl("yam", x)]                                     <- "yam"
+    x[grepl("yam", x)]         <- "yam"
     x[grepl("sukuma|kale", x)]                             <- "kale"
     x[grepl("egg plants", x)]                             <- "eggplant"
     x[grepl("fruits|trees", x)]                           <- "fruits"
@@ -275,7 +282,7 @@ carob_script <- function(path) {
   )
   # Dominant legume crop per farm (first if multiple)
   farm_legume_name <- farm_legume_crop[!duplicated(farm_legume_crop$farm_id),
-                                       c("field_id", "crop")]
+           c("field_id", "crop")]
   
   d8 <- data.frame(
     field_id        = r8$farm_id,
@@ -360,14 +367,14 @@ carob_script <- function(path) {
   
   d$yield_part[d$crop %in% c("maize", "rice", "sorghum")]                     <- "grain"
   d$yield_part[d$crop %in% c("cowpea", "soybean", "groundnut", "bean",
-                             "pigeon pea")]                                                             <- "seed"
+                             "pigeon pea")]                                 <- "seed"
   d$yield_part[d$crop %in% c("cassava", "sweetpotato", "taro", "yam")]        <- "roots"
   d$yield_part[d$crop %in% c("tomato", "pepper", "eggplant", "okra",
-                             "cabbage", "lettuce")]                                                    <- "fruit"
+                             "cabbage", "lettuce")]                        <- "fruit"
   d$yield_part[d$crop %in% c("banana", "avocado", "orange")]                  <- "fruit"
   d$yield_part[d$crop %in% c("cocoa", "coffee")]                              <- "seed"
-  d$yield_part[d$crop == "oilpalm"]                                           <- "fruit"
-  d$yield_part[d$crop %in% c("mucuna")]                                       <- "seed"
+  d$yield_part[d$crop == "oilpalm"]               <- "fruit"
+  d$yield_part[d$crop %in% c("mucuna")]           <- "seed"
   
   d$field_id         <- as.character(d$field_id)
   d$hh_size         <- as.integer(d$hh_size)
