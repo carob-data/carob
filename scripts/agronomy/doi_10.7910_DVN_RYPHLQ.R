@@ -26,7 +26,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		notes = NA,
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-06-25",
-		carob_completion = 0,	
+		carob_completion = 100,	
 		carob_effort = 5
 	)
 	
