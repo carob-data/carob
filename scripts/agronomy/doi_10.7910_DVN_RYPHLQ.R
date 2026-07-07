@@ -86,35 +86,50 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 	d$OM_used[man] <- TRUE 
 
 
-	#u <- unique(d[, c("adm1", "adm2", "adm3", "adm4")])
-	#u = u[!is.na(u$adm3), ]
-	#u= u[order(u$adm1, u$adm2, u$adm3, u$adm4), ]
-	#carobiner::dfput(u)
+	d$adm1[d$adm1 == "Tillabéri"] <- "Tillabéry"
+	d$adm3[d$adm3 == "Sarki Haoussa"] <- "Sarkin Haoussa" 
+	d$adm3[d$adm3 == "Dantchiandou"] <- "Dantiandou" 
+	d$adm4 <- carobiner::fix_name(d$adm4, "title")
+
 
 ## adm4 is unique, keeping other levels for checking. adm3 can be found with adm_pointRadius
-	geo <- data.frame(
-		adm1 = c("Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Zinder", "Zinder"),
-		adm2 = c("Aguié", "Aguié", "Aguié", "Dakoro", "Dakoro", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Mahahi", "Mahahi", "Mahahi", "Mayahi", "Balleyara", "Balleyara", "kollo", "kollo", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", "Magaria", "Mirriah"),
-		adm3 = c("Aguié", "Aguié", "Aguié", "Adjékoria", "Sabon Machi", "Guidan Roumdji", "Guidan Roumdji", "Guidan Sori", "Guidan Sori", "Guidan Sori", "Gabi", "Gabi", "Gabi", "Madarounfa", "Safo", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Yamma", "Sarki Haoussa", "Sarki Haoussa", "Sarki Haoussa", "Sarki Haoussa", "Tagazar", "Tagazar", "Dantchiandou", "Kouré", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", "Bandé", "Gouna"),
-		adm4 = c("Baban Anné", "Grpment Peulh Hardo Harouna", "Kodaou", "Akora-Idi", "Baban Kori", "Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Azzazala", "Guidan Tawayé Saboua", "Sarki Haoussa", "Azzazala", "Tabala", "Tabala Tondi T", "kampa Tegui", "Tchioubi", "Djioga", "Koubo", "seno Tiko", "Tchampanga", "Tiko", "Gochalo", "Kassari H")
+## these need to be georefenced with Google Maps or similar, to the extent possible
+	geo4 <- data.frame(
+		#adm1 = c("Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Tillabéry", "Zinder", "Zinder"),
+		#adm2 = c("Aguié", "Aguié", "Aguié", "Dakoro", "Dakoro", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Mahahi", "Mahahi", "Mahahi", "Mayahi", "Balleyara", "Balleyara", "kollo", "kollo", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", NA, NA, "Magaria", "Mirriah"),
+		#adm3 = c("Aguié", "Aguié", "Aguié", "Adjékoria", "Sabon Machi", "Guidan Roumdji", "Guidan Roumdji", "Guidan Sori", "Guidan Sori", "Guidan Sori", "Gabi", "Gabi", "Gabi", "Madarounfa", "Safo", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Haoussa", "Sarkin Haoussa", "Sarkin Haoussa", "Sarkin Haoussa", "Tagazar", "Tagazar", "Dantiandou", "Kouré", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", NA, NA, "Bandé", "Gouna"),
+		adm4 = c("Baban Anné", "Grpment Peulh Hardo Harouna", "Kodaou", "Akora-Idi", "Baban Kori", "Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Azzazala", "Guidan Tawayé Saboua", "Sarki Haoussa", "Azzazala", "Tabala", "Tabala Tondi T", "Kampa Tegui", "Tchioubi", "Djioga", "Koubo", "Seno Tiko", "Tchampanga", "Tiko", "Sirimbana", "Patty", "Gochalo", "Kassari H"),
+		longitude = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+		latitude = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
 	)
 
-	loc <- data.frame(
-	  adm3 = c("Guidan Roumdji", "Guidan Roumdji", "Guidan Sori", "Guidan Sori", "Guidan Sori", "Gabi", "Gabi", "Gabi", "Madarounfa", "Safo", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Yamma", "Tagazar", "Tagazar", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", "Gouna"),
-	  adm4 = c("Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Tabala", "Tabala Tondi T", "Djioga", "Koubo", "seno Tiko", "Tchampanga", "Tiko", "Kassari H"),
-	  longitude = c(6.5357, 6.5357, 6.7142, 6.7142, 6.7142, 7.0294, 7.0294, 7.0294, 7.3453, 6.943, 6.9758, 6.9758, 6.9758, 2.8641, 2.8641, 1.4951, 1.4951, 1.4951, 1.4951, 1.4951, 9.1986),
-	  latitude = c(13.7266, 13.7266, 13.6021, 13.6021, 13.6021, 13.126, 13.126, 13.126, 13.2438, 13.2962, 13.4391, 13.4391, 13.4391, 13.7382, 13.7382, 13.1219, 13.1219, 13.1219, 13.1219, 13.1219, 13.4889),
-	  geo_uncertainty = c(49890, 49890, 31921, 31921, 31921, 21031, 21031, 21031, 30085, 29379, 15836, 15836, 15836, 38040, 38040, 62102, 62102, 62102, 62102, 62102, 23555),
-	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3")
-	)	
-  d <- merge(d, loc, by=c("adm3","adm4"), all.x=TRUE)
- 
+	# if we cannot find "adm4" we fall back to "adm3"
+	geo3 <- data.frame(
+		adm3 = c("Adjékoria", "Aguié", "Bandé", "Dantiandou", "Gabi", "Gouna", "Guidan Roumdji", "Guidan Sori", "Kouré", "Madarounfa", "Sabon Machi", "Safo", "Sarkin Haoussa", "Sarkin Yamma", "Tagazar", "Torodi"),
+		#adm2 = c("Dakoro", "Aguié", "Magaria", "Kollo", "Madarounfa", "Mirriah", "Guidan Roumdji", "Guidan Roumdji", "Kollo", "Madarounfa", "Dakoro", "Madarounfa", "Mayahi", "Madarounfa", "Balleyara", "Torodi"),
+		#adm1 = c("Maradi", "Maradi", "Zinder", "Tillabéry", "Maradi", "Zinder", "Maradi", "Maradi", "Tillabéry", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Tillabéry", "Tillabéry"),
+		lon3 = c(6.6548, 7.693, 8.9152, 2.7069, 7.0223, 9.1546, 6.5346, 6.7179, 2.59, 7.1725, 6.9999, 6.9419, 7.4739, 6.9731, 2.875, 1.4754),
+		lat3 = c(14.3012, 13.5321, 13.1895, 13.5327, 13.1214, 13.4741, 13.7152, 13.5794, 13.3438, 13.2385, 13.8999, 13.2913, 13.8175, 13.4321, 13.7285, 13.2097),
+		unc3 = c(34663, 35648, 26588, 25699, 20739, 21872, 50045, 32186, 25195, 24139, 21047, 28456, 24590, 15603, 37088, 5533),
+		src3 = "GADM 5, adm3" 
+	)
 
+	# replace the missing lon/lat in geo4 with geo3
+	geo <- merge(geo4, geo3, all.x=TRUE)
+	i <- is.na(geo$latitude) 
+	geo$latitude[i] <- geo$lat3[i]
+	geo$longitude[i] <- geo$lon3[i]
+	geo$geo_uncertainty[i] <- geo$unc3[i]
+	geo$geo_source[i] <- geo$src3[i]
+	geo$lat3 <- geo$lon3 <- geo$unc3 <- geo$src3 <- NULL
 
+	# merge by adm4 only because adm3 is missing in about half the cases. adm4 is unique within the other adm levels so that's OK
+	d <- merge(d, geo[c("adm4", "longitude", "latitude", "geo_uncertainty", "geo_source")], by="adm4", all.x=TRUE)
 	d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
-    d$fertilizer_type[d$fertilizer_used] <- "NPK"
+    d$fertilizer_type <- "none"
+	d$fertilizer_type[d$fertilizer_used] <- "NPK"
 
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
