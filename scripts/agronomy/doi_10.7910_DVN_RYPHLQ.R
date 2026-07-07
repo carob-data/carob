@@ -99,24 +99,18 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		adm4 = c("Baban Anné", "Grpment Peulh Hardo Harouna", "Kodaou", "Akora-Idi", "Baban Kori", "Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Azzazala", "Guidan Tawayé Saboua", "Sarki Haoussa", "Azzazala", "Tabala", "Tabala Tondi T", "kampa Tegui", "Tchioubi", "Djioga", "Koubo", "seno Tiko", "Tchampanga", "Tiko", "Gochalo", "Kassari H")
 	)
 
-## merge with adm4 should be sufficient
-#    d <- merge(d, geo, by="adm4", all.x=TRUE)
+	loc <- data.frame(
+	  adm3 = c("Guidan Roumdji", "Guidan Roumdji", "Guidan Sori", "Guidan Sori", "Guidan Sori", "Gabi", "Gabi", "Gabi", "Madarounfa", "Safo", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Yamma", "Tagazar", "Tagazar", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", "Gouna"),
+	  adm4 = c("Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Tabala", "Tabala Tondi T", "Djioga", "Koubo", "seno Tiko", "Tchampanga", "Tiko", "Kassari H"),
+	  longitude = c(6.5357, 6.5357, 6.7142, 6.7142, 6.7142, 7.0294, 7.0294, 7.0294, 7.3453, 6.943, 6.9758, 6.9758, 6.9758, 2.8641, 2.8641, 1.4951, 1.4951, 1.4951, 1.4951, 1.4951, 9.1986),
+	  latitude = c(13.7266, 13.7266, 13.6021, 13.6021, 13.6021, 13.126, 13.126, 13.126, 13.2438, 13.2962, 13.4391, 13.4391, 13.4391, 13.7382, 13.7382, 13.1219, 13.1219, 13.1219, 13.1219, 13.1219, 13.4889),
+	  geo_uncertainty = c(49890, 49890, 31921, 31921, 31921, 21031, 21031, 21031, 30085, 29379, 15836, 15836, 15836, 38040, 38040, 62102, 62102, 62102, 62102, 62102, 23555),
+	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3")
+	)	
+  d <- merge(d, loc, by=c("adm3","adm4"), all.x=TRUE)
  
 
-#  location <- data.frame(
-#    adm1 = c("Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi", "Maradi",
-#		"Maradi", "Maradi", "Tillabéri", "Maradi", "Maradi", "Maradi", "Tillabéri", "Tillabéri", "Maradi", "Maradi", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri", "Zinder", "Zinder", "Maradi", "Maradi", "Tillabéri", "Tillabéri", "Tillabéri", "Tillabéri",
-#	adm4 = c("Gabi", "Akora-Idi", "Guidan Tawayé Saboua", "Karazomé", "Koki", "Guarin Makoyo", "Guidan Bawa", "Safo", 
-#         "Bargaja", "Sarki Haoussa", "Baban Kori", "Guarin Guizo", "Samiya Goma", "Noualla", "Tabala Tondi T", "Azzazala", "Guidan Sori", "Karo Sofoua", "seno Tiko", "kampa Tegui", "Sarkin Bindigua", "Grpment Peulh Hardo Harouna", "Koubo", "Tchioubi", "Tabala", "Tchampanga", "Gochalo", "Kassari H", "Baban Anné", "Kodaou", "Tiko", "Djioga", "Sirimbana", "Patty"),
-#	latitude = c(13.235, 14.348, 13.81, 13.653, 13.573, 13.45, 13.87, 13.415, 14, 13.841, 13.933, 13.421, 13.266, 14.436, 12.73, 
-#             13.819, 13.529, 13.63, 14.215, 13.443, 13.245, 13.491, 13.1,  13.3, 13.756, 14.212, 13.275, 13.801, 13.51, 13.465, 13.118, 
-#             13.116, 13.098, 14.212),
-#	longitude = c(7.068, 6.656, 7.494, 6.868, 6.788, 6.967, 7.285, 7.113, 7.85, 7.592, 6.966, 7.024, 7.033, 
-#              6.92, 2.012, 7.617, 6.898, 6.619, 1.455, 2.649, 7.027, 7.096,    1.816, 2.628, 3.022, 1.455, 8.771, 8.985, 7.95, 7.768, 1.799, 1.75, 1.796, 1.453)
-#	)
-  
-#    d <- merge(d,location,by=c("adm1", "adm4"),all.x=TRUE)
-  
+
 	d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
