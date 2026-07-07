@@ -482,7 +482,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	fert <- d[, Nm]
 	vars <- paste0(rep(gsub("#", "fertilizer", c("N_#", "P_#", "K_#", "#_amount", "#_price")), each=9))
 	cols <- paste0(vars, rep(1:9, 5))
-	date <- rep(c(paste0("fertilizer_date", 1:9), 5)
+	date <- rep(paste0("fertilizer_date", 1:9), 5)
 	fert_long <- reshape( fert, varying = list (cols, date), v.names = c("value", "date"), direction = "long")
 	fert_long$variable <- vars[fert_long$time]
 	fert_long <- fert_long[!is.na(fert_long$value),]
@@ -493,6 +493,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	
 	carobiner::write_files(path, meta, d, long = fert_long)
 }
+
 
 
 
