@@ -16,7 +16,7 @@ Climate-smart agricultural practices, such as no-tillage (NT) and cover cropping
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
-		data_organization = "UTK", # University of Tennessee at Knoxville
+		data_organization = "UTK", 
 		publication = "doi:10.1002/agj2.21661",
 		project = NA,
 		carob_date = "2026-07-06",
@@ -59,7 +59,7 @@ Climate-smart agricultural practices, such as no-tillage (NT) and cover cropping
 	  land_prep_method = ifelse(grepl("CT", r2$Tillage), "conventional", "none"),
 	  rep =  as.integer(gsub("R", "", r2$Replications)),
 	  soil_NH4 = r2$`Soil NH4+`,
-	  soil_N03 = r2$`Soil NO3-`,
+	  soil_NO3 = r2$`Soil NO3-`,
 	  depth = 10,
 	  date = as.character(r2$`Sampling date`)
 	  
