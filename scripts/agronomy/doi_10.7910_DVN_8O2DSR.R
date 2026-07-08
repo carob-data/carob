@@ -15,7 +15,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 "
   
 	uri <- "doi:10.7910/DVN/8O2DSR"
-	group <- "agronomy"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -38,7 +38,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	
 	d <- data.frame(
 	  country = "Ethiopia",
-	  adm1 = NA,
 	  adm2 = "West Hararghe",
 	  adm3 = "Mieso",
 	  location = r$Site,
@@ -66,24 +65,19 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$is_survey <- FALSE 
 	d$irrigated <- FALSE
 
-	geo <- data.frame(
-	  adm3 = c("Mieso"),
-	  longitude = c(40.5638),
-	  latitude = c(9.1779),
-	  geo_uncertainty = c(51603),
-	  geo_source = c("GADM 4.1, adm3")
-	)
+	d$longitude = 40.5638
+	d$latitude = 9.1779
+	d$geo_uncertainty 51603
+	d$geo_source = "GADM 4.1, adm3"
 	
-	d <- merge(d,geo,by=c("adm3"),all.x=TRUE)
-	d$geo_from_source <- TRUE
+	d$geo_from_source <- FALSE #!
 
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 	d$fertilizer_type <- NA
 	
-	
 	d$yield_part <- "grain"
+	d$yield_isfresh <- NA
 	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- TRUE
 
 	carobiner::write_files(path, meta, d)
 }
