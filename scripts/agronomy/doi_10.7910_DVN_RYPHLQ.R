@@ -99,10 +99,10 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 		#adm2 = c("Aguié", "Aguié", "Aguié", "Dakoro", "Dakoro", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Guidan Roumdji", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Madarounfa", "Mahahi", "Mahahi", "Mahahi", "Mayahi", "Balleyara", "Balleyara", "kollo", "kollo", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", NA, NA, "Magaria", "Mirriah"),
 		#adm3 = c("Aguié", "Aguié", "Aguié", "Adjékoria", "Sabon Machi", "Guidan Roumdji", "Guidan Roumdji", "Guidan Sori", "Guidan Sori", "Guidan Sori", "Gabi", "Gabi", "Gabi", "Madarounfa", "Safo", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Yamma", "Sarkin Haoussa", "Sarkin Haoussa", "Sarkin Haoussa", "Sarkin Haoussa", "Tagazar", "Tagazar", "Dantiandou", "Kouré", "Torodi", "Torodi", "Torodi", "Torodi", "Torodi", NA, NA, "Bandé", "Gouna"),
 		adm4 = c("Baban Anné", "Grpment Peulh Hardo Harouna", "Kodaou", "Akora-Idi", "Baban Kori", "Karazomé", "Karo Sofoua", "Guidan Sori", "Koki", "Noualla", "Gabi", "Samiya Goma", "Sarkin Bindigua", "Bargaja", "Safo", "Guarin Guizo", "Guarin Makoyo", "Guidan Bawa", "Azzazala", "Guidan Tawayé Saboua", "Sarki Haoussa", "Azzazala", "Tabala", "Tabala Tondi T", "Kampa Tegui", "Tchioubi", "Djioga", "Koubo", "Seno Tiko", "Tchampanga", "Tiko", "Sirimbana", "Patty", "Gochalo", "Kassari H"),
-		longitude = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-		latitude = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-	)
-
+		longitude = c( NA, NA, 7.768, NA, 8.074, 6.869, NA, 6.877, 6.789, NA, 8.814, NA, NA, 7.097, 7.121, NA, NA, 7.567, NA, 7.494, NA, NA, 2.916, NA, NA, NA, NA, 1.817, NA, NA, 1.415, 1.797, NA, 8.771, 8.631 ),
+		latitude = c( NA, NA, 13.467, NA, 13.73, 13.653, NA, 13.538, 13.576, NA, 13.125, NA, NA, 13.293, 13.408, NA, NA, 13.91, NA, 13.81, NA, NA, 13.606, NA, NA, NA, NA, 13.1, NA, NA, 14.241, 13.098, NA, 13.278, 13.203 )
+	) 
+	
 	# if we cannot find "adm4" we fall back to "adm3"
 	geo3 <- data.frame(
 		adm3 = c("Adjékoria", "Aguié", "Bandé", "Dantiandou", "Gabi", "Gouna", "Guidan Roumdji", "Guidan Sori", "Kouré", "Madarounfa", "Sabon Machi", "Safo", "Sarkin Haoussa", "Sarkin Yamma", "Tagazar", "Torodi"),
@@ -128,7 +128,7 @@ Data were collected from on-farm trials, conducted with farmers, aiming at devel
 	d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
-    d$fertilizer_type <- "none"
+  d$fertilizer_type <- "none"
 	d$fertilizer_type[d$fertilizer_used] <- "NPK"
 
 	d$yield_part <- "grain"
