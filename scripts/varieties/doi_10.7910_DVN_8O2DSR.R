@@ -1,10 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
-#geodata not available at the moment
-# netplot area was very small 
 
 carob_script <- function(path) {
 
