@@ -1,12 +1,11 @@
-#
-# --- carobiner::draft() wrote this under scripts/_AI/_rejected/ (review here, then move manually) ---
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
-# After review: move to scripts/<group>/ if you complete it, or to scripts/_rejected/ if permanently dropped.
-#
-# carob_script() ends with return(FALSE): nothing left to auto-generate after data reads.
-#
 # R script for "carob"
 # license: GPL (>=3)
+
+
+## REJECTED 
+# no response data ("GRAIN" is not clear)
+# no location data 
+# also: no management data except spraying
 
 ## ISSUES
 # data_organization: fixed TARI → SARI (Savanna Agricultural Research Institute) — verified against the actual author/producer fields in the dataset JSON.
@@ -29,17 +28,6 @@ This data study explores raising and sustaining productivity in cereal-legume cr
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-## Non-metadata .json files in ff (e.g. nested Dataverse Dataset/*.json). Parsed with jsonlite::fromJSON.
-## Optional string snapshots: lapply(json_list, function(x) jsonlite::toJSON(x, pretty=TRUE, auto_unbox=TRUE))
-	jmeta <- paste0(yuri::simpleURI(uri), ".json")
-	json_paths <- ff[grepl("\\.json$", ff, ignore.case=TRUE)]
-	json_paths <- json_paths[!tolower(basename(json_paths)) %in% tolower(c(jmeta, "metadata.json"))]
-	json_list <- if (length(json_paths) > 0) {
-		stats::setNames(lapply(json_paths, jsonlite::fromJSON), basename(json_paths))
-	} else {
-		list()
-	}
-
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "IITA; SARI",
 		publication = NA,
@@ -55,12 +43,8 @@ This data study explores raising and sustaining productivity in cereal-legume cr
 		notes = ""
 	)
 	
-
 	f1 <- ff[basename(ff) == "001_maizeSesameIntercropping.csv"]
-	#f2 <- ff[basename(ff) == ""]
-
 	r1 <- read.csv(f1)
-	#r2 <- read.???(f2)
 
 	d <- data.frame(rep = as.integer(r1$REP))
 	d$crop <- "sesame"
