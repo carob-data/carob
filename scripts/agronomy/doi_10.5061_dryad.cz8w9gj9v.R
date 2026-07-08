@@ -96,17 +96,18 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 	    min <- ifelse(length(nums) >= 2, nums[2], 0)
 	    sec <- ifelse(length(nums) >= 3, nums[3], 0)
 	    # Correct impossible values
-	    if (min >= 60) {
-	      deg <- deg + floor(min / 60)
-	      min <- min %% 60
+		## these are likely decimal numbers
+		## these may also exist <= 60 but cannot be easily detected
+	    if (min > 60) {
+	      min <- 0.6 * min
 	    }
-	    if (sec >= 60) {
-	      min <- min + floor(sec / 60)
-	      sec <- sec %% 60
+	    if (sec > 60) {
+	      sec <- 0.6 * sec
 	    }
 	    sign * (deg + min/60 + sec/3600)
 	  })
 	}
+
 	
 	d$latitude <- round(dms_to_decimal(d$latitude),4)
 	d$longitude <- round(dms_to_decimal(d$longitude), 4)
