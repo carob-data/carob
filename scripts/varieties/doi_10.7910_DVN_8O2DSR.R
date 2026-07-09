@@ -61,10 +61,10 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$is_survey <- FALSE 
 	d$irrigated <- FALSE
 
-	d$longitude = 40.5638
-	d$latitude = 9.1779
-	d$geo_uncertainty 51603
-	d$geo_source = "GADM 4.1, adm3"
+	d$longitude <- 40.5638
+	d$latitude <- 9.1779
+	d$geo_uncertainty <- 51603
+	d$geo_source <- "GADM 4.1, adm3"
 	
 	d$geo_from_source <- FALSE #!
 
