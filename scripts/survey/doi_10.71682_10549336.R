@@ -13,13 +13,14 @@ Analysis of Household-Level Survey Data: Farm Characteristics and Resource Alloc
 
 Processed dataset from a household-level survey describing the main farm characteristics, production, and resource allocation in two municipalities.  The survey covers 300 farms across three districts (Kham, Moke, and Nonghet) in Xieng Khouang Province, collected between December 2023 and May 2024.
 "
+
 	uri <- "doi:10.71682/10549336"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIMMYT; Lao Farmer Network",
-		publication = "https://hdl.handle.net/10883/35403",#cant site a report
+		data_organization = "CIMMYT;LFN",
+		publication = "hdl:10883/35403",
 		project = NA,
 		design = "unitOfAnalysis: Household level; collectionMode: Online survey",
 		data_type = "survey",
