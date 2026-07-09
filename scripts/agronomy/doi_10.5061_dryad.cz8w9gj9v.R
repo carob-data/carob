@@ -98,10 +98,10 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 	    # Correct impossible values
 		## these are likely decimal numbers
 		## these may also exist <= 60 but cannot be easily detected
-	    if (min > 60) {
+	    if (min >= 60) {
 	      min <- 0.6 * min
 	    }
-	    if (sec > 60) {
+	    if (sec >= 60) {
 	      sec <- 0.6 * sec
 	    }
 	    sign * (deg + min/60 + sec/3600)
