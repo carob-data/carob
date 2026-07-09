@@ -3,6 +3,7 @@
 
 ## ISSUES
 #1. dataset focuses on a rice-wheat system, so every variable captured is a combination of the 2 crops
+## that is OK for land prep costs, but we can't use the yield data 
 
 
 carob_script <- function(path) {
@@ -33,7 +34,6 @@ The data comes from a survey designed to understand the scope of LLL services in
 	)
 	
 	f <- ff[basename(ff) == "Data_LLL_ Western_Nepal.xlsx"]
-
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
@@ -48,8 +48,9 @@ The data comes from a survey designed to understand the scope of LLL services in
 	  cropland_used=r$culti_area_RW,
 	  land_prep_cost=r$Tillcost_Rsha,
 	  irrigation_cost=r$irrigcost_RW_perfarm,
-	  crop="rice;wheat",#survey is from a rice-wheat system, variables captured are for a system rather than a single crop
-	  yield=r$GY_R_W_kgha,
+	  ##survey is from a rice-wheat system, variables captured are for a system rather than a single crop
+	  # crop="rice;wheat",
+	  # yield=r$GY_R_W_kgha,
 	  currency="NPR"
 	)
 	
@@ -64,10 +65,10 @@ The data comes from a survey designed to understand the scope of LLL services in
 	d$geo_from_source <- FALSE
 	d$planting_date <- as.character(NA)
 	
-  d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
-	d$yield_part <- "grain"
-	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- NA
+	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
+	#d$yield_part <- "grain"
+	#d$yield_moisture <- as.numeric(NA)
+	#d$yield_isfresh <- NA
 	
 	#location data
 	loc <- data.frame(
@@ -80,7 +81,7 @@ The data comes from a survey designed to understand the scope of LLL services in
 	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3")
 	)
 	
-	d <- merge(d,loc,by=c("adm1","adm3"),all.x = TRUE)
+	d <- merge(d,loc,by=c("adm1", "adm3"), all.x = TRUE)
 	
 	carobiner::write_files(path, meta, d)
 }
