@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
 
 
 carob_script <- function(path) {
@@ -25,21 +23,19 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield;seed_weight;plant_height;flowering_days;maturity_days",
-  	carob_contributor = "Illiana Kwenda",
+		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-09",
 		carob_completion = 90,		
 		carob_effort = 1
 	)
 	
-
 	f1 <- ff[basename(ff) == "Advanced drought tolerant sorghum hybrids at Melkassa 2020.xlsx"]
-
 	r1 <- carobiner::read.excel(f1)
 
 	d <- data.frame(
 	  country = "Ethiopia",
 	  adm1 = NA,
-	  adm2 =  "East Shewa Zone",
+	  adm2 = "East Shewa Zone",
 	  adm3 = "Adama",
 	  location = (r1$Site),
 	  plot_id = as.character(r1$Plot),
@@ -56,9 +52,9 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	)
 	
 	d$location[d$location == "MK"] <- "Melkassa"
-	d$planting_date <- as.character("2020")
-	d$harvest_date <- as.character("2020")
-	d$trial_id <- paste(d$location,d$planting_date,sep = "_")
+	d$planting_date <- "2020"
+	d$harvest_date <- "2020"
+	d$trial_id <- "1"
 	d$on_farm <- TRUE 
 	d$is_survey <- FALSE 
 	d$irrigated <- FALSE
