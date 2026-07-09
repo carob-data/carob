@@ -61,7 +61,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  crop = "sorghum"
 	)
 	
-	d$planting_date <- as.character(as.Date("2018-07-17"))
+	d$planting_date <- "2018-07-17"
 	d$harvest_date <- "2018"
 	d$trial_id <- "1"
 	d$on_farm <- TRUE 
