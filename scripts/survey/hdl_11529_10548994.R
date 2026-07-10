@@ -18,7 +18,7 @@ Dataset processed from a household-level survey to describe the main farm charac
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIMMYT; IWMI; Kathmandu University",
+		data_organization = "CIMMYT; IWMI; KUN",
 		publication = "https://hdl.handle.net/10568/139116",#cannot cite a report
 		project = NA,
 		design = "unitOfAnalysis: Household level",
