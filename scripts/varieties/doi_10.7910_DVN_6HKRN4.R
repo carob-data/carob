@@ -63,6 +63,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	# s70 <- as.numeric(r$`Striga count at 70 days`) / d$plot_area
 	# s90 <- as.numeric(r$`Striga count at 90 days`) / d$plot_area
     # but that seems way too high, so I am leaving them out 
+	d$stress <- "striga"
 	
 	d$trial_id <- r$Type
 	d$on_farm <- NA
