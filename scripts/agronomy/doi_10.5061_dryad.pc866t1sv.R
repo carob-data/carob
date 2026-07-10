@@ -11,7 +11,7 @@ carob_script <- function(path) {
    
    meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
        data_organization = "COLSU", # Colorado State University
-       publication="doi.org/10.1016/j.agee.2022.108336", 
+       publication="doi:10.1016/j.agee.2022.108336", 
        project=NA, 
        data_type= "on-station experiment", 
        treatment_vars= "OM_type; variety", 
@@ -19,7 +19,7 @@ carob_script <- function(path) {
        carob_contributor= "Cedric Ngakou", 
        carob_effort = NA,
        carob_date="2025-06-18",
-       completion=75,
+       carob_completion=75,
        notes=NA
    )
    

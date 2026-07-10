@@ -16,7 +16,7 @@ The study was carried out by the International Institute of Tropical Agriculture
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
-		publication = "doi.org/10.1016/j.jenvman.2017.06.058",
+		publication = "doi:10.1016/j.jenvman.2017.06.058",
 		project = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",

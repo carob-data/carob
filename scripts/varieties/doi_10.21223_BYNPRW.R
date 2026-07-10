@@ -26,7 +26,7 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
          carob_contributor= "Cedric Ngakou", 
          carob_effort = NA,
          carob_date="2025-08-01",
-         completion=100,
+         carob_completion=100,
          notes=NA
    )
    

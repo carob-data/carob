@@ -16,7 +16,7 @@ carob_script <- function(path) {
   
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
      data_organization = "IITA",
-     publication = "doi.org/10.1002/eap.1984",
+     publication = "doi:10.1002/eap.1984",
      project = NA,
      data_type = "survey",
      treatment_vars = "none",
