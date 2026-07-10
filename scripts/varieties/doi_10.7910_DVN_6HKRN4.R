@@ -23,7 +23,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "variety",
 		response_vars = "yield;plant_height",
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-10",
@@ -35,11 +35,12 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 
 	r <- carobiner::read.excel(f)
 
-
 	d <- data.frame(
 	  country = "Ethiopia",
 	  location = r$Site,
+	  planting_date = as.character(as.Date(r$Sown)),
 	  treatment = r$Genotype,
+	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
 	  rep = as.integer(r$Replicate),
 	  yield = r$`Yield Kg/Ha`,
