@@ -24,7 +24,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "variety",
 		response_vars = "yield;seed_weight;plant_height;flowering_days;maturity_days", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-10",
@@ -45,7 +45,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  location = r$Site,
 	  plot_id = as.character(r$Plot),
 	  treatment = r$Genotype,
-	  #variety = as.character(r$Genotype)
+	  variety = as.character(r$Genotype),
 	  plant_height = r$PHT,
 	  maturity_days = r$DTM,
 	  flowering_days = r$DTF,
@@ -61,7 +61,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	d$trial_id <- "1"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <-FALSE
+	d$irrigated <- NA
 	
 	## GADM for record keeping
 	#Shiraro is not yet available in GADM so i used coordinates from google maps
