@@ -2,9 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# REJECTED - no quantitative response variable available. This is a package-monitoring survey with only
-# management/practice fields, GPS, and qualitative ratings (germination 1-4 scale undefined, farmer
-# fertility perception); no yield, biomass, or production data for the trial plots
+# REJECTED - This is a package-monitoring survey specific to a project. 
+# It has management/practice fields, GPS, and qualitative ratings (germination 1-4 scale undefined, farmer
+# fertility perception); Not clear that this is of general value
 
 carob_script <- function(path) {
 
@@ -23,20 +23,9 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	group <- "draft"
 	ff  <- carobiner::get_data(uri, path, group)
 
-## Non-metadata .json files in ff (e.g. nested Dataverse Dataset/*.json). Parsed with jsonlite::fromJSON.
-## Optional string snapshots: lapply(json_list, function(x) jsonlite::toJSON(x, pretty=TRUE, auto_unbox=TRUE))
-	jmeta <- paste0(yuri::simpleURI(uri), ".json")
-	json_paths <- ff[grepl("\\.json$", ff, ignore.case=TRUE)]
-	json_paths <- json_paths[!tolower(basename(json_paths)) %in% tolower(c(jmeta, "metadata.json"))]
-	json_list <- if (length(json_paths) > 0) {
-		stats::setNames(lapply(json_paths, jsonlite::fromJSON), basename(json_paths))
-	} else {
-		list()
-	}
-
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "IITA; World Agroforestry Centre (ICRAF); WUR; International Institute of Tropical Agriculture (IITA), Wageningen University",
+		data_organization = "IITA; ICRAF; WUR",
 		publication = NA,
 		project = "N2Africa",
 		# if available report the experimental or survey design
