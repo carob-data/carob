@@ -29,7 +29,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 		country = "Nigeria",
 		adm1 = "Kano",
 		adm2 = r$Location,
-		adm3 = "Wasai", #from the reference
+		location = "Wasai", #from the reference
 		latitude = 8.67,
 		longitude = 12.15,
 		geo_from_source = FALSE,
