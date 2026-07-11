@@ -1,7 +1,5 @@
 # R script for "carob"
 
-## variable "grain_yield" is missing. Data not very useful without It
-## RH has contacted CIMMYT. 
 
 carob_script <- function(path) {
   

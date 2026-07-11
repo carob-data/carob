@@ -35,19 +35,25 @@ proc_wheat <- function(ff) {
 	# 'Cid', 'Sid', 	
 	vars <- c( 'Trait.name', 'Value', 'Trial.name', 'Loc_no', 'Country', 'Loc_desc', 'Cycle', 'Gen_name', 'Rep', 'Plot')
 	raw <- raw[, vars]
-	
+
 	raw$Value <- trimws(raw$Value)
 	raw$Value[raw$Value %in% c("-", ".", "", "NORMAL", "SPARSE", "MIX", "DENSE")] <- NA
 	raw$Value[grep("\\+|\\*|-|B|R", raw$Value)] <- NA   
 	raw$Value[raw$Value == "FALSE"] <- 0
-
 	raw$Value <- as.numeric(raw$Value)
-	i <- colSums(!is.na(raw))
-	raw <- raw[, i>0]
-	
-	raw <- aggregate(Value ~ ., data=raw, mean, na.rm=TRUE)
+	raw <- raw[!(is.na(raw$Trait.name) | is.na(raw$Value)), ]
 
-	i <- match(c("Trait.name", "Trial.name"), names(raw))
+	i <- colSums(!is.na(raw))
+	raw <- raw[, i > 0]
+	for (v in vars[-c(1:2)]) {
+		if (!is.null(raw[[v]])) {
+		# for aggeregate cannot have NAs
+			raw[[v]][is.na(raw[[v]])] <- -99
+		}
+	}
+
+	raw <- aggregate(Value ~ ., data=raw, mean, na.rm=FALSE)
+	##i <- match(c("Trait.name", "Trial.name"), names(raw))
 	
 	vars <- vars[vars %in% colnames(raw)]
 	raw <- reshape(raw, idvar=vars[-c(1:2)], timevar = "Trait.name", direction = "wide")
@@ -87,6 +93,8 @@ proc_wheat <- function(ff) {
 		longitude = r$longitude,
 		latitude = r$latitude
 	)
+	
+
 	if (!is.null(r$grain_yield)) d$yield = as.numeric(r$grain_yield) * 1000
 	if (!is.null(r$sowing_date)) {
 		d$planting_date = as.Date(r$sowing_date, "%b %d %Y")
