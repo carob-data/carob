@@ -23,12 +23,12 @@ carob_script <- function(path) {
 		
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
-	d$crop <- "durum wheat"
+	d$wide$crop <- "durum wheat"
 	
 	#removing out of bound value
 	d$soil_pH[d$soil_pH == 24] <- NA
 	d$soil_pH[d$soil_pH == 0] <- NA
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

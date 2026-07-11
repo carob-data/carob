@@ -24,21 +24,30 @@ carob_script <- function(path) {
 
 	years <- gsub(".xlsx", "", grep("HRWSN.xlsx", basename(ff), value=TRUE))
 	
-	d <- lapply(years, \(y) {
+	maxid <- 0
+	dd <- lapply(years, \(y) {
 		f <- ff[grep(paste0("^", y), basename(ff))]
-		proc_wheat(f)
+		d <- proc_wheat(f)
+		d$wide$record_id <- d$wide$record_id + maxid
+		d$long$record_id <- d$long$record_id + maxid
+		maxid <<- max(d$wide$record_id)		
+		d		
 	})
 	
-	d <- do.call(carobiner::bindr, d) 
+	dlong <- do.call(carobiner::bindr, lapply(dd, \(x) x[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(dd, \(x) x[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	d <- list(long=dlong, wide=dwide)
 	
-	d$emergence_date[d$emergence_date == "2026-08-26"] <- "2001-08-26"
+	d$wide$emergence_date[d$wide$emergence_date == "2026-08-26"] <- "2001-08-26"
 		
-	d$planting_date[d$planting_date == "94-95"] <- "1994"
-	d$planting_date[d$planting_date == "96-97"] <- "1996"
-	d$planting_date[d$planting_date == "98-99"] <- "1998"
-	d$planting_date[d$planting_date == "00-01"] <- "2000"
+	d$wide$planting_date[d$wide$planting_date == "94-95"] <- "1994"
+	d$wide$planting_date[d$wide$planting_date == "96-97"] <- "1996"
+	d$wide$planting_date[d$wide$planting_date == "98-99"] <- "1998"
+	d$wide$planting_date[d$wide$planting_date == "00-01"] <- "2000"
 		
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 	

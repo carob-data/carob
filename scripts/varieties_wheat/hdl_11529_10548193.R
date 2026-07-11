@@ -26,6 +26,6 @@ carob_script <- function(path) {
 	
 	d$planting_date[d$planting_date == "2015-04-08"] <- NA
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 
 }

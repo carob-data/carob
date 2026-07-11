@@ -27,5 +27,5 @@ carob_script <- function(path) {
 
 	d$P_fertilizer[d$P_fertilizer > 450] <- NA
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

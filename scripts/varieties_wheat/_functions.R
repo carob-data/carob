@@ -80,6 +80,9 @@ proc_wheat <- function(ff) {
 	r <- merge(raw, env, by = c("Country", "Loc_no", "Trial.name", "Cycle"), all.x = TRUE)
 	colnames(r) <- tolower(colnames(r))
 	
+	r <- r[!grepl("null", r$country, ignore.case=TRUE), ]
+
+	
 	d <- data.frame(
 		crop = "wheat",
 		yield_part = "grain",
@@ -215,6 +218,7 @@ proc_wheat <- function(ff) {
 		"trifolium alexandrinum", "berseem clover",
 		"blend", NA,
 		"b napus", "rapeseed",		
+		"b. napus", "rapeseed",		
 		"nape seed", "rapeseed",		
 		"brasica napus", "rapeseed",
 		"rape-seed", "rapeseed",
@@ -261,7 +265,7 @@ proc_wheat <- function(ff) {
 		"maize cerial", "maize",
 		"costan", "cotton",
 		"sugar  beet-maize", "sugar beet; maize",	
-		"cotton/vegetable", "cotton; vegetables",
+		"cotton/vegetable", "cotton; vegetable",
 		"cotlon", "cotton",
 		"cottan", "cotton",
 		"cottoon", "cotton",
@@ -298,7 +302,10 @@ proc_wheat <- function(ff) {
 		"pistivum", "pea",
 		"field peas", "pea",
 		"peas barby blend", "pea",
+		"field bean", "lablab",
 		"field beans", "lablab",
+		"pulses (faba bean and field pea)", "faba bean;pea", 
+		"soja y poroto", "soybean;common bean",
 		"fodder", "forage legume",
 		"food legumes", "legume",
 		"food legume", "legume",
@@ -324,7 +331,7 @@ proc_wheat <- function(ff) {
 		"lab-lab", "lablab",
 		"lablab purpureus (cover crop)", "lablab",
 		"lablab purpureus", "lablab",		
-		"leaves vegetable followed by maize", "vegetables; maize",
+		"leaves vegetable followed by maize", "vegetable; maize",
 		"lechuga", "lettuce",
 		"legumes", "legume", 
 		"legume", "legume",
@@ -536,6 +543,7 @@ proc_wheat <- function(ff) {
 		"sugerbeet", "sugar beet",
 		"sugarr beets", "sugar beet",
 		"sugar beat", "sugar beet",
+		"sugor beet", "sugar beet",
 		"sugar beattrefoil", "sugar beet",			
 		"sija", "soybean",
 		"soja", "soybean",
@@ -612,14 +620,16 @@ proc_wheat <- function(ff) {
 		"ves", "vetch",
 		"beza", "vetch",
 		"veza", "vetch",
-		"vegetable", "vegetables",
-		"vegateables", "vegetables",
+		"vegetable", "vegetable",
+		"vegateables", "vegetable",
 		"water melon", "watermelon",
 		"spring wheat", "wheat",			
 		"weeds", "none",
 		"cereal", "cereal", 		
 		"beans", "common bean",
 		"bean", "common bean",
+		"onions", "onion",
+		"vegetables", "vegetable",
 		"crop", NA)
 	)
 
@@ -675,13 +685,13 @@ proc_wheat <- function(ff) {
 		d$soil_pH <- as.numeric(r$soil_ph_actual_value)
 		d$soil_pH[d$soil_pH == 0] <- NA
 	}
-					
+
 	d$country[d$country== "Dem Rep of Congo"] <- "Democratic Republic of the Congo"
 	d$country[d$country== "U A Emirates"] <- "United Arab Emirates"
 	d$country[d$country== "Swaziland"] <- "Eswatini"
 	d$country[d$country == "Bosnia"] <- "Bosnia and Herzegovina"
 	d$country[d$country == "Viet Nam"] <- "Vietnam"
-	
+
 
 	# more could be done. But we should not keep ALL CAPS
 	d$location <- carobiner::fix_name(d$location, "title")
@@ -737,21 +747,7 @@ proc_wheat <- function(ff) {
 	d$soil_type <- tolow(r$soil_clasification)
 	if (!is.null(r$soil_aluminium_toxicity)) d$soil_aluminium_toxicity <- tolower(r$soil_aluminium_toxicity) == "yes"
 
-	d$blast_intensity <- r$`blast intensity`
-	d$blast_severity <- r$`blast severity`
-	d$powdery_mildew <- r$powdery_mildew
-	d$stem_rust <- r$stem_rust
-	d$leaf_rust <- r$leaf_rust
 	d$sterility_index <- r$sterility_index
-	d$fusarium_scab_spike <- r$fusarium_scab_spike
-	d$fusarium_graminearum <- r$`Fusarium graminearum severity`
-	d$helminthosporium_sativum_leaf <- r$helminthosporium_sativum_leaf
-	d$septoria_tritici_blotch <- r$septoria_tritici_blotch 
-	d$septoria_species <- r$septoria_species 
-	d$blast_severity <- r$blast_severity 
-	d$blast_intensity <- r$blast_intensity
-	d$stripe_rust_on_leaf <- r$stripe_rust_on_leaf 
-	d$H_tritici_repentis <- r$h_tritici_repentis
 	d$grain_Fe <- r$feconcentration
 	d$grain_Zn <- r$znconcentration
 	d$weed_species <- tolow(r$major_weed_species)
@@ -773,12 +769,38 @@ proc_wheat <- function(ff) {
 	#d$fungicide_product <- clean_product(r$`fungicide_product(s)`)
 	#d$insecticide_product <- clean_product(r$`insecticide_product(s)`)
 	
-	d <- d[d$country != "Null", ]
-	d <- d[!is.na(d$yield), ]
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
-	
-	unique(d)
-}
 
+	d$record_id <- r$record_id <- 1:nrow(d)
+	x <- d["record_id"]
+	x$blast_severity <- r$blast_severity 
+	x$blast_severity <- r$`blast severity`
+	x$blast_intensity <- r$blast_intensity
+	x$blast_intensity <- r$`blast intensity`
+	x$powdery_mildew <- r$powdery_mildew
+	x$stem_rust <- r$stem_rust
+	x$leaf_rust <- r$leaf_rust
+	x$fusarium_scab_spike <- r$fusarium_scab_spike
+	x$fusarium_graminearum <- r$`Fusarium graminearum severity`
+	x$helminthosporium_sativum_leaf <- r$helminthosporium_sativum_leaf
+	x$septoria_tritici_blotch <- r$septoria_tritici_blotch 
+	x$septoria_species <- r$septoria_species 
+	x$stripe_rust_on_leaf <- r$stripe_rust_on_leaf 
+	x$pyrenophora_tritici_repentis <- r$h_tritici_repentis
+
+	if (ncol(x) > 1) {
+		nms <- names(x)[-1]
+		x <- reshape(x, varying=nms,times=nms, direction="long", v.names="value")
+		x <- x[!is.na(x$value), ]
+		x$id <- NULL
+		rownames(x) <- NULL
+		colnames(x)[2] <- "disease"
+		x$disease <- gsub("_", " ", x$disease) 
+	} else {
+		x <- NULL
+	}
+	
+	list(wide=unique(d), long=unique(x))
+}
 

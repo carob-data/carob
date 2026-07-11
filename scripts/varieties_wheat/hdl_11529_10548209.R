@@ -25,5 +25,5 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)
 
 #Note:  ATHIENOY is in the UN buffer zone between Cyprus and N Cyprus. GADM needs to updated for that.
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

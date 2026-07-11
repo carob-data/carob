@@ -13,7 +13,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 "
 
 	uri <- "doi:10.7910/DVN/GPLAJQ"
-	group <- "agronomy"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,

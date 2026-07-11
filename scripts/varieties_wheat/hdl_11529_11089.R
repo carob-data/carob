@@ -28,20 +28,26 @@ carob_script <- function(path) {
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 
-	d <- vector("list", length(sets))
+	maxid <- 0
+	dd <- vector("list", length(sets))
 	for (i in seq_along(sets)) {
 		fs <- grep(sets[i], ff, value=TRUE)
-		d[[i]] <- proc_wheat(fs)
+		d <- proc_wheat(fs)
+		d$wide$record_id <- d$wide$record_id + maxid
+		d$long$record_id <- d$long$record_id + maxid
+		maxid <<- max(d$wide$record_id)
+		dd[[i]] <- d
 	}
+	dlong <- do.call(carobiner::bindr, lapply(dd, \(x) x[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(dd, \(x) x[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	d <- list(long=dlong, wide=dwide)
 
-	dd <- do.call(carobiner::bindr, d)
-	d
+	d$wide$planting_date[d$wide$planting_date == "92-93"] <- "1992"
+	d$wide$planting_date[d$wide$planting_date == "99-00"] <- "1999"
+	d$wide$planting_date[d$wide$planting_date == "00-01"] <- "2000"
 
-	dd$planting_date[dd$planting_date == "92-93"] <- "1992"
-	dd$planting_date[dd$planting_date == "99-00"] <- "1999"
-	dd$planting_date[dd$planting_date == "00-01"] <- "2000"
-
-# all scripts must end like this
-	carobiner::write_files(meta, dd, path=path)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
