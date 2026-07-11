@@ -1,12 +1,13 @@
 # R script for "carob"
 
+## these data are derived from CIMMYT wheat trials already processed.
 
 carob_script <- function(path) {
   
-"Genotype ´ environment (G x E) interaction can be studied through multienvironment trials used to select wheat (Triticum aestivum L.) lines. We used spring wheat yield data from 136 international environments to evaluate the predictive ability (PA) of different models in diverse environments by modeling G X E using the pedigree-derived additive relationship matrix (A matrix)."
+"Genotype x environment (G x E) interaction can be studied through multienvironment trials used to select wheat (Triticum aestivum L.) lines. We used spring wheat yield data from 136 international environments to evaluate the predictive ability (PA) of different models in diverse environments by modeling G X E using the pedigree-derived additive relationship matrix (A matrix)."
   
 	uri <- "hdl:11529/10831"
-	group <- "wheat_trials"
+	group <- "varieties_wheat"
 	ff <- carobiner::get_data(uri, path, group)
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		publication= "doi:10.2135/cropsci2016.06.0558",
@@ -14,10 +15,11 @@ carob_script <- function(path) {
 		carob_contributor="Cedric Ngakou", 
 		data_type="on-station experiment",
 		project=NA,
+		response_vars = "yield",
+		treatment_vars = "variety",
 		carob_date="2023-10-19"		
 	)
-  
-	
+ 
 	f1 <- ff[basename(ff) == "1SATYN.csv"] 
 	f2 <- ff[basename(ff) == "1WYCYT.csv"]
 	f3 <- ff[basename(ff) == "2SATYN.csv"]
@@ -49,12 +51,6 @@ carob_script <- function(path) {
 		variety = r$Entry
 	)
  
- ## create a data frame with location , longitude, latitude and country variable
- ## The information come from # doi: 10.2135/cropsci2016.06.0558 # 
-
-## RH included codes that are not in d$trial_id
-## "BGLD J3" "Iran S"	"Iran SA" "Iran SC" "Mex B"	 "MEX CM"	"Mex D"	 "Mex H"	 "Mex HD"	"Pak N"	 "Pak R" 
-## "China L" "Mex-Baj"
 
 	location <- data.frame(
 		trial_id = c("BGLD D", "BGLD J", "BGLD R", "China L", "Croatia O", "Egypt A", 
@@ -74,6 +70,7 @@ carob_script <- function(path) {
   
 	# Add location and country in the dataset 
 	d <- merge(d, location, by="trial_id", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	
 	#fixes
 	d$longitude[d$location=="Dharwad"] <- 75.0066516
@@ -91,11 +88,13 @@ carob_script <- function(path) {
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE
 	d$irrigated <- FALSE
+
+	d$trial_id <- "1"
+	d$yield_moisture <- K_fertilizer <- N_fertilizer <- P_fertilizer <- NA
+	d$planting_date <- NA
 	
 	#data type
 	d$yield_part <- "grain"
-
 	carobiner::write_files(meta, d, path=path)
-	
 }
 
