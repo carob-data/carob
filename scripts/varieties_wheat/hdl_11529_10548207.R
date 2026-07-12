@@ -3,7 +3,7 @@
 
 carob_script <- function(path) {
 
-"	CIMMYT annually distributes improved germplasm developed by its researchers and partners in international nurseries trials and experiments. The High Rainfall Wheat Yield Trial (HRWYT) contains very top-yielding advance lines of spring bread wheat (Triticum aestivum) germplasm adapted to high rainfall, Wheat Mega-environment 2 (ME2HR). (2007)"
+"CIMMYT annually distributes improved germplasm developed by its researchers and partners in international nurseries trials and experiments. The High Rainfall Wheat Yield Trial (HRWYT) contains very top-yielding advance lines of spring bread wheat (Triticum aestivum) germplasm adapted to high rainfall, Wheat Mega-environment 2 (ME2HR). (2007)"
 	
 	uri <- "hdl:11529/10548207"
 	group <- "varieties_wheat"
@@ -15,20 +15,14 @@ carob_script <- function(path) {
 	   carob_contributor="Andrew Sila",
 	   carob_effort = NA,
 	   carob_date="2023-05-03",
-	   
 	   data_type="on-station experiment",
 		response_vars = "yield",
-		treatment_vars = "variety_code"
-	    
-	    
+		treatment_vars = "variety_code"	    
 	)
-
-
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
-	d <- d[d$country != "Null", ]
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 
 }

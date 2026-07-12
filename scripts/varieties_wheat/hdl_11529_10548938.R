@@ -25,5 +25,5 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)
 	d$previous_crop <- as.character(d$previous_crop)
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

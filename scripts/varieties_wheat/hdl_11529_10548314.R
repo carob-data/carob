@@ -27,5 +27,5 @@ carob_script <- function(path) {
 
 	d$harvest_date[which(d$harvest_date == "2049-06-12")] <- "2019-06-12"
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

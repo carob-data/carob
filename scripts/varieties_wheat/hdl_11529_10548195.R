@@ -24,21 +24,32 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	years <- gsub(".xlsx", "", grep("HRWYT.xlsx", basename(ff), value=TRUE))
 	
-	d <- lapply(years, \(y) {
+	maxid <- 0
+	x <- lapply(years, \(y) {
 		f <- ff[grep(paste0("^", y), basename(ff))]
-		proc_wheat(f)
+		d <- proc_wheat(f)
+		d$wide$record_id <- d$wide$record_id + maxid
+		d$long$record_id <- d$long$record_id + maxid
+		maxid <<- max(d$wide$record_id)
+		d
 	})
 	
-	d <- do.call(carobiner::bindr, d) 
-	d$planting_date[d$planting_date == "92-93"] <- "1992"
-	d$planting_date[d$planting_date == "99-00"] <- "1999"
-	d$planting_date[d$planting_date == "00-01"] <- "2000"
+	dlong <- do.call(carobiner::bindr, lapply(x, \(d) d[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(x, \(d) d[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	
+	d <- list(long=dlong, wide=dwide)
+	
+	d$wide$planting_date[d$wide$planting_date == "92-93"] <- "1992"
+	d$wide$planting_date[d$wide$planting_date == "99-00"] <- "1999"
+	d$wide$planting_date[d$wide$planting_date == "00-01"] <- "2000"
 
-	d$soil_pH[d$soil_pH==60] <- 6.0
-		
-		
-	carobiner::write_files(path, meta, d)
+	d$wide$soil_pH[d$soil_pH==60] <- 6.0
+	
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
+
 
 	
 	

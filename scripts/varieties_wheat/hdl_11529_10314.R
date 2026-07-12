@@ -26,6 +26,6 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)
 	
 	d$maturity_days[d$maturity_days > 400] <- NA
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

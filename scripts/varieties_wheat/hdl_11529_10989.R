@@ -26,6 +26,6 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)
   
   # all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
