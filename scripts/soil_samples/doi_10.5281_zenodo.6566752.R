@@ -40,10 +40,12 @@ the same SUs."
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-		data_organization = "Ethiopian Environment and Forest Research Institute; Natural Resources Institute Finland; FAO", #EEFRI; Luke; FAO
+		data_organization = "EEFRI; Luke; FAO",
 		publication = "doi:10.1002/ldr.3647",
-		project = "Assessment of the Forest Carbon Content in Soil and Litter in Ethiopia",
-		design = "balanced sample, 98 NFI SUs, 3 depths (0-10, 10-20, 20-30 cm) per SU",
+		# only larger projects with multiple datasets 
+		project = NA, #Assessment of the Forest Carbon Content in Soil and Litter in Ethiopia",
+		# only generic terms like RCBD, balanced sample, 98 NFI SUs does not help much
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none",
@@ -58,63 +60,68 @@ the same SUs."
 	r1 <- read.csv(f1)
 
 	f2 <- ff[basename(ff) == "OC%20_PSA_12.2.2018.xlsx"]
-	r2 <- carobiner::read.excel(f2, sheet="Sheet2", skip=2)
-	colnames(r2) <- c("lab_no", "field_code", "depth_range", "net_sample_weight_g",
-		"water_loss_105C", "weight_gt2mm_g", "weight_lt2mm_g", "OC_WB_pct",
-		"coarse_fragment_pct", "soil_sand", "soil_silt", "soil_clay", "soil_texture")
+	r2 <- carobiner::read.excel(f2, sheet="Sheet2", skip=2, fix_names=TRUE, lower=TRUE)
+
+## do not rename columns like this. Too risky
+## I used "fix_names" above to get more standard names (no spaces or special characters)
+#	colnames(r2) <- c("lab_no", "field_code", "depth_range", "net_sample_weight_g",
+#		"water_loss_105C", "weight_gt2mm_g", "weight_lt2mm_g", "OC_WB_pct",
+#		"coarse_fragment_pct", " =
+# lab.n, field.code, depth.cm, net.sample.weight.at.lab.g, water.lost.at.105.0c, weight.of.2mm.sample.g,
+# weight.of..2mm.sample.g, x.pct.oc.w.b.method, course.fragemet.pct, sand, silt, clay, textural.class"
 
 	f3 <- ff[basename(ff) == "Litter_Ethiopia_25.1.2018.xlsx"]
 	r3 <- carobiner::read.excel(f3)
 
-	r1$field_code <- gsub(" +", "", trimws(r1$FieldCode))
-	r1$depth_range <- gsub(" *-+ *", "-", trimws(r1$DepthRange_cm))
-	r1$key <- paste(r1$field_code, r1$depth_range)
+	depth_range <- gsub(" *-+ *", "-", trimws(r1$DepthRange_cm))
+	depth <- do.call(rbind, strsplit(depth_range, "-"))
 
-	r2$field_code <- gsub(" +", "", trimws(r2$field_code))
-	r2$depth_range <- gsub(" *-+ *", "-", trimws(r2$depth_range))
-	r2$key <- paste(r2$field_code, r2$depth_range)
-	r2$soil_texture <- tolower(trimws(gsub("'", "", r2$soil_texture)))
-	r2$soil_texture[r2$soil_texture == "silt loam"] <- "silty loam"
-## a few SU codes (e.g. B-122) appear twice here with no counterpart in r1;
-## drop the extra copy, it is unused by the merge below either way
-	r2 <- r2[!duplicated(r2$key), ]
-
-## SU O-348 has 2 litter measurements with no replicate id (see ISSUES); average them
-## to one value per SU so the merge below doesn't fan out the unrelated SOC depth rows
-	r3$field_code <- gsub(" +", "", trimws(r3$FieldCode))
-	r3 <- aggregate(cbind(LitterCStock_tha) ~ field_code, data=r3, FUN=mean)
-
-	r <- merge(r1, r2[, c("key", "soil_sand", "soil_silt", "soil_clay", "soil_texture")], by="key", all.x=TRUE)
-	r <- merge(r, r3, by="field_code", all.x=TRUE)
-
-	r$adm1 <- gsub("_", "-", r$Region)
-	r$adm1[r$Region == "Dembi Dolo"] <- "Oromia"
-## no PSA match for a few SUs (e.g. B-151, sampled twice for SOC but not for texture)
-	r$soil_texture[is.na(r$soil_texture)] <- "unknown"
-
-	depth <- do.call(rbind, strsplit(r$depth_range, "-"))
-
-	d <- data.frame(
+	d1 <- data.frame(
 		country = "Ethiopia",
-		adm1 = r$adm1,
-		location_id = r$field_code,
-		longitude = r$LAT, #swapped
-		latitude = r$LON, #swapped
+		adm1 = gsub("_", "-", r1$Region),
+		location_id = r1$FieldCode,
+		longitude = r1$LAT, #swapped
+		latitude = r1$LON, #swapped
 		geo_from_source = TRUE,
 		depth_top = as.numeric(depth[,1]),
 		depth_bottom = as.numeric(depth[,2]),
-		soil_SOC = r$OC_adj,
-		soil_bd = r$BDfe,
-		soil_sand = r$soil_sand,
-		soil_silt = r$soil_silt,
-		soil_clay = r$soil_clay,
-		soil_texture = r$soil_texture
+		soil_SOC = r1$OC_adj,
+		soil_bd = r1$BDfe,
+		biome = r1$BiomeSimplified,
+## not in terminag
+		soil_stoniness = r1$StoninessVSFAST, #%
+		soil_SOC_stock = r1$SOCfe_stoniness #_tha
 	)
-## not in terminag, see ISSUES
-	d$biome <- r$BiomeSimplified
-	d$stoniness_pct <- r$StoninessVSFAST
-	d$SOC_stock_tha <- r$SOCfe_stoniness
-	d$litter_C_stock_tha <- r$LitterCStock_tha
 
+	d1$adm1[d1$adm1 == "Dembi Dolo"] <- "Oromia"
+	
+	d2 <- data.frame(
+		location_id = gsub(" +", "", trimws(r2$field.code)),
+		depth_range = gsub(" *-+ *", "-", trimws(r2$depth.cm)),
+		soil_sand = r2$sand,
+		soil_silt = r2$silt,
+		soil_clay = r2$clay,
+		soil_texture = tolower(trimws(gsub("'", "", r2$textural.class)))
+	)
+	d2$soil_texture[d2$soil_texture == "silt loam"] <- "silty loam"
+	
+## a few SU codes (e.g. B-122) appear twice here with no counterpart in r1;
+## drop the extra copy, it is unused by the merge below either way,
+	d2 <- unique(d2)
+
+## SU O-348 has 2 litter measurements with no replicate id (see ISSUES); average them
+## to one value per SU so the merge below doesn't fan out the unrelated SOC depth rows
+	r3$location_id <- gsub(" +", "", trimws(r3$FieldCode))
+	d3 <- aggregate(cbind(LitterCStock_tha) ~ location_id, data=r3, FUN=mean, na.rm=TRUE)
+
+	d <- merge(d1, d2, by=c("location_id", "depth_range"), all.x=TRUE)
+	d <- merge(d, d3, by="location_id", all.x=TRUE)
+
+	
+## no PSA match for a few SUs (e.g. B-151, sampled twice for SOC but not for texture)
+	d$soil_texture[is.na(d$soil_texture)] <- "unknown"
+
+	d$on_farm <- FALSE
+	d$is_survey <- TRUE
 	carobiner::write_files(path, meta, d)
 }
