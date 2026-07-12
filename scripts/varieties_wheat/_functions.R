@@ -783,9 +783,10 @@ proc_wheat <- function(ff) {
 	x$leaf_rust <- r$leaf_rust
 	x$fusarium_scab_spike <- r$fusarium_scab_spike
 	x$fusarium_graminearum <- r$`Fusarium graminearum severity`
+	x$fusarium_spp <- r$fusarium_spp
 	x$helminthosporium_sativum_leaf <- r$helminthosporium_sativum_leaf
 	x$septoria_tritici_blotch <- r$septoria_tritici_blotch 
-	x$septoria_species <- r$septoria_species 
+	x$septoria_spp <- r$septoria_species 
 	x$stripe_rust_on_leaf <- r$stripe_rust_on_leaf 
 	x$pyrenophora_tritici_repentis <- r$h_tritici_repentis
 

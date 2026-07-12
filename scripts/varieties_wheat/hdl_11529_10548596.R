@@ -16,7 +16,7 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-06-26",   
 		data_type="on-station experiment",
-		response_vars = "yield",
+		response_vars = "disease;yield",
 		treatment_vars = "variety_code"
 	)
   
