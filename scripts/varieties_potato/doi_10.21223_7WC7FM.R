@@ -22,7 +22,8 @@ carob_script <- function(path) {
       carob_contributor = "Henry Juarez",
       carob_effort = NA,
       carob_date = "2024-09-24",
-      notes = "rAUDPC needs to be fixed"
+      notes = "rAUDPC needs to be fixed",
+	  license = "CC-BY-4.0"  # missing
   )
   
   
