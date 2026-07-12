@@ -4,17 +4,17 @@
 ## ISSUES
 # Chilimo litter-bag decomposition experiment, litter AWEN chemistry, soil
 # temperature loggers, and monthly weather normals not processed: different
-# observational unit (small elevation-gradient trial, not the 98-SU national grid)
-# and/or no terminag equivalent.
-# National-scale litter carbon stock (Litter_Ethiopia_25.1.2018.xlsx), forest biome
-# classification, and profile stoniness (%) intentionally left out: no terminag
-# term for carbon stock (only the concentration soil_SOC, %) or for vegetation/
-# stoniness.
+# observational unit (small elevation-gradient trial, not the 98-SU national grid).
+# Left for a future contribution.
+# biome, stoniness_pct, SOC_stock_tha, litter_C_stock_tha not in terminag (only the
+# concentration soil_SOC, %, is standardized): kept under a reasonable name so they
+# are flagged by the vocabulary check and can be considered for terminag.
 # Source "LAT"/"LON" columns are swapped (LAT values fall in Ethiopia's longitude
 # range 34-42, LON in its latitude range 5-14.5); corrected here.
 # adm1 "Benishangul_Gumuz" -> "Benishangul-Gumuz"; "Dembi Dolo" (a town, not a
 # region) -> "Oromia".
 # location_id values are lab/field codes (e.g. "T-2"), not place names.
+# SU O-348 has 2 litter measurements in the source with no replicate id; averaged.
 # One extreme soil_bd (2.53 g/cm3, site AM-62, 20-30cm) kept as-is from source.
 
 carob_script <- function(path) {
@@ -40,10 +40,10 @@ the same SUs."
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-		data_organization = "Ethiopian Environment and Forest Research Institute; Natural Resources Institute Finland", #EEFRI; LUKE
+		data_organization = "Ethiopian Environment and Forest Research Institute; Natural Resources Institute Finland; FAO", #EEFRI; Luke; FAO
 		publication = "doi:10.1002/ldr.3647",
-		project = NA,
-		design = "stratified sample of 98 Ethiopian National Forest Inventory sampling units, soil sampled at 3 depths (0-10, 10-20, 20-30 cm) per SU",
+		project = "Assessment of the Forest Carbon Content in Soil and Litter in Ethiopia",
+		design = "balanced sample, 98 NFI SUs, 3 depths (0-10, 10-20, 20-30 cm) per SU",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none",
@@ -51,7 +51,7 @@ the same SUs."
 		carob_contributor = "Oscar Bautista",
 		carob_effort = 1,
 		carob_date = "2026-07-11",
-		carob_completion = 90
+		carob_completion = 80
 	)
 
 	f1 <- ff[basename(ff) == "SOC_Ethiopia_2017-2018.csv"]
@@ -63,10 +63,8 @@ the same SUs."
 		"water_loss_105C", "weight_gt2mm_g", "weight_lt2mm_g", "OC_WB_pct",
 		"coarse_fragment_pct", "soil_sand", "soil_silt", "soil_clay", "soil_texture")
 
-## litter carbon stock (t/ha) has no terminag equivalent (see ISSUES), so this file
-## is not read:
-#	f3 <- ff[basename(ff) == "Litter_Ethiopia_25.1.2018.xlsx"]
-#	r3 <- carobiner::read.excel(f3)
+	f3 <- ff[basename(ff) == "Litter_Ethiopia_25.1.2018.xlsx"]
+	r3 <- carobiner::read.excel(f3)
 
 	r1$field_code <- gsub(" +", "", trimws(r1$FieldCode))
 	r1$depth_range <- gsub(" *-+ *", "-", trimws(r1$DepthRange_cm))
@@ -81,12 +79,13 @@ the same SUs."
 ## drop the extra copy, it is unused by the merge below either way
 	r2 <- r2[!duplicated(r2$key), ]
 
-## SU O-348 has 2 litter measurements in the source with no replicate id; this would
-## need averaging before a merge, see above for why the file is not used at all
-#	r3$field_code <- gsub(" +", "", trimws(r3$FieldCode))
-#	r3 <- aggregate(cbind(LitterCStock_tha) ~ field_code, data=r3, FUN=mean)
+## SU O-348 has 2 litter measurements with no replicate id (see ISSUES); average them
+## to one value per SU so the merge below doesn't fan out the unrelated SOC depth rows
+	r3$field_code <- gsub(" +", "", trimws(r3$FieldCode))
+	r3 <- aggregate(cbind(LitterCStock_tha) ~ field_code, data=r3, FUN=mean)
 
 	r <- merge(r1, r2[, c("key", "soil_sand", "soil_silt", "soil_clay", "soil_texture")], by="key", all.x=TRUE)
+	r <- merge(r, r3, by="field_code", all.x=TRUE)
 
 	r$adm1 <- gsub("_", "-", r$Region)
 	r$adm1[r$Region == "Dembi Dolo"] <- "Oromia"
@@ -111,9 +110,11 @@ the same SUs."
 		soil_clay = r$soil_clay,
 		soil_texture = r$soil_texture
 	)
-## r$BiomeSimplified (forest vegetation type), r$StoninessVSFAST (profile stoniness,
-## %) and r$SOCfe_stoniness (SOC stock, t/ha) are not added to d: no terminag term,
-## see ISSUES
+## not in terminag, see ISSUES
+	d$biome <- r$BiomeSimplified
+	d$stoniness_pct <- r$StoninessVSFAST
+	d$SOC_stock_tha <- r$SOCfe_stoniness
+	d$litter_C_stock_tha <- r$LitterCStock_tha
 
 	carobiner::write_files(path, meta, d)
 }
