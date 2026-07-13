@@ -19,7 +19,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-06-16",
-      completion=90,
+      carob_completion=90,
       notes="data on seed composition (protein, oil, lysine, etc.) not processed"
    )
    

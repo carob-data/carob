@@ -23,10 +23,8 @@ carob_script <- function(path) {
   
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)	
-  d <- subset(d, irrigation_amount < 1000)
-  
-  
-  carobiner::write_files(path, meta, d)
+   
+    carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 

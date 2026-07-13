@@ -31,7 +31,7 @@ carob_script <- function(path) {
 	i <- d$location == "Nobaria"
 	d$yield[i] <- d$yield[i] / 10
   
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 
 }
 

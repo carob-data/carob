@@ -24,11 +24,10 @@ carob_script <- function(path) {
 	
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
-	d$crop <- "durum wheat"
-	
-	d$planting_date[d$planting_date == "2018-05-12"] <- NA
+	d$wide$crop <- "durum wheat"
+	d$wide$planting_date[d$wide$planting_date == "2018-05-12"] <- NA
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 

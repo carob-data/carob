@@ -24,21 +24,30 @@ carob_script <- function(path) {
 
 	years <- sapply(grep("RawData.xls", basename(ff), value=TRUE), \(i) strsplit(i, " ")[[1]][1], USE.NAMES=F)
 	
-	d <- lapply(years, \(y) {
+	maxid <- 0
+	dd <- lapply(years, \(y) {
 		f <- ff[grep(paste0("^", y), basename(ff))]
-		proc_wheat(f)
+		d <- proc_wheat(f)
+		d$wide$record_id <- d$wide$record_id + maxid
+		d$long$record_id <- d$long$record_id + maxid
+		maxid <<- max(d$wide$record_id)
+		d		
 	})
 
-	d <- do.call(carobiner::bindr, d) 
+	dlong <- do.call(carobiner::bindr, lapply(dd, \(x) x[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(dd, \(x) x[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	d <- list(long=dlong, wide=dwide)
 
-	i <- grep("^00-..$", d$planting_date)
-	d$planting_date[i] <- "2000"
-	i <- grep("^..-..$", d$planting_date)
-	d$planting_date[i] <- paste0("19", substr(d$planting_date[i],1, 2))
+	i <- grep("^00-..$", d$wide$planting_date)
+	d$wide$planting_date[i] <- "2000"
+	i <- grep("^..-..$", d$wide$planting_date)
+	d$wide$planting_date[i] <- paste0("19", substr(d$wide$planting_date[i],1, 2))
 
 	i <- which(d$soil_pH > 50)
-	d$soil_pH[i] <- d$soil_pH[i] / 10
+	d$wide$soil_pH[i] <- d$wide$soil_pH[i] / 10
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

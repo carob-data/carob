@@ -25,7 +25,7 @@ carob_script <- function(path) {
   
   
   
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 

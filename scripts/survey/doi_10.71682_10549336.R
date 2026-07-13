@@ -13,13 +13,14 @@ Analysis of Household-Level Survey Data: Farm Characteristics and Resource Alloc
 
 Processed dataset from a household-level survey describing the main farm characteristics, production, and resource allocation in two municipalities.  The survey covers 300 farms across three districts (Kham, Moke, and Nonghet) in Xieng Khouang Province, collected between December 2023 and May 2024.
 "
+
 	uri <- "doi:10.71682/10549336"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIMMYT; Lao Farmer Network",
-		publication = "https://hdl.handle.net/10883/35403",#cant site a report
+		data_organization = "CIMMYT;LFN",
+		publication = "hdl:10883/35403",
 		project = NA,
 		design = "unitOfAnalysis: Household level; collectionMode: Online survey",
 		data_type = "survey",
@@ -116,13 +117,7 @@ Processed dataset from a household-level survey describing the main farm charact
   d$age <- as.numeric(age_values[as.character(d$age)])
   
   #cleaning education
-  edu_values<- c(
-    "0"="none",
-    "0.5"="primary",
-    "1"="secondary",
-    "1.5"="high school",
-    "2"="postgrad"
-  )
+  edu_values<- c("0"="none", "0.5"="primary", "1"="secondary", "1.5"="high school", "2"="postgrad")
   
   d$education <- edu_values[d$education]
   
@@ -132,36 +127,23 @@ Processed dataset from a household-level survey describing the main farm charact
   #re-shaping livestock data from wide to long
   d$row_id <- seq_len(nrow(d))#creating unique row id for reshaping
   
-  d <- reshape(
-    d,
-    varying   = c("cattle", "pig", "chicken"),
-    v.names   = "heads",
-    timevar   = "animal",
-    times     = c("cattle", "pig", "chicken"),
-    idvar     = "row_id",
-    direction = "long"
-  )
+  d <- reshape(d, varying = c("cattle", "pig", "chicken"),  v.names = "heads", timevar = "animal", 
+		times = c("cattle", "pig", "chicken"), idvar = "row_id", direction = "long")
   rownames(d) <- NULL
   d$heads <- as.numeric(d$heads)#coersion warning is converting character NA into true NA
   
   #reshaping crop data to long format
-  d <- reshape(
-    d,
-    varying   = c("maize", "rice"),
-    v.names   = "yield",
-    timevar   = "crop",
-    times     = c("maize", "rice"),
-    idvar     = c("row_id", "animal"),
-    direction = "long"
-  )
+  d <- reshape(d, varying = c("maize", "rice"), v.names = "yield", timevar = "crop", times = c("maize", "rice"),
+    idvar = c("row_id", "animal"), direction = "long")
   d$yield <- as.numeric(d$yield)#coersion warning is converting character NA into true NA
   d$yield <- d$yield*1000#converting to kg/ha
-  
   
   rownames(d) <- NULL
   d$row_id <- NULL
   
-  d <- unique(d)#i assume duplicates have been created as a result of the reshape
+  #i assume duplicates have been created as a result of the reshape
+  ## assuming is not enough...
+  d <- unique(d)
   
 	carobiner::write_files(path, meta, d)
 }

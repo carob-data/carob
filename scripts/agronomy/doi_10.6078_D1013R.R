@@ -20,7 +20,7 @@ carob_script <- function(path) {
          carob_contributor= "Cedric Ngakou", 
          carob_effort = NA,
          carob_date="2025-06-02",
-         completion=75,
+         carob_completion=75,
          notes="The Encyclo.csv file has not been processed as it does not contain useful information."
    )
    

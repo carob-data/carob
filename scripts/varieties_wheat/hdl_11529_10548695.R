@@ -1,7 +1,5 @@
 # R script for "carob"
 
-## variable "grain_yield" is missing. Data not very useful without It
-## RH has contacted CIMMYT. 
 
 carob_script <- function(path) {
   
@@ -26,6 +24,6 @@ carob_script <- function(path) {
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)
 
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }
 

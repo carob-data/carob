@@ -24,22 +24,32 @@ carob_script <- function(path) {
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 
-	d <- vector("list", length(sets))
+	maxid <- 0
+	dd <- vector("list", length(sets))
 	for (i in seq_along(sets)) {
 		fs <- grep(sets[i], ff, value=TRUE)
-		d[[i]] <- proc_wheat(fs)
+		d <- proc_wheat(fs)
+		d$wide$record_id <- d$wide$record_id + maxid
+		if (!is.null(d$long)) {
+			d$long$record_id <- d$long$record_id + maxid
+		}
+		maxid <<- max(d$wide$record_id)
+		dd[[i]] <- d
 	}
+	dlong <- do.call(carobiner::bindr, lapply(dd, \(x) x[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(dd, \(x) x[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	d <- list(long=dlong, wide=dwide)
 
-	dd <- do.call(carobiner::bindr, d)
-	dd$crop <- "durum wheat"
-	dd$soil_pH[dd$soil_pH < 2] <- NA
+	d$wide$crop <- "durum wheat"
+	d$wide$soil_pH[d$wide$soil_pH < 2] <- NA
 
 	pds <- paste0(81:96, "-", 82:97)
 	rpl <- 1981:1996
-	for (i in 1:length(pds)) dd$planting_date <- gsub(pds[i], rpl[i], dd$planting_date)
+	for (i in 1:length(pds)) d$wide$planting_date <- gsub(pds[i], rpl[i], d$wide$planting_date)
 
-
-	carobiner::write_files(path, meta, dd)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 

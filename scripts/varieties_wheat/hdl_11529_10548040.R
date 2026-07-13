@@ -32,6 +32,6 @@ carob_script <- function(path) {
   d$longitude[i] <- 33.48333 
   d$latitude[i] <- 14.4
 
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }
 

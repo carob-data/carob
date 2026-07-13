@@ -23,28 +23,38 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	years <- gsub(" IBWSN_RawData.xlsx", "", grep("IBWSN_RawData.xlsx", basename(ff), value=TRUE))
 	
-	d <- lapply(years, \(y) {
+	maxid <- 0
+	dd <- lapply(years, \(y) {
 		f <- ff[grep(paste0("^", y), basename(ff))]
-		proc_wheat(f)
+		d <- proc_wheat(f)
+		d$wide$record_id <- d$wide$record_id + maxid
+		d$long$record_id <- d$long$record_id + maxid
+		maxid <<- max(d$wide$record_id)		
+		d		
 	})
 	
-	d <- do.call(carobiner::bindr, d) 
-	d$soil_pH[d$soil_pH == 79] <- 7.9
+	dlong <- do.call(carobiner::bindr, lapply(dd, \(x) x[["long"]]))
+	dwide <- do.call(carobiner::bindr, lapply(dd, \(x) x[["wide"]]))
+	dlong$record_id <- as.integer(dlong$record_id)
+	dwide$record_id <- as.integer(dwide$record_id)
+	d <- list(long=dlong, wide=dwide)
 
-	d$planting_date[d$planting_date == "90-91"] <- "1990"
-	d$planting_date[d$planting_date == "91-92"] <- "1991"
-	d$planting_date[d$planting_date == "92-93"] <- "1992"
-	d$planting_date[d$planting_date == "95-96"] <- "1995"
-	d$planting_date[d$planting_date == "97-98"] <- "1997"
-	d$planting_date[d$planting_date == "98-99"] <- "1998"
-	d$planting_date[d$planting_date == "00-01"] <- "2000"
-	
-	d$yield[d$location == "Pan Rice Exper. Sta."] <- d$yield[d$location == "Pan Rice Exper. Sta."] / 10
-	d$yield[d$location == "La Ballenera"] <- d$yield[d$location == "La Ballenera"] / 10
+	d$wide$soil_pH[d$wide$soil_pH == 79] <- 7.9
 
-	d$emergence_date[d$emergence_date == "2026-08-26"] <- "2001-08-26"
+	d$wide$planting_date[d$wide$planting_date == "90-91"] <- "1990"
+	d$wide$planting_date[d$wide$planting_date == "91-92"] <- "1991"
+	d$wide$planting_date[d$wide$planting_date == "92-93"] <- "1992"
+	d$wide$planting_date[d$wide$planting_date == "95-96"] <- "1995"
+	d$wide$planting_date[d$wide$planting_date == "97-98"] <- "1997"
+	d$wide$planting_date[d$wide$planting_date == "98-99"] <- "1998"
+	d$wide$planting_date[d$wide$planting_date == "00-01"] <- "2000"
 	
-	carobiner::write_files(path, meta, d)
+	d$wide$yield[d$wide$location == "Pan Rice Exper. Sta."] <- d$wide$yield[d$wide$location == "Pan Rice Exper. Sta."] / 10
+	d$wide$yield[d$wide$location == "La Ballenera"] <- d$wide$yield[d$wide$location == "La Ballenera"] / 10
+
+	d$wide$emergence_date[d$wide$emergence_date == "2026-08-26"] <- "2001-08-26"
+	
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 	

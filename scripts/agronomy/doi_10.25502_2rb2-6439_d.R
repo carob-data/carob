@@ -20,7 +20,7 @@ Results from this project showed that with appropriate weed management couple wi
 "
 
 
-	uri <- "doi.org/10.25502/2rb2-6439/d"
+	uri <- "doi:10.25502/2rb2-6439/d"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 

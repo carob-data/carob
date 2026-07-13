@@ -11,7 +11,7 @@ carob_script <- function(path) {
    
    meta <- carobiner::get_metadata(uri, path, group, major=5, minor=NA,
         data_organization = "UQL", # The University of Queensland
-        publication="doi.org/10.1002/csc2.21160", 
+        publication="doi:10.1002/csc2.21160", 
         project=NA, 
         data_type= "experiment", 
         treatment_vars= "variety; variety_type", 
@@ -19,7 +19,7 @@ carob_script <- function(path) {
         carob_contributor= "Cedric Ngakou", 
         carob_effort = NA,
         carob_date="2025-06-24",
-        completion=100,
+        carob_completion=100,
         notes=NA
    )
    

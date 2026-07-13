@@ -78,6 +78,7 @@ carob_script <- function(path) {
 	d$flowering_date <- as.character(d$flowering_date)
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$yield_moisture <- d$yield_isfresh <- NA
 	
 	carobiner::write_files(path, meta, d)
 }

@@ -18,7 +18,7 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "SLU;CIMMYT",
-		publication = "doi.org/10.1007/s12571-024-01479-4",
+		publication = "doi:10.1007/s12571-024-01479-4",
 		project = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "land_prep_method;variety;intercrops",
