@@ -121,7 +121,6 @@ the same SUs."
 	d$depth_range <- NULL
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE
-	d$depth_range <- NULL
-	
+
 	carobiner::write_files(path, meta, d)
 }
