@@ -13,15 +13,16 @@ Analysis of Household-Level Survey Data: Farm Characteristics and Resource Alloc
 
 Processed dataset from a household-level survey describing the main farm characteristics, production, and resource allocation in two municipalities.  The survey covers 300 farms across three districts (Kham, Moke, and Nonghet) in Xieng Khouang Province, collected between December 2023 and May 2024.
 "
+
 	uri <- "doi:10.71682/10549336"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIMMYT; Lao Farmer Network",
-		publication ="NA", #"https://hdl.handle.net/10883/35403",cant site a report
+		data_organization = "CIMMYT; LFN",
+		publication = "hdl:10883/35403",
 		project = NA,
-		design = "unitOfAnalysis: Household level; collectionMode: Online survey",
+		design = "Online survey",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -78,24 +79,23 @@ Processed dataset from a household-level survey describing the main farm charact
 	
 	d$adm2 <- gsub("Nonghet","Nonghed",d$adm2)
 	d$adm2 <- gsub("Moke","Morkmay" ,d$adm2)
-	xy <- carobiner::adm_pointRadius("Laos", 2)
-	s <- xy[xy$adm2 %in% c("Kham","Morkmay","Nonghed"), ]
-	
-	carobiner::dfput(s, name="geo", drop="country")
-	
+	##xy <- carobiner::adm_pointRadius("Laos", 2)
+	##s <- xy[xy$adm2 %in% c("Kham","Morkmay","Nonghed"), ]
+	##carobiner::dfput(s, name="geo", drop="country")
 	
 	loc <-  data.frame(
-	  adm2 = c("Kham", "Morkmay", "Nonghed"),
-	longitude = c(103.6574, 103.9981, 103.9249),
-	latitude = c(19.7589, 19.0724, 19.5603),
-	geo_uncertainty = c(35266, 37324, 47903),
-	geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+		adm2 = c("Kham", "Morkmay", "Nonghed"),
+		longitude = c(103.6574, 103.9981, 103.9249),
+		latitude = c(19.7589, 19.0724, 19.5603),
+		geo_uncertainty = c(35266, 37324, 47903),
+		geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
 	)
 	
-  d <- merge(d,loc,by="adm2", all.x = T)
+	d <- merge(d,loc,by="adm2", all.x = T)
+	
 	d$planting_date <- as.character(NA)
 	d$harvest_date  <- as.character(NA)
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
+	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
@@ -134,42 +134,25 @@ Processed dataset from a household-level survey describing the main farm charact
 #converting % of women to number of women in a household
   d$hh_adult_women <- (d$hh_adult_women*d$hh_size)/100
   
-  #re-shaping livestock data from wide to long
-  d$row_id <- seq_len(nrow(d))#creating unique row id for reshaping
+  d$hhid <- as.character(1:nrow(d))
   
-  d <- reshape(
-    d,
-    varying   = c("cattle", "pig", "chicken"),
-    v.names   = "heads",
-    timevar   = "animal",
-    times     = c("cattle", "pig", "chicken"),
-    idvar     = "row_id",
-    direction = "long"
-  )
-  rownames(d) <- NULL
-  d$heads[d$heads == "NA"] <- NA
-  d$heads <- as.numeric(d$heads)
+  #re-shaping livestock data from wide to long
+  x <- reshape(d[, c("hhid", "cattle", "pig", "chicken")], varying = c("cattle", "pig", "chicken"), v.names = "heads", 
+			timevar = "animal", times = c("cattle", "pig", "chicken"),  idvar = "hhid", direction = "long")
+  rownames(x) <- NULL
+  x$heads[x$heads == "NA"] <- NA
+  x$heads <- as.numeric(x$heads)
   
   #reshaping crop data to long format
-  d <- reshape(
-    d,
-    varying   = c("maize", "rice"),
-    v.names   = "yield",
-    timevar   = "crop",
-    times     = c("maize", "rice"),
-    idvar     = c("row_id", "animal"),
-    direction = "long"
-  )
-  d$yield[d$yield == "NA"] <- NA
-  d$yield <- as.numeric(d$yield)
-
-  d$yield <- d$yield*1000#converting to kg/ha
+  y <- reshape(d[, c("hhid", "maize", "rice")], varying = c("maize", "rice"), v.names = "yield",
+				timevar = "crop", times = c("maize", "rice"), direction = "long")
+  y$yield[y$yield == "NA"] <- NA
+  y$yield <- as.numeric(y$yield)
+  y$yield <- y$yield * 1000 #converting to kg/ha
   
+  xy <- carobiner::bindr(x, y)
+  xy$id <- NULL
   
-  rownames(d) <- NULL
-  d$row_id <- NULL
-  
-  d <- unique(d)
-  
-	carobiner::write_files(path, meta, d)
- }
+  d$maize <- d$rice <- d$cattle <- d$pig <- d$chicken <- NULL
+  carobiner::write_files(path, meta, d, long=xy)
+}
