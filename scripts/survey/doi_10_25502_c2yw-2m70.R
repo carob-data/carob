@@ -66,7 +66,7 @@ carob_script <- function(path) {
 	}
 
 	d1 <- data.frame(
-		field_id        = r1$farm_id,
+		hhid        = r1$farm_id,
 		country         = "Uganda",
 		adm1            = tolower(trimws(r1$district)),
 		adm2            = tolower(trimws(r1$sub_county)),
@@ -91,7 +91,7 @@ carob_script <- function(path) {
 	d1$farmland[d1$farmland <= 0] <- NA
 
 	d2 <- data.frame(
-		field_id        = r2$farm_id,
+		hhid        = r2$farm_id,
 		sex             = trimws(r2$sex_farmer),
 		age             = suppressWarnings(as.numeric(r2$age_farmer)),
 		is_head         = trimws(r2$respondent_head_hh) == "Y",
@@ -115,7 +115,7 @@ carob_script <- function(path) {
 	d2$hh_size[d2$hh_size > 50 | d2$hh_size < 0] <- NA
 
 	d3 <- data.frame(
-		field_id = r3$farm_id,
+		hhid = r3$farm_id,
 		animal   = trimws(tolower(r3$livestock_type)),
 		heads    = suppressWarnings(as.numeric(r3$livestock_number)),
 		stringsAsFactors = FALSE
@@ -183,7 +183,7 @@ carob_script <- function(path) {
 		fertilizer_type <- if (length(fert_parts) > 0) paste(fert_parts, collapse = ";") else NA_character_
 
 		data.frame(
-			field_id        = field,
+			hhid        = field,
 			plot_id         = plot,
 			crop            = primary,
 			intercrops      = intercrop,
@@ -203,9 +203,9 @@ carob_script <- function(path) {
 	d <- d4
 
 	# Household/farm-level merges
-	d <- merge(d, d1, by = "field_id", all = TRUE)
-	d <- merge(d, d2, by = "field_id", all = TRUE)
-	d <- merge(d, d3, by = "field_id", all = TRUE)
+	d <- merge(d, d1, by = "hhid", all = TRUE)
+	d <- merge(d, d2, by = "hhid", all = TRUE)
+	d <- merge(d, d3, by = "hhid", all = TRUE)
 
 	d$trial_id       <- as.character(as.integer(as.factor(1)))
 	d$on_farm        <- TRUE
@@ -228,7 +228,7 @@ carob_script <- function(path) {
 	d$yield_part[d$crop %in% c("banana")]                          <- "fruit"
 	d$yield_part[d$crop %in% c("coffee")]                          <- "seed"
 
-	d$field_id       <- as.character(d$field_id)
+	d$hhid       <- as.character(d$hhid)
 	d$plot_id        <- as.character(d$plot_id)
 	d$hh_size        <- as.integer(d$hh_size)
 	d$hh_adult_women <- as.integer(d$hh_adult_women)
