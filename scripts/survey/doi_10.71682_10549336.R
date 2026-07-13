@@ -13,14 +13,13 @@ Analysis of Household-Level Survey Data: Farm Characteristics and Resource Alloc
 
 Processed dataset from a household-level survey describing the main farm characteristics, production, and resource allocation in two municipalities.  The survey covers 300 farms across three districts (Kham, Moke, and Nonghet) in Xieng Khouang Province, collected between December 2023 and May 2024.
 "
-
 	uri <- "doi:10.71682/10549336"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIMMYT;LFN",
-		publication = "hdl:10883/35403",
+		data_organization = "CIMMYT; Lao Farmer Network",
+		publication ="NA", #"https://hdl.handle.net/10883/35403",cant site a report
 		project = NA,
 		design = "unitOfAnalysis: Household level; collectionMode: Online survey",
 		data_type = "survey",
@@ -61,8 +60,10 @@ Processed dataset from a household-level survey describing the main farm charact
 		rice_pad=r$yield_paddym#estimated yield
 		)
 	
-	d$rice_up <- as.numeric(d$rice_up)#missing values stored as character "NA", so converting character NA to true NA
-	d$rice_pad <- as.numeric(d$rice_pad)#missing values stored as character "NA", so converting character NA to true NA
+	d$rice_up[d$rice_up == "NA"] <- NA
+	d$rice_up <- as.numeric(d$rice_up)
+	d$rice_pad[d$rice_pad == "NA"] <- NA
+	d$rice_pad <- as.numeric(d$rice_pad)
 	d$rice <- rowSums(cbind(d$rice_up, d$rice_pad), na.rm = TRUE)
 	d$rice[is.na(d$rice_up) & is.na(d$rice_pad)] <- NA
 	d[c("rice_pad", "rice_up")] <- NULL
@@ -74,22 +75,24 @@ Processed dataset from a household-level survey describing the main farm charact
 	d$irrigated <- TRUE
 	d$geo_from_source <- FALSE
 
-  loc <- data.frame(
-    adm2 = c("Kham", "Kham", 
-             "Moke", "Kham", "Moke", "Moke", "Moke", "Nonghet", "Kham", "Moke", 
-             "Nonghet", "Nonghet", "Nonghet", "Nonghet", "Kham", "Kham"),
-    adm3 = c("Tha", "Boa", "Phadaeng", "Souanmone", "Namone", 
-             "Phoumone", "Namueng", "Pakhom", "Pakhom", "Mor", "Yort", 
-             "Palan", "Pounsaeng", "Houay", "Namhome", "Sankham"),
-    latitude = c(19.741, 19.721, 19.45, 19.791, 19.078, 
-                 19.959, 19.503, 19.57, 19.57, 19.163, 19.489, 19.499, 19.461, 
-                 20.263, 19.545, 19.741),
-    longitude = c(103.587, 103.58, 103.712, 
-                  103.641, 102.142, 103.854, 102.061, 103.98, 103.98, 103.692, 
-                  103.953, 104.032, 103.189, 100.433, 103.695, 103.587)
-  )
 	
-  d <- merge(d,loc,by=c("adm2","adm3"), all.x = T)
+	d$adm2 <- gsub("Nonghet","Nonghed",d$adm2)
+	d$adm2 <- gsub("Moke","Morkmay" ,d$adm2)
+	xy <- carobiner::adm_pointRadius("Laos", 2)
+	s <- xy[xy$adm2 %in% c("Kham","Morkmay","Nonghed"), ]
+	
+	carobiner::dfput(s, name="geo", drop="country")
+	
+	
+	loc <-  data.frame(
+	  adm2 = c("Kham", "Morkmay", "Nonghed"),
+	longitude = c(103.6574, 103.9981, 103.9249),
+	latitude = c(19.7589, 19.0724, 19.5603),
+	geo_uncertainty = c(35266, 37324, 47903),
+	geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+	)
+	
+  d <- merge(d,loc,by="adm2", all.x = T)
 	d$planting_date <- as.character(NA)
 	d$harvest_date  <- as.character(NA)
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
@@ -102,7 +105,8 @@ Processed dataset from a household-level survey describing the main farm charact
   d$hh_income <- gsub("4e+05",400000,d$hh_income)
   d$hh_income <- gsub("1e+05",100000,d$hh_income)
   d$hh_income <- as.numeric(d$hh_income)
-  d$farm_labour <- as.numeric(d$farm_labour)#coersion warning is converting character NA into true NA
+  d$farm_labour[d$farm_labour == "NA"] <- NA
+  d$farm_labour <- as.numeric(d$farm_labour)
   
   #since carob doesnt accept range of values, a midpoint has been extracted
   age_values<- c(
@@ -117,7 +121,13 @@ Processed dataset from a household-level survey describing the main farm charact
   d$age <- as.numeric(age_values[as.character(d$age)])
   
   #cleaning education
-  edu_values<- c("0"="none", "0.5"="primary", "1"="secondary", "1.5"="high school", "2"="postgrad")
+  edu_values<- c(
+    "0"="none",
+    "0.5"="primary",
+    "1"="secondary",
+    "1.5"="high school",
+    "2"="postgrad"
+  )
   
   d$education <- edu_values[d$education]
   
@@ -127,23 +137,39 @@ Processed dataset from a household-level survey describing the main farm charact
   #re-shaping livestock data from wide to long
   d$row_id <- seq_len(nrow(d))#creating unique row id for reshaping
   
-  d <- reshape(d, varying = c("cattle", "pig", "chicken"),  v.names = "heads", timevar = "animal", 
-		times = c("cattle", "pig", "chicken"), idvar = "row_id", direction = "long")
+  d <- reshape(
+    d,
+    varying   = c("cattle", "pig", "chicken"),
+    v.names   = "heads",
+    timevar   = "animal",
+    times     = c("cattle", "pig", "chicken"),
+    idvar     = "row_id",
+    direction = "long"
+  )
   rownames(d) <- NULL
-  d$heads <- as.numeric(d$heads)#coersion warning is converting character NA into true NA
+  d$heads[d$heads == "NA"] <- NA
+  d$heads <- as.numeric(d$heads)
   
   #reshaping crop data to long format
-  d <- reshape(d, varying = c("maize", "rice"), v.names = "yield", timevar = "crop", times = c("maize", "rice"),
-    idvar = c("row_id", "animal"), direction = "long")
-  d$yield <- as.numeric(d$yield)#coersion warning is converting character NA into true NA
+  d <- reshape(
+    d,
+    varying   = c("maize", "rice"),
+    v.names   = "yield",
+    timevar   = "crop",
+    times     = c("maize", "rice"),
+    idvar     = c("row_id", "animal"),
+    direction = "long"
+  )
+  d$yield[d$yield == "NA"] <- NA
+  d$yield <- as.numeric(d$yield)
+
   d$yield <- d$yield*1000#converting to kg/ha
+  
   
   rownames(d) <- NULL
   d$row_id <- NULL
   
-  #i assume duplicates have been created as a result of the reshape
-  ## assuming is not enough...
   d <- unique(d)
   
 	carobiner::write_files(path, meta, d)
-}
+ }
