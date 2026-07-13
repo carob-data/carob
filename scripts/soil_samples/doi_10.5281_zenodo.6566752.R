@@ -79,7 +79,8 @@ the same SUs."
 	d1 <- data.frame(
 		country = "Ethiopia",
 		adm1 = gsub("_", "-", r1$Region),
-		location_id = r1$FieldCode,
+		location_id = gsub(" +", "", trimws(r1$FieldCode)),
+		depth_range = depth_range,
 		longitude = r1$LAT, #swapped
 		latitude = r1$LON, #swapped
 		geo_from_source = TRUE,
