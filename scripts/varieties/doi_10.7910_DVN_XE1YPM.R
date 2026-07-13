@@ -2,7 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
 
 
 carob_script <- function(path) {
@@ -33,9 +32,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	)
 	
 	f <- ff[basename(ff) == "Advanced drought tolerant sorghum hybrids at Mieso 2020.xlsx"]
-
 	r <- carobiner::read.excel(f)
-	
 	
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -54,25 +51,21 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  crop = "sorghum"
 	)
 	
-	d$trial_id <- "1"
-	
+	d$trial_id <- "1"	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
 	
 	d$longitude = 40.5638
 	d$latitude = 9.1779
 	d$geo_uncertainty = 51603
 	d$geo_source = "GADM 4.1, adm3"
-	
-	d$geo_from_source <- TRUE
+	d$geo_from_source <- FALSE #!
+	d$location[d$location == "MS"] <- "Mieso"
 
 	d$planting_date <- as.character(NA)
 	d$harvest_date <- as.character(NA)
-
-   d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
-
+	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
 
    d$yield_part <- "grain"
    d$yield_moisture <- as.numeric(NA)
