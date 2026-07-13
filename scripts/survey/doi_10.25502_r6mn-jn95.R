@@ -7,8 +7,6 @@ carob_script <- function(path) {
 
 N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project.
 
-
-
 The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uganda and Ethiopia) and six other countries (DR Congo, Malawi, Rwanda, Mozambique, Kenya & Zimbabwe) as tier one countries.
 "
 
@@ -17,7 +15,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	ff  <- carobiner::get_data(uri, path, group)
 
 		meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-		data_organization = "IITA;ICRAF;Wageningen University",
+		data_organization = "IITA;ICRAF;WUR",
 		publication = NA,
 		project = "N2Africa",
 		design = NA,
@@ -53,7 +51,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	  country = r1$country,
 	  adm1 = r1$sector_state,
 	  adm2 = r1$action_site,
-	  adm3 = r1$village,
+	  location = r1$village,
 	  longitude = r1$gps_longitude_dec,
 	  latitude = r1$gps_latitude_dec,
 	  elevation = r1$gps_altitude
@@ -138,7 +136,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d4$crop_rotation <- gsub("cow pea|maize cowpea","cowpea", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("pigeonpea|pegeon pea","pigeon pea", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("goundnut|grundnut","groundnut", d4$crop_rotation, ignore.case = TRUE)
-	d4$crop_rotation <- gsub("sesam|sesamee","sesame", d4$crop_rotation, ignore.case = TRUE)
+	d4$crop_rotation <- gsub("sesam|sesamee", "sesame", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("sunflouwer","sunflower", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("shorgum","sorghum", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("potatoe","potato", d4$crop_rotation, ignore.case = TRUE)
@@ -284,81 +282,68 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d$yield_isfresh <- NA
 	
 	#add missing longitude & latitude
-	d$longitude[d$adm3=="Namurequele"] <- "36.7861"
-	d$latitude[d$adm3=="Namurequele"] <- "-15.3492"
-	d$longitude[d$adm3 %in% c("Chimbuwa","Chimbua","Nhamukunga","Chicilua")] <- "33.4"
-	d$latitude[d$adm3 %in% c("Chimbuwa","Chimbua","Nhamukunga","Chicilua")] <- "-19.5"
-	d$longitude[d$adm3 %in% c("Dhimbontory","Chiquiso","Chikuzo","Chiquizo")] <- "33.9"
-	d$latitude[d$adm3 %in% c("Dhimbontory","Chiquiso","Chikuzo","Chiquizo")] <- "-19.6"
-	d$longitude[d$adm3 %in% c("Chindeque","chideque")] <- "34.4"
-	d$latitude[d$adm3 %in% c("Chindeque","chideque")] <- "-14.7"
-	d$longitude[d$adm3 %in% c("chilombo","amba amba")] <- "34.1"
-	d$latitude[d$adm3 %in% c("chilombo","amba amba")] <- "-14.5"
-	d$longitude[d$adm3 %in% c("NITA","Nita")] <- "39.7"
-	d$latitude[d$adm3 %in% c("NITA","Nita")] <- "-15.9"
-	d$longitude[d$adm3 %in% c("murimo","murrimu","Murrimo","Muripa")] <- "36.7947"
-	d$latitude[d$adm3 %in% c("murimo","murrimu","Murrimo","Muripa")] <- "-15.3508"
-	d$longitude[d$adm3=="Muripa"] <- "36.8225"
-	d$latitude[d$adm3=="Muripa"] <- "-15.3492"
-	d$longitude[d$adm3=="Nampawa"] <- "39.4667"
-	d$latitude[d$adm3=="Nampawa"] <- "-15.6667"
-	d$longitude[d$adm3 %in% c("Mahuwa","Muiane","Muiwane","Kokwe","Muhuwa")] <- "39.2"
-	d$latitude[d$adm3 %in% c("Mahuwa","Muiane","Muiwane","Kokwe","Muhuwa")] <- "-15.6"
-	d$longitude[d$adm3 %in% c("PISSI-1","Pissi-1","Pissi - 1","Pissi","Pini","pissi-1","Pissone","Metovola","pedeniva")] <- "36.82"
-	d$latitude[d$adm3 %in% c("PISSI-1","Pissi-1","Pissi - 1","Pissi","Pini","pissi-1","Pissone","Metovola","pedeniva")] <- "-15.1289"
-	d$longitude[d$adm3 %in% c("Sodoma","Sopoma")] <- "36.8"
-	d$latitude[d$adm3 %in% c("Sodoma","Sopoma")] <- "-15.3"
-	d$longitude[d$adm3 %in% c("Sede Nova","sede nova")] <- "36.9911"
-	d$latitude[d$adm3 %in% c("Sede Nova","sede nova")] <- "-15.4878"
+	d$longitude[d$location=="Namurequele"] <- "36.7861"
+	d$latitude[d$location=="Namurequele"] <- "-15.3492"
+	d$longitude[d$location %in% c("Chimbuwa","Chimbua","Nhamukunga","Chicilua")] <- "33.4"
+	d$latitude[d$location %in% c("Chimbuwa","Chimbua","Nhamukunga","Chicilua")] <- "-19.5"
+	d$longitude[d$location %in% c("Dhimbontory","Chiquiso","Chikuzo","Chiquizo")] <- "33.9"
+	d$latitude[d$location %in% c("Dhimbontory","Chiquiso","Chikuzo","Chiquizo")] <- "-19.6"
+	d$longitude[d$location %in% c("Chindeque","chideque")] <- "34.4"
+	d$latitude[d$location %in% c("Chindeque","chideque")] <- "-14.7"
+	d$longitude[d$location %in% c("chilombo","amba amba")] <- "34.1"
+	d$latitude[d$location %in% c("chilombo","amba amba")] <- "-14.5"
+	d$longitude[d$location %in% c("NITA","Nita")] <- "39.7"
+	d$latitude[d$location %in% c("NITA","Nita")] <- "-15.9"
+	d$longitude[d$location %in% c("murimo","murrimu","Murrimo","Muripa")] <- "36.7947"
+	d$latitude[d$location %in% c("murimo","murrimu","Murrimo","Muripa")] <- "-15.3508"
+	d$longitude[d$location=="Muripa"] <- "36.8225"
+	d$latitude[d$location=="Muripa"] <- "-15.3492"
+	d$longitude[d$location=="Nampawa"] <- "39.4667"
+	d$latitude[d$location=="Nampawa"] <- "-15.6667"
+	d$longitude[d$location %in% c("Mahuwa","Muiane","Muiwane","Kokwe","Muhuwa")] <- "39.2"
+	d$latitude[d$location %in% c("Mahuwa","Muiane","Muiwane","Kokwe","Muhuwa")] <- "-15.6"
+	d$longitude[d$location %in% c("PISSI-1","Pissi-1","Pissi - 1","Pissi","Pini","pissi-1","Pissone","Metovola","pedeniva")] <- "36.82"
+	d$latitude[d$location %in% c("PISSI-1","Pissi-1","Pissi - 1","Pissi","Pini","pissi-1","Pissone","Metovola","pedeniva")] <- "-15.1289"
+	d$longitude[d$location %in% c("Sodoma","Sopoma")] <- "36.8"
+	d$latitude[d$location %in% c("Sodoma","Sopoma")] <- "-15.3"
+	d$longitude[d$location %in% c("Sede Nova","sede nova")] <- "36.9911"
+	d$latitude[d$location %in% c("Sede Nova","sede nova")] <- "-15.4878"
 	d$longitude[d$adm2 == "Angonia"] <- "34.4"
 	d$latitude[d$adm2 == "Angonia"] <- "-14.8"
 	d$longitude[d$adm2 == "Gondola"] <- "33.4"
 	d$latitude[d$adm2 == "Gondola"] <- "-19.3"
-	d$longitude[d$adm3 %in% c("Ruace","ruace","Ruace - sede")] <- "36.675"
-	d$latitude[d$adm3 %in% c("Ruace","ruace","Ruace - sede")] <- "-15.2217"
-	d$longitude[d$adm3 %in% c("Sodoma","Sopoma")] <- "36.8"
-	d$latitude[d$adm3 %in% c("Sodoma","Sopoma")] <- "-15.3"
-	d$longitude[d$adm3 == "Mangigi"] <- "36.9508"
-	d$latitude[d$adm3 == "Mangigi"] <- "-15.5219"
-	d$longitude[d$adm3 == "Mangigi"] <- "36.9508"
-	d$latitude[d$adm3 == "Mangigi"] <- "-15.5219"
+	d$longitude[d$location %in% c("Ruace","ruace","Ruace - sede")] <- "36.675"
+	d$latitude[d$location %in% c("Ruace","ruace","Ruace - sede")] <- "-15.2217"
+	d$longitude[d$location %in% c("Sodoma","Sopoma")] <- "36.8"
+	d$latitude[d$location %in% c("Sodoma","Sopoma")] <- "-15.3"
+	d$longitude[d$location == "Mangigi"] <- "36.9508"
+	d$latitude[d$location == "Mangigi"] <- "-15.5219"
+	d$longitude[d$location == "Mangigi"] <- "36.9508"
+	d$latitude[d$location == "Mangigi"] <- "-15.5219"
 	d$longitude[d$adm2 == "Tsangano"] <- "34.4"
 	d$latitude[d$adm2 == "Tsangano"] <- "-14.8"
-	d$longitude[d$adm3 == "Mecutamala"] <- "39.5"
-	d$latitude[d$adm3 == "Mecutamala"] <- "-15.7"
+	d$longitude[d$location == "Mecutamala"] <- "39.5"
+	d$latitude[d$location == "Mecutamala"] <- "-15.7"
 	
-	i <- d$adm1 == "Manica" &
-	  d$adm2 == "Sussundenga" &
-	  d$adm3 == "Chikuizo"
-	
+	i <- d$location == "Chikuizo"
 	d$latitude[i]  <- -19.3
 	d$longitude[i] <- 33.3
 	
-	d$latitude[d$adm1 == "nampula" &
-	             d$adm2 == "mogovolas" &
-	             d$adm3 == "vorra"] <- -15.7
+	d$latitude[d$adm1 == "nampula" & d$adm2 == "mogovolas" & d$location == "vorra"] <- -15.7
 	
 #remove empty character values
-	vars <- c(
-	  "adm1",
-	  "adm2",
-	  "adm3",
-	  "previous_crop_residue_management"
-	)
+	vars <- c("adm1", "adm2", "location", "previous_crop_residue_management")
 	
 	for (v in vars) {
 	  d[[v]] <- trimws(d[[v]])
-	}
-	
-	for (v in vars) {
 	  d[[v]][d[[v]] == ""] <- NA
 	}
 	
-d$hhid <- as.integer(d$hhid)
-d$longitude <- as.numeric(d$longitude)
-d$latitude <- as.numeric(d$latitude)
-d$elevation[d$elevation > 5000] <- NA
-d <- unique(d)
+	d$adm1 <- trimws(d$adm1)
+	d$longitude <- as.numeric(d$longitude)
+	d$latitude <- as.numeric(d$latitude)
+	d$elevation[d$elevation > 5000] <- NA
+	d <- unique(d)
 	
 	carobiner::write_files(path, meta, d)
 }
