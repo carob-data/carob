@@ -55,7 +55,6 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 	  yield_moisture = NA_real_, 
 	  yield_part = "tubers", 
 	  country = "United States", 
-	  geo_from_source = TRUE, 
 	  irrigated = NA,
 	  location = "Hancock Agricultural Research Station",
 	  yield_isfresh = TRUE,
@@ -83,7 +82,8 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 	  planting_date = c("2015-04-22", "2016-04-20", "2017-04-19"),
 	  harvest_date = c("2015-09-02", "2016-08-29", "2017-08-31"),
 	  longitude = -89.54417,
-	  latitude = 44.11722 
+	  latitude = 44.11722,
+	  geo_from_source = TRUE
 	)
 
 	d <- merge(d, info, by= "year", all.x = TRUE)
@@ -93,17 +93,16 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 	#####################
 	i <-  grepl("tuber_|dmy|record_id", names(d))
 	Nm <- names(d)[i]   
-  dlon <- d[, Nm]
-  dlon <-  reshape(dlon, varying = c("dmy_total_45", "dmy_total_75", "tuber_N_45", "tuber_N_75"),
-                   v.names = "value",
-                   direction = "long")
-  dlon$variable <- c(rep("dmy_total", 2), rep("tuber_N", 2))[dlon$time]
-  dlon$DAE <-  c(rep(45L, 2), rep(75L, 2))[dlon$time]
-  dlon$time <- dlon$id <- d$year <- NULL
+	dlon <- d[, Nm]
+	dlon <-  reshape(dlon, varying=c("dmy_total_45", "dmy_total_75", "tuber_N_45", "tuber_N_75"),
+                   v.names = "value", direction = "long")
+	dlon$variable <- c(rep("dmy_total", 2), rep("tuber_N", 2))[dlon$time]
+	dlon$DAE <-  c(rep(45L, 2), rep(75L, 2))[dlon$time]
+	dlon$time <- dlon$id <- d$year <- NULL
+	dlon <- na.omit(dlon)
   
-  i <-  grepl("tuber_|dmy", names(d))
-  
-  d <- d[, !names(d) %in% names(d)[i]]
+	i <-  grepl("tuber_|dmy", names(d))
+	d <- d[, !names(d) %in% names(d)[i]]
   
 	carobiner::write_files(path, meta, d, long = dlon)
 }
