@@ -12,7 +12,7 @@ carob_script <- function(path) {
   group <- "varieties_potato"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=5, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=5, minor=1,
       data_organization = "CIP",
       publication = NA,
       project = NA,
@@ -22,11 +22,9 @@ carob_script <- function(path) {
       carob_contributor = "Henry Juarez",
       carob_effort = NA,
       carob_date = "2024-09-24",
-      notes = "rAUDPC needs to be fixed",
-	  license = "CC-BY-4.0"  # missing
+      notes = "rAUDPC needs to be fixed"
   )
-  
-  
+    
   process <- carobiner::get_function("process_cip_lbvars", path, group)
   
   f <- ff[grep("_PT", basename(ff))]
