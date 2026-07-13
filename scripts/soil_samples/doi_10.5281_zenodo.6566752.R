@@ -71,7 +71,6 @@ the same SUs."
 		country = "Ethiopia",
 		adm1 = gsub("_", "-", r1$Region),
 		location_id = gsub(" +", "", trimws(r1$FieldCode)),
-		depth_range = depth_range,
 		longitude = r1$LAT, #swapped
 		latitude = r1$LON, #swapped
 		geo_from_source = TRUE,
