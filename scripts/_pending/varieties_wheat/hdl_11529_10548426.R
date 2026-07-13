@@ -1,6 +1,7 @@
 # R script for "carob"
 
-## downloading does not work 
+## downloading does not work; files are not present.
+## RH has contacted CIMMYT
 
 carob_script <- function(path) {
   

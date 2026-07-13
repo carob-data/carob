@@ -17,11 +17,11 @@ carob_script <- function(path) {
     carob_effort = NA,
     carob_date="2024-05-07",   
     data_type="on-station experiment",
-		response_vars = "yield",
+		response_vars = "disease",
 		treatment_vars = "variety_code"
   )
   
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }

@@ -13,12 +13,13 @@ Analysis of Household-Level Survey Data: Farm Characteristics and Resource Alloc
 Dataset processed from a household-level survey to describe the main farm characteristics, production, and resource allocation in two municipalities across three regions of the country: Surkhet (Gurbhakot) and Khotang (Tuwachung) districts. Data was collected between March and June 2023.
 "
 
+
 	uri <- "hdl:11529/10548994"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIMMYT; IWMI; Kathmandu University",
+		data_organization = "CIMMYT; IWMI; KUN",
 		publication = "https://hdl.handle.net/10568/139116",#cannot cite a report
 		project = NA,
 		design = "unitOfAnalysis: Household level",

@@ -10,7 +10,7 @@ carob_script <- function(path) {
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2, 
 		data_organization = "CIMMYT;BARI;BRRI", 
-		publication="doi.org/10.1016/j.jclepro.2019.118982", 
+		publication="doi:10.1016/j.jclepro.2019.118982", 
 		project=NA, 
 		data_type= "experiment", 
 		response_vars= "yield;fwy_total", 

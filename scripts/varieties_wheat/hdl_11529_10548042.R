@@ -22,13 +22,11 @@ The Semi-Arid Wheat Yield Trial (SAWYT) is a replicated yield trial that contain
 		treatment_vars = "variety_code"
  	)
 
-
-
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
-	i <- d$location == "Exp.Farm Kasapa, U.Lubumbashi"
-	d$latitude[i] <- -d$latitude[i]
+	i <- d$wide$location == "Exp.Farm Kasapa, U.Lubumbashi"
+	d$wide$latitude[i] <- -d$wide$latitude[i]
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

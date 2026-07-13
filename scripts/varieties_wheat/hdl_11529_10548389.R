@@ -25,6 +25,6 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)
 	d$soil_pH <- as.numeric(NA)
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

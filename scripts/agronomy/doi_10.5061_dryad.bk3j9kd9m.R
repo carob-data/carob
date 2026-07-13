@@ -30,7 +30,7 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
          carob_contributor= "Cedric Ngakou", 
          carob_effort = NA,
          carob_date="2025-07-03",
-         completion=100,
+         carob_completion=100,
          design = "Field data was collected in 2014 during repeated sampling campaigns. Additional data was acquired from soil maps, GIS data bases and farm management surveys. Please refer to main paper for details.",
          notes=NA
    )

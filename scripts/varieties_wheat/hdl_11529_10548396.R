@@ -27,5 +27,5 @@ carob_script <- function(path) {
   d$previous_crop <- gsub("rice-wheat","rice",d$previous_crop)
 
   
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }

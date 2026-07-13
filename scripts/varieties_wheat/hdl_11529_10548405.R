@@ -28,5 +28,5 @@ The Acid-Soils Wheat Screening Nursery (ASWSN) contains spring bread wheat germp
   
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)
-  carobiner::write_files(path, meta, d)
+    carobiner::write_files(path, meta, d$wide, d$long)
 }
