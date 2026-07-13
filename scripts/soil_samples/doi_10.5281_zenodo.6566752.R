@@ -103,8 +103,8 @@ the same SUs."
 
 	d3 <- data.frame(
 		location_id = gsub(" +", "", trimws(r3$FieldCode)),
-		soil_C_litter = LitterCStock_tha
-	}
+		soil_C_litter = r3$LitterCStock_tha
+	)
 
 ## SU O-348 has 2 litter measurements with no replicate id (see ISSUES); average them
 ## to one value per SU so the merge below doesn't fan out the unrelated SOC depth rows
