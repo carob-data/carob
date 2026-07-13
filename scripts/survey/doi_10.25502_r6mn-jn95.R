@@ -136,7 +136,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d4$crop_rotation <- gsub("cow pea|maize cowpea","cowpea", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("pigeonpea|pegeon pea","pigeon pea", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("goundnut|grundnut","groundnut", d4$crop_rotation, ignore.case = TRUE)
-	d4$crop_rotation <- gsub("sesam|sesamee", "sesame", d4$crop_rotation, ignore.case = TRUE)
+	d4$crop_rotation <- gsub("sesam|sesamee","sesame", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("sunflouwer","sunflower", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("shorgum","sorghum", d4$crop_rotation, ignore.case = TRUE)
 	d4$crop_rotation <- gsub("potatoe","potato", d4$crop_rotation, ignore.case = TRUE)
