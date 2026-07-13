@@ -83,6 +83,7 @@ the same SUs."
 		longitude = r1$LAT, #swapped
 		latitude = r1$LON, #swapped
 		geo_from_source = TRUE,
+		depth_range = depth_range,
 		depth_top = as.numeric(depth[,1]),
 		depth_bottom = as.numeric(depth[,2]),
 		soil_SOC = r1$OC_adj,
@@ -121,6 +122,7 @@ the same SUs."
 ## no PSA match for a few SUs (e.g. B-151, sampled twice for SOC but not for texture)
 	d$soil_texture[is.na(d$soil_texture)] <- "unknown"
 
+	d$depth_range <- NULL
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE
 	carobiner::write_files(path, meta, d)
