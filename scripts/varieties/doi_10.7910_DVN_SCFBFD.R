@@ -10,11 +10,9 @@ White sorghum hybrids at Mieso 2014
 
 Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 35 experimental red hybrids, a hybrid and an OPV check evaluated at Mieso (Western Hararghe, Ethiopia) in 2014
 "
-
 	uri <- "doi:10.7910/DVN/SCFBFD"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -31,7 +29,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	)
 	
 	f <- ff[basename(ff) == "White sorghum hybrids at Mieso 2014.xlsx"]
-
 	r <- carobiner::read.excel(f, sheet="Sheet1")
 
 	d <- data.frame(
@@ -67,7 +64,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
-
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
 	geo_uncertainty = 51603
@@ -75,14 +71,12 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_from_source <- FALSE
 	d$location[d$location == "MS"] <- "Mieso"
 	
-	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
 	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
 	
-
 	carobiner::write_files(path, meta, d)
 }
 
