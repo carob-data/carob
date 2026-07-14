@@ -13,11 +13,9 @@ Red sorghum hybrids at Shoarobit 2014
 Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 36 experimental red hybrids, a hybrid and an OPV check evaluated at Shoarobit (North Shewa, Ethiopia) in 2014
 "
 
-
 	uri <- "doi:10.7910/DVN/VBLWFP"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -33,11 +31,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 1
 	)
 	
-
 	f <- ff[basename(ff) == "Red sorghum hybrids at Shoarobit 2014.xlsx"]
-
 	r <- carobiner::read.excel(f, sheet="Sheet1")
-	
 	
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -68,13 +63,11 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  crop = "sorghum"
 	)
 
-	
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE 
 	d$irrigated <- NA
 	
-	## Shoarobit is not available in GADM.
 	##geo_uncertainity was obtained from adm3 = kewet
 	d$longitude <- 39.900
 	d$latitude <- 10.000
@@ -82,11 +75,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	geo_source = "Google Maps"
 	d$geo_from_source <- FALSE
 
-
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
 	d$fertilizer_type <- NA
-	
-	
+		
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE

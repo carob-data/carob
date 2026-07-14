@@ -16,7 +16,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
 		publication = NA,
@@ -31,11 +30,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 5
 	)
 	
-
 	f <- ff[basename(ff) == "Stay-green hybrids at Mieso 2014.xlsx"]
-
 	r <- carobiner::read.excel(f)
-
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -65,21 +61,17 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  crop = "sorghum"
 	)
 	
-	d$trial_id <- "1"
-	
-	
+	d$trial_id <- "1"	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
-	
+		
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
 	geo_uncertainty = 51603
 	geo_source = "GADM 4.1, adm3"
 	d$geo_from_source <- FALSE
 	d$location[d$location == "MS"] <- "Mieso"
-	
 	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
 	
