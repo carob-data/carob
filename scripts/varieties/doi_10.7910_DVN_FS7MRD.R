@@ -24,7 +24,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;seed_weight;plant_height;emergence_days;severity_scale;rl;sl;flowering_days;maturity_days;pest_severity;drought_stress;bird_damage", 
+		response_vars = "yield;seed_weight;plant_height;emergence_days;disease_severity;rl;sl;flowering_days;maturity_days;pest_severity;drought_stress;bird_damage", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-13",
 		carob_completion = 90,	
@@ -59,7 +59,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  pest_severity = r$InsectScore,
 	  drought_stress = r$DroughtScore,
 	  bird_damage = as.character(r$BirdDamage),
-	  severity_scale = r$DiseaseScore,
+	  disease_severity = r$DiseaseScore,
 	  rl = r$RootLodging,
 	  sl = r$StemLodging,
 	  crop = "sorghum"
