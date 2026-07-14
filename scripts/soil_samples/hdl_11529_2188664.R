@@ -6,31 +6,32 @@
 # 2. NA values in sample_id originates from raw data 
 
 
+
 carob_script <- function(path) {
   
-  "
+"
 TAMASA Tanzania. Soil data from farmers' maize fields in 2014/15 season
 
 Soil analysis from 0-20 cm and 20-50 cm depths in 140 farmer fields from the in Southern Highlands, Eastern and Northern Zones of  Tanzania in 2014/2015.
 "
   
-  uri <- "hdl:11529/2188664"
-  group <- "soil_samples"
-  ff  <- carobiner::get_data(uri, path, group)
+	uri <- "hdl:11529/2188664"
+	group <- "soil_samples"
+	ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
-                                  data_organization = "CIMMYT; IARI; SARI",
-                                  publication = NA,
-                                  project = "TAMASA",
-                                  design = NA,
-                                  data_type = "survey",
-                                  treatment_vars = "none",
-                                  response_vars = "none", 
-                                  notes = NA,
-                                  carob_contributor = "Blessing Dzuda",
-                                  carob_date = "2026-06-28",
-                                  carob_completion = 100,	
-                                  carob_effort = 3
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
+		data_organization = "CIMMYT; IARI; SARI",
+		publication = NA,
+		project = "TAMASA",
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none", 
+		notes = NA,
+		carob_contributor = "Blessing Dzuda",
+		carob_date = "2026-06-28",
+		carob_completion = 100,	
+		carob_effort = 3
   )
   
   
