@@ -16,8 +16,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
 		publication = NA,
@@ -32,12 +30,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 4
 	)
 	
-
 	f <- ff[basename(ff) == "White sorghum hybrids at Shiraro 2014.xlsx"]
-
 	r <- carobiner::read.excel(f, sheet="Sheet1")
 	
-
 	d <- data.frame(
 	  country = "Ethiopia",
 	  adm2 = "Hararghe",
@@ -64,13 +59,11 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	)
 	
 	d$trial_id <- "1"
-	
-	
+
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
-
 	d$longitude <- 37.773
 	d$latitude <-  14.396
 	# uncertainty from GADM adm3 = "Tahtay Adiyabo",
@@ -79,16 +72,11 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_from_source <- FALSE
 	d$location[d$location == "SH"] <- "Shiraro"
 	
-
-
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
 	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
-	
-
- 
 
 	carobiner::write_files(path, meta, d)
 }
