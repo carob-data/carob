@@ -5,27 +5,27 @@
 
 carob_script <- function(path) {
 
-  "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers an N2Africa diagnostic trial (control/PK/NPK/SYMPAL fertilizer treatments on common bean) in northern Tanzania (Lushoto and Moshi Rural districts), 2014 season II, together with household demographics, livestock composition, and farm production context."
+"
+N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers an N2Africa diagnostic trial (control/PK/NPK/SYMPAL fertilizer treatments on common bean) in northern Tanzania (Lushoto and Moshi Rural districts), 2014 season II, together with household demographics, livestock composition, and farm production context.
+"
 
   uri   <- "doi:10.25502/f46k-yh57"
   group <- "survey"
-
   ff <- carobiner::get_data(uri, path, group)
 
-  meta <- carobiner::get_metadata(uri, path, group,
-                                  major = NA, minor = NA,
-                                  data_organization = "IITA",
-                                  publication = NA,
-                                  project = "N2Africa",
-                                  data_type = "survey",
-                                  treatment_vars = "fertilizer_used;fertilizer_amount",
-                                  response_vars = "yield",
-                                  carob_completion = 100,
-                                  carob_contributor = "Mitchelle Njukuya",
-                                  carob_date = "2026-07-14",
-                                  carob_effort = 3,
-                                  notes = NA,
-                                  design = NA
+  meta <- carobiner::get_metadata(uri, path, group, major = NA, minor = NA,
+		data_organization = "IITA",
+		publication = NA,
+		project = "N2Africa",
+		data_type = "survey",
+		treatment_vars = "fertilizer_used;fertilizer_amount",
+		response_vars = "yield",
+		carob_completion = 100,
+		carob_contributor = "Mitchelle Njukuya",
+		carob_date = "2026-07-14",
+		carob_effort = 3,
+		notes = NA,
+		design = NA
   )
 
   f1 <- ff[basename(ff) == "general.csv"]
@@ -100,8 +100,7 @@ carob_script <- function(path) {
     country  = "Tanzania",
     adm1     = tolower(trimws(r1$district)),
     adm2     = tolower(trimws(r1$sector_ward)),
-    adm3     = tolower(trimws(r1$village)),
-    stringsAsFactors = FALSE
+    location     = tolower(trimws(r1$village))
   )
 
   ## GPS: prefer field-level coordinates, fall back to household-level
@@ -263,11 +262,8 @@ carob_script <- function(path) {
 
       ## N/P/K left NA -- raw data give kg of product (fertilizer_amount)
       ## and product names (NPK/PK/SYMPAL) but not nutrient composition, so
-      ## exact N/P/K rates cannot be computed without fabricating a
-      ## composition.
-      N_fertilizer = NA_real_,
-      P_fertilizer = NA_real_,
-      K_fertilizer = NA_real_,
+      ## exact N/P/K rates cannot be computed without fabricating a composition.
+      N_fertilizer = P_fertilizer = K_fertilizer = NA_real_,
       
       ## fertilizer_amount = total kg of mineral fertilizer product(s)
       ## applied to the plot, summed across up to 3 products
