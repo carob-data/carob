@@ -63,7 +63,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$longitude <- 41.3 
 	d$latitude <- 9.56
 ### The dataset description has Erer in Eastern Hararghe but it is in Sitti
-	# uncertainty was computed how? Erer Woreda? Sitti? E. Hararghe? 
+	# uncertainty was computed  from Erer Sitti  
 	d$geo_uncertainty <- 91072
 	d$geo_source = "GADM 4.1, adm3"
 	d$geo_from_source <- FALSE # !!!!
