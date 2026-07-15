@@ -2,7 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
- #NA detected on yield
 
 carob_script <- function(path) {
 
@@ -15,7 +14,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	uri <- "doi:10.7910/DVN/BQFQ0Q"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -30,7 +28,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_completion = 100,	
 		carob_effort = 5
 	)
-	
+
 
 	f <- ff[basename(ff) == "White sorghum hybrids at Shoarobit 2014.xlsx"]
 
@@ -63,13 +61,10 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  crop = "sorghum"
 	)
 	
-	
-	d$trial_id <- "1"
-	
+	d$trial_id <- "1"	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
 
 	d$longitude <- 39.897
 	d$latitude <- 9.995
@@ -79,12 +74,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
-	
-	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
-	
 
 	carobiner::write_files(path, meta, d)
 }
