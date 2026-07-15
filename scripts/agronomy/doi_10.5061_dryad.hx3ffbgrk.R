@@ -30,7 +30,7 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
             carob_contributor= "Cedric Ngakou", 
             carob_effort = NA,
             carob_date="2025-06-23",
-            completion=100,
+            carob_completion=100,
             notes=NA
    )
    

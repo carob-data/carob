@@ -23,7 +23,5 @@ carob_script <- function(path) {
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)	
   
-  #remove 5 outliers from Sids, Egypt
-  d <- d[d$yield < 14000, ]
-  carobiner::write_files(path, meta, d)
+  carobiner::write_files(path, meta, d$wide, d$long)
 }

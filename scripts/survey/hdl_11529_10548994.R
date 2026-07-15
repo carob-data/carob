@@ -18,8 +18,8 @@ Dataset processed from a household-level survey to describe the main farm charac
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIMMYT; IWMI; Kathmandu University",
-		publication = "https://hdl.handle.net/10568/139116",#cannot cite a report
+		data_organization = "CIMMYT; IWMI; KUN",
+		publication = "hdl:10568/139116",
 		project = NA,
 		design = "unitOfAnalysis: Household level",
 		data_type = "survey",
@@ -32,17 +32,15 @@ Dataset processed from a household-level survey to describe the main farm charac
 		carob_effort = 8
 	)
 	
+	f <- ff[basename(ff) == "BD Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
+	r <- carobiner::read.excel(f, sheet="DB")
 
-	f <- ff[basename(ff) == "BD Khotang-Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
-	f2 <- ff[basename(ff) == "BD Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
-	f3 <- ff[basename(ff) == "BD Surkhet-Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
+# included in f
+#	f1 <- ff[basename(ff) == "BD Khotang-Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
+#	f3 <- ff[basename(ff) == "BD Surkhet-Nepal Houshold processed survey 2023 CIMMYT.xlsx"]
+#	r1 <- carobiner::read.excel(f1, sheet="DB")
+#	r3 <- carobiner::read.excel(f3, sheet="DB")
 
-	r1 <- carobiner::read.excel(f, sheet="DB")
-	r2 <- carobiner::read.excel(f2, sheet="DB")
-	r3 <- carobiner::read.excel(f3, sheet="DB")
-
-	r <- rbind(r1,r2,r3)
-	#r <- unique(r) no duplicates at t5his point
 	
 	d <- data.frame(
 	  hhid=r$hh_id2,
@@ -87,45 +85,28 @@ Dataset processed from a household-level survey to describe the main farm charac
 	  wheat=r$yield_wheat,
 	  irri_wheat=r$irri_wheat,
 	  yield_moisture=as.numeric(NA),
-	  planting_date=as.character(NA)
-	  )
-
-	#reshaping data to long to capture various crops and their yields
-	
-	crop_cols <- c("banana", "lentil", "maize", "mango", "ricebean",
-	               "millet", "potato", "rice", "wheat")
-	
-	irri_cols <- c("irri_banana", "irri_lentil", "irri_maize", "irri_mango", "irri_ricebean",
-	               "irri_millet", "irri_potato", "irri_rice", "irri_wheat")
-	
-
-	d$id <- 1:nrow(d)
-	
-	d <- reshape(
-	  d,
-	  direction = "long",
-	  varying = list(yield = crop_cols, irri_pct = irri_cols),
-	  v.names = c("yield", "irri_pct"),
-	  timevar = "crop",
-	  times = crop_cols,
-	  idvar = "id"
+	  planting_date=as.character(NA),
+	  OM_used = r$manure_sys == "1"
 	)
 	
+	#reshaping data to long to capture various crops and their yields	
+	crop_cols <- c("banana", "lentil", "maize", "mango", "ricebean", "millet", "potato", "rice", "wheat")
+	irri_cols <- paste0("irri_", crop_cols)
+	
+	d <- reshape(d, direction = "long", varying = list(yield = crop_cols, irri_pct = irri_cols),
+	  v.names = c("yield", "irri_pct"), timevar = "crop", times = crop_cols,  idvar = "hhid")
+	d <- d[d$yield > 0, ]
 	rownames(d) <- NULL
 	
 	
 	d$yield <- d$yield*1000 #converting t/ha to kg/ha
-	d$OM_used <- r$manure_sys == "1"
 	d$OM_type <- ifelse(d$OM_used, "animal dung", NA)
-	d$irrigated <- long_d$irri_pct > 0
+	d$irrigated <- d$irri_pct > 0
 	d$geo_from_source <- TRUE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-	d$trial_id <- paste(d$hhid,d$location,sep = "_")
 	d$yield_isfresh <- NA
-	
-	
 	
 	#cleaning education values
 	edu <- c(
@@ -136,32 +117,29 @@ Dataset processed from a household-level survey to describe the main farm charac
 	  "4" = "college"
 	)
 
-d$education <- edu[as.character(d$education)]
+	d$education <- edu[as.character(d$education)]
 
-#cleaning gender
-d$sex <- ifelse(d$sex=="1","male","female")
+	#cleaning gender
+	d$sex <- ifelse(d$sex=="1","male","female")
 
-d[c("irri_pct", "id")] <- NULL
+	d[c("irri_pct", "id")] <- NULL
 
-#standardizing yield part
-yield_part <- c(
-  banana   = "fruit",
-  lentil   = "seed",
-  maize    = "grain",
-  mango    = "fruit",
-  ricebean = "seed",
-  millet   = "grain",
-  potato   = "tubers",
-  rice     = "grain",
-  wheat    = "grain"
-)
+	#standardizing yield part
+	yield_part <- c(
+	  banana   = "fruit",
+	  lentil   = "seed",
+	  maize    = "grain",
+	  mango    = "fruit",
+	  ricebean = "seed",
+	  millet   = "grain",
+	  potato   = "tubers",
+	  rice     = "grain",
+	  wheat    = "grain"
+	)
 
-d$yield_part <- yield_part[d$crop]
-	
-d$currency <- "NPR"	
+	d$yield_part <- yield_part[d$crop]
+	d$currency <- "NPR"	
 
-d <- unique(d)#because some differentiating variables were ommitted during standardization, and
-             #reshaping, more entries behaved like duplicates
-
-carobiner::write_files(path, meta, d)
+	d$yield[d$yield > 20000] <- NA
+	carobiner::write_files(path, meta, d)
 }

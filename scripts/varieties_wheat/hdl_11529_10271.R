@@ -26,6 +26,6 @@ carob_script <- function(path) {
 	
 	d$soil_SOC[d$soil_SOC == 23.2] <- NA
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

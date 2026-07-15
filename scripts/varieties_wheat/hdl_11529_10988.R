@@ -28,5 +28,5 @@ carob_script <- function(path) {
 	#much too low
 	d$heading_days[d$country == "South Africa"] <- NA
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

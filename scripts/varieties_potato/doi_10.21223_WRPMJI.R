@@ -7,8 +7,9 @@ carob_script <- function(path) {
   
   uri <- "doi:10.21223/WRPMJI"
   group <- "varieties_potato"
-  ff  <- carobiner::get_data(uri, path, group)
-  meta <- carobiner::get_metadata(uri, path, group, major=7, minor=0,
+  ff  <- carobiner::get_data(uri, path, group, cache=F)
+  
+  meta <- carobiner::get_metadata(uri, path, group, major=7, minor=1,
       data_organization = "CIP",
       publication = NA,
       project = NA,
@@ -48,5 +49,8 @@ carob_script <- function(path) {
   d$on_farm <- TRUE
   d$crop <- "potato"  
 
+  d$yield_moisture <- NA
+  d$yield_isfresh <- TRUE
+  
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }

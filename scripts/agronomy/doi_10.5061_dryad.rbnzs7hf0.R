@@ -19,7 +19,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-06-03",
-	  completion=50, # % files f2-f5 were not porcessed
+	  carob_completion=50, # % files f2-f5 were not porcessed
       notes=NA
    )
    

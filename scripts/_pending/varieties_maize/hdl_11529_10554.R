@@ -4,23 +4,20 @@
 # Reading excel files needs to be refined a lot 
 # need to skip rows in begging and end 
 
-
 carob_script <- function(path) {
   
-  "
-
-    Summary results and individual trial results from the International Late White Hybrid - ILWH,
-    (Elite Tropical Late White Normal and QPM Hybrid Trial - CHTTW) conducted in 2006.
-
 "
+Summary results and individual trial results from the International Late White Hybrid - ILWH,
+(Elite Tropical Late White Normal and QPM Hybrid Trial - CHTTW) conducted in 2006.
+"
+
 	uri <- "hdl:11529/10554"
-	group <- "maize_trials"
+	group <- "varieties_maize"
 	ff	<- carobiner::get_data(uri, path, group)
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		#data_citation="Global Maize Program, 2018, International Late White Hybrid Trial - ILWH0607, https://hdl.handle.net/11529/10554, CIMMYT Research Data & Software Repository Network, V1",
 		data_organization = "CIMMYT",
 		publication= NA,
-		project="Global Maize Program",
+		project=NA,
 		data_type= "experiment",
 		carob_contributor= "Mitchelle Njukuya",
 		carob_date="2024-02-22"

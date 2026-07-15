@@ -67,6 +67,7 @@ carob_script <- function(path) {
 	d <- merge(d, coord, by="location", all.x=TRUE)
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$yield_moisture <- d$yield_isfresh <- NA
 	d$irrigated <- NA
 	d$on_farm <- NA
 	

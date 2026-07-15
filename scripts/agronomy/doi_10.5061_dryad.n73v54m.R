@@ -19,7 +19,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-06-19",
-      completion=100,
+      carob_completion=100,
       notes="N_fertilizer applied is not recorded."
    )
    

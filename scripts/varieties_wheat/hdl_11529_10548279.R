@@ -25,10 +25,10 @@ carob_script <- function(path) {
 	d <- proc_wheat(ff)	
 	
 	## yield much too high
-	i <- which(d$location %in% c("Sharkia Station", "Gujarat Agic Univ, Junagadh"))
-	d <- d[-i,]
+	i <- which(d$wide$location %in% c("Sharkia Station", "Gujarat Agic Univ, Junagadh"))
+	d$wide$yield[i] <- NA
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 

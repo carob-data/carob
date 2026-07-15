@@ -26,7 +26,7 @@ carob_script <- function(path) {
 	
 	d$harvest_date[d$harvest_date=="2004-04-09"] <- "2003-04-09"
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
 	

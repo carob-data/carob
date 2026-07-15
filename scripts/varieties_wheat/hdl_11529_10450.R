@@ -24,11 +24,9 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)	
 
-	d$yield[d$yield > 100000] <- NA
-	d$yield[(d$yield > 9999) & (d$location == "Uas, Mas Dharward")] <- NA
+	d$wide$yield[d$wide$yield > 100000] <- NA
+	d$wide$yield[(d$wide$yield > 9999) & (d$wide$location == "Uas, Mas Dharward")] <- NA
 
-	d <- d[!is.na(d$yield), ]
-
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
 
