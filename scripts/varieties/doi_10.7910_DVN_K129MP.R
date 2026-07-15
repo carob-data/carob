@@ -31,9 +31,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 4
 	)
 	
-
 	f <- ff[basename(ff) == "Drought hybrids observation Shiraro 2015.xlsx"]
-
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
@@ -61,13 +59,11 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  crop = "sorghum"
 	)
 
-	
 	d$trial_id <- "1"
 	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
 	  
 	d$longitude <- 37.773
 	d$latitude <-  14.396
@@ -77,10 +73,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_from_source <- FALSE
 	d$location[d$location == "SH"] <- "Shiraro"
 	
-	
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
-	
-	
+		
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
