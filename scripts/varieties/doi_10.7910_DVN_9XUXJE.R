@@ -16,7 +16,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
 		publication = NA,
@@ -31,11 +30,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 5
 	)
 	
-
 	f <- ff[basename(ff) == "R-lines observation nursery Mieso 2015.xlsx"]
-
 	r <- carobiner::read.excel(f)
-
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -61,7 +57,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
 	
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
