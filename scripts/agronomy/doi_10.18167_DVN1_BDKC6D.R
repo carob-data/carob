@@ -2,13 +2,10 @@
 # license: GPL (>=3)
 
 ## ISSUES
-"suggested/provisional fields:
-       pest_disease (combined pest+disease occurrence flag from score.csv - source
-
+"
 data does not distinguish which); 
        waterlogged and deficiency_P (waterlogging and phosphorus deficiency occurrence flags from score.csv). 
        N_fixation exceeds terminag's upper bound (150) for one trial (173 kg/ha)
-       A few trials have NA yield despite having other real measurements (biomass, LAI, soil water).
        longitude/latitude are NA for 17 trials (the 15 farmer-named groundnut trials,
 
 plus test and the MKSH2 trial) that have no match in usms
@@ -34,7 +31,7 @@ Data for the calibration of STICS and yield gap analysis for maize, groundnut co
 
 The dataset contains data on the growth of maize, groundnut, cowpea and pigeon pea collected during two growing seasons in on-farm trials in the Murehwa district, sub-humid Zimbabwe. The observed climate data for the experimental seasons is provided, along with basic soil characteristics. Crop management (planting date, date of field operations) is also described, as well as initial conditions prior to planting. Eventually, observations of in-season leaf area index (when available), soil water (when available), biological nitrogen fixation (when available), crop nitrogen content (when available), aboveground biomass and grain yield at harvest (and biomass at flowering when available) are provided. Scores of weed infestation, pest and disease occurrence, waterlogging occurrence and phosphorus deficiency occurrence are included. 
 
- There is one simulation unit for each combination of crop, soil and climate, identified by an unique key (see usms file)
+There is one simulation unit for each combination of crop, soil and climate, identified by an unique key (see usms file)
 "
 
 	uri <- "doi:10.18167/DVN1/BDKC6D"
@@ -55,7 +52,7 @@ The dataset contains data on the growth of maize, groundnut, cowpea and pigeon p
 		carob_completion = 70,	
 		carob_effort = 3
 	)
-	
+
 	f1 <- ff[basename(ff) == "obs.csv"]    # Observations. Actual measured outcomes
 	f2 <- ff[basename(ff) == "score.csv"]  #Categorical scores per simulation
 	f3 <- ff[basename(ff) == "tec.csv"]    #Management operations per simulation
@@ -72,47 +69,59 @@ The dataset contains data on the growth of maize, groundnut, cowpea and pigeon p
 	r6 <- read.csv(f6)
 	r7 <- read.csv(f7)
 
-### yield/actual observation data
+### crop growth/development
 	r1[r1 == -999] <- NA
 	
 	d1 <- data.frame(
-	  usm_name = r1$usm_name,
-	  yield = r1$mafruit * 1000,
-	  yield_part = "grain",
-	  yield_moisture = 0,
-	  yield_isfresh = FALSE,
-	  dmy_total = r1$masec_n * 1000,
-	  seed_weight = r1$p1000grain,
-	  harvest_index = r1$ircarb.n. * 100,
+	  trial_id = r1$usm_name,
+	  date = apply(r1[, c("ian", "mo", "jo")], 1, \(x) paste0(x, collapse="-")) |> as.Date() |> as.character(),
+	  yield = round(r1$mafruit * 1000,1),
+	  dmy_total = round(r1$masec_n * 1000,1),
+	  seed_weight = round(r1$p1000grain,1),
+	  harvest_index = round(r1$ircarb.n. * 100,1),
 	  grain_N = r1$CNgrain * 10,
-	  LAI = r1$lai_n,
-	  flowering_days = r1$iflos - r1$iplt0,
-	  maturity_days  = r1$imats - r1$iplt0,
-	  N_fixation = r1$Qfix #amount of N fixed symbiotically (BNF), kg/ha
+	  LAI = round(r1$lai_n,3),
+	  flowering_date = r1$iflos,
+	  maturity_date  = r1$imats,
+	  N_fixation = round(r1$Qfix,2) #amount of N fixed symbiotically (BNF), kg/ha
+	  
 	  #redundant, can be computed from N content and yield
 	  #grain_N_total = r1$QNgrain #suggested term for total amount of N in harvested grain, kg/ha
 	)
-	d1$date = apply(r1[, c("ian", "mo", "jo")], 1, \(x) paste0(x, collapse="-")) |> as.Date() |> as.character()
-	d1 <- d1[d1$usm_name != "test", ]
+	d1 <- d1[!(d1$trial_id %in% c("test")), ]
+	d1$flowering_date <- ifelse(is.na(d1$flowering_date), NA, d1$date)
+	d1$maturity_date <- ifelse(is.na(d1$maturity_date), NA, d1$date)
+	d1$harvest_date <- ifelse(is.na(d1$yield), NA, d1$date)
+	# remove records where only usm and date are not NA
+	d1 <- d1[rowSums(!is.na(d1)) > 2, ]
+
+	vL <- c("trial_id", "date", "dmy_total", "LAI", "N_fixation")
+    dlong <- d1[,vL]
+	dlong <- dlong[rowSums(!is.na(dlong)) > 2, ]
+	dlong <- dlong[order(dlong$trial_id, dlong$date), ]
+
+	v <- names(d1)
+    d1 <- d1[, c("trial_id", v[!v %in% vL])]
+	d1 <- aggregate(d1[,-1], d1[1], \(x) if (all(is.na(x))) NA else x[!is.na(x)])
 
 	#  Select relevant columns
 	d2 <- data.frame(
-	  usm_name = r2$usm_name,
-	  weed_severity = c("low","medium","high")[r2$weed_f + 1],
-	  pest_disease = r2$pest_disease_f,
-	  waterlogged = r2$waterlog_f,
-	  deficiency_P = r2$p_def_f
+	  trial_id = r2$usm_name,
+	  weed_severity = c("low","medium","high")[r2$weed_f + 1]
 	)
+	s <- apply(cbind(ifelse(r2$pest_disease_f, "pests;disease", NA),
+			ifelse(r2$waterlog_f, "excess water", NA),
+				ifelse(r2$p_def_f, "phosphorus deficiency", NA)), 1, \(x) paste0(x[!is.na(x)], collapse=";"))
+	s[s==""] <- "none"
+	d2$stress <- s
 	
 # farm management data
-	r3$irec[r3$irec == 999] <- NA   # harvest date genuinely not recorded
-
 	d3 <- data.frame(
-	  usm_name = r3$usm_name,
+	  trial_id = r3$usm_name,
 	  seed_density = r3$densitesem * 10000,
 	  N_fertilizer = ifelse(r3$Qtot_N == 999, NA, r3$Qtot_N),
 	  emergence_days = r3$ilev - r3$iplt0,
-	  iplt0 = r3$iplt0
+	  iplt0 = r3$iplt0 # planting day
 	)
 
 	d4 <- data.frame(
@@ -135,7 +144,7 @@ The dataset contains data on the growth of maize, groundnut, cowpea and pigeon p
 	)
 	
 	d6 <- data.frame(
-	  usm_name = r6$usm_name,
+	  trial_id = r6$usm_name,
 	  nomsol = r6$nomsol,
 	  station_id = gsub("_sta.xml", "", r6$id_ws),
 	  crop = tolower(r6$crop),
@@ -146,37 +155,32 @@ The dataset contains data on the growth of maize, groundnut, cowpea and pigeon p
 	
 # Final merge of all d tables
 ## note 
-# d2$usm_name[!(d2$usm_name %in% d1$usm_name)]
+# d2$trial_id[!(d2$trial_id %in% d1$trial_id)]
 # [1] "Makombe_Makombe_Chipo_GN_2"
-# d1$usm_name[!(d1$usm_name %in% d2$usm_name)]
+# d1$trial_id[!(d1$trial_id %in% d2$trial_id)]
 # [1] "2022_MKSH2_MZ_1_MZ"  "Dadha_Babra_Mafuta_GN_2_MTK" "Dadha_Christine_Karuru_GN_2_MTK",  and 13 more
 
-	d <- merge(d1, d2, by = "usm_name", all.x = TRUE)
-	d <- merge(d, d3, by = "usm_name", all.x = TRUE)
+
+	d <- merge(d1, d2, by = "trial_id", all.x = TRUE)
+	d <- merge(d, d3, by = "trial_id", all.x = TRUE)
 
 	dd <- merge(d6, d4, by = "nomsol", all.x = TRUE)
 	dd <- merge(dd, d5, by = "station_id", all.x = TRUE)
 
-	d <- merge(d, dd, by = "usm_name", all.x = TRUE)
+	d <- merge(d, dd, by = "trial_id", all.x = TRUE)
 
 	d$latitude[is.na(d$latitude)] <- mean(d$latitude, na.rm=TRUE)
 	d$longitude[is.na(d$longitude)] <- mean(d$longitude, na.rm=TRUE)
 
 	d$planting_date = as.character(as.Date(paste0(d$year_harvest-2, "-12-31")) + d$iplt0)
-	d$iplt0 <- NULL
-	d$year_harvest <- NULL
+	d$iplt0 <- d$irec <- d$year_harvest <- d$nomsol <- NULL
 	
-	d$trial_id <- d$usm_name
-	d$usm_name <- NULL
 	d$country <- "Zimbabwe"
 	d$adm1 <- "Mashonaland East"
 	d$adm2 <- "Murehwa"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
-
-	d$nomsol <- NULL
-	
 	d$K_fertilizer <- NA
 	d$P_fertilizer <- NA
 
@@ -191,11 +195,14 @@ The dataset contains data on the growth of maize, groundnut, cowpea and pigeon p
 		rhum = r7$HUMIDITY,
 		ETP = r7$ETP # presumably actual evapotranspiratoin
 	)
-	
 	w <- merge(w, d5[, c("station_id", "longitude", "latitude", "elevation")], all.x=TRUE)
+
 	d <- unique(d)
-	
-	carobiner::write_files(path, meta, d, wth=w)
+	d$yield_part = "grain"
+	d$yield_moisture = 0
+	d$yield_isfresh = FALSE
+
+	carobiner::write_files(path, meta, d, long=dlong, wth=w)
 }
 
 
