@@ -6,9 +6,22 @@
 # light interception before and after pruning. This script focuses on bean
 # yield, which has multiple plots per farm_id and two common bean varieties
 # (local and improved) grown on the same farm, but there is no way to
-# identify which plot belongs to which variety. For light interception, only
-# the before-pruning state is used (pruning occurred after harvest, so
-# cannot be linked to yield).
+# identify which plot belongs to which variety. 
+
+## RH: this could be a reason to _reject_ the dataset --- the main treatment is not available\
+## but I suppose we can still keep it such that we have observations on bean yields.
+ 
+
+# For light interception, only the before-pruning state is used (pruning occurred
+# after harvest, so cannot be linked to yield).
+
+# yield_shaded, yield_unshaded (kg/ha) are suggested new terminag terms:
+# yield from the most/least-shaded harvest subsamples within each plot.
+
+## RH: the approach would be to use "yield" and a new variable "shaded"
+## this could be  (TRUE/FALSE), but in this case it would be "low/average/high". 
+## however that seems so generic that it may be not be worth capturing it. 
+## perhaps we should just keep the (average) yield
 
 
 ## ISSUES
@@ -25,11 +38,6 @@
 # dataset title, "CBBISC" farm_id code, and sole_climbing_beans_in_
 # experiment_this_farm (variety type: local/improved).
 #
-# disease: "halo blight" (common bean) has no matching terminag term.
-#
-# yield_shaded, yield_unshaded (kg/ha) are suggested new terminag terms:
-# yield from the most/least-shaded harvest subsamples within each plot.
-#
 # light_interception (%) is a suggested new terminag term: 1 - below_canopy_
 # reading/outside_canopy reference reading, averaged across all transect
 # locations (no-pruning state only).
@@ -41,7 +49,7 @@
 
 carob_script <- function(path) {
   
-  "
+"
 N2Africa agronomy trials harvest - Uganda, 2016, II
 
 On-farm trial data from 23 climbing bean farms in Kapchorwa and Kanungu
@@ -57,23 +65,24 @@ complete harvest weights; one farm's crop failed entirely due to drought,
 and free-text notes for several others describe drought, pest (pod borer),
 hail, and disease (halo blight) damage."
   
+
   uri <- "doi:10.25502/9kj5-mb56"
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-                                  data_organization = "IITA;ICRAF;WUR",
-                                  publication = NA,
-                                  project = "N2Africa",
-                                  design = "on-farm plot-level harvest trial, up to 6 plots per farm, comparing local vs improved climbing bean varieties",
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "variety_type",
-                                  response_vars = "yield;yield_shaded;yield_unshaded;plant_density;light_interception",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-07-14",
-                                  carob_completion = 50,
-                                  carob_effort = 4
+		data_organization = "IITA;ICRAF;WUR",
+		publication = NA,
+		project = "N2Africa",
+		design = NA,
+		data_type = "on-farm experiment",
+		treatment_vars = "variety_type;shaded",
+		response_vars = "yield;light_interception",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-07-14",
+		carob_completion = 50,
+		carob_effort = 4
   )
   
   f1 <- ff[basename(ff) == "data_table.csv"]
@@ -91,25 +100,34 @@ hail, and disease (halo blight) damage."
   below_mat <- as.matrix(r1[, below_cols])
   outside_mat <- as.matrix(r1[, outside_cols])
   interception_mat <- 1 - (below_mat / outside_mat)
-  
-  r1$light_interception <- rowMeans(interception_mat, na.rm = TRUE) * 100
-  r1$light_interception[is.nan(r1$light_interception)] <- NA
-  
+  colnames(interception_mat) <- gsub("below_canopy_reading_|_no_pruning_mmol_m2_s", "", colnames(interception_mat))
+
+  light_interception <- rowMeans(interception_mat, na.rm = TRUE)
+  light_interception[is.nan(light_interception)] <- NA
+    
   ### Parse free-text harvest observations into standard fields (farm-level)
   obs_text <- r1$observations_during_after_harvest
   obs_text[obs_text == "#NAME?"] <- NA
-  
-  r1$drought_stress <- ifelse(grepl("drought", obs_text, ignore.case = TRUE), "severe", NA)
-  r1$disease <- ifelse(grepl("blight", obs_text, ignore.case = TRUE), "halo blight", NA)
-  r1$pest_species <- ifelse(grepl("pod borer", obs_text, ignore.case = TRUE), "pod borer", NA)
-  r1$season_constraint <- ifelse(grepl("hilstorm|hailstorm", obs_text, ignore.case = TRUE), "hail", NA)
-  
-  ### variety type, inferred from sole_climbing_beans_in_experiment_this_farm
-  r1$variety_type <- ifelse(
-    grepl("local", r1$sole_climbing_beans_in_experiment_this_farm) & grepl("improved", r1$sole_climbing_beans_in_experiment_this_farm), "local;improved",
-    ifelse(grepl("improved", r1$sole_climbing_beans_in_experiment_this_farm), "improved",
-    ifelse(grepl("local", r1$sole_climbing_beans_in_experiment_this_farm), "local", NA))
-  )
+ 
+  d1 <- data.frame(
+      farm_id = r1$farm_id,
+      country = "Uganda",
+      adm2 = carobiner::fix_name(r1$lga_district_woreda, "title"),
+      location = carobiner::fix_name(r1$sector_ward, "title"), # this may contain adm3, but also village and other adm levels
+      harvest_date = as.character(as.Date(r1$date_of_final_harvest_whole_n2a_field_date, format = "%d-%b-%y")),
+	  frac_int_radiation = light_interception,
+	  drought_stress = ifelse(grepl("drought", obs_text, ignore.case = TRUE), "severe", "none"),
+	  disease = ifelse(grepl("blight", obs_text, ignore.case = TRUE), "halo blight", "none"),
+	  pest_species = ifelse(grepl("pod borer", obs_text, ignore.case = TRUE), "pod borer", "none"),
+	  season_constraint = ifelse(grepl("hilstorm|hailstorm", obs_text, ignore.case = TRUE), "hail", "none"),
+	  ### variety type, inferred from sole_climbing_beans_in_experiment_this_farm
+	  ### they all become "local;improved" --- not very helpful
+	  variety_type = ifelse(
+			grepl("local", r1$sole_climbing_beans_in_experiment_this_farm) & grepl("improved", r1$sole_climbing_beans_in_experiment_this_farm), "local;improved",
+			ifelse(grepl("improved", r1$sole_climbing_beans_in_experiment_this_farm), "improved",
+			ifelse(grepl("local", r1$sole_climbing_beans_in_experiment_this_farm), "local", NA))
+		)
+	)
   
   ### Reshape plot-level harvest data - one row per farm x plot
   plot_data <- do.call(rbind, lapply(1:6, function(i) {
@@ -146,34 +164,31 @@ hail, and disease (halo blight) damage."
   ## harvested plot area (m2) and yield (kg/ha) - see ISSUES for the formula and its source
   plot_data$area_m2 <- plot_data$width_m * (plot_data$n_rows * plot_data$row_spacing_cm / 100)
   plot_data$yield <- (plot_data$grain_weight_kg / plot_data$area_m2) * 10000
-  plot_data$plant_density <- (plot_data$no_plants_hole / (plot_data$row_spacing_cm/100 * plot_data$plant_spacing_cm/100)) * 10000
   
   ## suggested new terms: yield from the shaded-subsample harvest zones
   plot_data$area_unshaded_m2 <- plot_data$least_shaded_len * (plot_data$least_shaded_rows * plot_data$row_spacing_cm / 100)
   plot_data$yield_unshaded <- (plot_data$least_shaded_kg / plot_data$area_unshaded_m2) * 10000
-  
   plot_data$area_shaded_m2 <- plot_data$most_shaded_len * (plot_data$most_shaded_rows * plot_data$row_spacing_cm / 100)
   plot_data$yield_shaded <- (plot_data$most_shaded_kg / plot_data$area_shaded_m2) * 10000
   
   ## documented total crop failure (drought) - a real, informative zero, not NA
   plot_data$yield[plot_data$farm_id == "Ug" & plot_data$plot_id == "1"] <- 0
+
+   d2 <- data.frame(
+     farm_id = plot_data$farm_id,
+     yield = plot_data$yield,
+	 yield_unshaded = plot_data$yield_unshaded,
+	 yield_shaded = plot_data$yield_shaded,
+	 plant_density 	= (plot_data$no_plants_hole / (plot_data$row_spacing_cm/100 * plot_data$plant_spacing_cm/100)) * 10000 ,
+     plot_width = plot_data$width_m, 
+     #plot_length = plot_data$???
+	 plot_area = plot_data$area_m2,
+	 row_spacing = plot_data$plant_spacing_cm, 
+	 plant_spacing = plot_data$plant_spacing_cm
+   )
   
   ### Merge farm-level info into the plot-level table
-  d <- merge(plot_data,
-             data.frame(
-               farm_id = r1$farm_id,
-               country = "Uganda",
-               adm2 = carobiner::fix_name(r1$lga_district_woreda, "title"),
-               adm3 = carobiner::fix_name(r1$sector_ward, "title"),
-               harvest_date = as.character(as.Date(r1$date_of_final_harvest_whole_n2a_field_date, format = "%d-%b-%y")),
-               drought_stress = r1$drought_stress,
-               disease = r1$disease,
-               pest_species = r1$pest_species,
-               season_constraint = r1$season_constraint,
-               variety_type = r1$variety_type,
-               light_interception = r1$light_interception
-             ),
-             by = "farm_id", all.x = TRUE)
+  d <- merge(d2, d1, by = "farm_id", all.x = TRUE)
   
   ## any harvest date parsing to year 1999 is implausible for a 2016 trial -
   ## treat all as the same placeholder/entry-error pattern, not just "1-Jan-99"
@@ -181,19 +196,24 @@ hail, and disease (halo blight) damage."
   d$harvest_date[grepl("^1999-", d$harvest_date)] <- NA
   
   ### District-level coordinates (sub-county names too inconsistent to geocode
-  ### reliably). Values obtained via:
+  ### reliably). 
+  ### RH: I do not agree, you can find at least some of them with Google Maps 
+  ### but I am not sure if it is worth the effort for these data
+
+  ### Values obtained via:
   ###   carobiner::geocode(country = "Uganda", location = "Kapchorwa")$put
   ###   carobiner::geocode(country = "Uganda", location = "Kanungu")$put.
-  district_coords <- data.frame(
-    lga_district_woreda = c("Kapchorwa", "Kanungu"),
+  geo <- data.frame(
+    adm2 = c("Kapchorwa", "Kanungu"),
     longitude = c(34.3962, 29.7143),
     latitude = c(1.3311, -0.7064)
   )
   
-  d <- merge(d, district_coords, by.x = "adm2", by.y = "lga_district_woreda", all.x = TRUE)
+  d <- merge(d, geo, by = "adm2", all.x = TRUE)
   d$geo_from_source <- FALSE
   
-  d$trial_id <- as.character(as.integer(as.factor(d$farm_id)))
+  d$trial_id <- d$farm_id
+  d$farm_id <- NULL
   d$on_farm <- TRUE
   d$is_survey <- FALSE
   d$irrigated <- NA
@@ -201,33 +221,16 @@ hail, and disease (halo blight) damage."
   d$yield_part <- "seed"
   d$yield_moisture <- NA
   d$yield_isfresh <- NA
-  d$row_spacing <- d$row_spacing_cm
-  d$plot_area <- d$area_m2
   
   ## no fertilizer or planting-date data exist anywhere in this dataset
   d$planting_date <- NA
+  
+  ## RH this is inconstent. 
+  ## If it is correct hat fertilizer_used = FALSE, then N_, P_, K_fertilizer should be zero, not NA
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
   d$K_fertilizer <- NA
   d$fertilizer_used <- FALSE
-  
-  ## clean up intermediate/helper columns not part of the standard
-  d$row_spacing_cm <- NULL
-  d$width_m <- NULL
-  d$n_rows <- NULL
-  d$plant_spacing_cm <- NULL
-  d$no_plants_hole <- NULL
-  d$area_m2 <- NULL
-  d$grain_weight_kg <- NULL
-  d$least_shaded_kg <- NULL
-  d$least_shaded_len <- NULL
-  d$least_shaded_rows <- NULL
-  d$most_shaded_kg <- NULL
-  d$most_shaded_len <- NULL
-  d$most_shaded_rows <- NULL
-  d$area_unshaded_m2 <- NULL
-  d$area_shaded_m2 <- NULL
-  d$farm_id <- NULL
-  
+    
   carobiner::write_files(path, meta, d)
 }
