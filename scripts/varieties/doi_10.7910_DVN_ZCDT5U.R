@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
 
 
 carob_script <- function(path) {
@@ -31,12 +29,9 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		carob_completion = 100,	
 		carob_effort = 1
 	)
-	
 
 	f <- ff[basename(ff) == "Test cross hybrids Mieso 2015.xlsx"]
-
 	r <- carobiner::read.excel(f)
-
 	
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -67,7 +62,6 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  crop = "sorghum"
 	)
 	
-	
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE 
 	d$is_survey <- FALSE 
@@ -78,12 +72,10 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	d$latitude <- 9.1779
 	d$geo_uncertainty <- 51603 
 	d$geo_source <- "GADM 4.1, adm3"
-	
-	d$geo_from_source <- FALSE #!
+	d$geo_from_source <- FALSE
 	
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 	d$fertilizer_type <- NA
-	
 	d$yield_part <- "grain"
 	d$yield_isfresh <- NA
 	d$yield_moisture <- as.numeric(NA)
