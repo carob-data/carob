@@ -539,7 +539,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	#### Fixing planting method 
 	d$planting_method <- "transplanting"
 	d$planting_method = ifelse(grepl("DSR", d$treatment), "direct seeding", d$planting_method)
-  d$season <- gsub("kahrif", "kharif", tolower(d$season)) 
+	d$season <- gsub("kahrif", "kharif", tolower(d$season)) 
 	### Fixing land_prep
 	P <- carobiner::fix_name(d$land_prep_method)
 	P <- gsub("2 tillage;tillage|3 tillage;Leveling", "conventional", P)
@@ -624,6 +624,10 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	fw[cols] <- lapply(fw[cols], as.numeric)
 	fw$P_fertilizer <- fw$P_fertilizer/2.29 
 	fw$K_fertilizer <- fw$P_fertilizer/1.2051
+
+	fw[is.na(fw)] <- 0
+	fw$date[fw$date == 0] <- NA # one date
+	fw$order <- NULL
 	
 	i <- grepl("^(N_|P_|K_|Zn_|B_)|date[1-8]$|amount[1-8]$|price[1-8]$|^rep|gypsum|type[1-8]",names(d))
 	Nm1 <- names(d)[i]
