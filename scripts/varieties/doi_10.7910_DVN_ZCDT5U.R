@@ -1,8 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-
-
 carob_script <- function(path) {
 
 "
@@ -14,7 +12,6 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	uri <- "doi:10.7910/DVN/ZCDT5U"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -44,6 +41,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  treatment = as.character(r$Genotype),
 	  variety = as.character(r$Genotype),
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "test cross hybrids",
 	  rep = as.integer(r$Replicate),
 	  plant_height = r$PHTMean,
 	  maturity_days = r$DTM,
@@ -61,6 +59,12 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
+	
+	d$variety_type[d$variety == "ESH-1"] <- "hybrid"
+	d$variety_type[d$variety == "ESH-3"] <- "hybrid"
+	d$variety_type[d$variety == "Melkam"] <- "OPV"
+	d$variety_type[d$variety == "Dekeba"] <- "OPV"
+	
 	
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE 
