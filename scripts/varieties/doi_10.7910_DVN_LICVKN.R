@@ -1,9 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
-
 
 carob_script <- function(path) {
 
@@ -59,8 +56,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
-	
+		
 	d$longitude <- 41.492 
 	d$latitude <- 10.1957
 ### The dataset description has Erer in Eastern Hararghe but it is in Sitti
