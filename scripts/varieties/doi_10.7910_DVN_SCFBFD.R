@@ -43,6 +43,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "red hybrids",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
@@ -58,6 +59,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
+
+	d$variety_type[d$variety == "ESH-3"] <- "hybrid"
+	d$variety_type[d$variety == "Dekeba"] <- "OPV"
 	
 	d$trial_id <- "1"
 	d$on_farm <- NA
