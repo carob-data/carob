@@ -345,7 +345,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    Zn_fertilizer8 = 0,
 	    gypsum8 = 0,
 	    fertilizer_price8 = as.numeric(r7$Farm.gate.price.per.kg.7),
-	    fertilizer_amount8 = as.numeric(r7$Fertilizer.applied.g.plot.7),
+	    fertilizer_amount8 = (as.numeric(r7$Fertilizer.applied.g.plot.7)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_date8 = ifelse(nchar(r7$Date.of.application...dd.mm.yy..6>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..6, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..6), origin = "1899-12-30"))),
 	    
 	    fertilizer_cost = as.numeric(r7$Total.fertiliser.cost..Tk.ha.),
@@ -622,6 +622,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	### type 
 	cols <- c("N_fertilizer", "P_fertilizer", "K_fertilizer", "Zn_fertilizer", "B_fertilizer", "gypsum", "fertilizer_amount", "fertilizer_price")
 	fw[cols] <- lapply(fw[cols], as.numeric)
+	fw$P_fertilizer <- fw$P_fertilizer/2.29 
+	fw$K_fertilizer <- fw$P_fertilizer/1.2051
 	
 	i <- grepl("^(N_|P_|K_|Zn_|B_)|date[1-8]$|amount[1-8]$|price[1-8]$|^rep|gypsum|type[1-8]",names(d))
 	Nm1 <- names(d)[i]
