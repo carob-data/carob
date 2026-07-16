@@ -31,11 +31,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 4
 	)
 	
-
 	f <- ff[basename(ff) == "B-line observation Mieso 2015.xlsx"]
-
 	r <- carobiner::read.excel(f)
-
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -60,18 +57,13 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	)
 	
 	d$trial_id <- "1"
-	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
-##longitude and latitude were taken from geo:
+##longitude and latitude were determined with
 	#xy <- carobiner::adm_pointRadius("Ethiopia", 3)
-	
-	#s <- xy[xy$adm3 %in% c("Mieso"), ]
-	
-	#carobiner::dfput(s, name="geo", drop="country")
-	
+	#carobiner::dfput( xy[xy$adm3 == "Mieso", ] )
 	
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
@@ -79,10 +71,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	geo_source = "GADM 4.1, adm3"
 	d$geo_from_source <- FALSE
 	
-	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
 
-	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
