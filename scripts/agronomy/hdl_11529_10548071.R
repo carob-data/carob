@@ -572,10 +572,16 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	fert_long$variable <- vars[fert_long$time]
 	fert_long <- fert_long[!(is.na(fert_long$value) & is.na(fert_long$date)),]
 	fert_long$time <- fert_long$id <- NULL
+	names(fert_long)[names(fert_long) == "rep"] <- "order"
+
+	fw <- reshape(fert_long, timevar="variable", idvar=c("record_id", "order", "date"), direction="wide")
+	names(fw) <- gsub("^value\\.", "", names(fw))
+	fw <- fw[order(fw$record_id, fw$order), ]
+	
 	i <- grepl("^(N_|P_|K_)|date[1-7]$|amount[1-7]$|price[1-7]$|^rep",names(d))
 	Nm1 <- names(d)[i]
 	d <- d[, !names(d) %in% Nm1]
 	
-	carobiner::write_files(path, meta, d, long = fert_long)
+	carobiner::write_files(path, meta, d, long=fw)
 }
 
