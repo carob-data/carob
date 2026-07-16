@@ -29,9 +29,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 5
 	)
 
-
 	f <- ff[basename(ff) == "White sorghum hybrids at Shoarobit 2014.xlsx"]
-
 	r <- carobiner::read.excel(f, sheet="Sheet1")
 	
 	d <- data.frame(
@@ -46,6 +44,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  plant_height = r$PHTMean,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "white hybrid",
 	  plot_id = as.character(r$Plot),
 	  maturity_days = r$DTM,
 	  disease_severity = as.character(r$DiseaseScore),
@@ -60,6 +59,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
+	
+	d$variety_type[d$variety == "ESH-3"] <- "hybrid"
+	d$variety_type[d$variety == "Dekeba"] <- "OPV"
 	
 	d$trial_id <- "1"	
 	d$on_farm <- NA
