@@ -12,12 +12,9 @@ Drought hybrids observation at Shiraro 2014
 Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 113 drought tolerant hybrids under observation nursery conducted at Sheraro (North Western Tigrai, Ethiopia) in 2014
 "
 
-
 	uri <- "doi:10.7910/DVN/XAM15W"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -33,11 +30,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_effort = 5
 	)
 	
-
 	f <- ff[basename(ff) == "Drought hybrids observation at Shiraro 2014.xlsx"]
-
 	r <- carobiner::read.excel(f)
-
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -51,6 +45,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "drought tolerant hybrid",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
@@ -69,8 +64,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
-	
+		
 	d$longitude <- 37.773
 	d$latitude <-  14.396
 	#uncertainty from GADM adm3 = "Tahtay Adiyabo",
@@ -78,14 +72,11 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_source = "Google Maps"
 	d$geo_from_source <- FALSE
 	
-	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
-	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
 	
-
 	carobiner::write_files(path, meta, d)
 }
 
