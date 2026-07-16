@@ -1,9 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
-
 
 carob_script <- function(path) {
 
@@ -17,26 +14,22 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
 		publication = NA,
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "yield;flowering_days;plant_height;maturity_days;spike_density;plant_density",
-		response_vars = "variety", 
+		treatment_vars = "variety",
+		response_vars = "yield;flowering_days;plant_height;maturity_days;spike_density;plant_density", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-16",
 		carob_completion = 100,	
 		carob_effort = 1
 	)
 	
-
 	f <- ff[basename(ff) == "Stay-green hybrids  Mieso 2015.xlsx"]
-
 	r <- carobiner::read.excel(f)
-	
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -49,6 +42,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  treatment = r$Genotype,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "stay-green hybrids",
 	  rep = as.integer(r$Replicate),
 	  plant_height = r$PHTMean,
 	  maturity_days = r$DTM,
@@ -58,7 +52,6 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
-
 
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE 
@@ -80,6 +73,9 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	d$yield_isfresh <- NA
 	d$yield_moisture <- as.numeric(NA)
 	
+	## 4 records with no variety (the treatment) and no yield. 
+	d <- d[!is.na(d$variety), ]
+
 	carobiner::write_files(path, meta, d)
 }
 
