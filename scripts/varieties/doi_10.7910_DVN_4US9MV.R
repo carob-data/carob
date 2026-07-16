@@ -65,7 +65,14 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
-
+##longitude and latitude were taken from geo:
+	#xy <- carobiner::adm_pointRadius("Ethiopia", 3)
+	
+	#s <- xy[xy$adm3 %in% c("Mieso"), ]
+	
+	#carobiner::dfput(s, name="geo", drop="country")
+	
+	
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
 	geo_uncertainty = 51603
