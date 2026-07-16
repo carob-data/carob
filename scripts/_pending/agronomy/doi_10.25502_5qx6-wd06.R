@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+# dataset is incomplete. Contacted authors to request more complete version.	
+# https://github.com/carob-data/carob/pull/994
 
 ## ISSUES
 # Trt_Code shows a third fertilizer level, NPK2 (16 rows), assuming it is the same as NPK
