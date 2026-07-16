@@ -207,6 +207,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  ### merge d and d4
 	  d <- merge(d, d4, by = intersect(names(d), names(d4)), all = TRUE)
 	  
+	  ####################
+	  
 	  r7 <- carobiner::read.excel(f, sheet="6 - Fertilizer amounts ")
 	  hdr <- rbind(r7[4, ], r7[3, ])
 	  names(r7) <- apply(hdr, 2, function(x) {
@@ -225,6 +227,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  names(r7) <- gsub("^P2O5$", "P2O5..kg.ha.", names(r7))
 	  names(r7) <- gsub("ZnSO4..kg.ha...kg.ha..1", "ZnSO4..kg.ha.", names(r7))
 	  names(r7) <- gsub("Total.cost.for.frtilizer..BDT.ha.", "Total.fertiliser.cost..Tk.ha.", names(r7))
+	  names(r7) <- gsub("Boric.acid..kg.ha.", "Boric.Acid..kg.ha.", names(r7))
 	  
 	  if (is.null(r7$Date.of.application...dd.mm.yy..5))  r7$Date.of.application...dd.mm.yy..5 <- NA
 	  if (is.null(r7$Date.of.application...dd.mm.yy..6)) r7$Date.of.application...dd.mm.yy..6 <- NA
@@ -239,7 +242,10 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  if(is.null(r7$Fert.Grade.P2O5.6)) r7$Fert.Grade.P2O5.6 <-  NA
 	  if(is.null(r7$Fert.Grade.K2O.5)) r7$Fert.Grade.K2O.5 <-  NA
 	  if(is.null(r7$Fert.Grade.K2O.6)) r7$Fert.Grade.K2O.6 <-  NA
-	    
+	  if(is.null(r7$Farm.gate.price.per.kg.7)) r7$Farm.gate.price.per.kg.7 <- NA
+	  if(is.null(r7$Fertilizer.applied.g.plot.7)) r7$Fertilizer.applied.g.plot.7 <-  NA
+	  if(is.null(r7$Boric.Acid..kg.ha.))  r7$Boric.Acid..kg.ha. <- NA  
+	  
 	  d5 <- data.frame(
 	    year = as.character(r7$Year),
 	    season = r7$Season,
@@ -249,66 +255,100 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    #site = as.character(r7$Site.No.),
 	    treatment = r7$Tmnt,
 	    plot_area = as.numeric(r7$Plot.size..m2.),
-	    #fertilizer_type1 = "basal",
-	    N_fertilizer1 = as.numeric(r7$Fert.Grade.N) *as.numeric(r7$Total.urea..kg.ha.)/100,
+	    ##
+	    fertilizer_type1 = r7$Product.used,
 	    rep1 = "1",
+	    N_fertilizer1 = as.numeric(r7$Fert.Grade.N) *as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer1 = as.numeric(r7$Fert.Grade.P2O5) *as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer1 = as.numeric(r7$Fert.Grade.K2O) *as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum1 = 0,
+	    B_fertilizer1 = 0,
+	    Zn_fertilizer1 = 0,
 	    fertilizer_date1 = ifelse(nchar(r7$Date.of.application...dd.mm.yy.>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy., "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy.), origin = "1899-12-30"))),
 	    fertilizer_amount1 = (as.numeric(r7$Fertilizer.applied.g.plot)/as.numeric(r7$Plot.size..m2.))*10, #kg/ha,
 	    fertilizer_price1 = as.numeric(r7$Farm.gate.price.per.kg),
-	    #r7$`Product used.1`,
+	    fertilizer_type2 = r7$Product.used.1,
 	    rep2 = "2",
 	    N_fertilizer2 = as.numeric(r7$Fert.Grade.N.1)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer2 = as.numeric(r7$Fert.Grade.P2O5.1)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer2 = as.numeric(r7$Fert.Grade.K2O.1)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum2 = 0,
+	    B_fertilizer2 = 0,
+	    Zn_fertilizer2 = 0,
 	    fertilizer_date2 = ifelse(nchar(r7$Date.of.application...dd.mm.yy.>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy., "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy.), origin = "1899-12-30"))),
 	    fertilizer_amount2 = (as.numeric(r7$Fertilizer.applied.g.plot.1)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price2 = as.numeric(r7$Farm.gate.price.per.kg.1),
-	    #fertilizer_type3 = r7$`Product used.2`,
+	    fertilizer_type3 = r7$Product.used.2,
 	    rep3 = "3",
 	    N_fertilizer3 = as.numeric(r7$Fert.Grade.N.2)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer3 = as.numeric(r7$Fert.Grade.P2O5.2)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer3 = as.numeric(r7$Fert.Grade.K2O.2)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum3 = 0,
+	    B_fertilizer3 = 0,
+	    Zn_fertilizer3 = 0,
 	    fertilizer_date3 =  ifelse(nchar(r7$Date.of.application...dd.mm.yy..1>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..1, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..1), origin = "1899-12-30"))),
 	    fertilizer_amount3 = (as.numeric(r7$Fertilizer.applied.g.plot.2)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price3 = as.numeric(r7$Farm.gate.price.per.kg.2),
-	    #fertilizer_type4 = tolower(r7$`Product used.3`),
+	    fertilizer_type4 = tolower(r7$Product.used.3),
 	    rep4 = "4",
 	    N_fertilizer4 = as.numeric(r7$Fert.Grade.N.3)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer4 = as.numeric(r7$Fert.Grade.P2O5.3)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer4 = as.numeric(r7$Fert.Grade.K2O.3)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum4 = 0,
+	    B_fertilizer4 = 0,
+	    Zn_fertilizer4 = 0,
 	    fertilizer_date4 =  ifelse(nchar(r7$Date.of.application...dd.mm.yy..2>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..2, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..2), origin = "1899-12-30"))),
 	    fertilizer_amount4 = (as.numeric(r7$Fertilizer.applied.g.plot.3)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price4 = as.numeric(r7$Farm.gate.price.per.kg.3),
-	    #fertilizer_type5 = tolower(r7$`Product used.4`),
+	    fertilizer_type5 = tolower(r7$Product.used.4),
 	    rep5 = "5",
 	    N_fertilizer5 = as.numeric(r7$Fert.Grade.N.4)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer5 = as.numeric(r7$Fert.Grade.P2O5.4)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer5 = as.numeric(r7$Fert.Grade.K2O.4)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum5 = 0,
+	    B_fertilizer5 = 0,
+	    Zn_fertilizer5 = 0,
 	    fertilizer_date5 = ifelse(nchar(r7$Date.of.application...dd.mm.yy..3>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..3, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..3), origin = "1899-12-30"))),
 	    fertilizer_amount5 = (as.numeric(r7$Fertilizer.applied.g.plot.4)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price5 = as.numeric(r7$Farm.gate.price.per.kg.4),
-	    #fertilizer_type6 = r7$`Product used.5`,
+	    #
+	    fertilizer_type6 = "gypsum",
 	    rep6 = "6",
 	    N_fertilizer6 = as.numeric(r7$Fert.Grade.N.5)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer6 = as.numeric(r7$Fert.Grade.P2O5.5)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer6 = as.numeric(r7$Fert.Grade.K2O.5)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    gypsum6 = as.numeric(r7$Gypsum..kg.ha.),
+	    B_fertilizer6 = 0,
+	    Zn_fertilizer6 = 0,
 	    fertilizer_date6 =  ifelse(nchar(r7$Date.of.application...dd.mm.yy..4 >5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..4, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..4), origin = "1899-12-30"))),
 	    fertilizer_amount6 = (as.numeric(r7$Fertilizer.applied.g.plot.5)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price6 = as.numeric(r7$Farm.gate.price.per.kg.5),
-	    #fertilizer_type7 = r7$`Product used.6`,
+	    
+	    fertilizer_type7 = "ZnSO4",
 	    rep7 = "7",
 	    N_fertilizer7 = as.numeric(r7$Fert.Grade.N.6)*as.numeric(r7$Total.urea..kg.ha.)/100,
 	    P_fertilizer7 = as.numeric(r7$Fert.Grade.P2O5.6)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer7 = as.numeric(r7$Fert.Grade.K2O.6)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    Zn_fertilizer7 =  as.numeric(r7$ZnSO4..kg.ha.),
+	    gypsum7 = 0,
+	    B_fertilizer7 = 0,
 	    fertilizer_date7 =  ifelse(nchar(r7$Date.of.application...dd.mm.yy..5>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..5, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..5), origin = "1899-12-30"))),
 	    fertilizer_amount7 = (as.numeric(r7$Fertilizer.applied.g.plot.6)/as.numeric(r7$Plot.size..m2.))*10,
 	    fertilizer_price7 = as.numeric(r7$Farm.gate.price.per.kg.6),
+	    
+	    fertilizer_type8 = "borax",
+	    rep8 = "8",
+	    N_fertilizer8 = 0,
+	    P_fertilizer8 = 0,
+	    K_fertilizer8 = 0,
+	    B_fertilizer8 = as.numeric(r7$Boric.Acid..kg.ha.),
+	    Zn_fertilizer8 = 0,
+	    gypsum8 = 0,
+	    fertilizer_price8 = as.numeric(r7$Farm.gate.price.per.kg.7),
+	    fertilizer_amount8 = as.numeric(r7$Fertilizer.applied.g.plot.7),
+	    fertilizer_date8 = ifelse(nchar(r7$Date.of.application...dd.mm.yy..6>5), as.character(as.Date(r7$Date.of.application...dd.mm.yy..6, "%m-%d-%y")) , as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..6), origin = "1899-12-30"))),
+	    
 	    fertilizer_cost = as.numeric(r7$Total.fertiliser.cost..Tk.ha.),
-	    gypsum = as.numeric(r7$Gypsum..kg.ha.),
-	    Zn_fertilizer =  as.numeric(r7$ZnSO4..kg.ha.),
-	    fertilizer_type = "TSP;urea;KCl;gypsum;ZnSO4",
 	    farm_nm = r7$Farmer.s.name	    
 	  )
 	  
@@ -560,14 +600,14 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	d <- unique(d)
 	#### create a long format for fertilizer
 	d$record_id <- as.integer(1: nrow(d))
-	i <- grepl("^(N_|P_|K_)|date[1-7]$|amount[1-7]$|price[1-7]$|^record_id$|^rep",names(d))
+	i <- grepl("^(N_|P_|K_|Zn_|B_)|date[1-8]$|amount[1-8]$|price[1-8]$|^record_id$|^rep|gypsum|type",names(d))
 	Nm <- names(d)[i]
 	
 	fert <- d[, Nm]
-	vars <- paste0(rep(gsub("#", "fertilizer", c("N_#", "P_#", "K_#", "#_amount", "#_price")), each=7))
-	cols <- paste0(vars, rep(1:7, 5))
-	date <- rep(paste0("fertilizer_date", 1:7), 5)
-	reps <- rep(paste0("rep", 1:7), 5)
+	vars <- paste0(rep(gsub("#", "fertilizer", c("N_#", "P_#", "K_#","Zn_#","B_#" ,"#_amount", "#_price", "gypsum", "#_type")),  each=8))
+	cols <- paste0(vars, rep(1:8, 8))
+	date <- rep(paste0("fertilizer_date", 1:8), 9)
+	reps <- rep(paste0("rep", 1:8), 9)
 	fert_long <- reshape( fert, varying = list (cols, date, reps), v.names = c("value", "date", "rep"), direction = "long")
 	fert_long$variable <- vars[fert_long$time]
 	fert_long <- fert_long[!(is.na(fert_long$value) & is.na(fert_long$date)),]
@@ -577,8 +617,13 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	fw <- reshape(fert_long, timevar="variable", idvar=c("record_id", "order", "date"), direction="wide")
 	names(fw) <- gsub("^value\\.", "", names(fw))
 	fw <- fw[order(fw$record_id, fw$order), ]
+	fw$fertilizer_type <- gsub("Muriate", "KCl", fw$fertilizer_type)
+	fw$fertilizer_type <- gsub("Urea", "urea", fw$fertilizer_type)
+	### type 
+	cols <- c("N_fertilizer", "P_fertilizer", "K_fertilizer", "Zn_fertilizer", "B_fertilizer", "gypsum", "fertilizer_amount", "fertilizer_price")
+	fw[cols] <- lapply(fw[cols], as.numeric)
 	
-	i <- grepl("^(N_|P_|K_)|date[1-7]$|amount[1-7]$|price[1-7]$|^rep",names(d))
+	i <- grepl("^(N_|P_|K_|Zn_|B_)|date[1-8]$|amount[1-8]$|price[1-8]$|^rep|gypsum|type[1-8]",names(d))
 	Nm1 <- names(d)[i]
 	d <- d[, !names(d) %in% Nm1]
 	
