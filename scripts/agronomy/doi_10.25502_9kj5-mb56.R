@@ -15,7 +15,7 @@
 # For light interception, only the before-pruning state is used (pruning occurred
 # after harvest, so cannot be linked to yield).
 
-# yield_shaded, yield_unshaded (kg/ha) are suggested new terminag terms:
+# yield_shaded, yield_least_shaded (kg/ha) are suggested new terminag terms:
 # yield from the most/least-shaded harvest subsamples within each plot.
 
 ## RH: the approach would be to use "yield" and a new variable "shaded"
@@ -58,7 +58,7 @@ measurements are included: (1) canopy light interception, measured with a
 light sensor across four transects per farm, once before and once after
 pruning; and (2) plot-level grain harvest weights, for up to 6 plots per farm, comparing local and
 improved bean varieties grown side-by-side (the specific plot each variety
-was grown on is not identified in the data). A smaller shaded/unshaded
+was grown on is not identified in the data). A smaller shaded/least_shaded
 harvest subsample was also taken within some plots, to relate light
 interception to yield loss from shading. Only 5 of the 23 farms have
 complete harvest weights; one farm's crop failed entirely due to drought,
@@ -76,8 +76,8 @@ hail, and disease (halo blight) damage."
 		project = "N2Africa",
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "variety_type;shaded",
-		response_vars = "yield;light_interception",
+		treatment_vars = "variety_type;harvest_area_type",
+		response_vars = "yield;frac_int_radiation",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-14",
@@ -166,26 +166,37 @@ hail, and disease (halo blight) damage."
   plot_data$yield <- (plot_data$grain_weight_kg / plot_data$area_m2) * 10000
   
   ## suggested new terms: yield from the shaded-subsample harvest zones
-  plot_data$area_unshaded_m2 <- plot_data$least_shaded_len * (plot_data$least_shaded_rows * plot_data$row_spacing_cm / 100)
-  plot_data$yield_unshaded <- (plot_data$least_shaded_kg / plot_data$area_unshaded_m2) * 10000
-  plot_data$area_shaded_m2 <- plot_data$most_shaded_len * (plot_data$most_shaded_rows * plot_data$row_spacing_cm / 100)
-  plot_data$yield_shaded <- (plot_data$most_shaded_kg / plot_data$area_shaded_m2) * 10000
+  plot_data$area_least_shaded_m2 <- plot_data$least_shaded_len * (plot_data$least_shaded_rows * plot_data$row_spacing_cm / 100)
+  plot_data$yield_least_shaded <- (plot_data$least_shaded_kg / plot_data$area_least_shaded_m2) * 10000
+  plot_data$area_most_shaded_m2 <- plot_data$most_shaded_len * (plot_data$most_shaded_rows * plot_data$row_spacing_cm / 100)
+  plot_data$yield_most_shaded <- (plot_data$most_shaded_kg / plot_data$area_most_shaded_m2) * 10000
   
   ## documented total crop failure (drought) - a real, informative zero, not NA
   plot_data$yield[plot_data$farm_id == "Ug" & plot_data$plot_id == "1"] <- 0
-
-   d2 <- data.frame(
-     farm_id = plot_data$farm_id,
-     yield = plot_data$yield,
-	 yield_unshaded = plot_data$yield_unshaded,
-	 yield_shaded = plot_data$yield_shaded,
-	 plant_density 	= (plot_data$no_plants_hole / (plot_data$row_spacing_cm/100 * plot_data$plant_spacing_cm/100)) * 10000 ,
-     plot_width = plot_data$width_m, 
-     #plot_length = plot_data$???
-	 plot_area = plot_data$area_m2,
-	 row_spacing = plot_data$plant_spacing_cm, 
-	 plant_spacing = plot_data$plant_spacing_cm
-   )
+  plot_data$plant_density <- (plot_data$no_plants_hole / (plot_data$row_spacing_cm/100 * plot_data$plant_spacing_cm/100)) * 10000
+  
+  d2 <- rbind(
+    data.frame(
+      farm_id = plot_data$farm_id, plot_id = plot_data$plot_id,
+      harvest_area_type = "plot",
+      yield = plot_data$yield,
+      plot_area = plot_data$area_m2
+    ),
+    data.frame(
+      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
+      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
+      harvest_area_type = "least shaded",
+      yield = plot_data$yield_least_shaded[plot_data$plot_id %in% c("1","2","3","4")],
+      plot_area = plot_data$area_least_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
+    ),
+    data.frame(
+      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
+      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
+      harvest_area_type = "most shaded",
+      yield = plot_data$yield_most_shaded[plot_data$plot_id %in% c("1","2","3","4")],
+      plot_area = plot_data$area_most_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
+    )
+  )
   
   ### Merge farm-level info into the plot-level table
   d <- merge(d2, d1, by = "farm_id", all.x = TRUE)
@@ -227,9 +238,9 @@ hail, and disease (halo blight) damage."
   
   ## RH this is inconstent. 
   ## If it is correct hat fertilizer_used = FALSE, then N_, P_, K_fertilizer should be zero, not NA
-  d$N_fertilizer <- NA
-  d$P_fertilizer <- NA
-  d$K_fertilizer <- NA
+  d$N_fertilizer <- 0
+  d$P_fertilizer <- 0
+  d$K_fertilizer <- 0
   d$fertilizer_used <- FALSE
     
   carobiner::write_files(path, meta, d)
