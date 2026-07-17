@@ -44,6 +44,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  yield = r$`Yield Kg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "drought tolerant hybrids",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,

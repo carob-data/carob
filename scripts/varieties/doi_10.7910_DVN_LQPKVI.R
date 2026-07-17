@@ -13,11 +13,9 @@ White sorghum hybrids at Kobo 2014
 Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 35 experimental white hybrids, a hybrid and an OPV check evaluated at Kobo (North Wello, Ethiopia) in 2014
 "
 
-
 	uri <- "doi:10.7910/DVN/LQPKVI"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
-
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
@@ -32,10 +30,8 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_completion = 90,	
 		carob_effort = 1
 	)
-	
 
 	f <- ff[basename(ff) == "White sorghum hybrids at Kobo 2014.xlsx"]
-
 	r <- carobiner::read.excel(f, sheet="Sheet1")
 
 	d <- data.frame(
@@ -50,6 +46,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  treatment = r$Genotype,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "white hybrid",
 	  rep = as.integer(r$Replicate),
 	  plot_area = r$PlotArea,
 	  plant_height = r$PHTMean,
@@ -66,6 +63,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  rl = r$RootLodging,
 	  crop = "sorghum"
 	)
+
+	d$variety_type[d$variety == "ESH-3"] <- "hybrid"
+	d$variety_type[d$variety == "Dekeba"] <- "OPV"
 	
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE 
@@ -78,15 +78,12 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_source = "GADM 4.1, adm3"
 	d$geo_from_source <- TRUE
 
-	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- as.numeric(NA)
 	d$fertilizer_type <- NA
-	
-	
+		
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
-	
 
 	carobiner::write_files(path, meta, d)
 }

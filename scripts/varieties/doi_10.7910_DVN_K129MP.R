@@ -16,7 +16,6 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "PURDUE",
 		publication = NA,
@@ -44,6 +43,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  plant_height = r$PHTMean,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "drought hybrid",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
