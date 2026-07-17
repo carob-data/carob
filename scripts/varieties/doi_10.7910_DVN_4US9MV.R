@@ -7,12 +7,12 @@
 carob_script <- function(path) {
 
 "
-R-lines observation nursery Mieso 2015
+B-line observation Mieso 2015
 
-Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 119 selected R lines evaluated at Mieso (Western Hararghe, Ethiopia) in 2015
+Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 59 selected B lines evaluated at Mieso (Western Hararghe, Ethiopia) in 2015
 "
 
-	uri <- "doi:10.7910/DVN/9XUXJE"
+	uri <- "doi:10.7910/DVN/4US9MV"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -23,14 +23,14 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety",
-		response_vars = "plant_height;flowering_days;maturity_days;plant_density;yield",
+		response_vars = "yield; plant_height;maturity_days;spike_density;plant_density;flowering_days", 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-15",
-		carob_completion = 80,	
-		carob_effort = 5
+		carob_completion = 100,	
+		carob_effort = 4
 	)
 	
-	f <- ff[basename(ff) == "R-lines observation nursery Mieso 2015.xlsx"]
+	f <- ff[basename(ff) == "B-line observation Mieso 2015.xlsx"]
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
@@ -39,18 +39,20 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  location = r$Site,
 	  treatment = r$Genotype,
 	  rep = as.integer(r$Replicate),
+	  emergence_days = as.numeric(r$DTE),
 	  planting_date = as.character(as.Date(r$Sown, format = "%d/%m/%Y")),
 	  harvest_date = as.character(as.Date(r$DateHarvest, format = "%d/%m/%Y")),
 	  plant_height = r$PHTMean,
+	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
-	  variety_type = "R-line",
+	  variety_type = "B line",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
-	  yield = r$`YieldKg/Ha`,
 	  plot_area = as.numeric(r$PlotArea),
 	  plant_density = 10000 * r$StandAtHarv / r$PlotArea,
+	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
 	
@@ -59,6 +61,10 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
+##longitude and latitude were determined with
+	#xy <- carobiner::adm_pointRadius("Ethiopia", 3)
+	#carobiner::dfput( xy[xy$adm3 == "Mieso", ] )
+	
 	d$longitude <- 40.5638
 	d$latitude <- 9.1779
 	geo_uncertainty = 51603
@@ -66,12 +72,14 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$geo_from_source <- FALSE
 	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
-	
+
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA
 	
 	carobiner::write_files(path, meta, d)
 }
+
+
 
 

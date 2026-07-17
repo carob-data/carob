@@ -46,6 +46,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  treatment = r$Genotype,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
+	  variety_type = "red hybrids",
 	  rep = as.integer(r$Replicate),
 	  plot_area = r$PlotArea,
 	  plant_height = r$PHTMean,
@@ -62,6 +63,9 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  rl = r$RootLodging,
 	  crop = "sorghum"
 	)
+
+	d$variety_type[d$variety == "ESH-3"] <- "hybrid"
+	d$variety_type[d$variety == "Dekeba"] <- "OPV"
 
 	d$trial_id <- r$Type
 	d$on_farm <- TRUE

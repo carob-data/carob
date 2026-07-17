@@ -7,12 +7,12 @@
 carob_script <- function(path) {
 
 "
-R-lines observation nursery Mieso 2015
+Drought hybrids observation at Shiraro 2014
 
-Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 119 selected R lines evaluated at Mieso (Western Hararghe, Ethiopia) in 2015
+Data on agronomic traits of maturity, plant height, grain yield, resistance/tolerance to biotic (insects and disease) and abiotic (drought) stress and plant aspect score collected for 113 drought tolerant hybrids under observation nursery conducted at Sheraro (North Western Tigrai, Ethiopia) in 2014
 "
 
-	uri <- "doi:10.7910/DVN/9XUXJE"
+	uri <- "doi:10.7910/DVN/XAM15W"
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -23,34 +23,40 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety",
-		response_vars = "plant_height;flowering_days;maturity_days;plant_density;yield",
+		response_vars = "plant_height;flowering_days;maturity_days;disease_severity;pest_severity;drought_stress;yield", 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-15",
-		carob_completion = 80,	
+		carob_completion = 100,	
 		carob_effort = 5
 	)
 	
-	f <- ff[basename(ff) == "R-lines observation nursery Mieso 2015.xlsx"]
+	f <- ff[basename(ff) == "Drought hybrids observation at Shiraro 2014.xlsx"]
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
 	  country = "Ethiopia",
-	  adm2 = "Hararghe",
+	  adm1 = "Tigray",
 	  location = r$Site,
 	  treatment = r$Genotype,
 	  rep = as.integer(r$Replicate),
 	  planting_date = as.character(as.Date(r$Sown, format = "%d/%m/%Y")),
 	  harvest_date = as.character(as.Date(r$DateHarvest, format = "%d/%m/%Y")),
 	  plant_height = r$PHTMean,
+	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
-	  variety_type = "R-line",
+	  variety_type = "drought tolerant hybrid",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
-	  yield = r$`YieldKg/Ha`,
+	  disease_severity = as.character(r$DiseaseScore),
+	  pest_severity = as.character(r$InsectScore),
+	  drought_stress = as.character(r$DroughtScore),
+	  sl = r$StemLodging,
+	  rl = r$RootLodging,
 	  plot_area = as.numeric(r$PlotArea),
 	  plant_density = 10000 * r$StandAtHarv / r$PlotArea,
+	  spike_density = 10000 * r$`Heads/Plot` / r$PlotArea,
 	  crop = "sorghum"
 	)
 	
@@ -58,15 +64,15 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
-	d$longitude <- 40.5638
-	d$latitude <- 9.1779
-	geo_uncertainty = 51603
-	geo_source = "GADM 4.1, adm3"
+		
+	d$longitude <- 37.773
+	d$latitude <-  14.396
+	#uncertainty from GADM adm3 = "Tahtay Adiyabo",
+	d$geo_uncertainty = 49096
+	d$geo_source = "Google Maps"
 	d$geo_from_source <- FALSE
 	
 	d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$fertilizer_type <- NA
-	
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- NA

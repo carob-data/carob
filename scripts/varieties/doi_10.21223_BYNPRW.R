@@ -97,6 +97,7 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
    ) 
    
  d <- rbind(d1, d2)   
+ d$variety_type= "LBHT x LTVR"
 
  d$geo_from_source <- TRUE
  d$yield_part <- "tubers"
