@@ -184,11 +184,8 @@ carob_script <- function(path) {
   
   #weather data
   weather <- data.frame(
-    site=r9$site_no,
     location=r9$site,
-    year=r9$year,
-    date=as.Date(r9$date),
-    dps=r9$dps,
+    date=as.character(r9$date),
     tmin=r9$min_temp,
     tmax=r9$max_temp,
     temp=(r9$min_temp + r9$max_temp) / 2,
@@ -196,20 +193,7 @@ carob_script <- function(path) {
     srad=r9$glob_radiation*1000,
     ETP=r9$ET_grass)
   
-  ## considering weather data from planting to harvest
-  dap_lookup <- unique(field[, c("site","location","year","DAP")])
-  weather_sub <- merge(weather, dap_lookup, by=c("site","location","year"), all.x=FALSE)
-  weather_sub <- weather_sub[weather_sub$dps >= 0 & weather_sub$dps <= weather_sub$DAP, ]
-  
-  weather_mean <- aggregate(cbind(tmin, tmax, temp) ~ site + location + year,
-                            data=weather_sub, FUN=mean, na.rm=TRUE)
-  weather_sum  <- aggregate(cbind(prec, srad, ETP) ~ site + location + year,
-                            data=weather_sub, FUN=sum, na.rm=TRUE)
-  weather_agg  <- merge(weather_mean, weather_sum, by=c("site","location","year"))
-  
-  d <- merge(d, weather_agg, by=c("site","location","year"), all.x=TRUE)
-  d <- unique(d)  
-    
+
   ##added administrative levels basing on the locations where the experiment was done
  ##adding coordinates using the point radius method
   ##using GADM adm names because GADM strips the German administrative-type prefixes, leaving only the place names
@@ -232,6 +216,8 @@ carob_script <- function(path) {
   d$is_survey <- FALSE
   d$irrigated <- tolower(trimws(d$irrigated)) == "yes"    
   d$geo_from_source <- FALSE
+  d$K_fertilizer <- as.numeric(NA)
+  d$P_fertilizer <- as.numeric(NA)
   d$yield_part <- "roots"
   d$yield_moisture <- (100-r8$root_dry_matter)
   d$fwy_storage <- r8$root_yield*1000
@@ -299,5 +285,7 @@ carob_script <- function(path) {
   
   d$year <- NULL
   d$site <- NULL
-  carobiner::write_files(path, meta, d)
+  
+  carobiner::write_files(path, meta, d,wth = weather)
 }
+
