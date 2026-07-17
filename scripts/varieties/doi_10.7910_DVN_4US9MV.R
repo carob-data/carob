@@ -46,7 +46,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
-	  variety_type = "B lines",
+	  variety_type = "B line",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,

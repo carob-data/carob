@@ -42,7 +42,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  treatment = r$Genotype,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
-	  variety_type = "stay-green hybrids",
+	  variety_type = "stay-green hybrid",
 	  rep = as.integer(r$Replicate),
 	  plant_height = r$PHTMean,
 	  maturity_days = r$DTM,

@@ -40,7 +40,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	  plot_id = as.character(r$Plot),
 	  treatment = r$Genotype,
 	  variety = r$Genotype,
-	  variety_type= "drought tolerant hybrids",
+	  variety_type= "drought tolerant hybrid",
 	  plant_height = r$PHT,
 	  maturity_days = r$DTM,
 	  flowering_days = r$DTF,

@@ -45,7 +45,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 	  yield = r$`YieldKg/Ha`,
 	  variety = r$Genotype,
 	  variety_pedigree = r$Pedigree,
-	  variety_type = "stay-green hybrids",
+	  variety_type = "stay-green hybrid",
 	  plot_id = as.character(r$Plot),
 	  flowering_days = r$DTF,
 	  maturity_days = r$DTM,
