@@ -15,7 +15,6 @@ carob_script <- function(path) {
   ff <- carobiner::get_data(uri, path, group,
                          files="https://odjar.org/article/view/18784/18279/Dataset.zip")
   
-  ##Manually generating the metadata, since the repository structure is different from what carob looks for(NO JSON FILE)
   meta <- data.frame(
     uri            = uri,
     dataset_id     = "doi_10.18174_odjar.v11i0.18784",
@@ -28,23 +27,20 @@ carob_script <- function(path) {
     description    = "This paper presents data from a two-year study with sugar beet in Germany (2000 and 2001). A total of 27 field trials were conducted in a wide range of environmental conditions including trials with and without irrigation. Sequential harvests were made every 14-28 days between May and October. Root yield and quality, leaf yield, leaf area index and soil water content were determined in four replicates at each harvest date. Soil characteristics were assessed in the field and daily weather data were collected for each trial site. The dataset is suitable for validating sugar beet growth models.",
     design         = NA,
     data_citation  = "Christine Kenter.Christa M. Hoffmann.2025. Sugar beet (Beta vulgaris L.) yield and quality data at different harvest dates from a multi-environmental study in Germany. ODjAR. doi:10.18174/odjar.v11i0.18784",
-    stringsAsFactors = FALSE)
-  
-  meta$carob_group <- group
-  
-  meta$data_organization <- "Institute of Sugar Beet Research"
-  meta$publication        <- "doi:10.18174/odjar.v11i0.18784"#no citation file
-  meta$project             <- NA
-  meta$data_type           <- "experiment"
-  meta$treatment_vars      <- "irrigated"
-  meta$response_vars       <- "yield"
-  meta$carob_completion    <- 90
-  meta$carob_effort        <- 7
-  meta$carob_contributor   <- "Blessing Dzuda"
-  meta$carob_date          <- "2026-07-14"
-  meta$notes               <- NA
-  meta$design              <- NA
-  
+	carob_group = group,
+	data_organization = "IFZ", #nstitute of Sugar Beet Research",
+	publication = "doi:10.18174/odjar.v11i0.18784",
+	project = NA,
+	data_type = "experiment",
+	treatment_vars = "irrigated",
+	response_vars = "yield",
+	carob_completion = 90,
+	carob_effort = 7,
+	carob_contributor = "Blessing Dzuda",
+	carob_date = "2026-07-14",
+	notes = NA
+  )
+
   ## read data 
   
   f1 <- ff[basename(ff) == "1_sheets_variables.csv"]
