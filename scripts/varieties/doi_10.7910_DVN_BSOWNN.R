@@ -30,6 +30,7 @@ Data on agronomic traits of maturity, plant height, drought score, grain yield a
 
 	f <- ff[basename(ff) == "Dual Purpose hybrids Kobo 2017.csv"]
 	r <- read.csv(f)
+	r <- r[r$Genotype != "", ] # remove one empty records
 
 	d <- data.frame(
 	  country = "Ethiopia",
@@ -53,6 +54,7 @@ Data on agronomic traits of maturity, plant height, drought score, grain yield a
 	  crop = "sorghum"
 	)
 
+
 	d$variety_type[d$variety %in% c("Melkam", "NTJ2", "A2267-2", "2005MI5064")] <- "OPV"
 	
 	d$harvest_date <- "2017"
@@ -74,7 +76,8 @@ Data on agronomic traits of maturity, plant height, drought score, grain yield a
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
-
+	
+	d$variety_pedigree[d$variety_pedigree == ""] <- NA
 	carobiner::write_files(path, meta, d)
 }
 
