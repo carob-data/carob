@@ -126,11 +126,13 @@ depths each.
     soil_clay = r3$Clay
   )  
   #d3$trial_id <- "1"
-  
+
+  ## assigning the average soil value to plots with no measurement  
   soil <- aggregate(d3[, c("soil_pH", "soil_C_total", "soil_N_total", "soil_P", "soil_K_exch", "soil_sand", "soil_silt", "soil_clay")],
 					d3[, c("depth_top", "depth_bottom")], mean)
   
-  soil <- data.frame(plot_id = rep(d$plot_id[!(d$plot_id %in% d3$plot_id)], each=2), soil)
-  
+  soil <- data.frame(plot_id=rep(d$plot_id[!(d$plot_id %in% d3$plot_id)], each=2), sample_id=0, soil)
+  soil <- rbind(d3, soil) 
+ 
   carobiner::write_files(path, meta, d, long=soil)
 }
