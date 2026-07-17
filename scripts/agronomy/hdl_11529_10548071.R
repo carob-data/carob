@@ -121,7 +121,6 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    trial_id = gsub("0", NA, as.character(r5$Trial.Code)),
 	    cropping_system = gsub("Note:", NA, r5$Cropping.System),
 	    location = carobiner::fix_name(r5$Node, "title"),
-	    country= "India",
 	    #site = as.character(r5$Site.No.),
 	    treatment = r5$Tmnt,
 	    plot_area = as.numeric(r5$Plot.size..m2.),
@@ -258,7 +257,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    ##
 	    fertilizer_type1 = r7$Product.used,
 	    rep1 = "1",
-	    N_fertilizer1 = as.numeric(r7$Fert.Grade.N) *as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer1 = as.numeric(r7$Fert.Grade.N) *((as.numeric(r7$Fertilizer.applied.g.plot)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer1 = as.numeric(r7$Fert.Grade.P2O5) *as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer1 = as.numeric(r7$Fert.Grade.K2O) *as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum1 = 0,
@@ -269,7 +268,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_price1 = as.numeric(r7$Farm.gate.price.per.kg),
 	    fertilizer_type2 = r7$Product.used.1,
 	    rep2 = "2",
-	    N_fertilizer2 = as.numeric(r7$Fert.Grade.N.1)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer2 = as.numeric(r7$Fert.Grade.N.1)*((as.numeric(r7$Fertilizer.applied.g.plot.1)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer2 = as.numeric(r7$Fert.Grade.P2O5.1)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer2 = as.numeric(r7$Fert.Grade.K2O.1)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum2 = 0,
@@ -280,7 +279,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_price2 = as.numeric(r7$Farm.gate.price.per.kg.1),
 	    fertilizer_type3 = r7$Product.used.2,
 	    rep3 = "3",
-	    N_fertilizer3 = as.numeric(r7$Fert.Grade.N.2)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer3 = as.numeric(r7$Fert.Grade.N.2)*((as.numeric(r7$Fertilizer.applied.g.plot.2)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer3 = as.numeric(r7$Fert.Grade.P2O5.2)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer3 = as.numeric(r7$Fert.Grade.K2O.2)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum3 = 0,
@@ -291,7 +290,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_price3 = as.numeric(r7$Farm.gate.price.per.kg.2),
 	    fertilizer_type4 = tolower(r7$Product.used.3),
 	    rep4 = "4",
-	    N_fertilizer4 = as.numeric(r7$Fert.Grade.N.3)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer4 = as.numeric(r7$Fert.Grade.N.3)*((as.numeric(r7$Fertilizer.applied.g.plot.3)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer4 = as.numeric(r7$Fert.Grade.P2O5.3)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer4 = as.numeric(r7$Fert.Grade.K2O.3)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum4 = 0,
@@ -302,7 +301,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_price4 = as.numeric(r7$Farm.gate.price.per.kg.3),
 	    fertilizer_type5 = tolower(r7$Product.used.4),
 	    rep5 = "5",
-	    N_fertilizer5 = as.numeric(r7$Fert.Grade.N.4)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer5 = as.numeric(r7$Fert.Grade.N.4)*((as.numeric(r7$Fertilizer.applied.g.plot.4)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer5 = as.numeric(r7$Fert.Grade.P2O5.4)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer5 = as.numeric(r7$Fert.Grade.K2O.4)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum5 = 0,
@@ -314,7 +313,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    #
 	    fertilizer_type6 = "gypsum",
 	    rep6 = "6",
-	    N_fertilizer6 = as.numeric(r7$Fert.Grade.N.5)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer6 = as.numeric(r7$Fert.Grade.N.5)*((as.numeric(r7$Fertilizer.applied.g.plot.5)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer6 = as.numeric(r7$Fert.Grade.P2O5.5)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer6 = as.numeric(r7$Fert.Grade.K2O.5)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    gypsum6 = as.numeric(r7$Gypsum..kg.ha.),
@@ -326,7 +325,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    
 	    fertilizer_type7 = "ZnSO4",
 	    rep7 = "7",
-	    N_fertilizer7 = as.numeric(r7$Fert.Grade.N.6)*as.numeric(r7$Total.urea..kg.ha.)/100,
+	    N_fertilizer7 = as.numeric(r7$Fert.Grade.N.6)*((as.numeric(r7$Fertilizer.applied.g.plot.6)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    P_fertilizer7 = as.numeric(r7$Fert.Grade.P2O5.6)*as.numeric(r7$Total.TSP..kg.ha.)/100,
 	    K_fertilizer7 = as.numeric(r7$Fert.Grade.K2O.6)*as.numeric(r7$Total.MOP..kg.ha.)/100,
 	    Zn_fertilizer7 =  as.numeric(r7$ZnSO4..kg.ha.),
@@ -623,7 +622,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	cols <- c("N_fertilizer", "P_fertilizer", "K_fertilizer", "Zn_fertilizer", "B_fertilizer", "gypsum", "fertilizer_amount", "fertilizer_price")
 	fw[cols] <- lapply(fw[cols], as.numeric)
 	fw$P_fertilizer <- fw$P_fertilizer/2.29 
-	fw$K_fertilizer <- fw$P_fertilizer/1.2051
+	fw$K_fertilizer <- fw$K_fertilizer/1.2051
 
 	fw[is.na(fw)] <- 0
 	fw$date[fw$date == 0] <- NA # one date
