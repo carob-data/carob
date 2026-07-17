@@ -46,7 +46,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		treatment = r$trt_code,
 		fertilizer = r$Fertilizer,
 		plant_density=r$cassava_density,
-		intercrops=ifelse(r$maize_density > 0, "maize", "none"),
+		intercrops=ifelse(!is.na(r$maize_density), "maize", "none"),
 		intercroped=r$maize_density > 0,
 		intercrop_density =ifelse(r$maize_density > 0, r$maize_density, 0),
 		harvest_date = as.character(as.Date(r$HarvestDate, format = "%d/%m/%Y")),
@@ -65,11 +65,13 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		plot_id = r$plot_ID,
 		treatment = r$trt_code,	
 		fertilizer = r$Fertilizer,
-		plant_density=r$cassava_density,
+		plant_density=r$maize_density,
 		intercrop_density =ifelse(r$cassava_density > 0, r$cassava_density, 0),	
 		intercrops=ifelse(r$cassava_density > 0, "cassava", "none"),
 		intercroped=r$cassava_density > 0
 	)
+	d2 <- d2[!is.na(d2$plant_density), ]
+	
 	d <- carobiner::bindr(d1, d2)
 	d$root_infection <- d$root_infection / d$yield
 
