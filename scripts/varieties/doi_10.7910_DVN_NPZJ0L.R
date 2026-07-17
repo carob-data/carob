@@ -27,7 +27,7 @@ Data on agronomic traits of maturity, plant height, drought score, grain yield a
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-17",
 		carob_completion = 90,
-		carob_effort = 1
+		carob_effort = 0.1
 	)
 
 	f <- ff[basename(ff) == "Drought hybrids Kobo 2017.csv"]

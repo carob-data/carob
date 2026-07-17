@@ -27,7 +27,7 @@ Data on agronomic traits of maturity, grain yield and plant aspect score collect
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-17",
 		carob_completion = 90,
-		carob_effort = 1
+		carob_effort = 0.1
 	)
 
 	f <- ff[basename(ff) == "Selected white hybrids Shiraro 2015.xlsx"]

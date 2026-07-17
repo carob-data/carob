@@ -27,7 +27,7 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-17",
 		carob_completion = 80,
-		carob_effort = 1
+		carob_effort = 0.1
 	)
 
 	f <- ff[basename(ff) == "Advanced drought tolerant sorghum hybrids at Mieso 2019.xlsx"]

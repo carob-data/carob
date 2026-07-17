@@ -32,7 +32,7 @@ Data on days to flowering, plant height, plant aspect score and grain yield coll
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-17",
 		carob_completion = 80,
-		carob_effort = 1
+		carob_effort = 0.1
 	)
 
 	f <- ff[basename(ff) == "Combining ability among key Ethiopian sorghum landraces at Mieso 2020.xlsx"]

@@ -27,7 +27,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-17",
 		carob_completion = 90,
-		carob_effort = 1
+		carob_effort = 0.1
 	)
 
 	f <- ff[basename(ff) == "High yield potential hybrids at Shoarobit 2014.xlsx"]
