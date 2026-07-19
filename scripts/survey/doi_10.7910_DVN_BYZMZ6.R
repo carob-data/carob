@@ -1,0 +1,278 @@
+# R script for "carob"
+# license: GPL (>=3)
+
+## ISSUES
+#Crop production information is missing.
+#The total amount of fertilizer applied is missing.
+
+
+carob_script <- function(path) {
+
+"
+Papua New Guinea Rural Household Survey, 2023
+
+The Papua New Guinea Rural Household Survey (2023) collected detailed household-level data on agricultural production, food and non-food consumption and expenditure, and livelihood strategies across 14 provinces, covering communities in the highlands, lowlands, and islands of Papua New Guinea (PNG). 
+
+The survey was designed using a purposive sampling strategy based on defined agro-ecological zones, which allows for the analysis of key factors influencing rural households and communities. It is important to note that the survey is not nationally representative; however, given the careful random selection of survey areas, we expect that generalizable relationships between variables affecting socio-economic and other development outcomes in rural PNG communities will be consistently observed across representative samples and in this survey. These factors include those that contribute to more resilient local food systems, diversified employment opportunities, and improved household wellbeing.
+
+The survey encompasses 2,699 households in 270 communities, spanning five agroecological zones.It features detailed modules on a wide range of topics relevant to rural livelihoods, agricultural production, and household wellbeing, including:    Household Characteristics — Demographics, education, migration, and other household composition details.   Agricultural Production — Crop production, use of household labor, and other farming-related activities.   Household Assets — Ownership of production equipment, consumer durables, livestock, and housing quality.   Off-farm Activities — Income from wage employment, business activities, and transfers or gifts.   Consumption and Expenditure — Non-food and food expenditures, food consumption patterns, and dietary diversity.   Economic Shocks and Food Insecurity — Perceptions of poverty, recent experiences of food insecurity, and access to health and nutrition extension services.   Child and Mother Anthropometric Measurements — Height and weight of the child and biological mother.   Dietary Quality Questionnaire — Individual-level data from a 24-hour recall of specific food groups consumed.
+"
+
+	uri <- "doi:10.7910/DVN/BYZMZ6"
+	group <- "survey"
+	ff  <- carobiner::get_data(uri, path, group)
+
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
+		data_organization = "IFPRI",
+		publication = NA,
+		project = NA,
+		design = "unitOfAnalysis" ,
+		data_type = NA,
+		treatment_vars = "none",
+		response_vars = "none", 
+		notes = NA,
+		carob_contributor = "Cedric Ngakou",
+		carob_date = "2026-07-19",
+		carob_completion = 50,	
+		carob_effort = 4
+	)
+	
+
+	
+	f <- ff[basename(ff) == "com_l_l.dta"]
+	f1 <- ff[basename(ff) == "hh_1_0.dta"]
+	f2 <- ff[basename(ff) == "hh_1_1.dta"]
+	f3 <- ff[basename(ff) == "hh_1_1_La.dta"]
+	f4 <- ff[basename(ff) == "hh_1_1_Lb.dta"]
+	f9 <- ff[basename(ff) == "hh_1_4.dta"]
+	f10 <- ff[basename(ff) == "hh_2_1.dta"]
+	f11 <- ff[basename(ff) == "hh_2_1_L.dta"]
+	f12 <- ff[basename(ff) == "hh_2_2.dta"]
+	f13 <- ff[basename(ff) == "hh_2_3a.dta"]
+	f16 <- ff[basename(ff) == "hh_2_4_L.dta"]
+	f23 <- ff[basename(ff) == "hh_3_2_L.dta"]
+	f27 <- ff[basename(ff) == "hh_4_1_L.dta"]
+	
+	
+	r <- haven::read_dta(f) |> carobiner:::unlabel()
+	r1 <- haven::read_dta(f1)|> carobiner:::unlabel()
+	r2 <- haven::read_dta(f2)|> carobiner:::unlabel()
+	r3 <- haven::read_dta(f3)|> carobiner:::unlabel()
+	r4 <- haven::read_dta(f4)|> carobiner:::unlabel()
+	r9 <- haven::read_dta(f9)|> carobiner:::unlabel()
+	r10 <- haven::read_dta(f10)|> carobiner:::unlabel()
+	r11 <- haven::read_dta(f11)|> carobiner:::unlabel()
+	r12 <- haven::read_dta(f12) |> carobiner:::unlabel()
+	r13 <- haven::read_dta(f13)|> carobiner:::unlabel()
+	r16 <- haven::read_dta(f16)|> carobiner:::unlabel()
+	r23 <- haven::read_dta(f23)|> carobiner:::unlabel()
+	r27 <- haven::read_dta(f27)|> carobiner:::unlabel()
+	
+	
+####	
+	d1 <- data.frame(
+	 elevation = r$l2altitude,
+	 latitude = r$l2latitude,
+	 longitude = r$l2longitude,
+	 com_id = r$community,
+	 id = r$today
+	)
+
+	d2 <- data.frame(
+	  adm1 = r1$province,
+	  adm2 = r1$district,
+	  hhid = r1$hhid,
+	  com_id = r1$community,
+	  id = r1$today
+	)
+	
+#### merge d1 and d2
+	d <- merge(d1, d2, by= intersect(names(d1), names(d2)), all.y = TRUE)
+	d$record_id <- as.integer(1:nrow(d))
+	d$id <- NULL
+	
+	d3 <- data.frame(
+	  hh_child_12 = r3$child_u12,
+	  hh_child_5 = r3$child_u5,
+	  hh_adult_men = r3$adult_male,
+	  hh_adult_women = r3$adult_female,
+	  age = r3$sec11_4a,
+	  sex = r3$sec11_3_gender,
+	  #relationship = r3$sec11_2_relat2hd,
+	  hhid = r3$hhid,
+	  com_id = r3$community
+	) 
+	
+	#### merge d and d3
+	d <- merge(d, d3, by= intersect(names(d), names(d3)), all = TRUE)
+	d <- d[!duplicated(d$record_id),]
+	d$record_id <- NULL
+	
+	d4 <- data.frame(
+	  hhid = r4$hhid,
+	  age = r4$sec11__age,
+	  civil_status = r4$sec11_7,
+	  occupation = r4$sec11_8,
+	  com_id = r4$community
+	)
+	
+	d4 <- d4[!is.na(d4$civil_status),]
+	#### merge d and d4
+	d <- merge(d, d4, by= intersect(names(d), names(d4)), all = TRUE)
+	d <- d[!is.na(d$adm1),]
+	
+	d5 <- data.frame(
+	  language = r9$sec14_1,
+	  hhid = r9$hhid,
+	  com_id = r9$community
+	)
+	cc_v = c("Tok pisin" =1, "Hiri Mota" =2, "Unserdeutsh"=3, "English"= 4, "local"= 5, "kuanua"=6, "others"= 777)
+	code_to_name <- setNames(names(cc_v), as.character(cc_v))
+	d5$language <- sapply(strsplit(d5$language, "\\s+"), function(x) {
+	  paste(code_to_name[x], collapse = "; ")
+	})
+	
+	#### merge d and d5
+	d <- merge(d, d5, by= intersect(names(d), names(d5)), all = TRUE)
+	d$record_id <- as.integer(1:nrow(d))
+	
+	d6 <- data.frame(
+	  hhid = r11$hhid,
+	  field_id = as.character(r11$garden_num),
+	  #field_size = r11$sec21_5a, # unspecified 
+	  hh_owner = grepl("own", r11$sec21_5c),
+	  crop = substr(r11$sec21_6, 1, 2),
+	  herbicide_used = grepl("yes", tolower(r11$sec21_10a)),
+	  ferti = r11$sec21_10b,
+	  com_id = r11$community
+	)
+	crop <- c("yam"= 11, "sweetpotato"= 12, "taro"= 13, "banana"= 14, "cassava"= 15, "potato"=16, "rice"= 17, "maize"=18, "banana"= 21, "coconut"= 22, "jackfruit"= 23, "papaya"=24, "mango"=25, "guava"=26, "common bean"=31, "cabbage"= 32, "pumpkin"= 33, "groundnut"=41, "galip"=42, "areca nut"=43, "NA"= 44, "cocoa"=51, "sage"= 52, "coffee"= 53, "tea"=56)
+	code_to_name <- setNames(names(crop), as.character(crop))
+	d6$crop <- sapply(strsplit(d6$crop, "\\s+"), function(x) {
+	  paste(code_to_name[x], collapse = "; ")
+	})
+	fert <- c("lime"= 106, "NPK(17-17-17)"= 201, "NPK(20-10-10)"= 202, "NPK(25-5-5)"= 203, "urea" = 204, "urea"= 205, "DAP" = 206, "TSP"= 207, "KCL" = 208)
+	code_to_name <- setNames(names(fert), as.character(fert))
+	d6$fertilizer_type <- gsub("NA;|;NA|     |   | ", "", sapply(strsplit(d6$ferti, "\\s+"), function(x) {
+	  paste(code_to_name[x], collapse = "; ")
+	}))
+	d6$fertilizer_type <- gsub(";NA|NA", "", d6$fertilizer_type)
+	d6$fertilizer_type <- ifelse(grepl("NPK", d6$fertilizer_type), "NPK", d6$fertilizer_type)
+	d6$fertilizer_type <- gsub("urea;urea", "urea", d6$fertilizer_type)
+	
+	herb <- c("glyphosate" = 401,  "dimethoate"= 303) 
+	code_to_name <- setNames(names(herb), as.character(herb))
+	d6$herbicide_product <- gsub("NA;|;NA|     |   | ", "", trimws(sapply(strsplit(d6$ferti, "\\s+"), function(x) {
+	  paste(code_to_name[x], collapse = "; ")
+	})))
+	
+	d6[d6==""| d6=="NA"] <- NA
+	d6$herbicide_product <- ifelse(is.na(d6$herbicide_product) & grepl("TRUE", d6$herbicide_used), "unknown", gsub(";NA|NA;", "", d6$herbicide_product))
+	d6$ferti <- NULL
+	
+	#### merge d and d6
+	d <- merge(d, d6, by= intersect(names(d), names(d6)), all = TRUE)
+	d <- d[!duplicated(d$record_id),]
+	
+	d7 <- data.frame(
+	  farm_labour_hh = r12$sec22_9*12,
+	  labor_price = r12$sec22_10, # Labor cost per person
+	  com_id = r12$community,
+	  hhid = r12$hhid
+	)
+	
+	#### merge d and d7
+	d <- merge(d, d7, by= intersect(names(d), names(d7)), all = TRUE)
+	
+	
+	d8 <- data.frame(
+	  hhid = r23$hhid,
+	  animal = r23$sec32_2,
+	  animal_price = r23$sec32_3, ## selling price of one animal 
+	  com_id = r23$community
+	)
+	ani_names <- c("pig"= 1, "pig"= 2, "pig"= 3, "chicken"= 4, "chicken"= 5, "chicken"= 6, "cattle"= 7, "goat"= 8, "sheep"= 9, "fish"= 10, "cossowary"= 11, "Deer" = 12, "duck" =13)
+	code_to_name <- setNames(names(ani_names), as.character(ani_names))
+	d8$animal <- gsub("character\\(0\\)", NA, trimws(sapply(d8$animal, function(x) {
+	  code_to_name[x]})))
+	
+	#### merge d and d8
+	d <- merge(d, d8, by= intersect(names(d), names(d8)), all = TRUE)
+	d <- d[!duplicated(d$record_id),]
+	
+	d9 <- data.frame(
+	  hhid = r27$hhid,
+	  hh_income_source = r27$sec41__inc_name,
+	  com_id = r27$community
+	)
+	
+	#### merge d and d9
+	d <- merge(d, d9, by= intersect(names(d), names(d9)), all = TRUE)
+	d <- d[!duplicated(d$record_id),]
+	
+	### Fixing long and lat 
+	d$geo_from_source <- TRUE
+	i <- grepl("Abau District", d$adm2)
+	d$longitude[i] <- 148.582
+	d$latitude[i] <- -10.045
+	d$geo_from_source[i] <- FALSE
+	
+	i <- grepl("Alotau District", d$adm2)
+	d$longitude[i] <- 150.584
+	d$latitude[i] <- -10.308
+	d$geo_from_source[i] <- FALSE
+	
+	i <- grepl("Kerema District", d$adm2)
+	d$longitude[i] <- 145.973
+	d$latitude[i] <- -7.948
+	d$geo_from_source[i] <- FALSE
+	
+	i <- grepl("Kainanatu District", d$adm2)
+	d$longitude[i] <- 145.864
+	d$latitude[i] <- -6.292
+	d$geo_from_source[i] <- FALSE
+	
+	
+	i <- grepl("North Bougainville District", d$adm2)
+	d$longitude[i] <- 151.782
+	d$latitude[i] <- -5.543
+	d$geo_from_source[i] <- FALSE
+	
+	i <- grepl("South Fly District", d$adm2)
+	d$longitude[i] <-  141.654
+	d$latitude[i] <- -8.324
+	d$geo_from_source[i] <- FALSE
+	
+	geo <- data.frame(
+	  adm2 = c("Ambunti/Drekikier District", "Anglimp/South Waghi District", "Kokopo District", "Madang District", "Menyamya District", "Abau District", "Kainanatu District", "North Fly District", "South Bougainville District", "Kerowagi District", "North Bougainville District", "Central Bougainville District", "South Fly District", "Tambul Nebilyer", "Kerema District", "Popondetta District", "Alotau District", "Mul/Baiyer District"),
+	  lon = c(142.648, 144.3362, 152.2669, 145.797, 145.994, 148.560, 145.859, 141.354, 155.3413, 144.866, 151.7833, 155.328, 141.841, 144.012, 145.772, 148.232, 150.459, 144.154),
+	  lat = c(-4.167, -5.875, -4.351, -5.228, -7.111, -10.0240, -6.288, -5.565, -6.359, -5.934, -5.538, -6.177, -8.416, -5.923, -7.963, -8.769, -10.314, -5.516 ),
+	  geo_from = FALSE
+	)
+	
+	d <- merge(d, geo, by= "adm2", all.x = TRUE)
+	
+	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
+	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
+	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
+	
+	d$lon <- d$lat <- d$geo_from <- NULL 
+	
+	
+	d$is_survey <- TRUE
+	d$on_farm  <- FALSE
+	d$trial_id <- paste(d$adm1, d$com_id)
+	d$yield <- NA_real_
+	d$planting_date <- NA_character_
+	d$yield_moisture <- NA_real_
+	d$yield_part <- "none"
+	d$country <- "Papua New Guinea"
+	d$irrigated <- NA
+	d$yield_isfresh <- TRUE
+	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
+	d$com_id <- NULL
+	
+	carobiner::write_files(path, meta, d)
+}
+
+
