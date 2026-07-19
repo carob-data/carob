@@ -37,7 +37,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 		carob_effort = 4
 	)
 	
-
+  
 	
 	f <- ff[basename(ff) == "com_l_l.dta"]
 	f1 <- ff[basename(ff) == "hh_1_0.dta"]
@@ -79,8 +79,8 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	)
 
 	d2 <- data.frame(
-	  adm1 = r1$province,
-	  adm2 = r1$district,
+	  adm1 = trimws(gsub(" Province", "", r1$province)),
+	  adm2 =  trimws(gsub(" District", "", r1$district)),
 	  hhid = r1$hhid,
 	  com_id = r1$community,
 	  id = r1$today
@@ -210,44 +210,52 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d <- merge(d, d9, by= intersect(names(d), names(d9)), all = TRUE)
 	d <- d[!duplicated(d$record_id),]
 	
+	d$adm2 <- gsub("/", "-", d$adm2)
+	d$adm2[d$adm2== "Ambunti-Drekikier"] <- "Ambunti-Dreikikir"
+	d$adm2[d$adm2== "Kainanatu"] <- "Kainantu"
+	d$adm2[d$adm2== "Tambul Nebilyer"] <- "Tambul-Nebilyer"
+	d$adm2[d$adm2== "Popondetta"] <- "Sohe"
+	
 	### Fixing long and lat 
 	d$geo_from_source <- TRUE
-	i <- grepl("Abau District", d$adm2)
-	d$longitude[i] <- 148.582
-	d$latitude[i] <- -10.045
+	i <- grepl("Abau", d$adm2)
+	d$longitude[i] <- 148.8787	
+	d$latitude[i] <- -10.0485
 	d$geo_from_source[i] <- FALSE
 	
-	i <- grepl("Alotau District", d$adm2)
-	d$longitude[i] <- 150.584
-	d$latitude[i] <- -10.308
+	i <- grepl("Alotau", d$adm2)
+	d$longitude[i] <- 149.9114		
+	d$latitude[i] <- -10.1302
 	d$geo_from_source[i] <- FALSE
 	
-	i <- grepl("Kerema District", d$adm2)
-	d$longitude[i] <- 145.973
-	d$latitude[i] <- -7.948
+	i <- grepl("Kerema", d$adm2)
+	d$longitude[i] <- 146.0659	
+	d$latitude[i] <- -7.7725
 	d$geo_from_source[i] <- FALSE
 	
-	i <- grepl("Kainanatu District", d$adm2)
-	d$longitude[i] <- 145.864
-	d$latitude[i] <- -6.292
+	i <- grepl("Kainanatu", d$adm2)
+	d$longitude[i] <- 145.9041
+	d$latitude[i] <- -6.3035	
 	d$geo_from_source[i] <- FALSE
 	
 	
-	i <- grepl("North Bougainville District", d$adm2)
+	i <- grepl("North Bougainville", d$adm2)
 	d$longitude[i] <- 151.782
 	d$latitude[i] <- -5.543
 	d$geo_from_source[i] <- FALSE
 	
-	i <- grepl("South Fly District", d$adm2)
+	i <- grepl("South Fly", d$adm2)
 	d$longitude[i] <-  141.654
 	d$latitude[i] <- -8.324
 	d$geo_from_source[i] <- FALSE
 	
 	geo <- data.frame(
-	  adm2 = c("Ambunti/Drekikier District", "Anglimp/South Waghi District", "Kokopo District", "Madang District", "Menyamya District", "Abau District", "Kainanatu District", "North Fly District", "South Bougainville District", "Kerowagi District", "North Bougainville District", "Central Bougainville District", "South Fly District", "Tambul Nebilyer", "Kerema District", "Popondetta District", "Alotau District", "Mul/Baiyer District"),
-	  lon = c(142.648, 144.3362, 152.2669, 145.797, 145.994, 148.560, 145.859, 141.354, 155.3413, 144.866, 151.7833, 155.328, 141.841, 144.012, 145.772, 148.232, 150.459, 144.154),
-	  lat = c(-4.167, -5.875, -4.351, -5.228, -7.111, -10.0240, -6.288, -5.565, -6.359, -5.934, -5.538, -6.177, -8.416, -5.923, -7.963, -8.769, -10.314, -5.516 ),
-	  geo_from = FALSE
+	  adm2 = c("Central Bougainville", "North Bougainville", "South Bougainville", "Abau", "Kerowagi", "Kokopo", "Sohe", "Ambunti-Dreikikir", "Kainantu", "Kerema", "Anglimp-South Waghi", "Madang", "Alotau", "Menyamya", "North Fly", "South Fly", "Mul-Baiyer", "Tambul-Nebilyer"),
+	  lon = c(155.3831, 154.8229, 155.4866, 148.8787, 144.8692, 152.3103, 151.5698, 142.3078, 145.9041, 146.0659, 144.5455, 145.5206, 149.9114, 146.1757, 141.4370, 141.9940, 144.1653, 144.1486),
+	  lat = c(-6.1585, -5.6207, -6.5457, -10.0485, -5.9251, -4.3591, -5.3037, -4.3449, -6.3035, -7.7725, -6.0403, -5.1473, -10.1302, -7.2632, -5.7738, -8.6021, -5.5274, -5.9885),
+	  geo_from = FALSE,
+	  geo_uncertainty = c(70231, 263638, 76737, 104025, 23991, 30904, 126554, 116454 ,37448, 96638 , 39047, 41829, 126387, 55258, 113929, 184813, 36441, 44991),
+	  geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
 	)
 	
 	d <- merge(d, geo, by= "adm2", all.x = TRUE)
@@ -257,7 +265,6 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
 	
 	d$lon <- d$lat <- d$geo_from <- NULL 
-	
 	
 	d$is_survey <- TRUE
 	d$on_farm  <- FALSE
