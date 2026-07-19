@@ -3,7 +3,8 @@
 
 ## ISSUES
 # list processing issues here so that an editor can look at them
-
+### the data set indicated that fertilizer was used but there is no amount and type highlighted
+#the data set did not provide the exact location where the experiment was done.
 
 carob_script <- function(path) {
 
@@ -13,8 +14,6 @@ Under best planting practices, the effect of land preparation on cassava root yi
 ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries in Africa (Nigeria and Tanzania) providing tailored agronomic advice to small scale cassava growers in the target countries. The project delivers agronomic solutions to improve cassava root yield and quality and the necessary knowledge base and applications for accessing this knowledge to cassava scaling partners and ultimately farmers in the target countries while instituting the necessary capacity and skills for national system scientists to engage in transformative cassava agronomy.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
 
 	uri <- "doi.org/10.25502/zwrb-ge44/d"
 	group <- "agronomy"
@@ -27,7 +26,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		project = "African Cassava Agronomy Initiative (ACAI)",
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "fertilizer_used;values_land_prep;herbicide_timing",
+		treatment_vars = "fertilizer_used;land_prep_method;herbicide_timing",
 		response_vars = "yield;yield_marketable;root_infection;plant_density", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-17",
@@ -57,20 +56,20 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	  plant_density = r1$plant_density_per_.ha,
 	  yield = r1$tuberizedMarketableRootsFW,
 	  yield_marketable = r1$tuberizedMarketableRootsFW,
-	  values_land_prep = paste(r1$ploughing,r1$flat_ridge),
+	  land_prep_method = paste(r1$ploughing,r1$flat_ridge),
 	  root_infection = (r1$tuberizedDiseasedRootsFW / (r1$tuberizedDiseasedRootsFW + r1$tuberizedMarketableRootsFW)) * 100,
 	  fertilizer_used = ifelse(r1$Fertilizer == "Fertilizers applied", TRUE, FALSE),
 	  crop = "cassava"
 	)
 
-#####These values were for land_prep
-	#### assuming flat in values_land_prep = minimum tillage and zero tillage is none 
+#####
+	#### assuming flat in land_prep_method = minimum tillage and zero tillage is none 
 	
-	d$values_land_prep <- gsub("Flat", "minimum tillage",d$values_land_prep)
-	d$values_land_prep<- gsub("Ridged", "ridge tillage",d$values_land_prep)
-	d$values_land_prep <- gsub("Zero tillage", "none",d$values_land_prep)
-	d$values_land_prep <- gsub("Single plough", "single ploughing",d$values_land_prep)
-	d$values_land_prep <- gsub("Double plough", "double ploughing",d$values_land_prep)
+	d$land_prep_method <- gsub("Flat", "minimum tillage",d$land_prep_method)
+	d$land_prep_method<- gsub("Ridged", "ridge tillage",d$land_prep_method)
+	d$land_prep_method <- gsub("Zero tillage", "none",d$land_prep_method)
+	d$land_prep_method <- gsub("Single plough", "single ploughing",d$land_prep_method)
+	d$land_prep_method <- gsub("Double plough", "double ploughing",d$land_prep_method)
 	
 	
 	##### assumed herbicide timing = wether following the protocol or farmers choice
@@ -81,13 +80,14 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	
-	
-	d$longitude <- 8.675
-	d$latitude <- 9.082
-	d$geo_uncertainty = 96111 # geo_uncertainty was computed  from  adm1 = Lagos 
-	d$geo_source = "Google maps"
+	######## there was no exact location provided, the dataset only indicated country
+	d$longitude <- NA
+	d$latitude <- NA
+	d$geo_uncertainty = NA 
+	d$geo_source = NA
 	d$geo_from_source <- FALSE
 	
+	##### The dataset indicated that fertiliser was used but never stated the amount and the type
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 	d$fertilizer_type <- NA
 	
