@@ -183,14 +183,13 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	#### merge d and d7
 	d <- merge(d, d7, by= intersect(names(d), names(d7)), all = TRUE)
 	
-	
 	d8 <- data.frame(
 	  hhid = r23$hhid,
-	  animal = r23$sec32_2,
+	  animal = tr23$sec32_2,
 	  animal_price = r23$sec32_3, ## selling price of one animal 
 	  com_id = r23$community
 	)
-	ani_names <- c("pig"= 1, "pig"= 2, "pig"= 3, "chicken"= 4, "chicken"= 5, "chicken"= 6, "cattle"= 7, "goat"= 8, "sheep"= 9, "fish"= 10, "cossowary"= 11, "Deer" = 12, "duck" =13)
+	ani_names <- c("pig"= 1, "pig"= 2, "pig"= 3, "chicken"= 4, "chicken"= 5, "chicken"= 6, "cattle"= 7, "goat"= 8, "sheep"= 9, "fish"= 10, "cossowary"= 11, "deer" = 12, "duck" =13)
 	code_to_name <- setNames(names(ani_names), as.character(ani_names))
 	d8$animal <- gsub("character\\(0\\)", NA, trimws(sapply(d8$animal, function(x) {
 	  code_to_name[x]})))
@@ -215,53 +214,41 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d$adm2[d$adm2== "Tambul Nebilyer"] <- "Tambul-Nebilyer"
 	d$adm2[d$adm2== "Popondetta"] <- "Sohe"
 	
-	### Fixing long and lat 
-	i <- grepl("Abau", d$adm2) & grepl(paste(148.1775, 148.1818, 148.169, 148.1817, sep ="|"), d$longitude)
-	d$longitude[i] <- NA
-	d$latitude[i] <- NA
+	### long and lat _just_ not on land --- could be moved a little, but let's leave them for now.
+	#i <- grepl("Abau", d$adm2) & grepl(paste(148.1775, 148.1818, 148.169, 148.1817, sep ="|"), d$longitude)
+	#d$longitude[i] <- NA
+	#d$latitude[i] <- NA	
+	#i <- grepl("Alotau", d$adm2) & grepl(paste(150.874, 150.4558, sep ="|"), d$longitude)
+	#i <- grepl("Kerema", d$adm2) & grepl(paste(145.7723, 145.7745, 145.765, 145.7745, 145.7722, 145.774,  145.7652, sep ="|"), d$longitude) 	
+	#i <- grepl("North Bougainville", d$adm2) & grepl("154.6707", d$longitude)	
+	#i <- grepl("South Fly", d$adm2) & grepl(paste(143.2, 143.2102, sep ="|"), d$longitude) 
 	
-	i <- grepl("Alotau", d$adm2) & grepl(paste(150.874, 150.4558, sep ="|"), d$longitude)
-	d$longitude[i] <- NA		
-	d$latitude[i] <- NA
-	
-	i <- grepl("Kerema", d$adm2) & grepl(paste(145.7723, 145.7745, 145.765, 145.7745, 145.7722, 145.774,  145.7652, sep ="|"), d$longitude) 
-	d$longitude[i] <- NA	
-	d$latitude[i] <- NA
-	
-	
-	i <- grepl("North Bougainville", d$adm2) & grepl("154.6707", d$longitude)
-	d$longitude[i] <- NA
-	d$latitude[i] <- NA
-	
-	i <- grepl("South Fly", d$adm2) & grepl(paste(143.2, 143.2102, sep ="|"), d$longitude) 
-	d$longitude[i] <-  NA
-	d$latitude[i] <- NA
-	
-#  CN: great
-#u <- unique(d[, c("adm2", "longitude", "latitude")])
-# better way to estimate lon/lat since most locations are clustered within adm2?
-#terra::plet(u, "adm2", cex=3)  |> lines(geodata::gadm("PNG", level=2, path))
-#a <- aggregate(u[, c("longitude", "latitude")], u["adm2"], mean, na.rm=T)
-	
+	# better way to estimate lon/lat since most locations are clustered within adm2?
+	#u <- unique(d[, c("adm2", "longitude", "latitude")])
+	#a <- aggregate(u[, c("longitude", "latitude")], u["adm2"], mean, na.rm=T)
+	# compute uncertainty given known points (not centroids) and admin areas 
+	#g <- carobiner::adm_pointRadius("PNG", 2, geo=a)
+	# carobiner::dfput(g)	
+
 	geo <- data.frame(
-	  adm2 = c("Central Bougainville", "North Bougainville", "South Bougainville", "Abau", "Kerowagi", "Kokopo", "Sohe", "Ambunti-Dreikikir", "Kainantu", "Kerema", "Anglimp-South Waghi", "Madang", "Alotau", "Menyamya", "North Fly", "South Fly", "Mul-Baiyer", "Tambul-Nebilyer"),
-	  lon = c(148.0871, 151.7734, 142.7366, 144.6196, 155.4895, 145.8807, 145.8695, 144.8775, 152.3150, 145.6913, 146.2538, 144.1884, 154.6885, 141.1886, 141.3323, 155.5946, 142.2237, 144.0158),
-	  lat = c(-10.125861, -5.5411, -3.773819, -5.884722, -6.198702, -6.263997, -7.979943, -5.933903, -4.394262, -5.212156, -7.334717, -5.728377, -5.274877, -5.723983, -5.4395, -6.661557, -8.981245, -5.898895),
-	  geo_from = FALSE,
-	  geo_uncertainty = c(70231, 263638, 76737, 104025, 23991, 30904, 126554, 116454 ,37448, 96638 , 39047, 41829, 126387, 55258, 113929, 184813, 36441, 44991),
-	  geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+		adm2 = c("Abau", "Alotau", "Ambunti-Dreikikir", "Anglimp-South Waghi", "Central Bougainville", "Kainantu", "Kerema", "Kerowagi", "Kokopo", "Madang", "Menyamya", "Mul-Baiyer", "North Bougainville", "North Fly", "Sohe", "South Bougainville", "South Fly", "Tambul-Nebilyer"),
+		lon = c(148.07582, 150.40361, 142.74709, 144.62268, 155.51076, 145.88004, 145.83809, 144.87791, 152.31496, 145.69676, 146.26359, 144.1875, 154.67765, 141.18226, 148.3833, 155.59891, 142.25708, 144.00914),
+		lat = c(-10.12329, -10.35783, -3.73951, -5.8778, -6.20674, -6.25996, -7.98188, -5.9343, -4.39552, -5.21351, -7.34365, -5.73598, -5.26141, -5.71602, -8.77838, -6.6662, -8.98297, -5.89437),
+		geo_uncertainty = c(175208, 171849, 182360, 56720, 76418, 35136, 95965, 24024, 34137, 57311, 61959, 58073, 267645, 111630, 174353, 94827, 200687, 59906)
 	)
-	
+
 	d <- merge(d, geo, by= "adm2", all.x = TRUE)
+	i <- is.na(d$longitude) | is.na(d$latitude)
+	d$longitude[i] <- d$lon[i]
+	d$latitude[i] <- d$lat[i]
+	## never true: is.na(d$geo_from_source)
+	d$geo_from_source[i] <- FALSE
+	d$geo_uncertainty[!i] <- NA
+	d$lon <- d$lat <- d$geo_uncertainty <- NULL 
 	
-	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
-	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
-	d$geo_from_source[is.na(d$geo_from_source)] <- d$geo_from[is.na(d$geo_from_source)]
-	
-	d$lon <- d$lat <- d$geo_from <- NULL 
 	
 	d$is_survey <- TRUE
-	d$on_farm  <- FALSE
+	d$on_farm  <- TRUE
 	d$trial_id <- paste(d$adm1, d$com_id)
 	d$yield <- NA_real_
 	d$planting_date <- NA_character_
