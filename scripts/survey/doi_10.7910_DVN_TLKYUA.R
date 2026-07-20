@@ -33,12 +33,12 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 		notes = "We process only files with useful information for carob"
 	)
 	
-	r1 <- haven::read_dta(grep("Data/Interview.dta", ff, value=TRUE)) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(grep("Data/Section B.dta", ff, value=TRUE)) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(grep("Data/Section E.dta", ff, value=TRUE)) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(grep("Data/Section G1.dta", ff, value=TRUE)) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(grep("Data/Section G2.dta", ff, value=TRUE)) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(grep("Data/Section H.dta", ff, value=TRUE)) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(grep("Data/Interview.dta", ff, value=TRUE)) 
+	r2 <- carobiner::read.dta(grep("Data/Section B.dta", ff, value=TRUE)) 
+	r3 <- carobiner::read.dta(grep("Data/Section E.dta", ff, value=TRUE)) 
+	r4 <- carobiner::read.dta(grep("Data/Section G1.dta", ff, value=TRUE)) 
+	r5 <- carobiner::read.dta(grep("Data/Section G2.dta", ff, value=TRUE)) 
+	r6 <- carobiner::read.dta(grep("Data/Section H.dta", ff, value=TRUE)) 
 	
 	
 	#### process

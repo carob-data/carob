@@ -22,7 +22,7 @@ carob_script <- function(path) {
 	)
 
 	f <- ff[basename(ff) == "RegressionDataFinal.dta"]
-	r <- haven::read_dta(f)
+	r <- carobiner::read.dta(f)
 
 	d <- data.frame(
 		location=r$Site, 

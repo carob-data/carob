@@ -34,13 +34,13 @@ The survey data on soil carbon enhancing practices in western Kenya is systemati
 	
 
 
-	r1 <- haven::read_dta(ff[basename(ff) == "Crop_Output.dta"]) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(ff[basename(ff) == "Demographic.dta"]) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(ff[basename(ff) == "Input_Usage.dta"]) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(ff[basename(ff) == "Main_File.dta"]) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(ff[basename(ff) == "Marketing.dta"]) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(ff[basename(ff) == "Plot_Information.dta"]) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(ff[basename(ff) == "Residue_Use.dta"]) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(ff[basename(ff) == "Crop_Output.dta"])
+	r2 <- carobiner::read.dta(ff[basename(ff) == "Demographic.dta"])
+	r3 <- carobiner::read.dta(ff[basename(ff) == "Input_Usage.dta"])
+	r4 <- carobiner::read.dta(ff[basename(ff) == "Main_File.dta"])
+	r5 <- carobiner::read.dta(ff[basename(ff) == "Marketing.dta"])
+	r6 <- carobiner::read.dta(ff[basename(ff) == "Plot_Information.dta"])
+	r7 <- carobiner::read.dta(ff[basename(ff) == "Residue_Use.dta"])
 
 ### process files	
 		

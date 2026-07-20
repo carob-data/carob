@@ -32,15 +32,15 @@ In 2023, the Nature Positive Solutions (Nature+) Baseline survey was conducted i
 	)
 	
 
-	r1 <- haven::read_dta(ff[basename(ff) == "SecA_Cover.dta"]) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(ff[basename(ff) == "SecB_Roster_&_Employment.dta"]) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(ff[basename(ff) == "SecE_Parcel.dta"]) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(ff[basename(ff) == "SecF_Crop_Area_Khalif.dta"]) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(ff[basename(ff) == "SecG_Crop_Area_Rabi.dta"]) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(ff[basename(ff) == "SecH_Crop_Area_Zabid.dta"]) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(ff[basename(ff) == "SecI_Crop_Area_Trees.dta"]) |> carobiner:::unlabel()
-	r8 <- haven::read_dta(ff[basename(ff) == "SecK_Crop_Input_Output.dta"]) |> carobiner:::unlabel()
-	r9 <- haven::read_dta(ff[basename(ff) == "SecU_WasteMangement.dta"]) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(ff[basename(ff) == "SecA_Cover.dta"]) 
+	r2 <- carobiner::read.dta(ff[basename(ff) == "SecB_Roster_&_Employment.dta"]) 
+	r3 <- carobiner::read.dta(ff[basename(ff) == "SecE_Parcel.dta"]) 
+	r4 <- carobiner::read.dta(ff[basename(ff) == "SecF_Crop_Area_Khalif.dta"]) 
+	r5 <- carobiner::read.dta(ff[basename(ff) == "SecG_Crop_Area_Rabi.dta"]) 
+	r6 <- carobiner::read.dta(ff[basename(ff) == "SecH_Crop_Area_Zabid.dta"]) 
+	r7 <- carobiner::read.dta(ff[basename(ff) == "SecI_Crop_Area_Trees.dta"]) 
+	r8 <- carobiner::read.dta(ff[basename(ff) == "SecK_Crop_Input_Output.dta"]) 
+	r9 <- carobiner::read.dta(ff[basename(ff) == "SecU_WasteMangement.dta"]) 
 	
 	
 	#####
