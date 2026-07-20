@@ -185,7 +185,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	
 	d8 <- data.frame(
 	  hhid = r23$hhid,
-	  animal = tr23$sec32_2,
+	  animal = r23$sec32_2,
 	  animal_price = r23$sec32_3, ## selling price of one animal 
 	  com_id = r23$community
 	)
