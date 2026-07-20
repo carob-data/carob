@@ -38,12 +38,12 @@ Mali Africa RISING follow-up evaluation survey was implemented in 2022. The surv
 #	f2 <- ff[basename(ff) == "Household"]
 #	f3 <- ff[basename(ff) == "Market"]
 
-	r1 <- haven::read_dta(ff[basename(ff) == "Section_B1_HouseholdMembers.dta"]) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(ff[basename(ff) == "Section_E_AgriculturalLand.dta"]) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(ff[basename(ff) == "Section_F_CropInputs.dta"])|> carobiner:::unlabel()
-	r4 <- haven::read_dta(ff[basename(ff) == "Section_G1_CropProduction.dta"]) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(ff[basename(ff) == "Section_G2_CropInputs_Costs.dta"]) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(ff[basename(ff) == "Section_H_CropSales_Quantities.dta"]) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(ff[basename(ff) == "Section_B1_HouseholdMembers.dta"]) 
+	r2 <- carobiner::read.dta(ff[basename(ff) == "Section_E_AgriculturalLand.dta"]) 
+	r3 <- carobiner::read.dta(ff[basename(ff) == "Section_F_CropInputs.dta"])
+	r4 <- carobiner::read.dta(ff[basename(ff) == "Section_G1_CropProduction.dta"]) 
+	r5 <- carobiner::read.dta(ff[basename(ff) == "Section_G2_CropInputs_Costs.dta"]) 
+	r6 <- carobiner::read.dta(ff[basename(ff) == "Section_H_CropSales_Quantities.dta"]) 
 	
 	
 	d1 <- data.frame(

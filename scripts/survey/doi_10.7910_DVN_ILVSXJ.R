@@ -26,7 +26,7 @@ This work was undertaken as part of, and funded by, the CGIAR Research Program o
 		project = NA,
 		carob_date = "2025-10-05",
 		carob_effort = NA,
-		design = "unitOfAnalysis", 
+		design = "", 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield", 
@@ -48,21 +48,16 @@ This work was undertaken as part of, and funded by, the CGIAR Research Program o
 	
 	r1 <- carobiner::read.excel(f1)
 	r2 <- carobiner::read.excel(f2, sheet="soil")
-	r3 <- haven::read_dta(f3)
+	r3 <- carobiner::read.dta(f3, FALSE)
 	#r4 <- read_dta(f4)
 	#r5 <- read_dta(f5)
 	#r6 <- read_dta(f6)
 	#r7 <- read_dta(f7)
 	#r8 <- read_dta(f8)
 	
-	
-	### process useful data
-	
-	
-	### process crop price 
-	 
+	### process useful data	
+	### crop price 
 	## comment out because it's not related to the crop yield data 
-	
 	# col <- names(r1)[grepl("y", names(r1))]
 	# dcp <- reshape(r1, varying = c(col), v.names = "crop_price", 
 	#                times = c(1989:2013),

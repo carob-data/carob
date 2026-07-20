@@ -34,17 +34,17 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	
 
 	#f1 <- ff[basename(ff) == "Data"]
-	#r1 <- haven::read_dta(paste(f1, "_CONVFAC_area.dta", sep = "/"))|> carobiner:::unlabel()
-	#r2 <- haven::read_dta(paste(f1, "_CONVFAC_crop.dta", sep = "/")) |> carobiner:::unlabel()
+	#r1 <- carobiner::read.dta(paste(f1, "_CONVFAC_area.dta", sep = "/"))
+	#r2 <- carobiner::read.dta(paste(f1, "_CONVFAC_crop.dta", sep = "/")) 
 
-	r3 <- haven::read_dta(ff[basename(ff) == "_Cover.dta"]) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(ff[basename(ff) == "A_hhroster_employment.dta"]) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(ff[basename(ff) == "C_parcelid.dta"]) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(ff[basename(ff) == "D1_crop_main.dta"]) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(ff[basename(ff) == "D2_crop_minor.dta"]) |> carobiner:::unlabel()
-	r8 <- haven::read_dta(ff[basename(ff) == "D3_crop_12m.dta"]) |> carobiner:::unlabel()
-	r9 <- haven::read_dta(ff[basename(ff) == "F2_livestockprod.dta"]) |> carobiner:::unlabel()
-	r10 <- haven::read_dta(ff[basename(ff) == "G_NPS.dta"]) |> carobiner:::unlabel()
+	r3 <- carobiner::read.dta(ff[basename(ff) == "_Cover.dta"]) 
+	r4 <- carobiner::read.dta(ff[basename(ff) == "A_hhroster_employment.dta"]) 
+	r5 <- carobiner::read.dta(ff[basename(ff) == "C_parcelid.dta"]) 
+	r6 <- carobiner::read.dta(ff[basename(ff) == "D1_crop_main.dta"]) 
+	r7 <- carobiner::read.dta(ff[basename(ff) == "D2_crop_minor.dta"]) 
+	r8 <- carobiner::read.dta(ff[basename(ff) == "D3_crop_12m.dta"]) 
+	r9 <- carobiner::read.dta(ff[basename(ff) == "F2_livestockprod.dta"]) 
+	r10 <- carobiner::read.dta(ff[basename(ff) == "G_NPS.dta"]) 
 
 
 

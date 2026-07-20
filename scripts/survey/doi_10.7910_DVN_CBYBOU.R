@@ -16,7 +16,7 @@ Tanzania Africa RISING follow-up evaluation survey was implemented in 2022. The 
 
 	uri <- "doi:10.7910/DVN/CBYBOU"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "IFPRI",
@@ -37,13 +37,13 @@ Tanzania Africa RISING follow-up evaluation survey was implemented in 2022. The 
 	f1 <- ff[basename(ff) == "Community"]
 	f2 <- ff[basename(ff) == "Household"]
 
-	r1 <- haven::read_dta(ff[basename(ff) == "Interview.dta"]) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(ff[basename(ff) == "Section_B.dta"]) |> carobiner:::unlabel()
-	r3 <- haven::read_dta(ff[basename(ff) == "Section_E.dta"]) |> carobiner:::unlabel()
-	r4 <- haven::read_dta(ff[basename(ff) == "Section_F.dta"]) |> carobiner:::unlabel()
-	r5 <- haven::read_dta(ff[basename(ff) == "Section_G1.dta"]) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(ff[basename(ff) == "Section_G2.dta"]) |> carobiner:::unlabel()
-	r7 <- haven::read_dta(ff[basename(ff) == "Section_H.dta"]) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(ff[basename(ff) == "Interview.dta"])
+	r2 <- carobiner::read.dta(ff[basename(ff) == "Section_B.dta"])
+	r3 <- carobiner::read.dta(ff[basename(ff) == "Section_E.dta"])
+	r4 <- carobiner::read.dta(ff[basename(ff) == "Section_F.dta"])
+	r5 <- carobiner::read.dta(ff[basename(ff) == "Section_G1.dta"])
+	r6 <- carobiner::read.dta(ff[basename(ff) == "Section_G2.dta"])
+	r7 <- carobiner::read.dta(ff[basename(ff) == "Section_H.dta"])
 	
 	#### process
 	
