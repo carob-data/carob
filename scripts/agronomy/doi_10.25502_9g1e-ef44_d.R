@@ -7,13 +7,12 @@
 # Soil data (r3/r4) covers only 6 of 64 plots at 2 depths each, kept as its own table (d3) rather than
 # merged into d, to avoid duplicating biomass rows for a different- dimension measurement.
 
-## ISSUES
+## NOTES
 # Fert "75:20:90 NPK" treated as elemental kg/ha N:P:K (not oxide)
+
 # green_branch_DM/Stem_branches_DM combined into dmy_stems (no separate
-# terminag field for green vs woody branches); both kept individually too.
-# Planting_stake_DM and HI_total have no terminag equivalent, kept under
-# their original names.
-# No planting date exists; only harvest round (H1/H2) is recorded.
+# terminag field for green vs woody branches); 
+
 
 
 carob_script <- function(path) {
@@ -47,7 +46,7 @@ depths each.
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-17",
-		carob_completion = 65,
+		carob_completion = 85,
 		carob_effort = 2
   )
   
@@ -71,16 +70,18 @@ depths each.
     on_farm = FALSE,
     is_survey = FALSE,
     crop = "cassava",
-
     N_fertilizer = ifelse(r1$Fert == "F0", 0, ifelse(r1$Fert == "F1", 75, NA)),
     P_fertilizer = ifelse(r1$Fert == "F0", 0, ifelse(r1$Fert == "F1", 20, NA)),
     K_fertilizer = ifelse(r1$Fert == "F0", 0, ifelse(r1$Fert == "F1", 90, NA)),
-    fertilizer_used = r1$Fert == "F1",
+    fertilizer_type = "NPK;urea;KCl",
+	fertilizer_date = "2020-06-08;2020-07-03;2020-08-18;2020-09-02;2020-09-17",
+	fertilizer_used = r1$Fert == "F1",
     irrigated = r1$Irrigate == "I1",
     variety = ifelse(r1$V == "V419", "TME 419", ifelse(r1$V == "V581", "TMS 0581", NA)),
     
-    harvest_round = r1$H,   # suggested field, no actual dates given
-    
+	planting_date = "2020-05-07", # from author
+	harvest_date = ifelse(r1$H == "H1", "2021-05-18", "2021-08-24"), # from author
+	
     yield = r1$OK_Root_DM * 1000,
     yield_part = "roots",
     yield_isfresh = FALSE,
@@ -101,12 +102,18 @@ depths each.
     #green_branch_DM = r1$green_branch_DM * 1000,
     #stem_branches_DM = r1$Stem_branches_DM * 1000,
     
-    
-    longitude = 3.9470,
-    latitude = 7.4419,
+	# IITA West Bank (from author, as in metadata)
+    longitude = 3.88462,
+    latitude = 7.48830,
     geo_from_source = FALSE
   )
-  d$planting_date <- NA
+
+  # could do this if we had the quantities by date 
+#  ftab <- data.frame(
+#	 fetilizer_date = c("2020-06-08", "2020-07-03", "2020-08-18", "2020-09-02", "2020-09-17"),
+#    fertilizer_product = c("NPK", "NPK", "urea", "KCl", "KCl")
+#    fertilizer_amount = 
+#  )
   
   ### Soil table (d3) - not merged into d, see NOTES
   depth_parts <- strsplit(r3$DEPTH, "-")
