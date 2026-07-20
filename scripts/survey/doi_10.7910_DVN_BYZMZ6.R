@@ -70,10 +70,11 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 ####	
 	d1 <- data.frame(
 	 elevation = r$l2altitude,
-	 latitude = r$l2latitude,
-	 longitude = r$l2longitude,
+	 latitude = round(r$l2latitude, 4),
+	 longitude = round(r$l2longitude, 4),
 	 com_id = r$community,
-	 id = r$today
+	 id = r$today,
+	 geo_from_source = TRUE
 	)
 
 	d2 <- data.frame(
@@ -215,47 +216,37 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d$adm2[d$adm2== "Popondetta"] <- "Sohe"
 	
 	### Fixing long and lat 
-	d$geo_from_source <- TRUE
-	i <- grepl("Abau", d$adm2)
-	d$longitude[i] <- 148.8787	
-	d$latitude[i] <- -10.0485
-	d$geo_from_source[i] <- FALSE
+	i <- grepl("Abau", d$adm2) & grepl(paste(148.1775, 148.1818, 148.169, 148.1817, sep ="|"), d$longitude)
+	d$longitude[i] <- NA
+	d$latitude[i] <- NA
 	
-	i <- grepl("Alotau", d$adm2)
-	d$longitude[i] <- 149.9114		
-	d$latitude[i] <- -10.1302
-	d$geo_from_source[i] <- FALSE
+	i <- grepl("Alotau", d$adm2) & grepl(paste(150.874, 150.4558, sep ="|"), d$longitude)
+	d$longitude[i] <- NA		
+	d$latitude[i] <- NA
 	
-	i <- grepl("Kerema", d$adm2)
-	d$longitude[i] <- 146.0659	
-	d$latitude[i] <- -7.7725
-	d$geo_from_source[i] <- FALSE
-	
-	i <- grepl("Kainanatu", d$adm2)
-	d$longitude[i] <- 145.9041
-	d$latitude[i] <- -6.3035	
-	d$geo_from_source[i] <- FALSE
+	i <- grepl("Kerema", d$adm2) & grepl(paste(145.7723, 145.7745, 145.765, 145.7745, 145.7722, 145.774,  145.7652, sep ="|"), d$longitude) 
+	d$longitude[i] <- NA	
+	d$latitude[i] <- NA
 	
 	
-	i <- grepl("North Bougainville", d$adm2)
-	d$longitude[i] <- 151.782
-	d$latitude[i] <- -5.543
-	d$geo_from_source[i] <- FALSE
+	i <- grepl("North Bougainville", d$adm2) & grepl("154.6707", d$longitude)
+	d$longitude[i] <- NA
+	d$latitude[i] <- NA
 	
-	i <- grepl("South Fly", d$adm2)
-	d$longitude[i] <-  141.654
-	d$latitude[i] <- -8.324
-	d$geo_from_source[i] <- FALSE
-
-#	u <- unique(d[, c("adm2", "longitude", "latitude")])
+	i <- grepl("South Fly", d$adm2) & grepl(paste(143.2, 143.2102, sep ="|"), d$longitude) 
+	d$longitude[i] <-  NA
+	d$latitude[i] <- NA
+	
+#  CN: great
+#u <- unique(d[, c("adm2", "longitude", "latitude")])
 # better way to estimate lon/lat since most locations are clustered within adm2?
-# see terra::plet(u, "adm2", cex=3)  |> lines(geodata::gadm("PNG", level=2)
-# a <- aggregate(u[, c("longitude", "latitude")], u["adm2"], mean, na.rm=T)
+#terra::plet(u, "adm2", cex=3)  |> lines(geodata::gadm("PNG", level=2, path))
+#a <- aggregate(u[, c("longitude", "latitude")], u["adm2"], mean, na.rm=T)
 	
 	geo <- data.frame(
 	  adm2 = c("Central Bougainville", "North Bougainville", "South Bougainville", "Abau", "Kerowagi", "Kokopo", "Sohe", "Ambunti-Dreikikir", "Kainantu", "Kerema", "Anglimp-South Waghi", "Madang", "Alotau", "Menyamya", "North Fly", "South Fly", "Mul-Baiyer", "Tambul-Nebilyer"),
-	  lon = c(155.3831, 154.8229, 155.4866, 148.8787, 144.8692, 152.3103, 151.5698, 142.3078, 145.9041, 146.0659, 144.5455, 145.5206, 149.9114, 146.1757, 141.4370, 141.9940, 144.1653, 144.1486),
-	  lat = c(-6.1585, -5.6207, -6.5457, -10.0485, -5.9251, -4.3591, -5.3037, -4.3449, -6.3035, -7.7725, -6.0403, -5.1473, -10.1302, -7.2632, -5.7738, -8.6021, -5.5274, -5.9885),
+	  lon = c(148.0871, 151.7734, 142.7366, 144.6196, 155.4895, 145.8807, 145.8695, 144.8775, 152.3150, 145.6913, 146.2538, 144.1884, 154.6885, 141.1886, 141.3323, 155.5946, 142.2237, 144.0158),
+	  lat = c(-10.125861, -5.5411, -3.773819, -5.884722, -6.198702, -6.263997, -7.979943, -5.933903, -4.394262, -5.212156, -7.334717, -5.728377, -5.274877, -5.723983, -5.4395, -6.661557, -8.981245, -5.898895),
 	  geo_from = FALSE,
 	  geo_uncertainty = c(70231, 263638, 76737, 104025, 23991, 30904, 126554, 116454 ,37448, 96638 , 39047, 41829, 126387, 55258, 113929, 184813, 36441, 44991),
 	  geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
@@ -265,7 +256,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	
 	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
 	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
-	d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
+	d$geo_from_source[is.na(d$geo_from_source)] <- d$geo_from[is.na(d$geo_from_source)]
 	
 	d$lon <- d$lat <- d$geo_from <- NULL 
 	
