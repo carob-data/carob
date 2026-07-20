@@ -66,7 +66,7 @@ depths each.
     
     country = "Nigeria",
     adm1 = "Oyo",
-    location = "Ibadan",
+    location = "West Bank, IITA HQ farm, Ibadan",
     on_farm = FALSE,
     is_survey = FALSE,
     crop = "cassava",
