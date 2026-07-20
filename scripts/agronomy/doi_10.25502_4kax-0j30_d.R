@@ -76,14 +76,21 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	npk <- read.table(text = fert_clean, sep = ":", fill = TRUE,
 	                  col.names = c("N", "P", "K"))
 	
-	d$N_fertilizer <- suppressWarnings(as.numeric(npk$N))
-	d$P_fertilizer <- suppressWarnings(as.numeric(npk$P))
-	d$K_fertilizer <- suppressWarnings(as.numeric(npk$K))
+	num_cols <- function(x) grepl("^[0-9.]+$", x)
 	
-	is_control <- d$fertilizer_used == "control"
-	d$N_fertilizer[is_control] <- 0
-	d$P_fertilizer[is_control] <- 0
-	d$K_fertilizer[is_control] <- 0
+	d$N_fertilizer <- NA_real_
+	d$P_fertilizer <- NA_real_
+	d$K_fertilizer <- NA_real_
+	
+	d$N_fertilizer[num_cols(npk$N)] <- as.numeric(npk$N[num_cols(npk$N)])
+	d$P_fertilizer[num_cols(npk$P)] <- as.numeric(npk$P[num_cols(npk$P)])
+	d$K_fertilizer[num_cols(npk$K)] <- as.numeric(npk$K[num_cols(npk$K)])
+	
+	control <- d$fertilizer_used == "control"
+	
+	d$N_fertilizer[control] <- 0
+	d$P_fertilizer[control] <- 0
+	d$K_fertilizer[control] <- 0
 	
 	d$fertilizer_type <- ifelse(d$fertilizer_used=="control","none","NPK")
 	d$fertilizer_type <- ifelse(is.na(d$N_fertilizer), NA, "NPK")
