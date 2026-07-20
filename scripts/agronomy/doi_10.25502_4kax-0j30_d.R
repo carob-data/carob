@@ -22,7 +22,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		project ="ACAI",
 		design = NA,
 		data_type ="experiment",
-		treatment_vars = "variety;fertilizer_used;harvest_interval",
+		treatment_vars = "variety;N_fertilizer,P_fertilizer,K_fertilizer",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Blessing Dzuda",
@@ -31,7 +31,6 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		carob_effort = 5
 	)
 	
-
 	f <- ff[basename(ff) == "spt_ckan.csv"]
 
 	r <- read.csv(f)
@@ -42,59 +41,42 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	  trial_id=r$trial_ID,
 	  plot_id=r$plot_ID,
 	  treatment=r$trt_name,
-	  harvest_date=as.character(as.Date(d$harvest_date, format = "%d/%m/%Y")),
+	  harvest_date=as.character(as.Date(r$harvestDate, format = "%d/%m/%Y")),
+	  plot_area = ifelse(r$Net_plot_size=="5m by 4m ", 20, 25),
 	  crop="cassava",
 	  variety=r$Variety,
 	  fertilizer_used=trimws(r$Fertilizer),
-	  harvest_interval=trimws(r$Harvestmonth),
 	  irrigated=r$Rainfed_Irrigation,
 	  yield_part="roots",
 	  yield_moisture=as.numeric(NA),
 	  yield_isfresh=TRUE
-	  )
+	)
 	
-	d$plot_area <- ifelse(r$Net_plot_size=="5m by 4m ",20,25)
 	d$plant_density <- (r$num_of_plant/d$plot_area)*10000
 	
 	##determining yield from the production columns per plot
-	prod_cols <- c("tuberizedDiseasedRootsFW",
-	              "tuberizedSmallRootsFW",
-	              "tuberizedMarketableRootsFW")
+	prod_cols <- c("tuberizedDiseasedRootsFW", "tuberizedSmallRootsFW", "tuberizedMarketableRootsFW")
 	
 	all_na <- rowSums(!is.na(r[, prod_cols])) == 0
-	
 	r$prod_fw_kg <- ifelse(!is.na(r$tuberizedRootsFW),
 	                        r$tuberizedRootsFW,
 	                        ifelse(all_na, NA, rowSums(r[, prod_cols], na.rm = TRUE)))
-	
 	d$yield <- (r$prod_fw_kg/d$plot_area)*10000
 	
 	##deriving fertilizer amount from treatments
 	fert_clean <- sub(" NPK$", "", d$fertilizer_used)
-	fert_clean[fert_clean == ""] <- "NA:NA:NA"
+	fert_clean[d$fertilizer_used == "control"] <- "0:0:0"
+	fert_clean[fert_clean %in% c("", "Mkombozi or Mkuranga1")] <- "NA:NA:NA"
 	
-	npk <- read.table(text = fert_clean, sep = ":", fill = TRUE,
-	                  col.names = c("N", "P", "K"))
+	npk <- read.table(text = fert_clean, sep = ":", fill=TRUE, col.names = c("N", "P", "K"))
 	
-	num_cols <- function(x) grepl("^[0-9.]+$", x)
-	
-	d$N_fertilizer <- NA_real_
-	d$P_fertilizer <- NA_real_
-	d$K_fertilizer <- NA_real_
-	
-	d$N_fertilizer[num_cols(npk$N)] <- as.numeric(npk$N[num_cols(npk$N)])
-	d$P_fertilizer[num_cols(npk$P)] <- as.numeric(npk$P[num_cols(npk$P)])
-	d$K_fertilizer[num_cols(npk$K)] <- as.numeric(npk$K[num_cols(npk$K)])
-	
-	control <- d$fertilizer_used == "control"
-	
-	d$N_fertilizer[control] <- 0
-	d$P_fertilizer[control] <- 0
-	d$K_fertilizer[control] <- 0
-	
-	d$fertilizer_type <- ifelse(d$fertilizer_used=="control","none","NPK")
-	d$fertilizer_type <- ifelse(is.na(d$N_fertilizer), NA, "NPK")
-	d$fertilizer_used <- ifelse(d$fertilizer_used=="control",FALSE,TRUE)
+	d$N_fertilizer <- npk$N
+	d$P_fertilizer <- npk$P
+	d$K_fertilizer <- npk$K
+
+	d$fertilizer_type <- ifelse(d$fertilizer_used=="control", "none", "NPK")
+	d$fertilizer_type <- ifelse(is.na(d$N_fertilizer), NA, d$fertilizer_type)
+	d$fertilizer_used <- d$N_fertilizer > 0
 	
 	d$irrigated <- tolower(trimws(d$irrigated)) == "irrigation supplemented"
 	d$irrigated[r$Rainfed_Irrigation==""] <- NA
@@ -104,8 +86,14 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	d$geo_from_source <- FALSE
 	
 	#extracting planting year since the date is not provided
-	r$date <- as.Date(d$harvest_date, format = "%d/%m/%Y")
-	d$planting_date <- as.character(format(r$date, "%Y"))
+	# wrong: can be earlier year, and can use Harvestmonth 
+	###r$date <- as.Date(d$harvest_date, format = "%d/%m/%Y")
+	###d$planting_date <- as.character(format(r$date, "%Y"))
+	
+	harv <- gsub(" months after planting|sub-plot harvest at |Harvest at ", "", r$Harvestmonth)
+	harv <- as.numeric(harv)
+	harv[harv == 63] <- NA
+	d$planting_date <- as.character(as.Date(d$harvest_date) - harv * 30.42)
 	
 	##to be added
 	#d$longitude <- 
