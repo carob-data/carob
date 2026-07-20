@@ -67,24 +67,24 @@ GPS from linked dataset hdl:11529/10548230.
 
 
   ## ---- load various data files ----
-  r_plotmc  <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotmc.dta"])  # yield, long rains
-  r_plotmcc <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotmcc.dta"]) # yield, long rains
-  r_plotsc  <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotsc.dta"])  # yield, short season
-  r_plotscc <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotscc.dta"]) # yield, short season
-  r_hh_plot <- haven::read_dta(ff[basename(ff) == "TZAPS16_hh_plot.dta"])      # plot data
-  r_plotmlf <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotmlf.dta"]) # hh labour long rains
-  r_plotmlh <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotmlh.dta"]) # hired labour long rains
-  r_plotslf <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotslf.dta"]) # hh labor short rains
-  r_plotslh <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_plotslh.dta"]) # hired labour short rains
-  r_mroster <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_mroster.dta"]) # hh demographics
-  r_lstock  <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_lstock.dta"])  #house hold level livestock
-  r_othinp  <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_othinp.dta"])  #fertilizer input
-  r_seed    <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_seed.dta"])    #seed_source
-  r_weed    <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_weed.dta"])    #weeding type
-  r_main    <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp.dta"]) #607 hh
-  r_cmyt    <- haven::read_dta(ff[basename(ff) == "TZAPS16_cmty.dta"])
-  #r_fertavail <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_fertavail.dta"])
-  #r_groupmemb <- haven::read_dta(ff[basename(ff) == "TZAPS16_hhfp_groupmemb.dta"])
+  r_plotmc  <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotmc.dta"], FALSE)  # yield, long rains
+  r_plotmcc <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotmcc.dta"], FALSE) # yield, long rains
+  r_plotsc  <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotsc.dta"], FALSE)  # yield, short season
+  r_plotscc <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotscc.dta"], FALSE) # yield, short season
+  r_hh_plot <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hh_plot.dta"], FALSE)      # plot data
+  r_plotmlf <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotmlf.dta"], FALSE) # hh labour long rains
+  r_plotmlh <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotmlh.dta"], FALSE) # hired labour long rains
+  r_plotslf <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotslf.dta"], FALSE) # hh labor short rains
+  r_plotslh <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_plotslh.dta"], FALSE) # hired labour short rains
+  r_mroster <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_mroster.dta"], FALSE) # hh demographics
+  r_lstock  <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_lstock.dta"], FALSE)  #house hold level livestock
+  r_othinp  <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_othinp.dta"], FALSE)  #fertilizer input
+  r_seed    <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_seed.dta"], FALSE)    #seed_source
+  r_weed    <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_weed.dta"], FALSE)    #weeding type
+  r_main    <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp.dta"], FALSE) #607 hh
+  r_cmyt    <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_cmty.dta"], FALSE)
+  #r_fertavail <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_fertavail.dta"])
+  #r_groupmemb <- carobiner::read.dta(ff[basename(ff) == "TZAPS16_hhfp_groupmemb.dta"])
 
   r_gps <- carobiner::read.excel(ff_gps[basename(ff_gps) == "TAMASA_TZ_APS_HH_2016.xlsx"], sheet="Data")
   

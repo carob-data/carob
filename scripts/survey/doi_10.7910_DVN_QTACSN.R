@@ -41,17 +41,17 @@ A total of 379 households were sampled, the households were randomly drawn from 
 	f2 <- ff[basename(ff) == "Data"]
 
 	
-	r1 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018_Main File.dta", sep = "/")) |> carobiner:::unlabel()
-	r2 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Crops and Land Info.dta", sep = "/")) |> carobiner:::unlabel()
-	#r3 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Extension.dta", sep = "/")) |> carobiner:::unlabel()
-	#r4 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Fertility.dta", sep = "/")) |> carobiner:::unlabel()
-	#r5 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Livestock.dta", sep = "/")) |> carobiner:::unlabel()
-	r6 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Sale of Crops.dta", sep = "/")) |> carobiner:::unlabel()
-	#r7 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Soil Carbon Practices.dta", sep = "/")) |> carobiner:::unlabel()
-	#r8 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Credit.dta", sep = "/")) |> carobiner:::unlabel()
-	r9 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Demographic Information.dta", sep = "/")) |> carobiner:::unlabel()
-	r10 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Fertlizer Usage.dta", sep = "/")) |> carobiner:::unlabel()
-	#r11 <- haven::read_dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Group Membership.dta", sep = "/")) |> carobiner:::unlabel()
+	r1 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018_Main File.dta", sep = "/")) 
+	r2 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Crops and Land Info.dta", sep = "/")) 
+	#r3 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Extension.dta", sep = "/")) 
+	#r4 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Fertility.dta", sep = "/")) 
+	#r5 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Livestock.dta", sep = "/")) 
+	r6 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Sale of Crops.dta", sep = "/")) 
+	#r7 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Soil Carbon Practices.dta", sep = "/")) 
+	#r8 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Credit.dta", sep = "/")) 
+	r9 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Demographic Information.dta", sep = "/")) 
+	r10 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Fertlizer Usage.dta", sep = "/")) 
+	#r11 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Group Membership.dta", sep = "/")) 
 
 	### process files
 	
