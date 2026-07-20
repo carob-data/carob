@@ -92,7 +92,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
   )
 
     # metadata has two lon/lat pairs. Assigning to site based on East/West names
-	i <- d$Site == "WB_East"
+	i <- d$site == "WB_East"
 	d$longitude[i] = 3.88401
     d$latitude[i] = 7.4482
 	d$longitude[!i] = 3.88285
