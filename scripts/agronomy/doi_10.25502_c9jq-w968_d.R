@@ -36,7 +36,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
 		publication = NA,
-		project = "AKILIMO",
+		project = "ACAI",
 		design = "on-station trial",
 		data_type = "on-station experiment",
 		treatment_vars = "variety;treatment",
@@ -110,6 +110,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
 	dns$DAP <- as.integer(as.numeric(dns$DAP) * 30.4)
 	dns$variable <- "stem_density"
 	dns$id <- NULL
+	dns <- dns[!is.na(dns$stem_density), ]
 
 	carobiner::write_files(path, meta, d, long=dns)
 }
