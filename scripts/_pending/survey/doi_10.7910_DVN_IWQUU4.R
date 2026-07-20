@@ -23,7 +23,7 @@ carob_script <- function(path) {
 	
 
 	f <- ff[basename(ff) == "MAPS_R4.dta"]
-	r <- haven::read_dta(f) |> carobiner:::unlabel()
+	r <- carobiner::read.dta(f) 
 	
 	b <- read.csv(ff[basename(ff) == "MAPS_R4_codebook.csv"])
 	unique(b[,1:2])

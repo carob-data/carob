@@ -22,7 +22,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIMMYT;CIRAD;ZARI;ICRAF",
 		publication = NA,
-		project = NA,
+		project = "GAIA",
 		design = "Randomized Complete Block",#from description
 		data_type = "experiment",
 		treatment_vars = "lime",

@@ -38,7 +38,7 @@ The dataset consist of 178 farmers who irrigated at least one of their plots in 
 	f2 <- ff[basename(ff) == "003_dataset.dta"]
 
 	r1 <- carobiner::read.excel(f1)
-	r2 <- haven::read_dta(f2) |> carobiner:::unlabel()
+	r2 <- carobiner::read.dta(f2) 
 
 
 
