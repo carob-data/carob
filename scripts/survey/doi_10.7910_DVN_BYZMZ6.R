@@ -20,13 +20,13 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 
 	uri <- "doi:10.7910/DVN/BYZMZ6"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "IFPRI",
 		publication = NA,
 		project = NA,
-		design = "unitOfAnalysis" ,
+		design = "" ,
 		data_type = NA,
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -37,9 +37,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 		carob_effort = 4
 	)
 	
-  
-	
-	f <- ff[basename(ff) == "com_l_l.dta"]
+ 	f <- ff[basename(ff) == "com_l_l.dta"]
 	f1 <- ff[basename(ff) == "hh_1_0.dta"]
 	f2 <- ff[basename(ff) == "hh_1_1.dta"]
 	f3 <- ff[basename(ff) == "hh_1_1_La.dta"]
@@ -54,19 +52,19 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	f27 <- ff[basename(ff) == "hh_4_1_L.dta"]
 	
 	
-	r <- haven::read_dta(f) |> carobiner:::unlabel()
-	r1 <- haven::read_dta(f1)|> carobiner:::unlabel()
-	r2 <- haven::read_dta(f2)|> carobiner:::unlabel()
-	r3 <- haven::read_dta(f3)|> carobiner:::unlabel()
-	r4 <- haven::read_dta(f4)|> carobiner:::unlabel()
-	r9 <- haven::read_dta(f9)|> carobiner:::unlabel()
-	r10 <- haven::read_dta(f10)|> carobiner:::unlabel()
-	r11 <- haven::read_dta(f11)|> carobiner:::unlabel()
-	r12 <- haven::read_dta(f12) |> carobiner:::unlabel()
-	r13 <- haven::read_dta(f13)|> carobiner:::unlabel()
-	r16 <- haven::read_dta(f16)|> carobiner:::unlabel()
-	r23 <- haven::read_dta(f23)|> carobiner:::unlabel()
-	r27 <- haven::read_dta(f27)|> carobiner:::unlabel()
+	r <- carobiner::read.dta(f)
+	r1 <- carobiner::read.dta(f1)
+	r2 <- carobiner::read.dta(f2)
+	r3 <- carobiner::read.dta(f3)
+	r4 <- carobiner::read.dta(f4)
+	r9 <- carobiner::read.dta(f9)
+	r10 <- carobiner::read.dta(f10)
+	r11 <- carobiner::read.dta(f11)
+	r12 <- carobiner::read.dta(f12)
+	r13 <- carobiner::read.dta(f13)
+	r16 <- carobiner::read.dta(f16)
+	r23 <- carobiner::read.dta(f23)
+	r27 <- carobiner::read.dta(f27)
 	
 	
 ####	
@@ -248,6 +246,11 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d$longitude[i] <-  141.654
 	d$latitude[i] <- -8.324
 	d$geo_from_source[i] <- FALSE
+
+#	u <- unique(d[, c("adm2", "longitude", "latitude")])
+# better way to estimate lon/lat since most locations are clustered within adm2?
+# see terra::plet(u, "adm2", cex=3)  |> lines(geodata::gadm("PNG", level=2)
+# a <- aggregate(u[, c("longitude", "latitude")], u["adm2"], mean, na.rm=T)
 	
 	geo <- data.frame(
 	  adm2 = c("Central Bougainville", "North Bougainville", "South Bougainville", "Abau", "Kerowagi", "Kokopo", "Sohe", "Ambunti-Dreikikir", "Kainantu", "Kerema", "Anglimp-South Waghi", "Madang", "Alotau", "Menyamya", "North Fly", "South Fly", "Mul-Baiyer", "Tambul-Nebilyer"),
