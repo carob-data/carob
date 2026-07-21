@@ -29,37 +29,32 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	}
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-		data_organization = "IITA; World Agroforestry Centre (ICRAF); WUR; International Institute of Tropical Agriculture (IITA), Wageningen University",
+		data_organization = "IITA;ICRAF;WUR",
 		publication = NA,
 		project = "N2Africa",
 		design = "on-farm diagnostic trial, to evaluate groundnut variety and P/S fertiliser response", # SERENUT 5 & 6 and the presence of TSP/GYPSUM fertiliser 
 		data_type = "on-farm experiment",
 		treatment_vars = "variety;P_fertilizer;S_fertilizer",
-		response_vars = "yield; dmy_total", 
-		notes = "yield was derived from unshelled groundnut wight in kg/plot and converted to kg/ha. 
-		in the raw data plots 5-8 are mostly empty, so only treatments 1-4 will be included. 
-		nutrition.csv and production.csv doesn't seem to contain data pertaining to the actual trial. 
-		land_crops_and_livestock.csv contains general farm data.",
+		response_vars = "yield;dmy_total", 
+		notes ="yield was derived from unshelled groundnut weight in kg/plot and converted to kg/ha. in the raw data plots 5-8 are mostly empty, so only treatments 1-4 will be included. nutrition.csv and production.csv doesn't seem to contain data pertaining to the actual trial. land_crops_and_livestock.csv contains general farm data.",
 		carob_contributor = "Kudzaishe M. Muzata",
 		carob_date = "2026-07-13",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_completion = 75,	
+		carob_effort = 18
 	)
 	
 
 	f1 <- ff[basename(ff) == "experiment.csv"]
 	f2 <- ff[basename(ff) == "general.csv"]
-	f3 <- ff[basename(ff) == "labour_income_and_assets.csv"]
-	f4 <- ff[basename(ff) == "land_crops_and_livestock.csv"]
-	f5 <- ff[basename(ff) == "variable_definitions.csv"]
+	# f3 <- ff[basename(ff) == "labour_income_and_assets.csv"]
+	# f4 <- ff[basename(ff) == "land_crops_and_livestock.csv"]
+	# f5 <- ff[basename(ff) == "variable_definitions.csv"]
 
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)
-	r3 <- read.csv(f3)
-	r4 <- read.csv(f4)
-	r5 <- read.csv(f5)
+	# r3 <- read.csv(f3)
+	# r4 <- read.csv(f4)
+	# r5 <- read.csv(f5)
 
 	make_plot <- function(r1, i){ # constructing a function to extract data for each experimental plot
 		name <- r1[[paste0("name_treatment_", i)]]
@@ -79,80 +74,65 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		fert2 <- as.numeric(r1[[paste0("fert_2_kg_plot_plot_", i, ".kg_per_plot")]]) # for gypsum
 		inoc <- r1[[paste0("inoculant_y_n_plot_", i)]]
 		performance <- r1[[paste0("relative_performance_plot_", i, "_yield")]]	
-		germ_crop <- r1[[paste0("germination_crop_1_treatment_", i)]]
+		# germ_crop <- r1[[paste0("germination_crop_1_treatment_", i)]]
 
 		data.frame(
-			id = r1[["id"]],
-			farm_id = r1[["farm_id"]],
-			treatment = name,
-			treatment_description = desc,
-			plot_num= i,
+			hhid = as.character(r1[["id"]]),
+			farm_id = r1[["farm_id"]], # could be field_id (not sure as it identifies specific fields on farm and not the whole farm)
+			treatment_name = name, # treatment_name used instead of "treatment" because the variable is used to describe the treatment not name it
+			treatment = desc, 
+			plot_id = as.character(i),
 			variety = r1[["experimental_treatments_variety_crop_1"]],
-			plot_width_m = width,
-			plot_depth_m = depth,
-			plot_area_m2 = width * depth,
-			num_rows = num_rows,
-			pod_weight_kg = podweight,
+			plot_width = width,
+			plot_depth_m = depth, # was recorded in meters/ may also be soil depth [not 100% sure]
+			plot_area = width * depth,
+			row_density = num_rows, # could not find equivalent in terminag
+			nodule_weight = podweight,
 			biomass_kg = agbio,
-			TSP_fert_kg = fert1,
-			Gypsum_fert_kg = fert2,
+			TSP = fert1, # measured in kg/ could not find equivalent variable in terminag
+			gypsum = fert2, # measured in kg
 			inoculated = tolower(inoc) == "y",
-			yield = performance,
-			germination_crop = germ_crop,
+			reletive_yield_performance = performance, # could not find equivalent variable in terminag
+			# germination_rate = as.numeric((germ_crop)),
 			stringsAsFactors = FALSE
 		)
 	}
+	
 
 	# creating plot records for treatments 1-4 and stacking them
 	plots <- vector("list", 4)
-	for i in 1:4 {
-		plots[[i]] <- make_plot(r1,i)
+	for (i in 1:4) {
+		plots[[i]] <- make_plot(r1, i)
 	}
 	d1 <-do.call(rbind, plots)
- 
+	# normalising treatment
+	d1$treatment <- trimws(d1$treatment)
+	d1$treatment[d1$treatment == ""] <- NA
+
 	d2 <- data.frame(
-		id = r2[["id"]],
-		farm_id = r2[["farm_id"]],
+		hhid = as.character(r2[["id"]]),
+		farm_id = r2[["farm_id"]], # could be field_id (not sure as it identifies specific fields on farm and not the whole farm)
 		# survey_date = as.character(as.Date(paste(r2[["date_field_survey_yyyy"]], r2[["date_field_survey_mm"]], r2[["date_field_survey_dd"]], sep="-"), format = "%Y-%B-%d")),
-		year = as.integer(r2[["date_hhsurvey_yyyy.years"]]), # trial year
+		year = as.integer(r2[["date_hhsurvey_yyyy.years"]]), # trial year / could not find equivalent in terminag
 		country = r2[["country"]],
-		village = r2[["village"]],
 		adm2 = carobiner::fix_name(r2[["district"]], "title"),
 		adm3 = carobiner::fix_name(r2[["sector_ward"]], "title"),
-		location = r2[["village"]],
+		location = tolower(r2[["village"]]),
 		latitude = as.numeric(r2[["gps_latitude_hh.decimal_degrees"]]),
 		longitude = as.numeric(r2[["gps_longitude_hh.decimal_degrees"]]),
 		elevation = as.numeric(r2[["gps_altitude_hh.m"]]),
-		hhid = r2[["id"]],
 		harvest_date = as.character(as.Date(paste(r2[["date_harvest_yyyy_technician_1"]], r2[["date_harvest_mm_technician_1"]], r2[["date_harvest_dd_technician_1"]], sep="-"), format = "%Y-%B-%d")),
-		soil_sample_collected = r2[["soil_sample_collected"]],
-		soil_sample_code = r2[["soil_sample_code"]],
-		rain_data_collected = r2[["rain_data_collected"]],
-		harvest_technician = r2[["organization_harvest_technician_1"]],
 		stringsAsFactors = FALSE
 	)
 	d2$year[is.na(d2$year)] <- 2014 # filling in missing data in "year"
 
-## not sure whether or not to include this data as i have not seen data like this be processed
-	# d3 <- data.frame(
-	# 	id = r3[["id"]],
-	# 	farm_id = r3[["farm_id"]],
-	# 	crop_income = r3[["proportion_income_from_crops$percentage"]],
-	# 	livestock_income = r3[["proportion_income_from_livestock$percentage"]],
-	# 	business_income = r3[["proportion_income_from_business$percentage"]],
-	# 	wealth_index = r3[["estimated_wealth"]],
-	# 	stringsAsFactors = FALSE
-	# )
-	# d3$business_income[is.na(d3$business_income)] <- NA
-	
-## not sure whether or not to include this data as i have not seen data like this be processed
-	# d5 <- data.frame(
-	# 	plot_id = r5[["Level.1..field.plot."]],
-	# 	crop = tolower(r5[["Level.2..person.crop."]])
-	# )
-##r5: "variable_name", "variable_name_raw", "code", "category", "question..FARM.HH.", "sub_question..FARM.HH.", "Level.3..time.visit.repeated.measurement.", "category.1", "question.description", "data_field", "vartype", "units", "units_mysql", "comments"
+	# normalising country names
+	d2$country <- trimws(d2$country)
+	d2$country[d2$country == ""] <- "Uganda"
+	d2$country[toupper(d2$country) == "UGANDA"] <- "Uganda"
 
-d <- merge(d1, d2, by = c("id", "farm_id"), all.x = TRUE)
+
+d <- merge(d1, d2, by = c("hhid", "farm_id"), all.x = TRUE)
 ## separate individual trials. For example trials in different locations or years. 
 ## farm_id uniquely id's a farm
 	d$trial_id <- as.character(as.integer(as.factor( d$farm_id )))
@@ -164,8 +144,8 @@ d <- merge(d1, d2, by = c("id", "farm_id"), all.x = TRUE)
 
 ## crop
 	d$crop <- "groundnut"
-    d$crop_rotation <-  NA # 1. rotation briefly mentioned in experiment.csv, but isnt consistent enough to mention. 2. other crops are mentioned in "production.csv" but they don't seem to relate to the trial
-	
+    d$crop_rotation <-  NA # 1. rotation briefly mentioned in experiment.csv, but isn't consistent enough to mention. 2. other crops are mentioned in "production.csv" but they don't seem to relate to the trial
+
 	d$geo_from_source <- TRUE # taken from coordinates in general.csv
 
 	d$planting_date <- NA # not recorded
@@ -177,18 +157,18 @@ d <- merge(d1, d2, by = c("id", "farm_id"), all.x = TRUE)
 ## K <- K2O / 1.2051
 ## TSP: 46% P2O5
 ## GYPSUM: 18.5% S
-	P2O5 <- (TSP_fert_kg/plot_area_m2) * 0.46 * 10000 # converting mass of tsp applied to p2o5 mass kg/ha
+	P2O5 <- (d1$TSP/d1$plot_area) * 0.46 * 10000 # converting mass of tsp applied to p2o5 mass kg/ha
    	d$P_fertilizer <- P2O5 / 2.29 # converting to elemental p mass kg/ha
    	d$K_fertilizer <- 0
    	d$N_fertilizer <- 0
-   	d$S_fertilizer <- (Gypsum_fert_kg/plot_area_m2) * 0.185 * 10000
+   	d$S_fertilizer <- (d1$gypsum/d1$plot_area) * 0.185 * 10000
    	d$lime <- 0
 
 	d$P_fertilizer[is.na(d$P_fertilizer)] <- 0 # if data val is na, fill as 0
-	d$S_fertilizer[is.na(s$S_fertilizer)] <- 0
+	d$S_fertilizer[is.na(d$S_fertilizer)] <- 0
 
 ## normalize names 
-   	d$fertilizer_type <- ifelse(d$P_fertilizer > 0 | d$S_fertilizer > 0, "TSP ; GYPSUM", NA)
+   	d$fertilizer_type <- ifelse(d$P_fertilizer > 0 | d$S_fertilizer > 0, "TSP ; gypsum", NA)
 
 ## for legumes   
    	d$inoculated <- d$inoculated # FALSE, all inoculant use in plots is recorded as "n" in experiment.csv under inoculant_y_n_plot_N
@@ -196,14 +176,15 @@ d <- merge(d1, d2, by = c("id", "farm_id"), all.x = TRUE)
 
 ## Yield
 ## not numerically recorded. yield was described as "better", "worse", "same" in experiment.csv under relative_performance_plot_N_yield
-	d$yield_part <- "pods" # recorded as shelled pods, no values for shelled grain given
+	d$yield_part <- "pod" # recorded as unshelled pods, no values for shelled grain given
 	d$yield_moisture <- NA # not recorded
+	d$yield_isfresh <- NA # not stated
 
 #NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-	d$fwy_storage <- (d$pod_weight_kg/d$plot_area_m2) * 10000 # converted to kg/ha
+	d$fwy_storage <- (d$nodule_weight/d$plot_area) * 10000 # converted to kg/ha
 	d$yield <- d$fwy_storage
 	d$dmy_storage <- NA  # moisture content not recorded
-	d$dmy_total <- (d$biomass_kg/d$plot_area_m2) * 10000
+	d$dmy_total <- (d$biomass_kg/d$plot_area) * 10000
 	
 # all scripts must end like this
  	carobiner::write_files(path, meta, d)
