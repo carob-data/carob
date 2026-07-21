@@ -59,8 +59,8 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 	
 	d2 <- data.frame(
 	  year = r2$siteyr,
-	  #soil_P = r2$Soil_P, #kg/ha 
-	  #soil_K = r2$Soil_K, #kg/ha 
+	  soil_P = r2$Soil_P/1.1, #ppm 
+	  soil_K = r2$Soil_K/1.1, #ppm 
 	  soil_SOM = r2$SOM, 
 	  soil_pH = r2$Soil_pH,
 	  previous_crop = "rye",# rolled-crimped  crop
