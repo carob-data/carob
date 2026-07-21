@@ -3,6 +3,7 @@
 
 ## ISSUES
 #1. bad value in r$ppt_DM_roots (3.833333). Should bre a fraction.
+#2.out of bounds: plant_height (5, 405)
 
 
 carob_script <- function(path) {
@@ -51,8 +52,8 @@ Orientation of the planting stake in the soil at 3 levels
 	  crop="cassava",
 	  fertilizer_used=r$FERT,
 	  rep=as.integer(r$REP),
-	  plant_density=r$plt_ha_52,# since cassava is harvested in 9-12months, this is the true plant popilation
-	  plant_height=r$PHT24, # taking the last recorded height as true plant height
+	  #plant_density=r$plt_ha_52,# since cassava is harvested in 9-12months, this is the true plant popilation
+	  #plant_height=r$PHT24, # taking the last recorded height as true plant height
 	  yield=r$FRYield*1000, # only considering the fresh useful mass 
 	  dmy_roots=r$DRY_root_yield_Mg_ha*1000,
 	  yield_moisture=(1 - r$ppt_DM_roots) * 100,
@@ -69,6 +70,7 @@ Orientation of the planting stake in the soil at 3 levels
 	d$irrigated <- FALSE
 	d$geo_from_source <- FALSE
 	d$planting_date <- NA
+	d$harvest_date <- NA
 	d$fertilizer_used <- d$fertilizer_used == "Fert"
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- 0
 	d$P_fertilizer[d$fertilizer_used] <- 20
@@ -90,6 +92,49 @@ Orientation of the planting stake in the soil at 3 levels
   )
   
   d <- merge(d, geo, by="location", all.x = TRUE)
-   
+  
+  #other important traits
+  ## --- long-format reshape of repeated week-based measurements ---
+  r$row_id <- seq_len(nrow(r))
+  
+  nsp_cols    <- paste0("NSP", c(1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 52))
+  ppp_cols    <- paste0("PPP", c(6, 8, 12, 16, 20, 24, 52))
+  pht_cols    <- paste0("PHT", c(6, 8, 12, 16, 20, 24))
+  plt_ha_cols <- paste0("plt_ha_", c(6, 8, 12, 16, 20, 24, 52))
+  
+  nsp_cols    <- nsp_cols[nsp_cols %in% names(r)]
+  ppp_cols    <- ppp_cols[ppp_cols %in% names(r)]
+  pht_cols    <- pht_cols[pht_cols %in% names(r)]
+  plt_ha_cols <- plt_ha_cols[plt_ha_cols %in% names(r)]
+  
+  nsp_long <- reshape(r[, c("row_id", nsp_cols)],varying = nsp_cols,v.names = "shoots_count",timevar = "week",
+                      times = nsp_cols,idvar = "row_id",direction = "long")
+  rownames(nsp_long) <- NULL
+
+  ppp_long <- reshape(r[, c("row_id", ppp_cols)],varying = ppp_cols,v.names = "plant_density_plot", timevar = "week",
+                      times = ppp_cols,idvar = "row_id",direction = "long")
+  rownames(ppp_long) <- NULL
+
+  pht_long <- reshape(r[, c("row_id", pht_cols)],varying = pht_cols,v.names = "plant_height",timevar = "week",
+                      times = pht_cols,idvar = "row_id",direction = "long")
+  rownames(pht_long) <- NULL
+
+  plt_ha_long <- reshape(r[, c("row_id", plt_ha_cols)],varying = plt_ha_cols,v.names = "plant_density_ha",timevar = "week",
+                         times = plt_ha_cols,idvar = "row_id",direction = "long")
+  rownames(plt_ha_long) <- NULL
+
+  d_long <- Reduce(function(x, y) merge(x, y, by = c("row_id", "week"), all = TRUE),
+                   list(nsp_long, ppp_long, pht_long, plt_ha_long))
+  
+  d_long <- merge(d_long, data.frame(row_id = r$row_id, plot_id = as.character(r$PLOT)),
+                  by = "row_id", all.x = TRUE)
+  d_long$row_id <- NULL
+  
+  #merging into main dataframe
+ d <- merge(d,d_long,by="plot_id", all.x = T) 
+  
+ #removing duplicates created from merge
+ d <- unique(d) 
+ 
 	carobiner::write_files(path, meta, d)
 }
