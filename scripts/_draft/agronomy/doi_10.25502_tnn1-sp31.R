@@ -127,14 +127,14 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d2$country[toupper(d2$country) == "UGANDA"] <- "Uganda"
 
 
-	d <- merge(d1, d2, by = c("hhid", "farm_id"), all.x = TRUE)
+d <- merge(d1, d2, by = c("hhid", "farm_id"), all.x = TRUE)
  
 ## farm_id uniquely id's a farm
 	d$trial_id <- as.character(as.integer(as.factor( d$farm_id )))
 
 ## about data
 	d$on_farm <- TRUE
-	d$is_survey <- FALSE	
+	d$is_survey <- FALSE
 	d$irrigated <- FALSE # no irrigation mentioned. rain data is collected in general.csv
 
 ## crop
@@ -159,7 +159,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
    	d$S_fertilizer <- (d1$gypsum/d1$plot_area) * 0.185 * 10000
    	d$lime <- 0
 
-	d$P_fertilizer[is.na(d$P_fertilizer)] <- 0 # if data val is na, fill as 0
+d$P_fertilizer[is.na(d$P_fertilizer)] <- 0 # if data val is na, fill as 0
 	d$S_fertilizer[is.na(d$S_fertilizer)] <- 0
 
 ## normalize names 
