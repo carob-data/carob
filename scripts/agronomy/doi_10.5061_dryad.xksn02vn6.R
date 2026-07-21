@@ -59,22 +59,25 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 	
 	d2 <- data.frame(
 	  year = r2$siteyr,
-	  #soil_P = r2$Soil_P, kg/ha 
-	  #soil_K = r2$Soil_K,
-	  soil_SOM = r2$SOM/10, # %
-	  soil_pH = r2$Soil_pH
+	  #soil_P = r2$Soil_P, #kg/ha 
+	  #soil_K = r2$Soil_K, #kg/ha 
+	  soil_SOM = r2$SOM, 
+	  soil_pH = r2$Soil_pH,
+	  previous_crop = "rye",# rolled-crimped  crop
+	  residue_prevcrop  = r2$Rye_bm 
 	)
 	
-	Agg <- aggregate(. ~ year,d2, function(X) mean(X) )
+	Agg <- aggregate(. ~ year+ previous_crop,d2, function(X) mean(X) )
 	d <- merge(d1, Agg, by= "year", all.x = TRUE)
 	
 	d3 <- data.frame(
 	  year = r3$siteyr,
+	  DAP = as.integer(r3$week*7), # Days after planting
 	  rep = r3$block,
 	  treatment = r3$treatment,
 	  growth_stage = r3$gs_cat,
-	  plant_height = r3$height
-	  #spad = r3$spad
+	  plant_height = r3$height,
+	  spad = r3$spad
 	)
 	
 	d <- merge(d, d3, by= c("year", "rep", "treatment"), all = TRUE)
@@ -87,7 +90,7 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
   d$N_organic <- ifelse(grepl("SN|PL|FM", d$treatment), 28, 0)
   d$OM_type <- ifelse(grepl("PL", d$treatment), "poultry litter", 
                       ifelse(grepl("FM", d$treatment), "feather meal", "none"))
-
+  d$record_id <- as.integer(1: nrow(d))
   
   d$is_survey <- FALSE
   d$on_farm <- TRUE
@@ -102,6 +105,12 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
   d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
   d$year <- NULL
   
-	carobiner::write_files(path, meta, d)
+  #### keep spad, plant_height, growth_stage in the Lon format
+  d_lon <- d[, c("growth_stage", "record_id", "DAP", "spad", "plant_height")]
+  d_lon <- d_lon[!is.na(d_lon$DAP),]
+  
+  d <- d[,!names(d) %in% c("growth_stage", "DAP", "spad", "plant_height")]
+  
+	carobiner::write_files(path, meta, d, long = d_lon)
 }
 
