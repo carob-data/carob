@@ -97,7 +97,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
     d$latitude[i] = 7.4482
 	d$longitude[!i] = 3.88285
     d$latitude[!i] = 7.48907 
-    geo_from_source = TRUE
+    d$geo_from_source = TRUE
 
 	d$record_id <- 1:nrow(d)
     sdens <- r1[, grepl("stems_m2_", names(r1))]
