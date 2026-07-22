@@ -28,7 +28,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety;P_fertilizer;S_fertilizer",
-		response_vars = "yield;fmy_total", 
+		response_vars = "yield;fwy_total", 
 		notes = NA,
 		carob_contributor = "Kudzaishe M. Muzata",
 		carob_date = "2026-07-13",
