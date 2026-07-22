@@ -9,7 +9,7 @@ pwds <- function() {
 		## DATAVERSE: name/email/institution are used for guestbook responses; 
 		## token is the Dataverse API token (sent as X-Dataverse-key) for restricted files.
 		DATAVERSE = list(name="my name", email="name@email.com", position="volunteer", institution="ZzZzZ", 
-		answers=c("Carob project", "Reserach", "Other"), token=NULL)
+		answers=c("Carob project", "Research", "Other"), token=NULL)
 	)
 }
 

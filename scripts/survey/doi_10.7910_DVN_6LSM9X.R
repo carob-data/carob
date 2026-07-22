@@ -40,16 +40,16 @@ carob_script <- function(path) {
   f16<- ff[basename(ff) == "G2.2-Insecticide_use_VN_final.dta"]
   f18<- ff[basename(ff) == "G3.2-Herbicide_use_VN_final.dta"]
 
-  r <- haven::read_dta(f)
-  r2 <- haven::read_dta(f2)
-  r3<- haven::read_dta(f3)
-  r5 <- haven::read_dta(f5)
-  r6 <- haven::read_dta(f6)
-  r9 <- haven::read_dta(f9)
-  r10 <- haven::read_dta(f10)
-  r14 <- haven::read_dta(f14)
-  r16 <- haven::read_dta(f16)
-  r18 <- haven::read_dta(f18)
+  r <- carobiner::read.dta(f, FALSE)
+  r2 <- carobiner::read.dta(f2, FALSE)
+  r3<- carobiner::read.dta(f3, FALSE)
+  r5 <- carobiner::read.dta(f5, FALSE)
+  r6 <- carobiner::read.dta(f6, FALSE)
+  r9 <- carobiner::read.dta(f9, FALSE)
+  r10 <- carobiner::read.dta(f10, FALSE)
+  r14 <- carobiner::read.dta(f14, FALSE)
+  r16 <- carobiner::read.dta(f16, FALSE)
+  r18 <- carobiner::read.dta(f18, FALSE)
 
  d <- data.frame(
    country=r$country_,
