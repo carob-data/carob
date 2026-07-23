@@ -107,10 +107,11 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	#d2$date[is.na(d2$date)] <- 2014 # filling in missing data in "year"
 
 	# assigned longitude/latitude for missing location (id9) in general.csv 
-	d2$geo_from_source <- !(is.na(d2$latitude) | is.na(d2$longitude))
+	missing_geo <- (is.na(d2$latitude) | is.na(d2$longitude))
+	d2$geo_from_source <- !missing_geo
 	d2$geo_uncertainty <- NA
 	d2$geo_source <- NA
-	missing_geo <- !d2$geo_from_source
+	# d2$adm3[missing_geo] # [1] "Kagumu"
 	d2$latitude[missing_geo] <- 1.1187 
 	d2$longitude[missing_geo] <- 33.8428
 	d2$geo_uncertainty[missing_geo] <- 5906 # meters
@@ -143,14 +144,12 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d$TSP <- d$gypsum <- NULL
 
 ## for legumes   
-   	# all d$inoculated == FALSE, 
    	d$inoculant <- NA
 
 ## Yield
 	d$yield_part <- "pod" # recorded as unshelled pods, no values for shelled grain given
 	d$yield_moisture <- NA # not recorded
 	d$yield_isfresh <- NA # not stated
-
 
 ## about data
 	d$on_farm <- TRUE
