@@ -3,20 +3,29 @@
 
 ## ISSUES
 # 1. raw header names can't be trusted for cols 10-11 (2 cols are even both
-#    named "Yield_t_ha", cols 11 & 14) so columns were renamed by position, not
-#    by name: metadata_time_of_planting.csv has 22 description rows that align
-#    1:1, left-to-right, with the raw file's 22 data columns (all but ID, which
-#    has no metadata row). That positional match is what shows "Vigor" (row 9)
-#    and the 1st "Yield_t_ha" (row 10) actually hold Leaf Area Index and Number
-#    of Leaves. Confirmed col 14, not col 11, is the true yield: back-calculated
-#    yield (plant density x tubers/plant x mean tuber weight) matches col 14
-#    (corr 0.9999) but not col 11 (corr 0.54)
+#    named "Yield_t_ha", cols 11 & 14; read.csv auto-dedups the 2nd to
+#    "Yield_t_ha.1"). metadata_time_of_planting.csv has 22 description rows
+#    that align 1:1, left-to-right, with the raw file's 22 data columns (all
+#    but ID, which has no metadata row). That positional match is what shows
+#    "Vigor" (row 9) and the 1st "Yield_t_ha" (row 10) actually hold Leaf Area
+#    Index and Number of Leaves - see the inline comments at each field below.
+#    Confirmed "Yield_t_ha.1", not "Yield_t_ha", is the true yield:
+#    back-calculated yield (plant density x tubers/plant x mean tuber weight)
+#    matches "Yield_t_ha.1" (corr 0.9999) but not "Yield_t_ha" (corr 0.54)
 # 2. exact planting/harvest dates are not in the raw data (only Year and
 #    Early/Mid/Late); dates were taken from the linked publication's Materials
 #    and Methods (Aighewi et al. 2020)
-# 3. plant vigor, number of leaves/vines and the five pest/disease severity
-#    scores have no matching terminag term and are kept as non-standard,
-#    domain-prefixed variables
+# 3. plant vigor and number of leaves/vines have no matching terminag term
+#    and are kept as non-standard, domain-prefixed variables
+# 4. the five pest/disease severity scores are pivoted from wide to long
+#    (pest_species/pest_severity/severity_scale) via reshape(), which
+#    multiplies the row count from 54 to 270 (5 rows per original plot);
+#    tuber rot (ROT) is grouped with the other 4 as "pest" per the editor's
+#    instruction, though it could arguably be classified as a disease instead
+# 5. per editor feedback, Number_of_tuber_trt (raw count per 9 m2 plot) is
+#    converted to tuber_density (tubers/ha), matching the plant_density
+#    convention; Mean_number_of_tubers_plant is dropped, since it is now
+#    fully recoverable as tuber_density / plant_density (both kept in d)
 
 carob_script <- function(path) {
 
@@ -49,13 +58,6 @@ The data is from an investigation of the influence of planting different miniset
 
 	# raw file has trailing empty rows; nrows drops them at read time
 	r <- read.csv(f, nrows = 54)
-
-	# the raw header has duplicated/mislabeled names; metadata_time_of_planting.csv lists the
-	# true column descriptions in file order, so columns are renamed here by position
-	names(r) <- c("ID", "Plot", "Rep", "Year", "SettSize", "TimePlant", "Perc_sprout",
-		"Day50_perc_Sprout", "STEM_LENGTH_m", "LAI", "Leaf_number", "Vine_number", "Plant_vigor",
-		"Yield_t_ha", "CRACK", "M_BUG", "SCALE", "CRZROOT_Gall", "ROT", "Number_of_tuber_trt",
-		"PLST", "Mean_number_of_tubers_plant", "MeanWt")
 
 	# Year is coded 1/2 for the two cropping seasons (confirmed in the linked publication)
 	year_lookup <- c("1" = 2015, "2" = 2016)
@@ -98,7 +100,36 @@ The data is from an investigation of the influence of planting different miniset
 		minisett_size = r$SettSize, # g
 		treatment = paste0(r$SettSize, "g_", r$TimePlant),
 		planting_date = r$planting_date,
-		harvest_date = r$harvest_date
+		harvest_date = r$harvest_date,
+
+		# raw col "Yield_t_ha.1" (2nd dup-named col) confirmed true yield, ISSUES 1
+		yield = r$Yield_t_ha.1 * 1000, # t/ha to kg/ha
+
+		# raw col "Vigor" mislabeled; metadata confirms it is LAI, see ISSUES 1
+		LAI = r$Vigor,
+
+		## non-standard, domain-prefixed variables with no matching terminag term
+		sprout_percent = r$Perc_sprout, # %
+		sprout_days50 = r$Day50_perc_Sprout, # days to 50% sprouting
+		vine_length = r$STEM_LENGTH_m, # m
+		# raw col "Yield_t_ha" (1st dup-named col) mislabeled; metadata confirms
+		# it is Number of Leaves, see ISSUES 1
+		leaf_number = r$Yield_t_ha,
+		vine_number = r$NO_VINE, # metadata: Number of Vines
+		plant_vigor = r$PL_Vigor, # scale 1-5
+
+		# pest/disease severity, scale 1-5 (1=least severe), see metadata CSV;
+		# pivoted into long-format pest_severity/pest_species below, ISSUES 4
+		nematode_severity = r$CRACK, # scale 1-5
+		mealybug_severity = r$M_BUG, # scale 1-5
+		scaleinsect_severity = r$SCALE, # scale 1-5
+		crazyroot_severity = r$CRZROOT_Gall, # scale 1-5
+		rot_severity = r$ROT, # scale 1-5
+
+		# mean weight per tuber is an intensive (average) measure, not an
+		# extensive per-plot/per-plant count, so the per-ha rule doesn't
+		# apply; kept as-is, ISSUES 5
+		tuber_mean_weight = r$MeanWt # kg
 	)
 
 	d$on_farm <- FALSE
@@ -109,36 +140,40 @@ The data is from an investigation of the influence of planting different miniset
 	d$plot_area <- 9 * 1 # m2
 	d$plant_density <- (r$PLST / d$plot_area) * 10000 # plants/ha
 
-	d$yield <- r$Yield_t_ha * 1000 # t/ha to kg/ha
+	# tubers counted per 9 m2 plot, converted to a per-ha basis the same way
+	# as plant_density above; no exact terminag term for tubers, so named
+	# following the existing <organ>_density (count/ha) family, ISSUES 5
+	d$tuber_density <- (r$Number_of_tuber_trt / d$plot_area) * 10000 # tubers/ha
+
 	d$yield_part <- "tubers"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
-
-	d$LAI <- r$LAI # leaf area index, terminag standard term
 
 	# no fertilizer was applied (Aighewi et al. 2020)
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
 	d$fertilizer_used <- FALSE
 	d$fertilizer_type <- "none"
 
-	## non-standard, domain-prefixed variables with no matching terminag term
-	d$sprout_percent <- r$Perc_sprout # %
-	d$sprout_days50 <- r$Day50_perc_Sprout # days to 50% sprouting
-	d$vine_length <- r$STEM_LENGTH_m # m
-	d$leaf_number <- r$Leaf_number
-	d$vine_number <- r$Vine_number
-	d$plant_vigor <- r$Plant_vigor # scale 1-5
+	# pivot the five wide pest/disease severity columns into shared long-format
+	# fields (pest_species/pest_severity), following the reshape() pattern in
+	# doi_10.25502_ec86-2t29.R; trial_id + plot_id already uniquely identify
+	# each of the 54 original rows, so they double as the reshape idvar
+	d <- reshape(d, direction = "long",
+		varying = c("nematode_severity", "mealybug_severity",
+			"scaleinsect_severity", "crazyroot_severity", "rot_severity"),
+		timevar = "pest_species",
+		times = c("nematode", "mealybug", "scale insect",
+			"crazy root/gall", "tuber rot"),
+		v.names = "pest_severity",
+		idvar = c("trial_id", "plot_id"))
+	rownames(d) <- NULL
 
-	# pest/disease severity scores, all on a scale 1-5 (1 = least severe), metadata_time_of_planting.csv
-	d$nematode_severity <- r$CRACK # scale 1-5
-	d$mealybug_severity <- r$M_BUG # scale 1-5
-	d$scaleinsect_severity <- r$SCALE # scale 1-5
-	d$crazyroot_severity <- r$CRZROOT_Gall # scale 1-5
-	d$rot_severity <- r$ROT # scale 1-5
+	# terminag defines pest_severity as character (matches precedent in
+	# doi_10.21223_P3_RBR0FG.R, doi_10.21421_D2_MHOUWW.R, ...)
+	d$pest_severity <- as.character(d$pest_severity)
 
-	d$tuber_number <- r$Number_of_tuber_trt # tubers per plot
-	d$tuber_number_plant <- r$Mean_number_of_tubers_plant
-	d$tuber_mean_weight <- r$MeanWt # kg
+	# scale is constant across all pest/disease scores, see metadata CSV
+	d$severity_scale <- "1-5, 1=least severe"
 
 	carobiner::write_files(path, meta, d)
 }
