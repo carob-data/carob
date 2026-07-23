@@ -106,6 +106,16 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	)
 	#d2$date[is.na(d2$date)] <- 2014 # filling in missing data in "year"
 
+	# assigned longitude/latitude for missing location (id9) in general.csv 
+	d2$geo_from_source <- !(is.na(d2$latitude) | is.na(d2$longitude))
+	d2$geo_uncertainty <- NA
+	d2$geo_source <- NA
+	missing_geo <- !d2$geo_from_source
+	d2$latitude[missing_geo] <- 1.1187 
+	d2$longitude[missing_geo] <- 33.8428
+	d2$geo_uncertainty[missing_geo] <- 5906 # meters
+	d2$geo_source[missing_geo] <- "GADM 4.1, adm3"
+
 	d <- merge(d1, d2, by = c("hhid", "trial_id"), all.x = TRUE) 
 	d$trial_id <- as.character(as.numeric(as.factor(d$trial_id)))
 
