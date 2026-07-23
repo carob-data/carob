@@ -1,0 +1,119 @@
+# R script for "carob"
+# license: GPL (>=3)
+
+## NOTES
+# On-station trial (IITA HQ, Ibadan), 2 site-seasons (WB_East=2018,
+# WB_West=2019), stake orientation x variety, 3-4 reps. Yields Mg/ha ->
+# kg/ha. Dates and 13 MAP harvest timing confirmed via Hauser et al. 2025
+# (J Plant Sci Phytopathol 9(1):011-022). Stem counts over time are in the
+# long table (record_id, DAP, stem_density).
+
+## ISSUES
+# "nd" -> NA; WB_West lacks intermediate stem counts (harvest count only).
+# plant_survival, root_density: no terminag equivalent, suggested as new
+# X_density-style terms.
+# datespan warning (>366 days) is real: WB_East had a confirmed 62-week
+# cycle, not an error.
+# "no time/depth variables in long records" warning persists despite DAP
+# being present - unresolved, needs further investigation.
+
+carob_script <- function(path) {
+  
+"
+Cassava storage root yield as affected by planting stake orientation, and variety in two sites in SW Nigeria
+
+An on-station trial at IITA's Ibadan station, Nigeria, testing cassava
+planting stake orientation (horizontal, buried 5-7cm; slanted, ~45 degrees;
+vertical, ~90 degrees) and variety (TME419 vs TMS0581), across two site x
+season combinations (WB_East 2018, WB_West 2019), 3-4 replicates. Stem
+counts were tracked from 1 to 11 months after planting (WB_East only), with
+survival, root counts, and fresh/dry root yield recorded at final harvest.
+"
+  
+  uri <- "doi:10.25502/c9jq-w968/d"
+  group <- "agronomy"
+  ff  <- carobiner::get_data(uri, path, group)
+  
+  meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
+		data_organization = "IITA",
+		publication = "10.29328/journal.jpsp.1001148",
+		project = "ACAI",
+		design = "on-station trial",
+		data_type = "on-station experiment",
+		treatment_vars = "variety;treatment",
+		response_vars = "yield;dmy_storage",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-07-20",
+		carob_completion = 75,
+		carob_effort = 2
+  )
+  
+  f1 <- ff[basename(ff) == "staggered-planting-stake-orientation-expt-3.csv"]
+  f2 <- ff[basename(ff) == "data_dictionary.csv"]
+ 
+  r1 <- read.csv(f1, na.strings="nd")
+  r1 <- r1[!is.na(r1$ID) & r1$ID != "", ]
+  
+  d <- data.frame(
+
+	trial_id = r1$Site,
+    rep = r1$rep,
+ 
+    country = "Nigeria",
+    adm1 = "Oyo",
+    adm2 = "Ibadan",
+    location = "Ibadan, IITA HQ",
+	site = r1$Site,   # WB_East / WB_West - specific field within the IITA station
+    
+    on_farm = FALSE,
+    is_survey = FALSE,
+    
+    crop = "cassava",
+    variety = r1$variety,
+    treatment = r1$orientation,
+    
+	stake_orientation = r1$orientation,
+    plant_density = r1$plants_m2_at_harvest * 10000,   # plants/m2 -> plants/ha
+    
+    yield = r1$useful_fresh_root_yield_Mg_ha * 1000,
+    yield_part = "roots",
+    yield_isfresh = TRUE,
+    yield_moisture = (1 - r1$ppt_root_DM) * 100,
+    
+    dmy_storage = r1$useful_dry_root_yield_Mg_ha * 1000,
+    
+    root_density = r1$no_useful_roots_m2 * 10000,
+    plant_survival = r1$Perc_survival,
+    irrigated = NA,
+    N_fertilizer = NA,
+    P_fertilizer = NA,
+    K_fertilizer = NA
+  )
+
+    # metadata has two lon/lat pairs. Coordinates confirmed from Publication; center of trials
+	i <- d$site == "WB_East"
+	d$longitude[i] = 3.88401
+    d$latitude[i] = 7.48882
+	d$longitude[!i] = 3.88285
+    d$latitude[!i] = 7.48907 
+    d$geo_from_source = TRUE
+    d$planting_date <- ifelse(d$site == "WB_East", "2018-11-09", "2019-04-01")
+    d$harvest_date <- ifelse(d$site == "WB_East", "2020-01-15", "2020-04-01")
+
+	d$record_id <- 1:nrow(d)
+	sdens <- r1[, grepl("stems_m2_", names(r1))]
+	sdens <- sdens * 10000   # stems/m2 -> stems/ha, matching plant_density/root_density convention
+	dnms <- names(sdens)
+	sdens$record_id <- 1:nrow(sdens)
+	dns <- reshape(sdens, varying = dnms, v.names = "stem_density",
+				times = dnms, timevar = "DAP",  direction = "long")
+	dns$DAP <- gsub("stems_m2_|map", "", dns$DAP)
+	dns$DAP <- gsub("at_harvest", "13", dns$DAP) # confirmed from source publication
+	dns$DAP <- as.integer(as.numeric(dns$DAP) * 30.4)
+	dns$variable <- "stem_density"
+	dns$id <- NULL
+	dns <- dns[!is.na(dns$stem_density), ]
+	
+	carobiner::write_files(path, meta, d, long=dns)
+}
