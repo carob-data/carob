@@ -45,63 +45,49 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
   
 	
 	### process f1
-	r1 <- carobiner::read.excel(f1, sheet="SUMMARY")
-	hdr = r1[3:4,]
-	names(r1) <- apply(hdr, 2, function(x) {
-	  x <- trimws(as.character(x))
-	  x <- x[!is.na(x) & x != ""]
-	  if (length(x)) x[1] else NA_character_
-	})
-	r1 <- r1[-(1:4),] ### header
-	names(r1) <- make.names(names(r1), unique = TRUE)
+	r1 <- carobiner::read.excel.hdr(f1, skip=4, hdr=2, sheet="SUMMARY")
+
+	shaper <- function(d) {
+		e <- reshape(d, varying = nms, times=nms, v.names="value", direction = "long", timevar="variable")
+		e$value <- as.numeric(e$value)
+		v <- do.call(rbind, strsplit(e$variable, "_"))
+		e$DAP <- as.integer(v[,2])
+		e$variable <- v[,1]
+		e <- reshape(e, timevar ="variable", idvar = c("id", "DAP"), direction = "wide")
+		names(e) <- gsub("^value.", "", names(e))
+		rownames(e) <- NULL
+		e
+	}
 	
-	d11 <- data.frame(
+	d1 <- data.frame(
 	  season = r1$Year.Season,
 	  trial_id = r1$ID,
 	  plot_id = r1$Plot.no,
 	  variety = r1$Variety.Name,
-	  N_fertilizer = r1$Nrate..kg.N.ha.,
+	  N_fertilizer = r1$Nrate.kg.N.ha,
 	  rep = r1$Rep,
-	  LA_23 = r1$LEAF.AREA.INDEX,
-	  LA_29 = NA,
-	  LA_36 = NA,
-	  LA_43 = r1$X43.DAT,
-	  LA_50 = NA,
-	  LA_57 = r1$X57.DAT,
-	  LA_64 = NA,
-	  LA_68 = r1$X68.DAT,
-	  LA_71 = NA,
-	  LA_78 = NA,
-	  spad_23 = NA,
+	  LAI_23 = r1$LEAF.AREA.INDEX_23.DAT,
+	  LAI_43 = r1$X43.DAT,
+	  LAI_57 = r1$X57.DAT,
+	  LAI_68 = r1$X68.DAT,
+	  spad_23 = r1$SPAD.MEASUREMENT_23,
 	  spad_29 = r1$X29.DAT,
 	  spad_36 = r1$X36.DAT,
 	  spad_43 = r1$X43.DAT.1,
 	  spad_50 = r1$X50.DAT,
 	  spad_57 = r1$X57.DAT.1,
 	  spad_64 = r1$X64DAT,
-	  spad_68 = NA,
 	  spad_71 = r1$X71.DAT,
 	  spad_78 = r1$X78.DAT,
-	  dmy_total_23 = r1$PLANT.DRY.WEIGHT..kg.ha.,
-	  dmy_total_43 = r1$X43.DAT.4,
-	  dmy_total_57 = r1$X57.DAT.4,
-	  dmy_total_68 = r1$X68.DAT.2,
-	  dmy_total_29 = NA,
-	  dmy_total_36 = NA,
-	  dmy_total_50 = NA,
-	  dmy_total_64 = NA,
-	  dmy_total_71 = NA,
-	  dmy_total_78 = NA
+	  dmy_23 = r1$PLANT.DRY.WEIGHT.kg.ha._23.DAT,
+	  dmy_43 = r1$X43.DAT.4,
+	  dmy_57 = r1$X57.DAT.4,
+	  dmy_68 = r1$X68.DAT.2
 	)
-	var1 <- paste0("LA_", c("23", "29", "36", "43", "50", "57", "64", "68", "71", "78"))
-	var2 <- paste0("spad_", c("23", "29", "36", "43", "50", "57", "64", "68", "71", "78")) 
-	var3 <-  paste0("dmy_total_", c("23", "29", "36", "43", "50", "57", "64", "68", "71", "78")) 
-	d11 <- reshape(d11, varying = list(var1, var2, var3), v.names = c("LAI", "spad", "dmy_total"), 
-	              times = c(23L, 29L, 36L, 43L, 50L, 57L, 64L, 68L, 71L, 78L),
-	              timevar = "DAP",
-	              direction = "long")
+	cols <- grep("LA|spad|dmy", names(d1))
+	g1 <- shaper(d1[,cols])
+	d1 <- d1[, -cols]
 	
-	d11$id <- NULL
 	  
 	  ### biomass from f1 
 	  r4 <- carobiner::read.excel(f1, sheet="Biomass ")
