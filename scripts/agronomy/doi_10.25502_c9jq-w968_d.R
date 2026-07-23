@@ -2,19 +2,20 @@
 # license: GPL (>=3)
 
 ## NOTES
-# On-station trial (IITA HQ, Ibadan, Nigeria), 2 sites/seasons (site and
-# year are confounded: WB_East=2018, WB_West=2019), testing planting stake
-# orientation (horizontal/slanted/vertical) and variety (TME419/TMS0581),
-# 3-4 reps. Yields in Mg/ha (t/ha), converted to kg/ha (x1000).
+# On-station trial (IITA HQ, Ibadan), 2 site-seasons (WB_East=2018,
+# WB_West=2019), stake orientation x variety, 3-4 reps. Yields Mg/ha ->
+# kg/ha. Dates and 13 MAP harvest timing confirmed via Hauser et al. 2025
+# (J Plant Sci Phytopathol 9(1):011-022). Stem counts over time are in the
+# long table (record_id, DAP, stem_density).
 
 ## ISSUES
-# "nd" (not determined, per dictionary) in the stems_m2_*map columns
-# converts to NA on read - all WB_West/2019 rows lack intermediate stem
-# counts, only stem_density_harvest is available for that site.
-# stem_density_*map, plant_survival, and root_density have no terminag
-# equivalent - suggested as new terms, following the existing X_density
-# (per ha) naming pattern.
-
+# "nd" -> NA; WB_West lacks intermediate stem counts (harvest count only).
+# plant_survival, root_density: no terminag equivalent, suggested as new
+# X_density-style terms.
+# datespan warning (>366 days) is real: WB_East had a confirmed 62-week
+# cycle, not an error.
+# "no time/depth variables in long records" warning persists despite DAP
+# being present - unresolved, needs further investigation.
 
 carob_script <- function(path) {
   
@@ -35,7 +36,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
   
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
-		publication = NA,
+		publication = "10.29328/journal.jpsp.1001148",
 		project = "ACAI",
 		design = "on-station trial",
 		data_type = "on-station experiment",
@@ -58,7 +59,6 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
 
 	trial_id = r1$Site,
     rep = r1$rep,
-	planting_date = r1$year,
  
     country = "Nigeria",
     adm1 = "Oyo",
@@ -91,26 +91,29 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
     K_fertilizer = NA
   )
 
-    # metadata has two lon/lat pairs. Assigning to site based on East/West names
+    # metadata has two lon/lat pairs. Coordinates confirmed from Publication; center of trials
 	i <- d$site == "WB_East"
 	d$longitude[i] = 3.88401
-    d$latitude[i] = 7.4482
+    d$latitude[i] = 7.48882
 	d$longitude[!i] = 3.88285
     d$latitude[!i] = 7.48907 
     d$geo_from_source = TRUE
+    d$planting_date <- ifelse(d$site == "WB_East", "2018-11-09", "2019-04-01")
+    d$harvest_date <- ifelse(d$site == "WB_East", "2020-01-15", "2020-04-01")
 
 	d$record_id <- 1:nrow(d)
-    sdens <- r1[, grepl("stems_m2_", names(r1))]
+	sdens <- r1[, grepl("stems_m2_", names(r1))]
+	sdens <- sdens * 10000   # stems/m2 -> stems/ha, matching plant_density/root_density convention
 	dnms <- names(sdens)
 	sdens$record_id <- 1:nrow(sdens)
 	dns <- reshape(sdens, varying = dnms, v.names = "stem_density",
 				times = dnms, timevar = "DAP",  direction = "long")
 	dns$DAP <- gsub("stems_m2_|map", "", dns$DAP)
-	dns$DAP <- gsub("at_harvest", "13", dns$DAP) # speculative
+	dns$DAP <- gsub("at_harvest", "13", dns$DAP) # confirmed from source publication
 	dns$DAP <- as.integer(as.numeric(dns$DAP) * 30.4)
 	dns$variable <- "stem_density"
 	dns$id <- NULL
 	dns <- dns[!is.na(dns$stem_density), ]
-
+	
 	carobiner::write_files(path, meta, d, long=dns)
 }
