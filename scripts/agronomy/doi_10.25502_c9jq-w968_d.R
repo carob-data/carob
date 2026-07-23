@@ -10,6 +10,7 @@
 ## ISSUES
 # plant_survival, root_density: no terminag equivalent, suggested as new terms
 
+
 carob_script <- function(path) {
   
 "
@@ -43,7 +44,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
   )
   
   f1 <- ff[basename(ff) == "staggered-planting-stake-orientation-expt-3.csv"]
-  f2 <- ff[basename(ff) == "data_dictionary.csv"]
+  #f2 <- ff[basename(ff) == "data_dictionary.csv"]
  
   r1 <- read.csv(f1, na.strings="nd")
   r1 <- r1[!is.na(r1$ID) & r1$ID != "", ]
@@ -56,7 +57,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
     country = "Nigeria",
     adm1 = "Oyo",
     adm2 = "Ibadan",
-    location = "Ibadan, IITA HQ",
+    location = "IITA HQ, Ibadan",
 	site = r1$Site,   # WB_East / WB_West - specific field within the IITA station
     
     on_farm = FALSE,
@@ -79,9 +80,9 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
     root_density = r1$no_useful_roots_m2 * 10000,
     plant_survival = r1$Perc_survival,
     irrigated = NA,
-    N_fertilizer = NA,
-    P_fertilizer = NA,
-    K_fertilizer = NA
+    N_fertilizer = 0,
+    P_fertilizer = 0,
+    K_fertilizer = 0
   )
 
     # metadata has two lon/lat pairs. Coordinates confirmed from Publication; center of trials
