@@ -3,19 +3,12 @@
 
 ## NOTES
 # On-station trial (IITA HQ, Ibadan), 2 site-seasons (WB_East=2018,
-# WB_West=2019), stake orientation x variety, 3-4 reps. Yields Mg/ha ->
-# kg/ha. Dates and 13 MAP harvest timing confirmed via Hauser et al. 2025
-# (J Plant Sci Phytopathol 9(1):011-022). Stem counts over time are in the
-# long table (record_id, DAP, stem_density).
+# WB_West=2019), stake orientation x variety, 3-4 reps. Dates and 13 MAP 
+# harvest timing confirmed via Hauser et al. 2025 (J Plant Sci Phytopathol 9(1):011-022). 
+# Stem counts over time are in the long table (record_id, DAP, stem_density).
 
 ## ISSUES
-# "nd" -> NA; WB_West lacks intermediate stem counts (harvest count only).
-# plant_survival, root_density: no terminag equivalent, suggested as new
-# X_density-style terms.
-# datespan warning (>366 days) is real: WB_East had a confirmed 62-week
-# cycle, not an error.
-# "no time/depth variables in long records" warning persists despite DAP
-# being present - unresolved, needs further investigation.
+# plant_survival, root_density: no terminag equivalent, suggested as new terms
 
 carob_script <- function(path) {
   
