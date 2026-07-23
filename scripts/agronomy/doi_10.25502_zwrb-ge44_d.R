@@ -7,6 +7,7 @@
 # no planting date 
 # herbicide treatments not clear (what is protocol?)
 
+
 carob_script <- function(path) {
 
 "
@@ -22,7 +23,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
 		publication = NA,
-		project = "African Cassava Agronomy Initiative (ACAI)",
+		project = "ACAI",
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "fertilizer_used;land_prep_method", #herbicide_timing
