@@ -44,20 +44,23 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	f7 <- ff[basename(ff) == "LTCCE_EP_EWS 2016 yield.xlsx"]
   
 	
-	### process f1
-	r1 <- carobiner::read.excel.hdr(f1, skip=4, hdr=2, sheet="SUMMARY")
-
+	### process 
 	shaper <- function(d) {
-		e <- reshape(d, varying = nms, times=nms, v.names="value", direction = "long", timevar="variable")
-		e$value <- as.numeric(e$value)
-		v <- do.call(rbind, strsplit(e$variable, "_"))
-		e$DAP <- as.integer(v[,2])
-		e$variable <- v[,1]
-		e <- reshape(e, timevar ="variable", idvar = c("id", "DAP"), direction = "wide")
-		names(e) <- gsub("^value.", "", names(e))
-		rownames(e) <- NULL
-		e
+	  nms <- names(d)
+	  e <- reshape(d, varying = nms, times=nms, v.names="value", direction = "long", timevar="variable")
+	  e$value <- as.numeric(e$value)
+	  v <- do.call(rbind, strsplit(e$variable, "_"))
+	  e$DAP <- as.integer(v[,2])
+	  e$variable <- v[,1]
+	  e <- reshape(e, timevar ="variable", idvar = c("id", "DAP"), direction = "wide")
+	  names(e) <- gsub("^value.", "", names(e))
+	  rownames(e) <- NULL
+	  e
 	}
+	
+	### process f1
+	
+	r1 <- carobiner::read.excel.hdr(f1, skip=4, hdr=2, sheet="SUMMARY")
 	
 	d1 <- data.frame(
 	  season = r1$Year.Season,
@@ -84,346 +87,235 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	  dmy_57 = r1$X57.DAT.4,
 	  dmy_68 = r1$X68.DAT.2
 	)
-	cols <- grep("LA|spad|dmy", names(d1))
-	g1 <- shaper(d1[,cols])
-	d1 <- d1[, -cols]
 	
+ ### biomass from f1 
+	  r2 <- carobiner::read.excel.hdr(f1, skip = 2, hdr =2 , sheet="Biomass ") 
 	  
-	  ### biomass from f1 
-	  r4 <- carobiner::read.excel(f1, sheet="Biomass ")
-	  hdr = r4[1:2,]
-	  names(r4) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r4 <- r4[-(1:2),] ### header
-	  names(r4) <- make.names(names(r4), unique = TRUE)
+	  d2 <- data.frame(
+	    season = r2$Year.Season,
+	    trial_id = r2$ID,
+	    plot_id = r2$Plot.no,
+	    variety = r2$Variety.Name,
+	    N_fertilizer = r2$Nrate.kg.N.ha,
+	    rep = r2$Rep,
+	    dmy.stems_23 = r2$Stem.dry.wt.kg.ha,
+	    dmy.stems_43 = r2$Stem.dry.wt.kg.ha.1,
+	    dmy.stems_57 = r2$Stem.dry.wt.kg.ha.2,
+	    dmy.stems_68 = r2$Stem.dry.wt.kg.ha.3,
+	    dmy.leaves_23 = r2$Green.leaf.dry.wt.kg.ha,
+	    dmy.leaves_43 = r2$Green.leaf.dry.wt.kg.ha.1,
+	    dmy.leaves_57 = r2$Green.leaf.dry.wt.kg.ha.2,
+	    dmy.leaves_68 = r2$Green.leaf.dry.wt.kg.ha.3
+	  )
 	  
-	  d12 <- data.frame(
+	  ### merge d11 and d12
+	  d2 <- d2[!is.na(d2$season),]
+	  d12 <- merge(d1, d2, by = intersect(names(d1), names(d2)), all = TRUE)
+	  d12$id <- as.integer(1: nrow(d12))
+	  
+	  cols <- grep("LA|spad|dmy", names(d12))
+	  g1 <- shaper(d12[, cols])
+	  d12 <- d12[, -cols]
+	  g1 <- merge(d12, g1, by= "id", all.y = TRUE)
+	  ## dmy.leaves and dmy.stems
+	  names(g1) <- gsub("dmy.", "dmy_", names(g1)) 
+	  
+	  ########### process f2
+	  
+	  r3 <- carobiner::read.excel.hdr(f2, skip = 4, hdr =3 , sheet="SUMMARY") 
+	  d3 <- data.frame(
+	    season = r3$Year.Season,
+	    trial_id = r3$ID,
+	    plot_id = r3$Plot.no,
+	    variety = r3$Variety.Name,
+	    N_fertilizer = r3$Nrate.kg.N.ha,
+	    rep = r3$Rep,
+	    LAI_23 = r3$LEAF.AREA.INDEX_23.DAT,
+	    LAI_37 = r3$X37.DAT,
+	    LAI_64 = r3$X64.DAT,
+	    spad_23 = r3$SPAD.MEASUREMENT_23.DAT,
+	    spad_30 = r3$X30.DAT,
+	    spad_37 = r3$X37.DAT.1,
+	    spad_43 = r3$X43.DAT,
+	    spad_50 = r3$X50.DAT,
+	    spad_57 = r3$X57.DAT,
+	    spad_64 = r3$X64.DAT.1,
+	    spad_71 = r3$X71.DAT,
+	    spad_78 = r3$X78.DAT,
+	    dmy_23 = r3$PLANT.DRY.WEIGHT.kg.ha._23.DAT,
+	    dmy_43 = r3$X43.DAT.3,
+	    dmy_56 = r3$X56.DAT.1,
+	    dmy_65 = r3$X65.DAT.1,
+	    id = as.integer(1:nrow(r3))
+	    
+	  )
+	  
+	  cols <- grep("LA|spad|dmy", names(d3))
+	  g2 <- shaper(d3[, cols])
+	  d3 <- d3[, -cols]
+	  g2 <- merge(d3, g2, by= "id", all.y = TRUE)
+	  #### process f3
+	  
+	  r4 <- carobiner::read.excel.hdr(f3, skip= 4, hdr = 3,  sheet="SUMMARY")
+	  
+	  d4 <- data.frame(
 	    season = r4$Year.Season,
 	    trial_id = r4$ID,
 	    plot_id = r4$Plot.no,
 	    variety = r4$Variety.Name,
-	    N_fertilizer = r4$Nrate..kg.N.ha.,
+	    N_fertilizer = r4$Nrate.kg.N.ha,
 	    rep = r4$Rep,
-	    dmy_stems_23 = r4$Stem.dry.wt.kg.ha,
-	    dmy_stems_43 = r4$Stem.dry.wt.kg.ha.1,
-	    dmy_stems_57 = r4$Stem.dry.wt.kg.ha.2,
-	    dmy_stems_68 = r4$Stem.dry.wt.kg.ha.3,
-	    dmy_stems_78 = r4$Stem.dry.wt.kg.ha.4,
-	    dmy_leaves_23 = r4$Green.leaf.dry.wt.kg.ha,
-	    dmy_leaves_43 = r4$Green.leaf.dry.wt.kg.ha.1,
-	    dmy_leaves_57 = r4$Green.leaf.dry.wt.kg.ha.2,
-	    dmy_leaves_68 = r4$Green.leaf.dry.wt.kg.ha.3,
-	    dmy_leaves_78 = r4$Green.leaf.dry.wt.kg.ha.4 
-	  )
-	  vars1 = paste0("dmy_stems_", c("23", "43", "57", "68", "78"))
-	  vars2 = paste0("dmy_leaves_", c("23", "43", "57", "68", "78"))
-	  d12 <- reshape(d12, varying = list(vars1, vars2), v.names = c("dmy_stems", "dmy_leaves"), times = c(23L, 43L, 57L, 68L, 78L), timevar = "DAP",direction = "long")
-	  d12$id <- NULL
-	  ### merge d11 and d12
-	  d1 <- merge(d11, d12, by = intersect(names(d11), names(d12)), all = TRUE)
-	  
-	 
-	  ########### process f2
-	  
-	  r7 <- carobiner::read.excel(f2, sheet="SUMMARY")
-	  hdr = r7[3:4,]
-	  names(r7) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r7 <- r7[-(1:4),] ### header
-	  names(r7) <- make.names(names(r7), unique = TRUE)
-	  
-	  d2 <- data.frame(
-	    season = r7$Year.Season,
-	    trial_id = r7$ID,
-	    plot_id = r7$Plot.no,
-	    variety = r7$Variety.Name,
-	    N_fertilizer = r7$Nrate..kg.N.ha.,
-	    rep = r7$Rep,
-	    LAI_23 = r7$LEAF.AREA.INDEX,
-	    LAI_37 = r7$X37.DAT,
-	    LAI_64 = r7$X64.DAT,
-	    LAI_30 = NA,
-	    LAI_43 = NA,
-	    LAI_50 = NA,
-	    LAI_57 = NA,
-	    LAI_71 = NA,
-	    LAI_78 = NA,
-	    LAI_56 = NA,
-	    LAI_65 = NA,
-	    spad_23 = r7$SPAD.MEASUREMENT,
-	    spad_30 = r7$X30.DAT,
-	    spad_37 = r7$X37.DAT.1,
-	    spad_43 = r7$X43.DAT,
-	    spad_50 = r7$X50.DAT,
-	    spad_57 = r7$X57.DAT,
-	    spad_64 = r7$X64.DAT.1,
-	    spad_71 = r7$X71.DAT,
-	    spad_78 = r7$X78.DAT,
-	    spad_56 = NA,
-	    spad_65 = NA,
-	    dmy_total_23 = r7$PLANT.DRY.WEIGHT..kg.ha.,
-	    dmy_total_43 = r7$X43.DAT.3,
-	    dmy_total_56 = r7$X56.DAT.1,
-	    dmy_total_65 = r7$X65.DAT.1,
-	    dmy_total_30 = NA,
-	    dmy_total_37 = NA,
-	    dmy_total_50 = NA,
-	    dmy_total_57 = NA,
-	    dmy_total_64 = NA,
-	    dmy_total_71 = NA,
-	    dmy_total_78 = NA
-	  )
-	  
-	  var1 <- paste0("LAI_", c("23", "30", "37", "43", "50", "57", "64", "71", "78", "56", "65"))
-	  var2 <- paste0("spad_", c("23", "30", "37", "43", "50", "57", "64", "71", "78", "56", "65")) 
-	  var3 <- paste0("dmy_total_", c("23", "30", "37", "43", "50", "57", "64", "71", "78", "56", "65")) 
-	  d2 <- reshape(d2, varying = list(var1, var2, var3), v.names = c("LAI", "spad", "dmy_total"), 
-	                times = c(23L, 30L, 37L, 43L, 50L, 57L, 64L, 71L, 78L, 56L, 65L),
-	                timevar = "DAP",
-	                direction = "long")
-	  
-	  d2$id <- NULL
-	  
-	  
-	  #### process f3
-	  
-	  r15 <- carobiner::read.excel(f3, sheet="SUMMARY")
-	  hdr = r15[3:4,]
-	  names(r15) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r15 <- r15[-(1:4),] ### header
-	  names(r15) <- make.names(names(r15), unique = TRUE)
-	  
-	  d3 <- data.frame(
-	    season = r15$Year.Season,
-	    trial_id = r15$ID,
-	    plot_id = r15$Plot.no,
-	    variety = r15$Variety.Name,
-	    N_fertilizer = r15$Nrate..kg.N.ha.,
-	    rep = r15$Rep,
-	    LAI_23 = r15$LEAF.AREA.INDEX,
-	    LAI_42 = r15$X42.DAT,
-	    LAI_64 = r15$X64.DAT,
-	    LAI_30 = NA, 
-	    LAI_65 = NA, 
-	    LAI_36 = NA, 
-	    LAI_49 = NA, 
-	    LAI_56 = NA, 
-	    LAI_71 = NA, 
-	    LAI_78 = NA, 
-	    spad_23 = r15$SPAD.MEASUREMENT,
-	    spad_30 = r15$X30.DAT,
-	    spad_36 = r15$X36.DAT,
-	    spad_42 = r15$X42.DAT.1,
-	    spad_49 = r15$X49.DAT,
-	    spad_56 = r15$X56.DAT,
-	    spad_64 = r15$X64.DAT.2,
-	    spad_65 = NA,
-	    spad_71 = r15$X71.DAT,
-	    spad_78 = r15$X78.DAT,
-	    dmy_total_23 = r15$PLANT.DRY.WEIGHT..kg.ha.,
-	    dmy_total_42 = r15$X42.DAT.4,
-	    dmy_total_56 = r15$X56.DAT.3,
-	    dmy_total_65 = r15$X65.DAT.1,
-	    dmy_total_64 = NA,
-	    dmy_total_30 = NA, 
-	    dmy_total_36 = NA, 
-	    dmy_total_49 = NA, 
-	    dmy_total_71 = NA, 
-	    dmy_total_78 = NA
+	    LAI_23 = r4$LEAF.AREA.INDEX_30.DAT,
+	    LAI_42 = r4$X42.DAT,
+	    LAI_64 = r4$X64.DAT,
+	    spad_23 = r4$SPAD.MEASUREMENT_23.DAT,
+	    spad_30 = r4$X30.DAT,
+	    spad_36 = r4$X36.DAT,
+	    spad_42 = r4$X42.DAT.1,
+	    spad_49 = r4$X49.DAT,
+	    spad_56 = r4$X56.DAT,
+	    spad_64 = r4$X64.DAT.2,
+	    spad_71 = r4$X71.DAT,
+	    spad_78 = r4$X78.DAT,
+	    dmy_22 = r4$PLANT.DRY.WEIGHT.kg.ha._22.DAT,
+	    dmy_42 = r4$X42.DAT.4,
+	    dmy_56 = r4$X56.DAT.3,
+	    dmy_65 = r4$X65.DAT.1,
+	    id = as.integer(1: nrow(r4))
 	  ) 
 	  
-	  var1 <- paste0("LAI_", c("23", "30", "36", "42", "49", "56", "64", "65", "71", "78"))
-	  var2 <- paste0("spad_", c("23", "30", "36", "42", "49", "56", "64", "65", "71", "78")) 
-	  var3 <- paste0("dmy_total_", c("23", "30", "36", "42", "49", "56", "64", "65", "71", "78")) 
-	  d3 <- reshape(d3, varying = list(var1, var2, var3), v.names = c("LAI", "spad", "dmy_total"), 
-	                times = c(23L, 30L, 36L, 42L, 49L, 56L, 64L, 65L, 71L, 78L),
-	                timevar = "DAP",
-	                direction = "long")
-	  d3$id <- NULL
-	 
-	  #### f6
-	  r42 <- carobiner::read.excel(f6, sheet="SUMMARY")
-	  hdr = r42[3:4,]
-	  names(r42) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r42 <- r42[-(1:4),] ### header
+	  cols <- grep("LA|spad|dmy", names(d4))
+	  g3 <- shaper(d4[, cols])
+	  d4 <- d4[, -cols]
+	  g3 <- merge(d4,g3, by= "id", all.y = TRUE)
 	  
-	  names(r42) <- make.names(names(r42), unique = TRUE)
-	  
-	  d4 <- data.frame(
-	    season = r42$Year.Season,
-	    exp = r42$Experiment,
-	    trial_id = r42$ID,
-	    plot_id = r42$Plot.no,
-	    variety = r42$Variety.Name,
-	    N_fertilizer = r42$Nrate..kg.N.ha.,
-	    rep = r42$Rep,
-	    LAI_23 = r42$LEAF.AREA.INDEX,
-	    LAI_42 = r42$X42.DAT,
-	    LAI_55 = r42$X55.DAT,
-	    LAI_62 = r42$X62.DAT,
-	    LAI_29 = NA, 
-	    LAI_36 = NA, 
-	    LAI_63 = NA, 
-	    LAI_56 = NA, 
-	    LAI_49 = NA, 
-	    LAI_71 = NA, 
-	    LAI_78 = NA, 
-	    spad_23 = r42$SPAD.MEASUREMENT,
-	    spad_29 = r42$X29.DAT,
-	    spad_36 = r42$X36.DAT,
-	    spad_42 = r42$X42.DAT.1,
-	    spad_49 = r42$X49.DAT,
-	    spad_56 = r42$X56.DAT,
-	    spad_63 = r42$X63.DAT,
-	    spad_71 = r42$X71.DAT,
-	    spad_78 = r42$X78.DAT.1,
-	    spad_55 = NA,
-	    spad_62 = NA,
-	    dmy_total_23 = r42$PLANT.DRY.WEIGHT..kg.ha.,
-	    dmy_total_42 = r42$X42.DAT.4,
-	    dmy_total_55 = r42$X55.DAT.2,
-	    dmy_total_62 = r42$X62.DAT.2,
-	    dmy_total_29 = NA, 
-	    dmy_total_36 = NA, 
-	    dmy_total_49 = NA, 
-	    dmy_total_56 = NA, 
-	    dmy_total_63 = NA, 
-	    dmy_total_71 = NA, 
-	    dmy_total_78 = NA
+	  #### process f6
+	  r5 <- carobiner::read.excel.hdr(f6, skip = 4, hdr = 3,  sheet="SUMMARY")
+    r5 <- r5[!is.na(r5$Experiment),]
+	  d5 <- data.frame(
+	    season = r5$Year.Season,
+	    trial_id = r5$ID,
+	    plot_id = r5$Plot.no,
+	    variety = r5$Variety.Name,
+	    N_fertilizer = r5$Nrate.kg.N.ha,
+	    rep = r5$Rep,
+	    LAI_23 = r5$LEAF.AREA.INDEX_22.DAT,
+	    LAI_42 = r5$X42.DAT,
+	    LAI_55 = r5$X55.DAT,
+	    LAI_62 = r5$X62.DAT,
+	    spad_23 = r5$SPAD.MEASUREMENT_22.DAT,
+	    spad_29 = r5$X29.DAT,
+	    spad_36 = r5$X36.DAT,
+	    spad_42 = r5$X42.DAT.1,
+	    spad_49 = r5$X49.DAT,
+	    spad_56 = r5$X56.DAT,
+	    spad_63 = r5$X63.DAT,
+	    spad_71 = r5$X71.DAT,
+	    spad_78 = r5$X78.DAT.1,
+	    dmy_22 = r5$PLANT.DRY.WEIGHT.kg.ha._22.DAT,
+	    dmy_42 = r5$X42.DAT.4,
+	    dmy_55 = r5$X55.DAT.2,
+	    dmy_62 = r5$X62.DAT.2,
+	    id = as.integer(1: nrow(r5))
 	  ) 
 	  
-	  var1 <- paste0("LAI_", c("23", "42", "55", "62", "29", "36", "49", "56", "63", "71", "78"))
-	  var2 <- paste0("spad_", c("23", "42", "55", "62", "29", "36", "49", "56", "63", "71", "78")) 
-	  var3 <- paste0("dmy_total_", c("23", "42", "55", "62", "29", "36", "49", "56", "63", "71", "78")) 
-	  d4 <- reshape(d4, varying = list(var1, var2, var3), v.names = c("LAI", "spad", "dmy_total"), 
-	                times = c(23L, 42L, 55L, 62L, 29L, 36L, 49L, 56L, 63L, 71L, 78L),
-	                timevar = "DAP",
-	                direction = "long")
-	  d4 <- d4[!is.na(d4$exp),]
-	  d4$id <- d4$exp <- NULL
+	  cols <- grep("LA|spad|dmy", names(d5))
+	  g4 <- shaper(d5[, cols])
+	  d5 <- d5[, -cols]
+	  g4 <- merge(d5, g4, by = 'id', all.y = TRUE)
 	  
-	  dd <- carobiner::bindr(d1, d2, d3, d4)
-	  dd$planting_date <- ifelse(grepl("2017", dd$season), "2017", "2016") 
+	  g <- carobiner::bindr(g1, g2, g3, g4)
+	  names(g) <- gsub("dmy$", "dmy_total", names(g))
+	  g$planting_date <- ifelse(grepl("2017", g$season), "2017", "2016") 
 	  
+	  g$id <- NULL
+	
 	  #------------ process grain yield files------------------------------
 	  #### process f4
-	  r30 <- carobiner::read.excel(f4, sheet = "LTCCE_GY&YC RJB")
-	  hdr = r30[10:9,]
-	  names(r30) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r30 <- r30[-(1:10),] ### header
-	  names(r30) <- make.names(names(r30), unique = TRUE)
-	  
-	  d5 <- data.frame(
-	    trial_id = r30$ID,
-	    plot_id = r30$PlotNo,
-	    N_fertilizer = r30$N.Rate,
-	    variety = r30$Variety,
-	    rep = r30$Rep,
-	    yield_14 = as.numeric(r30$Grain.yield.14...t.ha.)*1000,
-	    yield_3 = as.numeric(r30$Grain.Yield.at.3.)*1000,
-	    dmy_total = as.numeric(r30$Total.DM..t.ha.)*1000,
-	    plant_height = r30$PLTHTx,
-	    harvest_index = r30$HI2,
-	    dmy_residue = r30$SYKHA,
-	    grain_N = r30$Grain.N..kg.ha.,
-	    residue_N = r30$Straw.N..kg.ha.,
-	    planting_date = as.character(as.Date(as.numeric(r30$Seedling.Date), "1899-12-30")),
-	    harvest_date = as.character(as.Date(as.numeric(r30$HarvDate), "1899-12-30"))
+	 
+	  r6 <- carobiner::read.excel.hdr(f4, , skip = 10, hdr = 9, sheet = "LTCCE_GY&YC RJB")
+
+	  d6 <- data.frame(
+	    trial_id = r6$LTE_Year.Season_Cropping.Number_Barcode.ID_ID,
+	    plot_id = r6$Plot.Number_PlotNo,
+	    N_fertilizer = r6$N.Rate_N.Rate,
+	    variety = r6$Variety_Variety,
+	    rep = r6$Rep_Rep,
+	    yield_14 = as.numeric(r6$Grain.yield.14pct.t.ha)*1000,
+	    yield_3 = as.numeric(r6$Grain.Yield.at.3pct)*1000,
+	    dmy_total = as.numeric(r6$Total.DM.t.ha)*1000,
+	    plant_height = r6$Plant.Ht.cm_PLTHTx,
+	    harvest_index = r6$Harvest.index.2_HI2,
+	    harvest_days = r6$Growth.duration,
+	    DAP = as.integer(r6$Growth.duration),
+	    dmy_residue = r6$Straw.yield.kg.ha._SYKHA,
+	    grain_N = r6$Grain.N.kg.ha,
+	    residue_N = r6$Straw.N.kg.ha,
+	    planting_date = as.character(r6$Seedling.Date),
+	    harvest_date = as.character(r6$Harvest.Date.dd.mmm.yyyy._HarvDate)
 	  )
     
 	  #### remove empty rows
-	  d5 <- d5[!is.na(d5$plot_id),]
-	  
-	  #### process f5
-	  r41 <- carobiner::read.excel(f5, sheet = "LTCCE_GY&YC RJB")
-	  hdr = r41[10:9,]
-	  names(r41) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r41 <- r41[-(19:1),] ### header
-	  names(r41) <- make.names(names(r41), unique = TRUE)
-	  
-	  d6 <- data.frame(
-	    trial_id = r41$ID,
-	    plot_id = r41$PlotNo,
-	    N_fertilizer = r41$N.Rate,
-	    variety = r41$Variety,
-	    rep = r41$Rep,
-	    yield_14 = as.numeric(r41$Grain.yield.14...t.ha.)*1000,
-	    yield_3 = as.numeric(r41$Grain.Yield.at.3.),
-	    dmy_total = as.numeric(r41$Total.DM..t.ha.)*1000,
-	    plant_height = r41$PLTHTx,
-	    dmy_residue = r41$Straw.N..kg.ha.,
-	    harvest_index = r41$HI2,
-	    grain_N = r41$Grain.N..kg.ha.,
-	    residue_N = r41$Straw.N..kg.ha.,
-	    planting_date = as.character(as.Date(as.numeric(r41$Seedling.Date), "1899-12-30")),
-	    harvest_date = as.character(as.Date(as.numeric(r41$HarvDate), "1899-12-30"))
-	  )
-	  
-	  #### remove empty rows
 	  d6 <- d6[!is.na(d6$plot_id),]
 	  
-	  ### process f7
-	  r57 <- carobiner::read.excel(f7,  sheet = "LTCCE_GY&YC RJB")
-	  hdr = r57[10:9,]
-	  names(r57) <- apply(hdr, 2, function(x) {
-	    x <- trimws(as.character(x))
-	    x <- x[!is.na(x) & x != ""]
-	    if (length(x)) x[1] else NA_character_
-	  })
-	  r57 <- r57[-(1:10),] ### header
-	  names(r57) <- make.names(names(r57), unique = TRUE)
+	  #### process f5
+	  
+	  r7 <- carobiner::read.excel.hdr(f5, skip= 10, hdr= 3, sheet = "LTCCE_GY&YC RJB")
 	  
 	  d7 <- data.frame(
-	    trial_id = r57$ID,
-	    plot_id = r57$PlotNo,
-	    N_fertilizer = r57$N.Rate,
-	    variety = r57$Variety,
-	    rep = r57$Rep,
-	    yield_14 = as.numeric(r57$Grain.yield.14...t.ha.)*1000,
-	    yield_3 = as.numeric(r57$Grain.Yield.at.3.),
-	    plant_height = r57$PLTHTx,
-	    dmy_residue = r57$SYKHA,
-	    dmy_total = as.numeric(r57$Total.DM..t.ha.)*1000,
-	    harvest_index = r57$HI2,
-	    grain_N = r57$Grain.N..kg.ha.,
-	    residue_N = r57$Straw.N..kg.ha.,
-	    planting_date = as.character(as.Date(as.numeric(r57$Seedling.Date), "1899-12-30")),
-	    harvest_date = as.character(as.Date(as.numeric(r57$HarvDate), "1899-12-30"))
+	    trial_id = r7$Barcode.ID_ID,
+	    plot_id = r7$Plot.Number_PlotNo,
+	    N_fertilizer = r7$N.Rate_N.Rate,
+	    variety = r7$Variety_Variety,
+	    rep = r7$Rep_Rep,
+	    yield_14 = as.numeric(r7$Grain.yield.14pct.t.ha)*1000,
+	    yield_3 = as.numeric(r7$Grain.Yield.at.3pct),
+	    dmy_total = as.numeric(r7$Total.DM.t.ha)*1000,
+	    plant_height = r7$Plant.Ht.cm_PLTHTx,
+	    dmy_residue = r7$Straw.N.kg.ha,
+	    harvest_index = r7$Harvest.index.2_HI2,
+	    harvest_days = r7$Growth.duration,
+	    DAP = as.integer(r7$Growth.duration),
+	    grain_N = r7$Grain.N.kg.ha,
+	    residue_N = r7$Straw.N.kg.ha,
+	    planting_date = as.character(r7$Seedling.Date),
+	    harvest_date = as.character(r7$Harvest.Date.dd.mmm.yyyy._HarvDate)
+	  )
+	  
+	  ### process f7
+	  r8 <- carobiner::read.excel.hdr(f7, skip= 10, hdr= 2, sheet = "LTCCE_GY&YC RJB")
+	  
+	  d8 <- data.frame(
+	    trial_id = r8$Barcode.ID_ID,
+	    plot_id = r8$Plot.Number_PlotNo,
+	    N_fertilizer = r8$N.Rate_N.Rate,
+	    variety = r8$Variety_Variety,
+	    rep = r8$Rep_Rep,
+	    yield_14 = as.numeric(r8$Grain.yield.14pct.t.ha)*1000,
+	    yield_3 = as.numeric(r8$Grain.Yield.at.3pct),
+	    plant_height = r8$Plant.Ht.cm_PLTHTx,
+	    dmy_residue = r8$Straw.yield.kg.ha._SYKHA,
+	    dmy_total = as.numeric(r8$Total.DM.t.ha)*1000,
+	    harvest_index = r8$Harvest.index.2_HI2,
+	    harvest_days = r8$Growth.duration,
+	    DAP = as.integer(r8$Growth.duration),
+	    grain_N = r8$Grain.N.kg.ha,
+	    residue_N = r8$Straw.N.kg.ha,
+	    planting_date = as.character(r8$Seedling.Date),
+	    harvest_date = as.character(r8$Harvest.Date.dd.mmm.yyyy._HarvDate)
 	  )
 	  
 	  #### remove empty rows
-	  d7 <- d7[!is.na(d7$plot_id),]
+	  d8 <- d8[!is.na(d8$plot_id),]
 	  
-	  dd1 <- carobiner::bindr(d5, d6, d7)
+	  dy <- carobiner::bindr(d6, d7, d8)
 	  
-	  dd1 <- reshape(dd1, varying = c("yield_14", "yield_3"), v.names = "yield", timevar = "yield_moisture", times = c(14, 3), direction = "long")
-	  dd1$id <- NULL
+	  dy <- reshape(dy, varying = c("yield_14", "yield_3"), v.names = "yield", timevar = "yield_moisture", times = c(14, 3), direction = "long")
+	  dy$id <- NULL
+	  
 	  ### merge data with yield 
 	  
-	  d <- merge(dd, dd1, by = intersect(names(dd1), names(dd)), all = TRUE)
-	  d <- d[!is.na(d$N_fertilizer),]
+	  d <- merge(dy, g, by = intersect(names(dy), names(g)), all = TRUE)
 	  
 	  i <- grepl("EWS", d$trial_id)
 	  d$season <- "dry"
@@ -431,6 +323,7 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	  d$rep <- as.integer(d$rep)
 	  cols <- c("dmy_residue","N_fertilizer", "dmy_total", "LAI", "dmy_stems", "dmy_leaves", "plant_height", "harvest_index", "grain_N", "residue_N")
 	  d[cols] <- sapply(d[cols], as.numeric)
+	  
 	  ######
 	  d$country <- "Philippines"
 	  d$location <- "Laguna, Los Baños, IRRI"
@@ -449,10 +342,12 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	  ### keep DAP depending variables in the long format
 	  d$record_id <- as.integer(1:nrow(d))
 	  
-	  d_lon <- d[, c("LAI", "spad", "dmy_stems", "dmy_leaves", "DAP", "record_id", "dmy_total")]
+	  cols <- grep("LA|spad|record_id|DAP|dmy", names(d)) 
+	  d_lon <- d[, cols]
 	  d_lon <- d_lon[!is.na(d_lon$DAP),]
 	  
-	  d <- d[, !names(d)%in% c("LAI", "spad", "dmy_stems", "dmy_leaves", "DAP", "dmy_total")]
+	  col <- grep("LA|spad|DAP|dmy", names(d)) 
+	  d <- d[, -col]
 	  
 	carobiner::write_files(path, meta, d, long = d_lon)
 }
