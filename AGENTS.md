@@ -120,6 +120,10 @@ Rules and gotchas:
   outcomes of interest — **not** management variables applied to all plots.
 - `data_type` "survey" (and the `survey`/`soil_samples` groups) relax some crop/agronomy requirements — see the required-variables logic below.
 - Copy the dataset **title and abstract** verbatim into the quoted string near the top of the function (see the template) so reviewers have context.
+- Do _not_ guess things if they are not reported in the metadata 
+- Do _not_ fill out things you do not know such as "carob_contributor"
+- Estimate carob_completion (% of variables in the raw data that have been processed) 
+- Estimate carob_effort based on your time spent
 
 ---
 
@@ -199,7 +203,9 @@ d$yield_moisture <- as.numeric(NA)    # % moisture if known
 General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
-- **Variable (Column) names** should match a variable name from terminag. Where that is not possible because terminag does not have a matching variable name propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`).
+- **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment")
+- **Variable (Column) names** should match a variable name from terminag. 
+- **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). These are dropped from the written output -- but a warning is given, so you need not worry about that. Do not change terminag, that is a separate process.
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
