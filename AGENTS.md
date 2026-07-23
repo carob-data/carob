@@ -10,7 +10,7 @@ This document supplements those pages with practical, agent-specific detail. If 
 
 **Before writing, also read a few existing scripts in `scripts/<group>/`** — especially the same group you are targeting — to see the conventions applied to real datasets (e.g. recent files in `scripts/varieties/` such as `doi_10.7910_DVN_SMGA6L.R`, or any script in `scripts/agronomy/` or `scripts/survey/`). They are the best templates for structure, naming, units, and how metadata and geo/housekeeping variables are set.
 
-Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear`# comment` in the code, and add a line to the `## NOTE:` or `## ISSUES` block at the top of the scripts
+Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear`# comment` in the code, and add a line to the `## NOTE:` or `## ISSUES` block at the top of the scripts. It is better not to process a variable (and leave a comment about it) than to introduce errors.
 
 ---
 
