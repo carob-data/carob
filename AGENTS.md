@@ -123,9 +123,18 @@ Rules and gotchas:
 
 ## 5. Building `d`: the tidy data.frame
 
+
+### Reading
+
+- Read each **input** file into **`r`**. If a script reads more than one file (or sheet), name them **`r1`, `r2`, ...** (or descriptive names like `rA`, `rD`). 
+- Do not change the values in `r` 
+- When missing value "flags" are used, consider `read.csv(f, na.strings="nd")` and `carobiner::read.excel(f, na=  )` to automatically transform them. 
+- Consider argument `skip` to skip empty rows
+- Consider `carobiner::read.excel.hdr(f, )` for excel files that have multiple header rows.
+
+
 ### Naming and style convention
 
-- Read each **input** file into **`r`**. If a script reads more than one file (or sheet), name them **`r1`, `r2`, ...** (or descriptive names like `rA`, `rD`).
 - Transform each into an **output** `data.frame` named **`d`**, or **`d1`, `d2`, ...** when there are several, then combine as needed.
 - Do the mapping **as directly as possible inside the `data.frame(...)` call** — one line per variable, using a plain column reference or a simple in-line transformation (e.g. a unit multiplication, `tolower()`, `as.numeric()`):
 
