@@ -7,9 +7,7 @@
 # 1-9 scale. Species linked to Latin name/family via r1d's lookup table.
 # Site metadata (soil_type, landscape, crop stage, total cover) repeats per
 # row. soil_type covers 5 mutually-exclusive categories from the source
-# (sandy/sandy-clay/clayey/hydromorphic/gravelly) - a real terminag field
-# with no restricted vocabulary, unlike soil_texture. Source in French,
-# translated below.
+# (sandy/sandy-clay/clayey/hydromorphic/gravelly) 
 
 ## ISSUES
 # Culture_origine sometimes lists 2 crops - first used as crop, rest go in
@@ -20,7 +18,7 @@
 
 carob_script <- function(path) {
   
-  "
+"
 Weed survey in food crops in Abidjan district, Cote d'Ivoire (2015)
 
 Weed abundance survey of food crops (cassava, maize, okra) in the
@@ -33,22 +31,22 @@ in the source workbook.
 "
   
   uri <- "doi:10.18167/DVN1/VCLIB5"
-  group <- "pest_disease"
+  group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
-                                  data_organization = "CIRAD",
-                                  publication = NA,
-                                  project = "Amatrop",
-                                  design = "weed abundance survey, 200 plots in cassava/maize/okra food-crop fields",
-                                  data_type = "survey",
-                                  treatment_vars = "none",
-                                  response_vars = "weed_species;weed_cover",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-07-23",
-                                  carob_completion = 75,
-                                  carob_effort = 5
+		data_organization = "CIRAD",
+		publication = NA,
+		project = "Amatrop",
+		design = "weed abundance survey in 200 fields",
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "weed_species;weed_cover",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-07-23",
+		carob_completion = 75,
+		carob_effort = 5
   )
   
   f1 <- ff[basename(ff) == "CDI-SAB-2015-VIV-AD.xlsx"]
@@ -57,10 +55,10 @@ in the source workbook.
   f4 <- ff[basename(ff) == "CDI-SAB-2015-VIV-FAC.txt"]
   f5 <- ff[basename(ff) == "CDI-SAB-2015-VIV-PA-FLO.txt"]
   
-  r1a <- carobiner::read.excel(f1, sheet="M\u00e9ta donn\u00e9es")
+  r1a <- carobiner::read.excel(f1, sheet="Méta données")
   r1b <- carobiner::read.excel(f1, sheet="Facteurs")
   r1c <- carobiner::read.excel(f1, sheet="Floristique")
-  r1d <- carobiner::read.excel(f1, sheet="Donn\u00e9es origine")
+  r1d <- carobiner::read.excel(f1, sheet="Données origine")
   
   ## r2/f3/f4/f5: documentation and duplicate plain-text versions of r1b/r1c,
   ## not used further - see ISSUES
@@ -101,39 +99,29 @@ in the source workbook.
     apply(vals, 1, function(x) { x <- x[!is.na(x)]; if (length(x) == 0) NA else x[1] })
   }
   
-  crop_lookup <- c(manioc = "cassava", mais = "maize", gombo = "okra", tomate = "tomato", vivrier = "unknown")
-  
-  culture <- get_row("Culture_origine")
-  culture_split <- strsplit(tolower(trimws(culture)), "/")
-  crop_main <- sapply(culture_split, function(x) unname(crop_lookup[trimws(x)[1]]))
-  crop_extra <- sapply(culture_split, function(x) {
-    if (length(x) <= 1) return("none")
-    extras <- unname(crop_lookup[trimws(x)[-1]])
-    paste(extras, collapse = ";")
-  })
+  crop_lookup <- c(manioc="cassava", mais = "maize", `mais/manioc` = "maize_cassava", `manioc/tomate` = "cassava_tomato", gombo = "okra")
+
   
   d1b <- data.frame(
-    trial_id = names(r1b)[-1],
-    crop = crop_main,
-    intercropped = crop_extra != "none",
-    intercrops = crop_extra,
-    crop_local = culture,
-    crop_group = get_row("Type_culture"),   # suggested field
-    obs_year = as.character(as.integer(get_row("Ann\u00e9e"))),
-    country = "C\u00f4te d'Ivoire",
+    field_id = names(r1b)[-1],
+    crop = crop_lookup[get_row("Culture_origine")],
+    date = as.character(as.integer(get_row("Année"))),
+    country = "Côte d'Ivoire",
     location = get_row("Lieu"),
     soil_type = pick_onehot(soil_lookup$fr, soil_lookup),
     landscape_position = pick_onehot(pos_lookup$fr, pos_lookup),
     growth_stage = pick_onehot(stage_lookup$fr, stage_lookup),
-    total_weed_cover = as.numeric(get_row("RECOUVR")),   # suggested field, survey-level total (%)
-    irrigated = tolower(get_row("Irrigation")) %in% c("inonde", "inond\u00e9"),
-    aez = get_row("Climat")   # suggested field - climate zone
+    weed_cover = as.numeric(get_row("RECOUVR")),   # suggested field, survey-level total (%)
+    irrigated = tolower(get_row("Irrigation")) %in% c("inonde", "inondé")
   )
   
   ### Coordinates - single location (Abidjan) for all surveys
-  d1b$longitude <- -4.0083
-  d1b$latitude <- 5.3600
-  d1b$adm1 <- "Abidjan"
+  # g <- carobiner::adm_pointRadius("CIV", 2)
+  # carobiner::dfput(g[g$adm2 == "Abidjan", ])
+  d1b$longitude <- -4.065
+  d1b$latitude <- 5.4203 
+  d1b$geo_uncertainty <- 41047
+  d1b$geo_source <- "GADM 4.1, adm2" 
   d1b$geo_from_source <- FALSE
   
   ### Weed abundance, one row per species actually observed per survey.
@@ -142,27 +130,19 @@ in the source workbook.
   
   present <- which(!is.na(r1c[, -1]) & r1c[, -1] > 0, arr.ind = TRUE)
   d <- data.frame(
-    trial_id = names(r1c)[-1][present[, "col"]],
+    field_id = names(r1c)[-1][present[, "col"]],
     weed_code = r1c[[1]][present[, "row"]],
-    weed_cover = rating_to_cover$cover[match(r1c[, -1][present], rating_to_cover$rating)]
+    ground_cover = rating_to_cover$cover[match(r1c[, -1][present], rating_to_cover$rating)]
   )
   
   ### Link species codes to Latin name / family
   d <- merge(d, species_lookup, by.x = "weed_code", by.y = "code", all.x = TRUE)
+  d <- merge(d, d1b, by = "field_id", all.x = TRUE)
   
-  d <- merge(d, d1b, by = "trial_id", all.x = TRUE)
-  
+  d$weed_code <- NULL
   d$on_farm <- TRUE
   d$is_survey <- TRUE
-  d$yield <- NA
-  d$yield_part <- NA
-  d$yield_moisture <- NA
-  d$yield_isfresh <- NA
-  d$N_fertilizer <- NA
-  d$P_fertilizer <- NA
-  d$K_fertilizer <- NA
-  d$planting_date <- NA
-  d$harvest_date <- NA
+  d$intercropped <- grepl("_", d$crop)
   
   carobiner::write_files(path, meta, d)
 }
