@@ -7,12 +7,7 @@
 # one row per plot x evaluator. 
 
 ## ISSUES
-# r2/r3/r9 have more flavor/texture data (by clone x locality).
-
-## That is not true for r2/r3
-   # I could not figure out how those values link up with the long format data so i left it out.
-   # r2 - seems like the average and sd values per clone per location from the 3 (N) evaluators; which can be recalculated from long format
-   # r3 - is even complex; likely another summarry version of the long-format
+# r2/r3/r9 appear to have the same flavor/texture data (by clone x locality).
 
 # flavor_score/texture_score: no terminag equivalent, suggested new terms.
 
