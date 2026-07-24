@@ -21,7 +21,7 @@ carob_script <- function(path) {
 2006 Fertilizer experiment at Ekha Agro farm LANLATE
 "
 
-	uri <- "https://doi.org/10.25502/6ana-1536"
+	uri = "doi:10.25502/6ana-1536"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
@@ -33,7 +33,7 @@ carob_script <- function(path) {
 		design = "RCBD",
 		data_type = "experiment", # on-farm/site not specified
 		treatment_vars = "", # not provided in dataset
-		response_vars = "yield;dry_matter_content;fwy_storage;harvest_index;", 
+		response_vars = "yield;fwy_storage;harvest_index;", 
 		notes = "3 seperate yields were recorded in this dataset, so 3 seperate variable names were used instead of the terminags 'yield'",
 		carob_contributor = "Kudzaishe M. Muzata",
 		carob_date = "2026-07-22",
@@ -51,30 +51,30 @@ carob_script <- function(path) {
 		rep = as.integer(r1[["replicate"]]),
 		planting_date = r1[["plantingDate"]],
 		# harvest_date = r1[["harvestDate"]],
-		location = r1[["locationDbId"]],
 		variety = r1[["germplasmName"]],
-		dry_matter_content = r1[["dry.matter.content.percentage.CO_334.0000092"]], # could not find equivalent in terminag
-		dry_yield = r1[["dry.yield.CO_334.0000014"]], # see notes
-		fresh_yield = r1[["fresh.root.yield.CO_334.0000013"]],
+		yield_moisture = 100 - r1[["dry.matter.content.percentage.CO_334.0000092"]],
+		dmy_roots = r1[["dry.yield.CO_334.0000014"]],
+		fwy_roots = r1[["fresh.root.yield.CO_334.0000013"]],
 	 	fwy_leaves = r1[["fresh.shoot.weight.measurement.in.kg.per.plot.CO_334.0000016"]],
 		harvest_index = r1[["harvest.index.variable.CO_334.0000015"]],
-		top_yield = r1[["top.yield.CO_334.0000017"]]		
+		# top_yield = r1[["top.yield.CO_334.0000017"]],
+		location_id = as.character(r1[["locationDbId"]]),		
+		location = r1[["locationName"]]
 	)
 
 	d$country <- "Nigeria"
-	d$trial_id <- "1" # there is only trial, one location, and one design
-	
-## about the data (TRUE/FALSE)
+	d$trial_id <- "1" 
+
 	d$on_farm <- TRUE # sumised from experiment name "Ekha Agro farm"
 	d$is_survey <- FALSE
-	d$irrigated <- NA # no irrigation methods documented
+	d$irrigated <- NA 
 
-    d$crop_rotation <- NA # no information provided
+    d$crop_rotation <- NA 
 	d$crop <- "cassava"
 
 # could not find lanlate in geodata so use of just adm1 was most accurate
 	d$adm1 <- "Oyo" 
-	d$location <- "Lanlate"
+	# d$location <- "Lanlate"
 	d$longitude <- 3.6188
 	d$latitude <- 8.1437 
 	d$geo_uncertainty <- 124749
@@ -96,14 +96,11 @@ carob_script <- function(path) {
    d$fertilizer_type <- NA
 
 ### Yield
-	d$yield <- d$fresh_yield * 1000
-	d$yield_part <- "tubers" # cassava is classified as a tuberous root
-	d$yield_moisture <- 100 - d$dry_matter_content #dmc is given in %
+	d$yield <- d$fwy_roots * 1000
+	d$yield_part <- "tubers" 
 
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-	d$fwy_storage <- d$fresh_yield * 1000
-	d$dmy_storage <- d$dry_yield * 1000
-	d$dmy_total <- d$top_yield * 1000
+	d$fwy_storage <- d$fwy_roots * 1000
+	# d$dmy_total <- d$top_yield * 1000
 	
 	carobiner::write_files(path, meta, d)
 }
