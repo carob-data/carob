@@ -4,21 +4,20 @@
 ## NOTES
 # 6 site trials, sensory flavor/texture scores (1-9, 3 evaluators/plot),
 # potato clones vs Canchan/Unica reference varieties, Peru. Long format:
-# one row per plot x evaluator. Reassigned from pest_disease to varieties -
-# no disease data present. Coordinates geocoded once, hardcoded.
+# one row per plot x evaluator. 
 
 ## ISSUES
 # r2/r3/r9 have more flavor/texture data (by clone x locality) but aren't
 # used - their locality names don't reliably link to the 6 site codes.
-# Sum/Average columns in the plot files are inconsistent, not used.
-# Source description mentions yield/dry matter/sugar content as selection
-# criteria - none of these exist in the data, only sensory scores.
+
+## That is not true for r2/r3
+
 # flavor_score/texture_score: no terminag equivalent, suggested new terms.
 
 
 carob_script <- function(path) {
   
-  "
+"
 Dataset for: Late blight resistant potato varieties for the tropical highlands and mid-elevation
  
 Sensory evaluation (flavor and texture, scored by 3 independent tasters) of
@@ -31,22 +30,22 @@ selection criteria, but none of these variables are present in any of the
 "
   
   uri <- "doi:10.21223/BJECYK"
-  group <- "varieties"
+  group <- "varieties_potato"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-                                  data_organization = "CIP",
-                                  publication = NA,
-                                  project = NA,
-                                  design = "sensory evaluation trial (flavor/texture)",
-                                  data_type = "on-station experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "flavor_score;texture_score",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-07-23",
-                                  carob_completion = 75,
-                                  carob_effort = 4
+		data_organization = "CIP",
+		publication = NA,
+		project = NA,
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "flavor_score;texture_score",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-07-23",
+		carob_completion = 75,
+		carob_effort = 4
   )
   
   f1 <- ff[basename(ff) == "01_MAJ21_01.xlsx"]
@@ -67,7 +66,7 @@ selection criteria, but none of these variables are present in any of the
   r6 <- carobiner::read.excel(f6)
   r7 <- carobiner::read.excel(f7)
   r8 <- carobiner::read.excel(f8)
-  r9 <- carobiner::read.excel(f9)
+  #r9 <- carobiner::read.excel(f9)
   ## r2, r3, r9 are not used - see ISSUES (no reliable link to trial_id/site)
   
   ### Reshape one site's plot-level file into long format (one row per plot x
