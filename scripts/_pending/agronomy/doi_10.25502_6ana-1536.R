@@ -12,6 +12,7 @@
 # "dmy_total" is presented as "dmy_totat" in draft
 # "fertilizer_type" is presented as "fertlizer_type" in draft
 
+# 3 seperate yields were recorded in this dataset, so 3 seperate variable names were used instead of the terminags 'yield'"
 
 carob_script <- function(path) {
 
@@ -25,7 +26,6 @@ carob_script <- function(path) {
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
 		publication = NA,
@@ -33,8 +33,8 @@ carob_script <- function(path) {
 		design = "RCBD",
 		data_type = "experiment", # on-farm/site not specified
 		treatment_vars = "", # not provided in dataset
-		response_vars = "yield;fwy_storage;harvest_index;", 
-		notes = "3 seperate yields were recorded in this dataset, so 3 seperate variable names were used instead of the terminags 'yield'",
+		response_vars = "yield", 
+		notes = NA,
 		carob_contributor = "Kudzaishe M. Muzata",
 		carob_date = "2026-07-22",
 		carob_completion = 30,	
