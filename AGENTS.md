@@ -83,12 +83,14 @@ Whichever you use, be aware the cache is only refreshed by `vocal` (on the GitHu
 
 0. **Study a few finished scripts** in `scripts/<group>/` (ideally the target group) to learn the expected structure and conventions before you begin.
 1. **bootstrap** with `carobiner::draft(uri, path, group)`. This downloads the data and writes a starter into `scripts/_draft/<group>/`.
-2. **Inspect the raw data**: list `ff`, read each relevant sheet/file, and look at column names, codebooks, and the dataset's description/abstract. Codebooks (often extra `.csv`/`.xlsx`/`.pdf`) tell you units and category codes. **Also read the associated publication's Methods section** (Section 8) for location, management, design, and unit information not in the data files.
-3. **Map columns** to terminag names and correct units (Section 5–6).
-4. **Fill metadata** (Section 4).
-5. **Build `d`**, then set the required "housekeeping" variables (trial_id, geo, on_farm/is_survey, yield_part, ...).
-6. **Test** in a clean session and resolve every `write_files()` message (Section 9).
-7. **Place** the finished file in `scripts/<group>/` (Section 10).
+2. **Inspect the raw data**: list `ff`, read each relevant sheet/file, and look at column names, codebooks, and the dataset's description/abstract. Codebooks (often extra `.csv`/`.xlsx`/`.pdf`) tell you units and category codes. 
+3. **Associated publication** If no associated publication (paper) is reported in the metadata, do a search to see if there is an probably match. Note that you found it in a comment. Do a careful crosscheck to see if this is indeed reporting the data at hand.
+4. **Read the associated publication's Methods section** (Section 8) for location, management, design, and unit information not in the data files. Note if you cannot do that, for example because the publication is behind a paywall. 
+5. **Map columns** to terminag names and correct units (Section 5–6).
+6. **Fill metadata** (Section 4).
+7. **Build `d`**, then set the required "housekeeping" variables (trial_id, geo, on_farm/is_survey, yield_part, ...).
+8. **Test** in a clean session and resolve every `write_files()` message (Section 9).
+9. **Place** the finished file in `scripts/<group>/` (Section 10).
 
 ---
 
@@ -118,6 +120,10 @@ Rules and gotchas:
   outcomes of interest — **not** management variables applied to all plots.
 - `data_type` "survey" (and the `survey`/`soil_samples` groups) relax some crop/agronomy requirements — see the required-variables logic below.
 - Copy the dataset **title and abstract** verbatim into the quoted string near the top of the function (see the template) so reviewers have context.
+- Do _not_ guess things if they are not reported in the metadata 
+- Do _not_ fill out things you do not know such as "carob_contributor"
+- Estimate carob_completion (% of variables in the raw data that have been processed) 
+- Estimate carob_effort based on your time spent
 
 ---
 
@@ -197,7 +203,9 @@ d$yield_moisture <- as.numeric(NA)    # % moisture if known
 General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
-- **Variable (Column) names** should match a variable name from terminag. Where that is not possible because terminag does not have a matching variable name propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`).
+- **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment")
+- **Variable (Column) names** should match a variable name from terminag. 
+- **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). These are dropped from the written output -- but a warning is given, so you need not worry about that. Do not change terminag, that is a separate process.
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
@@ -212,6 +220,7 @@ General rules:
 - **Fertilizer**: report `P_fertilizer` and `K_fertilizer` as the weight of the **elements P and K**, *not* the weight of the oxides P2O5 and K2O. Convert with `P = P2O5 / 2.29` and `K = K2O / 1.2051`. Likewise report elemental **N** (and `S_fertilizer`, `lime`) in kg/ha. Compute nutrient amounts from product rate × nutrient fraction (e.g. urea 46% N).
 - **Dates**: character strings, one of `"2023"` (year), `"2023-07"` (year-month), or `"2023-07-21"` (full date). Use `as.character(as.Date(...))` for full dates.
 - **Prices**: include `currency` whenever `crop_price` is present (a price without a currency is flagged).
+- **no "per plot" or "per plant" values**: counts and weights that are reported by plot or plant shoud normally be normalized to a per-ha basis using the plot's known area or the plant_density. Always record the relevant *_density field (plant_density, or the organ-specific density if the raw data gives it directly) alongside it so the per-plant/per-plot figure remains recoverable by dividing the two densities back out
 
 Add a short `#` comment whenever a computation relies on the codebook, the paper, or a non-obvious assumption (e.g. basket→kg conversions, nutrient fractions).
 
