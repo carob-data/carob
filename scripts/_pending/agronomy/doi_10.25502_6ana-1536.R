@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# NOTE: this was moved to pending due to missing information
 # in 2021-11-24t035520phenotype_download.csv "harvestDate" is an empty column
 # in 2021-11-24t035520phenotype_download.csv "locationName" lists Ibadan as the location but "studyDescription" and the datasets title place trial in Lanlate
 # the dataset is described as a "Fertilizer experiment" in both the description and title but NO fertiliser information is given, so all fertiliser vars are set to NA and treatment_var in metadata is left empty
