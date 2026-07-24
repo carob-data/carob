@@ -7,10 +7,12 @@
 # one row per plot x evaluator. 
 
 ## ISSUES
-# r2/r3/r9 have more flavor/texture data (by clone x locality) but aren't
-# used - their locality names don't reliably link to the 6 site codes.
+# r2/r3/r9 have more flavor/texture data (by clone x locality).
 
 ## That is not true for r2/r3
+   # I could not figure out how those values link up with the long format data so i left it out.
+   # r2 - seems like the average and sd values per clone per location from the 3 (N) evaluators; which can be recalculated from long format
+   # r3 - is even complex; likely another summarry version of the long-format
 
 # flavor_score/texture_score: no terminag equivalent, suggested new terms.
 
@@ -67,7 +69,6 @@ selection criteria, but none of these variables are present in any of the
   r7 <- carobiner::read.excel(f7)
   r8 <- carobiner::read.excel(f8)
   #r9 <- carobiner::read.excel(f9)
-  ## r2, r3, r9 are not used - see ISSUES (no reliable link to trial_id/site)
   
   ### Reshape one site's plot-level file into long format (one row per plot x
   ### evaluator).
