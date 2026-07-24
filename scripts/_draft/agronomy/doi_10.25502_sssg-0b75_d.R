@@ -30,7 +30,6 @@ TAMASA is a 4-year project seeking to improve productivity and profitability for
 	}
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-
 		data_organization = "IITA;ABU;BUK",
 		publication = NA,
 		project = "Taking Maize Agronomy to Scale in Africa (TAMASA)",
@@ -45,18 +44,11 @@ TAMASA is a 4-year project seeking to improve productivity and profitability for
 		carob_effort = 8
 	)
 	
-
-	f1 <- ff[basename(ff) == "data_dictionary.csv"]
 	f2 <- ff[basename(ff) == "maize-planting-date-experiment.csv"]
 
-	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)
 
-	d1 <- data.frame(
-		country = r1[["coverage.country"]]
-	)
-
-	d2 <- data.frame(
+	d <- data.frame(
 		plot_id = as.character(r2[["Plotno"]]),
 		location = r2[["Loc"]],
 		year = r2[["Year"]], # could not find equivalent in terminag
@@ -73,8 +65,8 @@ TAMASA is a 4-year project seeking to improve productivity and profitability for
 		yield = r2[["Gyieldtha"]],
 		topwt = r2[["Topwtha"]] # could not find equivalent in terminag
 	)
-	d <- d2
-	d$country <- d1$country[1] # from coverage.country column in data_dictionary.csv
+	
+	d$country <- "Nigeria" # from coverage.country column in data_dictionary.csv
 
 	d$trial_id <- as.character(as.integer(as.factor(paste(d$location, d$year))))
 	
@@ -93,7 +85,6 @@ TAMASA is a 4-year project seeking to improve productivity and profitability for
 
 	d$geo_from_source <- FALSE # estimated from location given
 
-	d$planting_date <- d$planting_date
 	d$harvest_date  <- NA
 
 ### Fertilizers 
@@ -106,24 +97,16 @@ TAMASA is a 4-year project seeking to improve productivity and profitability for
    d$S_fertilizer <- NA
    d$lime <- NA
 
-## normalize names 
    d$fertilizer_type <- NA
-
-## for legumes <- dealing with maize
-   d$inoculated <- FALSE
-   d$inoculant <- NA
    
 ### Yield
-	d$yield <- d2$yield
-
 	d$yield_part <- "grain"
 	d$yield_moisture <- NA # not given
 	d$yield_isfresh <- NA # not stated
 
-	d$fwy_storage <- d2$yield
+	d$fwy_storage <- d$yield
 	d$dmy_storage <- NA # moisture content not given so cannot be derived
-	d$dmy_total <- NA
-	d$fwy_residue <- d$topwt - d2$yield
+	d$fwy_residue <- d$topwt - d$yield
 	
 	carobiner::write_files(path, meta, d)
 }
