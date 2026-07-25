@@ -2,7 +2,7 @@ passwords.R
 .html
 temp.*
 _old/
-_draft/
+scripts/_draft/
 data/
 run.R
 *.zip
@@ -18,7 +18,7 @@ run.R
 *.utf8.md
 *.knit.md
 .Renviron
-carob.Rproj
+*.Rproj
 .Rprofile
 update_carob.R
 harvester/
