@@ -180,14 +180,13 @@ yam, groundnut, and general food crop fields.
   #Merge all the sites into a d1 database
   d1 <- rbind(d1d, d1e, d1f, d1g, d1h, d1i)
   d1$crop <- crop_lookup$crop[match(tolower(d1$crop), crop_lookup$fr)]
-  d1$intercropped <- d1$crop == "plantain_manioc"
+
+  d1b$on_farm <- TRUE
+  d1b$is_survey <- TRUE
   
   ### Merge species lookup (d1) with site (d1b)
   d <- merge(d1, d1b, by = "hhid", all.x = TRUE)
   
-  d$on_farm <- TRUE
-  d$is_survey <- TRUE
-  
-  carobiner::write_files(path, meta, d)
+  carobiner::write_files(path, meta, d1b, long=d1)
 }
 

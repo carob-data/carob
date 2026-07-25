@@ -51,8 +51,12 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
   ## build an ISO (yyyy-mm-dd) date string from separate dd/mm/yyyy
   ## components. mm may arrive as a month name (e.g. "December") or a number.
   build_date <- function(dd, mm, yyyy) {
-    dd   <- trimws(as.character(dd))
-    mm   <- trimws(as.character(mm))
+    dd <- trimws(as.character(dd))
+    mm <- tolower(trimws(as.character(mm)))
+	mm <- gsub("january", "01", mm)  
+	mm <- gsub("february", "02", mm)  
+	mm <- gsub("november", "11", mm)  
+	mm <- gsub("december|desember", "12", mm)  
     yyyy <- trimws(as.character(yyyy))
     mm_num <- (as.numeric(mm))
     mm_num[is.na(mm_num)] <- match(tolower(mm[is.na(mm_num)]), tolower(month.name))
@@ -395,6 +399,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
   d$fertilizer_type <- toupper(d$treatment)
   d$treatment <- as.character(d$treatment_description)
   d$fertilizer_type[d$fertilizer_type=="CONTROL"] <- "none"
+  d$fertilizer_type[d$fertilizer_type=="SYMPAL"] <- "sympal"
   
   d$treatment_description <- d$inoculant_y_n <- NULL
   
