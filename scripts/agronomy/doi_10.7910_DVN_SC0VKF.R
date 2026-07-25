@@ -19,13 +19,13 @@ Four seasons of N2O and CO2 emission from four selected treatments of CIAT's lon
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=5,
 		data_organization = "CIAT",
-		publication = "doi.org/10.1007/s10705-015-9693-6",
+		publication = "doi:10.1007/s10705-015-9693-6",
 		project = NA,
 		carob_date = "2026-07-19",
 		design = "split–split–split plot",
 		data_type = NA,
 		treatment_vars = "N_fertilizer;P_fertilizer;OM_used;residue_prevcrop_used;crop_rotation",
-		response_vars = "methane_flux;nitrous_oxide_flux;carbon_dioxide_flux", 
+		response_vars = "flux_CH4;flux_N2O;flux_CO2", 
 		carob_contributor = "Blessing Dzuda",
 		carob_completion = 100,	
 		carob_effort = 6,
@@ -55,9 +55,9 @@ Four seasons of N2O and CO2 emission from four selected treatments of CIAT's lon
 	  rep=r$Rep.,
 	  #treatment=r$Treatm.,numeric codes not defined, silencing the column
 	  crop_rotation=r$Rotation,
-	  methane_flux=r$CH4.FLUX..mg.m..h.,
-	  carbon_dioxide_flux=r$CO2.FLUX..mg.C.m..h.,
-	  nitrous_oxide_flux=r$N2O.FLUX..µg.m..h.
+	  flux_CH4 =r$CH4.FLUX..mg.m..h.,
+	  flux_CO2 =r$CO2.FLUX..mg.C.m..h.,
+	  flux_N2O =r$N2O.FLUX..µg.m..h.
 	)
 	
 	d$date <- as.character(as.Date(r$Date, format = "%d-%b-%y"))
