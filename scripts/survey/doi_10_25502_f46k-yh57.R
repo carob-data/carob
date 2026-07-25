@@ -1,11 +1,16 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
+## WARNINGS NEED TO BE FIXED
+
 #production.csv file (standardized as dd) describes the farmer's *other* fields/crop rotations (field survey) (outside the N2Africa trial plot) and is intentionally NOT merged into d -- see note near `dd`
 
 carob_script <- function(path) {
 
-  "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers an N2Africa diagnostic trial (control/PK/NPK/SYMPAL fertilizer treatments on common bean) in northern Tanzania (Lushoto and Moshi Rural districts), 2014 season II, together with household demographics, livestock composition, and farm production context."
+"
+N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. This dataset covers an N2Africa diagnostic trial (control/PK/NPK/SYMPAL fertilizer treatments on common bean) in northern Tanzania (Lushoto and Moshi Rural districts), 2014 season II, together with household demographics, livestock composition, and farm production context.
+"
 
   uri   <- "doi:10.25502/f46k-yh57"
   group <- "survey"
@@ -13,19 +18,19 @@ carob_script <- function(path) {
   ff <- carobiner::get_data(uri, path, group)
 
   meta <- carobiner::get_metadata(uri, path, group,
-                                  major = NA, minor = NA,
-                                  data_organization = "IITA",
-                                  publication = NA,
-                                  project = "N2Africa",
-                                  data_type = "survey",
-                                  treatment_vars = "fertilizer_used;fertilizer_amount",
-                                  response_vars = "yield",
-                                  carob_completion = 100,
-                                  carob_contributor = "Mitchelle Njukuya",
-                                  carob_date = "2026-07-14",
-                                  carob_effort = 3,
-                                  notes = NA,
-                                  design = NA
+		major = NA, minor = NA,
+		data_organization = "IITA",
+		publication = NA,
+		project = "N2Africa",
+		data_type = "survey",
+		treatment_vars = "fertilizer_used;fertilizer_amount",
+		response_vars = "yield",
+		carob_completion = 100,
+		carob_contributor = "Mitchelle Njukuya",
+		carob_date = "2026-07-14",
+		carob_effort = 3,
+		notes = NA,
+		design = NA
   )
 
   f1 <- ff[basename(ff) == "general.csv"]
