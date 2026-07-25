@@ -1,16 +1,16 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## NOTES
+# shade observations commented out. Too vague.
+
 # This appears to be an ODK-collected dataset originally designed to study
 # light interception before and after pruning. This script focuses on bean
 # yield, which has multiple plots per farm_id and two common bean varieties
 # (local and improved) grown on the same farm, but there is no way to
 # identify which plot belongs to which variety. 
 
-## RH: this could be a reason to _reject_ the dataset --- the main treatment is not available\
-## but I suppose we can still keep it such that we have observations on bean yields.
- 
 
 # For light interception, only the before-pruning state is used (pruning occurred
 # after harvest, so cannot be linked to yield).
@@ -134,14 +134,6 @@ hail, and disease (halo blight) damage."
     ## plot 3's row-count column is missing its number in the raw data
     n_rows_col <- if (i == 3) "number_of_rows_crop_1_plot__nr" else paste0("number_of_rows_crop_1_plot_", i, "_nr")
     
-    ## least/most shaded harvest subsample - only plots 1-4 have these columns
-    least_shaded_kg   <- if (i <= 4) r1[[paste0("grain_weight_net_harvest_area_least_shaded_plot", i, "_kg")]] else NA
-    least_shaded_len  <- if (i <= 4) r1[[paste0("row_length_net_harvest_area_least_shaded_plot", i, "_m")]] else NA
-    least_shaded_rows <- if (i <= 4) r1[[paste0("number_of_rows_net_harvest_area_least_shaded_plot", i, "_nr")]] else NA
-    
-    most_shaded_kg   <- if (i <= 4) r1[[paste0("grain_weight_net_harvest_area_most_shaded_plot", i)]] else NA
-    most_shaded_len  <- if (i <= 4) r1[[paste0("row_length_net_harvest_area_most_shaded_plot", i)]] else NA
-    most_shaded_rows <- if (i <= 4) r1[[paste0("number_of_rows_net_harvest_area_most_shaded_plot", i)]] else NA
     
     data.frame(
       farm_id = r1$farm_id,
@@ -151,13 +143,15 @@ hail, and disease (halo blight) damage."
       n_rows = r1[[n_rows_col]],
       row_spacing_cm = r1[[paste0("row_spacing_crop_1_plot_", i, "_cm")]],
       plant_spacing_cm = r1[[paste0("plant_spacing_crop_1_plot_", i, "_cm")]],
-      no_plants_hole = r1[[paste0("no_plants_hole_crop_1_plot_", i, "_nr")]],
-      least_shaded_kg = least_shaded_kg,
-      least_shaded_len = least_shaded_len,
-      least_shaded_rows = least_shaded_rows,
-      most_shaded_kg = most_shaded_kg,
-      most_shaded_len = most_shaded_len,
-      most_shaded_rows = most_shaded_rows
+      no_plants_hole = r1[[paste0("no_plants_hole_crop_1_plot_", i, "_nr")]]
+
+    ## least/most shaded harvest subsample - only plots 1-4 have these columns
+	  #least_shaded_kg  = ifelse(i <= 4, r1[[paste0("grain_weight_net_harvest_area_least_shaded_plot", i, "_kg")]], NA),
+	  #least_shaded_len = ifelse(i <= 4, r1[[paste0("row_length_net_harvest_area_least_shaded_plot", i, "_m")]], NA),
+	  #least_shaded_rows= ifelse(i <= 4, r1[[paste0("number_of_rows_net_harvest_area_least_shaded_plot", i, "_nr")]], NA),
+	  #most_shaded_kg  = ifelse(i <= 4, r1[[paste0("grain_weight_net_harvest_area_most_shaded_plot", i)]], NA),
+	  #most_shaded_len = ifelse(i <= 4, r1[[paste0("row_length_net_harvest_area_most_shaded_plot", i)]], NA),
+	  #most_shaded_rows= ifelse(i <= 4, r1[[paste0("number_of_rows_net_harvest_area_most_shaded_plot", i)]], NA)
     )
   }))
   
@@ -166,10 +160,10 @@ hail, and disease (halo blight) damage."
   plot_data$yield <- (plot_data$grain_weight_kg / plot_data$area_m2) * 10000
   
   ## suggested new terms: yield from the shaded-subsample harvest zones
-  plot_data$area_least_shaded_m2 <- plot_data$least_shaded_len * (plot_data$least_shaded_rows * plot_data$row_spacing_cm / 100)
-  plot_data$yield_least_shaded <- (plot_data$least_shaded_kg / plot_data$area_least_shaded_m2) * 10000
-  plot_data$area_most_shaded_m2 <- plot_data$most_shaded_len * (plot_data$most_shaded_rows * plot_data$row_spacing_cm / 100)
-  plot_data$yield_most_shaded <- (plot_data$most_shaded_kg / plot_data$area_most_shaded_m2) * 10000
+ # plot_data$area_least_shaded_m2 <- plot_data$least_shaded_len * (plot_data$least_shaded_rows * plot_data$row_spacing_cm / 100)
+ # plot_data$yield_least_shaded <- (plot_data$least_shaded_kg / plot_data$area_least_shaded_m2) * 10000
+ # plot_data$area_most_shaded_m2 <- plot_data$most_shaded_len * (plot_data$most_shaded_rows * plot_data$row_spacing_cm / 100)
+ # plot_data$yield_most_shaded <- (plot_data$most_shaded_kg / plot_data$area_most_shaded_m2) * 10000
   
   ## documented total crop failure (drought) - a real, informative zero, not NA
   plot_data$yield[plot_data$farm_id == "Ug" & plot_data$plot_id == "1"] <- 0
@@ -181,21 +175,21 @@ hail, and disease (halo blight) damage."
       harvest_area_type = "plot",
       yield = plot_data$yield,
       plot_area = plot_data$area_m2
-    ),
-    data.frame(
-      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
-      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
-      harvest_area_type = "least shaded",
-      yield = plot_data$yield_least_shaded[plot_data$plot_id %in% c("1","2","3","4")],
-      plot_area = plot_data$area_least_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
-    ),
-    data.frame(
-      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
-      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
-      harvest_area_type = "most shaded",
-      yield = plot_data$yield_most_shaded[plot_data$plot_id %in% c("1","2","3","4")],
-      plot_area = plot_data$area_most_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
-    )
+    )#,
+#    data.frame(
+#      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
+#      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
+#      harvest_area_type = "least shaded",
+#      yield = plot_data$yield_least_shaded[plot_data$plot_id %in% c("1","2","3","4")],
+#      plot_area = plot_data$area_least_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
+#    ),
+#    data.frame(
+#      farm_id = plot_data$farm_id[plot_data$plot_id %in% c("1","2","3","4")],
+#      plot_id = plot_data$plot_id[plot_data$plot_id %in% c("1","2","3","4")],
+#      harvest_area_type = "most shaded",
+#      yield = plot_data$yield_most_shaded[plot_data$plot_id %in% c("1","2","3","4")],
+#      plot_area = plot_data$area_most_shaded_m2[plot_data$plot_id %in% c("1","2","3","4")]
+#    )
   )
   
   ### Merge farm-level info into the plot-level table
@@ -236,11 +230,7 @@ hail, and disease (halo blight) damage."
   ## no fertilizer or planting-date data exist anywhere in this dataset
   d$planting_date <- NA
   
-  ## RH this is inconstent. 
-  ## If it is correct hat fertilizer_used = FALSE, then N_, P_, K_fertilizer should be zero, not NA
-  d$N_fertilizer <- 0
-  d$P_fertilizer <- 0
-  d$K_fertilizer <- 0
+  d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
   d$fertilizer_used <- FALSE
     
   carobiner::write_files(path, meta, d)
