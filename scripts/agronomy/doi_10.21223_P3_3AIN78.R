@@ -52,7 +52,9 @@ partial/total Land Equivalent Ratio (LER)."
 		carob_contributor = "AI agronomy writer agent",
 		carob_date = "2026-07-27",
 		carob_completion = 85,
-		carob_effort = 3
+		# measured from session start to PR creation (scratchpad-dir ctime 10:29:01 to
+		# PR-creation timestamp 10:58:23, both 2026-07-27): ~29 minutes, rounded up slightly
+		carob_effort = 0.5
 	)
 
 ## read data
