@@ -24,14 +24,11 @@ dataset covers the Liberia baseline survey, conducted 3 October-30 November 2012
 across four action sites (Foya, Jorquelleh, Sannoyea, Zorzor) in the humid warm
 tropics agroecological zone."
 
-## Identifiers
 	uri <- "doi:10.25502/ckxj-2t51/d"
 	group <- "survey"
 
-## Download data
 	ff <- carobiner::get_data(uri, path, group)
 
-## metadata
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
 		publication = NA,
@@ -47,34 +44,34 @@ tropics agroecological zone."
 		design = NA
 	)
 
-## read data
 	f1  <- ff[basename(ff) == "general.csv"]
-	r1  <- read.csv(f1, na="")
 	f2  <- ff[basename(ff) == "a_demographic.csv"]
-	r2  <- read.csv(f2, na="")
-	#f3  <- ff[basename(ff) == "b_income.csv"]
-	#r3  <- read.csv(f3, na="")
+	f3  <- ff[basename(ff) == "b_income.csv"]
 	f4  <- ff[basename(ff) == "c_labour.csv"]
-	r4  <- read.csv(f4, na="")
 	f5  <- ff[basename(ff) == "d_livestock_ownership.csv"]
-	r5  <- read.csv(f5, na="")
 	f6  <- ff[basename(ff) == "e1_e2_land_use.csv"]
-	r6  <- read.csv(f6, na="")
 	f7  <- ff[basename(ff) == "e3_land_use.csv"]
-	r7  <- read.csv(f7, na="")
-	#f8  <- ff[basename(ff) == "e4_e6_land_use.csv"]
-	#r8  <- read.csv(f8, na="")
+	f8  <- ff[basename(ff) == "e4_e6_land_use.csv"]
 	f9  <- ff[basename(ff) == "f_crop_production.csv"]
-	r9  <- read.csv(f9, na="")
 	f10 <- ff[basename(ff) == "g1_legume_utilisation.csv"]
-	r10 <- read.csv(f10, na="")
 	f11 <- ff[basename(ff) == "g2_legume_utilisation.csv"]
-	r11 <- read.csv(f11, na="")
 	f12 <- ff[basename(ff) == "h1_access_to_markets.csv"]
-	r12 <- read.csv(f12, na="")
 	#f13 <- ff[basename(ff) == "h2_h3_access_to_markets.csv"]
-	#r13 <- read.csv(f13, na="")
 	#f14 <- ff[basename(ff) == "g3_nutrition_important_food_hh.csv"]
+
+	r1  <- read.csv(f1, na="")
+	r2  <- read.csv(f2, na="")
+	r3  <- read.csv(f3, na="")
+	r4  <- read.csv(f4, na="")
+	r5  <- read.csv(f5, na="")
+	r6  <- read.csv(f6, na="")
+	r7  <- read.csv(f7, na="")
+	r8  <- read.csv(f8, na="")
+	r9  <- read.csv(f9, na="")
+	r10 <- read.csv(f10, na="")
+	r11 <- read.csv(f11, na="")
+	r12 <- read.csv(f12, na="")
+	#r13 <- read.csv(f13, na="")
 	#r14 <- read.csv(f14, na="")
 
 ## crop names shared across crop production, e3 rotation, and legume utilisation
@@ -110,114 +107,102 @@ tropics agroecological zone."
 		x[x == "rices"] <- "rice"
 		x[x == "pawpaw"] <- "papaya"
 		x[x %in% c("water-melon", "watermelon")] <- "watermelon"
-		x[x %in% c("water-grain", "water-grains", "water-green",
-		           "water-greens", "watergreen")] <- "waterleaf"
-		x[grepl("other non-legume crop", x)] <- "unknown"
-		# dish names, column-header leakage, single letters - not real crop names
-		x[x %in% c("palava sauce", "palava sorce", "plava-suace", "price",
-		           "principle crop", "butterfly", "greens")] <- NA
-		x[x %in% c("na", "crop", "n", "none", "")] <- NA
+		x[x %in% c("water-grain", "water-grains", "water-green", "water-greens", "watergreen")] <- "waterleaf"
+		x[x %in% c("palava sauce", "palava sorce", "plava-suace", "greens")] <- "vegetable"
+		x[x %in% c("other non-legume crop", "principle crop", "butterfly", "price", "na", "crop", "n", "none", "")] <- NA
 		x
 	}
 
-## general.csv - one row per household, the only source of geo/admin data
-## homestead_latitude/homestead_longitude are swapped and sign-flipped: as-is,
-## 0/370 non-missing pairs fall inside Liberia; swapped+negated, 345/370 do,
-## matching real site locations (e.g. Foya ~8.3/-10.3 vs actual 8.31/-10.22)
-	lat <- -as.numeric(r1$homestead_longitude)
-	lon <- -as.numeric(r1$homestead_latitude)
-
 	d1 <- data.frame(
-		field_id = as.character(r1$farm_id),
+		hhid = as.character(r1$farm_id),
 		country = r1$country,
 		adm2 = carobiner::fix_name(r1$action_site, "title"),
 		location = carobiner::fix_name(r1$location, "title"),
-		longitude = lon,
-		latitude = lat,
-		stringsAsFactors = FALSE
+		## latitude/longitude are swapped and sign-flipped
+		longitude = -as.numeric(r1$homestead_latitude),
+		latitude = -as.numeric(r1$homestead_longitude)
 	)
 
 ## a_demographic.csv - one row per household
 	d2 <- data.frame(
-		field_id = as.character(r2$farm_id),
+		hhid = as.character(r2$farm_id),
 		sex = trimws(tolower(r2$gender)),
 		hh_adult_men = as.integer(r2$adults_male),
 		hh_adult_women = as.integer(r2$adults_female),
 		hh_child_18 = as.integer(r2$children_male) + as.integer(r2$children_female),
 		age = as.numeric(r2$age),
-		education = trimws(tolower(r2$highest_education_level)),
-		stringsAsFactors = FALSE
+		education = trimws(tolower(r2$highest_education_level))
 	)
 	d2$sex[d2$sex == "f"] <- "female"
 	d2$sex[d2$sex == "m"] <- "male"
 	d2$hh_size <- d2$hh_adult_men + d2$hh_adult_women + d2$hh_child_18
-
+	d2$hh_child_18 <- d2$hh_child_18
+	
 ## b_income.csv - not processed here
-	#d3 <- data.frame(
-	#	field_id = as.character(r3$farm_id),
-	#	hh_income_source = trimws(tolower(r3$main_source_income)),
-	#	stringsAsFactors = FALSE
-	#)
+	d3 <- data.frame(
+		hhid = as.character(r3$farm_id),
+		hh_income_source = tolower(r3$main_source_income),
+		hh_prop_farm_income <- r3$portion_income_farming_and_off_farming
+	)
 
 ## c_labour.csv - one row per household
 	d4 <- data.frame(
-		field_id = as.character(r4$farm_id),
-		# 0/1, not TRUE/FALSE: the source is a yes/no answer, not a day count,
-		# but farm_labour_hired is expected to be numeric
-		farm_labour_hired = as.numeric(trimws(tolower(r4$labour_hired)) == "y"),
-		stringsAsFactors = FALSE
+		hhid = as.character(r4$farm_id),
+		any_labour_hired = r4$labour_hired == "y"
 	)
 
 ## d_livestock_ownership.csv - one-to-many (farm x animal); collapsed to one row
 ## per household (";"-joined animal names, total heads summed across types)
-	r5$field_id <- as.character(r5$farm_id)
-	r5$animal   <- trimws(tolower(r5$livestock))
-	r5$heads    <- as.numeric(r5$number_owned)
-	r5$animal[grepl("^goats?$", r5$animal)] <- "goat"
-	r5$animal[grepl("^ducks?$", r5$animal)] <- "duck"
-	r5$animal[grepl("^pigs?$", r5$animal)] <- "pig"
-	r5$animal[grepl("^rabbits?$", r5$animal)] <- "rabbit"
-	r5$animal[grepl("guinea fowls?", r5$animal)] <- "guinea fowl"
-	# dogs are pets, not production livestock, and are not an accepted animal term
-	r5$animal[grepl("^dogs?$", r5$animal)] <- NA
-	r5  <- r5[!is.na(r5$animal), ]
-	d5a <- aggregate(animal ~ field_id, data = r5, FUN = \(x) paste(unique(x), collapse = ";"))
-	d5b <- aggregate(heads ~ field_id, data = r5, FUN = sum, na.rm = TRUE)
-	d5  <- merge(d5a, d5b, by = "field_id", all = TRUE)
+	d5 <- data.frame(
+		hhid = as.character(r5$farm_id),
+		animal = trimws(tolower(r5$livestock)),
+		heads = as.numeric(r5$number_owned)
+	)	
+	d5$animal[grepl("^goats?$", d5$animal)] <- "goat"
+	d5$animal[grepl("^ducks?$", d5$animal)] <- "duck"
+	d5$animal[grepl("^pigs?$", d5$animal)] <- "pig"
+	d5$animal[grepl("^rabbits?$", d5$animal)] <- "rabbit"
+	d5$animal[grepl("guinea fowls?", d5$animal)] <- "guinea fowl"
+	# dogs are not production livestock
+	d5$animal[grepl("^dogs?$", d5$animal)] <- NA
+	d5  <- d5[!is.na(d5$animal), ]
+
+# can stay long?
+#	d5a <- aggregate(animal ~ hhid, data = d5, FUN = \(x) paste(unique(x), collapse = ";"))
+#	d5b <- aggregate(heads ~ hhid, data = d5, FUN = sum, na.rm = TRUE)
+#	d5  <- merge(d5a, d5b, by = "hhid", all = TRUE)
 
 ## e1_e2_land_use.csv - one row per household
 	d6 <- data.frame(
-		field_id = as.character(r6$farm_id),
-		cropland = as.numeric(r6$cropping_area_available_ha),
-		land_fallow = trimws(tolower(r6$land_left_fallow_during_cropping_season)) == "y",
-		years_fallow = as.numeric(r6$years_left_fallow),
-		stringsAsFactors = FALSE
+		hhid = r6$farm_id,
+		cropland = r6$cropping_area_available_ha,
+		n_fields = r6$number_of_individual_fields,
+		any_fallow = trimws(tolower(r6$land_left_fallow_during_cropping_season)) == "y",
+		years_fallow = as.numeric(r6$years_left_fallow)
 	)
 
 ## e3_land_use.csv - principle/second/third crop columns stacked into one long
 ## table, then collapsed to a ";"-separated crop_rotation string per household
-	fid <- as.character(r7$farm_id)
-	r7_long <- rbind(
-		data.frame(field_id = fid, crop = standardise_crop(r7$principle_crop), stringsAsFactors = FALSE),
-		data.frame(field_id = fid, crop = standardise_crop(r7$second_crop), stringsAsFactors = FALSE),
-		data.frame(field_id = fid, crop = standardise_crop(r7$third_crop), stringsAsFactors = FALSE)
+	d7 <- data.frame(
+		hhid = r7$farm_id,
+		crop_rotation = apply(r7[, c("principle_crop", "second_crop", "third_crop")], 1, 
+			\(x) paste(na.omit(standardise_crop(x)), collapse = "#"))
 	)
-	r7_long <- r7_long[!is.na(r7_long$crop), ]
-	d7 <- aggregate(crop ~ field_id, data = r7_long, FUN = \(x) paste(unique(x), collapse = ";"))
-	names(d7)[2] <- "crop_rotation"
+	# multiple crop rotations per farm. Proposing to use "#" to separate crops in a rotation, and 
+	# the usual  ";" to seperatre crop rotations. (Intercrops are combined with "_" and then ";" if need be)
+	d7 <- aggregate(d7["crop_rotation"], d7["hhid"], \(x) paste(x, collapse = ";"))
 
 ## e4_e6_land_use.csv - not processed here
-	#d8 <- data.frame(
-	#	field_id = as.character(r8$farm_id),
-	#	land_tree_ha = as.numeric(r8$land_owned_with_plantation_trees_ha),
-	#	access_pasture = trimws(tolower(r8$access_to_pastures_for_grazing)) == "y",
-	#	access_woodlot = trimws(tolower(r8$access_to_wood_lots_forest)) == "y",
-	#	stringsAsFactors = FALSE
-	#)
+	d8 <- data.frame(
+		hhid = as.character(r8$farm_id),
+		land_treecrop = as.numeric(r8$land_owned_with_plantation_trees_ha),
+		access_pasture = trimws(tolower(r8$access_to_pastures_for_grazing)) == "y",
+		access_woodlot = trimws(tolower(r8$access_to_wood_lots_forest)) == "y"
+	)
 
 ## h1_access_to_markets.csv - one-to-many (farm x market visited); aggregated to
 ## one row per household (";"-joined market names/types)
-	r12$field_id <- as.character(r12$farm_id)
+	r12$hhid <- as.character(r12$farm_id)
 	r12$market_type <- trimws(toupper(r12$how_f_mc_c))
 	r12$market_type[r12$market_type == "MC"] <- "market centre"
 	r12$market_type[r12$market_type == "C"]  <- "cooperative"
@@ -225,11 +210,11 @@ tropics agroecological zone."
 	r12$market_type[r12$market_type == "V"]  <- "village market"
 	r12$market_type[!r12$market_type %in%
 		c("market centre", "cooperative", "farmer group", "village market")] <- "unknown"
-	d9 <- aggregate(market_type ~ field_id, data = r12, FUN = \(x) paste(unique(x), collapse = ";"))
+	d9 <- aggregate(market_type ~ hhid, data = r12, FUN = \(x) paste(unique(x), collapse = ";"))
 
 ## h2_h3_access_to_markets.csv - not processed here
 	#d10 <- data.frame(
-	#	field_id = as.character(r13$farm_id),
+	#	hhid = as.character(r13$farm_id),
 	#	sell_at_farm_gate = trimws(tolower(r13$sell_at_farm_gate)) == "y",
 	#	sell_at_home = trimws(tolower(r13$sell_at_home)) == "y",
 	#	stringsAsFactors = FALSE
@@ -253,11 +238,11 @@ tropics agroecological zone."
 	#r14$food <- clean_food(r14$food_household)
 	#r14 <- r14[!is.na(r14$food), ]
 	#d11 <- aggregate(food ~ farm_id, data = r14, FUN = \(x) paste(unique(x), collapse = ";"))
-	#names(d11) <- c("field_id", "important_foods")
+	#names(d11) <- c("hhid", "important_foods")
 
 ## g1_legume_utilisation.csv - one row per household x legume type
 	dg1 <- data.frame(
-		field_id = as.character(r10$farm_id),
+		hhid = as.character(r10$farm_id),
 		crop = standardise_crop(r10$legume_type),
 		yield_marketable = as.numeric(r10$amount_used_for_sale), # kg
 		amount_consumed = as.numeric(r10$hh_amount_used_for_consumption_seed_kg), # kg
@@ -267,10 +252,9 @@ tropics agroecological zone."
 
 ## g2_legume_utilisation.csv - one row per household x legume type
 	dg2 <- data.frame(
-		field_id = as.character(r11$farm_id),
+		hhid = as.character(r11$farm_id),
 		crop = standardise_crop(r11$legume_type),
-		previous_crop_residue_management = trimws(tolower(r11$haulms_usage)),
-		stringsAsFactors = FALSE
+		previous_crop_residue_management = trimws(tolower(r11$haulms_usage))
 	)
 	p <- dg2$previous_crop_residue_management
 	p[grepl("incorporated in the soil", p)] <- "incorporated"
@@ -336,7 +320,7 @@ tropics agroecological zone."
 	flooded[crop_raw == "rice - upland"]  <- FALSE
 
 	d <- data.frame(
-		field_id = as.character(r9$farm_id),
+		hhid = as.character(r9$farm_id),
 		crop = standardise_crop(ifelse(grepl("^rice", crop_raw), "rice", crop_raw)),
 		flooded = flooded,
 		intercropped = trimws(r9$sole_crop_or_intercrop) == "I",
@@ -346,14 +330,13 @@ tropics agroecological zone."
 		OM_type = om_type,
 		fertilizer_used = fertilizer_used,
 		fertilizer_type = fert_type,
-		percentage_sold = percentage_sold,
-		stringsAsFactors = FALSE
+		percentage_sold = percentage_sold
 	)
 	d$yield <- ifelse(!is.na(d$field_size) & d$field_size > 0, yield_total / d$field_size, NA)
 
 ## merge legume utilisation onto the matching household x crop rows
-	d <- merge(d, dg1, by = c("field_id", "crop"), all.x = TRUE)
-	d <- merge(d, dg2, by = c("field_id", "crop"), all.x = TRUE)
+	d <- merge(d, dg1, by = c("hhid", "crop"), all.x = TRUE)
+	d <- merge(d, dg2, by = c("hhid", "crop"), all.x = TRUE)
 
 ## fallback yield source for legumes: g1's total_prod_most_recent_season_kg is
 ## clean numeric (unlike the free-text yield above), used only where the main
@@ -363,18 +346,17 @@ tropics agroecological zone."
 	d$amount_produced <- NULL
 
 ## merge household-level (one row per household) tables
-	d <- merge(d, d1,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d2,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d4,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d5,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d6,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d7,  by = "field_id", all.x = TRUE)
-	d <- merge(d, d9,  by = "field_id", all.x = TRUE)
+	d <- merge(d, d1,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d2,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d4,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d5,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d6,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d7,  by = "hhid", all.x = TRUE)
+	d <- merge(d, d9,  by = "hhid", all.x = TRUE)
 
 ## drop rows with no identifiable crop (e.g. blank crop, "fallow"-style placeholder rows)
 	d <- d[!is.na(d$crop), ]
 
-	d$hhid     <- d$field_id
 	d$trial_id <- as.character(as.integer(as.factor(1)))
 	d$on_farm  <- TRUE
 	d$is_survey <- TRUE
