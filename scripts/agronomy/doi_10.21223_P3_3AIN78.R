@@ -44,6 +44,12 @@ partial/total Land Equivalent Ratio (LER)."
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
 		publication = NA,
+		# CIP Dataverse's own metadata record for this dataset (native API,
+		# metadataBlocks$citation$contributor) lists a single "Funder" contributor:
+		# "CGIAR Research Program on Roots, Tubers and Bananas (RTB)" - used verbatim rather
+		# than inferred from CIP's general RTB affiliation. Note RTB formally ended ~2021,
+		# before this 2022-2024 trial, so this may be a legacy/administrative tag rather than
+		# an active funding program; kept as-is since it is what the source states.
 		project = "RTB",
 		design = NA,
 		data_type = "on-farm experiment",
