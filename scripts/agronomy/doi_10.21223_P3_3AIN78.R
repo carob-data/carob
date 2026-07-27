@@ -44,10 +44,6 @@ partial/total Land Equivalent Ratio (LER)."
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
 		publication = NA,
-		# CIP Dataverse lists "Funder: CGIAR Research Program on Roots, Tubers and Bananas
-		# (RTB)" as a Contributor, but RTB was a CGIAR-wide funding umbrella (not a specific
-		# coordinated trial network like ACAI/N2Africa/GAIA) that formally ended ~2021, before
-		# this 2022-2024 trial - a funder acknowledgment, not a carob "project".
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
@@ -56,8 +52,6 @@ partial/total Land Equivalent Ratio (LER)."
 		carob_contributor = "AI agronomy writer agent",
 		carob_date = "2026-07-27",
 		carob_completion = 85,
-		# measured from session start to PR creation (scratchpad-dir ctime 10:29:01 to
-		# PR-creation timestamp 10:58:23, both 2026-07-27): ~29 minutes, rounded up slightly
 		carob_effort = 0.5
 	)
 
@@ -247,6 +241,3 @@ partial/total Land Equivalent Ratio (LER)."
 
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=".")
