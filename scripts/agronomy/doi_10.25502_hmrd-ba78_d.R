@@ -26,6 +26,15 @@
 #    converted to tuber_density (tubers/ha), matching the plant_density
 #    convention; Mean_number_of_tubers_plant is dropped, since it is now
 #    fully recoverable as tuber_density / plant_density (both kept in d)
+# 6. per editor feedback: leaf_number/vine_number (raw "Yield_t_ha"/"NO_VINE") are
+#    a mean count PER PLANT (31-95 leaves, 1-16 vines; confirmed by magnitude, not
+#    plausible as a per-ha or per-plot total), not per ha as the earlier revision's
+#    naming implied -- converted to leaf_density/vine_density (organs/ha) by
+#    multiplying by plant_density (not dividing by plot_area, since the raw values
+#    aren't a plot total); tuber_mean_weight (raw MeanWt) is dropped, since it is
+#    fully recoverable as yield / tuber_density (corr 0.9999, both kept in d).
+#    sprout_percent/sprout_days50 definitions: see the inline comments at each
+#    field, grounded in metadata_time_of_planting.csv and the linked publication
 
 carob_script <- function(path) {
 
@@ -109,13 +118,15 @@ The data is from an investigation of the influence of planting different miniset
 		LAI = r$Vigor,
 
 		## non-standard, domain-prefixed variables with no matching terminag term
-		sprout_percent = r$Perc_sprout, # %
-		sprout_days50 = r$Day50_perc_Sprout, # days to 50% sprouting
+		# % of planted minisetts that produced a visible sprout/shoot (metadata: "Percentage
+		# of Sprout"); the linked publication's parallel "crop establishment" metric confirms
+		# this population (planted minisetts, not surviving plants at harvest), see ISSUES 6
+		sprout_percent = r$Perc_sprout,
+		# days after planting until 50% of minisetts had sprouted (metadata: "Duration of the
+		# 50 Percentage Sprout (days)"; publication calls the same concept "time to 50% shoot
+		# emergence" / "period to 50% crop establishment"), see ISSUES 6
+		sprout_days50 = r$Day50_perc_Sprout,
 		vine_length = r$STEM_LENGTH_m, # m
-		# raw col "Yield_t_ha" (1st dup-named col) mislabeled; metadata confirms
-		# it is Number of Leaves, see ISSUES 1
-		leaf_number = r$Yield_t_ha,
-		vine_number = r$NO_VINE, # metadata: Number of Vines
 		plant_vigor = r$PL_Vigor, # scale 1-5
 
 		# pest/disease severity, scale 1-5 (1=least severe), see metadata CSV;
@@ -124,12 +135,7 @@ The data is from an investigation of the influence of planting different miniset
 		mealybug_severity = r$M_BUG, # scale 1-5
 		scaleinsect_severity = r$SCALE, # scale 1-5
 		crazyroot_severity = r$CRZROOT_Gall, # scale 1-5
-		rot_severity = r$ROT, # scale 1-5
-
-		# mean weight per tuber is an intensive (average) measure, not an
-		# extensive per-plot/per-plant count, so the per-ha rule doesn't
-		# apply; kept as-is, ISSUES 5
-		tuber_mean_weight = r$MeanWt # kg
+		rot_severity = r$ROT # scale 1-5
 	)
 
 	d$on_farm <- FALSE
@@ -144,6 +150,12 @@ The data is from an investigation of the influence of planting different miniset
 	# as plant_density above; no exact terminag term for tubers, so named
 	# following the existing <organ>_density (count/ha) family, ISSUES 5
 	d$tuber_density <- (r$Number_of_tuber_trt / d$plot_area) * 10000 # tubers/ha
+
+	# leaves/vines are reported as a mean count PER PLANT, not a plot total (unlike
+	# tubers above), so the per-ha conversion multiplies by plant_density instead of
+	# dividing by plot_area; mean-per-plant remains recoverable as density/plant_density
+	d$leaf_density <- r$Yield_t_ha * d$plant_density # raw col mislabeled, see ISSUES 1
+	d$vine_density <- r$NO_VINE * d$plant_density # metadata: Number of Vines
 
 	d$yield_part <- "tubers"
 	d$yield_moisture <- as.numeric(NA)
