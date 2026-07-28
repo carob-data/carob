@@ -22,7 +22,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 
 
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
-		data_organization = "UYSDA-ARS ; USDA-ARS",# UYSDA-ARS Northern Great Plains Research Laboratory
+		data_organization = "USDA-ARS",
 		publication = "doi:10.1002/agj2.21085",
 		project = NA,
 		design = "RCB",
@@ -53,22 +53,25 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d1 <- data.frame(
 	  grain_C = r1$C..g.kg.,
 	  grain_N = r1$N..g.kg.,
-	  cover_crop = r1$Crop,
-	  rep = r1$rep,
+	  cover_crop = gsub("tillage radish", "radish",tolower(r1$Crop)),
+	  rep = as.integer(r1$rep),
 	  plot_id = as.character(r1$plot),
 	  treatment_code = r1$trt..,
 	  N_fertilizer = r1$culture*173.5,
 	  N_fert_level = as.character(r1$culture),
 	  planting_date = "2016",
-	  DAP = 169L ## harvest day
+	  DAP = 169L, ## 
+	  harvest_days = 169L
 	
 	)
 	
+	d1$cover_crop <- gsub("rye grass", "ryegrass", d1$cover_crop)
+	
 	d2 <- data.frame(
-	  cover_crop = r2$CoverCrop,
+	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
 	  N_fertilizer = r2$Nrate*173.5,
 	  N_fert_level = as.character(r2$Nrate),
-	  rep = r2$rep,
+	  rep = as.integer(r2$rep),
 	  treatment_code = r2$treatment,
 	  root_C_10_60 = r2$RootC_10to60cm_.g.kg,
 	  root_C_0_10 = r2$RootC_0to10cm_.g.kg,
@@ -83,7 +86,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  DAP = as.integer(r2$DaysAfterPlanting),
 	  planting_date = as.character(r2$Year)
 	)
-	
+	d2$cover_crop <- gsub("annual rye", "annual ryegrass", d2$cover_crop)
 	var1 <- c("root_C_10_60", "root_C_0_60", "root_C_0_10")
 	var2 <- c("root_N_10_60", "root_N_0_60", "root_N_0_10")
 	var3 <- c("fmy_roots_10_60", "fmy_roots_0_60", "fmy_roots_0_10")
@@ -92,17 +95,16 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d2$depth_bottom  <- as.numeric(substr(d2$depth, 4, 5))
 	d2$depth_top  <- as.numeric(substr(d2$depth, 1, 2))
 	d2$depth <- NULL
-	d <- merge(d1, d2, by = intersect(names(d1), names(d2)), all = TRUE)
+	d <- merge(d1, d2, by = c("cover_crop", "rep", "plot_id", "treatment_code", "N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
 	
 	#######
 	d3 <- data.frame(
-	  plot_id = r3$plot,
-	  rep = r3$rep,
+	  plot_id = as.character(r3$plot),
+	  rep = as.integer(r3$rep),
 	  N_fertilizer = r3$Nrate*173.5,
 	  N_fert_level = as.character(r3$Nrate),
-	  cover_crop = r3$CoverCrop,
+	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
 	  treatment_code = r3$treatment,
-	  treatment = r3$CCbyN,
 	  DAP = as.integer(r3$DaysAfterPlanting),
 	  planting_date = as.character(r3$Year),
 	  crop = r3$Crop,
@@ -112,32 +114,27 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  
 	)
 	
+	d3$cover_crop <- gsub("annual rye", "annual ryegrass", d3$cover_crop)
+	
 	####
-	d <- merge(d, d3, by = intersect(names(d), names(d3)), all = TRUE)
+	d <- merge(d, d3,  by = c("cover_crop", "rep", "plot_id", "treatment_code","N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
 	
 	d4 <- data.frame(
 	  N_fertilizer = r4$Nrate*173.5,
 	  N_fert_level = as.character(r4$Nrate),
-	  cover_crop = r4$CoverCrop,
+	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
 	  treatment_code = r4$Trt,
-	  treatment = r4$CCbyN,
-	  plot_id = r4$Plot,
+	  plot_id = as.character(r4$Plot),
 	  DAP = as.integer(r4$DaysAfterPlanting),
 	  NDVI = r4$NDVI,
-	  rep = r4$rep,
+	  rep = as.integer(r4$rep),
 	  planting_date = as.character(r4$Year)
 	)
 	
-	d <- merge(d, d4, by = intersect(names(d), names(d4)), all = TRUE)
-	d$treatment_code <- NULL
+	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
 	
-	### Fixing cover crop 
-	P <- carobiner::fix_name(d$cover_crop)
-	P <- gsub("^annual rye$|Annual Rye", "rye", P)
-	P <- gsub("annual rye grass", "annual ryegrass", P)
-	P <- gsub("Radish|tillage radish", "radish", P)
-	P <- gsub("No Cover", "none", P)
-	d$cover_crop <- P
+	d <- merge(d, d4, by = c("cover_crop", "rep", "plot_id", "treatment_code", "N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
+	d$treatment_code <- NULL
 	
 	
 	d$is_survey <- FALSE
