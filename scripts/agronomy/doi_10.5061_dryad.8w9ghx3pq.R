@@ -156,7 +156,14 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
+	############### long format 
+	d$record_id <- as.integer(1:nrow(d))
+	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth", names(d))
+	d_lon <- d[, cols]
+	
+	col <- grep("NDVI|DAP|fwy|leaf|root|depth", names(d))
+	d <- d[, -col]
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = d_lon)
 }
 
