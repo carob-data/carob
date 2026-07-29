@@ -205,7 +205,7 @@ General rules:
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
 - **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment")
 - **Variable (Column) names** should match a variable name from terminag. 
-- **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). List these new variables at the top of the script under ## NEW VARIABLES and describe what they represent. New variables cause a warning and are dropped but that is _not_ a concern. Do not change terminag, that is a separate process.
+- **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). List these new variables at the top of the script under ## NEW VARIABLES and describe what they represent, and what their unit is (do not add unit to the variable name). New variables cause a warning and are dropped but that is _not_ a concern. Do not change terminag, that is a separate process.
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
@@ -299,6 +299,7 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 
 ---
 
+
 ## 10. Where scripts go, and PR conventions
 
 - Work-in-progress from `draft()`: `scripts/_draft/<group>/`.
@@ -327,13 +328,22 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 
 ---
 
-## 12. Pre-submission checklist
+## 12. Reject / pending
+
+- scripts for datasets that are not suitable should be moved to the `_reject` folder 
+- reasons for rejection include: data are not reasable or were collected in a greenhouse or lab, not in the field (greenhouse experiments for variety traits are OK)
+- reasons to recommend rejection or moving to the `_pending` folder include: reported treatment variables are not included; surveys without quantiative georeferences of location. If moved to `_pending` the dataset authors should be contacted for help.
+
+
+## 13. Pre-submission checklist
 
 - [ ] File named `<dataset_id>.R` and placed in `scripts/<group>/`.
-- [ ] Title + abstract copied into the script; `## ISSUES` notes any caveats.
+- [ ] Title + abstract copied into the script; 
+- [ ] `## NOTES` describe peculiarities --- make these succinct!
+- [ ] `## ISSUES` notes any caveats that need attention --- make these succinct!
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
 - [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_contributor`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields.
-- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists) a RIS added to `references/`.
+- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists).
 - [ ] All column names and categorical values match terminag; units correct (kg/ha yields, elemental N/P/K, ha areas, proper date formats).
 - [ ] `trial_id`, `on_farm`, `is_survey`, `longitude`, `latitude`, `geo_from_source`, `yield_part` set appropriately.
 - [ ] `carob_script(path)` runs clean in a fresh session with no unresolved `write_files()` messages.
