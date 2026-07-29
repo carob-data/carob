@@ -2,8 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-#1. out of bounds: grain_Zn (24.633, 54)
-#2.
 
 carob_script <- function(path) {
 
@@ -19,8 +17,8 @@ Experimental Materials and Field Trials  Genotypes were evaluated in two replica
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "ICRISAT",
 		publication = NA,
-		project = "Harvest Plus Pearl Millet Bio fortification",
-		design = "Randomized Complete Block",
+		project = "Harvest Plus",
+		design = "RCB",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "grain_Fe;grain_Zn", 
@@ -31,7 +29,6 @@ Experimental Materials and Field Trials  Genotypes were evaluated in two replica
 		carob_effort = 5
 	)
 	
-
 	f1 <- ff[basename(ff) == "Pearl millet commercial hybrid trial ICP and XRF data.xlsx"]
 	f2 <- ff[basename(ff) == "Pearl millet Hybrid trial 26 entries ICP and XRF data.xlsx"]
 	f3 <- ff[basename(ff) == "Pearl millet Hybrid trial 28 entries ICP and XRF data.xlsx"]
@@ -42,39 +39,40 @@ Experimental Materials and Field Trials  Genotypes were evaluated in two replica
 	r3 <- carobiner::read.excel(f3)
 	r4 <- carobiner::read.excel(f4)
 
-  r <- rbind(r1,r2,r3,r4)
+	r <- rbind(r1,r2,r3,r4)
 	
-d <- data.frame(
-  date="2010",
-  country="India",
-  adm1="Telangana",
-  adm2="Medak",
-  adm3="Sangareddi",
-  longitude = 78.0474,
-  latitude = 17.5982,
-  geo_uncertainty = 33176,
-  geo_source = "GADM 4.1, adm3",
-  crop="pearl millet",
-  yield=as.numeric(NA),
-  yield_part="grain",
-  yield_moisture=NA,
-  yield_isfresh=NA,
-  season="wet",
-  variety= paste(r$`Genotype ID`,"RP 07B/2010",sep ="_"),#same genotype name despite description mentioning commercial, hybrid 1,2 and 4
-  rep=r$`Replication number`,
-  grain_Fe=r$Iron,
-  grain_Zn=r$Zinc,
-  grain_analysis_method=r$Method,
-  planting_date=NA,
-  harvest_date=NA)
+	d <- data.frame(
+	  date="2010",
+	  country="India",
+	  location="ICRISAT HQ, Patancheru" 
+	  adm1="Telangana",
+	  adm2="Sangareddy",
+	  longitude = 78.27265,
+	  latitude = 17.50466,
+	  geo_uncertainty = 100, # approx length of field
+	  geo_from_source = TRUE,
+	  crop="pearl millet",
+	  yield=as.numeric(NA),
+	  yield_part="grain",
+	  yield_moisture=NA,
+	  yield_isfresh=NA,
+	  season="wet",
+	  #same genotype name despite description mentioning commercial, hybrid 1,2 and 4
+	  variety= paste(r$`Genotype ID`,"RP 07B/2010",sep ="_"),
+	  rep=r$`Replication number`,
+	  grain_Fe=r$Iron,
+	  grain_Zn=r$Zinc,
+	  grain_analysis_method=r$Method,
+	  planting_date=NA,
+	  harvest_date=NA
+	)
 
 	d$trial_id <- paste(d$variety,1:nrow(d),sep = "_")
 	
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE 
 	d$irrigated <-FALSE
-	d$geo_from_source <- FALSE
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
+	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
   
   #fixing row(s) where data is concatenated within a cell
   row_i <- which(is_concat)
