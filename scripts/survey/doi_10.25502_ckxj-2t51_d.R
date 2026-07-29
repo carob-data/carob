@@ -9,7 +9,6 @@
 # yield is NA for ~158/1279 rows
 # percentage_sold sometimes holds a quantity ("1bag") instead of a percentage; non-numeric values coerced to NA.
 # homestead_latitude/homestead_longitude are swapped and sign-flipped in the source corrected in the script, with
-# geo_from_source = FALSE for the whole dataset. 
 # 25 records fall outside Liberia
 # one pepper record has a high yield (~5.9 t/ha) from a small (0.05 ha) plot.
 
@@ -165,7 +164,7 @@ tropics agroecological zone."
 	d5$animal[grepl("guinea fowls?", d5$animal)] <- "guinea fowl"
 	# dogs are not production livestock
 	d5$animal[grepl("^dogs?$", d5$animal)] <- NA
-	d5  <- d5[!is.na(d5$animal), ]
+	animals  <- d5[!is.na(d5$animal), ]
 
 # can stay long?
 #	d5a <- aggregate(animal ~ hhid, data = d5, FUN = \(x) paste(unique(x), collapse = ";"))
@@ -310,7 +309,9 @@ tropics agroecological zone."
 	variety <- tolower(trimws(r9$variety))
 	variety[variety %in% c("no", "n0", "mung bean", "sweet potato")] <- "none"
 
-	percentage_sold <- as.numeric(r9$percentage_sold)
+	percentage_sold <- r9$percentage_sold
+	percentage_sold[percentage_sold %in% c("1bag", "3bags", "not yet")] <- NA
+	percentage_sold <- as.numeric(percentage_sold)
 	percentage_sold[!is.na(percentage_sold) & (percentage_sold < 0 | percentage_sold > 100)] <- NA
 
 	crop_raw <- trimws(tolower(r9$crop))
@@ -349,7 +350,7 @@ tropics agroecological zone."
 	d <- merge(d, d1,  by = "hhid", all.x = TRUE)
 	d <- merge(d, d2,  by = "hhid", all.x = TRUE)
 	d <- merge(d, d4,  by = "hhid", all.x = TRUE)
-	d <- merge(d, d5,  by = "hhid", all.x = TRUE)
+	#d <- merge(d, d5,  by = "hhid", all.x = TRUE)
 	d <- merge(d, d6,  by = "hhid", all.x = TRUE)
 	d <- merge(d, d7,  by = "hhid", all.x = TRUE)
 	d <- merge(d, d9,  by = "hhid", all.x = TRUE)
@@ -376,16 +377,13 @@ tropics agroecological zone."
 
 	d$yield_isfresh  <- TRUE
 	d$yield_moisture <- NA
-	perennial <- c("cocoa", "coffee", "oil palm", "rubber", "banana", "plantain",
-	               "orange", "pineapple", "sugarcane")
+	perennial <- c("cocoa", "coffee", "oil palm", "rubber", "banana", "plantain", "orange", "pineapple", "sugarcane")
 	d$planting_date <- ifelse(d$crop %in% perennial, NA, "2012")
-	d$harvest_date   <- d$treatment <- NA
-	d$N_fertilizer   <- d$P_fertilizer <- d$K_fertilizer <- NA
 
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(d[char_cols], trimws)
 
 	d <- unique(d)
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=animals)
 }
