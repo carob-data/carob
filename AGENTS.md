@@ -12,6 +12,8 @@ This document supplements those pages with practical, agent-specific detail. If 
 
 Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear`# comment` in the code, and add a line to the `## NOTE:` or `## ISSUES` block at the top of the scripts. It is better not to process a variable (and leave a comment about it) than to introduce errors.
 
+It is of fundamental importance that no critical information is lost to analyze the data as intended. Resist simplifying the data to the point where relevant information is lost
+
 ---
 
 ## 1. What a Carob script is
@@ -105,7 +107,8 @@ meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
     data_type = "on-farm experiment", # "experiment", "on-farm experiment", "survey", "compilation", ...
     treatment_vars = "variety",       # ";"-separated variables that ARE the treatments
     response_vars = "yield;plant_height;maturity_days", # ";"-separated measured responses
-    carob_contributor = "Your Name",
+    carob_contributor = "Author Name",
+    carob_LLM = "LLM & version",
     carob_date = "2026-07-17",        # date first written (YYYY-MM-DD)
     carob_completion = 80,            # % of relevant variables standardized (0-100)
     carob_effort = 0.1               # hours spent
@@ -121,7 +124,8 @@ Rules and gotchas:
 - `data_type` "survey" (and the `survey`/`soil_samples` groups) relax some crop/agronomy requirements — see the required-variables logic below.
 - Copy the dataset **title and abstract** verbatim into the quoted string near the top of the function (see the template) so reviewers have context.
 - Do _not_ guess things if they are not reported in the metadata 
-- Use _your_ AI Model name and version as "carob_contributor"
+- Do *not* fill in the name of the "carob_contributor"
+- Use _your_ model name and version as "carob_LLM"
 - Estimate carob_completion (% of variables in the raw data that have been processed) 
 - Estimate carob_effort based on your time spent (typically a fraction of an hour)
 
@@ -209,7 +213,7 @@ General rules:
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
-- **`crop`** and other controlled values must be lowercase accepted terms (`tolower(...)` where appropriate). Intercrops use an underscore: `"maize_bean"`.
+- **`crop`** and other controlled values must be lowercase accepted terms (`tolower(...)` where appropriate). Intercrops use an underscore: `"maize_bean"`. In the rare case of multiple crop_rotations, these can be separated with a `#`
 
 ---
 
