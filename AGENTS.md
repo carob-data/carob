@@ -315,7 +315,7 @@ Keep iterating until the only remaining output is the contributor line / `TRUE`.
 
 ### Never suppress or work around warnings
 
-Warnings (from `write_files()` or from R itself) are signals, not noise. For each one there are only two acceptable outcomes:
+**R warnings are generally not allowed in a finished script.** A clean run should emit no R warnings at all. The only tolerable exceptions are warnings you genuinely cannot prevent — e.g. some `readxl`/`read.excel` warnings when opening a malformed `.xlsx` — and even those must be noted in a `#` comment. Warnings from `write_files()` and from R itself are signals, not noise. For each one there are only two acceptable outcomes:
 
 1. **Truly fix it** — you identified a concrete problem and solved it (corrected a unit, coerced a type, mapped a value to an accepted term, fixed a name, etc.).
 2. **Leave it visible** — if it reflects a genuine limitation of the source data that you cannot resolve, let the warning stand so a reviewer can inspect it, and add a `#` comment (and/or a `## ISSUES` note) explaining **why** it remains.
@@ -328,7 +328,12 @@ Do **not**:
 - drop records that have `NA` in a required variable (e.g. `yield`) only to silence the message — the `NA` flags something to check, not to delete; keep the records unless they truly hold nothing else of interest;
 - delete or comment out a variable only to make a warning disappear.
 
-**`NAs introduced by coercion` is a real error, not noise.** It means `as.numeric()`/`as.integer()` hit values it could not parse. Inspect the raw values and fix them: e.g. month names (`"December"`, and the misspelled `"Desember"`) must be mapped to numbers; flag strings (`"nd"`, `"-"`, `""`) should be turned into `NA` first (`read.csv(f, na.strings=...)`); numbers with embedded units (`"0.5KM"`, `"2.75KM"`, `"1200 m"`) must be parsed out before converting — and watch for **inconsistent units within one column** (e.g. distance vs travel time). Do the same for `as.character(as.numeric(x))` chains that warn.
+**Coercion warnings are never allowed.** `NAs introduced by coercion` from `as.numeric()`/`as.integer()`/`as.logical()` means the input held text those functions could not parse. Fix it in one of exactly two ways:
+
+1. **Set the missing-value flag when reading the file**, so the offending strings become `NA` before any coercion: `read.csv(f, na.strings=c("nd","-",""))` or `carobiner::read.excel(f, na=...)`. Use this when the offenders are just missing-value markers.
+2. **Repair the offending character values first, then coerce.** Use this when the values carry information that must be cleaned: e.g. month names (`"December"`, and the misspelled `"Desember"`) mapped to numbers; numbers with embedded units (`"0.5KM"`, `"2.75KM"`, `"1200 m"`) parsed out — and watch for **inconsistent units within one column** (e.g. distance vs travel time).
+
+Never coerce first and let it warn (and never wrap it in `suppressWarnings()`). The same applies to `as.character(as.numeric(x))` chains that warn.
 
 The goal is that every remaining warning is either intentional and explained, or gone because the underlying problem was actually fixed — never merely hidden.
 
@@ -346,8 +351,17 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - The build (`make_carob()` / `process_carob()`) **skips** `_draft`, `_AI`, `_pending`, and `_rejected`. Only files under a real `scripts/<group>/` folder are compiled.
 - **Move the finished file out of `_draft/`** into `scripts/<group>/` when you submit — a script left in `_draft/` is not compiled.
 - **One dataset = one file = one PR.** Do not bundle two datasets/scripts in one PR. Use a branch named after the script file.
-- **Write a real PR message.** Describe what is particular to *this* dataset — units/assumptions, anything moved to `_pending`/`_rejected` and *why*, unresolved `## ISSUES`. Do not submit an auto-generated "Added metadata"-style message.
 - **Address review feedback by pushing to the *same* PR/branch** — do not open a new PR for fixes, and do not add an unrelated new file to an open PR.
+
+### Commit and PR messages
+
+- **Commit message** follows the pattern `<new|edited> <group> script <uri>`. Use `new` for a script you are adding, and `edited` for a change to an existing script. Examples:
+  - `new agronomy script doi:10.25502/20180814/1514/HJ`
+  - `edited varieties script doi:10.7910/DVN/SMGA6L`
+- **PR message** is for the reviewer — make it **very succinct**. It should:
+  - list, in one line each, the `## NOTES`/`## ISSUES` the reviewer needs to consider (assumptions, unit conversions, anything moved to `_pending`/`_rejected` and *why*, open questions);
+  - list the messages printed by `write_files()` that remain (e.g. `unknown variables: stake_diameter_`, `out of bounds: ...`, `datespan: ...`), so the reviewer knows what to expect and why each is acceptable.
+- Do **not** submit an auto-generated / boilerplate message (e.g. "Added metadata"). No message should be identical across datasets.
 
 ---
 
@@ -403,7 +417,8 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - [ ] `carob_script(path)` runs clean in a fresh session with no unresolved `write_files()` messages and no R warnings (incl. `NAs introduced by coercion`).
 - [ ] No `suppressWarnings()`/`suppressMessages()`/`options(warn=-1)` and no "numeric-looking" filters used; every remaining warning is either fixed or left with a `#` comment explaining why.
 - [ ] No records dropped merely to silence a warning; no information silently dropped to fit a single table.
-- [ ] Finished file moved out of `_draft/`; one dataset per PR; meaningful PR message.
+- [ ] Finished file moved out of `_draft/`; one dataset per PR.
+- [ ] Commit message `<new|edited> <group> script <uri>`; PR message very succinctly lists the `## NOTES`/`## ISSUES` and the remaining `write_files()` messages.
 
 ---
 
