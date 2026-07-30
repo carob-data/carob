@@ -128,7 +128,7 @@ Rules and gotchas:
 - **Get `data_type`, `group`, and `design` right.** Do not label observational/survey data as an "experiment", and do not invent a `design` (e.g. "RCBD") that the source does not state — leave `design = NA` if unknown. Put the dataset in the correct group (a variety trial is `varieties`, not `agronomy`).
 - Copy the dataset **title and abstract** verbatim into the quoted string near the top of the function (see the template) so reviewers have context.
 - Do _not_ guess things if they are not reported in the metadata 
-- Do *not* fill in the name of the "carob_contributor"
+- Do *not* fill in the name of the "carob_contributor". `carob_contributor` must be a **real person** (the human responsible for the script) — never an AI/LLM, a placeholder, or a GitHub handle. Leave it for that person to fill in; record the model you used under `carob_LLM` instead.
 - Use _your_ model name and version as "carob_LLM"
 - Estimate carob_completion (% of variables in the raw data that have been processed) 
 - Estimate carob_effort based on your time spent (typically a fraction of an hour)
