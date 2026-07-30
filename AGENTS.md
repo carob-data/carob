@@ -14,6 +14,8 @@ Do NOT guess silently. If you get stuck on *what* a value should be (not *how* t
 
 It is of fundamental importance that no critical information is lost to analyze the data as intended. Resist simplifying the data to the point where relevant information is lost
 
+**You stay in charge.** Using AI to help is fine, but you are responsible for the result — do not blindly trust generated code, mappings, or `## NOTES`/`## ISSUES`. Verify every claim against the actual data and the publication before you leave it in the script. A wrong note or a plausible-but-incorrect mapping is worse than an honest "I could not determine this" (in `## ISSUES`).
+
 ---
 
 ## 1. What a Carob script is
@@ -121,7 +123,9 @@ Rules and gotchas:
 - `treatment_vars` must be actual column names present in `d`, and each must have
   >1 non-missing value (there must be variation). `response_vars` are the measured
   outcomes of interest — **not** management variables applied to all plots.
+- Do **not** confuse treatments and responses. A treatment is something the experimenters *chose/applied* and varied (variety, N rate, orientation, spacing); a response is something they *measured* as an outcome (yield, plant_height, disease). A management level applied to every plot (e.g. a blanket fertilizer dose) is neither.
 - `data_type` "survey" (and the `survey`/`soil_samples` groups) relax some crop/agronomy requirements — see the required-variables logic below.
+- **Get `data_type`, `group`, and `design` right.** Do not label observational/survey data as an "experiment", and do not invent a `design` (e.g. "RCBD") that the source does not state — leave `design = NA` if unknown. Put the dataset in the correct group (a variety trial is `varieties`, not `agronomy`).
 - Copy the dataset **title and abstract** verbatim into the quoted string near the top of the function (see the template) so reviewers have context.
 - Do _not_ guess things if they are not reported in the metadata 
 - Do *not* fill in the name of the "carob_contributor"
@@ -207,26 +211,43 @@ d$yield_moisture <- as.numeric(NA)    # % moisture if known
 General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
-- **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment")
+- **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment"). This holds **even when terminag has no matching variable name**: give the treatment its own clear new variable name (ending in an underscore, see "New variable names" below) rather than burying it only in `treatment`. Such a new variable triggers a warning and is dropped from the written output, but that is fine — naming it explicitly is what lets a maintainer add the term to terminag (a separate process). A missing vocabulary term is never a reason to hide a treatment inside the `treatment` code.
 - **Variable (Column) names** should match a variable name from terminag. 
 - **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). List these new variables at the top of the script under ## NEW VARIABLES and describe what they represent, and what their unit is (do not add unit to the variable name). New variables cause a warning and are dropped but that is _not_ a concern. Do not change terminag, that is a separate process.
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
 - **`crop`** and other controlled values must be lowercase accepted terms (`tolower(...)` where appropriate). Intercrops use an underscore: `"maize_bean"`. In the rare case of multiple crop_rotations, these can be separated with a `#`
+- **Intercrops need care.** In an intercropping trial the `crop` is not simply e.g. `"cassava"`; it is `"cassava"` (sole) vs `"cassava_sweetpotato"` (intercropped), etc. When yield is reported per component crop, split an intercrop plot into one row per crop. Let the **treatment name** guide you (a sole-crop treatment is a sole crop even if another column looks contradictory — note the discrepancy in `## ISSUES`).
+- **Measured data only.** Include observed/measured values, not values that were *simulated* or *modeled*. If a column is a model output (e.g. simulated emissions), drop it and note why. For measurements, record what a value represents (an instantaneous reading vs an average, and over what period) in a `#` comment.
+- **Keep it simple and readable.** Do not read files you do not use, do not create `d1`/`d2` when a single `d` suffices, and remove unused objects and commented-out code before submitting. Prefer the simplest computation that is correct (reviewers repeatedly ask for this, e.g. for fertilizer math).
+- **Use `pkg::fun()`, never `library()`/`require()`.** Scripts must not attach packages; call `haven::read_dta(...)`, `readxl::read_excel(...)`, etc. directly.
+- **One operation per line** where at all reasonable (building a `data.frame(...)` is the exception). Avoid both excessive line-splitting and cramming unrelated steps onto one line.
+
+### Repeated measurements and extra record types → long format
+
+- If a variable is **measured several times** (over time: weekly shoot counts, plant height at 6/8/12 weeks, repeated fertilizer applications, ...), do **not** pick the last value or drop the time information. Keep every observation in a **long** table passed as `carobiner::write_files(path, meta, d, long=dlong)`.
+- The long table needs a key back to the wide records (`record_id`, `plot_id`, `trial_id`, or `hhid`) **and** a variable that makes each long row unique — a time variable (`date`, or `DAP`/`DAE` = days after planting/emergence) or an application/measurement `order`/`rep`. Without one you cannot reshape the long data back to wide.
+- A partly-wide long table (one row per record × time/order, with `N_fertilizer`, `P_fertilizer`, ... as its own columns) is usually easier to read than a pure `variable`/`value` long table; either is acceptable.
+- **Weather** data go in their own table via `write_files(..., wth = weather)`. Do **not** aggregate weather into the wide records.
+- **Do not aggregate** (e.g. to one row per plot/household) to reduce `NA`s or simplify the shape. Aggregation discards repeated observations (e.g. LAI or biomass measured on several dates, or per-subplot yields); keep them, in the long table if needed.
+- Do not force several record types into one wide row when that loses data (see Section 9).
 
 ---
 
 ## 6. Units and common conversions
 
 - **Yield**: kg/ha, as **fresh weight** of `yield_part`. Convert t/ha → kg/ha (`* 1000`). Set `yield_moisture` (%) when known; if all yields are dry or moisture is unknown, consider `yield_isfresh`.
+- **Yield from production and area**: if `yield` is not reported directly but production and the plot/field **area** are, compute `yield = production / area` (kg/ha).
 - **Area**: hectares. 1 acre = 0.4046863 ha.
-- **Fertilizer**: report `P_fertilizer` and `K_fertilizer` as the weight of the **elements P and K**, *not* the weight of the oxides P2O5 and K2O. Convert with `P = P2O5 / 2.29` and `K = K2O / 1.2051`. Likewise report elemental **N** (and `S_fertilizer`, `lime`) in kg/ha. Compute nutrient amounts from product rate × nutrient fraction (e.g. urea 46% N).
+- **Fertilizer**: report `P_fertilizer` and `K_fertilizer` as the weight of the **elements P and K**, *not* the weight of the oxides P2O5 and K2O. Convert with `P = P2O5 / 2.29` and `K = K2O / 1.2051`. Likewise report elemental **N** (and `S_fertilizer`, `lime`) in kg/ha. Compute nutrient amounts from product rate × nutrient fraction (e.g. urea 46% N); nutrient percentages for named products are in the terminag `values_fertilizer_type` table (<https://controvoc.github.io/terminag/table.html?f=values%2Fvalues_fertilizer_type.csv>).
+- **A control / "no fertilizer" treatment is `0`, not `NA`.** This is the single most common review correction. `0` is a real, measured value (no nutrient applied); `NA` means "unknown". The same holds for any "none"/"nil"/"control" level of a quantitative treatment.
+- **Keep fertilizer math simple.** Compute each application as `rate × nutrient_fraction`. When a nutrient is applied **several times** to the same plot, sum the applications *or* keep them as long records (Section 5) — do **not** multiply a single nutrient fraction by a grand total, which double counts.
 - **Dates**: character strings, one of `"2023"` (year), `"2023-07"` (year-month), or `"2023-07-21"` (full date). Use `as.character(as.Date(...))` for full dates.
 - **Prices**: include `currency` whenever `crop_price` is present (a price without a currency is flagged).
 - **no "per plot" or "per plant" values**: counts and weights that are reported by plot or plant shoud normally be normalized to a per-ha basis using the plot's known area or the plant_density. Always record the relevant *_density field (plant_density, or the organ-specific density if the raw data gives it directly) alongside it so the per-plant/per-plot figure remains recoverable by dividing the two densities back out
 
-Add a short `#` comment whenever a computation relies on the codebook, the paper, or a non-obvious assumption (e.g. basket→kg conversions, nutrient fractions).
+Add a short `#` comment whenever a computation relies on the codebook, the paper, or a non-obvious assumption (e.g. basket→kg conversions, nutrient fractions); include a URL when you cite an external report or webpage.
 
 ---
 
@@ -234,12 +255,20 @@ Add a short `#` comment whenever a computation relies on the codebook, the paper
 
 Every distinct site needs `longitude`/`latitude`.
 
+**Do not put live geo lookups in the script.** Never call `carobiner::geo_adm()`, `carobiner::adm_pointRadius()`, `carobiner::geocode()`, `geodata::gadm()`, or similar **inside `carob_script()`**. Use these helpers *interactively while writing the script* to derive coordinates, then **hard-code the output** — typically a small lookup `data.frame` of `adm*` → `longitude`/`latitude`/`geo_uncertainty` that you `merge` into `d`. `dput()` is handy for turning a looked-up table into script code. (The same rule applies to any external/online lookup: derive offline, hard-code the result.)
+
 - If the data/publication provide coordinates, use them and set `d$geo_from_source <- TRUE`.
-- If not, estimate them from admin units / place names and set `d$geo_from_source <- FALSE`. Useful helpers:
-  - `carobiner::geocode(...)` for place names.
-  - `carobiner::adm_pointRadius(country, level)` to get admin-unit centroids plus a `geo_uncertainty` (meters) and a `geo_source` string (e.g. `"GADM 4.1, adm3"`). See the "Georeferencing" contribute page for the worked example.
-- When you estimate from an admin unit, also set `d$geo_uncertainty` and `d$geo_source` to document the estimate.
+- If not, estimate them from admin units / place names and set `d$geo_from_source <- FALSE`. To derive the values (interactively, **not** in the script):
+  - `carobiner::geo_adm(country, level, tempdir())` returns admin-unit coordinates **and** `geo_uncertainty` (meters); subset it to the units in your data (this is the current recommended approach — see the Georeferencing page). `carobiner::geocode(...)` geocodes place names. Then paste the resulting values into the script as a hard-coded lookup and merge it into `d`.
+- **`adm1`–`adm4` are official administrative units only** (as in GADM). Many place names — including villages, farms, research stations, and markets — are **not** administrative units. Put those in `location` (or `site`), not `adm4`, and georeference them from coordinates or by geocoding. Only assign a name to `adm4` when you have **verified** it is a real 4th-level admin unit; when unsure, use `location`.
+- **Georeference at the most detailed admin level you can verify.** When you do have `adm4`, use it and fall back to `adm3` only for units you cannot locate. Merge on the **finest level alone** (e.g. `adm4`), not a combination like `c("adm3","adm4")` — many rows have `adm4` but not `adm3`, and `adm4` is unique.
+- **Match names to GADM.** Reconcile `adm*` spellings to the current GADM names (the development GADM is often a better match); fix spelling variants explicitly. A blind `merge(..., all.x=TRUE)` that leaves many unmatched is not acceptable.
+- When you estimate from an admin unit, also set `d$geo_uncertainty` (and `d$geo_source` when relevant) to document the estimate.
 - Fill `adm1`/`adm2`/`adm3` (title-cased) and `location`/`site` when available; use `location` before `site` (a `site` column is not allowed without `location`).
+- **`geo_from_source` is frequently set wrong** (a repeat review correction). It is `TRUE` only when the coordinates come from the data or the publication; if you estimated them from a place name or admin unit it is `FALSE`.
+- **Document estimated coordinates.** When you estimate `longitude`/`latitude`, add a `#` comment stating the basis (which place name / admin level) and how `geo_uncertainty` was derived.
+- **Do not georeference from an admin unit blindly.** Follow the Georeferencing page (<https://carob-data.org/contribute/georeference.html>): first normalize `adm*` names to match GADM, and sanity-check that coordinates fall on land and inside the intended unit (e.g. interactively plot them against `geodata::gadm(...)` while developing — not in the script). Coordinates for a coastal site that are just offshore can still be better than an admin-area centroid.
+- Do **not** overwrite existing/known georeferences without a clear, documented reason.
 
 ---
 
@@ -275,12 +304,12 @@ carob_script(path = "<root>/carob/carob")
 `carobiner::write_files(path, meta, d)` prints messages you must resolve:
 
 - **`missing variables` / `missing metadata`**: a required variable/metadata field is absent. Add it (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`).
-- **`unknown variables`**: a column name is not in the vocabulary. Rename it to a terminag name, or if it is legitimately non-standard, keep it.
+- **`unknown variables`**: a column name is not in the vocabulary. Rename it to a terminag name, or, if it is legitimately non-standard, **keep it** with an underscore name (Section 5). Do **not** delete or omit a meaningful variable just because it is not in terminag — naming it is what lets it be added later.
 - **`out of bounds`**: a numeric value is outside `valid_min`/`valid_max`. Consider fixing the units or the value.
 - **`bad datatype`**: coerce the column (`as.numeric`, `as.integer`, `as.character`).
 - **`NA detected`**: a variable that may not be `NA` (per `required_variables.csv`, `NAok=no`) contains `NA`. Provide values or reconsider the mapping.
 - **`empty character values` / `untrimmed characters`**: clean strings with `trimws()` and replace `""` with a real value or `NA`.
-- **`invalid terms`**: a categorical value is not in the accepted `values_*.csv` list (e.g. a crop or country spelled differently). Map it to the accepted term.
+- **`invalid terms`**: a categorical value is not in the accepted `values_*.csv` list. If it is only a spelling/case variant of an accepted term, map it. But if the value is meaningful and simply **not yet** in the vocabulary, keep it (the warning is fine) — do **not** replace it with `"none"` or `"unknown"`. Combine multiple values with `;` (e.g. a fertilizer `"urea & ammonium nitrate"` → `"urea; AN"`). Use `"unknown"` only when the value is genuinely unknowable, and `"none"`/`"mixture"` only when that is literally the case.
 
 Keep iterating until the only remaining output is the contributor line / `TRUE`.
 
@@ -294,8 +323,12 @@ Warnings (from `write_files()` or from R itself) are signals, not noise. For eac
 Do **not**:
 
 - use `suppressWarnings()`, `suppressMessages()`, `options(warn=-1)`, `try()`/ `tryCatch()` swallowing, or similar, to hide a warning;
+- filter to "numeric-looking" values (e.g. `grepl("^[0-9.]+$", x)` before `as.numeric()`) — this is just as bad as `suppressWarnings()`; find and fix/map the offending values instead;
 - filter/drop rows, coerce blindly, or tweak values **just to silence** a message without understanding it;
+- drop records that have `NA` in a required variable (e.g. `yield`) only to silence the message — the `NA` flags something to check, not to delete; keep the records unless they truly hold nothing else of interest;
 - delete or comment out a variable only to make a warning disappear.
+
+**`NAs introduced by coercion` is a real error, not noise.** It means `as.numeric()`/`as.integer()` hit values it could not parse. Inspect the raw values and fix them: e.g. month names (`"December"`, and the misspelled `"Desember"`) must be mapped to numbers; flag strings (`"nd"`, `"-"`, `""`) should be turned into `NA` first (`read.csv(f, na.strings=...)`); numbers with embedded units (`"0.5KM"`, `"2.75KM"`, `"1200 m"`) must be parsed out before converting — and watch for **inconsistent units within one column** (e.g. distance vs travel time). Do the same for `as.character(as.numeric(x))` chains that warn.
 
 The goal is that every remaining warning is either intentional and explained, or gone because the underlying problem was actually fixed — never merely hidden.
 
@@ -311,7 +344,10 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - **Finished** script: `scripts/<group>/<dataset_id>.R`.
 - Confirmed "do not process": `scripts/_rejected/`.
 - The build (`make_carob()` / `process_carob()`) **skips** `_draft`, `_AI`, `_pending`, and `_rejected`. Only files under a real `scripts/<group>/` folder are compiled.
-- Prefer **one script per pull request**. Use branch with same name as script file name.
+- **Move the finished file out of `_draft/`** into `scripts/<group>/` when you submit — a script left in `_draft/` is not compiled.
+- **One dataset = one file = one PR.** Do not bundle two datasets/scripts in one PR. Use a branch named after the script file.
+- **Write a real PR message.** Describe what is particular to *this* dataset — units/assumptions, anything moved to `_pending`/`_rejected` and *why*, unresolved `## ISSUES`. Do not submit an auto-generated "Added metadata"-style message.
+- **Address review feedback by pushing to the *same* PR/branch** — do not open a new PR for fixes, and do not add an unrelated new file to an open PR.
 
 ---
 
@@ -324,19 +360,26 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - Density variables: `plant_density`, `spike_density` = `10000 * count / plot_area`  (per ha); coerce `count` and `plot_area` with `as.numeric` first.
 
 ### `survey`
-- `data_type = "survey"`, `d$is_survey <- TRUE`. Each surveyed unit (household) gets a unique `hh_id`. `crop`, `yield`, and management vars are not required.
+- A **survey** observes the state of the world *without applying treatments* (vs an **experiment**, which has treatments and responses). This covers field/weed/soil surveys, not only *household* surveys — do not assume "survey" means "household".
+- `data_type = "survey"`, `d$is_survey <- TRUE`. Each surveyed unit (e.g. household) gets a unique `hh_id`. `crop`, `yield`, and management vars are not required.
 - Multi-module surveys often need to create several `data.frame`s (Section 9) that can be merged.
 
 ### `soil_samples`
-- `crop`/`management` requirements are relaxed; focus on soil variables and `sample_id`. Still set `is_survey`, `on_farm`, and geography.
+- Soil samples collected in the field with no treatment applied are a **survey**: set `data_type = "survey"` and `d$is_survey <- TRUE`.
+- `crop`/`management` requirements are relaxed; focus on soil variables and `sample_id`. Still set `on_farm` and geography.
+- Soil nutrients are in ppm; a value given in kg/ha can be approximated as ppm by dividing by ~1.1 (note the assumption in a `#` comment).
+
+### `pest_disease`
+- Record that a trial concerned a stress with `stress` (e.g. `stress = "pests;disease"`). Capture incidence/severity/score responses with their terminag names.
 
 ---
 
 ## 12. Reject / pending
 
-- scripts for datasets that are not suitable should be moved to the `_reject` folder 
-- reasons for rejection include: data are not reasable or were collected in a greenhouse or lab, not in the field (greenhouse experiments for variety traits are OK)
-- reasons to recommend rejection or moving to the `_pending` folder include: reported treatment variables are not included; surveys without quantiative georeferences of location. If moved to `_pending` the dataset authors should be contacted for help.
+- scripts for datasets that are not suitable should be moved to the `_rejected` folder
+- reasons for rejection include: data are not readable, or were collected in a greenhouse or lab rather than in the field (greenhouse experiments for variety traits are OK)
+- reasons to recommend rejection or moving to the `_pending` folder include: reported treatment variables are not included in the data; surveys without quantitative georeferences of location; no location data and no planting dates. If moved to `_pending` the dataset authors should be contacted for help.
+- when you move a dataset to `_pending` or `_rejected`, say so — and why — in the PR message.
 
 
 ## 13. Pre-submission checklist
@@ -345,14 +388,22 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - [ ] Title + abstract copied into the script; 
 - [ ] `## NOTES` describe peculiarities --- make these succinct!
 - [ ] `## ISSUES` notes any caveats that need attention --- make these succinct!
+- [ ] `## NOTES`/`## ISSUES` are correct — verified against the data and paper, not blindly trusted.
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
-- [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_contributor`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields.
-- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists).
+- [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields; treatments and responses not swapped.
+- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists) a RIS added to `references/`.
 - [ ] All column names and categorical values match terminag; units correct (kg/ha yields, elemental N/P/K, ha areas, proper date formats).
-- [ ] `trial_id`, `on_farm`, `is_survey`, `longitude`, `latitude`, `geo_from_source`, `yield_part` set appropriately.
-- [ ] `carob_script(path)` runs clean in a fresh session with no unresolved `write_files()` messages.
-- [ ] No `suppressWarnings()`/`suppressMessages()`/`options(warn=-1)` used; every remaining warning is either fixed or left with a `#` comment explaining why.
-- [ ] No information silently dropped to fit a single table.
+- [ ] Meaningful non-standard variables/values kept (named, not omitted or mapped to `"none"`/`"unknown"`); multiple values joined with `;`.
+- [ ] No `library()`/`require()` (use `pkg::`); numbers-with-units parsed before `as.numeric()`; one operation per line where reasonable.
+- [ ] Every treatment variable is an explicit, interpretable column (not only inside `treatment`); a control / "no input" level is `0`, not `NA`.
+- [ ] Repeated/time-series measurements kept in a long table (not reduced to one value or aggregated away); weather passed via `wth=`; only measured (not simulated) values included.
+- [ ] `trial_id`, `on_farm`, `is_survey`, `longitude`, `latitude`, `geo_from_source` (TRUE only if coords from data/paper), `yield_part` set appropriately; estimated coordinates documented.
+- [ ] Non-admin places (villages, farms, stations) are in `location`/`site`, not `adm*`; admin names matched to GADM.
+- [ ] No live geo/online lookups in the script — helpers (`geo_adm`, `gadm`, `geocode`, `adm_pointRadius`) used only to *derive* values, which are then hard-coded.
+- [ ] `carob_script(path)` runs clean in a fresh session with no unresolved `write_files()` messages and no R warnings (incl. `NAs introduced by coercion`).
+- [ ] No `suppressWarnings()`/`suppressMessages()`/`options(warn=-1)` and no "numeric-looking" filters used; every remaining warning is either fixed or left with a `#` comment explaining why.
+- [ ] No records dropped merely to silence a warning; no information silently dropped to fit a single table.
+- [ ] Finished file moved out of `_draft/`; one dataset per PR; meaningful PR message.
 
 ---
 
