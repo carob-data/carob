@@ -12,7 +12,7 @@
 ### fertilizer amount and types must be processed. It is fundamental to this dataset. It would be good to then verify it with the table from the paper
 
 # 4. GrainFWbp/GrainDWbp ("100/1000 grain weight") left unprocessed: values (0.05-0.78 g) implausibly small.
-### that suggests that is the weight of single grain
+### that suggests that is the weight of single grain. Do not leave data unprocessed just because the values seem off 
 
 # 6. yield uses unadjusted TGrainYld, not TGrainYld_adj (matches sibling Tuchila S2 script; TGrainYld_adj has far more NAs: 57 vs 2 of 290).
 
@@ -70,6 +70,7 @@ covers the maize nutrient omission trial (season 1) at the Thuchila sentinel sit
 	r1$OM_type <- om
 	r1$OM_used <- !is.na(r1$OM_type)
 
+### correct admin names, but do not "enrich" the data with new variables (except lon/lat); also always provide the source in a comment
 #	geo <- data.frame(
 #		FieldID = c("Thuc2009011", "Thuc2009012", "Thuc2009021", "Thuc2009022", "Thuc2009031", "Thuc2009032", "Thuc2009041", "Thuc2009042", "Thuc2009051", "Thuc2009052", "Thuc2009061", "Thuc2009062", "Thuc2009071", "Thuc2009072", "Thuc2009081", "Thuc2009082", "Thuc2009091", "Thuc2009092", "Thuc2009101", "Thuc2009102", "Thuc2009111", "Thuc2009112", "Thuc2009121", "Thuc2009122", "Thuc2009131", "Thuc2009132", "Thuc2009141", "Thuc2009142", "Thuc2009151", "Thuc2009152", "Thuc2009161", "Thuc2009162"),
 #		adm1 = c("Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Mulanje", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Chiradzulu", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje", "Mulanje"),
@@ -116,17 +117,13 @@ covers the maize nutrient omission trial (season 1) at the Thuchila sentinel sit
 		treatment = r2$TrtDesc,
 		yield = r2$TGrainYld * 1000,          # t/ha -> kg/ha, dry weight
 		dmy_residue = r2$TStoverYld * 1000,   # t/ha -> kg/ha, dry weight
-		plot_area = r2$Harea,                 # m2 (terminag's plot_area is defined in m2,
-		                                       # range 1-350, distinct from ha-based field_size)
+		plot_area = r2$Harea,                 # m2, harvested area
 		plant_density = 10000 * pno / r2$Harea
 	)
 	stopifnot(all(d2$treatment %in% trt$treatment)) # confirm every TrtDesc has a matched lookup row
 	d2 <- merge(d2, trt, by="treatment")
 
 	d <- merge(d1, d2, by="trial_id")
-	# 2 of 290 plots had NA TGrainYld; verified they still carry other real measurements
-	# (TStoverYld, CobNo, PNoHvst, etc) but are dropped anyway since yield is a hard-required,
-	# NA-disallowed field with no partial-row option (see ISSUES)
 
 	d$country <- "Malawi"
 	d$geo_from_source <- TRUE
