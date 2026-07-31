@@ -97,11 +97,11 @@ ownership, maintenance, and operating cost of each tool.
   
   # long format: one row per before/after reading, not two side-by-side columns
   d3b_before <- d3b_base
-  d3b_before$weeding_period <- "before"
+  d3b_before$weeding_period <- "before intervention"
   d3b_before$weed_density <- suppressWarnings(as.numeric(r3b$Density_Ini)) * 10000
   
   d3b_after <- d3b_base
-  d3b_after$weeding_period <- "after"
+  d3b_after$weeding_period <- "after intervention"
   d3b_after$weed_density <- suppressWarnings(as.numeric(r3b$Density_fin)) * 10000
   
   d3b <- rbind(d3b_before, d3b_after)
