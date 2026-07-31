@@ -56,7 +56,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  cover_crop = gsub("tillage radish", "radish",tolower(r1$Crop)),
 	  rep = as.integer(r1$rep),
 	  plot_id = as.character(r1$plot),
-	  treatment_code = r1$trt..,
 	  N_fertilizer = r1$culture*173.5,
 	  N_fert_level = as.character(r1$culture),
 	  planting_date = "2016",
@@ -72,7 +71,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fertilizer = r2$Nrate*173.5,
 	  N_fert_level = as.character(r2$Nrate),
 	  rep = as.integer(r2$rep),
-	  treatment_code = r2$treatment,
 	  root_C_10_60 = r2$RootC_10to60cm_.g.kg,
 	  root_C_0_10 = r2$RootC_0to10cm_.g.kg,
 	  root_C_0_60 = r2$Roots0_60cm_kg.C.ha*1.1/1000, #mg/g or g/kg
@@ -95,8 +93,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d2$depth_bottom  <- as.numeric(substr(d2$depth, 4, 5))
 	d2$depth_top  <- as.numeric(substr(d2$depth, 1, 2))
 	d2$depth <- NULL
-	d <- merge(d1, d2, by = c("cover_crop", "rep", "plot_id", "treatment_code", "N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
-	
+
 	#######
 	d3 <- data.frame(
 	  plot_id = as.character(r3$plot),
@@ -104,7 +101,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fertilizer = r3$Nrate*173.5,
 	  N_fert_level = as.character(r3$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
-	  treatment_code = r3$treatment,
 	  DAP = as.integer(r3$DaysAfterPlanting),
 	  planting_date = as.character(r3$Year),
 	  crop = r3$Crop,
@@ -117,13 +113,10 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d3$cover_crop <- gsub("annual rye", "annual ryegrass", d3$cover_crop)
 	
 	####
-	d <- merge(d, d3,  by = c("cover_crop", "rep", "plot_id", "treatment_code","N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
-	
 	d4 <- data.frame(
 	  N_fertilizer = r4$Nrate*173.5,
 	  N_fert_level = as.character(r4$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
-	  treatment_code = r4$Trt,
 	  plot_id = as.character(r4$Plot),
 	  DAP = as.integer(r4$DaysAfterPlanting),
 	  NDVI = r4$NDVI,
@@ -132,9 +125,9 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	)
 	
 	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
-	
-	d <- merge(d, d4, by = c("cover_crop", "rep", "plot_id", "treatment_code", "N_fertilizer", "N_fert_level", "planting_date", "DAP"), all = TRUE)
-	d$treatment_code <- NULL
+
+	####
+	d <- carobiner::bindr(d1, d2, d3, d4)
 	
 	
 	d$is_survey <- FALSE
