@@ -256,20 +256,18 @@ Add a short `#` comment whenever a computation relies on the codebook, the paper
 
 Every distinct site needs `longitude`/`latitude`.
 
-**Do not put live geo lookups in the script.** Never call `carobiner::geo_adm()`, `carobiner::adm_pointRadius()`, `carobiner::geocode()`, `geodata::gadm()`, or similar **inside `carob_script()`**. Use these helpers *interactively while writing the script* to derive coordinates, then **hard-code the output** — typically a small lookup `data.frame` of `adm*` → `longitude`/`latitude`/`geo_uncertainty` that you `merge` into `d`. `dput()` is handy for turning a looked-up table into script code. (The same rule applies to any external/online lookup: derive offline, hard-code the result.)
-
 - If the data/publication provide coordinates, use them and set `d$geo_from_source <- TRUE`.
-- If not, estimate them from admin units / place names and set `d$geo_from_source <- FALSE`. To derive the values (interactively, **not** in the script):
-  - `carobiner::geo_adm(country, level, tempdir())` returns admin-unit coordinates **and** `geo_uncertainty` (meters); subset it to the units in your data (this is the current recommended approach — see the Georeferencing page). `carobiner::geocode(...)` geocodes place names. Then paste the resulting values into the script as a hard-coded lookup and merge it into `d`.
+- If the coordinates do not match the country (per a message by `write_files`) check if longitude and latitude are flipped or miss a mius sign
+- If records to not have coordinates, they need to be **georeferenced at the most detailed location level** If there is no site or location variable, follow the Georeferencing page (<https://carob-data.org/contribute/georeference.html>): first normalize `adm*` names to match GADM. When merging consider higher levels as well as lower level names may not be be duplicated. Paste the resulting values into the script as a hard-coded lookup and merge it into `d`.
+In other cases - where there is a "location" or "site" variable, write a note that the script author should manually georeference with Google Maps
 - **`adm1`–`adm4` are official administrative units only** (as in GADM). Many place names — including villages, farms, research stations, and markets — are **not** administrative units. Put those in `location` (or `site`), not `adm4`, and georeference them from coordinates or by geocoding. Only assign a name to `adm4` when you have **verified** it is a real 4th-level admin unit; when unsure, use `location`.
-- **Georeference at the most detailed admin level you can verify.** When you do have `adm4`, use it and fall back to `adm3` only for units you cannot locate. Merge on the **finest level alone** (e.g. `adm4`), not a combination like `c("adm3","adm4")` — many rows have `adm4` but not `adm3`, and `adm4` is unique.
 - **Match names to GADM.** Reconcile `adm*` spellings to the current GADM names (the development GADM is often a better match); fix spelling variants explicitly. A blind `merge(..., all.x=TRUE)` that leaves many unmatched is not acceptable.
 - When you estimate from an admin unit, also set `d$geo_uncertainty` (and `d$geo_source` when relevant) to document the estimate.
 - Fill `adm1`/`adm2`/`adm3` (title-cased) and `location`/`site` when available; use `location` before `site` (a `site` column is not allowed without `location`).
-- **`geo_from_source` is frequently set wrong** (a repeat review correction). It is `TRUE` only when the coordinates come from the data or the publication; if you estimated them from a place name or admin unit it is `FALSE`.
+- **`geo_from_source`** is `TRUE` only when for records where the coordinates come from the data or the publication; if you estimated them from a place name or admin unit it is `FALSE`.
 - **Document estimated coordinates.** When you estimate `longitude`/`latitude`, add a `#` comment stating the basis (which place name / admin level) and how `geo_uncertainty` was derived.
-- **Do not georeference from an admin unit blindly.** Follow the Georeferencing page (<https://carob-data.org/contribute/georeference.html>): first normalize `adm*` names to match GADM, and sanity-check that coordinates fall on land and inside the intended unit (e.g. interactively plot them against `geodata::gadm(...)` while developing — not in the script). Coordinates for a coastal site that are just offshore can still be better than an admin-area centroid.
 - Do **not** overwrite existing/known georeferences without a clear, documented reason.
+**Do not put live geo lookups in the script.** Never call `carobiner::geo_adm()`, `carobiner::adm_pointRadius()`, `carobiner::geocode()`, `geodata::gadm()`, or similar **inside `carob_script()`**. Use these helpers *interactively while writing the script* to derive coordinates, then **hard-code the output** — typically a small lookup `data.frame` of `adm*` → `longitude`/`latitude`/`geo_uncertainty` that you `merge` into `d`. `carobiner::dfput()` is handy for turning a looked-up table into script code. (The same rule applies to any external/online lookup: derive offline, hard-code the result.)
 
 ---
 
