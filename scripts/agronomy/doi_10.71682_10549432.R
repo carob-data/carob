@@ -68,8 +68,7 @@ ownership, maintenance, and operating cost of each tool.
   r4b <- carobiner::read.excel(f4, sheet="Data")                  # Work capacity/fuel
   ## r2 (cost-model reference) is not merged into d3b/d1b - see ISSUES
   
-  ### Base table: weed density (r3b)
-  d3b <- data.frame(
+  d3b_base <- data.frame(
     country = "Mexico",
     adm1 = r3b$State,
     location = gsub("_", " ", r3b$Site),
@@ -87,16 +86,25 @@ ownership, maintenance, and operating cost of each tool.
     row_spacing = r3b$Row_spacing * 100,   # m -> cm
     
     weeding_method = ifelse(r3b$Treatment == "Ctrl", "none", r3b$Treatment),
+    mach_cat = r3b$Mach_cat,               # suggested field - tool category
     weeding_times = as.integer(r3b$N_interv_perf),
     weeding_done = r3b$N_interv_perf > 0,
     weeding_pass = ifelse(r3b$Intervention == "NA", NA,
-                          ifelse(r3b$Intervention == "Primera", "first",
-                                 ifelse(r3b$Intervention == "Segunda", "second", r3b$Intervention))), # suggested field - which weeding pass
-    rep = as.integer(r3b$Rep),
-    
-    weed_density = as.numeric(r3b$Density_fin) * 10000,       # plants/m2 -> plants/ha (post-intervention)
-    weed_density_pre = as.numeric(r3b$Density_Ini) * 10000    # suggested field - pre-intervention (plants/ha)
+                   ifelse(r3b$Intervention == "Primera", "first",
+                   ifelse(r3b$Intervention == "Segunda", "second", r3b$Intervention))), # suggested field - which weeding pass
+    rep = as.integer(r3b$Rep)
   )
+  
+  # long format: one row per before/after reading, not two side-by-side columns
+  d3b_before <- d3b_base
+  d3b_before$weeding_period <- "before"
+  d3b_before$weed_density <- suppressWarnings(as.numeric(r3b$Density_Ini)) * 10000
+  
+  d3b_after <- d3b_base
+  d3b_after$weeding_period <- "after"
+  d3b_after$weed_density <- suppressWarnings(as.numeric(r3b$Density_fin)) * 10000
+  
+  d3b <- rbind(d3b_before, d3b_after)
   
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
   geo_lookup <- data.frame(
@@ -109,8 +117,8 @@ ownership, maintenance, and operating cost of each tool.
   
   ### r4b has multiple timing readings per key, no Rep to link - averaged per State+Site+Treatment+Intervention
   d4b <- aggregate(Area ~ State + Site + Treatment + Intervention, data = r4b, FUN = mean)
-  d4b_time <- aggregate(Time ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) mean(as.numeric(x), na.rm = TRUE))
-  d4b_fuel <- aggregate(Fuel_consumption ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) mean(as.numeric(x), na.rm = TRUE))
+  d4b_time <- aggregate(Time ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) suppressWarnings(mean(as.numeric(x), na.rm = TRUE)))
+  d4b_fuel <- aggregate(Fuel_consumption ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) suppressWarnings(mean(as.numeric(x), na.rm = TRUE)))
   
   d4b <- merge(d4b, d4b_time, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
   d4b <- merge(d4b, d4b_fuel, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
@@ -120,7 +128,7 @@ ownership, maintenance, and operating cost of each tool.
     location = gsub("_", " ", d4b$Site),
     weeding_method = ifelse(d4b$Treatment == "Ctrl", "none", d4b$Treatment),
     weeding_pass = ifelse(d4b$Intervention == 1, "first",
-                          ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
+                  ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
     work_area = d4b$Area,                    # suggested field - m2, tool's working area
     work_time = d4b$Time,                    # suggested field - minutes
     fuel_consumption = d4b$Fuel_consumption  # suggested field - mL
