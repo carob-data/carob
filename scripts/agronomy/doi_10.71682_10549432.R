@@ -31,7 +31,7 @@ intervention (plants/m2), maize grain yield sub-samples and moisture, and
 the tool's work capacity (area covered, time, and fuel consumption per
 treatment). A separate cost-model reference table estimates the annual
 ownership, maintenance, and operating cost of each tool.
-  "
+"
 
   uri <- "doi:10.71682/10549432"
   group <- "agronomy"
@@ -134,7 +134,7 @@ ownership, maintenance, and operating cost of each tool.
     fuel_consumption = d4b$Fuel_consumption  # suggested field - mL
   )
   
-  d3b <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
+  d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
   
   ### weeding_cost: fuel cost (motorized tools only) + labor cost (all tools), using fixed assumptions from r2b's "1. 
   ### This is a partial operating cost (fuel + labor only) - does NOT include tool purchase/depreciation/repair costs.
@@ -142,34 +142,34 @@ ownership, maintenance, and operating cost of each tool.
   daily_wage_usd <- 13.33
   workday_hours <- 8
   
-  d3b$fuel_cost <- (d3b$fuel_consumption / 1000) * fuel_price_usd_per_L
-  d3b$labor_cost <- (d3b$work_time / 60) / workday_hours * daily_wage_usd
-  d3b$weeding_cost <- (ifelse(is.na(d3b$fuel_cost), 0, d3b$fuel_cost) + d3b$labor_cost) / (d3b$work_area / 10000)
+  d$fuel_cost <- (d$fuel_consumption / 1000) * fuel_price_usd_per_L
+  d$labor_cost <- (d$work_time / 60) / workday_hours * daily_wage_usd
+  d$weeding_cost <- (ifelse(is.na(d$fuel_cost), 0, d$fuel_cost) + d$labor_cost) / (d$work_area / 10000)
   
-  d3b$trial_id <- r3b$Site
-  d3b$on_farm <- TRUE
-  d3b$is_survey <- FALSE
-  d3b$crop <- "maize"
-  d3b$irrigated <- NA
-  d3b$planting_date <- NA
-  d3b$harvest_date <- NA
-  d3b$N_fertilizer <- NA
-  d3b$P_fertilizer <- NA
-  d3b$K_fertilizer <- NA
-  d3b$yield <- NA
-  d3b$yield_part <- NA
-  d3b$yield_moisture <- NA
-  d3b$yield_isfresh <- NA
+  d$trial_id <- r3b$Site
+  d$on_farm <- TRUE
+  d$is_survey <- FALSE
+  d$crop <- "maize"
+  d$irrigated <- NA
+  d$planting_date <- NA
+  d$harvest_date <- NA
+  d$N_fertilizer <- NA
+  d$P_fertilizer <- NA
+  d$K_fertilizer <- NA
+  d$yield <- NA
+  d$yield_part <- NA
+  d$yield_moisture <- NA
+  d$yield_isfresh <- NA
   
   ### Yield sub-samples (r1b).
-  d1b <- data.frame(
-    trial_id = r1b$Site,
-    rep = as.integer(r1b$Rep),
-    weeding_method = ifelse(r1b$Treatment == "Ctrl", "none", r1b$Treatment),
+  #d1b <- data.frame(
+  #  trial_id = r1b$Site,
+  #  rep = as.integer(r1b$Rep),
+  #  weeding_method = ifelse(r1b$Treatment == "Ctrl", "none", r1b$Treatment),
     
-    sample_weight = r1b$Sample_weight,   # kg, sub-sample from an unspecified area
-    yield_moisture = r1b$Moisture_per
-  )
+  #  sample_weight = r1b$Sample_weight,   # kg, sub-sample from an unspecified area
+  #  yield_moisture = r1b$Moisture_per
+  #)
   
-  carobiner::write_files(path, meta, d3b)
+  carobiner::write_files(path, meta, d)
 }
