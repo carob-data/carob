@@ -58,12 +58,12 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  grain_N = r1$N..g.kg.,
 	  date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
 	  planting_date =  as.character(as.Date(r1$Date, "%m/%d/%Y") -151L),
-	  harvest_date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
-	  harvest_days = 151L	
+	  harvest_date = as.character(as.Date(r1$Date, "%m/%d/%Y"))
 	)
 	
 	d1$cover_crop <- gsub("rye grass", "ryegrass", d1$cover_crop)
 	
+	######
 	d2 <- data.frame(
 	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
 	  N_fertilizer = r2$Nrate*173.5,
@@ -109,6 +109,9 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	)
 	d3$cover_crop <- gsub("annual rye", "annual ryegrass", d3$cover_crop)
 	
+	### merge d2 and d3
+	dd <- merge(d2, d3, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date", "DAP"), all = TRUE)
+	
 	####
 	d4 <- data.frame(
 	  N_fertilizer = r4$Nrate*173.5,
@@ -121,9 +124,16 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  planting_date = as.character(as.Date(r4$date, "%m/%d/%Y")- as.integer(r4$DaysAfterPlanting))
 	)
 	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
-
+  
+	### merge d2 and dd
+	#dd <- merge(dd, d4, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date", "DAP"), all = TRUE)
+	dd <- carobiner::bindr(dd, d4)
 	
-	d <- carobiner::bindr(d1, d2, d3, d4)
+	### merge dd and d1
+	d <- merge(dd, d1, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date"), all = TRUE)
+	
+	### Fixing harvest_date
+	d$harvest_date <- ifelse(grepl("harvest", d$growth_stage), d$date, d$harvest_date)
 	
 	d$is_survey <- FALSE
 	d$crop <- "maize"
