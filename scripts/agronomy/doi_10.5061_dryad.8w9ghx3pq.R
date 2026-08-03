@@ -54,7 +54,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  rep = as.integer(r1$rep),
 	  plot_id = as.character(r1$plot),
 	  N_fertilizer = r1$culture*173.5,
-	  N_fert_level = as.character(r1$culture),
 	  grain_C = r1$C..g.kg.,
 	  grain_N = r1$N..g.kg.,
 	  date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
@@ -67,7 +66,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d2 <- data.frame(
 	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
 	  N_fertilizer = r2$Nrate*173.5,
-	  N_fert_level = as.character(r2$Nrate),
 	  rep = as.integer(r2$rep),
 	  root_C_10_60 = r2$RootC_10to60cm_.g.kg,
 	  root_C_0_10 = r2$RootC_0to10cm_.g.kg,
@@ -99,7 +97,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  plot_id = as.character(r3$plot),
 	  rep = as.integer(r3$rep),
 	  N_fertilizer = r3$Nrate*173.5,
-	  N_fert_level = as.character(r3$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
 	  date = as.character(as.Date(r3$Date, "%m/%d/%Y")),
 	  DAP = as.integer(r3$DaysAfterPlanting),
@@ -114,7 +111,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	####
 	d4 <- data.frame(
 	  N_fertilizer = r4$Nrate*173.5,
-	  N_fert_level = as.character(r4$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
 	  plot_id = as.character(r4$Plot),
 	  date = as.character(as.Date(r4$date, "%m/%d/%Y")),
@@ -127,7 +123,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 
 	
 	d <- carobiner::bindr(d1, d2, d3, d4)
-	
 	
 	d$is_survey <- FALSE
 	d$crop <- "maize"
@@ -151,17 +146,18 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	############### long format 
 	d$record_id <- as.integer(1:nrow(d))
 	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth", names(d))
-  d_lon <- d[, cols]
-  vars <- names(d_lon)[grep("NDVI|fwy|leaf|root",names(d_lon))]
 	
-  dl <- reshape(d_lon, varying = vars, v.names = "value", timevar = "variable", times = vars, direction = "long")
-  dl <- dl[!is.na(dl$value),]
-  dl$id <- NULL
-  row.names(dl) <- NULL
+	d_lon <- d[, cols]
+	vars <- names(d_lon)[grep("NDVI|fwy|leaf|root",names(d_lon))]
+	
+	d_lon <- reshape(d_lon, varying = vars, v.names = "value", timevar = "variable", times = vars, direction = "long")
+	d_lon <- d_lon[!is.na(d_lon$value),]
+	d_lon$id <- NULL
+	row.names(d_lon) <- NULL
   
 	col <- grep("NDVI|DAP|fwy|leaf|root|depth", names(d))
 	d <- d[, -col]
 
-	carobiner::write_files(path, meta, d, long = dl)
+	carobiner::write_files(path, meta, d, long = d_lon)
 }
 
