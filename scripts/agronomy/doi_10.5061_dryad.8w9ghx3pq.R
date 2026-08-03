@@ -28,7 +28,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 		design = "RCB",
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fert_level",
-		response_vars = "grain_N;leaf_N;root_N;root_C", 
+		response_vars = "NDVI,grain_N;leaf_N;root_N;root_C", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-27",
@@ -60,13 +60,13 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fert_level = as.character(r1$culture),
 	  planting_date = "2016",
 	  DAP = 169L, ## 
-	  harvest_days = 169L
-	
+	  harvest_days = 169L	
 	)
 	
 	d1$cover_crop <- gsub("rye grass", "ryegrass", d1$cover_crop)
 	
 	d2 <- data.frame(
+	  date = r2$Date.Sample.Taken,
 	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
 	  N_fertilizer = r2$Nrate*173.5,
 	  N_fert_level = as.character(r2$Nrate),
@@ -85,6 +85,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  planting_date = as.character(r2$Year)
 	)
 	d2$cover_crop <- gsub("annual rye", "annual ryegrass", d2$cover_crop)
+
 	var1 <- c("root_C_10_60", "root_C_0_60", "root_C_0_10")
 	var2 <- c("root_N_10_60", "root_N_0_60", "root_N_0_10")
 	var3 <- c("fmy_roots_10_60", "fmy_roots_0_60", "fmy_roots_0_10")
@@ -101,15 +102,15 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fertilizer = r3$Nrate*173.5,
 	  N_fert_level = as.character(r3$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
+	  date = r3$Date
 	  DAP = as.integer(r3$DaysAfterPlanting),
-	  planting_date = as.character(r3$Year),
+#wrong, you have date + DAP so you can compute planting_date
+#	  planting_date = as.character(r3$Year), 
 	  crop = r3$Crop,
 	  growth_stage = trimws(r3$stage),
 	  leaf_N = r3$N_gkg,
-	  leaf_C = r3$C_gkg
-	  
+	  leaf_C = r3$C_gkg	  
 	)
-	
 	d3$cover_crop <- gsub("annual rye", "annual ryegrass", d3$cover_crop)
 	
 	####
@@ -118,12 +119,13 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fert_level = as.character(r4$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
 	  plot_id = as.character(r4$Plot),
+	  date = r4$date,
 	  DAP = as.integer(r4$DaysAfterPlanting),
 	  NDVI = r4$NDVI,
-	  rep = as.integer(r4$rep),
-	  planting_date = as.character(r4$Year)
+	  rep = as.integer(r4$rep)
+#wrong, you have date + DAP so you can compute planting_date
+	  # planting_date = as.character(r4$Year) wrong
 	)
-	
 	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
 
 	####
