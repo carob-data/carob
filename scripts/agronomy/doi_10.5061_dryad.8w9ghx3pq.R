@@ -26,7 +26,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 		project = NA,
 		design = "RCB",
 		data_type = "experiment",
-		treatment_vars = "cover_crop;N_fert_level",
+		treatment_vars = "cover_crop;N_fertilizer",
 		response_vars = "grain_N;grain_C", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
@@ -58,6 +58,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  grain_N = r1$N..g.kg.,
 	  date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
 	  planting_date =  as.character(as.Date(r1$Date, "%m/%d/%Y") -151L),
+	  harvest_date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
 	  harvest_days = 151L	
 	)
 	
@@ -139,13 +140,13 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d$elevation <- 344 
 	d$irrigated <- NA
 	d$yield_isfresh <- TRUE
-	d$harvest_date <- NA_character_
+
 	
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
 	############### long format 
 	d$record_id <- as.integer(1:nrow(d))
-	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth", names(d))
+	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth|growth_stage|^date", names(d))
 	
 	d_lon <- d[, cols]
 	vars <- names(d_lon)[grep("NDVI|fwy|leaf|root",names(d_lon))]
@@ -155,7 +156,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d_lon$id <- NULL
 	row.names(d_lon) <- NULL
   
-	col <- grep("NDVI|DAP|fwy|leaf|root|depth", names(d))
+	col <- grep("NDVI|DAP|fwy|leaf|root|depth|growth_stage|^date", names(d))
 	d <- d[, -col]
 
 	carobiner::write_files(path, meta, d, long = d_lon)
