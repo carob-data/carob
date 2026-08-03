@@ -20,7 +20,6 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
 		data_organization = "USDA-ARS",
 		publication = "doi:10.1002/agj2.21085",
@@ -28,7 +27,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 		design = "RCB",
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fert_level",
-		response_vars = "NDVI,grain_N;leaf_N;root_N;root_C", 
+		response_vars = "NDVI;grain_N;leaf_N;root_N;root_C", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-27",
@@ -58,15 +57,15 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  plot_id = as.character(r1$plot),
 	  N_fertilizer = r1$culture*173.5,
 	  N_fert_level = as.character(r1$culture),
-	  planting_date = "2016",
-	  DAP = 169L, ## 
-	  harvest_days = 169L	
+	  date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
+	  planting_date =  as.character(as.Date(r1$Date, "%m/%d/%Y") -151L),
+	  DAP = 151L, ## 
+	  harvest_days = 151L	
 	)
 	
 	d1$cover_crop <- gsub("rye grass", "ryegrass", d1$cover_crop)
 	
 	d2 <- data.frame(
-	  date = r2$Date.Sample.Taken,
 	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
 	  N_fertilizer = r2$Nrate*173.5,
 	  N_fert_level = as.character(r2$Nrate),
@@ -82,7 +81,8 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  fmy_roots_0_10 = r2$Roots.mass_0to10cm_kg.ha,
 	  plot_id = as.character(r2$Plot),
 	  DAP = as.integer(r2$DaysAfterPlanting),
-	  planting_date = as.character(r2$Year)
+	  date = as.character(as.Date(r2$Date.Sample.Taken, "%m/%d/%Y")),
+	  planting_date = as.character(as.Date(r2$Date.Sample.Taken, "%m/%d/%Y") - as.integer(r2$DaysAfterPlanting))
 	)
 	d2$cover_crop <- gsub("annual rye", "annual ryegrass", d2$cover_crop)
 
@@ -94,7 +94,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d2$depth_bottom  <- as.numeric(substr(d2$depth, 4, 5))
 	d2$depth_top  <- as.numeric(substr(d2$depth, 1, 2))
 	d2$depth <- NULL
-
+	
 	#######
 	d3 <- data.frame(
 	  plot_id = as.character(r3$plot),
@@ -102,10 +102,9 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fertilizer = r3$Nrate*173.5,
 	  N_fert_level = as.character(r3$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
-	  date = r3$Date
+	  date = as.character(as.Date(r3$Date, "%m/%d/%Y")),
 	  DAP = as.integer(r3$DaysAfterPlanting),
-#wrong, you have date + DAP so you can compute planting_date
-#	  planting_date = as.character(r3$Year), 
+	  planting_date = as.character(as.Date(r3$Date, "%m/%d/%Y")- as.integer(r3$DaysAfterPlanting)),
 	  crop = r3$Crop,
 	  growth_stage = trimws(r3$stage),
 	  leaf_N = r3$N_gkg,
@@ -119,16 +118,15 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	  N_fert_level = as.character(r4$Nrate),
 	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
 	  plot_id = as.character(r4$Plot),
-	  date = r4$date,
+	  date = as.character(as.Date(r4$date, "%m/%d/%Y")),
 	  DAP = as.integer(r4$DaysAfterPlanting),
 	  NDVI = r4$NDVI,
-	  rep = as.integer(r4$rep)
-#wrong, you have date + DAP so you can compute planting_date
-	  # planting_date = as.character(r4$Year) wrong
+	  rep = as.integer(r4$rep),
+	  planting_date = as.character(as.Date(r4$date, "%m/%d/%Y")- as.integer(r4$DaysAfterPlanting))
 	)
 	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
 
-	####
+	
 	d <- carobiner::bindr(d1, d2, d3, d4)
 	
 	
@@ -152,13 +150,13 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
 	############### long format 
-	d$record_id <- as.integer(1:nrow(d))
-	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth", names(d))
-	d_lon <- d[, cols]
+	#d$record_id <- as.integer(1:nrow(d))
+	#cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth", names(d))
+	#d_lon <- d[, cols]
 	
-	col <- grep("NDVI|DAP|fwy|leaf|root|depth", names(d))
-	d <- d[, -col]
+	#col <- grep("NDVI|DAP|fwy|leaf|root|depth", names(d))
+	#d <- d[, -col]
 
-	carobiner::write_files(path, meta, d, long = d_lon)
+	carobiner::write_files(path, meta, d)
 }
 
