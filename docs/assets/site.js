@@ -40,13 +40,21 @@
 		return lead || provider;
 	}
 
-	function titleLinkCell(title, uri) {
+	function titleUriCell(title, uri) {
 		title = String(title || "").trim();
 		uri = String(uri || "").trim();
-		if (!title) return "";
-		const href = uriHref(uri);
-		if (!href) return escapeHtml(title);
-		return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`);
+		const parts = [];
+		if (title) parts.push(escapeHtml(title));
+		if (uri) {
+			const href = uriHref(uri);
+			if (href) {
+				parts.push(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(uri)}</a>`);
+			} else {
+				parts.push(escapeHtml(uri));
+			}
+		}
+		if (!parts.length) return "";
+		return gridjs.html(parts.join(" "));
 	}
 
 	function transformTodoTable(headers, rows) {
@@ -151,7 +159,7 @@
 				if (key === "title") {
 					col.formatter = (cell, row) => {
 						const uri = row.cells[uriColIdx]?.data ?? "";
-						return titleLinkCell(cell, uri);
+						return titleUriCell(cell, uri);
 					};
 				}
 				return col;

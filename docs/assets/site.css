@@ -133,6 +133,6 @@ table.gridjs-shadowTable .gridjs-th {
 	word-break: break-word !important;
 }
 
-.gridjs-search input { font-size: .85rem; }
-.gridjs-th, .gridjs-td { font-size: .78rem; padding: .28rem .4rem; }
+.gridjs-search input { font-size: .9rem; }
+.gridjs-th, .gridjs-td { font-size: .88rem; padding: .35rem .45rem; }
 .gridjs-th-content { font-weight: 600; }
