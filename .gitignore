@@ -25,3 +25,5 @@ update_carob.R
 harvester/
 other/
 private/
+misc/scripts/
+__pycache__

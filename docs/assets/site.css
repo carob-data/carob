@@ -1,0 +1,118 @@
+:root {
+	--fg: #1c1c1c;
+	--muted: #6b6b6b;
+	--bg: #fafafa;
+	--card-bg: #ffffff;
+	--border: #e5e5e5;
+	--accent: #2e7d32;
+	--accent-fg: #ffffff;
+	--error: #b00020;
+}
+
+* { box-sizing: border-box; }
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	color: var(--fg);
+	background: var(--bg);
+	margin: 0;
+	line-height: 1.4;
+}
+
+a { color: var(--accent); }
+a:hover { text-decoration: underline; }
+.sep { color: var(--muted); margin: 0 .25rem; }
+
+header {
+	padding: 1.5rem 1.5rem 1rem;
+	border-bottom: 1px solid var(--border);
+	background: #fff;
+}
+header h1 {
+	margin: 0 0 .25rem;
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+header h1 a { color: var(--fg); text-decoration: none; }
+header h1 a:hover { text-decoration: underline; }
+
+.tagline {
+	margin: 0 0 .75rem;
+	color: var(--muted);
+}
+
+.meta {
+	font-size: .85rem;
+	color: var(--muted);
+	margin: 0;
+}
+
+main {
+	padding: 1.5rem;
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+.empty, .muted { color: var(--muted); }
+.error { color: var(--error); }
+
+.table-controls {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	margin: .5rem 0 .25rem;
+	font-size: .9rem;
+	color: var(--muted);
+}
+.table-controls label {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+}
+.table-controls select {
+	padding: .2rem .35rem;
+	font-size: .9rem;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	background: #fff;
+	color: var(--fg);
+}
+
+#table-host { margin-top: .5rem; }
+#table-host .gridjs-wrapper { box-shadow: none; }
+
+.gridjs-wrapper {
+	width: fit-content;
+	overflow-x: auto;
+	max-width: 100%;
+}
+
+.gridjs-td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.gridjs-td[data-col="title"],
+.gridjs-td[data-col="author"],
+.gridjs-td[data-col="description"],
+.gridjs-td[data-col="notes"] {
+	white-space: normal;
+	overflow-wrap: break-word;
+	max-width: 42rem;
+}
+
+.gridjs-temp table.gridjs-table {
+	width: auto !important;
+}
+
+table.gridjs-shadowTable .gridjs-td,
+table.gridjs-shadowTable .gridjs-th {
+	min-width: 0 !important;
+	white-space: normal !important;
+	word-break: break-all !important;
+}
+
+.gridjs-search input { font-size: .9rem; }
+.gridjs-th, .gridjs-td { font-size: .85rem; padding: .4rem .55rem; }
+.gridjs-th-content { font-weight: 600; }
