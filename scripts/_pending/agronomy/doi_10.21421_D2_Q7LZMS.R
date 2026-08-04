@@ -6,6 +6,8 @@
 #NPK fertilizer rates and organic ammendment rates has not been specified
 # The plant_height had out of bounds values (0, 651)
 #heading_days, flowering_days, maturity_days,e_asp and ear_dam_co had some NA values in the dataset resulting in Warning message:NAs introduced by coercion
+#The title talked about sorghum but the dataset does not include any information about sorghum
+
 
 carob_script <- function(path) {
 
@@ -28,8 +30,8 @@ Over exploitation of soil and absence of fallow system expose soil to degradatio
 		project = NA,
 		design = NA,
 		data_type = NA,
-		treatment_vars = "variety",
-		response_vars = "seed_treatment;OM_used",
+		treatment_vars = "seed_treatment;OM_used;fertilizer_used",
+		response_vars = "yield;dmy_total",
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-27",
 		carob_completion = 70,	
@@ -45,9 +47,9 @@ Over exploitation of soil and absence of fallow system expose soil to degradatio
 	
 	
 	d <- data.frame(
-	  country = c("Burkina Faso","Niger"),
+	  country = NA,
 	  plot_id = as.character(r$`Plot no`),
-	  block_id = as.character(r$Block),
+	  rep = as.integer(r$Block),
 	  seed_treatment = r$`Seed treatment l`,
 	  OM_used = r$`Organic amend l`,
 	  fertilizer_used = r$`Minerals l`,
@@ -64,7 +66,7 @@ Over exploitation of soil and absence of fallow system expose soil to degradatio
 	  crop = ifelse(r$`Millet genotype l` != "", "millet", "sorghum")
 	)
 	
-	##the term striga_infested_hills is not abailable in carob
+	##the term striga_infested_hills is not available in carob
 	#striga_infested_hills = r$`striga_nbre poquets_parcelle`,
 
 	d$trial_id <- as.character(as.integer(as.factor(1)))
@@ -74,32 +76,14 @@ Over exploitation of soil and absence of fallow system expose soil to degradatio
 	d$irrigated <- NA
 	
 	
-	
-	location <-  data.frame(
-	  country = c("Burkina Faso", "Niger"),
-	  adm1 = c("Nord", "Maradi"),
-	  adm2 = c("Yatenga", NA),
-	  adm3 = c("Ouahigouya", NA),
-	  latitude = c(13.5891, 14.1162),
-	  longitude = c(-2.436, 7.2992),
-	  geo_uncertainty= c(18121, 157733 ),
-	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm1")
-	)
-	
-	d <- merge(d, location, by = "country", all.x = TRUE)
-	
-	d$geo_from_source <- FALSE
-
-
 	d$planting_date <- as.character(as.Date(NA))
 	d$harvest_date  <- as.character(as.Date(NA))
 
-	d$fertilizer_used <-NA
-	d$fertilizer_used[d$'Minerals l'%in% c("No Min fert")] <- FALSE
-	d$fertilizer_used[d$'Minerals l'%in% c("3g NPK per hill","6g NPK per hill","Recomm rate")] <- TRUE
+	d$fertilizer_used <- NA
+	d$fertilizer_used <- ifelse(r$`Minerals l`=="No Min fert",FALSE,TRUE)
 	
-	d$OM_used <-NA
-	d$OM_used[d$'Organic amend l' %in% c("No Org Man", "Boadcast appl", "200g Man per hill")] <- TRUE
+	d$OM_used <- NA
+	d$OM_used <- ifelse(r$`Organic amend l`=="No Org Man",FALSE,TRUE)
 	
    
 	d$yield_part <- "grain"
