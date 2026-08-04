@@ -12,6 +12,13 @@ An integrated approach for understanding the factors that facilitate or constrai
 The survey data on soil carbon enhancing practices in Ethiopia is systematically organized in Microsoft Excel tables. The data entails general household characteristics, plot characteristics, crops grown, yield, practices implemented, inputs, livestock ownership, social capital, access to credit, access to extension services.
 "
 
+"universe: The survey was carried out in two watersheds that is Yiser and Azugashube watershed. Yesir watershed and Azugashube watershed covers an area of 115.8km² with a population density of 158 persons per km² and 88.7km² with a population density of 502.13 persons per km² respectively.
+
+The population in this area practice a mixed system of crop and livestock keeping in which crop and livestock mutually benefit one another. The most common crops in the area includes teff, barley, wheat and horse beans (Bakela). These crops are grown mostly for subsistence purposes. Other important crops include; maize, sorghum, finger millet, enset, pulses and oil crops. Cattle, goats, sheep and poultry forms the major types of livestock kept. In addition to donkey, horses and mules are also common in these areas. The area experience bimodal type of rainfall with the main season (meher) between June and September while the short rainy season (belg) is experienced between February and April. The mean annual precipitation of Yesir is1500mm and Azugashube is 1656mm and with mean temperatures ranging between 20°C and 24°C.
+
+A total of 379 households were sampled, the households were randomly drawn from a list of pastoral area (PA) household rosters. In total 161, and 218 household were sampled in Yiser and Azugashube respectively."
+		
+
 	uri <- "doi:10.7910/DVN/QTACSN"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -22,36 +29,26 @@ The survey data on soil carbon enhancing practices in Ethiopia is systematically
 		project = NA,
 		carob_date = "2026-03-11",
 		carob_effort = NA,
-		design = "universe: The survey was carried out in two watersheds that is Yiser and Azugashube watershed. Yesir watershed and Azugashube watershed covers an area of 115.8km² with a population density of 158 persons per km² and 88.7km² with a population density of 502.13 persons per km² respectively.
-
-The population in this area practice a mixed system of crop and livestock keeping in which crop and livestock mutually benefit one another. The most common crops in the area includes teff, barley, wheat and horse beans (Bakela). These crops are grown mostly for subsistence purposes. Other important crops include; maize, sorghum, finger millet, enset, pulses and oil crops. Cattle, goats, sheep and poultry forms the major types of livestock kept. In addition to donkey, horses and mules are also common in these areas. The area experience bimodal type of rainfall with the main season (meher) between June and September while the short rainy season (belg) is experienced between February and April. The mean annual precipitation of Yesir is1500mm and Azugashube is 1656mm and with mean temperatures ranging between 20°C and 24°C.
-
-A total of 379 households were sampled, the households were randomly drawn from a list of pastoral area (PA) household rosters. In total 161, and 218 household were sampled in Yiser and Azugashube respectively.",
-		
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 70,	
-		notes = "We only process files with useful information for carob"
+		notes = NA
 	)
-	
 
-	f1 <- ff[basename(ff) == "02.Codebooks.xlsx"]
-	f2 <- ff[basename(ff) == "Data"]
-
-	
-	r1 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018_Main File.dta", sep = "/")) 
-	r2 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Crops and Land Info.dta", sep = "/")) 
-	#r3 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Extension.dta", sep = "/")) 
-	#r4 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Fertility.dta", sep = "/")) 
-	#r5 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Livestock.dta", sep = "/")) 
-	r6 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Sale of Crops.dta", sep = "/")) 
-	#r7 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Soil Carbon Practices.dta", sep = "/")) 
-	#r8 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Credit.dta", sep = "/")) 
-	r9 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Demographic Information.dta", sep = "/")) 
-	r10 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Fertlizer Usage.dta", sep = "/")) 
-	#r11 <- carobiner::read.dta(paste(f2, "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Group Membership.dta", sep = "/")) 
+	r1 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018_Main File.dta"]) 
+	r2 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Crops and Land Info.dta"]) 
+	#r3 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Extension.dta"]) 
+	#r4 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Fertility.dta"]) 
+	#r5 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Livestock.dta"]) 
+	r6 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Sale of Crops.dta"]) 
+	#r7 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_2018-Soil Carbon Practices.dta"]) 
+	#r8 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Credit.dta"]) 
+	r9 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Demographic Information.dta"]) 
+	r10 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Fertlizer Usage.dta"]) 
+	#r11 <- carobiner::read.dta(ff[basename(ff) == "ETHIOPIA_SOIL_CARBON_ENHANCEMENT_PROJECT_20180-Group Membership.dta"]) 
 
 	### process files
 	
