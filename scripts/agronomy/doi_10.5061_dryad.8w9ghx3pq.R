@@ -27,7 +27,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 		design = "RCB",
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fertilizer",
-		response_vars = "grain_N;grain_C", 
+		response_vars = "grain_N;grain_C;NDVI", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-27",
@@ -48,93 +48,96 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	
 
 #### process
-	
+
+	## 2016 only, grain C and N at harvest 
 	d1 <- data.frame(
-	  cover_crop = gsub("tillage radish", "radish",tolower(r1$Crop)),
-	  rep = as.integer(r1$rep),
-	  plot_id = as.character(r1$plot),
-	  N_fertilizer = r1$culture*173.5,
+	  plot_id = r1$plot,
 	  grain_C = r1$C..g.kg.,
 	  grain_N = r1$N..g.kg.,
-	  date = as.character(as.Date(r1$Date, "%m/%d/%Y")),
-	  planting_date =  as.character(as.Date(r1$Date, "%m/%d/%Y") -151L),
 	  harvest_date = as.character(as.Date(r1$Date, "%m/%d/%Y"))
-	)
-	
-	d1$cover_crop <- gsub("rye grass", "ryegrass", d1$cover_crop)
-	
-	######
-	d2 <- data.frame(
-	  cover_crop = gsub("no cover", "none",  tolower(r2$CoverCrop)),
-	  N_fertilizer = r2$Nrate*173.5,
-	  rep = as.integer(r2$rep),
-	  root_C_10_60 = r2$RootC_10to60cm_.g.kg,
-	  root_C_0_10 = r2$RootC_0to10cm_.g.kg,
-	  root_C_0_60 = r2$Roots0_60cm_kg.C.ha*1.1/1000, #mg/g or g/kg
-	  root_N_10_60 = r2$RootN_10to60cm_.g.kg,
-	  root_N_0_10 = r2$RootN_0to10cm_.g.kg,
-	  root_N_0_60 = r2$RootN_0to60cm_.kg.N.ha*1.1/1000,
-	  fmy_roots_0_60 = r2$Roots.mass..0.60.cm.kg.ha,
-	  fmy_roots_10_60 = r2$Roots.Mass_10to60cm_kg.ha,
-	  fmy_roots_0_10 = r2$Roots.mass_0to10cm_kg.ha,
-	  plot_id = as.character(r2$Plot),
-	  DAP = as.integer(r2$DaysAfterPlanting),
-	  date = as.character(as.Date(r2$Date.Sample.Taken, "%m/%d/%Y")),
-	  planting_date = as.character(as.Date(r2$Date.Sample.Taken, "%m/%d/%Y") - as.integer(r2$DaysAfterPlanting))
-	)
-	d2$cover_crop <- gsub("annual rye", "annual ryegrass", d2$cover_crop)
+	)	
+	d1$year <- substr(d1$harvest_date, 1, 4)
 
-	var1 <- c("root_C_10_60", "root_C_0_60", "root_C_0_10")
-	var2 <- c("root_N_10_60", "root_N_0_60", "root_N_0_10")
-	var3 <- c("fmy_roots_10_60", "fmy_roots_0_60", "fmy_roots_0_10")
-	d2 <- reshape(d2, varying = list(var1, var2, var3), v.names = c("root_C", "root_N", "fwy_roots"), timevar = "depth", times = c("10-60", "00_60", "00-10"), direction = "long")
-	d2$id <- NULL
-	d2$depth_bottom  <- as.numeric(substr(d2$depth, 4, 5))
-	d2$depth_top  <- as.numeric(substr(d2$depth, 1, 2))
-	d2$depth <- NULL
+	## root biomass and C/N at two depths (0-10, 10-60cm, not using redundant 0-60), in three years
+	d2 <- data.frame(
+	  plot_id = r2$Plot,
+	  root_C_0_10 = r2$RootC_0to10cm_.g.kg,
+	  root_C_10_60 = r2$RootC_10to60cm_.g.kg,
+	  root_N_0_10 = r2$RootN_0to10cm_.g.kg,
+	  root_N_10_60 = r2$RootN_10to60cm_.g.kg,
+	  fmy_roots_0_10 = r2$Roots.mass_0to10cm_kg.ha,
+	  fmy_roots_10_60 = r2$Roots.Mass_10to60cm_kg.ha,
+	  date = as.character(as.Date(r2$Date.Sample.Taken, "%m/%d/%Y")),
+	  growth_stage = trimws(r2$sample.timing)
+	)
+	d2$year <- substr(d2$date, 1, 4)
+
 	
-	#######
+	## leaf N and C. 5 measurements per year, in two years
 	d3 <- data.frame(
-	  plot_id = as.character(r3$plot),
-	  rep = as.integer(r3$rep),
-	  N_fertilizer = r3$Nrate*173.5,
-	  cover_crop = gsub("tillage radish", "radish", tolower(r3$CoverCrop)),
+	  plot_id = r3$plot,
 	  date = as.character(as.Date(r3$Date, "%m/%d/%Y")),
 	  DAP = as.integer(r3$DaysAfterPlanting),
-	  planting_date = as.character(as.Date(r3$Date, "%m/%d/%Y")- as.integer(r3$DaysAfterPlanting)),
-	  crop = r3$Crop,
 	  growth_stage = trimws(r3$stage),
 	  leaf_N = r3$N_gkg,
 	  leaf_C = r3$C_gkg	  
 	)
-	d3$cover_crop <- gsub("annual rye", "annual ryegrass", d3$cover_crop)
-	
-	### merge d2 and d3
-	dd <- merge(d2, d3, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date", "DAP"), all = TRUE)
-	
-	####
+	d3$planting_date = as.Date(d3$date)- d3$DAP
+	d3$year <- substr(d3$date, 1, 4)
+	d3$DAP <- NULL
+
+	## NDVI for one or two years 5-6 measurments per year
 	d4 <- data.frame(
+	  plot_id = r4$Plot,
+	  treatment = as.character(r4$Trt),
+	  rep = as.integer(r4$rep),
 	  N_fertilizer = r4$Nrate*173.5,
 	  cover_crop = gsub("tillage radish", "radish", tolower(r4$CoverCrop)),
-	  plot_id = as.character(r4$Plot),
 	  date = as.character(as.Date(r4$date, "%m/%d/%Y")),
-	  DAP = as.integer(r4$DaysAfterPlanting),
-	  NDVI = r4$NDVI,
-	  rep = as.integer(r4$rep),
-	  planting_date = as.character(as.Date(r4$date, "%m/%d/%Y")- as.integer(r4$DaysAfterPlanting))
+	  NDVI = r4$NDVI
 	)
 	d4$cover_crop <- gsub("annual rye", "annual ryegrass", d4$cover_crop)
+	d4$year <- substr(d4$date, 1, 4)
+
+
+### treatments and year combination
+	d <- unique(d4[, c("plot_id", "treatment", "cover_crop", "N_fertilizer", "year")])
+	d$record_id <- 1:nrow(d)
+
+	d2 <- merge(d2, d[, c("plot_id", "year", "record_id")], all.x=TRUE)
+	d3 <- merge(d3, d[, c("plot_id", "year", "record_id")], all.x=TRUE)
+	d4 <- merge(d4, d[, c("plot_id", "year", "record_id")], all.x=TRUE)
+
+
+
+## d1 has one observation per variable for one year (wide)
+    d <- merge(d, d1, by=c("plot_id", "year"), all.x=TRUE)
+
+# add planting_date (there is two-day variation within d3
+	pd <- aggregate(d3["planting_date"], d3[, c("plot_id", "year")], mean)
+	pd$planting_date <- as.character(pd$planting_date)
+	d <- merge(d, pd, all.x=TRUE) 
+
+# reshape d2 to long
+  	var1 <- c("root_C_0_10", "root_C_10_60")
+	var2 <- c("root_N_0_10", "root_N_10_60")
+	var3 <- c("fmy_roots_0_10", "fmy_roots_10_60")
+	d2 <- reshape(d2, varying = list(var1, var2, var3), v.names = c("root_C", "root_N", "fwy_roots"), timevar = "depth", times = c("00-10", "10_60"), direction = "long")
+	d2$id <- NULL
+	d2$depth_bottom  <- as.numeric(substr(d2$depth, 4, 5))
+	d2$depth_top  <- as.numeric(substr(d2$depth, 1, 2))
+	d2$depth <- NULL
+
+	d4$cover_crop <- d4$N_fertilizer <- d4$treatment <- NULL
+ 
+	d_long <- carobiner::bindr(d2, d3, d4)
+	d_long$year <- d_long$planting_date <- d_long$plot_id <- d_long$rep <- NULL
+
+	vars <- c('root_C', 'root_N', 'fwy_roots', 'leaf_N', 'leaf_C', 'NDVI')
+	d_long <- reshape(d_long, varying=vars, v.names="value", timevar="variable", times=vars, direction="long")
+	d_long <- d_long[!is.na(d_long$value), ]
+	d_long$id <- NULL
   
-	### merge d2 and dd
-	#dd <- merge(dd, d4, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date", "DAP"), all = TRUE)
-	dd <- carobiner::bindr(dd, d4)
-	
-	### merge dd and d1
-	d <- merge(dd, d1, by= c("cover_crop", "rep", "plot_id", "N_fertilizer", "date", "planting_date"), all = TRUE)
-	
-	### Fixing harvest_date
-	d$harvest_date <- ifelse(grepl("harvest", d$growth_stage), d$date, d$harvest_date)
-	
 	d$is_survey <- FALSE
 	d$crop <- "maize"
 	d$on_farm <- TRUE
@@ -149,26 +152,11 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 	d$longitude <- -95.9
 	d$elevation <- 344 
 	d$irrigated <- NA
-	d$yield_isfresh <- TRUE
-
-	
+	d$yield_isfresh <- TRUE	
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
-	
-	############### long format 
-	d$record_id <- as.integer(1:nrow(d))
-	cols <- grep("NDVI|DAP|fwy|leaf|root|record_id|depth|growth_stage|^date", names(d))
-	
-	d_lon <- d[, cols]
-	vars <- names(d_lon)[grep("NDVI|fwy|leaf|root",names(d_lon))]
-	
-	d_lon <- reshape(d_lon, varying = vars, v.names = "value", timevar = "variable", times = vars, direction = "long")
-	d_lon <- d_lon[!is.na(d_lon$value),]
-	d_lon$id <- NULL
-	row.names(d_lon) <- NULL
-  
-	col <- grep("NDVI|DAP|fwy|leaf|root|depth|growth_stage|^date", names(d))
-	d <- d[, -col]
 
-	carobiner::write_files(path, meta, d, long = d_lon)
+	d$year <- NULL
+	d$plot_id <- as.character(d$plot_id)
+	
+	carobiner::write_files(path, meta, d, long = d_long)
 }
-
