@@ -2,8 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-
+# d3 does not have plot ID. Not clear how to link to d1 and d2	
 
 carob_script <- function(path) {
 
@@ -52,10 +51,10 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  treatment = as.character(r1b$Treatment),
 	  variety = r1b$Variety,
 	  rep = as.integer(r1b$Replicate),
-	  OM_amount = r1b$Treat_Compost_tDM,
+	  OM_amount = r1b$Compost_tDM, # actual, Treat_Compost_tDM is theoretical, 
 	  N_fertilizer = r1b$Treat_Fertilizer_kgN,
 	  yield = r1b$Grain_yield * 1000,
-	  #crop_cycle = r1b$Cycle, ### number of cycles
+	  #crop_cycle = r1b$Cycle, # ??
 	  soil_C_litter = r1b$ABG_tC * 1000,
 	  dmy_roots = r1b$Root_DM,
 	  dmy_residue = r1b$Straw_DM,
@@ -68,13 +67,13 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	d1$OM_type <- ifelse(d1$OM_used, "compost", "none")
 	d1$fertilizer_used <- r1b$Treat_Fertilizer_kgN > 0
 #	d1$fertilizer_type <- NA
-  d1$residue_C[d1$residue_C == 0] <- NA
+	d1$residue_C[d1$residue_C == 0] <- NA
 
 	d2 <- data.frame(
 	  plot_id = as.character(r1c$ID),
 	  date = as.character(r1c$Date),
-	  treatment = as.character(r1c$Traitement),
-	  rep = as.integer(ifelse(r1c$Replicate == "Composite", NA, r1c$Replicate)),
+	  #treatment = as.character(r1c$Traitement),
+	  #rep = as.integer(ifelse(r1c$Replicate == "Composite", NA, r1c$Replicate)),
 	  soil_pH = as.numeric(r1c$pH_water),
 	  soil_pH_KCl = as.numeric(r1c$pH_KCl),
 	  soil_K_exch = as.numeric(r1c$K_ech_cmole_kg),
@@ -88,25 +87,25 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	)
 	d2$soil_pH_KCl[d2$soil_pH_KCl == 1.09] <- NA
 
-	
+
+
+### no plot ID. Not clear how to link to d1 and d2	
 	d3 <- data.frame(
 	  treatment    = gsub("temoin", "control", tolower(r1d$Treatment)),
 	  rep          = as.integer(r1d$Field_replicate),
 	  method       = r1d$Method,
+	  age  = r1d$Age, #11 or 22 (years?)
 	  soil_SOC = as.numeric(r1d$Contenu_C_g_kg_sol) * 100,
-	  soil_N   = as.numeric(r1d$Contenu_N_g_kg_sol) 
+	  soil_N   = as.numeric(r1d$Contenu_N_g_kg_sol), 
+	  Teneur_C =  r1d$Teneur_C_g_kg_fraction, #concentration of carbon within that specific soil fraction
+	  Teneur_N = r1d$Teneur_N_g_kg_fraction #concentration of N within that specific soil fraction
 	)	
+	#d3$treatment[d3$treatment == "control"] <- "1" 
+	#d3$treatment[d3$treatment == "compost"] <- "7"
 	
-	d3$treatment <- as.character(d3$treatment)
-	d3$treatment[d3$treatment == "control"] <- "1" 
-	d3$treatment[d3$treatment == "compost"] <- "7"
-	
-	d3$Teneur_C <- r1d$Teneur_C_g_kg_fraction #concentration of carbon within that specific soil fraction
-	d3$Teneur_N <- r1d$Teneur_N_g_kg_fraction #concentration of N within that specific soil fraction
 	#d3$Proportion_C <-rd1$Proportion_C_sol_g_kg #proportional contributions of each fraction to the total soil carbon or nitorgen pool per given soil mass
 	#d3$Proportion_C <- rd1$Proportion_N_sol_g_kg
 	#d3$C_N_ratio <- rd1$C_N
-	# Excluded  in  Age  in d3 since it is not clear if its the age of the sample or what.
 	
 	wth <- data.frame(
 		date = as.Date(r1e$Date),
@@ -124,14 +123,11 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	)
 	
 	d7 <- merge(d5, d6, by = "date")
-	d7 <- data.frame(
-	  date = d7$date,
-	  temp   = (d7$tmax + d7$tmin) / 2
-	)
 	
-	d <- merge(d1, d2, by = c("plot_id", "date", "treatment", "rep"), all = TRUE)
+	d <- merge(d1, d2, by = c("plot_id", "date"), all.x = TRUE)
 
-	d <- merge(d, d3, by = c("treatment", "rep"), all = TRUE)
+#	d <- merge(d, d3, by = c("treatment", "rep"), all = TRUE)
+
 	d <- merge(d, d7, by = "date", all = TRUE)
 	
 	d$trial_id <- "1"
