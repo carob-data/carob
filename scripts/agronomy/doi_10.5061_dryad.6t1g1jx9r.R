@@ -56,7 +56,7 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 ### process
 	### soil data
 	d1 <- data.frame(
-		plot_id = r1$plot,
+		plot_id = as.character(r1$plot),
 		#rep = as.integer(r1$block),
 		#previous_crop = tolower(r1$X2021_crop),
 		#crop = gsub("Corn", "maize", r1$X2022_crop),
@@ -81,14 +81,14 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 ### not sure how to capture this. 
 ### it is the density of one intercrop in the previous year
 	d2 <- data.frame(
-		plot_id = r2$plot,
-		prev_crop_plant_density = r2$`alfalfa_density_plants_m^-2`
+		plot_id = as.character(r2$plot),
+		prev_crop_plant_density = r2$`alfalfa_density_plants_m^-2`*10000 # /ha
 	)
 
 
 	d3 <- data.frame(
-		plot_id = r3$plot,
-		date = r3$date,
+		plot_id = as.character(r3$plot),
+		date = as.character(r3$date),
 		plant_green = r3$relative_chlorophyll
 	)
 	
@@ -115,7 +115,7 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	  grain_Fe = r4$Fe_ug_g/1000,
 	  grain_Zn = r4$Zn_ug_g/1000
 	)
-	d4$crop_rotation <- apply(r4[, grep("crop$", tolower(names(r4)), ignore.case=TRUE)], 1, \(x) paste(x, collapse=";	"))
+	d4$crop_rotation <- apply(r4[, grep("crop$", tolower(names(r4)), ignore.case=TRUE)], 1, function(x) paste(x, collapse=";	"))
 	
 	# aggregate over two combine passes
 	d4 <- aggregate(. ~ rep + plot_id + previous_crop + crop + treatment + crop_rotation, d4, mean)
@@ -124,6 +124,9 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	### merge d1 and d4
 	d <- merge(d1, d4, by="plot_id")
 	
+	## merge d and d2
+	d <- merge(d, d2, by= "plot_id", all.x = TRUE)
+	
 	### d3 clearly is a long variable
 	d3 <- merge(d3, d4[, c("record_id", "plot_id")], by= "plot_id")
 	
@@ -131,24 +134,30 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	d$previous_crop <- gsub("alfalfa", "lucerne", d$previous_crop)
 	d$previous_crop <- gsub("spring wheat", "wheat", d$previous_crop)
 	d$previous_crop <- ifelse(grepl("Annual \\+ Alfalfa", d$treatment), "wheat;lucerne", d$previous_crop)
+  d$crop_rotation <-  gsub("Alfalfa", "lucerne", d$crop_rotation)
+  d$crop_rotation <-  gsub("Corn", "maize", d$crop_rotation)
+  d$crop_rotation <-  gsub("Field Pea", "pea", d$crop_rotation)
+  d$crop_rotation <-  gsub("Canola", "rapeseed", d$crop_rotation)
+  d$crop_rotation <-  gsub("Spring Wheat|Winter Wheat", "wheat", d$crop_rotation)
 	d$intercropped_prevcrop <- d$previous_crop=="wheat;lucerne"
-	d$intercrop_prevcrop_type <- "mixt"  #? that is not an english word
+	d$intercrop_prevcrop_type <- "mixed"  
 		
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <-  as.numeric(NA)
 
-	d$is_survey = FALSE, 
-	d$on_farm = FALSE, 
-	d$yield_moisture = 13, 	carobiner::write_files(path, meta, d)
-	d$yield_part = "grain", }
-	d$country = "United States" , 
-	d$geo_from_source = TRUE, # from publication
-	d$location = "Mandan",
-	d$latitude = 46.80806 ,  
-	d$longitude = - 100.9156, 
-	d$irrigated = NA, 
-	d$planting_date = "2022", 
-	d$harvest_date = NA,
-	d$yield_isfresh = TRUE
+	d$is_survey <- FALSE
+	d$on_farm <- FALSE
+	d$trial_id <- "1"
+	d$yield_moisture <- 13 
+	d$yield_part <- "grain" 
+	d$country <- "United States"  
+	d$geo_from_source <- TRUE # from publication
+	d$location <- "Mandan"
+	d$latitude <- 46.80806  
+	d$longitude <- - 100.9156 
+	d$irrigated <- NA 
+	d$planting_date <- "2022"
+	d$harvest_date <- NA
+	d$yield_isfresh <- TRUE
 
 	carobiner::write_files(path, meta, d, long=d3)
 }
