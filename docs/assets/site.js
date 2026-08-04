@@ -7,8 +7,6 @@
 	const repoUrl = cfg.repo ? `https://github.com/${cfg.repo}` : null;
 	const rawBase = cfg.repo ? `https://raw.githubusercontent.com/${cfg.repo}/${cfg.branch || "main"}` : null;
 
-	const LONG_TEXT_COLS = new Set(["title", "author", "description", "notes"]);
-
 	async function fetchTables() {
 		const r = await fetch("tables.json", { cache: "no-cache" });
 		if (!r.ok) throw new Error("cannot load tables.json (HTTP " + r.status + ")");
@@ -30,13 +28,48 @@
 		return null;
 	}
 
-	function uriCell(cell) {
-		if (cell == null) return "";
-		const text = String(cell).trim();
-		if (!text) return "";
-		const href = uriHref(text);
-		if (!href) return escapeHtml(text);
-		return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`);
+	function formatSource(author, year, provider) {
+		author = String(author || "").trim().replace(/,\s*$/, "");
+		year = String(year || "").trim();
+		provider = String(provider || "").trim();
+		let lead = "";
+		if (author && year) lead = `${author} (${year})`;
+		else if (author) lead = author;
+		else if (year) lead = `(${year})`;
+		if (lead && provider) return `${lead}, ${provider}`;
+		return lead || provider;
+	}
+
+	function titleLinkCell(title, uri) {
+		title = String(title || "").trim();
+		uri = String(uri || "").trim();
+		if (!title) return "";
+		const href = uriHref(uri);
+		if (!href) return escapeHtml(title);
+		return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`);
+	}
+
+	function transformTodoTable(headers, rows) {
+		const colKeys = headers.map(h => String(h).trim().toLowerCase());
+		const idx = name => colKeys.indexOf(name);
+
+		const records = rows.map(row => ({
+			title: idx("title") >= 0 ? String(row[idx("title")] ?? "").trim() : "",
+			uri: idx("uri") >= 0 ? String(row[idx("uri")] ?? "").trim() : "",
+			source: formatSource(
+				idx("author") >= 0 ? row[idx("author")] : "",
+				idx("year_pub") >= 0 ? row[idx("year_pub")] : "",
+				idx("provider") >= 0 ? row[idx("provider")] : ""
+			),
+			region: idx("region") >= 0 ? String(row[idx("region")] ?? "").trim() : "",
+			crop: idx("crop") >= 0 ? String(row[idx("crop")] ?? "").trim() : "",
+			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : ""
+		}));
+
+		return {
+			headers: ["title", "source", "region", "crop", "group", "uri"],
+			rows: records.map(r => [r.title, r.source, r.region, r.crop, r.group, r.uri])
+		};
 	}
 
 	async function renderTable() {
@@ -60,9 +93,6 @@
 		try { manifest = await fetchTables(); } catch (_) { /* optional */ }
 
 		const meta = manifest.find(t => t.file === file);
-		if (meta && subtitle) {
-			subtitle.textContent = `${meta.rows.toLocaleString()} rows \u00b7 ${meta.cols} columns`;
-		}
 
 		let csvText;
 		try {
@@ -92,11 +122,17 @@
 		});
 
 		({ headers, rows } = dropEmptyColumns(headers, rows));
-		const colKeys = headers.map(h => String(h).trim().toLowerCase());
-		const uriIdx = colKeys.indexOf("uri");
+		const transformed = transformTodoTable(headers, rows);
+		headers = transformed.headers;
+		rows = transformed.rows;
 
-		const maxChars = headers.map((_, i) =>
-			rows.reduce((m, r) => Math.max(m, String(r[i] ?? "").length), 0));
+		if (subtitle) {
+			const rowCount = meta ? meta.rows : rows.length;
+			subtitle.textContent = `${rowCount.toLocaleString()} rows \u00b7 5 columns`;
+		}
+
+		const colKeys = headers.map(h => String(h).trim().toLowerCase());
+		const uriColIdx = colKeys.indexOf("uri");
 
 		host.innerHTML = "";
 		const initialPageSize = readPageSize();
@@ -107,16 +143,16 @@
 				const col = {
 					name: h,
 					sort: true,
-					attributes: (cell, row) => {
-						const attrs = { "data-col": key };
-						if (row && LONG_TEXT_COLS.has(key)) {
-							attrs.style = `min-width: min(28rem, ${maxChars[idx] + 2}ch)`;
-						}
-						return attrs;
-					}
+					attributes: () => ({ "data-col": key })
 				};
-				if (idx === uriIdx) {
-					col.formatter = uriCell;
+				if (key === "uri") {
+					col.hidden = true;
+				}
+				if (key === "title") {
+					col.formatter = (cell, row) => {
+						const uri = row.cells[uriColIdx]?.data ?? "";
+						return titleLinkCell(cell, uri);
+					};
 				}
 				return col;
 			}),
@@ -124,7 +160,7 @@
 			search: { enabled: true },
 			sort: true,
 			pagination: paginationConfig(initialPageSize, rows.length),
-			resizable: true,
+			resizable: false,
 			fixedHeader: false,
 			width: "100%",
 			language: {
