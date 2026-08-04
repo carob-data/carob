@@ -54,14 +54,13 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	r4 <- carobiner::read.excel(f1, sheet="Grain")
 
 ### process
-	
 	### soil data
 	d1 <- data.frame(
-		plot_id = as.character(r1$plot),
-		rep = as.integer(r1$block),
-		previous_crop = tolower(r1$X2021_crop),
-		crop = gsub("Corn", "maize", r1$X2022_crop),
-		treatment = r1$treatment,
+		plot_id = r1$plot,
+		#rep = as.integer(r1$block),
+		#previous_crop = tolower(r1$X2021_crop),
+		#crop = gsub("Corn", "maize", r1$X2022_crop),
+		#treatment = r1$treatment,
 		soil_SOM = r1$organic_matter_loi_percent,
 		soil_pH = r1$soil_ph,
 		soil_N = r1$nitrate_n_ppm_n,
@@ -77,52 +76,33 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 		soil_Mn = r1$mangansese_ppm_mn,
 		soil_CEC = r1$cec_sum_of_cations_me_100g,
 		soil_texture = "sandy loam"
-		
-		
 	)
 
-	#d2 <- data.frame(
-		#plot_id = as.character(r2$plot),
-	#	rep = r2$block,
-	#	previous_crop = r2$`2021_crop`,
-	#	crop = r2$`2022_crop`,
-	#	treatment = r2$treatment,
-		#plant_density = r2$`alfalfa_density_plants_m^-2`
-	#)
-
-
+### not sure how to capture this. 
+### it is the density of one intercrop in the previous year
 	d2 <- data.frame(
-		plot_id = as.character(r3$plot),
-		date = as.character(r3$date),
-		rep = as.integer(r3$block),
-		previous_crop = tolower(r3$`2021_crop`),
-		crop = gsub("Corn", "maize", r3$`2022_crop`),
-		treatment = r3$treatment,
-		plant_green = r3$relative_chlorophyll,
-		is_survey = FALSE, 
-		on_farm = FALSE, 
-		trial_id = as.character(r3$plot), 
-		yield_moisture = 13, 
-		yield_part = "grain", 
-		country = "United States" , 
-		geo_from_source = TRUE, # from publication
-		location = "Mandan",
-		latitude = 46.80806 ,  
-		longitude = - 100.9156, 
-		irrigated = NA, 
-		planting_date = "2022", 
-		harvest_date = NA,
-		yield_isfresh = TRUE
-		
+		plot_id = r2$plot,
+		prev_crop_plant_density = r2$`alfalfa_density_plants_m^-2`
 	)
-	
-	### merge d1 and d2
-	d <- merge(d1, d2, by= c("plot_id", "rep", "previous_crop", "crop", "treatment"), all = TRUE)
+
 
 	d3 <- data.frame(
+		plot_id = r3$plot,
+		date = r3$date,
+		plant_green = r3$relative_chlorophyll
+	)
+	
+	# multiple measurments on same date
+	d3 <- aggregate(d3["plant_green"], d3[, c("plot_id", "date")], mean)
+	
+
+	d4 <- data.frame(
 	  rep = as.integer(r4$rep),
 	  plot_id = as.character(r4$plot),
 	  #pass = r4$`plot_combine pass`,
+	  
+	  ### previous crop may be this + alfalfa
+	  ### see "treatment"
 	  previous_crop = tolower(r4$`2021_Crop`),
 	  crop = gsub("Corn", "maize",  r4$`2022_Crop`),
 	  treatment = r4$treatment,
@@ -135,21 +115,42 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	  grain_Fe = r4$Fe_ug_g/1000,
 	  grain_Zn = r4$Zn_ug_g/1000
 	)
+	d4$crop_rotation <- apply(r4[, grep("crop$", tolower(names(r4)), ignore.case=TRUE)], 1, \(x) paste(x, collapse=";	"))
 	
-	d3Ag <- aggregate(. ~ rep+ plot_id + previous_crop + crop+ treatment ,d3, function(X) mean(X) )
+	# aggregate over two combine passes
+	d4 <- aggregate(. ~ rep + plot_id + previous_crop + crop + treatment + crop_rotation, d4, mean)
+	d4$record_id <- 1:nrow(d4)
+
+	### merge d1 and d4
+	d <- merge(d1, d4, by="plot_id")
 	
-	d <- merge(d, d3Ag, by= c("plot_id", "rep", "previous_crop", "crop", "treatment"), all = TRUE)
+	### d3 clearly is a long variable
+	d3 <- merge(d3, d4[, c("record_id", "plot_id")], by= "plot_id")
+	
 	
 	d$previous_crop <- gsub("alfalfa", "lucerne", d$previous_crop)
 	d$previous_crop <- gsub("spring wheat", "wheat", d$previous_crop)
 	d$previous_crop <- ifelse(grepl("Annual \\+ Alfalfa", d$treatment), "wheat;lucerne", d$previous_crop)
 	d$intercropped_prevcrop <- d$previous_crop=="wheat;lucerne"
-	d$intercrop_prevcrop_type <- "mixt"
-	
-	
+	d$intercrop_prevcrop_type <- "mixt"  #? that is not an english word
+		
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <-  as.numeric(NA)
 
-	carobiner::write_files(path, meta, d)
+	d$is_survey = FALSE, 
+	d$on_farm = FALSE, 
+	d$yield_moisture = 13, 	carobiner::write_files(path, meta, d)
+	d$yield_part = "grain", }
+	d$country = "United States" , 
+	d$geo_from_source = TRUE, # from publication
+	d$location = "Mandan",
+	d$latitude = 46.80806 ,  
+	d$longitude = - 100.9156, 
+	d$irrigated = NA, 
+	d$planting_date = "2022", 
+	d$harvest_date = NA,
+	d$yield_isfresh = TRUE
+
+	carobiner::write_files(path, meta, d, long=d3)
 }
 
 
