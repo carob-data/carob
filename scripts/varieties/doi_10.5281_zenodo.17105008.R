@@ -17,11 +17,10 @@ Data on spring wheat from a long term trial on cereal production for the period 
 	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=8, minor=NA,
-		data_organization = "Swedish University of Agricultural Sciences",
+		data_organization = "SLU",
 		publication = NA,
-		project = "Organic Yields UP",
+		project = NA,
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
@@ -33,59 +32,52 @@ Data on spring wheat from a long term trial on cereal production for the period 
 		carob_effort = 6
 	)
 	
-
-	library(DBI)
-	library(RSQLite)
-	
-	# Connect to the SQLite file
-	
-	con <- dbConnect(RSQLite::SQLite(),ff)
-	
-	# See what tables are inside
-	dbListTables(con)
+	# Connect to the SQLite file	
+	con <- RSQLite::dbConnect(RSQLite::SQLite(), ff)
+	# See what tables are inside: RSQLite::dbListTables(con)
 	
 	# Reading specific table into a data.frame
-	fertilizer <- dbReadTable(con, "farm_op_fertilisation_view")
-	harvest <- dbReadTable(con, "farm_op_harvest_view")
-	irrigation <- dbReadTable(con, "farm_op_irrigation_view")
-	protection <- dbReadTable(con, "farm_op_plant_protection_view")
-	planting <- dbReadTable(con, "farm_op_seedingplanting_view")
-	tillage <- dbReadTable(con, "farm_op_tillage_view")
-	fertilizer2 <- dbReadTable(con, "farm_operation_fertilisation_tbl")
-	harvest1 <- dbReadTable(con, "farm_operation_harvest_tbl")
-	irrigation1 <- dbReadTable(con, "farm_operation_irrigation_tbl")
-	planting2 <- dbReadTable(con, "farm_operation_seedingplanting_tbl")
-	tillage2 <- dbReadTable(con, "farm_operation_tillage_tbl")
-	harvest2 <- dbReadTable(con, "harvest_tbl")
-	harvest3 <- dbReadTable(con, "harvest_variety_view")
-	harvest4 <- dbReadTable(con, "harvest_view")
-	diseases <- dbReadTable(con, "pest_disease_data_tbl")
-	diseases2 <- dbReadTable(con, "pest_disease_view")
-	plots <- dbReadTable(con, "plot_soil_measurement_view")
-	site <- dbReadTable(con, "site_tbl")
-	soil2 <- dbReadTable(con, "soil_classification_tbl")
-	soil3 <- dbReadTable(con, "soil_measurement_tbl")
-	treatment <- dbReadTable(con, "study_treatment_site_distinct_view")
-	treatment2 <- dbReadTable(con, "treatment_tbl")
-	variety <- dbReadTable(con, "variety_data_tbl")
-	variety2 <- dbReadTable(con, "variety_data_view")
-	variety3 <- dbReadTable(con, "variety_specification_tbl")
-	weather <- dbReadTable(con, "weather_data_daily_tbl")
-	weather <- dbReadTable(con, "weather_data_monthly_tbl")
-	fertilizer3 <- dbReadTable(con, "farm_op_fertilisation_view")
+	fertilizer <- RSQLite::dbReadTable(con, "farm_op_fertilisation_view")
+	harvest <- RSQLite::dbReadTable(con, "farm_op_harvest_view")
+	irrigation <- RSQLite::dbReadTable(con, "farm_op_irrigation_view")
+	protection <- RSQLite::dbReadTable(con, "farm_op_plant_protection_view")
+	planting <- RSQLite::dbReadTable(con, "farm_op_seedingplanting_view")
+	tillage <- RSQLite::dbReadTable(con, "farm_op_tillage_view")
+	fertilizer2 <- RSQLite::dbReadTable(con, "farm_operation_fertilisation_tbl")
+	harvest1 <- RSQLite::dbReadTable(con, "farm_operation_harvest_tbl")
+	irrigation1 <- RSQLite::dbReadTable(con, "farm_operation_irrigation_tbl")
+	planting2 <- RSQLite::dbReadTable(con, "farm_operation_seedingplanting_tbl")
+	tillage2 <- RSQLite::dbReadTable(con, "farm_operation_tillage_tbl")
+	harvest2 <- RSQLite::dbReadTable(con, "harvest_tbl")
+	harvest3 <- RSQLite::dbReadTable(con, "harvest_variety_view")
+	harvest4 <- RSQLite::dbReadTable(con, "harvest_view")
+	diseases <- RSQLite::dbReadTable(con, "pest_disease_data_tbl")
+	diseases2 <- RSQLite::dbReadTable(con, "pest_disease_view")
+	plots <- RSQLite::dbReadTable(con, "plot_soil_measurement_view")
+	site <- RSQLite::dbReadTable(con, "site_tbl")
+	soil2 <- RSQLite::dbReadTable(con, "soil_classification_tbl")
+	soil3 <- RSQLite::dbReadTable(con, "soil_measurement_tbl")
+	treatment <- RSQLite::dbReadTable(con, "study_treatment_site_distinct_view")
+	treatment2 <- RSQLite::dbReadTable(con, "treatment_tbl")
+	variety <- RSQLite::dbReadTable(con, "variety_data_tbl")
+	variety2 <- RSQLite::dbReadTable(con, "variety_data_view")
+	variety3 <- RSQLite::dbReadTable(con, "variety_specification_tbl")
+	weather <- RSQLite::dbReadTable(con, "weather_data_daily_tbl")
+	weather <- RSQLite::dbReadTable(con, "weather_data_monthly_tbl")
+	fertilizer3 <- RSQLite::dbReadTable(con, "farm_op_fertilisation_view")
 	
-	dbDisconnect(con)
+	RSQLite::dbDisconnect(con)
 
 	fert <- data.frame(
 	  id=fertilizer$fk_site_id,
 	  country=fertilizer$country,
-	  adm2=fertilizer$Town,
+	  location=fertilizer$Town,
 	  fertilizer_date=fertilizer$operation_date,
 	  crop="wheat",
 	  fertilizer_implement=fertilizer$machinery_used,
 	  OM_amount=fertilizer$fertiliser_quantity*1000,
 	  OM_type=fertilizer$comment_operation
-	  )
+	)
 	
 	yield <- data.frame(
 	  id=harvest3$fk_site_id,
@@ -133,18 +125,20 @@ Data on spring wheat from a long term trial on cereal production for the period 
   
   ##adding coordinates
   #there are 2 place names that do not fall under adm2 because they are localities, so i will find their corresponding adm2 places
-  d$adm2 <- gsub("Borrby","Simrishamn",d$adm2)
-  d$adm2 <- gsub("Vikingstad","Linköping",d$adm2)
+  d$adm2 <- d2$location
+  d$adm2 <- gsub("Borrby", "Simrishamn",d$adm2)
+  d$adm2 <- gsub("Vikingstad", "Linköping",d$adm2)
   
-  loc <- data.frame(
+  geo <- data.frame(
     adm1 = c("Östergötland", "Skåne", "Västmanland", "Västra Götaland", "Västra Götaland", "Västra Götaland"),
     adm2 = c("Linköping", "Simrishamn", "Västerås", "Grästorp", "Skara", "Vara"),
     longitude = c(15.6026, 14.2069, 16.5681, 12.6643, 13.4821, 13.065),
     latitude = c(58.3644, 55.5772, 59.6209, 58.3225, 58.372, 58.2376),
     geo_uncertainty = c(36838, 20475, 26727, 16056, 18019, 20733),
-    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2"))
+    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+  )
   
-  d <- merge(d,loc,by="adm2")
+  d <- merge(d, geo, by="adm2")
   
 	carobiner::write_files(path, meta, d)
 }
