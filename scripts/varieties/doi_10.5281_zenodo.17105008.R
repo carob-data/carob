@@ -19,7 +19,7 @@ Data on spring wheat from a long term trial on cereal production for the period 
 
 
 	meta <- carobiner::get_metadata(uri, path, group, major=8, minor=NA,
-		data_organization = "CIMMYT",
+		data_organization = "Swedish University of Agricultural Sciences",
 		publication = NA,
 		project = "Organic Yields UP",
 		design = NA,
@@ -39,8 +39,7 @@ Data on spring wheat from a long term trial on cereal production for the period 
 	
 	# Connect to the SQLite file
 	
-	#files <- "C:/Users/godso/Documents/EiA/CAROB/data/raw/varieties/doi_10.5281_zenodo.17105008/SLU_variety_trial_Spring_wheat_WSE_zenodo_2025_09_25.sqlite"
-	con <- dbConnect(RSQLite::SQLite(),files )#files is the path where the files are
+	con <- dbConnect(RSQLite::SQLite(),ff)
 	
 	# See what tables are inside
 	dbListTables(con)
