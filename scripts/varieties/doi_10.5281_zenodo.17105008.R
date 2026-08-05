@@ -2,7 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
 
 
 carob_script <- function(path) {
@@ -38,34 +37,9 @@ Data on spring wheat from a long term trial on cereal production for the period 
 	
 	# Reading specific table into a data.frame
 	fertilizer <- RSQLite::dbReadTable(con, "farm_op_fertilisation_view")
-	harvest <- RSQLite::dbReadTable(con, "farm_op_harvest_view")
-	irrigation <- RSQLite::dbReadTable(con, "farm_op_irrigation_view")
-	protection <- RSQLite::dbReadTable(con, "farm_op_plant_protection_view")
-	planting <- RSQLite::dbReadTable(con, "farm_op_seedingplanting_view")
-	tillage <- RSQLite::dbReadTable(con, "farm_op_tillage_view")
-	fertilizer2 <- RSQLite::dbReadTable(con, "farm_operation_fertilisation_tbl")
-	harvest1 <- RSQLite::dbReadTable(con, "farm_operation_harvest_tbl")
-	irrigation1 <- RSQLite::dbReadTable(con, "farm_operation_irrigation_tbl")
 	planting2 <- RSQLite::dbReadTable(con, "farm_operation_seedingplanting_tbl")
-	tillage2 <- RSQLite::dbReadTable(con, "farm_operation_tillage_tbl")
-	harvest2 <- RSQLite::dbReadTable(con, "harvest_tbl")
 	harvest3 <- RSQLite::dbReadTable(con, "harvest_variety_view")
-	harvest4 <- RSQLite::dbReadTable(con, "harvest_view")
-	diseases <- RSQLite::dbReadTable(con, "pest_disease_data_tbl")
-	diseases2 <- RSQLite::dbReadTable(con, "pest_disease_view")
-	plots <- RSQLite::dbReadTable(con, "plot_soil_measurement_view")
-	site <- RSQLite::dbReadTable(con, "site_tbl")
-	soil2 <- RSQLite::dbReadTable(con, "soil_classification_tbl")
-	soil3 <- RSQLite::dbReadTable(con, "soil_measurement_tbl")
-	treatment <- RSQLite::dbReadTable(con, "study_treatment_site_distinct_view")
-	treatment2 <- RSQLite::dbReadTable(con, "treatment_tbl")
-	variety <- RSQLite::dbReadTable(con, "variety_data_tbl")
-	variety2 <- RSQLite::dbReadTable(con, "variety_data_view")
-	variety3 <- RSQLite::dbReadTable(con, "variety_specification_tbl")
-	weather <- RSQLite::dbReadTable(con, "weather_data_daily_tbl")
-	weather <- RSQLite::dbReadTable(con, "weather_data_monthly_tbl")
-	fertilizer3 <- RSQLite::dbReadTable(con, "farm_op_fertilisation_view")
-	
+
 	RSQLite::dbDisconnect(con)
 
 	fert <- data.frame(
@@ -124,21 +98,17 @@ Data on spring wheat from a long term trial on cereal production for the period 
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
   
   ##adding coordinates
-  #there are 2 place names that do not fall under adm2 because they are localities, so i will find their corresponding adm2 places
-  d$adm2 <- d2$location
-  d$adm2 <- gsub("Borrby", "Simrishamn",d$adm2)
-  d$adm2 <- gsub("Vikingstad", "Linköping",d$adm2)
-  
+
   geo <- data.frame(
     adm1 = c("Östergötland", "Skåne", "Västmanland", "Västra Götaland", "Västra Götaland", "Västra Götaland"),
-    adm2 = c("Linköping", "Simrishamn", "Västerås", "Grästorp", "Skara", "Vara"),
-    longitude = c(15.6026, 14.2069, 16.5681, 12.6643, 13.4821, 13.065),
-    latitude = c(58.3644, 55.5772, 59.6209, 58.3225, 58.372, 58.2376),
-    geo_uncertainty = c(36838, 20475, 26727, 16056, 18019, 20733),
-    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+    location = c("Vikingstad", "Borrby", "Västerås", "Grästorp", "Skara", "Vara"),
+    longitude = c(15.4397, 14.1804, 16.5681, 12.6643, 13.4821, 13.065),
+    latitude = c(58.3817, 55.4571, 59.6209, 58.3225, 58.372, 58.2376),
+    geo_uncertainty = c(NA, NA, 26727, 16056, 18019, 20733),
+    geo_source = c("Google Maps", "Google Maps", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
   )
   
-  d <- merge(d, geo, by="adm2")
+  d <- merge(d, geo, by="location")
   
 	carobiner::write_files(path, meta, d)
 }
