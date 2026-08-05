@@ -67,10 +67,10 @@ ownership, maintenance, and operating cost of each tool.
   r3a <- carobiner::read.excel(f3, sheet="Variable description")
   r3b <- carobiner::read.excel(f3, sheet="Data", na="NA")                  # Weed density (base table)
   r4a <- carobiner::read.excel(f4, sheet="Variable description")
-  r4b <- carobiner::read.excel(f4, sheet="Data")                  # Work capacity/fuel
+  r4b <- carobiner::read.excel(f4, sheet="Data", na="NA")                  # Work capacity/fuel
   ## r2 (cost-model reference) is not merged into d3b/d1b - see ISSUES
   
-  d3b_base <- data.frame(
+  d3b <- data.frame(
     country = "Mexico",
     adm1 = r3b$State,
     location = gsub("_", " ", r3b$Site),
@@ -78,9 +78,8 @@ ownership, maintenance, and operating cost of each tool.
     # Assumed decoding of land preparation
     # AC = Agricultura de Conservacion (conservation agriculture) -> approximated as "reduced tillage"
     # LC = Labranza Convencional (conventional tillage) -> "conventional"
-    # RQ = Roza y Quema (slash and burn) -> no accepted land_prep_method term, kept in land_prep_local only
-
-	## then come up with a new one...
+    # RQ = Roza y Quema (slash and burn)
+	
     land_prep_method = ifelse(r3b$Soil_preparation == "AC", "reduced tillage",
                        ifelse(r3b$Soil_preparation == "LC", "conventional", 
                        ifelse(r3b$Soil_preparation == "RQ", "slash and burn", NA))),
@@ -100,18 +99,8 @@ ownership, maintenance, and operating cost of each tool.
                    ifelse(r3b$Intervention == "Segunda", "second", r3b$Intervention)), 
     rep = as.integer(r3b$Rep)
   )
-  
-  # long format: one row per before/after reading, not two side-by-side columns
-  d3b_before <- d3b_base
-  d3b_before$weeding_period <- "before intervention"
-  d3b_before$weed_density <- (as.numeric(r3b$Density_Ini)) * 10000
-  
-  d3b_after <- d3b_base
-  d3b_after$weeding_period <- "after intervention"
-  d3b_after$weed_density <- (as.numeric(r3b$Density_fin)) * 10000
-  
-  d3b <- rbind(d3b_before, d3b_after)
-  
+
+  d3b$record_id <- 1:nrow(d3b_base)
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
   geo <- data.frame(
     location = c("El Armadillo", "Tierra Blanca", "Guelache", "Puerto Arturo", "Tixmehuac", "Tlanichico"),
@@ -121,6 +110,20 @@ ownership, maintenance, and operating cost of each tool.
   d3b <- merge(d3b, geo, by = "location", all.x = TRUE)
   d3b$geo_from_source <- FALSE
   
+  
+  # long format: one row per before/after reading, not two side-by-side columns
+  d3b_before <- d3b[, c("record_id", "weeding_pass")]
+  d3b_before$period <- ifelse(is.na(d3b$weeding_pass), "before weeding", paste("before", d3b$weeding_pass, "weeding"))
+  d3b_before$weed_density <- r3b$Density_Ini * 10000
+  
+  d3b_after <- d3b[, c("record_id", "weeding_pass")]
+  d3b_after$period <- ifelse(is.na(d3b$weeding_pass), "after weeding", paste("after", d3b$weeding_pass, "weeding"))
+  d3b_after$weed_density <- r3b$Density_fin * 10000
+  
+  d_long <- rbind(d3b_before, d3b_after)
+  d_long$weeding_pass <- NULL 
+  d_long <- d_long[!is.na(d_long$weed_density), ]
+  
   ### r4b has multiple timing readings per key, no Rep to link - averaged per State+Site+Treatment+Intervention
   d4b <- aggregate(Area ~ State + Site + Treatment + Intervention, data = r4b, FUN = mean)
   d4b_time <- aggregate(Time ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) (mean(as.numeric(x), na.rm = TRUE)))
@@ -128,6 +131,9 @@ ownership, maintenance, and operating cost of each tool.
   
   d4b <- merge(d4b, d4b_time, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
   d4b <- merge(d4b, d4b_fuel, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
+
+  # go from experimental area to ha
+  to_ha = 10000 / d4b$Area
   
   d4b <- data.frame(
     adm1 = d4b$State,
@@ -135,22 +141,24 @@ ownership, maintenance, and operating cost of each tool.
     weeding_method = ifelse(d4b$Treatment == "Ctrl", "none", d4b$Treatment),
     weeding_pass = ifelse(d4b$Intervention == 1, "first",
                    ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
-    work_area = d4b$Area,                    # suggested field - m2, tool's working area
-    work_time = d4b$Time,                    # suggested field - minutes
-    fuel_consumption = d4b$Fuel_consumption  # suggested field - mL
+	plot_size = d4b$Area, 
+	# suggested field - hours
+	weeding_time = to_ha * (d4b$Time / 60), 
+	# suggested field - L 
+    weeding_fuel = to_ha * (d4b$Fuel_consumption / 1000)
   )
-  
-  d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
   
   ### weeding_cost: fuel cost (motorized tools only) + labor cost (all tools), using fixed assumptions from r2b's "1. 
   ### This is a partial operating cost (fuel + labor only) - does NOT include tool purchase/depreciation/repair costs.
   fuel_price_usd_per_L <- 1.18
-  daily_wage_usd <- 13.33
-  workday_hours <- 8
+  hourly_wage_usd <- 13.33 / 8
   
-  d$fuel_cost <- (d$fuel_consumption / 1000) * fuel_price_usd_per_L
-  d$labor_cost <- (d$work_time / 60) / workday_hours * daily_wage_usd
-  d$weeding_cost <- (ifelse(is.na(d$fuel_cost), 0, d$fuel_cost) + d$labor_cost) / (d$work_area / 10000)
+  d4b$fuel_cost <- d4b$weeding_fuel * fuel_price_usd_per_L
+  d4b$labor_cost <- d4b$weeding_time * hourly_wage_usd
+  d4b$weeding_cost <- ifelse(is.na(d4b$fuel_cost), 0, d4b$fuel_cost) + d4b$labor_cost
+  d4b$currency <- "USD"
+
+  d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
   
   d$trial_id <- r3b$Site
   d$on_farm <- TRUE
@@ -166,6 +174,7 @@ ownership, maintenance, and operating cost of each tool.
   d$yield_part <- NA
   d$yield_moisture <- NA
   d$yield_isfresh <- NA
+  d$weeding_pass <- NULL 
   
   ### Yield sub-samples (r1b).
   #d1b <- data.frame(
@@ -177,5 +186,5 @@ ownership, maintenance, and operating cost of each tool.
   #  yield_moisture = r1b$Moisture_per
   #)
   
-  carobiner::write_files(path, meta, d)
+  carobiner::write_files(path, meta, d, long=d_long)
 }
