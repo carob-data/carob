@@ -16,7 +16,6 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",
 		publication = NA,
@@ -41,7 +40,6 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	#r2 <- read.csv(f2)
 	#r3 <- read.csv(f3)
 
-
 	d <- data.frame(
 	  country="Malawi",
 	  location="Chitedze Research Station",
@@ -50,7 +48,12 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	  adm3="Chitedze",
 	  latitude=-13.9815,
 	  longitude=33.6371,
-	  geo_uncertainty=100,#approx length of the field 
+	  #approx length of the field  
+	  ##how do you know the field and that the coordinates are correct for the field?
+	  ## if you look these up in Google Maps you can see that the coordinates are about 200 m north of the research station
+	  ## but we do not know which field. I would move the coordinates to the middle of the field and 
+	  ## use an undertainty of 1000 m
+	  geo_uncertainty=100, 
 	  crop="soybean",
 	  variety_pedigree=r$CROSS,
 	  rep=as.integer(r$REP_NO),
@@ -58,7 +61,7 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	  flowering_days=r$DFFL,
 	  podding_days=r$DF_P,
 	  maturity_days=r$DM,
-	  seed_weight=r$SWT100,#100 seed weight
+	  seed_weight=r$SWT100 * 10, #1000 seed weight
 	  yield=r$YIELD,
 	  yield_part="seed",
 	  yield_moisture=r$MC,
@@ -71,62 +74,44 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	  bacterial_blight=r$BB,
 	  red_leaf_blot=r$RED_LB,
 	  pod_shattering_score=r$SHATTERING
-	  )
+	)
 	
-	d$trial_id <- paste(d$variety_pedigree,d$plot_id,sep="_")
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	d$irrigated <- FALSE
-	d$geo_from_source <- TRUE
-	d$planting_date <- NA
-	d$harvest_date  <- NA
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA) 
+  d$record_id <- seq_len(nrow(d))
   
   ##reshaping disease cols 
   disease_cols <- c("rust_3", "rust_6", "SMV", "frogeye", 
                     "bacterial_pustule", "bacterial_blight", "red_leaf_blot")
   
-  d$row_id <- seq_len(nrow(d))
   
-  long <- reshape(d, 
-                  varying = disease_cols, 
-                  v.names = "severity_scale", 
-                  timevar = "disease", 
-                  times = disease_cols, 
-                  idvar = "row_id", 
-                  direction = "long")
-  
+  long <- reshape(d[, c("record_id", disease_cols)], varying = disease_cols, v.names = "disease_severity", 
+			timevar = "disease", times = disease_cols,  idvar = "record_id", direction = "long")
   rownames(long) <- NULL
-  long$row_id <- NULL
   
   #cleaning disease names
-  disease_lookup <- c(
-    rust_3 = "rust",
-    rust_6 = "rust",
-    SMV = "soybean mosaic virus",
-    frogeye = "frogeye leaf spot",
-    bacterial_pustule = "bacterial pustule",
-    bacterial_blight = "bacterial blight",
-    red_leaf_blot = "red leaf blotch"
-  )
+  disease_lookup <- c(rust_3 = "rust", rust_6 = "rust",  SMV = "soybean mosaic virus",
+    frogeye = "frogeye leaf spot",  bacterial_pustule = "bacterial pustule",
+    bacterial_blight = "bacterial blight",  red_leaf_blot = "red leaf blotch")
   
   # lookup: raw column name -> growth stage (NA where not applicable)
-  stage_lookup <- c(
-    rust_3 = "R3",
-    rust_6 = "R6",
-    SMV = NA,
-    frogeye = NA,
-    bacterial_pustule = "R3",  
-    bacterial_blight = NA,
-    red_leaf_blot = NA
-  )
+  stage_lookup <- c(rust_3 = "R3", rust_6 = "R6", SMV = NA, frogeye = NA,  bacterial_pustule = "R3",  
+    bacterial_blight = NA, red_leaf_blot = NA)
   
   long$growth_stage <- stage_lookup[long$disease]
   long$disease <- disease_lookup[long$disease]
+  long$disease_severity <- as.character(long$disease_severity)
   
-  d <- long
-  d$severity_scale <- as.character(d$severity_scale)
+# what is the scale at which these are measured?
+# long$severity_scale <- ???
+
+	d <- d[, !(names(d) %in% disease_cols)]
+ 	d$trial_id <- "1"
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
+	d$irrigated <- FALSE
+	d$geo_from_source <- TRUE
+	d$planting_date <- d$harvest_date  <- NA
+	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA) 
   
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=long)
 }
 
