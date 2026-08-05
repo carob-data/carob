@@ -78,38 +78,8 @@ Experimental Materials and Field Trials  Genotypes were evaluated in two replica
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
   
   #fixing row(s) where data is concatenated within a cell
-  is_concat <- grepl("^c\\(.*\\)$", d$rep)
-  row_i <- which(is_concat)
-  
-  # columns holding a pure deparsed vector and vector with extra text stuck on the end
-  if (length(row_i) > 0) {
-    vec_cols <- c("rep", "grain_Fe", "grain_Zn", "grain_analysis_method")
-    vec_suffix_cols <- c("variety", "trial_id")
-    
-    parse_vec <- function(x) eval(parse(text = x))
-    split_vec_suffix <- function(x) {
-      close_pos <- regexpr(")", x, fixed = TRUE)
-      vec  <- eval(parse(text = substr(x, 1, close_pos)))
-      suff <- substr(x, close_pos + 1, nchar(x))
-      paste0(vec, suff)
-    }
-    
-    row <- d[row_i, , drop = FALSE]
-    n   <- length(parse_vec(row$rep[1]))
-    new_rows <- row[rep(1, n), , drop = FALSE]
-    rownames(new_rows) <- NULL
-    
-    for (col in vec_cols)        new_rows[[col]] <- parse_vec(row[[col]][1])
-    for (col in vec_suffix_cols) new_rows[[col]] <- split_vec_suffix(row[[col]][1])
-    
-    d <- rbind(d[-row_i, ], new_rows)
-    rownames(d) <- NULL
-  }  
   #improving quality
-  d$rep <- ifelse(d$rep=="1",1,2)
-  d$rep <- as.integer(d$rep)
-  d$grain_Fe <- as.numeric(d$grain_Fe)
-  d$grain_Zn <- as.numeric(d$grain_Zn)
+  d$rep <- ifelse(d$rep=="1", 1L, 2L)
   
   carobiner::write_files(path, meta, d)
 }
