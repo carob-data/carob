@@ -33,6 +33,8 @@ treatment). A separate cost-model reference table estimates the annual
 ownership, maintenance, and operating cost of each tool.
 "
 
+# on-farm trial, 10 mechanical/manual weed control treatments (incl. untreated control), 4 states, 6 sites
+
   uri <- "doi:10.71682/10549432"
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
@@ -41,7 +43,7 @@ ownership, maintenance, and operating cost of each tool.
                                   data_organization = "CIMMYT",
                                   publication = NA,
                                   project = NA,
-                                  design = "on-farm trial, 10 mechanical/manual weed control treatments (incl. untreated control), 4 states, 6 sites",
+                                  design = NA,
                                   data_type = "on-farm experiment",
                                   treatment_vars = "weeding_method",
                                   response_vars = "weed_density; weeding_cost",
@@ -61,9 +63,9 @@ ownership, maintenance, and operating cost of each tool.
   r1a <- carobiner::read.excel(f1, sheet="Variable description")
   r1b <- carobiner::read.excel(f1, sheet="Data")                  # Maize yield sub-samples
   r2a <- carobiner::read.excel(f2, sheet="Metadata")
-  r2b <- carobiner::read.excel(f2, sheet="Data")                  # Weed control cost-model assumptions
+  r2b <- carobiner::read.excel(f2, sheet="Data", na="NA")                  # Weed control cost-model assumptions
   r3a <- carobiner::read.excel(f3, sheet="Variable description")
-  r3b <- carobiner::read.excel(f3, sheet="Data")                  # Weed density (base table)
+  r3b <- carobiner::read.excel(f3, sheet="Data", na="NA")                  # Weed density (base table)
   r4a <- carobiner::read.excel(f4, sheet="Variable description")
   r4b <- carobiner::read.excel(f4, sheet="Data")                  # Work capacity/fuel
   ## r2 (cost-model reference) is not merged into d3b/d1b - see ISSUES
@@ -77,48 +79,52 @@ ownership, maintenance, and operating cost of each tool.
     # AC = Agricultura de Conservacion (conservation agriculture) -> approximated as "reduced tillage"
     # LC = Labranza Convencional (conventional tillage) -> "conventional"
     # RQ = Roza y Quema (slash and burn) -> no accepted land_prep_method term, kept in land_prep_local only
+
+	## then come up with a new one...
     land_prep_method = ifelse(r3b$Soil_preparation == "AC", "reduced tillage",
-                              ifelse(r3b$Soil_preparation == "LC", "conventional", NA)),
-    land_prep_local = r3b$Soil_preparation,   # suggested field - raw code, incl. RQ (slash and burn)
+                       ifelse(r3b$Soil_preparation == "LC", "conventional", 
+                       ifelse(r3b$Soil_preparation == "RQ", "slash and burn", NA))),
     
     variety = r3b$Maize_variety,
     variety_type = ifelse(grepl("Criollo", r3b$Maize_variety), "landrace", "improved"),
     row_spacing = r3b$Row_spacing * 100,   # m -> cm
     
+	### should "control" weeding change from "none" to "unknown"
+	### assuming that control is farmer management?
     weeding_method = ifelse(r3b$Treatment == "Ctrl", "none", r3b$Treatment),
     mach_cat = r3b$Mach_cat,               # suggested field - tool category
     weeding_times = as.integer(r3b$N_interv_perf),
     weeding_done = r3b$N_interv_perf > 0,
-    weeding_pass = ifelse(r3b$Intervention == "NA", NA,
-                   ifelse(r3b$Intervention == "Primera", "first",
-                   ifelse(r3b$Intervention == "Segunda", "second", r3b$Intervention))), # suggested field - which weeding pass
+	# suggested field - which weeding pass
+    weeding_pass = ifelse(r3b$Intervention == "Primera", "first",
+                   ifelse(r3b$Intervention == "Segunda", "second", r3b$Intervention)), 
     rep = as.integer(r3b$Rep)
   )
   
   # long format: one row per before/after reading, not two side-by-side columns
   d3b_before <- d3b_base
   d3b_before$weeding_period <- "before intervention"
-  d3b_before$weed_density <- suppressWarnings(as.numeric(r3b$Density_Ini)) * 10000
+  d3b_before$weed_density <- (as.numeric(r3b$Density_Ini)) * 10000
   
   d3b_after <- d3b_base
   d3b_after$weeding_period <- "after intervention"
-  d3b_after$weed_density <- suppressWarnings(as.numeric(r3b$Density_fin)) * 10000
+  d3b_after$weed_density <- (as.numeric(r3b$Density_fin)) * 10000
   
   d3b <- rbind(d3b_before, d3b_after)
   
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
-  geo_lookup <- data.frame(
+  geo <- data.frame(
     location = c("El Armadillo", "Tierra Blanca", "Guelache", "Puerto Arturo", "Tixmehuac", "Tlanichico"),
     longitude = c(-93.3867, -92.1759, -96.777457, -89.0664, -89.0850, -96.8064),
     latitude = c(16.7013, 15.3940, 17.214845, 19.6595, 20.2483, 16.9717)
   )
-  d3b <- merge(d3b, geo_lookup, by = "location", all.x = TRUE)
+  d3b <- merge(d3b, geo, by = "location", all.x = TRUE)
   d3b$geo_from_source <- FALSE
   
   ### r4b has multiple timing readings per key, no Rep to link - averaged per State+Site+Treatment+Intervention
   d4b <- aggregate(Area ~ State + Site + Treatment + Intervention, data = r4b, FUN = mean)
-  d4b_time <- aggregate(Time ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) suppressWarnings(mean(as.numeric(x), na.rm = TRUE)))
-  d4b_fuel <- aggregate(Fuel_consumption ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) suppressWarnings(mean(as.numeric(x), na.rm = TRUE)))
+  d4b_time <- aggregate(Time ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) (mean(as.numeric(x), na.rm = TRUE)))
+  d4b_fuel <- aggregate(Fuel_consumption ~ State + Site + Treatment + Intervention, data = r4b, FUN = function(x) (mean(as.numeric(x), na.rm = TRUE)))
   
   d4b <- merge(d4b, d4b_time, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
   d4b <- merge(d4b, d4b_fuel, by = c("State","Site","Treatment","Intervention"), all.x = TRUE)
@@ -128,7 +134,7 @@ ownership, maintenance, and operating cost of each tool.
     location = gsub("_", " ", d4b$Site),
     weeding_method = ifelse(d4b$Treatment == "Ctrl", "none", d4b$Treatment),
     weeding_pass = ifelse(d4b$Intervention == 1, "first",
-                  ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
+                   ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
     work_area = d4b$Area,                    # suggested field - m2, tool's working area
     work_time = d4b$Time,                    # suggested field - minutes
     fuel_consumption = d4b$Fuel_consumption  # suggested field - mL
