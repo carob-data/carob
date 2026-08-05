@@ -3,6 +3,7 @@
 
 ## ISSUES
 
+
 # treatment 
 # - Cover crop and nitrogen rate management practices
 ## - Urea ammonium nitrate-N was applied to obtain relative N rates (0×, 0.25×, 0.5×, and 1×) of the recommended 157–190 kg N ha−1 rate
