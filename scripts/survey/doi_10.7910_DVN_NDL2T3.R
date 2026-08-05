@@ -13,22 +13,22 @@ This database provides a comprehensive, field-level record of rice management pr
   group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
     
-  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
      data_organization = "AfricaRice",
      publication = NA,
-     project = NA,
+     project = "Sustainable Farming Program",
      carob_date = "2026-06-15",
      carob_effort = NA,
      design = NA,
      data_type = "survey",
-     treatment_vars = "none",
-     response_vars = "none", 
-     carob_contributor = "Blessing Dzuda",
+     treatment_vars = "herbicide_used; weeding_done; insecticide_used; OM_used;variety; planting_method;N_fertilizer;P_fertilizer;K_fertilizer",
+     response_vars = "yield", 
+     carob_contributor = "Blessing Dzuda; Kora Simperegui",
      carob_completion = 100,	
      notes = NA
   )
   
-  f <- ff[basename(ff) == "Data.xls"]
+  f <- ff[basename(ff) == "data.xls"]
   r <- carobiner::read.excel(f)
   
   d <- data.frame(
@@ -40,6 +40,7 @@ This database provides a comprehensive, field-level record of rice management pr
     latitude = r$Field_latitude,
     longitude = r$Field_longitude,
     field_size=r$`Field size (ha)`,
+    seed_rate=as.numeric(r$`Quantity of seed used (kg/ha)`),
     season = r$Season,
     age=as.numeric(r$`Farmer age`),
     sex=r$`Gender`,
@@ -58,8 +59,8 @@ This database provides a comprehensive, field-level record of rice management pr
     weeding_times=as.integer(r$`Number of weeding`),
     maturity_days=r$`Crop duration`,
     N_fertilizer=r$`Quanity of N applied (kg/ha)`,
-    P_fertilizer=r$`Quantity of P2O5 applied (kg/ha)`/2.29,
-    K_fertilizer=r$`Quantity of K2O applied (kg/ha)`/1.2051
+    P_fertilizer=r$`Quantity of P2O5 applied (kg/ha)`,
+    K_fertilizer=r$`Quantity of K2O applied (kg/ha)`
   )
 
   d$trial_id <- paste(d$hhid,d$adm2,sep = "_")
@@ -71,12 +72,11 @@ This database provides a comprehensive, field-level record of rice management pr
   d$yield_moisture <- as.numeric(NA)
   d$yield_isfresh <- TRUE
   d$season <- ifelse(d$season=="Wet season","wet","dry")
-  d$longitude[d$adm2=="Kano"] <- 11.992
-  d$geo_from_source[d$adm2=="Kano"] <- FALSE
   
   d$insecticide_used <- r$`Insecticide use`=="Yes"
   d$herbicide_used <- r$`Herbicide use`=="Yes"
-  d$OM_used <- r$`Organic input use`=="yes"
+  d$OM_used <- r$`Organic input use`=="Yes"
+  d$weeding_done <- r$`Number of weeding` > 0
   
   d$insecticide_times <- as.integer(r$`Number of insecticide application`)
   d$farm_labour <- r$`Labor input (person day/ha)` *d$field_size #converting to labour days/year basing on field size
