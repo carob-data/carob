@@ -1,7 +1,3 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
-# R script for "carob"
-# license: GPL (>=3)
 
 ## ISSUES
 # list processing issues here so that an editor can look at them
@@ -40,18 +36,16 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	#f3 <- ff[basename(ff) == "Readme.rtf"]
 	#f4 <- ff[basename(ff) == "rfsrc_bd.R"]
 	
-	
 
 	r1 <- data.frame(read.csv(f1))
-	load(f2)
-	r2 = Geo_Peds
-	
+	r2 <- carobiner::read.RData(f2)$Geo_Peds	
+
 	
 	d1 <- data.frame(
-	  location = as.character(r1$province),
+	  ## location = as.character(r1$province), this is a vegetation province!
 	  sample_id = as.character(r1$X.1),
-	  soil_bd = as.numeric(r1$bd),
-	  soil_SOC = as.numeric(r1$soc),
+	  soil_bd = r1$bd,
+	  soil_SOC = r1$soc,  # do not use as.numeric if a variable is already numeric
 	  soil_pH = as.numeric(r1$ph_h2o),
 	  depth = as.numeric(r1$depth),
 	  soil_sand = as.numeric(r1$sand),
