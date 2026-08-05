@@ -7,7 +7,7 @@
 #3. 4 records with harvest_date within 45 days of planting_date
 carob_script <- function(path) {
   
-  
+
   "This paper presents data from a two-year study with sugar beet in Germany (2000 and 2001). A total of 27 field trials were conducted in a wide range of environmental conditions including trials with and without irrigation. Sequential harvests were made every 14-28 days between May and October. Root yield and quality, leaf yield, leaf area index and soil water content were determined in four replicates at each harvest date. Soil characteristics were assessed in the field and daily weather data were collected for each trial site. The dataset is suitable for validating sugar beet growth models."
   
   uri <- "doi:10.18174/odjar.v11i0.18784"
