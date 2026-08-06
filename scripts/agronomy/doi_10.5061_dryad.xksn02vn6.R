@@ -77,7 +77,7 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 	  treatment = r3$treatment,
 	  growth_stage = r3$gs_cat,
 	  plant_height = r3$height,
-	  spad = r3$spad
+	  SPAD = r3$spad
 	)
 	
 	d <- merge(d, d3, by= c("year", "rep", "treatment"), all = TRUE)
