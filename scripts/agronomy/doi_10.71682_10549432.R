@@ -40,25 +40,24 @@ ownership, maintenance, and operating cost of each tool.
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "CIMMYT",
-                                  publication = NA,
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "weeding_method",
-                                  response_vars = "weed_density; weeding_cost",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-07-24",
-                                  carob_completion = 60,
-                                  carob_effort = 4
+		data_organization = "CIMMYT",
+		publication = NA,
+		project = NA,
+		design = NA,
+		data_type = "on-farm experiment",
+		treatment_vars = "weeding_method",
+		response_vars = "weed_density; weeding_cost",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-07-24",
+		carob_completion = 60,
+		carob_effort = 4
   )
   
   f1 <- ff[basename(ff) == "Maize_Grain_Yield_VF.xlsx"]
   f2 <- ff[basename(ff) == "Weed_Control_Costs_VF.xlsx"]
   f3 <- ff[basename(ff) == "Weed_Density_VF.xlsx"]
   f4 <- ff[basename(ff) == "Work_Capacity_and_Fuel_Consumption_VF.xlsx"]
-  f5 <- ff[basename(ff) == "0MANIFEST.TXT"]
   
   r1a <- carobiner::read.excel(f1, sheet="Variable description")
   r1b <- carobiner::read.excel(f1, sheet="Data")                  # Maize yield sub-samples
@@ -88,10 +87,7 @@ ownership, maintenance, and operating cost of each tool.
     variety_type = ifelse(grepl("Criollo", r3b$Maize_variety), "landrace", "improved"),
     row_spacing = r3b$Row_spacing * 100,   # m -> cm
     
-	### should "control" weeding change from "none" to "unknown"
-	### assuming that control is farmer management?
-    weeding_method = ifelse(r3b$Treatment == "Ctrl", "none", r3b$Treatment),
-    mach_cat = r3b$Mach_cat,               # suggested field - tool category
+    weeding_method = ifelse(r3b$Treatment == "Ctrl", "none", tolower(r3b$Treatment)),
     weeding_times = as.integer(r3b$N_interv_perf),
     weeding_done = r3b$N_interv_perf > 0,
 	# suggested field - which weeding pass
@@ -100,7 +96,7 @@ ownership, maintenance, and operating cost of each tool.
     rep = as.integer(r3b$Rep)
   )
 
-  d3b$record_id <- 1:nrow(d3b_base)
+  d3b$record_id <- 1:nrow(d3b)
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
   geo <- data.frame(
     location = c("El Armadillo", "Tierra Blanca", "Guelache", "Puerto Arturo", "Tixmehuac", "Tlanichico"),
@@ -141,21 +137,21 @@ ownership, maintenance, and operating cost of each tool.
     weeding_method = ifelse(d4b$Treatment == "Ctrl", "none", d4b$Treatment),
     weeding_pass = ifelse(d4b$Intervention == 1, "first",
                    ifelse(d4b$Intervention == 2, "second", as.character(d4b$Intervention))),
-	plot_size = d4b$Area, 
+	plot_area = d4b$Area, 
 	# suggested field - hours
 	weeding_time = to_ha * (d4b$Time / 60), 
 	# suggested field - L 
     weeding_fuel = to_ha * (d4b$Fuel_consumption / 1000)
   )
-  
+
   ### weeding_cost: fuel cost (motorized tools only) + labor cost (all tools), using fixed assumptions from r2b's "1. 
   ### This is a partial operating cost (fuel + labor only) - does NOT include tool purchase/depreciation/repair costs.
   fuel_price_usd_per_L <- 1.18
   hourly_wage_usd <- 13.33 / 8
   
-  d4b$fuel_cost <- d4b$weeding_fuel * fuel_price_usd_per_L
-  d4b$labor_cost <- d4b$weeding_time * hourly_wage_usd
-  d4b$weeding_cost <- ifelse(is.na(d4b$fuel_cost), 0, d4b$fuel_cost) + d4b$labor_cost
+  d4b$weeding_fuel_cost <- d4b$weeding_fuel * fuel_price_usd_per_L
+  d4b$weeding_labor_cost <- d4b$weeding_time * hourly_wage_usd
+  d4b$weeding_cost <- ifelse(is.na(d4b$weeding_fuel_cost), 0, d4b$weeding_fuel_cost) + d4b$weeding_labor_cost
   d4b$currency <- "USD"
 
   d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
