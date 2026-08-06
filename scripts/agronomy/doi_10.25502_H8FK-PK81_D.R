@@ -46,14 +46,9 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	  adm1="Central Region",
 	  adm2="Lilongwe",
 	  adm3="Chitedze",
-	  latitude=-13.9815,
-	  longitude=33.6371,
-	  #approx length of the field  
-	  ##how do you know the field and that the coordinates are correct for the field?
-	  ## if you look these up in Google Maps you can see that the coordinates are about 200 m north of the research station
-	  ## but we do not know which field. I would move the coordinates to the middle of the field and 
-	  ## use an undertainty of 1000 m
-	  geo_uncertainty=100, 
+	  latitude=-13.9824,
+	  longitude=33.6370,
+	  geo_uncertainty=1000, 
 	  crop="soybean",
 	  variety_pedigree=r$CROSS,
 	  rep=as.integer(r$REP_NO),
@@ -72,8 +67,8 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	  frogeye=r$FROGEYE,
 	  bacterial_pustule=r$BP_R3,
 	  bacterial_blight=r$BB,
-	  red_leaf_blot=r$RED_LB,
-	  pod_shattering_score=r$SHATTERING
+	  red_leaf_blot=r$RED_LB
+	  #pod_shattering_score=r$SHATTERING--unknown scale
 	)
 	
   d$record_id <- seq_len(nrow(d))
@@ -87,6 +82,7 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 			timevar = "disease", times = disease_cols,  idvar = "record_id", direction = "long")
   rownames(long) <- NULL
   
+
   #cleaning disease names
   disease_lookup <- c(rust_3 = "rust", rust_6 = "rust",  SMV = "soybean mosaic virus",
     frogeye = "frogeye leaf spot",  bacterial_pustule = "bacterial pustule",
@@ -98,12 +94,12 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
   
   long$growth_stage <- stage_lookup[long$disease]
   long$disease <- disease_lookup[long$disease]
-  long$disease_severity <- as.character(long$disease_severity)
+  long$disease_severity <- NA
   
 # what is the scale at which these are measured?
 # long$severity_scale <- ???
 
-	d <- d[, !(names(d) %in% disease_cols)]
+	d <- d[, !(names(d) %in% disease_cols)] 
  	d$trial_id <- "1"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
