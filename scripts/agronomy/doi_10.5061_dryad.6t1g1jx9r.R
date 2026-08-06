@@ -35,13 +35,12 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 		carob_date = "2026-07-30",
 		design = NA,
 		data_type = "on-station experiment",
-		treatment_vars = "previous_crop;intercropped_prevcrop",
-		response_vars = "yield;plant_green", 
+		treatment_vars = "previous_crop",
+		response_vars = "yield;SPAD", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 80,
 		carob_effort = 2
-		
 	)
 	
 
@@ -80,20 +79,20 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 
 ### not sure how to capture this. 
 ### it is the density of one intercrop in the previous year
-	d2 <- data.frame(
-		plot_id = as.character(r2$plot),
-		prev_crop_plant_density = r2$`alfalfa_density_plants_m^-2`*10000 # /ha
-	)
+#	d2 <- data.frame(
+#		plot_id = as.character(r2$plot),
+#		prev_crop_plant_density = r2$`alfalfa_density_plants_m^-2`*10000 # /ha
+#	)
 
 
 	d3 <- data.frame(
 		plot_id = as.character(r3$plot),
 		date = as.character(r3$date),
-		plant_green = r3$relative_chlorophyll
+		SPAD = r3$relative_chlorophyll
 	)
 	
 	# multiple measurments on same date
-	d3 <- aggregate(d3["plant_green"], d3[, c("plot_id", "date")], mean)
+	d3 <- aggregate(d3["SPAD"], d3[, c("plot_id", "date")], mean)
 	
 
 	d4 <- data.frame(
@@ -125,7 +124,7 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	d <- merge(d1, d4, by="plot_id")
 	
 	## merge d and d2
-	d <- merge(d, d2, by= "plot_id", all.x = TRUE)
+	## d <- merge(d, d2, by= "plot_id", all.x = TRUE)
 	
 	### d3 clearly is a long variable
 	d3 <- merge(d3, d4[, c("record_id", "plot_id")], by= "plot_id")
@@ -134,13 +133,13 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	d$previous_crop <- gsub("alfalfa", "lucerne", d$previous_crop)
 	d$previous_crop <- gsub("spring wheat", "wheat", d$previous_crop)
 	d$previous_crop <- ifelse(grepl("Annual \\+ Alfalfa", d$treatment), "wheat;lucerne", d$previous_crop)
-  d$crop_rotation <-  gsub("Alfalfa", "lucerne", d$crop_rotation)
-  d$crop_rotation <-  gsub("Corn", "maize", d$crop_rotation)
-  d$crop_rotation <-  gsub("Field Pea", "pea", d$crop_rotation)
-  d$crop_rotation <-  gsub("Canola", "rapeseed", d$crop_rotation)
-  d$crop_rotation <-  gsub("Spring Wheat|Winter Wheat", "wheat", d$crop_rotation)
-	d$intercropped_prevcrop <- d$previous_crop=="wheat;lucerne"
-	d$intercrop_prevcrop_type <- "mixed"  
+	d$crop_rotation <-  gsub("Alfalfa", "lucerne", d$crop_rotation)
+	d$crop_rotation <-  gsub("Corn", "maize", d$crop_rotation)
+	d$crop_rotation <-  gsub("Field Pea", "pea", d$crop_rotation)
+	d$crop_rotation <-  gsub("Canola", "rapeseed", d$crop_rotation)
+	d$crop_rotation <-  gsub("Spring Wheat|Winter Wheat", "wheat", d$crop_rotation)
+	#d$intercropped_prevcrop <- d$previous_crop=="wheat;lucerne"
+	#d$intercrop_prevcrop_type <- "mixed"  
 		
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <-  as.numeric(NA)
 
