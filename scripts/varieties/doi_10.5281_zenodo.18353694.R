@@ -1,6 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## NON STANDARD VARIABLES
 # package_id_: tricot package / block id (farmer × assigned variety set) from the source
 
@@ -80,15 +81,6 @@ tricot data v1 This release consolidates standardized trial outputs from partici
 			cowpea = "seed", `forage crop` = "aboveground biomass", maize = "grain",	soybean = "seed", `common bean` = "seed", 
 			`chili pepper` = "fruit", sorghum = "grain", tomato = "fruit", wheat = "grain")
 
-	# rough country boxes for location QC (flag only; coordinates are kept)
-	country_bbox <- list(
-		Benin = c(0.85, 3.85, 6.15, 12.35),
-		Mali = c(-12.3, 4.3, 10.1, 25.0),
-		Tanzania = c(29.2, 40.5, -11.8, -0.95),
-		Nigeria = c(2.7, 14.7, 4.2, 13.9),
-		Rwanda = c(28.85, 30.9, -2.85, -1.02),
-		Ethiopia = c(33.0, 47.5, 3.4, 14.9)
-	)
 
 	first_col <- function(nms, patterns, exclude = "reason|loss|priorit|method|density|damag|freq") {
 		for (p in patterns) {
@@ -330,17 +322,6 @@ tricot data v1 This release consolidates standardized trial outputs from partici
 			}, character(1))
 		}
 		out
-	}
-
-	bbox_ok <- function(country, lon, lat) {
-		ok <- rep(TRUE, length(lon))
-		for (cn in names(country_bbox)) {
-			w <- country == cn & !is.na(lon) & !is.na(lat)
-			if (!any(w)) next
-			b <- country_bbox[[cn]]
-			ok[w] <- lon[w] >= b[1] & lon[w] <= b[2] & lat[w] >= b[3] & lat[w] <= b[4]
-		}
-		ok
 	}
 
 	process_trial <- function(f) {
@@ -663,11 +644,11 @@ tricot data v1 This release consolidates standardized trial outputs from partici
 	d$yield_part <- unname(yield_part_map[d$crop])
 
 	# location flags (keep coordinates); after country names are standardized
-	miss_geo <- is.na(d$longitude) | is.na(d$latitude)
-	ok_box <- bbox_ok(d$country, d$longitude, d$latitude)
-	d$location_problem_ <- NA_character_
-	d$location_problem_[miss_geo] <- "missing coordinates"
-	d$location_problem_[!miss_geo & !ok_box] <- "outside country"
+	#miss_geo <- is.na(d$longitude) | is.na(d$latitude)
+	#ok_box <- bbox_ok(d$country, d$longitude, d$latitude)
+	#d$location_problem_ <- NA_character_
+	#d$location_problem_[miss_geo] <- "missing coordinates"
+	#d$location_problem_[!miss_geo & !ok_box] <- "outside country"
 
 	d$record_id <- as.integer(seq_len(nrow(d)))
 

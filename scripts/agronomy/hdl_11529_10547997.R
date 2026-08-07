@@ -21,8 +21,8 @@ carob_script <- function(path) {
 		carob_contributor="Fredy Chimire",
 		carob_effort = NA,
 		carob_date="2023-10-31",
-		modified_by="Robert Hijmans",
-		last_modified="2023-11-04",
+		carob_modified_by="Robert Hijmans",
+		carob_last_modified="2023-11-04",
 		treatment_vars=NA, 
 		response_vars = "yield"
 	)

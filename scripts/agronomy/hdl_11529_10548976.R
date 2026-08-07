@@ -21,8 +21,8 @@ carob_script <- function(path) {
 		carob_contributor= "Shumirai Manzvera",
 		carob_effort = NA,
 		carob_date="2024-03-14",
-		modified_by= "Cedric Ngakou",
-		last_modified= "2024-09-26"
+		carob_modified_by= "Cedric Ngakou",
+		carob_last_modified= "2024-09-26"
 	)
 	
 	f <- ff[basename(ff) == "DAT-SJCotzoconExperiments.xlsx"]

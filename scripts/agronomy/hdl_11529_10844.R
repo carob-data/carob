@@ -20,7 +20,7 @@ carob_script <- function(path) {
 		response_vars = "yield; dmy_total",
 		carob_effort = NA,
 		carob_date = "2024-05-03",
-		last_modified = "2024-07-31"
+		carob_last_modified = "2024-07-31"
 	)
 
 

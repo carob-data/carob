@@ -292,7 +292,7 @@ process_cassava <- function(ff, location=NULL, adm1=NULL) {
 		if (!is.na(d$planting_date[1])) {
 			dates <- as.character(as.Date(d$planting_date[1]) + DAP)
 		}
-		disease <- rep("mosaic", length(vnms))
+		disease <- rep("cassava mosaic", length(vnms))
 		disease[grep("blight", vnms)] <- "bacterial blight"
 		incidence <- severity <- NULL
 		sev <- grepl("severity", names(dd))	
