@@ -8,7 +8,7 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.7910/DVN/WS38SA"
 	group <- "survey"
-	ff <- carobiner::get_data(uri, path, group, recursive=TRUE)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		project="RHoMIS",

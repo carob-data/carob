@@ -14,7 +14,7 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 
 	uri <- "doi:10.7910/DVN/QFQURF"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
+	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "IFPRI;KVC",
