@@ -22,8 +22,8 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 		carob_contributor= "Shumirai Manzvera",
 		carob_effort = NA,
 		carob_date="2024-02-22",
-		modified_by="Siyabusa Mkuhlani",
-		last_modified = "2024-07-31"
+		carob_modified_by="Siyabusa Mkuhlani",
+		carob_last_modified = "2024-07-31"
 	)
 	f0 <- ff[basename(ff) == "Linthipe_Dedza_MaizeResopnsetoGroundnut_2019_2020.csv"]
 	f1 <- ff[basename(ff) == "Mtubwi_Machinga_MaizeResopnsetoGroundnut_2019_2020.csv"]

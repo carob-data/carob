@@ -20,7 +20,7 @@ carob_script <- function(path) {
 		carob_contributor="Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date="2023-01-30",
-		modified_by="Robert Hijmans"
+		carob_modified_by="Robert Hijmans"
 	)
     
 	#f <- ff[basename(ff) == "12CHTSPROA-Locations.xls"]

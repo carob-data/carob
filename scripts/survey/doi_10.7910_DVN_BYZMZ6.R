@@ -20,7 +20,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 
 	uri <- "doi:10.7910/DVN/BYZMZ6"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
+	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "IFPRI",

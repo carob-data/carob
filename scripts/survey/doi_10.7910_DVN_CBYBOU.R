@@ -16,7 +16,7 @@ Tanzania Africa RISING follow-up evaluation survey was implemented in 2022. The 
 
 	uri <- "doi:10.7910/DVN/CBYBOU"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group, recursive=TRUE)
+	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "IFPRI",
