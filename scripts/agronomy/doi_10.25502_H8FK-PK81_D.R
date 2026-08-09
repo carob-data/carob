@@ -94,7 +94,8 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
   
   long$growth_stage <- stage_lookup[long$disease]
   long$disease <- disease_lookup[long$disease]
-  long$disease_severity <- NA
+  long$disease_severity <- as.character(long$disease_severity)
+  long$severity_scale <- NA
   
 # what is the scale at which these are measured?
 # long$severity_scale <- ???
