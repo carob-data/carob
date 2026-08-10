@@ -17,8 +17,8 @@ carob_script <- function(path) {
 		carob_contributor="Mary Njogu",
 		carob_effort = NA,
 		carob_date="2023-02-20",
-		modified_by = "Eduardo Garcia Bendito",
-		last_modified = "2024-03-05",
+		carob_modified_by = "Eduardo Garcia Bendito",
+		carob_last_modified = "2024-03-05",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield"
 	)

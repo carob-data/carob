@@ -17,8 +17,8 @@ carob_script <- function(path) {
 		carob_contributor="Mitchelle Njukuya", 
 		carob_effort = NA,
 		carob_date="2023-08-17", 
-		modified_by="Cedric Ngakou, Robert Hijmans",
-		last_modified="2023-11-03",
+		carob_modified_by="Cedric Ngakou, Robert Hijmans",
+		carob_last_modified="2023-11-03",
 		treatment_vars=NA, 
 		response_vars="yield"
 	)

@@ -109,11 +109,11 @@ ownership, maintenance, and operating cost of each tool.
   
   # long format: one row per before/after reading, not two side-by-side columns
   d3b_before <- d3b[, c("record_id", "weeding_pass")]
-  d3b_before$period <- ifelse(is.na(d3b$weeding_pass), "before weeding", paste("before", d3b$weeding_pass, "weeding"))
+  d3b_before$timing <- ifelse(is.na(d3b$weeding_pass), "before weeding", paste("before", d3b$weeding_pass, "weeding"))
   d3b_before$weed_density <- r3b$Density_Ini * 10000
   
   d3b_after <- d3b[, c("record_id", "weeding_pass")]
-  d3b_after$period <- ifelse(is.na(d3b$weeding_pass), "after weeding", paste("after", d3b$weeding_pass, "weeding"))
+  d3b_after$timing <- ifelse(is.na(d3b$weeding_pass), "after weeding", paste("after", d3b$weeding_pass, "weeding"))
   d3b_after$weed_density <- r3b$Density_fin * 10000
   
   d_long <- rbind(d3b_before, d3b_after)
@@ -150,8 +150,8 @@ ownership, maintenance, and operating cost of each tool.
   hourly_wage_usd <- 13.33 / 8
   
   d4b$weeding_fuel_cost <- d4b$weeding_fuel * fuel_price_usd_per_L
-  d4b$weeding_labor_cost <- d4b$weeding_time * hourly_wage_usd
-  d4b$weeding_cost <- ifelse(is.na(d4b$weeding_fuel_cost), 0, d4b$weeding_fuel_cost) + d4b$weeding_labor_cost
+  d4b$weeding_labour_cost <- d4b$weeding_time * hourly_wage_usd
+  d4b$weeding_cost <- ifelse(is.na(d4b$weeding_fuel_cost), 0, d4b$weeding_fuel_cost) + d4b$weeding_labour_cost
   d4b$currency <- "USD"
 
   d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
