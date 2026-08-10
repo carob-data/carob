@@ -131,7 +131,7 @@ Rules and gotchas:
 - Do *not* fill in the name of the "carob_contributor". `carob_contributor` must be a **real person** (the human responsible for the script) — never an AI/LLM, a placeholder, or a GitHub handle. Leave it for that person to fill in; record the model you used under `carob_LLM` instead.
 - Use _your_ model name and version as "carob_LLM"
 - Estimate carob_completion (% of variables in the raw data that have been processed) 
-- Estimate carob_effort based on your time spent (typically a fraction of an hour)
+- Estimate carob_effort based on your actual time spent (typically a fraction of an hour)
 
 ---
 
@@ -304,7 +304,7 @@ carob_script(path = "<root>/carob/carob")
 
 - **`missing variables` / `missing metadata`**: a required variable/metadata field is absent. Add it (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`).
 - **`unknown variables`**: a column name is not in the vocabulary. Rename it to a terminag name, or, if it is legitimately non-standard, **keep it** with an underscore name (Section 5). Do **not** delete or omit a meaningful variable just because it is not in terminag — naming it is what lets it be added later.
-- **`out of bounds`**: a numeric value is outside `valid_min`/`valid_max`. Consider fixing the units or the value.
+- **`out of bounds`**: a numeric value is outside `valid_min`/`valid_max`. Consider fixing the units or the value. DO NOT set outlier values to NA. Add a comment about it, suggesting next steps, but leave the action to the script author.
 - **`bad datatype`**: coerce the column (`as.numeric`, `as.integer`, `as.character`).
 - **`NA detected`**: a variable that may not be `NA` (per `required_variables.csv`, `NAok=no`) contains `NA`. Provide values or reconsider the mapping.
 - **`empty character values` / `untrimmed characters`**: clean strings with `trimws()` and replace `""` with a real value or `NA`.
@@ -326,6 +326,7 @@ Do **not**:
 - filter/drop rows, coerce blindly, or tweak values **just to silence** a message without understanding it;
 - drop records that have `NA` in a required variable (e.g. `yield`) only to silence the message — the `NA` flags something to check, not to delete; keep the records unless they truly hold nothing else of interest;
 - delete or comment out a variable only to make a warning disappear.
+- set outliers to NA
 
 **Coercion warnings are never allowed.** `NAs introduced by coercion` from `as.numeric()`/`as.integer()`/`as.logical()` means the input held text those functions could not parse. Fix it in one of exactly two ways:
 

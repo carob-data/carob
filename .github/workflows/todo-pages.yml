@@ -1,0 +1,74 @@
+name: Build and deploy todo list site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "misc/todo/to-do.csv"
+      - "docs/**"
+      - ".github/workflows/todo-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Assemble static site into _site/
+        env:
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          OUT=_site
+          rm -rf "$OUT"
+          mkdir -p "$OUT/misc/todo"
+
+          cp misc/todo/to-do.csv "$OUT/misc/todo/to-do.csv"
+
+          cp -r docs/. "$OUT/"
+          rm -rf "$OUT/_build"
+
+          touch "$OUT/.nojekyll"
+
+          cat > "$OUT/config.js" <<EOF
+          window.SITE_CONFIG = { repo: "${REPO}", branch: "${BRANCH}" };
+          EOF
+
+      - name: Generate tables manifest
+        run: python3 docs/_build/manifest.py _site
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

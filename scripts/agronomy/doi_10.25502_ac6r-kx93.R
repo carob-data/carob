@@ -20,8 +20,8 @@ carob_script <- function(path){
 		carob_date="2023-07-17",
 		data_type = "on-farm experiment",
 		data_organization="IITA;WUR",
-		modified_by = "Eduardo Garcia Bendito",
-		last_modified = "2024-03-07",
+		carob_modified_by = "Eduardo Garcia Bendito",
+		carob_last_modified = "2024-03-07",
 		response_vars = "yield",
 		treatment_vars = "inoculated;P_fertilizer"	
 	)

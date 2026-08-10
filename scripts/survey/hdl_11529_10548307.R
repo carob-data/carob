@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		carob_contributor="Shumirai Manzvera",
 		carob_date="2023-08-25",
 		carob_effort = NA,
-		modified_by="Robert Hijmans"
+		carob_modified_by="Robert Hijmans"
 	)
 
 

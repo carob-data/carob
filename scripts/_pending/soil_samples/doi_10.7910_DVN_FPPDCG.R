@@ -17,7 +17,7 @@ carob_script <- function(path) {
     data_type="on-farm experiment", 
     carob_contributor="Andrew Sila", 
     carob_date="2023-09-28",
-  	modified_by= "Njogu Mary"
+  	carob_modified_by= "Njogu Mary"
   )
   
   ## download data from the uri provided

@@ -23,7 +23,7 @@ carob_script <- function(path) {
 		project="AgMIP",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;Ca_fertilizer;Mg_fertilizer;OM_used",
 		response_vars = "yield;fwy_residue;leaf_N;leaf_P;leaf_K;leaf_Ca;leaf_Mg;grain_N;grain_P;grain_K;grain_Ca;grain_Mg;residue_N;residue_P;residue_K;residue_Ca;residue_Mg",
-		last_modified = "2024-08-28",
+		carob_last_modified = "2024-08-28",
 		notes = "Assuming that the biomass, stover and soil records correspond to season 1. Season 2 is nowhere indicated in the protocols"
 	)
 
