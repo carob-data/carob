@@ -1,6 +1,17 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# "Todanga" and "Neulia" villages each occur in two different Bhadrak blocks -
+# disambiguated coordinate lookup by location+block/GP (carob-data/carob#749).
+# GP "Ramchandra Pur" mapped to block "Bhandari Pokhari" per official GP->
+# village list (village Neulia listed there, not under any Bonth-block GP);
+# small residual risk from a third-party source, max ~19 km off either way.
+# Todanga/Neulia block coords from OSM (block PHC/CD centroid, GP office) - see
+# geo_source column.
+# 78 dry-season rows with GP/Village both NA kept, not dropped - geolocated to
+# adm2 centroid via carobiner::adm_pointRadius; adm3/adm4/location left NA.
+
 carob_script <- function(path) {
 
  
@@ -86,26 +97,52 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	           "Bankisole"="Bankisul")
 	
 	d$location <- ifelse(d$location %in% names(fixes),fixes[d$location],d$location)
-	d$location <- ifelse(is.na(d$location), d$adm2, d$location)
-	
-	loc <- data.frame(location = c("Narayan Pur","Todanga","Khorasahi","Chhuruni","Bishnupur","Renugan","Belpal","Chilbasa","Neulia",
-	                               "Kandagadia","Adiapada","Odang","Pagadabili","Chandigaon","Bahudarada","Haridapal","Sikarghati",
-	                               "Badbrahmanmara","Palli","Sankilo","Kansapal","Telibila","Dhanpur","Sankerko","Salugadia",
-	                               "Athangaon","Tikarpada","Amdubi","Napanga","Jaganathpur","Nandoor","Bankisul","Pc Pur","Gundihudi","Mayurbhanj","Cuttack","Bhadrak"),
-  longitude =c(83.702, 86.404, 86.614, 86.675, 86.828, 86.834, 
-               86.588, 86.861, 86.256, 85.326, 85.313, 86.421, 83.781, 86.579, 
-               86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 
-               86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 
-               83.007, 86.772, 86.902, 86.654, 86.414, 85.88, 86.501),
-	latitude=  c(20.835, 21.002, 21.084, 21.709, 21.268, 
-	             21.735, 21.625, 21.802, 20.328, 19.916, 19.887, 20.413, 19.062, 
-	             21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 
-	             21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 
-	             19.803, 19.931, 21.994, 21.779, 21.899, 21.922, 20.471, 21.058))         
-	       
-	d <- merge(d,loc, by="location", all.x=TRUE)
-	#d$location <- ifelse(is.na(d$location), d$adm2, d$location)
-    
+
+	# "Blck" (adm3) spelling variants for the same block, seen in the raw data
+	blck_fixes <- c("Bont"="Bonth", "Bhandaripokhari"="Bhandari Pokhari",
+	                "Naschintakoili"="Nischinta Koili")
+	d$adm3 <- ifelse(d$adm3 %in% names(blck_fixes), blck_fixes[d$adm3], d$adm3)
+
+	# Todanga/Neulia block-disambiguated, see ## ISSUES
+	ambiguous <- d$location %in% c("Todanga", "Neulia")
+	# dry-season sheet has no Blck, only GP; map Ramchandra Pur to Bhandari Pokhari
+	grp <- ifelse(!is.na(d$adm3), d$adm3, d$adm4)
+	grp[grp == "Ramchandra Pur"] <- "Bhandari Pokhari"
+	d$location_key <- d$location
+	d$location_key[ambiguous] <- paste(d$location[ambiguous], grp[ambiguous])
+
+	loc <- data.frame(location_key = c("Narayan Pur", "Khorasahi", "Chhuruni", "Bishnupur", "Renugan", "Belpal", "Chilbasa", "Kandagadia", "Adiapada", "Odang", "Pagadabili", "Chandigaon", "Bahudarada", "Haridapal", "Sikarghati", "Badbrahmanmara", "Palli", "Sankilo", "Kansapal", "Telibila", "Dhanpur", "Sankerko", "Salugadia", "Athangaon", "Tikarpada", "Amdubi", "Napanga", "Jaganathpur", "Nandoor", "Bankisul", "Pc Pur", "Gundihudi",
+	                               # block/GP-disambiguated entries, see comment above
+	                               "Todanga Bonth", "Todanga Bhadrak", "Neulia Bhandari Pokhari", "Neulia Bhadrak"),
+  longitude = c( 83.702, 86.614, 86.675, 86.828, 86.834, 86.588, 86.861, 85.326, 85.313, 86.421, 83.781, 86.579, 86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 83.007, 86.772, 86.902, 86.654,
+               # block/GP-level approximations, see ## ISSUES
+               86.325, 86.498, 86.339, 86.498),
+	latitude = c( 20.835, 21.084, 21.709, 21.268, 21.735, 21.625, 21.802, 19.916, 19.887, 20.413, 19.062, 21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 19.803, 19.931, 21.994, 21.779, 21.899,
+	             21.12, 21.067, 20.949, 21.067),
+	# NA = undocumented legacy coords; uncertainty below ~ sqrt(area/n/pi) over
+	# Bhadrak's blocks/GPs
+	geo_uncertainty = c(rep(as.numeric(NA), 32), 10700, 10700, 1900, 10700),
+	geo_source = c(rep(as.character(NA), 32),
+	              "Bonth block, OSM PHC point 'Bonth(N)' (block-level approx.)",
+	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)",
+	              "Ramachandrapur GP office, OSM node 8037423899 (GP-level approx.)",
+	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)"))
+
+	d <- merge(d,loc, by="location_key", all.x=TRUE)
+	d$location_key <- NULL
+
+	# district-centroid fallback for unmatched rows, see ## ISSUES
+	adm2_loc <- carobiner::adm_pointRadius("India", 2, cache_path=dirname(f))
+	adm2_loc <- adm2_loc[, c("adm1","adm2","longitude","latitude","geo_uncertainty","geo_source")]
+	names(adm2_loc)[3:6] <- c("longitude2","latitude2","geo_uncertainty2","geo_source2")
+	d <- merge(d, adm2_loc, by=c("adm1","adm2"), all.x=TRUE)
+	fill <- is.na(d$longitude)
+	d$longitude[fill] <- d$longitude2[fill]
+	d$latitude[fill] <- d$latitude2[fill]
+	d$geo_uncertainty[fill] <- d$geo_uncertainty2[fill]
+	d$geo_source[fill] <- d$geo_source2[fill]
+	d$longitude2 <- d$latitude2 <- d$geo_uncertainty2 <- d$geo_source2 <- NULL
+
 	#Publication data
 	d$P_fertilizer <- 40
   d$K_fertilizer <- 40
@@ -150,4 +187,3 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
    d <- unique(d)  
 	carobiner::write_files(path, meta, d)
 }
-	 
