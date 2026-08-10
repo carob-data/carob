@@ -87,7 +87,6 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	  soil_C_stock = r2$C_Stock_t_C_ha_1*100, # g/m2
 	  longitude = 34.458 ,
 	  latitude = 0.155
-,
 	)
 	
 	tret <- c("CROP+FERT" = "Fert", "CROP+FERT+CHARC"= "Fert+Biochar", "CROP" = "Control", "CROP+CHARC" = "Biochar")
@@ -97,8 +96,10 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	
 	geo <- data.frame(
 	  location = c("Siaya", "Embu" ),
-	  longitude = c(34.296, 37.4564),
-	  latitude = c(0.0620, -0.531),
+	  longitude = c(34.2488, 37.6259),
+	  latitude = c(-0.0546, -0.5922),
+	  geo_uncertainty = c(44931, 60722),
+	  geo_source ="GADM 4.1, adm1",
 	  geo_from_source = FALSE,
 	  country = "Kenya",
 	  soil_clay = c(61.00, 70.33),
