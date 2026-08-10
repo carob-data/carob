@@ -84,7 +84,10 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	  depth = r2$Sampling_Depth,
 	  soil_bd = r2$BD,
 	  soil_C = r2$perc_C,
-	  soil_C_stock = r2$C_Stock_t_C_ha_1*10
+	  soil_C_stock = r2$C_Stock_t_C_ha_1*100, # g/m2
+	  longitude = 34.458 ,
+	  latitude = 0.155
+,
 	)
 	
 	tret <- c("CROP+FERT" = "Fert", "CROP+FERT+CHARC"= "Fert+Biochar", "CROP" = "Control", "CROP+CHARC" = "Biochar")
