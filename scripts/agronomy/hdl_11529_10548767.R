@@ -19,8 +19,8 @@ carob_script <- function(path) {
     carob_contributor="Hope Mazungunye",
     carob_effort = NA,
     carob_date="2023-09-15",
-    modified_by="Siyabusa Mkuhlani",
-    last_modified = "2024-09-06"
+    carob_modified_by="Siyabusa Mkuhlani",
+    carob_last_modified = "2024-09-06"
   )
   
   #Process sheet: Yield and Attributing Character

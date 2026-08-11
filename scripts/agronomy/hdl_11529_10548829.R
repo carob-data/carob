@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		carob_contributor="Hope Mazungunye"  ,
 		carob_effort = NA,
 		carob_date="2023-09-17",
-		modified_by = "Effie Ochieng'",
+		carob_modified_by = "Effie Ochieng'",
 		treatment_vars = NA,
 		response_vars = "yield"
 	)

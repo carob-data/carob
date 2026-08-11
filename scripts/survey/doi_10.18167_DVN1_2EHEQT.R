@@ -20,8 +20,8 @@ carob_script <- function(path) {
 	# perhaps this is stratification (-like)?
    treatment_vars= "landscape_position;land_prep_method;OM_amount",
     project="Doctorant du Sud;ABACO",
-    modified_by = "Siyabusa Mkuhlani", 
-    last_modified = "2024-07-05"
+    carob_modified_by = "Siyabusa Mkuhlani", 
+    carob_last_modified = "2024-07-05"
   )
   
   r <- readxl::read_excel(ff[basename(ff)=="2006-2010_database_bvlac_bruelle_v01.20201009.xlsx"],sheet=1) |> as.data.frame()

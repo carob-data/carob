@@ -77,7 +77,7 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 	  treatment = r3$treatment,
 	  growth_stage = r3$gs_cat,
 	  plant_height = r3$height,
-	  spad = r3$spad
+	  SPAD = r3$spad
 	)
 	
 	d <- merge(d, d3, by= c("year", "rep", "treatment"), all = TRUE)
@@ -106,10 +106,10 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
   d$year <- NULL
   
   #### keep spad, plant_height, growth_stage in the Lon format
-  d_lon <- d[, c("growth_stage", "record_id", "DAP", "spad", "plant_height")]
+  d_lon <- d[, c("growth_stage", "record_id", "DAP", "SPAD", "plant_height")]
   d_lon <- d_lon[!is.na(d_lon$DAP),]
   
-  d <- d[,!names(d) %in% c("growth_stage", "DAP", "spad", "plant_height")]
+  d <- d[,!names(d) %in% c("growth_stage", "DAP", "SPAD", "plant_height")]
   
 	carobiner::write_files(path, meta, d, long = d_lon)
 }

@@ -52,7 +52,7 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 	    irrigation_method = tolower(r1$`Water regime`),
 	    irrigated = !is.na(r1$`Water regime`),
 	    land_prep_method = gsub("no-tillage", "none", tolower(r1$`Tillage type`)),
-	    N2O_emission = r1$`Cumulative N2O fluxes (kg N ha-1)`,
+	    emission_N2O = r1$`Cumulative N2O fluxes (kg N ha-1)`,
 	    yield = r1$`Grain yield (Mg ha-1)`,
 	    soil_silt = r1$...16,
 	    soil_clay = gsub("10~20", NA, r1$...17),

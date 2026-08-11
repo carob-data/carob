@@ -44,8 +44,8 @@ Climate-smart agricultural practices, such as no-tillage (NT) and cover cropping
 	  cover_crop = ifelse(grepl("HV", r1$`Cover crop`), "vetch", "none"),
 	  land_prep_method = ifelse(grepl("CT", r1$Tillage), "conventional", "none") ,
 	  rep = as.integer(gsub("R", "", r1$Replications)),
-	  N2O_emission = as.numeric(r1$`N2O flux`),
-	  CO2_emission = as.numeric(r1$`CO2 flux`),
+	  emission_N2O = as.numeric(r1$`N2O flux`),
+	  emission_CO2 = as.numeric(r1$`CO2 flux`),
 	  #soil_temperature = as.numeric(r1$`Soil temperature`),
 	  date = as.character(r1$`Sampling date`)
 	)
