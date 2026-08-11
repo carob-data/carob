@@ -21,8 +21,8 @@ This database provides a comprehensive, field-level record of rice management pr
      carob_effort = NA,
      design = NA,
      data_type = "survey",
-     treatment_vars = "herbicide_used; weeding_done; insecticide_used; OM_used;variety; planting_method;N_fertilizer;P_fertilizer;K_fertilizer",
-     response_vars = "yield", 
+     treatment_vars = "none",
+     response_vars = "none", 
      carob_contributor = "Blessing Dzuda; Kora Simperegui",
      carob_completion = 100,	
      notes = NA
@@ -59,8 +59,8 @@ This database provides a comprehensive, field-level record of rice management pr
     weeding_times=as.integer(r$`Number of weeding`),
     maturity_days=r$`Crop duration`,
     N_fertilizer=r$`Quanity of N applied (kg/ha)`,
-    P_fertilizer=r$`Quantity of P2O5 applied (kg/ha)`,
-    K_fertilizer=r$`Quantity of K2O applied (kg/ha)`
+    P_fertilizer=r$`Quantity of P2O5 applied (kg/ha)`/2.29,
+    K_fertilizer=r$`Quantity of K2O applied (kg/ha)`/1.2051
   )
 
   d$trial_id <- paste(d$hhid,d$adm2,sep = "_")
@@ -76,7 +76,7 @@ This database provides a comprehensive, field-level record of rice management pr
   d$insecticide_used <- r$`Insecticide use`=="Yes"
   d$herbicide_used <- r$`Herbicide use`=="Yes"
   d$OM_used <- r$`Organic input use`=="Yes"
-  d$weeding_done <- r$`Number of weeding` > 0
+  d$weeding_done <- r$`Number of weeding` > 0 # Number of weeding > 0 means a weeding was done
   
   d$insecticide_times <- as.integer(r$`Number of insecticide application`)
   d$farm_labour <- r$`Labor input (person day/ha)` *d$field_size #converting to labour days/year basing on field size
