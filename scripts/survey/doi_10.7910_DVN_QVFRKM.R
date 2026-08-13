@@ -30,8 +30,7 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 	)
 	
 
-	# f <- ff[basename(ff) == "data.xls"]
-	f <- "C:/Users/KSimperegui/OneDrive - CGIAR/AfricaRice/Dr. Ali/to_do/Updated_data/sowing_dates/data/data.xls"
+	f <- ff[basename(ff) == "data.xls"]
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
