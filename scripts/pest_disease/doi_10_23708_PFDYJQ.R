@@ -80,7 +80,7 @@ carob_script <- function(path) {
   d$longitude <- 36.8047
   d$latitude <- -1.2700
   d$elevation <- 1700
-  d$geo_from_source <- FALSE
+  d$geo_from_source <- TRUE
   d$treatment <- NA
   d$crop <- "maize"
   d$yield_part <- "grain"
