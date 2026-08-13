@@ -15,22 +15,23 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "AfricaRice",
 		publication = NA,
-		project = NA,
+		project = "Sustainable Farming Program",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
 		carob_completion = 100,
-		carob_contributor = "Blessing Dzuda",
+		carob_contributor = "Blessing Dzuda; Kora Simperegui",
 		carob_date = "2025-06-15",
 		notes = NA, 
 		design = NA
 	)
 	
 
-	f <- ff[basename(ff) == "Farmer field survey data on rice sowing dates yield and nutrient use in the Senegal River Valley.xls"]
+	# f <- ff[basename(ff) == "data.xls"]
+	f <- "C:/Users/KSimperegui/OneDrive - CGIAR/AfricaRice/Dr. Ali/to_do/Updated_data/sowing_dates/data/data.xls"
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
@@ -73,6 +74,7 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
   
 	d$trial_id <- paste(d$location, d$planting_date, sep = "_")
 	d$K_fertilizer<- as.numeric(NA)
+	d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$irrigated <- FALSE
@@ -89,7 +91,6 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
   d$season <- ifelse(d$season=="DS", "dry", "wet")
   d$sex <- ifelse(d$sex=="Masculin", "male", "female")
   
-  #manually adding coordinates because some of datasets' coordinates are in Mauritania
   d$location <- trimws(d$location)  
   
   d$location[d$location == "Débi"]         <- "Debi"
@@ -98,26 +99,10 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
   d$location[d$location == "Ross-Bèthio"]  <- "Ross-Bethio"
   d$location[d$location == "Thiago"] <- "Thiagar"
   
-  loc <- data.frame(
-    location = c("Mbagame", "Debi", "Mbilor", 
-                 "Mboltogne", "Kassack Nord", "Ndiareme", "Ndieurba", "Diawar", 
-                 "Ronkh", "Maka Diama", "Ndiatene", "Fanaye", "Rosso", "Kheune", 
-                 "Ndelle", "Savoigne", "Keur Mbaye", "Lougue Demisse", "Ross-Bethio", 
-                 "Bokhol", "Gaé", "Thiagar", "Thillene", "Wassoul", "Lampsar", 
-                 "Ndombo", "Dagana", "Ndiol", "Mboundoum"),
-     
-    latitude = c(16.49,16.467, 16.508, 16.474, 16.266, 16.558, 16.546, 15.027, 16.475, 
-                 16.2, 16.5, 16.534, 16.42, 16.5, 16.267, 16.2, 16.495, 16.484, 
-                 16.465, 16.532, 16.578, 16.5, 16.26, 16.478, 16.4, 16.433, 16.483, 
-                 16.399, 16.4),
-     
-    longitude = c(-16.145, -16.283, -15.584, -15.854,-16.283, -15.443, -15.318, -12.546,
-                  -15.988, -16.4, -15.9, -15.211, -15.799, -16.1, -15.883, -16.3, -15.599,
-                  -16.084, -16.295, -15.395, -15.45, -15.9, -16.307, -16.025, -16.1, -15.7,
-                  -15.6, -15.964, -16.1))
-  
-	d <- merge(d, loc, by="location", all.x=T)
-	#Diawar/Diawara seems to be in an isolated locat
+  #The initial data comprises observations from Senegal and some in Mauritania, taken along the Senegal River Valley. However, observations from Mauritania were removed from the updated version of the data because the focus of the study was Senegal.
+  #Therefore, there is no need to replace the coordinates of points in Mauritania with those in Senegal, as they were correct. 
+  d$longitude <- as.numeric(gsub(",", ".", r$gps_long))
+  d$latitude <- as.numeric(gsub(",", ".", r$gps_lat))
   
 	carobiner::write_files(path, meta, d)
 }
