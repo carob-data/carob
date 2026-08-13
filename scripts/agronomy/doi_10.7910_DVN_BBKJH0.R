@@ -13,15 +13,15 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
    data_organization = "AfricaRice",
    publication = NA,
    project = "EiA",
    data_type = "on-farm experiment",
-   treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+   treatment_vars = "herbicide_used; variety; planting_method; N_fertilizer;P_fertilizer;K_fertilizer",
    response_vars = "yield", 
    carob_completion = 100,
-   carob_contributor = "Blessing Dzuda",
+   carob_contributor = "Blessing Dzuda; Kora Simperegui",
    carob_effort = NA,
    carob_date = "2025-05-30",
    notes = NA, 
@@ -46,6 +46,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
       planting_date= as.character(r$sowing_date),
       transplanting_date= as.character(r$transplanting_date),
       harvest_date= as.character(r$harvest_date),
+      land_prep_method=as.character(r$number_tillage),
       N_fertilizer= r$n_applied_kg_ha,
       P_fertilizer= r$p_applied_kg_ha,
       K_fertilizer= r$k_applied_kg_ha,
@@ -54,31 +55,18 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
       weeding_times = as.integer(r$number_weeding),
       irrigated = grepl("irrigated", tolower(r$production_system)),
       fertilizer_cost = r$total_fertilizer_cost_usd_ha,
-      fertilizer_used = !grepl("No fertilizer", r$type_npk_fertilizer_used),
-      fertilizer_type ="NPK;urea",
       trial_id = paste(r$use_case_name, r$activity_name, r$activity_type, sep = "-")
     ) 
    
-    
-    #lat_lon data
-    
-    geo <- data.frame(
-      country = c("Burkina Faso", "Mali", rep("Sierra Leone", 2), "Ghana", "Nigeria"),
-      adm1 = c("Bama", "Sikasso", "North West", "Southern", "Northern", "Nasarawa"),
-      lon = c(-4.4129, -5.667, -12.520, -11.753, -0.181, 7.7115),
-      lat = c(11.375, 11.315, 9.367, 8.564,9.549 , 8.547),
-      geo_from = FALSE
-    )
-  
-    d <- merge(d, geo, by= c("adm1", "country"), all.x = TRUE)
-    
-    d$longitude[!is.na(d$lon)] <- d$lon[!is.na(d$lon)]
-    d$latitude[!is.na(d$lat)] <- d$lat[!is.na(d$lat)]
-    d$geo_from_source[!is.na(d$geo_from)] <- d$geo_from[!is.na(d$geo_from)]
-    
-    d$lat <- d$lon <- d$geo_from <- NULL
+    # For the land preparation, the number of tillage was used as a proxy. 0 for "None", NA for "Unknown" and >0 for "Tillage"
+    d$land_prep_method[d$land_prep_method == "0"] <- "none"
+    d$land_prep_method[is.na(d$land_prep_method)] <- "unknown"
+    d$land_prep_method[!d$land_prep_method %in% c("none", "unknown")] <- "tillage"
     
     
+    d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
+    d$fertilizer_type <- ifelse(d$fertilizer_used, "NPK;urea", "none") # In some experiments, no fertilizer was applied. For such, fertilizer_type is set to "none"
+
     
     d$season <- ifelse(d$season=="dry season","dry","wet")
     d$planting_method <- ifelse(d$planting_method=="direct","direct seeding","transplanted")
@@ -89,9 +77,6 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
     d$crop <- "rice"
     d$yield_part <- "grain"
     d$yield_moisture <- 14
-    
-    ### Set ambiguous harvest dates to NA (10 rows)
-    d$harvest_date[(as.Date(d$harvest_date) -as.Date(d$planting_date))< 40] <-  NA
     
   carobiner::write_files(path, meta, d)
 }
