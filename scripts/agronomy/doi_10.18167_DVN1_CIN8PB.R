@@ -1,9 +1,17 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES: 
+# 5 sites: BEOU (Benin), ETBA (Ethiopia), GHKP (Ghana), MANT (Mali), RWBU (Rwanda), 2 experiments (seasons) each. 
+# GHKP TRT_NAME encodes N-P rate and residue as free text, not parsed. 
+# RWBU soil_id does not follow the SITEyyNNNN pattern used elsewhere. 
+# RWBU initial-conditions layer block has a stray value outside the defined columns, left as NA rather than guessed. 
+# BEOU soils sheet showed only a profile summary row, no deeper layer table - needs re-checking against the raw data
+
+
 carob_script <- function(path) {
   
-  "Calibration data for: Modelling climate change impacts on maize yields under
+"Calibration data for: Modelling climate change impacts on maize yields under
 low nitrogen input conditions in sub-Saharan Africa
 The dataset contains experimental data on maize growth for crop model
 calibration, at five sites in sub-Saharan Africa (Benin, Ethiopia, Ghana,
@@ -18,19 +26,19 @@ with average and standard deviation) are provided for 10 experiments
   ff <- carobiner::get_data(uri, path, group, filter=F)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "CIRAD; University of Ghana, Accra, Ghana; APNI; IUCN; CIMMYT; ICRISAT",
-                                  publication = "",
-                                  project = "AgMIP Smallholder Low-Input Maize",
-                                  carob_date = "2026-08-03",
-                                  design = "on-farm calibration trials, 2 seasons per site, 5 sites",
-                                  data_type = "trial",
-                                  treatment_vars = "fertilizer N, fertilizer P, fertilizer K, organic amendment, previous crop, tillage",
-                                  response_vars = "yield, aboveground biomass, LAI, crop N, crop P, soil water, soil N",
-                                  carob_contributor = "Stella Muthoni",
-                                  completion = 60,
-                                  notes = "5 sites: BEOU (Benin), ETBA (Ethiopia), GHKP (Ghana), MANT (Mali), RWBU (Rwanda), 2 experiments (seasons) each. GHKP TRT_NAME encodes N-P rate and residue as free text, not parsed here. RWBU soil_id does not follow the SITEyyNNNN pattern used elsewhere. RWBU initial-conditions layer block has a stray value outside the defined columns, left as NA rather than guessed. r9 used dd.mm.yyyy dates, r10 used yyyy-mm-dd for the same observations. RWBU spans a season crossing a calendar year boundary. BEOU soils sheet showed only a profile summary row, no deeper layer table - needs re-checking against the live file.",
-                                  carob_completion = 60,
-                                  carob_effort = 10
+		data_organization = "CIRAD; UGHA; APNI; IUCN; CIMMYT; ICRISAT",
+		publication = "",
+		project = NA,
+		carob_date = "2026-08-03",
+		design = "on-farm calibration trials, 2 seasons per site, 5 sites",
+		data_type = "trial",
+		treatment_vars = "fertilizer N, fertilizer P, fertilizer K, organic amendment, previous crop, tillage",
+		response_vars = "yield, aboveground biomass, LAI, crop N, crop P, soil water, soil N",
+		carob_contributor = "Stella Muthoni",
+		completion = 60,
+		notes = NA,
+		carob_completion = 60,
+		carob_effort = 10
   )
   
   f1  <- ff[basename(ff) == "Agmip_LowInput_template_variable_definition0717-2.xlsx"]
@@ -57,7 +65,7 @@ with average and standard deviation) are provided for 10 experiments
   
   
   ### Reading small tables for Benin farm management, soils and weather
-  r2a_exp      <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=19, n_max=2)
+  r2a_exp  <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=19, n_max=2)
   
   r2a_prevcrop <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=27, n_max=2)
   r2a_prevcrop$exname <- ifelse(r2a_prevcrop$`!...1` == 1, "BEOU1501", "BEOU1401")
@@ -68,17 +76,12 @@ with average and standard deviation) are provided for 10 experiments
   
   r2a_tillage <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=44, n_max=2)
   r2a_tillage$exname <- ifelse(r2a_tillage$`! Definitions` == 1, "BEOU1501", "BEOU1401")
-  r2a_tillage$`yyyy-mm-dd` <- as.Date(r2a_tillage$`yyyy-mm-dd`)
   
   r2a_planting <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=48, n_max=2)
   r2a_planting$exname <- ifelse(r2a_planting$`! Definitions` == 1, "BEOU1501", "BEOU1401")
-  r2a_planting$`yyyy-mm-dd` <- as.Date(r2a_planting$`yyyy-mm-dd`)
   
   r2a_summary  <- carobiner::read.excel(f2, sheet="Field-mgmt", skip=67, n_max=2)
   r2a_summary$exname <- ifelse(r2a_summary$`#` == 1, "BEOU1501", "BEOU1401")
-  r2a_summary$pldae  <- as.Date(r2a_summary$pldae)
-  r2a_summary$adat   <- as.Date(r2a_summary$adat)
-  r2a_summary$mdat   <- as.Date(r2a_summary$mdat)
   
   r2b_profile <- carobiner::read.excel(f2, sheet="Soils", skip=12, n_max=1)
   r2b_layers  <- carobiner::read.excel(f2, sheet="Soils", skip=17, n_max=3)
@@ -106,21 +109,27 @@ with average and standard deviation) are provided for 10 experiments
     residue_prevcrop = 0,
     residue_prevcrop_used = FALSE,
     residue_prevcrop_N = 0,
+
+
+############ 
+## this part does not look good. 
+## instead make a data.frame for prevcrop and then merge by exname 
+
     soil_sample_date = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                      r2a_prevcrop$icdat[r2a_prevcrop$exname == "BEOU1501"],
-                                      r2a_prevcrop$icdat[r2a_prevcrop$exname == "BEOU1401"]), origin = "1970-01-01"),
+		    r2a_prevcrop$icdat[r2a_prevcrop$exname == "BEOU1501"],
+		    r2a_prevcrop$icdat[r2a_prevcrop$exname == "BEOU1401"]), origin = "1970-01-01"),
     
     land_prep_traction = "Animal-drawn implement",
     tillage_date  = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                   r2a_tillage$`yyyy-mm-dd`[r2a_tillage$exname == "BEOU1501"],
-                                   r2a_tillage$`yyyy-mm-dd`[r2a_tillage$exname == "BEOU1401"])),
+		 r2a_tillage$`yyyy-mm-dd`[r2a_tillage$exname == "BEOU1501"],
+		 r2a_tillage$`yyyy-mm-dd`[r2a_tillage$exname == "BEOU1401"])),
     tillage_depth = ifelse(r2a_iclayers$exname == "BEOU1501",
                            r2a_tillage$cm[r2a_tillage$exname == "BEOU1501"],
                            r2a_tillage$cm[r2a_tillage$exname == "BEOU1401"]),
     
     planting_date = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                   r2a_planting$`yyyy-mm-dd`[r2a_planting$exname == "BEOU1501"],
-                                   r2a_planting$`yyyy-mm-dd`[r2a_planting$exname == "BEOU1401"])),
+		 r2a_planting$`yyyy-mm-dd`[r2a_planting$exname == "BEOU1501"],
+		 r2a_planting$`yyyy-mm-dd`[r2a_planting$exname == "BEOU1401"])),
     variety = "BEOU_CUL",
     variety_type = "Open pollinated variety (OPV)",
     plant_density = ifelse(r2a_iclayers$exname == "BEOU1501",
@@ -129,17 +138,20 @@ with average and standard deviation) are provided for 10 experiments
     row_spacing = ifelse(r2a_iclayers$exname == "BEOU1501",
                          r2a_planting$cm[r2a_planting$exname == "BEOU1501"],
                          r2a_planting$cm[r2a_planting$exname == "BEOU1401"]),
-    planting_depth = 50,
+    
     
     emergence_date = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                    r2a_summary$pldae[r2a_summary$exname == "BEOU1501"],
-                                    r2a_summary$pldae[r2a_summary$exname == "BEOU1401"])),
+		  r2a_summary$pldae[r2a_summary$exname == "BEOU1501"],
+		  r2a_summary$pldae[r2a_summary$exname == "BEOU1401"])),
     flowering_date = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                    r2a_summary$adat[r2a_summary$exname == "BEOU1501"],
-                                    r2a_summary$adat[r2a_summary$exname == "BEOU1401"])),
+		  r2a_summary$adat[r2a_summary$exname == "BEOU1501"],
+		  r2a_summary$adat[r2a_summary$exname == "BEOU1401"])),
     maturity_date  = as.Date(ifelse(r2a_iclayers$exname == "BEOU1501",
-                                    r2a_summary$mdat[r2a_summary$exname == "BEOU1501"],
-                                    r2a_summary$mdat[r2a_summary$exname == "BEOU1401"])),
+		  r2a_summary$mdat[r2a_summary$exname == "BEOU1501"],
+		  r2a_summary$mdat[r2a_summary$exname == "BEOU1401"])),
+############
+
+	planting_depth = 50, # unit, where do you get that from?
     
     irrigated = FALSE,
     OM_used   = FALSE,
@@ -149,7 +161,13 @@ with average and standard deviation) are provided for 10 experiments
     
     soil_id  = "BEOU150001",
     soil_slope = 0,
-    soil_depth = 60,
+    soil_depth = 60,  # where do you get that from (soil_depth is not the same as the depth of a soil sample)?  
+
+
+############ 
+## this is not good. part does not look good. 
+## r2a_iclayers has multiple rows, you are assigning it as if it had a single row.
+
     soil_NH4 = r2a_iclayers$icnh4,
     soil_NO3 = r2a_iclayers$icno3,
     soil_GWC = r2a_iclayers$ich2o / r2b_layers$slbdm,
@@ -180,6 +198,8 @@ with average and standard deviation) are provided for 10 experiments
     fertilizer_amount = NA,
     fertilization_method = NA
   )
+  
+  
   
   ### Reading small tables for Ethiopia farm management, soils and weather
   r3a_exp      <- carobiner::read.excel(f3, sheet="Field-mgmt", skip=19, n_max=2)   # experiment metadata
@@ -243,20 +263,20 @@ with average and standard deviation) are provided for 10 experiments
     residue_prevcrop_used = FALSE,
     residue_prevcrop_N = 0,
     soil_sample_date = as.Date(ifelse(r3a_iclayers$exname == "ETBA1401",
-                                      r3a_prevcrop$icdat[r3a_prevcrop$exname == "ETBA1401"],
-                                      r3a_prevcrop$icdat[r3a_prevcrop$exname == "ETBA1301"]), origin = "1970-01-01"),
+		    r3a_prevcrop$icdat[r3a_prevcrop$exname == "ETBA1401"],
+		    r3a_prevcrop$icdat[r3a_prevcrop$exname == "ETBA1301"]), origin = "1970-01-01"),
     
     land_prep_traction = "Animal-drawn implement",
     tillage_date  = as.Date(ifelse(r3a_iclayers$exname == "ETBA1401",
-                                   r3a_tillage$`yyyy-mm-dd`[r3a_tillage$exname == "ETBA1401"],
-                                   r3a_tillage$`yyyy-mm-dd`[r3a_tillage$exname == "ETBA1301"])),
+		 r3a_tillage$`yyyy-mm-dd`[r3a_tillage$exname == "ETBA1401"],
+		 r3a_tillage$`yyyy-mm-dd`[r3a_tillage$exname == "ETBA1301"])),
     tillage_depth = ifelse(r3a_iclayers$exname == "ETBA1401",
                            r3a_tillage$cm[r3a_tillage$exname == "ETBA1401"],
                            r3a_tillage$cm[r3a_tillage$exname == "ETBA1301"]),
     
     planting_date = as.Date(ifelse(r3a_iclayers$exname == "ETBA1401",
-                                   r3a_planting$`yyyy-mm-dd`[r3a_planting$exname == "ETBA1401"],
-                                   r3a_planting$`yyyy-mm-dd`[r3a_planting$exname == "ETBA1301"])),
+		 r3a_planting$`yyyy-mm-dd`[r3a_planting$exname == "ETBA1401"],
+		 r3a_planting$`yyyy-mm-dd`[r3a_planting$exname == "ETBA1301"])),
     variety = "ETBA_CUL",
     variety_type = "Hybrid",
     plant_density = ifelse(r3a_iclayers$exname == "ETBA1401",
@@ -269,11 +289,11 @@ with average and standard deviation) are provided for 10 experiments
     
     emergence_date = as.Date(NA),   # not recorded at ETBA
     flowering_date = as.Date(ifelse(r3a_iclayers$exname == "ETBA1401",
-                                    r3a_summary$adat[r3a_summary$exname == "ETBA1401"],
-                                    r3a_summary$adat[r3a_summary$exname == "ETBA1301"])),
+		  r3a_summary$adat[r3a_summary$exname == "ETBA1401"],
+		  r3a_summary$adat[r3a_summary$exname == "ETBA1301"])),
     maturity_date  = as.Date(ifelse(r3a_iclayers$exname == "ETBA1401",
-                                    r3a_summary$mdat[r3a_summary$exname == "ETBA1401"],
-                                    r3a_summary$mdat[r3a_summary$exname == "ETBA1301"])),
+		  r3a_summary$mdat[r3a_summary$exname == "ETBA1401"],
+		  r3a_summary$mdat[r3a_summary$exname == "ETBA1301"])),
     
     irrigated = FALSE,
     OM_used   = FALSE,
@@ -343,7 +363,7 @@ with average and standard deviation) are provided for 10 experiments
   r4a_fert$exname <- ifelse(r4a_fert$`%` == 1, "GHKP0801", "GHKP0901")
   r4a_fert$product_kg <- ifelse(r4a_fert$`!Fertilizer type - code signification` == "Urea", r4a_fert$`kg[N]/ha` / 0.46,
                                 ifelse(r4a_fert$`!Fertilizer type - code signification` == "Triple Super Phosphate", r4a_fert$`kg[P]/ha` / 0.1923,
-                                       r4a_fert$`kg[K]/ha` / 0.498))
+		     r4a_fert$`kg[K]/ha` / 0.498))
   fert_totals <- aggregate(cbind(`kg[N]/ha`, `kg[P]/ha`, `kg[K]/ha`) ~ exname, data = r4a_fert, sum)
   names(fert_totals) <- c("exname", "N_total", "P_total", "K_total")
   n_splits <- aggregate(`kg[N]/ha` ~ exname, data = r4a_fert[r4a_fert$`kg[N]/ha` > 0, ], length)
@@ -388,8 +408,8 @@ with average and standard deviation) are provided for 10 experiments
     residue_prevcrop_used = FALSE,
     residue_prevcrop_N = 0,
     soil_sample_date = as.Date(ifelse(r4a_iclayers$exname == "GHKP0801",
-                                      r4a_prevcrop$icdat[r4a_prevcrop$exname == "GHKP0801"],
-                                      r4a_prevcrop$icdat[r4a_prevcrop$exname == "GHKP0901"]), origin = "1970-01-01"),
+		    r4a_prevcrop$icdat[r4a_prevcrop$exname == "GHKP0801"],
+		    r4a_prevcrop$icdat[r4a_prevcrop$exname == "GHKP0901"]), origin = "1970-01-01"),
     
     # no tillage at GHKP - confirmed "!No Tillage" in source
     land_prep_traction = NA,
@@ -397,8 +417,8 @@ with average and standard deviation) are provided for 10 experiments
     tillage_depth = NA,
     
     planting_date = as.Date(ifelse(r4a_iclayers$exname == "GHKP0801",
-                                   r4a_planting$`yyyy-mm-dd`[r4a_planting$exname == "GHKP0801"],
-                                   r4a_planting$`yyyy-mm-dd`[r4a_planting$exname == "GHKP0901"])),
+		 r4a_planting$`yyyy-mm-dd`[r4a_planting$exname == "GHKP0801"],
+		 r4a_planting$`yyyy-mm-dd`[r4a_planting$exname == "GHKP0901"])),
     variety = "GHKP_CUL",
     variety_type = "Open Pollinated Variety (OPV)",
     plant_density = ifelse(r4a_iclayers$exname == "GHKP0801",
@@ -410,14 +430,14 @@ with average and standard deviation) are provided for 10 experiments
     planting_depth = 50,
     
     emergence_date = as.Date(ifelse(r4a_iclayers$exname == "GHKP0801",
-                                    r4a_summary$pldae[r4a_summary$exname == "GHKP0801"],
-                                    r4a_summary$pldae[r4a_summary$exname == "GHKP0901"])),
+		  r4a_summary$pldae[r4a_summary$exname == "GHKP0801"],
+		  r4a_summary$pldae[r4a_summary$exname == "GHKP0901"])),
     flowering_date = as.Date(ifelse(r4a_iclayers$exname == "GHKP0801",
-                                    r4a_summary$adat[r4a_summary$exname == "GHKP0801"],
-                                    r4a_summary$adat[r4a_summary$exname == "GHKP0901"])),
+		  r4a_summary$adat[r4a_summary$exname == "GHKP0801"],
+		  r4a_summary$adat[r4a_summary$exname == "GHKP0901"])),
     maturity_date  = as.Date(ifelse(r4a_iclayers$exname == "GHKP0801",
-                                    r4a_summary$mdat[r4a_summary$exname == "GHKP0801"],
-                                    r4a_summary$mdat[r4a_summary$exname == "GHKP0901"])),
+		  r4a_summary$mdat[r4a_summary$exname == "GHKP0801"],
+		  r4a_summary$mdat[r4a_summary$exname == "GHKP0901"])),
     
     irrigated = FALSE,
     OM_used   = FALSE,
@@ -535,20 +555,20 @@ with average and standard deviation) are provided for 10 experiments
     residue_prevcrop_used = FALSE,
     residue_prevcrop_N = 0,
     soil_sample_date = as.Date(ifelse(r5a_iclayers$exname == "MANT1001",
-                                      r5a_prevcrop$icdat[r5a_prevcrop$exname == "MANT1001"],
-                                      r5a_prevcrop$icdat[r5a_prevcrop$exname == "MANT0901"]), origin = "1970-01-01"),
+		    r5a_prevcrop$icdat[r5a_prevcrop$exname == "MANT1001"],
+		    r5a_prevcrop$icdat[r5a_prevcrop$exname == "MANT0901"]), origin = "1970-01-01"),
     
     land_prep_traction = "Animal-drawn implement",
     tillage_date  = as.Date(ifelse(r5a_iclayers$exname == "MANT1001",
-                                   r5a_tillage$`yyyy-mm-dd`[r5a_tillage$exname == "MANT1001"],
-                                   r5a_tillage$`yyyy-mm-dd`[r5a_tillage$exname == "MANT0901"])),
+		 r5a_tillage$`yyyy-mm-dd`[r5a_tillage$exname == "MANT1001"],
+		 r5a_tillage$`yyyy-mm-dd`[r5a_tillage$exname == "MANT0901"])),
     tillage_depth = ifelse(r5a_iclayers$exname == "MANT1001",
                            r5a_tillage$cm[r5a_tillage$exname == "MANT1001"],
                            r5a_tillage$cm[r5a_tillage$exname == "MANT0901"]),
     
     planting_date = as.Date(ifelse(r5a_iclayers$exname == "MANT1001",
-                                   r5a_planting$`yyyy-mm-dd`[r5a_planting$exname == "MANT1001"],
-                                   r5a_planting$`yyyy-mm-dd`[r5a_planting$exname == "MANT0901"])),
+		 r5a_planting$`yyyy-mm-dd`[r5a_planting$exname == "MANT1001"],
+		 r5a_planting$`yyyy-mm-dd`[r5a_planting$exname == "MANT0901"])),
     variety = "MANT_CUL",
     variety_type = "Open Pollinated Variety (OPV)",
     plant_density = ifelse(r5a_iclayers$exname == "MANT1001",
@@ -561,11 +581,11 @@ with average and standard deviation) are provided for 10 experiments
     
     emergence_date = as.Date(NA),   # not recorded at MANT
     flowering_date = as.Date(ifelse(r5a_iclayers$exname == "MANT1001",
-                                    r5a_summary$adat[r5a_summary$exname == "MANT1001"],
-                                    r5a_summary$adat[r5a_summary$exname == "MANT0901"])),
+		  r5a_summary$adat[r5a_summary$exname == "MANT1001"],
+		  r5a_summary$adat[r5a_summary$exname == "MANT0901"])),
     maturity_date  = as.Date(ifelse(r5a_iclayers$exname == "MANT1001",
-                                    r5a_summary$mdat[r5a_summary$exname == "MANT1001"],
-                                    r5a_summary$mdat[r5a_summary$exname == "MANT0901"])),
+		  r5a_summary$mdat[r5a_summary$exname == "MANT1001"],
+		  r5a_summary$mdat[r5a_summary$exname == "MANT0901"])),
     
     irrigated = FALSE,
     OM_used   = TRUE,
@@ -686,20 +706,20 @@ with average and standard deviation) are provided for 10 experiments
     residue_prevcrop_used = FALSE,
     residue_prevcrop_N = 0,
     soil_sample_date = as.Date(ifelse(r6a_iclayers$exname == "RWBU1501",
-                                      r6a_prevcrop$icdat[r6a_prevcrop$exname == "RWBU1501"],
-                                      r6a_prevcrop$icdat[r6a_prevcrop$exname == "RWBU1401"]), origin = "1970-01-01"),
+		    r6a_prevcrop$icdat[r6a_prevcrop$exname == "RWBU1501"],
+		    r6a_prevcrop$icdat[r6a_prevcrop$exname == "RWBU1401"]), origin = "1970-01-01"),
     
     land_prep_traction = "Animal-drawn implement",
     tillage_date  = as.Date(ifelse(r6a_iclayers$exname == "RWBU1501",
-                                   r6a_tillage$`yyyy-mm-dd`[r6a_tillage$exname == "RWBU1501"],
-                                   r6a_tillage$`yyyy-mm-dd`[r6a_tillage$exname == "RWBU1401"])),
+		 r6a_tillage$`yyyy-mm-dd`[r6a_tillage$exname == "RWBU1501"],
+		 r6a_tillage$`yyyy-mm-dd`[r6a_tillage$exname == "RWBU1401"])),
     tillage_depth = ifelse(r6a_iclayers$exname == "RWBU1501",
                            r6a_tillage$cm[r6a_tillage$exname == "RWBU1501"],
                            r6a_tillage$cm[r6a_tillage$exname == "RWBU1401"]),
     
     planting_date = as.Date(ifelse(r6a_iclayers$exname == "RWBU1501",
-                                   r6a_planting$`yyyy-mm-dd`[r6a_planting$exname == "RWBU1501"],
-                                   r6a_planting$`yyyy-mm-dd`[r6a_planting$exname == "RWBU1401"])),
+		 r6a_planting$`yyyy-mm-dd`[r6a_planting$exname == "RWBU1501"],
+		 r6a_planting$`yyyy-mm-dd`[r6a_planting$exname == "RWBU1401"])),
     variety = "RWBU_CUL",
     variety_type = "Open Pollinated Variety (OPV)",
     plant_density = ifelse(r6a_iclayers$exname == "RWBU1501",
@@ -712,11 +732,11 @@ with average and standard deviation) are provided for 10 experiments
     
     emergence_date = as.Date(NA),
     flowering_date = as.Date(ifelse(r6a_iclayers$exname == "RWBU1501",
-                                    r6a_summary$adat[r6a_summary$exname == "RWBU1501"],
-                                    r6a_summary$adat[r6a_summary$exname == "RWBU1401"])),
+		  r6a_summary$adat[r6a_summary$exname == "RWBU1501"],
+		  r6a_summary$adat[r6a_summary$exname == "RWBU1401"])),
     maturity_date  = as.Date(ifelse(r6a_iclayers$exname == "RWBU1501",
-                                    r6a_summary$mdat[r6a_summary$exname == "RWBU1501"],
-                                    r6a_summary$mdat[r6a_summary$exname == "RWBU1401"])),
+		  r6a_summary$mdat[r6a_summary$exname == "RWBU1501"],
+		  r6a_summary$mdat[r6a_summary$exname == "RWBU1401"])),
     
     irrigated = FALSE,
     OM_used   = FALSE,
