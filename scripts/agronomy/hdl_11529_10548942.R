@@ -132,8 +132,14 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	d$location_key <- NULL
 
 	# district-centroid fallback for unmatched rows, see ## ISSUES
-	adm2_loc <- carobiner::adm_pointRadius("India", 2, cache_path=dirname(f))
-	adm2_loc <- adm2_loc[, c("adm1","adm2","longitude","latitude","geo_uncertainty","geo_source")]
+	adm2_loc <- data.frame(
+	    adm1 = c("Odisha", "Odisha", "Odisha"),
+	    adm2 = c("Bhadrak", "Cuttack", "Mayurbhanj"),
+	    longitude = c(86.6167, 85.6985, 86.4059),
+	    latitude = c(20.9786, 20.4436, 21.8907),
+	    geo_uncertainty = c(46171, 89463, 83588),
+	    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2", "GADM 4.1, adm2")
+	)
 	names(adm2_loc)[3:6] <- c("longitude2","latitude2","geo_uncertainty2","geo_source2")
 	d <- merge(d, adm2_loc, by=c("adm1","adm2"), all.x=TRUE)
 	fill <- is.na(d$longitude)
