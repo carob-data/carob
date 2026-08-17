@@ -76,7 +76,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 	)
 	
 	 #No application of fertilizer for experiments with N_fertilizer = P_fertilizer == 0 (K was not applied here)
-	d$fertilizer_used = !(d$N_fertilizer == 0 & d$P_fertilizer == 0),
+	d$fertilizer_used = d$N_fertilizer != 0 & d$P_fertilizer != 0
 
 
 ### Adding lon and lat coordinate
