@@ -190,7 +190,7 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
   d$planting_method[!is.na(it)] <- plant_mthd[it[!is.na(it)]]  
   d$land_prep_method[!is.na(it)] <- land_mthd[it[!is.na(it)]]  
 
-  d$harvest_date[d$harvest_date == "2018-01-12"] <- "2018-12-12"
+  d$harvest_date[d$harvest_date == "2018-01-12"] <- "2018-12-01"
   d$harvest_date[d$harvest_date == "2018-07-12"] <- "2018-12-07"
 
    d <- unique(d)  
