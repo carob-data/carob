@@ -23,7 +23,7 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "intercrops;spatial_arrangement",
+		treatment_vars = "intercrops;intercrop_fraction;intercrop_type",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
@@ -80,6 +80,7 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   
   i <- grepl("Sole", d$treatment)
   d$intercrops[i] <- "none"
+  d$intercrop_fraction[i] <- 1
   i <- grepl("SP\\+SB", d$treatment) & d$crop=="sweetpotato"
   d$intercrops[i] <- "soybean"
   i <- grepl("SP\\+PP|SP:PP", d$treatment) & d$crop=="sweetpotato"
@@ -88,10 +89,6 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   d$intercrops[i] <- "sweetpotato"
   i <- grepl("SP\\+SB", d$treatment) & d$crop=="soybean"
   d$intercrops[i] <- "sweetpotato"
-  
-  d$spatial_arrangement <- ifelse(grepl("1:1", d$treatment),"1:1",
-                           ifelse(grepl("2:1", d$treatment), "2:1", 
-                           ifelse(grepl("Row", d$treatment), "alternating row", "none")))
   
   ### Adding geo-coordinate
   
@@ -115,7 +112,17 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   d$harvest_date <- NA_character_
   
   d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA) 
+
   
+	arrangement <- ifelse(grepl("1:1", d$treatment),"1:1",
+        ifelse(grepl("2:1", d$treatment), "2:1", 
+        ifelse(grepl("Row", d$treatment), "row", "none")))
+  
+	d$intercrop_fraction <- ifelse(arrangement == "none", 1, 
+		ifelse(arrangement %in% c("1:1", "row"), 0.5, 
+		ifelse(arrangement == "2:1", ifelse(d$crop == "sweetpotato", 2/3, 1/3), NA)))
+
+	d$intercrop_type <- ifelse(grepl(":", arrangement), "mixed", arrangement)
 
 	carobiner::write_files(path, meta, d)
 }
