@@ -16,23 +16,20 @@ This dataset includes raw data values used to determine the effects of cover cro
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
 		data_organization = "UCD",
 		publication = "doi:10.1016/j.jafr.2025.102160",
 		project = NA,
 		carob_date = "2026-08-11",
 		design = NA,
-  	data_type = "experiment",
+		data_type = "experiment",
 		notes = NA,
-		treatment_vars = "cover_crop;biosolarized_used",
+		treatment_vars = "cover_crop;biosolarized",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 80	,
 		carob_effort = 2
-		
 	)
-	
 
 	f1 <- ff[basename(ff) == "Crown_rot_incidence.xlsx"]
 	f2 <- ff[basename(ff) == "Fruit_data.xlsx"]
@@ -72,7 +69,7 @@ This dataset includes raw data values used to determine the effects of cover cro
 	  treatment = r3$Treatment,
 	  rep = as.integer(r3$`Replicate plot`),
 	  DAP = as.integer(r3$Week*7),
-	  plant_health_index = r3$`Health rating`
+	  plant_health = r3$`Health rating`
 	)
 	
 	### 
@@ -128,7 +125,7 @@ This dataset includes raw data values used to determine the effects of cover cro
 	####
 	d$cover_crop <- ifelse(grepl("B. juncea-V. villosa", d$treatment), "brown mustard;hairy vetch", 
 	                ifelse(grepl("B. juncea monoculture", d$treatment), "brown mustard", "none"))
-	d$biosolarized_used <- grepl("biosolarized|solarized", d$treatment)
+	d$biosolarized <- grepl("biosolarized|solarized", d$treatment)
 	
 	#####
 	d$crop <- "eggplant"
