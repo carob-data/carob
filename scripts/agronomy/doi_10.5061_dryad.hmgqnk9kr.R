@@ -81,7 +81,7 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 	d <- d[(!is.na(d$crop)) & (!is.na(d$yield)), ]
 	
 	crop <- gsub(" ", "", d$crop)
-	crop <- gsub("g_nuts|gnuts", "groundnut", gsub("p_peas|pigeonpea", "pigeon pea", d$crop))
+	crop <- gsub("g_nuts|gnuts", "groundnut", gsub("p_peas|pigeonpea", "pigeon pea", crop))
 	crop <- gsub("miilet", "millet", crop)
 	crop <- gsub("bambara", "bambara groundnut", crop)
 	crop <- gsub("beans", "common bean", crop)
