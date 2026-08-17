@@ -5,6 +5,11 @@
 ### fertilizer amount and OM_amount are given in kg/station
 # station size is not defined 
 
+# abstract mentions cowpea, but no cowpea in data
+
+# This is an intercropping experiment, but only "grain_yield" is given, presumably the yield for the "main_crop" which is always a cereal (maize, sorghum, or millet).  So we do not have the yield of the other (legume) intercrop?!
+
+
 carob_script <- function(path) {
 
 "
@@ -13,13 +18,12 @@ Cereal legume intercropping studies in Malawi
 Innovations in Technology, Institutional and Extension Approaches towards Sustainable Agriculture and enhanced Food and Nutritional Security in Africa (InnovAfrica), a European Commission funded project validated and upscaled cereal legume intercropping technology in Dedza and Mzimba districts of Malawi involving farmers in between year 2017 and 2020. The results from the intercropping experiment of three cereals (maize, sorghum, and finger millet) and various legume species (pigeonpea, soyabeans, Bambara nut, groundnut, cowpea, and common beans) are presented in this data set.
 "
 
-  uri <- "doi:10.5061/dryad.hmgqnk9kr"
+	uri <- "doi:10.5061/dryad.hmgqnk9kr"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
-		data_organization = "CIMMYT; UM; ILRI", #UM :University of Malawi
+		data_organization = "CIMMYT; UNIMA; ILRI", 
 		publication = NA,
 		project = "InnovAfrica",
 		design = NA,
@@ -32,7 +36,6 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 		carob_completion = 100,	
 		carob_effort = 2
 	)
-	
 
 	f1 <- ff[basename(ff) == "Intercrop.Malawi.xlsx"]
 	#f2 <- ff[basename(ff) == "README1.txt"]
@@ -55,50 +58,44 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 		CA_years = r1$`experience_conservation (yrs)`,
 		rain = r1$`rainfall (mm)`,
 		#crop_type = r1$crop_type,
-		crop = r1$crops,
-		intercrops = r1$cropping_system_type,
+		crop = tolower(r1$crops),
+		#intercrops = tolower(r1$cropping_system_type),
 		#r1$cropping_systems,
-		#r1$technology,
+		#r1$technology,  CA = cons ag, CONV = conventional
 		variety = ifelse(is.na(r1$cereal_varieties) & !is.na(r1$legume_variety), r1$legume_variety, r1$cereal_varieties) ,
-		intercropped = ifelse(!is.na(r1$system_technology), as.logical(grepl("Intercrop", r1$system_technology)), NA),
 		row_spacing = r1$`row_spacing (cm)`,
 		plant_spacing = r1$`with in row spacing (cm)`,
 		land_prep_method = gsub("Manual hoe tillage", "hoeing", r1$tillage_method),
 		land_prep_implement = "manual" ,
 		residue_prevcrop_used = r1$residues_applied =="Yes",
-		residue_type = r1$residue_type,
+		residue_type = tolower(r1$residue_type),
 		planting_date = as.character(r1$seeding_date),
 		harvest_date = as.character(r1$harvest_date),
 		OM_type = tolower(r1$`basal fertilizer_type`),
-		OM_amount = as.numeric(gsub("500g/station", 500,  r1$`basal fertilizer (bokash)_rate`))/1000, # kg/station
 		fertilizer_type = tolower(r1$`top_dressing fertilizer_type`),
-		N_fertilizer = as.numeric(gsub("3g/station", 3, r1$`topdress Urea application_rate`))*0.46/1000, # kg/station
 		yield = r1$`grain_yield (kg/ha)`,
 		fwy_total = r1$`total_biomass (kg/ha)`
+		## OM_amount = as.numeric(gsub("500g/station", 500,  r1$`basal fertilizer (bokash)_rate`))/1000, # kg/station
+		##N_fertilizer = as.numeric(gsub("3g/station", 3, r1$`topdress Urea application_rate`))*0.46/1000, # kg/station
 	)
+	d <- d[(!is.na(d$crop)) & (!is.na(d$yield)), ]
 	
-	crop <- strsplit(d$crop, "_")
-	max_len <- max(sapply(crop, length))
-	split_padded <- lapply(crop, function(x) {
-	  length(x) <- max_len
-	  return(x)
-	})
-	crop <- as.data.frame(do.call(rbind, split_padded), stringsAsFactors = FALSE)
-	d$crop <- tolower(crop$V1)
-	
-	###  inter-crop 
-	P <- carobiner::fix_name(d$intercrops)
-	P <- gsub("Sole", "none", P)
-	P <- gsub("Pigeon_peas", "Pigeon pea", P)
-	P <- gsub("Bambara_nuts", "Bambara groundnut", P)
-	P <- gsub("Gnuts", "groundnut", P)
-	P <- gsub("Soya_beans", "soybean", P)
-	P <- gsub("Common_beans", "common bean", P)
-	P <- gsub("Common_ beans", "common bean", P)
-	P <- gsub("Soya", "soybean", P)
-	P <- gsub("Beans", "common bean", P)
-	d$intercrops <- tolower(P)
-	d$crop <- gsub("miilet", "millet", trimws(d$crop))
+	crop <- gsub(" ", "", d$crop)
+	crop <- gsub("g_nuts|gnuts", "groundnut", gsub("p_peas|pigeonpea", "pigeon pea", d$crop))
+	crop <- gsub("miilet", "millet", crop)
+	crop <- gsub("bambara", "bambara groundnut", crop)
+	crop <- gsub("beans", "common bean", crop)
+	crop <- gsub("soya", "soybean", crop)
+
+	crop <- strsplit(crop, "_")
+	crop <- data.frame(do.call(rbind, lapply(crop, \(x) x[1:2])))
+
+	d$crop <- crop$X1
+	d$intercropped <- !is.na(crop$X2)
+	d$intercrops <- crop$X2
+	d$intercrops[is.na(d$intercrops)] <- "none"
+    d$OM_type[d$OM_type == "bokash manure"] <- "compost" # presumably bokashi comost
+	d$residue_type[d$residue_type == "no"] <- "none"
   
 	###### adding geo coordinate
 	geo <- data.frame(
@@ -111,8 +108,6 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 	) 
 	
 	d <- merge(d, geo, by = "adm2", all.x = TRUE)
-	
-	d <- d[!is.na(d$yield),]
 	d$harvest_date <- ifelse( grepl("2018-19", d$season) & grepl("2018-12", d$planting_date), gsub("2018", "2019", d$harvest_date), d$harvest_date)
 	d$planting_date <- ifelse(is.na(d$planting_date), substr(d$season, 1, 4), d$planting_date)
 	d$season <- NULL
@@ -125,7 +120,7 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 	d$country <- "Malawi" 
 	d$irrigated <- NA 
 	d$yield_isfresh <- TRUE
-	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
 	carobiner::write_files(path, meta, d)
 }
