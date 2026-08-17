@@ -111,27 +111,30 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	d$location_key <- d$location
 	d$location_key[ambiguous] <- paste(d$location[ambiguous], grp[ambiguous])
 
-	loc <- data.frame(location_key = c("Narayan Pur", "Khorasahi", "Chhuruni", "Bishnupur", "Renugan", "Belpal", "Chilbasa", "Kandagadia", "Adiapada", "Odang", "Pagadabili", "Chandigaon", "Bahudarada", "Haridapal", "Sikarghati", "Badbrahmanmara", "Palli", "Sankilo", "Kansapal", "Telibila", "Dhanpur", "Sankerko", "Salugadia", "Athangaon", "Tikarpada", "Amdubi", "Napanga", "Jaganathpur", "Nandoor", "Bankisul", "Pc Pur", "Gundihudi",
-	                               # block/GP-disambiguated entries, see comment above
-	                               "Todanga Bonth", "Todanga Bhadrak", "Neulia Bhandari Pokhari", "Neulia Bhadrak"),
-  longitude = c( 83.702, 86.614, 86.675, 86.828, 86.834, 86.588, 86.861, 85.326, 85.313, 86.421, 83.781, 86.579, 86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 83.007, 86.772, 86.902, 86.654,
+	loc <- data.frame(
+		location_key = c("Narayan Pur", "Khorasahi", "Chhuruni", "Bishnupur", "Renugan", "Belpal", "Chilbasa", "Kandagadia", "Adiapada", "Odang", "Pagadabili", "Chandigaon", "Bahudarada", "Haridapal", "Sikarghati", "Badbrahmanmara", "Palli", "Sankilo", "Kansapal", "Telibila", "Dhanpur", "Sankerko", "Salugadia", "Athangaon", "Tikarpada", "Amdubi", "Napanga", "Jaganathpur", "Nandoor", "Bankisul", "Pc Pur", "Gundihudi",
+				# block/GP-disambiguated entries, see comment above
+				"Todanga Bonth", "Todanga Bhadrak", "Neulia Bhandari Pokhari", "Neulia Bhadrak"),
+		longitude = c( 83.702, 86.614, 86.675, 86.828, 86.834, 86.588, 86.861, 85.326, 85.313, 86.421, 83.781, 86.579, 86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 83.007, 86.772, 86.902, 86.654,
                # block/GP-level approximations, see ## ISSUES
                86.325, 86.498, 86.339, 86.498),
-	latitude = c( 20.835, 21.084, 21.709, 21.268, 21.735, 21.625, 21.802, 19.916, 19.887, 20.413, 19.062, 21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 19.803, 19.931, 21.994, 21.779, 21.899,
+		latitude = c( 20.835, 21.084, 21.709, 21.268, 21.735, 21.625, 21.802, 19.916, 19.887, 20.413, 19.062, 21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 19.803, 19.931, 21.994, 21.779, 21.899,
 	             21.12, 21.067, 20.949, 21.067),
-	# NA = undocumented legacy coords; uncertainty below ~ sqrt(area/n/pi) over
-	# Bhadrak's blocks/GPs
-	geo_uncertainty = c(rep(as.numeric(NA), 32), 10700, 10700, 1900, 10700),
-	geo_source = c(rep(as.character(NA), 32),
+		# NA = undocumented legacy coords; uncertainty below ~ sqrt(area/n/pi) over
+		# Bhadrak's blocks/GPs
+		geo_uncertainty = c(rep(as.numeric(NA), 32), 10700, 10700, 1900, 10700),
+		geo_source = c(rep(as.character(NA), 32),
 	              "Bonth block, OSM PHC point 'Bonth(N)' (block-level approx.)",
 	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)",
 	              "Ramachandrapur GP office, OSM node 8037423899 (GP-level approx.)",
-	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)"))
+	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)")
+	)
 
 	d <- merge(d,loc, by="location_key", all.x=TRUE)
 	d$location_key <- NULL
 
 	# district-centroid fallback for unmatched rows, see ## ISSUES
+	# hardcoded snapshot (3 districts used) from carobiner::adm_pointRadius("India", 2) (GADM 4.1 adm2)
 	adm2_loc <- data.frame(
 	    adm1 = c("Odisha", "Odisha", "Odisha"),
 	    adm2 = c("Bhadrak", "Cuttack", "Mayurbhanj"),
