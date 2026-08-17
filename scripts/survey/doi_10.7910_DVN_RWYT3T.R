@@ -27,7 +27,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield", 
-		carob_contributor = "Cedric Ngakou",
+		carob_contributor = "Cedric Ngakou; Kora Simperegui",
 		carob_completion = 100,	
 		notes = NA
 	)
@@ -52,7 +52,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		farmer_gender = r2$gender,
 		#crop_system = r2$farmsystem,
 		irrigation_method = tolower(r2$irrigation),
-		irrigated = !is.na(r2$irrigation),
+		irrigated = !(is.na(r2$irrigation) & r2$irrigation %in% c("None", "1")), # In addition to cases where NA values are present, instances where the irrigation method is 'none' (either None or 1) were not irrigated.
 		season = tolower(r2$riceseason),
 		variety = ifelse(is.na(r2$variety_firstchoice) & !is.na(r2$variety_2ndchoice), r2$variety_2ndchoice,
 		          ifelse(is.na(r2$variety_firstchoice) & is.na(r2$variety_2ndchoice), r2$variety_3rdchoice, r2$variety_firstchoice)),
@@ -72,6 +72,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		yield_moisture = as.numeric(NA), 
 		planting_date = as.character(NA), 
 		K_fertilizer = as.numeric(NA),
+		fertilizer_used = !(d$N_fertilizer == 0 & d$P_fertilizer == 0), #No application of fertilizer for experiments with N_fertilizer = P_fertilizer == 0 (K was not applied here)
 		yield_isfresh = TRUE,
 		geo_from_source = FALSE
 		
@@ -105,7 +106,8 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 	d$lat <- d$lon <- NULL
 	
 	### Fixing Irrigation method
-	d$irrigation_method <- ifelse(grepl("surface", d$irrigation_method), "surface", "unknown")
+	# d$irrigation_method <- ifelse(grepl("surface", d$irrigation_method), "surface", "unknown") # Some irrigation methods were set to "none". This line will not take that into consideration.
+	d$irrigation_method <- ifelse(d$irrigation_method %in% c("surface", "ground", "surface and ground", "both", "2", "3", "4"), "surface", ifelse(d$irrigation_method %in% c("None", "1"), "none","unknown"))
 	
 	d$N_fertilizer[which(d$N_fertilizer > 600)] <- NA
 	d$P_fertilizer[which(d$P_fertilizer > 350)] <- NA
