@@ -27,7 +27,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 		data_type = "experiment",
 		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer",		
 		response_vars = "yield", 
-		carob_contributor = "Robert Hijmans",
+		carob_contributor = "Robert Hijmans; Kora Simperegui",
 		carob_completion = 100
 	)
 	
@@ -47,6 +47,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 			season = tolower(r[["Season"]]),
 			treatment = r[["Treatment"]],
 			variety = r[["Variety"]],
+			fertilizer_type = "",
 			planting_date = as.Date(r[["Sowing date"]]),
 			transplanting_date = as.character(r[["Transplanting date"]]),
 			flowering_date = r[["FLWR"]],
@@ -73,6 +74,13 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	
 	d <- merge(d, npk, by="treatment")
 
+	# Treatment give insights on the type of fertilizer used during the experiment
+	d$fertilizer_type[d$treatment %in% c("T2", "T3", "T5", "T6")] <- "NPK"
+	d$fertilizer_type[d$treatment == "T4"] <- "urea"
+	d$fertilizer_type[d$treatment == "T1"] <- "none"
+	
+	d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
+	
 	# from article
 	geo <- data.frame(
 		location = c("Ndiaye", "Fanaye"),
