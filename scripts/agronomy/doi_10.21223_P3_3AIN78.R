@@ -23,7 +23,7 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "intercrops",
+		treatment_vars = "intercrops;spatial_arrangement",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
@@ -88,7 +88,10 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   d$intercrops[i] <- "sweetpotato"
   i <- grepl("SP\\+SB", d$treatment) & d$crop=="soybean"
   d$intercrops[i] <- "sweetpotato"
- 
+  
+  d$spatial_arrangement <- ifelse(grepl("1:1", d$treatment),"1:1",
+                           ifelse(grepl("2:1", d$treatment), "2:1", 
+                           ifelse(grepl("Row", d$treatment), "alternating row", "none")))
   
   ### Adding geo-coordinate
   
