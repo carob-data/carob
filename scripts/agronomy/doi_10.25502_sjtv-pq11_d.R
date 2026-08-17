@@ -51,7 +51,7 @@ Science-based “research-in-development” project focused on putting nitrogen 
 		location = r1$Location,
 		planting_date = substr(r1$Crop.Season, 1, 4),
 		seed_treatment = trimws(r1$Treatment),
-		nodule_NN = r1$NN,
+		nodule_plant = r1$NN,
 		#nodule_weight = r1$NDW, ## mg/plant
 		rep = r1$Block,
 		#fwy_residue = r1$SDW, ## mg/plant
@@ -69,7 +69,7 @@ Science-based “research-in-development” project focused on putting nitrogen 
 		location = r2$Location,
 		planting_date = substr(r2$Crop_Season, 1, 4),
 		rep = r2$Block,
-		nodule_NN = r2$NN, 
+		nodule_plant = r2$NN, 
 		#nodule_weight = r2$NDW, # mg/plant
 		#fwy_residue = r2$SDW, # g/plant
 		fwy_total = as.numeric(trimws(gsub(",", "", r2$AGB))),
@@ -151,7 +151,6 @@ Science-based “research-in-development” project focused on putting nitrogen 
 	d$harvest_date <- NA_character_
 	
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
-	
 
 	carobiner::write_files(path, meta, d)
 }
