@@ -32,7 +32,6 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		notes = NA
 	)
 	
-
 	f1 <- ff[basename(ff) == "SRP_Dataset.xls"]
 	f2 <- ff[basename(ff) == "SRP_Dataset_dictionary.xls"]
 	f3 <- ff[basename(ff) == "doi_10.7910_DVN_RWYT3T.json"]
@@ -57,7 +56,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		variety = ifelse(is.na(r2$variety_firstchoice) & !is.na(r2$variety_2ndchoice), r2$variety_2ndchoice,
 		          ifelse(is.na(r2$variety_firstchoice) & is.na(r2$variety_2ndchoice), r2$variety_3rdchoice, r2$variety_firstchoice)),
 		#soil_salinity = r2$SRPS_soil_salinity,
-		plot_area = r2$SRPPI_pp_plotsize*10000,# m2
+		field_size = r2$SRPPI_pp_plotsize*10000,# m2
 		yield = r2$SRPPI_yield_tha*1000,
 		net_benefit = r2$SRPPI_profit_usdha,
 		labour = r2$SRPPI_labour_mandayha,
@@ -72,11 +71,13 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		yield_moisture = as.numeric(NA), 
 		planting_date = as.character(NA), 
 		K_fertilizer = as.numeric(NA),
-		fertilizer_used = !(d$N_fertilizer == 0 & d$P_fertilizer == 0), #No application of fertilizer for experiments with N_fertilizer = P_fertilizer == 0 (K was not applied here)
 		yield_isfresh = TRUE,
-		geo_from_source = FALSE
-		
+		geo_from_source = FALSE		
 	)
+	
+	 #No application of fertilizer for experiments with N_fertilizer = P_fertilizer == 0 (K was not applied here)
+	d$fertilizer_used = !(d$N_fertilizer == 0 & d$P_fertilizer == 0),
+
 
 ### Adding lon and lat coordinate
 	geo = data.frame(
@@ -112,8 +113,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 	d$N_fertilizer[which(d$N_fertilizer > 600)] <- NA
 	d$P_fertilizer[which(d$P_fertilizer > 350)] <- NA
 	
-	### drop rows with missing location and adm1
-	
+	### drop rows with missing location and adm1	
 	d <- d[!is.na(d$location)& !is.na(d$adm1),]
 	
 	carobiner::write_files(path, meta, d)

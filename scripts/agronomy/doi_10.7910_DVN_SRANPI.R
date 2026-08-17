@@ -20,7 +20,7 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "AfricaRice",
 		publication = NA,
-		project = NA,
+		project = "Sustainable Farming Program",
 		carob_effort = NA,
 		carob_date = "2026-06-09",
 		design = NA,
@@ -71,6 +71,7 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	  )
 	
 	d$fertilizer_type <- fert_type[d$treatment]
+	d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
 	d$season <- ifelse(d$season=="DS","dry","wet")
 	d$latitude[is.na(d$latitude) & d$location == "Thilène"] <- 16.2712
 	d$longitude[is.na(d$longitude) & d$location == "Thilène"] <- -16.1629
