@@ -115,19 +115,22 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		location_key = c("Narayan Pur", "Khorasahi", "Chhuruni", "Bishnupur", "Renugan", "Belpal", "Chilbasa", "Kandagadia", "Adiapada", "Odang", "Pagadabili", "Chandigaon", "Bahudarada", "Haridapal", "Sikarghati", "Badbrahmanmara", "Palli", "Sankilo", "Kansapal", "Telibila", "Dhanpur", "Sankerko", "Salugadia", "Athangaon", "Tikarpada", "Amdubi", "Napanga", "Jaganathpur", "Nandoor", "Bankisul", "Pc Pur", "Gundihudi",
 				# block/GP-disambiguated entries, see comment above
 				"Todanga Bonth", "Todanga Bhadrak", "Neulia Bhandari Pokhari", "Neulia Bhadrak"),
-		longitude = c( 83.702, 86.614, 86.675, 86.828, 86.834, 86.588, 86.861, 85.326, 85.313, 86.421, 83.781, 86.579, 86.429, 86.151, 86.82, 86.801, 86.207, 86.224, 86.682, 86.686, 86.673, 86.681, 86.693, 83.526, 84.791, 86.68, 85.986, 85.685, 83.007, 86.772, 86.902, 86.654,
+		longitude = c( 86.482, 86.614, 86.675, 86.94200483288681, 86.834, 86.588, 86.861, 86.6167, 86.35572862179598, 86.39464241440933, 86.6167, 86.579, 86.429, 85.6985, 86.82, 86.801, 86.6167, 86.224, 86.55609023190443, 86.686, 86.673, 86.681, 86.693, 86.56991598971972, 86.71389262563368, 86.68, 86.34358671867636, 86.7504729943751, 86.575, 86.772, 86.902, 86.654,
                # block/GP-level approximations, see ## ISSUES
                86.325, 86.498, 86.339, 86.498),
-		latitude = c( 20.835, 21.084, 21.709, 21.268, 21.735, 21.625, 21.802, 19.916, 19.887, 20.413, 19.062, 21.093, 21.007, 21.163, 21.924, 21.977, 20.201, 20.469, 20.428, 21.929, 21.919, 21.842, 21.969, 20.653, 20.61, 21.949, 20.515, 19.803, 19.931, 21.994, 21.779, 21.899,
+		latitude = c( 20.980, 21.084, 21.709, 21.635604774307996, 21.735, 21.625, 21.802, 20.9786, 21.17931570321743, 21.13843547271577, 20.9786, 21.093, 21.007, 20.4436, 21.924, 21.977, 20.9786, 20.469, 22.192099401915538, 21.929, 21.919, 21.842, 21.969, 21.56054293955723, 21.91016781535042, 21.949, 20.89778221263852, 21.178946985247496, 20.965, 21.994, 21.779, 21.899,
 	             21.12, 21.067, 20.949, 21.067),
 		# NA = undocumented legacy coords; uncertainty below ~ sqrt(area/n/pi) over
 		# Bhadrak's blocks/GPs
-		geo_uncertainty = c(rep(as.numeric(NA), 32), 10700, 10700, 1900, 10700),
-		geo_source = c(rep(as.character(NA), 32),
-	              "Bonth block, OSM PHC point 'Bonth(N)' (block-level approx.)",
-	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)",
-	              "Ramachandrapur GP office, OSM node 8037423899 (GP-level approx.)",
-	              "Bhadrak Rural block, OSM boundary centroid (block-level approx.)")
+		geo_uncertainty = c(rep(as.numeric(NA), 7), 46171, rep(as.numeric(NA), 2), 46171, rep(as.numeric(NA), 5), 46171, rep(as.numeric(NA), 15), 10700, 10700, 1900, 10700),
+		geo_source = c(rep(as.character(NA), 3), "Google Maps, village 'Bishnupur'", 
+					rep(as.character(NA), 3), "Bhadrak block/district centroid (GADM 4.1 adm2), village not locatable", "Google Maps, village 'Adia' (Bonth block)", "Google Maps, village 'Odanga'", "Bhadrak block/district centroid (GADM 4.1 adm2), village not locatable", 
+					rep(as.character(NA), 2), "Cuttack block/district centroid (GADM 4.1 adm2), village not locatable", 
+					rep(as.character(NA), 2), "Bhadrak block/district centroid (GADM 4.1 adm2), village not locatable", 
+					rep(as.character(NA), 1), "Google Maps, village 'Kansapal' (GP Chandanpur)", 
+					rep(as.character(NA), 4), "Google Maps, village 'Athanagan'", "Google Maps, village 'Tikarpada' (GP Karkachia)", 
+					rep(as.character(NA), 1), "Google Maps, village 'Napanga'", "Google Maps, village 'Jagannathi' (GP Sudarshanpur; ~666m across Bhadrak/Baleshwar GADM border)", 
+					rep(as.character(NA), 4), "Bonth block, OSM PHC point 'Bonth(N)' (block-level approx.)", "Bhadrak Rural block, OSM boundary centroid (block-level approx.)","Ramachandrapur GP office, OSM node 8037423899 (GP-level approx.)","Bhadrak Rural block, OSM boundary centroid (block-level approx.)")
 	)
 
 	d <- merge(d,loc, by="location_key", all.x=TRUE)
