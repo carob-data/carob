@@ -22,7 +22,7 @@ using agro-morphological markers
                                   design = NA,
                                   data_type = "experiment",
                                   treatment_vars = "variety",
-                                  response_vars = "plant_height, grain_fill, heading_days", 
+                                  response_vars = "plant_height; grain_fill; heading_days", 
                                   notes = NA,
                                   carob_contributor = "Kora Simperegui",
                                   carob_date = "2026-08-18",
@@ -37,7 +37,7 @@ using agro-morphological markers
   
 	
   d <- data.frame(
-    trial_id = paste(r$Location, r$Cultivar, r$Bloc, r$Year, sep="-"), 
+    trial_id = paste(r$Location, r$Year, sep="-"), 
     block_id = as.character(r$Bloc),
     date = as.character(r$Year),
     country = "Benin",
@@ -56,9 +56,10 @@ using agro-morphological markers
   d$longitude <- 2.4182
   d$latitude <- 6.3758
   d$geo_from_source <- FALSE
-
   
   d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+  d$irrigated <- d$harvest_date <- d$yield <- d$yield_moisture <- d$yield_isfresh  <- NA
+  d$yield_part <- "grain"
   
   carobiner::write_files(path, meta, d)
 }
