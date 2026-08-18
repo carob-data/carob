@@ -12,7 +12,7 @@ using agro-morphological markers
 "
 
   uri <- "doi:10.7910/DVN/GIOAPK"
-  group <- "agronomy"
+  group <- "varieties"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
