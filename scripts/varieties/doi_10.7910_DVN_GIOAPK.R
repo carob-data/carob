@@ -16,18 +16,18 @@ using agro-morphological markers
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-                                  data_organization = "AfricaRice",
-                                  publication = "doi:10.1007/s10681-017-1872-x",
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "plant_height; grain_fill; heading_days", 
-                                  notes = NA,
-                                  carob_contributor = "Kora Simperegui",
-                                  carob_date = "2026-08-18",
-                                  carob_completion = 100,	
-                                  carob_effort = 2
+    data_organization = "AfricaRice",
+    publication = "doi:10.1007/s10681-017-1872-x",
+    project = NA,
+    design = NA,
+    data_type = "experiment",
+    treatment_vars = "variety",
+    response_vars = "plant_height; grain_fill; heading_days", 
+    notes = NA,
+    carob_contributor = "Kora Simperegui",
+    carob_date = "2026-08-18",
+    carob_completion = 100,	
+    carob_effort = 2
   )
   
   
