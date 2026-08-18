@@ -17,7 +17,7 @@ using agro-morphological markers
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
                                   data_organization = "AfricaRice",
-                                  publication = "https://doi.org/10.1007/s10681-017-1872-x",
+                                  publication = "doi:10.1007/s10681-017-1872-x",
                                   project = NA,
                                   design = NA,
                                   data_type = "experiment",
@@ -38,7 +38,7 @@ using agro-morphological markers
 	
   d <- data.frame(
     trial_id = paste(r$Location, r$Cultivar, r$Bloc, r$Year, sep="-"), 
-    block_id = r$Bloc,
+    block_id = as.character(r$Bloc),
     date = as.character(r$Year),
     country = "Benin",
     location = r$Location,
