@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
+
 ## ISSUES
+# land_prep_method is not is d2 dataframe so it created NA value for d dataframe after binding to d
 
 carob_script <- function(path) {
   "
@@ -92,6 +94,8 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
   r3_long$date <- format(r3_long$date, "%Y-%m-%d")
   r3_long$id <- NULL
   
+  r3_long$soil_N_total[r3_long$soil_N_total=="Missing"]  <- NA
+  r3_long$soil_SOC[r3_long$soil_SOC=="Missing"] <- NA
   r3_long$soil_N_total = as.numeric(r3_long$soil_N_total)
   r3_long$soil_SOC = as.numeric(r3_long$soil_SOC)
   
@@ -108,16 +112,15 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
     N_fertilizer = r2$N,
     P_fertilizer = r2$P,
     K_fertilizer = 60,   #60kg/ha information from the publication
-    residue_prevcrop_used = grepl("R\\+", r2$stover),
+    residue_prevcrop_used = grepl("R\\+", r2$Stover),
     crop_rotation = ifelse(r2$Rotation == "M-M", "maize; maize",
                                ifelse(r2$Rotation == "S-M", "soybean; maize",
                                       ifelse(r2$Rotation == "M-S", "maize; soybean",
-                                             ifelse(r2$Rotation == "Inter", "intercrops", r2$Rotation)))),
+                                             ifelse(r2$Rotation == "Inter", "maize;soybean", r2$Rotation)))),
     land_prep_method = ifelse(r2$Tillage == "CT", "conventional",
                               ifelse(r2$Tillage == "0T", "none", r2$Tillage))
   ) 
   
-  d1$crop = "soybean" #information from publication
   d1$crop = "maize"   #information from publication
   
   
@@ -131,7 +134,7 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
     crop_rotation = ifelse(r3$Rotation == "M-M", "maize; maize",
                                ifelse(r3$Rotation == "T-M", "tephrosia; maize",
                                       ifelse(r3$Rotation == "M-T", "maize; tephrosia",
-                                             ifelse(r3$Rotation == "Intercr", "intercrops", r3$Rotation)))),
+                                             ifelse(r3$Rotation == "Intercr", "maize;tephrosia", r3$Rotation)))),
     N_fertilizer = r3$N,
     P_fertilizer = r3$P,
     K_fertilizer = 60,   #60kg/ha information from the publication
@@ -139,7 +142,6 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
                      ifelse(r3$FYM == "Minus FYM", "none", r3$FYM))
   )
   
-  d2$crop = "tephrosia"   #information from publication
   d2$crop = "maize"     #information from publication
   
   d <- carobiner::bindr(d1, d2)
