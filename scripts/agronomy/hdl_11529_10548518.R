@@ -102,23 +102,20 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	
 	#fixing location
 	g <- data.frame(
-	  adm3 =c("Singarpur", "Barbill", "Baria", 
-	           "Bagdofa", "Rasamtala", "Labda", "Batupondugandi", "Tisira", 
+		adm3 =c("Singarpur", "Barbill", "Baria",  "Bagdofa", "Rasamtala", "Labda", "Batupondugandi", "Tisira", 
 	           "Jashipur", "Deogaon", "Sarangarh", "Tikarpara"),
 	# "Barbill" not locatable within Mayurbhanj (only match found is Barbil
 	# town, Kendujhar district, 33km from the Mayurbhanj border) - using
 	# Mayurbhanj district centroid (GADM 4.1 adm2) instead
-	latitude = c(21.9348, 21.8907, 21.8980, 21.9909, 21.771, 22.0952, 22.029, 21.996, 21.969,
-	             22.1646, 21.8386, 21.9078),
-	longitude = c(86.0885, 86.4059, 85.9431,
-	              87.0135, 86.003, 86.4847, 86.135, 86.002, 86.079, 86.1373, 85.9174,
-	              86.712),stringsAsFactors = FALSE)
+		latitude = c(21.9348, 21.8907, 21.8980, 21.9909, 21.771, 22.0952, 22.029, 21.996, 21.969, 22.1646, 21.8386, 21.9078),
+		longitude = c(86.0885, 86.4059, 85.9431, 87.0135, 86.003, 86.4847, 86.135, 86.002, 86.079, 86.1373, 85.9174, 86.712)
+	)
 	
-	d<- merge(d,g,by="adm3",all.x=TRUE)
+	d <- merge(d, g, by="adm3", all.x=TRUE)
 	
-	#using adm2 coordinates where adm3 is unavailable
-	d$latitude[is.na(d$latitude)] <- 21.75
-	d$longitude[is.na(d$longitude)] <- 86.5
+	#using adm2 coordinates where adm3 is NA
+	d$latitude[is.na(d$latitude)] <- 21.8907
+	d$longitude[is.na(d$longitude)] <- 86.4059
 	
 	carobiner::write_files(path, meta, d)
 }

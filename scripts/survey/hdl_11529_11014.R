@@ -48,7 +48,7 @@ This files ontains yiedl and soils data coillected by CSA (Central Statistical A
 	  yield_isfresh = TRUE,
 	  yield_part = "grain",
       crop_cut = TRUE,
-	  plot_area = r$`Field area (ha)`,
+	  field_size = r$`Field area (ha)`,
 	  soil_SOC = r$`Carbon (%)`,
 	  soil_pH = r$pH,
 	  soil_Al = r$`Al (mg/kg)`,
