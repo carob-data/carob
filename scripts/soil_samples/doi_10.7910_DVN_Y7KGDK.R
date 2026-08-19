@@ -46,7 +46,7 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	  #location = r2$province,
 	  location_id = as.character(r2$county_cod),
 	  date = as.character(r2$site_obsyear),
-	  plot_slope = r2$slope,
+	  land_slope = atan(r2$slope / 100) * (180 / pi), # % to degrees
 	  latitude = r2$lat,
 	  longitude = r2$long,
 	  elevation = r2$elevation,
@@ -54,7 +54,6 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	  ##tmin = r2$tmin / 10, #not original observations
 	  soil_pH = r2$ph_h2o,
 	  soil_pH_CaCl2 = r2$ph_cacl2,
-	  depth = as.numeric(r2$depth),
 	  #soil_structure_grade = r2$structgrade,
 	  soil_sand = r2$sand,
 	  soil_clay = r2$clay,
@@ -77,18 +76,11 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	  #CN_ratio = r2$cn_ratio,
 	  soil_ex_acidity = r2$pot_acidity,
 	  soil_stones = r2$rock_percent,
-	  soil_depth = r2$hzn_thick #### this case reffers to the layer thickness of the horizon
+	  soil_depth = as.numeric(r2$depth)
 	)
 	
-	d$soil_drainage[d$soil_drainage == "Excessively drained"] <- "excessively drained"
-	d$soil_drainage[d$soil_drainage == "Well drained"] <- "well drained"
-	d$soil_drainage[d$soil_drainage == "Moderately well drained"] <- "moderately well drained"
-	d$soil_drainage[d$soil_drainage == "Somewhat excessively drained"] <- "somewhat excessively drained"
-	d$soil_drainage[d$soil_drainage == "Somewhat poorly drained"] <- "somewhat poorly drained"
-	d$soil_drainage[d$soil_drainage == "Very poorly drained"] <- "very poorly drained"
-	d$soil_drainage[d$soil_drainage == "Poorly drained"] <- "poorly drained"
-	d$soil_drainage[d$soil_drainage == ""] <- NA #### there are empty  spaces within this column
-	
+	d$soil_drainage <- tolower(d$soil_drainage)
+	d$soil_drainage[d$soil_drainage == ""] <- NA
 	
 	soil_texture_class <- c(sil = "silt", c = "clay", sicl = "silty clay loam", sic ="silty clay",l = "loam", cl ="clay loam", fsl = "fine sandy loam", lfs = "very fine loamy sand", lcos = "coarse loamy sand", scl = "sandy clay", fs = "fine sand" , s = "sand", vfsl = "very fine sandy loam", cos = "coarse sand", sc = "sandy clay", cosl = "coarse sandy loam", sl = "sandy loam", lvfs = "very fine loamy sand", ls = "loamy sand", si = "silt", vfs = "very fine sand")
 	d$soil_texture <- soil_texture_class[d$soil_texture]
@@ -97,14 +89,23 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 ##	dup_cols <- setdiff(intersect(names(d1), names(d_unique)), "location")
 ##	d_clean <- d_unique[, !(names(d_unique) %in% dup_cols)]
 
+  
+    i <- d$soil_depth > 300
+	d$soil_depth[i] <- d$soil_depth[i] / 10
+	d$depth_top[i] <- d$depth_top[i] / 10
+	d$depth_bottom[i] <- d$depth_bottom[i] / 10
 
+	d$soil_depth[d$soil_depth <= 0] <- NA
+	d$depth_bottom[d$depth_bottom == 0] <- NA
+	# guesswork, but these seem to be in mm (unlikely to have 3000 cm)
 
+	d$soil_pH_CaCl2[d$soil_pH_CaCl2 == 0] <- NA
+	d$soil_pH[d$soil_pH <= 1] <- NA
 	d$soil_SOC[d$soil_SOC == 0] <- NA
 	d$soil_Ca[d$soil_Ca == 0] <- NA
 	d$soil_K[d$soil_K == 0] <- NA
 	d$soil_Mg[d$soil_Mg == 0] <- NA
 	d$soil_Na[d$soil_Na == 0] <- NA
-	d$soil_pH[d$soil_pH == 10.8] <- NA
 
 	d$country <- "United States"
 	d$on_farm <- NA
