@@ -67,7 +67,7 @@ Mali Africa RISING follow-up evaluation survey was implemented in 2022. The surv
 	   irrigation_source = r2$e10,
 	   soil_texture = tolower(r2$e12),
 	   soil_color = r2$e14,
-	   plot_slope = r2$e15
+	   land_slope = r2$e15
 	)
 	
 	####### merge d1 and d2

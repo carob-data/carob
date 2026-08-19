@@ -190,7 +190,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   #r6$e11,
 	   soil_texture = tolower(r6$e12),
 	   soil_color = r6$e14,
-	   plot_slope = r6$e15,
+	   land_slope = r6$e15,
 	   treatment = r6$treat
 	) 
 	

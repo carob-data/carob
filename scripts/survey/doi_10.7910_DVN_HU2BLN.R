@@ -83,7 +83,7 @@ The data originate from a panel of households established in 2016, enabling a lo
 		field_id = as.character(r1$e5),
 		field_name = r1$e6,
 		field_size = ifelse(grepl("Acre", r1$e81unit), r1$e810*0.4047, r1$e81) ,
-		plot_slope = r1$e91,
+		land_slope = r1$e91,
 		soil_texture = ifelse(is.na(r1$e92), r1$oth_e92, r1$e92),
 		farmland_owned = ifelse(grepl("Owned", ifelse(is.na(r1$e92), r1$oth_e93, r1$e93)), "TRUE", ifelse(is.na(r1$e92), r1$oth_e93, r1$e93)),
 		irrigated = grepl("Yes", r1$e106),
