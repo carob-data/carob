@@ -8,24 +8,21 @@ carob_script <- function(path) {
 "
 Multi-country Dataset of Agronomic, Soil, and Climatic Drivers of Rice yield in Smart-Valleys Systems and Adjacent Non-Developed Inland Valleys Systems
 
-This dataset contains agronomic, environmental, soil, management, and climatic data collected from inland valley rice production systems across multiple countries in West Africa under the Smart-Valleys approach. The dataset includes information from both Smart-Valleys-developed sites and adjacent non-developed inland valleys, enabling comparative analyses of rice productivity and system performance. Variables comprise rice grain yield, fertilizer application rates and timing, crop management practices, disease control, soil physicochemical properties, seasonal rainfall characteristics, temperature, and other environmental indicators influencing rice production. The dataset was compiled from multi-year field observations and surveys conducted across diverse agroecological conditions to assess the drivers of yield variability and the effectiveness of low-cost water control technologies in inland valleys. It supports research on climate-smart agriculture, sustainable intensification, land and water management, yield gap analysis, and adaptation strategies for improving rice productivity, resilience, and food security in sub-Saharan Africa.      &nbsp;   
-
-  &nbsp;
+This dataset contains agronomic, environmental, soil, management, and climatic data collected from inland valley rice production systems across multiple countries in West Africa under the Smart-Valleys approach. The dataset includes information from both Smart-Valleys-developed sites and adjacent non-developed inland valleys, enabling comparative analyses of rice productivity and system performance. Variables comprise rice grain yield, fertilizer application rates and timing, crop management practices, disease control, soil physicochemical properties, seasonal rainfall characteristics, temperature, and other environmental indicators influencing rice production. The dataset was compiled from multi-year field observations and surveys conducted across diverse agroecological conditions to assess the drivers of yield variability and the effectiveness of low-cost water control technologies in inland valleys. It supports research on climate-smart agriculture, sustainable intensification, land and water management, yield gap analysis, and adaptation strategies for improving rice productivity, resilience, and food security in sub-Saharan Africa.
 "
 
 	uri <- "doi:10.5281/zenodo.20345853"
-	group <- "agronomy"
+	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
-		data_organization = "AfricaRice, Abidjan",
+		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "valley_development",
-		response_vars = "yield", 
+		treatment_vars = NA,
+		response_vars = NA, 
 		notes = NA,
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-08-17",
@@ -33,7 +30,6 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 		carob_effort = 5
 	)
 	
-
 	f <- ff[basename(ff) == "Smart-Valleys%20dataset.xlsx"]
 	r <- carobiner::read.excel(f)
 
@@ -92,7 +88,6 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 	
 	rownames(d) <- NULL
 	d$row_id <- NULL
-
 
 	carobiner::write_files(path, meta, d)
 }
