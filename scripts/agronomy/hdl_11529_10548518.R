@@ -108,11 +108,11 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	# "Barbill" not locatable within Mayurbhanj (only match found is Barbil
 	# town, Kendujhar district, 33km from the Mayurbhanj border) - using
 	# Mayurbhanj district centroid (GADM 4.1 adm2) instead
-	latitude = c(21.93484389509997, 21.8907, 21.897982233683532, 21.99092531873402, 21.771, 22.095157607691736, 22.029, 21.996, 21.969,
-	             22.164586242235547, 21.838562125830823, 21.907826171234465),
-	longitude = c(86.0884742552035, 86.4059, 85.94314411536766,
-	              87.013461779339, 86.003, 86.48466409092752, 86.135, 86.002, 86.079, 86.13734227746735, 85.91741407135564,
-	              86.71199818816208),stringsAsFactors = FALSE)
+	latitude = c(21.9348, 21.8907, 21.8980, 21.9909, 21.771, 22.0952, 22.029, 21.996, 21.969,
+	             22.1646, 21.8386, 21.9078),
+	longitude = c(86.0885, 86.4059, 85.9431,
+	              87.0135, 86.003, 86.4847, 86.135, 86.002, 86.079, 86.1373, 85.9174,
+	              86.712),stringsAsFactors = FALSE)
 	
 	d<- merge(d,g,by="adm3",all.x=TRUE)
 	
