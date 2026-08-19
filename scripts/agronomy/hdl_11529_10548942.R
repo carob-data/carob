@@ -115,10 +115,10 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		location_key = c("Narayan Pur", "Khorasahi", "Chhuruni", "Bishnupur", "Renugan", "Belpal", "Chilbasa", "Kandagadia", "Adiapada", "Odang", "Pagadabili", "Chandigaon", "Bahudarada", "Haridapal", "Sikarghati", "Badbrahmanmara", "Palli", "Sankilo", "Kansapal", "Telibila", "Dhanpur", "Sankerko", "Salugadia", "Athangaon", "Tikarpada", "Amdubi", "Napanga", "Jaganathpur", "Nandoor", "Bankisul", "Pc Pur", "Gundihudi",
 				# block/GP-disambiguated entries, see comment above
 				"Todanga Bonth", "Todanga Bhadrak", "Neulia Bhandari Pokhari", "Neulia Bhadrak"),
-		longitude = c( 86.482, 86.614, 86.675, 86.94200483288681, 86.834, 86.588, 86.861, 86.6167, 86.35572862179598, 86.39464241440933, 86.6167, 86.579, 86.429, 85.6985, 86.82, 86.801, 86.6167, 86.224, 86.55609023190443, 86.686, 86.673, 86.681, 86.693, 86.56991598971972, 86.71389262563368, 86.68, 86.34358671867636, 86.7504729943751, 86.575, 86.772, 86.902, 86.654,
+		longitude = c( 86.482, 86.614, 86.675, 86.942, 86.834, 86.588, 86.861, 86.6167, 86.3557, 86.3946, 86.6167, 86.579, 86.429, 85.6985, 86.82, 86.801, 86.6167, 86.224, 86.5561, 86.686, 86.673, 86.681, 86.693, 86.5699, 86.7139, 86.68, 86.3436, 86.7505, 86.575, 86.772, 86.902, 86.654,
                # block/GP-level approximations, see ## ISSUES
                86.325, 86.498, 86.339, 86.498),
-		latitude = c( 20.980, 21.084, 21.709, 21.635604774307996, 21.735, 21.625, 21.802, 20.9786, 21.17931570321743, 21.13843547271577, 20.9786, 21.093, 21.007, 20.4436, 21.924, 21.977, 20.9786, 20.469, 22.192099401915538, 21.929, 21.919, 21.842, 21.969, 21.56054293955723, 21.91016781535042, 21.949, 20.89778221263852, 21.178946985247496, 20.965, 21.994, 21.779, 21.899,
+		latitude = c( 20.980, 21.084, 21.709, 21.6356, 21.735, 21.625, 21.802, 20.9786, 21.1793, 21.1384, 20.9786, 21.093, 21.007, 20.4436, 21.924, 21.977, 20.9786, 20.469, 22.1921, 21.929, 21.919, 21.842, 21.969, 21.5605, 21.9102, 21.949, 20.8978, 21.1789, 20.965, 21.994, 21.779, 21.899,
 	             21.12, 21.067, 20.949, 21.067),
 		# NA = undocumented legacy coords; uncertainty below ~ sqrt(area/n/pi) over
 		# Bhadrak's blocks/GPs
