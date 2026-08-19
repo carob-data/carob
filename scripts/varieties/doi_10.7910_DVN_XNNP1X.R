@@ -15,18 +15,18 @@ Replication Data for: Genetic Diversity of improved varieties of intraspecific
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "AfricaRice",
-                                  publication = "doi:10.1007/s10722-017-0573-6",
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "plant_height, grain_fill, heading_days", 
-                                  notes = NA,
-                                  carob_contributor = "Kora Simperegui",
-                                  carob_date = "2026-08-18",
-                                  carob_completion = 100,	
-                                  carob_effort = 2
+    data_organization = "AfricaRice",
+    publication = "doi:10.1007/s10722-017-0573-6",
+    project = NA,
+    design = NA,
+    data_type = "experiment",
+    treatment_vars = "variety",
+    response_vars = "plant_height; grain_fill; heading_days", 
+    notes = NA,
+    carob_contributor = "Kora Simperegui",
+    carob_date = "2026-08-18",
+    carob_completion = 100,	
+    carob_effort = 2
   )
   
   
@@ -52,12 +52,14 @@ Replication Data for: Genetic Diversity of improved varieties of intraspecific
   )
   
   #adding the coordinates. Observation are all from Cotonou, Benin
-  d$longitude <- c(2.4182)
-  d$latitude <- c(6.3758)
+  d$longitude <- 2.4182
+  d$latitude <- 6.3758
   d$geo_from_source <- FALSE
   
   
   d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+  d$irrigated <- d$harvest_date <- d$yield <- d$yield_moisture <- d$yield_isfresh  <- NA
+  d$yield_part <- "grain"
   
   carobiner::write_files(path, meta, d)
 }
