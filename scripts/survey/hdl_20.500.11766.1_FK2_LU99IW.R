@@ -30,17 +30,17 @@ carob_script <- function(path) {
   f <- ff[basename(ff) == "FP_Data173.csv"]
   f2 <- ff[basename(ff) == "DataDictionary_ElementDescription.csv"]
   r <- read.csv(f, sep = ";", stringsAsFactors = FALSE)
-  vars<- read.csv(f2, sep = ";", stringsAsFactors = FALSE)
+  vars <- read.csv(f2, sep = ";", stringsAsFactors = FALSE)
   
   d <- data.frame(
     hhid=r$HH_ID,
     country=r$Country,
     adm2=r$Zone,
     adm3=r$Woreda,
-    farmer_age=r$Farmer_age,
+    age=r$Farmer_age,
     field_size=r$Farm_Size,
     cropland_used=r$Cultivated_Area,
-    farmer_education=r$HH_Head_Edu,
+    education=r$HH_Head_Edu,
     crop_rotation=tolower(r$Rotation_Type)
    )
   
@@ -224,7 +224,7 @@ carob_script <- function(path) {
   
   d <- merge(d,loc, by="adm3")
   d$hhid <- as.character(d$hhid)
-  d$farmer_age <- as.numeric(d$farmer_age)
+  d$age <- as.numeric(d$age)
   d <- d[!duplicated(d), ]
   
   carobiner::write_files(path, meta, d)

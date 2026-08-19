@@ -95,7 +95,7 @@ carob_script <- function(path) {
  ##education
  edu <- data.frame(
   hhid=r3$HHID,
-  farmer_education=r3$Literacy)
+  education=r3$Literacy)
  
  #fixing farmer education
  edu_labels <- c(
@@ -104,11 +104,11 @@ carob_script <- function(path) {
    "3" = "Can read only",
    "4" = "Can read and write")
  
- edu$farmer_education <- edu_labels[as.character(edu$farmer_education)]
+ edu$education <- edu_labels[as.character(edu$education)]
  
  #aggregate
  edu <- aggregate(
-   farmer_education ~ hhid,
+   education ~ hhid,
    data = edu,
    FUN = function(x) {
      x <- unique(na.omit(x))
