@@ -10,6 +10,9 @@ carob_script <- function(path) {
 An integrated approach for understanding the factors that facilitate or constrain the adoption of soil carbon enhancing practices in East Africa, specifically Western Kenya
 
 The survey data on soil carbon enhancing practices in western Kenya is systematically organized in Microsoft Excel tables. The data entails general household characteristics, plot characteristics, practices implemented, yield, inputs, livestock ownership, social capital, access to credit, access to extension services and sources of income.
+
+
+universe: The survey was carried out in the Western Kenya in Kakamega and Vihiga counties. The counties are characterized as high agricultural area but are of low agricultural productivity as a result of poor farming techniques, low soil fertility, soil erosion and degradation. The counties are also classified by high population density and high poverty rates. Vihiga is the most densely populated county in Kenya with 1044 persons per km2 and Kakamega county at 682 persons per km2. Approximately 51% and 41% of the population live below the poverty line in Kakamega and Vihiga county respectively compared to an average of 39%. The main source of livelihood is agriculture. Cropping is also widely practiced in the region with most farmers owning between 1-2 acres of land or less. Some of the crop species grown include maize, beans, sweet potatoes, local vegetables, cassava, sorghum, millet, sugarcane and tea. The snowballing technique was used to generate a sample of 334 farmers.
 "
 
 
@@ -17,13 +20,13 @@ The survey data on soil carbon enhancing practices in western Kenya is systemati
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIAT; UNOBI",
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
+		data_organization = "CIAT; UONBI",
 		publication = NA,
 		project = NA,
 		carob_date = "2026-03-12",
 		carob_effort = NA,
-		design = "universe: The survey was carried out in the Western Kenya in Kakamega and Vihiga counties. The counties are characterized as high agricultural area but are of low agricultural productivity as a result of poor farming techniques, low soil fertility, soil erosion and degradation. The counties are also classified by high population density and high poverty rates. Vihiga is the most densely populated county in Kenya with 1044 persons per km2 and Kakamega county at 682 persons per km2. Approximately 51% and 41% of the population live below the poverty line in Kakamega and Vihiga county respectively compared to an average of 39%. The main source of livelihood is agriculture. Cropping is also widely practiced in the region with most farmers owning between 1-2 acres of land or less. Some of the crop species grown include maize, beans, sweet potatoes, local vegetables, cassava, sorghum, millet, sugarcane and tea. The snowballing technique was used to generate a sample of 334 farmers.",
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 
@@ -66,8 +69,8 @@ dd$record_id <- as.integer(1:nrow(dd))
 d2 <- data.frame(
   hhid = as.character(r2$Household_Names[r2$HH_Relation == "Household Head"]),
   farmer_gender = r2$Gender[r2$HH_Relation == "Household Head"],
-  farmer_age = r2$Age[r2$HH_Relation == "Household Head"],
-  farmer_education = r2$Education_Level[r2$HH_Relation == "Household Head"],
+  age = r2$Age[r2$HH_Relation == "Household Head"],
+  education = r2$Education_Level[r2$HH_Relation == "Household Head"],
   trial_id = r2$KEY[r2$HH_Relation == "Household Head"]
 )
 

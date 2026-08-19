@@ -10,12 +10,11 @@ Farmer field survey data on rice sowing dates, yield, and nutrient use in the Se
 This dataset contains plot-level survey data collected from rice farmers’ fields to evaluate the influence of sowing date on rice yield and nutrient use efficiency under real smallholder production conditions. Data were collected through structured farmer surveys. The dataset captures variability in sowing dates, crop management practices, fertilizer use, and yield across contrasting seasons and production environments. The data reflect farmer decision making rather than controlled experimental treatments, making it particularly suitable for assessing agronomic performance under realistic management conditions. Linking sowing date information with yield and nutrient input data, the dataset enables analysis of optimal planting windows, yield penalties associated with delayed sowing, and implications for nutrient use efficiency in rice-based systems. The dataset supports agronomic research, digital advisory tool development, and evidence-based extension recommendations. (2025-12-15)
 "
 	
-	
 	uri <- "doi:10.7910/DVN/QVFRKM"
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,
@@ -30,7 +29,7 @@ This dataset contains plot-level survey data collected from rice farmers’ fiel
 	)
 	
 
-	f <- ff[basename(ff) == "Farmer field survey data on rice sowing dates yield and nutrient use in the Senegal River Valley.xls"]
+	f <- ff[basename(ff) == "data.xls"] #"Farmer field survey data on rice sowing dates yield and nutrient use in the Senegal River Valley.xls"]
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(

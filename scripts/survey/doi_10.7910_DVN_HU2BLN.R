@@ -191,9 +191,9 @@ The data originate from a panel of households established in 2016, enabling a lo
 	d6 <- data.frame(
 	   hhid = as.character(r8$hhid),
 	   farmer_gender = r8$b11,
-	   farmer_age = r8$b14,
-	   farmer_civil_status = r8$b13,
-	   farmer_education = r8$b15,
+	   age = r8$b14,
+	   civil_status = r8$b13,
+	   education = r8$b15,
 	   #key = r8$key,
 	   parent = r8$parent_key,
 	   ward_num = r8$ward_num,

@@ -110,9 +110,9 @@ The dataset consist of 178 farmers who irrigated at least one of their plots in 
 		crop_price_pepper = r2$q_5_11r_3,
 		crop_price_okra = r2$q_5_11r_4,
 		location = carobiner::fix_name(r2$q_6_2b, "title") ,
-		farmer_age = r2$q_7_1,
+		age = r2$q_7_1,
 		farmer_gender = r2$q_7_2,
-		farmer_education_level = r2$q_7_3
+		education_level = r2$q_7_3
 		
 	)
 	

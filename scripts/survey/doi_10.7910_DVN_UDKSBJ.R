@@ -141,7 +141,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 		location = r1$a3,
 		#relalationship_hh = r1$a15,
 		#translator_used = grepl("Yes", r1$a16),
-		farmer_religion = r1$a18,
+		religion = r1$a18,
 		#bean_method_used= r1$a25,
 		treatment = r1$treat
 	)
@@ -157,9 +157,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   weight = r3$weight,
 	   field_id = as.character(r3$pid),
 	   farmer_gender = r3$b3,
-	   farmer_age = as.numeric(r3$b4a),
-	   farmer_civil_status = r3$b6,
-	   farmer_education = r3$b7,
+	   age = as.numeric(r3$b4a),
+	   civil_status = r3$b6,
+	   education = r3$b7,
 	   #previous_activity = r3$b9,
 	   treatment = r3$treat
 	)
