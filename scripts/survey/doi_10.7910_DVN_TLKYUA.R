@@ -49,9 +49,9 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 	   location = r2$a3,
 	   hhid = as.character(r2$hhid),
 	   farmer_gender = r2$b3,
-	   farmer_age = r2$b4a,
-	   farmer_civil_status = r2$b6,
-	   farmer_education = r2$b7
+	   age = r2$b4a,
+	   civil_status = r2$b6,
+	   education = r2$b7
 	)
 	
 	
@@ -72,7 +72,7 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 	   irrigation_source = r3$e10,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r3$e12)),
 	   soil_color = r3$e14,
-	   plot_slope = r3$e15,
+	   land_slope = r3$e15,
 	   treatment = r3$treat
 	)
 	

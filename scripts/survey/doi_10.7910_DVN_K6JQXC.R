@@ -91,7 +91,7 @@ This household survey was conducted among 88 respondents by CIAT in three counti
  d1	<- data.frame(
   hhid =  as.character(r18$unique_hhqid),
   location = r18$county,
-  farmer_education = r18$q3_2,
+  education = r18$q3_2,
   farmer_gender = r18$q3_3,
   field_size = r18$q_7*0.4047,
   farmland_owned = r18$q_8owned*0.4047,
@@ -103,7 +103,7 @@ This household survey was conducted among 88 respondents by CIAT in three counti
  d2	<- data.frame(
    hhid = as.character(r19$unique_hhqid),
    plot_area = r19$q9_area*0.4047,
-   plot_slope = r19$q9_slope,
+   land_slope = r19$q9_slope,
    soil_color = r19$q9_soil_type,
    season = r19$q9_ssn_utilization,
    crop = tolower(r19$q9_crops_ssn_1)

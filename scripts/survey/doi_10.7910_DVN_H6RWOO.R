@@ -151,7 +151,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   adm3 = r1$a3,
 	   location = r1$a4,
 	   translator_used = grepl("YES", r1$a17),
-	   farmer_religion = r1$a19
+	   religion = r1$a19
 	   
 	)
 	
@@ -173,7 +173,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	    irrigation_source = trimws(ifelse(is.na(r6$e11), ifelse(is.na(r6$e10a), r6$e10b, r6$e10a), r6$e11)) ,
 	    soil_texture = gsub("other", NA, tolower(r6$e13)),
 	    soil_color = r6$e15,
-	    plot_slope = r6$e16
+	    land_slope = r6$e16
 	 )
 	 
 	 ## merge d1 and d2

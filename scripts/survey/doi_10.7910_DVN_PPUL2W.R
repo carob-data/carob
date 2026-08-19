@@ -145,9 +145,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	d2 <- data.frame(
 	   hhid = as.character(r5$hhid),
 	   farmer_gender = r5$b3,
-	   farmer_age = r5$b4a,
-	   farmer_education = r5$b6,
-	   farmer_civil_status = r5$b10
+	   age = r5$b4a,
+	   education = r5$b6,
+	   civil_status = r5$b10
 	)
 	
 	### merge d1 and d2
@@ -163,7 +163,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   #irrigation_method = r8$e10,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r8$e12)),
 	   soil_color = r8$e14,
-	   plot_slope = r8$e15
+	   land_slope = r8$e15
 	)
 	
 	### merge d and d3
