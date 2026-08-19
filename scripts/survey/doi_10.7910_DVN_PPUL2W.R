@@ -145,9 +145,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	d2 <- data.frame(
 	   hhid = as.character(r5$hhid),
 	   farmer_gender = r5$b3,
-	   farmer_age = r5$b4a,
-	   farmer_education = r5$b6,
-	   farmer_civil_status = r5$b10
+	   age = r5$b4a,
+	   education = r5$b6,
+	   civil_status = r5$b10
 	)
 	
 	### merge d1 and d2

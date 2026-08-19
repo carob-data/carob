@@ -141,9 +141,9 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   adm2 = r3$a2,
 	   location = r3$a3,
 	   farmer_gender = r3$b3,
-	   farmer_age = r3$b4a,
-	   farmer_civil_status = r3$b6,
-	   farmer_education = trimws(r3$b7),
+	   age = r3$b4a,
+	   civil_status = r3$b6,
+	   education = trimws(r3$b7),
 	   treatment = r3$treat
 	)
 	

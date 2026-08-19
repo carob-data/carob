@@ -60,8 +60,8 @@ In 2023, the Nature Positive Solutions (Nature+) baseline survey was conducted i
 	d2 <- data.frame(
 	  hhid = as.character(r4$hhid),
 	  farmer_gender = r4$sex,
-	  farmer_age = r4$age,
-	  farmer_education = tolower(r4$education),
+	  age = r4$age,
+	  education = tolower(r4$education),
 	  weeding_done = grepl("yes", r4$manual_weeding),
 	  weeding_method = ifelse(grepl("yes", r4$manual_weeding), "manual", "none"),
 	  irrigated = grepl("yes", r4$bucket_irrigation)

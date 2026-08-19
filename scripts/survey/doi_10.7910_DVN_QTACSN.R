@@ -55,7 +55,7 @@ A total of 379 households were sampled, the households were randomly drawn from 
 	d1 <- data.frame(
 	  adm2 = r1$Zone_0,
 	  location = r1$SOC_sites,
-	  farmer_age = r1$hh_age,
+	  age = r1$hh_age,
 	  farmer_gender = r1$gender,
 	  fertilizer_used = grepl("Yes", r1$fert_use),
 	  OM_used = grepl("Yes", r1$manure_use),
@@ -100,10 +100,10 @@ A total of 379 households were sampled, the households were randomly drawn from 
 	
 	###############
 d4 <- data.frame(
-	  farmer_age = r9$age,
+	  age = r9$age,
 	  farmer_gender = r9$gender3,
-	  farmer_civil_status = r9$marital,
-	  farmer_education = r9$education,
+	  civil_status = r9$marital,
+	  education = r9$education,
 	  trial_id = r9$PARENT_KEY
 	)
 	
