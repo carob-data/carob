@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## adding variety_pref == variety preference
 
 carob_script <- function(path) {
 
@@ -29,7 +29,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-19",
-		carob_completion = 80,	
+		carob_completion = 90,	
 		carob_effort = 3
 	)
 	
@@ -42,11 +42,12 @@ The data collection aimed to investigate gender-responsive participatory variety
 	#f6 <- ff[basename(ff) == "01c. Codebook - Embu.xlsx"]
 
 	r1 <- carobiner::read.dta(f1) # include r2 and r3
+	r11 <- haven::read_dta(f1)
 	r2 <- read.csv(f2)
-	r3 <- read.csv(f3)
+	r3 <- read.csv(f3, na = "")
 	#r4 <- carobiner::read.excel(f4)
-	#r5 <- carobiner::read.excel(f4)
-	#r6 <- carobiner::read.excel(f5)
+	#r5 <- carobiner::read.excel(f5)
+	#r6 <- carobiner::read.excel(f6)
 
   
 #### Process
@@ -72,9 +73,52 @@ The data collection aimed to investigate gender-responsive participatory variety
 	  variety3 = r1$variety3
 	)
 
-	d <- reshape(d1, varying = c("variety1", "variety2", "variety3"), v.names = "variety", direction = "long")
+	
+	rejected <- paste(
+	  unique(c(r2$Rejected_variety1, r2$Rejected_variety2)),
+	  collapse = "|"
+	)
+	
+	d2 <- data.frame(
+	 hhid = as.character(41:93),
+	 adm1 = "Nakuru",
+	 variety_trait1 = r2$Reason1,
+	 variety_trait2 = r2$Reason1,
+	 variety_trait3 = r2$Reason1,
+	 variety_accepted1 = !grepl(rejected, r2$variety1),
+	 variety_accepted2 = !grepl(rejected, r2$variety2),
+	 variety_accepted3 = !grepl(rejected, r2$variety3)
+	)
+	
+	rejected <- paste(
+	  unique(c(r3$worstvariety1_sn1, r3$worstvariety2_sn1, r3$worstvariety3_sn1)),
+	  collapse = "|"
+	)
+	
+	d3 <- data.frame(
+	  adm1 = "Embu",
+	  hhid = r3$id,
+	  hh_size = r3$hhsize,
+	  variety_trait1 = r3$missingtraits1_sn1, ## missing accepted trait
+	  variety_trait2 = r3$missingtraits2_sn1,
+	  variety_trait3 = r3$missingtraits3_sn1,
+	  variety_accepted1 = !grepl(rejected, r3$variety1),
+	  variety_accepted2 = !grepl(rejected, r3$variety2),
+	  variety_accepted3 = !grepl(rejected, r3$variety3)
+	  
+	  
+	)
+	
+	dd <- carobiner::bindr(d2, d3)
+	### merge
+	
+	d <- merge(d1, dd, by= c("hhid", "adm1"), all.x  = TRUE)
+	
+	d <- reshape(d, varying = list(c("variety1", "variety2", "variety3"), c("variety_trait1", "variety_trait2", "variety_trait3"), c("variety_accepted1", "variety_accepted2", "variety_accepted3")), v.names = c("variety", "variety_traits", "variety_pref"), direction = "long")
 	d$id <- d$time <- NULL
 	d <- unique(d[!is.na(d$variety),])
+	
+
 	### Adding geo coordinate 
 	
 	geo <- data.frame(
