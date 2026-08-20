@@ -42,8 +42,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 	#f6 <- ff[basename(ff) == "01c. Codebook - Embu.xlsx"]
 
 	r1 <- carobiner::read.dta(f1) # include r2 and r3
-	r11 <- haven::read_dta(f1)
-	r2 <- read.csv(f2)
+	r2 <- read.csv(f2, na= "")
 	r3 <- read.csv(f3, na = "")
 	#r4 <- carobiner::read.excel(f4)
 	#r5 <- carobiner::read.excel(f5)
@@ -73,7 +72,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 	  variety3 = r1$variety3
 	)
 
-	
+	### rejected beans varieties
 	rejected <- paste(
 	  unique(c(r2$Rejected_variety1, r2$Rejected_variety2)),
 	  collapse = "|"
@@ -82,16 +81,20 @@ The data collection aimed to investigate gender-responsive participatory variety
 	d2 <- data.frame(
 	 hhid = as.character(41:93),
 	 adm1 = "Nakuru",
-	 variety_trait1 = r2$Reason1,
-	 variety_trait2 = r2$Reason1,
-	 variety_trait3 = r2$Reason1,
+	 variety_trait1 = ifelse(!grepl(rejected, r2$variety1), r2$Reason1, 
+	                  ifelse(grepl(rejected, r2$variety1) & grepl(rejected, r2$Reason_rej1), r2$Reason_rej1, r2$Reason_rej2)) ,
+	 variety_trait2 =  ifelse(!grepl(rejected, r2$variety2), r2$Reason1, 
+	                          ifelse(grepl(rejected, r2$variety2) & grepl(rejected, r2$Reason_rej1), r2$Reason_rej1, r2$Reason_rej2)) ,
+	 variety_trait3 =  ifelse(!grepl(rejected, r2$variety3), r2$Reason1, 
+	                          ifelse(grepl(rejected, r2$variety3) & grepl(rejected, r2$Reason_rej1), r2$Reason_rej1, r2$Reason_rej2)) ,
 	 variety_accepted1 = !grepl(rejected, r2$variety1),
 	 variety_accepted2 = !grepl(rejected, r2$variety2),
 	 variety_accepted3 = !grepl(rejected, r2$variety3)
 	)
 	
-	rejected <- paste(
-	  unique(c(r3$worstvariety1_sn1, r3$worstvariety2_sn1, r3$worstvariety3_sn1)),
+	## best beans varieties
+	accepted <- paste(
+	  unique(c(r3$F1_1, r3$F1_2, r3$F1_3)),
 	  collapse = "|"
 	)
 	
@@ -99,12 +102,12 @@ The data collection aimed to investigate gender-responsive participatory variety
 	  adm1 = "Embu",
 	  hhid = r3$id,
 	  hh_size = r3$hhsize,
-	  variety_trait1 = r3$missingtraits1_sn1, ## missing accepted trait
-	  variety_trait2 = r3$missingtraits2_sn1,
-	  variety_trait3 = r3$missingtraits3_sn1,
-	  variety_accepted1 = !grepl(rejected, r3$variety1),
-	  variety_accepted2 = !grepl(rejected, r3$variety2),
-	  variety_accepted3 = !grepl(rejected, r3$variety3)
+	  #variety_trait1 = r3$missingtraits1_sn1, ## 
+	  #variety_trait2 = r3$missingtraits2_sn1,
+	  #variety_trait3 = r3$missingtraits3_sn1,
+	  variety_accepted1 = grepl(accepted, r3$variety1),
+	  variety_accepted2 = grepl(accepted, r3$variety2),
+	  variety_accepted3 = grepl(accepted, r3$variety3)
 	  
 	  
 	)
