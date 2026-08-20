@@ -37,11 +37,11 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 	f2 <- ff[basename(ff) == "02. Macrofauna.csv"]
 	f3 <- ff[basename(ff) == "03. Mesofauna.csv"]
 	f4 <- ff[basename(ff) == "04. Microbial Biomass and Enzyme Activities.csv"]
-	#f5 <- ff[basename(ff) == "05. Bacteria 2016.csv"] # not sure how to capture this
-	#f6 <- ff[basename(ff) == "06. Fungi 2017.csv"]
-	#f7 <- ff[basename(ff) == "07. Bacteria 2017.csv"]
+	f5 <- ff[basename(ff) == "05. Bacteria 2016.csv"] # not sure how to capture this (treatment missing)
+	f6 <- ff[basename(ff) == "06. Fungi 2017.csv"] # not sure how to capture this (treatment missing)
+	f7 <- ff[basename(ff) == "07. Bacteria 2017.csv"] # not sure how to capture this (treatment missing)
 
-	r1 <- carobiner::read.excel(f1)
+	#r1 <- carobiner::read.excel(f1)
 	r2 <- read.csv(f2)
 	r3 <- read.csv(f3)
 	r4 <- read.csv(f4)
@@ -59,16 +59,32 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 	names(r3) <- gsub("Descript", "Treat", names(r3))
 	col <- names(r3)[!grepl("Site|Plot|Treat|Rep|Depth", names(r3))]
 	colnames(r3) <- c("Site", "Plot", "Treat","Rep", "Depth", paste0("Mesofauna_", col))
-	rr <-  merge(r2, r3, by = c("Site","Plot","Treat","Rep","Depth"), all = TRUE)
+	rr <-  merge(r2[!duplicated(r2[, c("Site", "Plot", "Treat", "Rep", "Depth")]), ], r3, by = c("Site","Plot","Treat","Rep","Depth"), all = TRUE)
 	
-	col1 <- names(rr)[grepl("Macrofauna", names(rr))]
-	col2 <- names(rr)[grepl("Mesofauna", names(rr))]
+	### Adding record_id
+	id <- unique(rr[, c("Plot", "Rep", "Treat", "Depth", "Site")])
+	id$record_id <- as.integer(1:nrow(id))
+	rr <- merge(rr, id, by= c("Plot", "Rep", "Treat", "Depth", "Site"), all.x = TRUE)
 	
-	rr <- reshape(rr, varying = c(col1, col2), v.names = c("macrofauna_number", "mesofauna_number"), direction = "long")
-	rr$soil_macrofauna <- gsub("Macrofauna_", "", col1[rr$time])
-	rr$soil_mesofauna <- gsub("Mesofauna_", "", col2[rr$time])
-	rr$id <- rr$time <- NULL
 	
+	### long format
+	col <- names(rr)[grepl("Macrofauna|Mesofauna", names(rr))]
+	
+	d_lon <- rr[, col]
+	d_lon$record_id <- rr$record_id
+	d_lon$Depth <- rr$Depth
+	d_lon <- reshape(d_lon, varying = col, v.names = "count", direction = "long")
+	domain <- as.data.frame(do.call(rbind, strsplit(col[d_lon$time], "_")))
+	d_lon$taxon <- tolower(domain$V2)
+	tx = c("acari" = "acarina", "collemb" = "collembola", "diplur" = "dipluran", "symp" = "symphyla", "enchyt" = "enchytraeids", "proturan" = "proturan", "arachnid" = "arachnida", "richness" = "species richness", "abund" = "species abundance", "olig" = "oligochaeta", "coleo" = "coleoptera", "hym" = "hymenoptera", "dipt" = "diptera", "isopt" = "isoptera", "lepid" = "lepidoptera", "diplop" = "diplopoda", "chilop" = "chilopoda", "arane" = "araneae", "hemip" = "hemiptera", "orthop" = "orthoptera", "blatt" = "blattodea", "arachnid" = "arachnida", "odonata" = "odonata", "isopod" = "isopoda", "richness total" = "total species richness")
+	d_lon$taxon <- tx[d_lon$taxon]
+	d_lon$tax_domain <- domain$V1
+	d_lon$depth_top <- as.numeric(gsub("-", "", substr(d_lon$Depth, 1, 2)))
+	d_lon$depth_bottom <- as.numeric(gsub("-", "", substr(d_lon$Depth, 3, 5)))
+	d_lon$id <- d_lon$time <- d_lon$Depth <- NULL
+	
+	
+	### wide format
 	d1 <- data.frame(
 	  location = carobiner::fix_name(rr$Site, "title"),
 	  country = "Kenya",
@@ -83,18 +99,13 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 	                   ifelse(grepl("-CR", rr$Treat), 0, NA)) ,
 	  crop = ifelse(grepl("SB", rr$Treat), "common bean", "maize"),
 	  rep = rr$Rep,
-	  depth_top = as.numeric(gsub("-", "", substr(rr$Depth, 1, 2))),
-	  depth_bottom = as.numeric(gsub("-", "", substr(rr$Depth, 3, 5))),
-	  soil_macrofauna = rr$soil_macrofauna,
-	  soil_macrofauna_index = rr$macrofauna_number,
-	  soil_mesofauna = rr$soil_mesofauna,
-	  soil_mesofauna_index = rr$mesofauna_number
+	  record_id = rr$record_id
 	
 	)
 	
 	### Microbial Biomass and Enzyme Activities
 	d2 <- data.frame(
-		#treatment_code = r4$Treatment.code,
+		record_id = as.integer(max(rr$record_id)+1: nrow(r4)),
 		location = r4$Site,
 		country = "Kenya",
 		rep = r4$Rep,
@@ -148,7 +159,7 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
   
   d <- unique(d)
   
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = d_lon)
 }
 
 
