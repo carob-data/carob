@@ -33,7 +33,7 @@ date and time data are in UTC. Measurements were taken using a Hobo
 MX2301A sensor (ONSET)."
   
   uri <- "doi:10.23708/IRNHFP"
-  group <- "pest_disease"
+  group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -61,6 +61,17 @@ MX2301A sensor (ONSET)."
   r3 <- read.csv(f3)
   r4 <- read.csv(f4)
   
+  planting_dates <- as.Date(c("2021-11-29","2021-12-08","2022-11-12","2023-04-04","2023-10-31"))
+  harvest_dates  <- as.Date(c("2022-04-10","2023-02-17","2024-02-03","2024-03-03","2024-07-10"))
+  # NOTE: 2024-02-03 and 2024-03-03 are both labeled "Harvesting", one
+  # month apart - kept as two separate events.
+  
+  tag_events <- function(df) {
+    df$planting_date <- as.character(ifelse(as.Date(df$date) %in% planting_dates, as.character(as.Date(df$date)), NA))
+    df$harvest_date  <- as.character(ifelse(as.Date(df$date) %in% harvest_dates, as.character(as.Date(df$date)), NA))
+    df
+  }
+  
   # --- d1: Busseola fusca ---
   d1 <- data.frame(
     location    = r1$site,
@@ -71,9 +82,9 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r1$date)),
     pest_species = r1$species,
-    trapped_pest_count       = r1$numberOfIndividuals,
-    pheromone_change = r1$pheromoneChange
+    trapped_pest_count = r1$numberOfIndividuals
   )
+  d1 <- tag_events(d1)
   
   # --- d3: Chilo partellus ---
   d3 <- data.frame(
@@ -85,9 +96,9 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r3$date)),
     pest_species = r3$species,
-    trapped_pest_count       = r3$numberOfIndividuals,
-    pheromone_change = r3$pheromoneChange
+    trapped_pest_count = r3$numberOfIndividuals
   )
+  d3 <- tag_events(d3)
   
   # --- d4: Spodoptera frugiperda ---
   d4 <- data.frame(
@@ -99,9 +110,9 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r4$date)),
     pest_species = r4$species,
-    trapped_pest_count  = r4$numberOfIndividuals,
-    pheromone_change = r4$pheromoneChange
+    trapped_pest_count = r4$numberOfIndividuals
   )
+  d4 <- tag_events(d4)   # sf trap has no notes of its own, but may still land on a shared event date
   
   d_pest <- rbind(d1, d3, d4)
   d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record
@@ -115,7 +126,7 @@ MX2301A sensor (ONSET)."
     elevation = 1090,
     geo_from_source = TRUE,
     date = as.character(as.Date(dt)),
-    time = format(dt, "%H:%M:%S"),   # plain "hh:mm:ss" string but still gives bad data type
+    time = format(dt, "%H:%M:%S"),   # still fails validation
     temp = r2$temperature,
     rhum = r2$rh,
     dewp = r2$dewpoint
@@ -137,8 +148,7 @@ MX2301A sensor (ONSET)."
   d$K_fertilizer <- NA
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
-  d$planting_date <- NA
-  d$harvest_date <- NA
+  d$hhid <- as.character(d$record_id)
   
   carobiner::write_files(path, meta, wide=d, wth=d2)
 }
