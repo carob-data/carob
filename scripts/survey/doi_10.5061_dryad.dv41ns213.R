@@ -18,6 +18,9 @@
 # No household id column in source - hhid is built as country + a per-country sequential number.
 # Although description says "12 sites" no XY is found.
 # Out of bounds hh_size and plot_area left as is
+   # probably because it needs to be "field_size" not "plot_area"
+
+
 # hhid do not match between long and wide as d_crops doesnt have Kenya/Rwanda
 # Suggested new terms: expenses_education; mulching_used (logical); agroecozone; road_distance, expenses_living
 #                      expenses_health; savings; animal_age, animal_sex
@@ -59,8 +62,7 @@ the third years of the project."
   f3 <- ff[basename(ff) == "README_ELr1.txt"]   # Data dictionary
   
   r1 <- carobiner::read.excel(f1, sheet=1, skip=1)   # row 1 is a title, row 2 is the real header
-  n <- nrow(r1)
-  r1$hhid <- paste0(r1$COUNTRY, "_", ave(seq_len(n), r1$COUNTRY, FUN = seq_along))
+  r1$hhid <- as.character(1:nrow(r1))
   
   currency_lookup <- c("Ethiopia" = "ETB","Kenya" = "KES","Malawi" = "MWK","Rwanda" = "RWF",
                        "South Africa" = "ZAR","Tanzania" = "TZS")
@@ -138,14 +140,18 @@ the third years of the project."
   }
   
   spsc_area_ha <- r1$SPSC_AREA_CROP_MAIN_HA
+
+
+## do not remove values except if they are truly impossible (e.g. negative yield)
+## or perhaps a single crazy outlier
   
-  crop_max_yield <- c("maize" = 41500,"common bean" = 9000,"sorghum" = 18000,
-    "chickpea" = 6000,"cowpea" = 5000,"pigeon pea" = 12000)
+#  crop_max_yield <- c("maize" = 41500,"common bean" = 9000,"sorghum" = 18000,
+#    "chickpea" = 6000,"cowpea" = 5000,"pigeon pea" = 12000)
   
-  cap_yield <- function(crop, yld) {
-    max_allowed <- crop_max_yield[crop]
-    ifelse(!is.na(max_allowed) & !is.na(yld) & yld > max_allowed, NA, yld)
-  }
+#  cap_yield <- function(crop, yld) {
+#    max_allowed <- crop_max_yield[crop]
+#    ifelse(!is.na(max_allowed) & !is.na(yld) & yld > max_allowed, NA, yld)
+#  }
   
   crop_v <- standardize_crop(r1$SPSC_SELECT_CROP)
   yield_v <- ifelse(!is.na(spsc_area_ha) & spsc_area_ha > 0, r1$SPSC_YIELD_CROP_MAIN / spsc_area_ha, NA)
@@ -183,6 +189,7 @@ the third years of the project."
     ifelse(is.na(out) & !is.na(x), x, out)
   }
   
+  ## never use column numbers, always names
   livestock_slot_starts <- 2331 + (0:7) * 14
   d_livestock <- do.call(rbind, lapply(livestock_slot_starts, function(start) {
     raw_animal <- r1[[start + 1]]
