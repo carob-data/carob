@@ -6,6 +6,8 @@
 # Each site has different column structure
 # Lat/Long hardcoded for CGIAR ocation website; IITA-SARAH for all sites
 
+### provide website and why not use lon/lat provided in metadata ?
+
 ## ISSUES
 # GRAIN_YIELDPLOT_KG is mislabeled across all 4 sites - metadata
 # confirms it is actually in GRAMS formula: YIELD (kg/ha) = GRAIN_YIELDPLOT_KG(g) * 10000/6/1000,
@@ -14,12 +16,16 @@
 # Disease/quality scores (PL_VIGOR, RUST, RUST_R6, Shattering, FLW_COLOR) for soybean not present
 # DFFL and DF_P are duplicated column names in sites 06/07 (days then date) and in site 04 for DFFL only.
 
-### Suggested new terms: rust_score (soybean rust); harvest_count (number of plants counted at harvest, per plot);
-###                      
+### Suggested new terms
+## rust_score (soybean rust) -> use disease, and disease_incidence or disease_severity and severity_scale
+## harvest_count (number of plants counted at harvest, per plot); -> we have plant_density
+                     
+## there are other new variables. Please describe new variables and provide their unit.
+					 
 
 carob_script <- function(path) {
   
-  "
+"
 Preliminary Variety Trials (PVT) Zambia-2018
 
 Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of the world 
@@ -35,19 +41,20 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   group <- "varieties"
   ff  <- carobiner::get_data(uri, path, group)
   
+  ## do not use excessive indentation (change RStudio Global Options?)
   meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-                                  data_organization = "IITA",
-                                  publication = NA,
-                                  project = NA,
-                                  design = "Preliminary Variety Trial (PVT), RCBD, 4 sites, single 2017-18 season",
-                                  data_type = NA,
-                                  treatment_vars = "variety",
-                                  response_vars = "yield; plant_height; seed_weight",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-08-21",
-                                  carob_completion = 80,
-                                  carob_effort = 4
+		data_organization = "IITA",
+		publication = NA,
+		project = NA,
+		design = "Preliminary Variety Trial (PVT), RCBD, 4 sites, single 2017-18 season",
+		data_type = NA,
+		treatment_vars = "variety",
+		response_vars = "yield; plant_height; seed_weight",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-08-21",
+		carob_completion = 80,
+		carob_effort = 4
   )
   
   f1  <- ff[basename(ff) == "18pvt-04-site-1.csv"]
@@ -67,15 +74,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ### DFFL appears twice - first is days, second (auto-renamed DFFL.1) is date.
   d1 <- data.frame(
     trial_id = "18PVT_Site04",
-    location = "IITA-SARAH",
-    country = "Zambia",
-    adm1 = "Lusaka Province",
-    adm2 = "Chongwe District",
-    latitude = -15.1809, # source CGIAR locations website
-    longitude = 28.18173,
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
     plot_id = r1$PLOT_NO,
     rep = r1$REP_NO,
     block = r1$BLOCK_NO,
@@ -88,7 +86,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     flowering_days = r1$DFFL,
     flowering_date = as.character(as.Date(r1$DFFL.1, format = "%d/%m/%Y")),
     podding_days = NA,
-    podding_date = as.character(as.Date(NA)),
+    podding_date = NA,
     rust_score = NA,
     flower_color = NA,
     maturity_date = as.character(as.Date(r1$Date_PM, format = "%d/%m/%Y")),
@@ -102,6 +100,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     seed_weight = r1$SWT100 * 10,
     shattering_score = r1$Shattering
   )
+  
   #####-------------------------------------------------------------------------
   ### Site 05 - IITA- SARAH
   ####--------------------------------------------------------------------------
@@ -110,11 +109,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   d4 <- data.frame(
     trial_id = "18PVT_Site05",
     location = "IITA-SARAH",
-    country = "Zambia",
-    adm1 = "Lusaka Province",
-    adm2 = "Chongwe District",
-    latitude = -15.1809, # source CGIAR locations website
-    longitude = 28.18173,
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
@@ -125,15 +119,15 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     variety = r4$VARIETY,
     pedigree = r4$PEDIGREE,
     seed_source = NA,
-    planting_date = as.character(as.Date(NA)),
+    planting_date = NA,
     plant_vigor = r4$PL_VIGOR,
     flowering_days = r4$DFFL,
-    flowering_date = as.character(as.Date(NA)),
+    flowering_date = NA,
     podding_days = r4$DF_P,
-    podding_date = as.character(as.Date(NA)),
+    podding_date = NA,
     rust_score = r4$RUST,
     flower_color = NA,
-    maturity_date = as.character(as.Date(NA)),
+    maturity_date = NA,
     maturity_days = r4$DM,
     plant_height = r4$PLHT,
     pod_clearance = r4$POD_CL,
@@ -150,12 +144,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d7 <- data.frame(
     trial_id = "18PVT_Site06",
-    location = "IITA-SARAH",
-    country = "Zambia",
-    adm1 = "Lusaka Province",
-    adm2 = "Chongwe District",
-    latitude = -15.1809, # source CGIAR locations website
-    longitude = 28.18173,
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
@@ -193,12 +181,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ### No shattering or flower color recorded.
   d10 <- data.frame(
     trial_id = "18PVT_Site07",
-    location = "IITA-SARAH",
-    country = "Zambia",
-    adm1 = "Lusaka Province",
-    adm2 = "Chongwe District",
-    latitude = -15.1809, # source CGIAR locations website
-    longitude = 28.18173,
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
@@ -230,6 +212,16 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   )
   
   d <- rbind(d1, d4, d7, d10)
+
+  d$location <- "IITA-Sarah"
+  d$country = "Zambia"
+  d$adm1 = "Lusaka" # where from? Do not inferred data like this
+  d$adm2 = "Chongwe"  # where from?
+  d$latitude = -15.1809 # source CGIAR locations website 
+  d$longitude = 28.18173
+  d$geo_from_source = FALSE
+  d$on_farm = FALSE
+  d$is_survey = FALSE
   
   d$crop <- "soybean"
   d$yield_moisture <- NA
@@ -238,7 +230,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   d$K_fertilizer <- NA
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
-  d$harvest_date <- as.character(as.Date(NA))
+  d$harvest_date <- NA
   
   names(d)[names(d) == "block"] <- "block_id"
   names(d)[names(d) == "pedigree"] <- "variety_pedigree"
@@ -250,14 +242,8 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   
   d$flower_color <- ifelse(d$flower_color == "" | is.na(d$flower_color), NA_character_, d$flower_color)
   d$plot_id <- as.character(d$plot_id)
-  d$location <- "Iita-Sarah"
   d$flowering_days <- as.numeric(d$flowering_days)
   d$podding_days <- as.numeric(d$podding_days)
-  
-  # all rows kept - no dropping for NA fields absent at a given site
-  
+   
   carobiner::write_files(path, meta, wide=d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
