@@ -17,7 +17,7 @@ Farm-Level Rice Yield Data and Climate Change Impact Projections Across Rice Eco
   "
   
   uri <- "doi:10.5281/zenodo.21075805"
-  group <- "agronomy"
+  group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
@@ -25,7 +25,7 @@ Farm-Level Rice Yield Data and Climate Change Impact Projections Across Rice Eco
                                   publication = NA,
                                   project = NA,
                                   design = NA,
-                                  data_type = "experiment",
+                                  data_type = "survey",
                                   treatment_vars = NA,
                                   response_vars = NA, 
                                   notes = NA,
