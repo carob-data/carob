@@ -14,7 +14,7 @@ The Potato NPT Trials Amidst Prolonged Rains in Kenyan Regions took place in Apr
 "
 
 	uri <- "doi:10.21223/ENR3AN"
-	group <- "varieties"
+	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
 
 
