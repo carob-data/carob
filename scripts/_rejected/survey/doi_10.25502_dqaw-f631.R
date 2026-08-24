@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# coordinates were removed
 # crop not specified
 
 carob_script <- function(path) {
