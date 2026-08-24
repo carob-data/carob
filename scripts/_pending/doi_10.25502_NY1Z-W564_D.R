@@ -1,6 +1,7 @@
 # R script for "carob"
 
-# not included because the yield data provided is a rating hence data is out of scope for us until we know what amount the ratings stand for
+# not included because the yield data provided is a rating
+# RH: ratings can be OK
 
 "
 N2Africa farm monitoring - Malawi, 2012 - 2013
