@@ -3,7 +3,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# Automatically rejected by carobiner::draft
+
 # This file is a bean breeding-line pedigree registry (linea, cruza,
 # Pedigri, extended genealogy notation, registration year), not trial/
 # evaluation data. The dataset's own description states yield (kg/ha) and

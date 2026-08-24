@@ -1,6 +1,6 @@
 # R script for "carob"
 
-# not included because there no yield data are provided. So these data are not in scope for us.
+# no yield data are provided
 
 "
 N2Africa farm monitoring - Mozambique, 2011 - 2012, II
