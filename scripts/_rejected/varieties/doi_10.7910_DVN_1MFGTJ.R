@@ -21,7 +21,7 @@ Six lowland experiments were conducted over three years in southern Benin to ass
 ## only keep the comments you added that are specific to this dataset
 
 	uri <- "doi:10.7910/DVN/1MFGTJ"
-	group <- "draft"
+	group <- "varieties"
 	ff  <- carobiner::get_data(uri, path, group)
 
 ## Non-metadata .json files in ff (e.g. nested Dataverse Dataset/*.json). Parsed with jsonlite::fromJSON.

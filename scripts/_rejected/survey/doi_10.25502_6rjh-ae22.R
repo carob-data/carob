@@ -20,7 +20,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 ## only keep the comments you added that are specific to this dataset
 
 	uri <- "doi:10.25502/6rjh-ae22"
-	group <- "draft"
+	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
