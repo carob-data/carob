@@ -1,5 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
+
 #### NOTES
 ## REJECT or Pending subject to full data availability
 # 35 paired near/away samples across 3 plots (JK A2, A4, A5), 5 tree species
@@ -7,9 +8,10 @@
 # Plot/sample area is missing so yield (kg/ha) is not possible to calculate
 # No column on year/season despite dataset title referencing 2015/2016
 # Exact location is also unknown besides that it is Kenya
+
 carob_script <- function(path) {
   
-  "Maize yield 2015_2016 short rains
+"Maize yield 2015_2016 short rains
 Maize productivity was measured adjacent and away from tree rows to
 determine influence of trees on crop productivity.
 Long-Term Agroforestry Trial, Kenya (World Agroforestry Centre / ICRAF)."

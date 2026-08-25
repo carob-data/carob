@@ -72,7 +72,7 @@ Ghana Africa RISING follow-up evaluation survey was implemented in 2020. The sur
 	   irrigation_source = r3$e10,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r3$e12)),
 	   soil_color = r3$e14,
-	   plot_slope = r3$e15,
+	   land_slope = r3$e15,
 	   treatment = r3$treat
 	)
 	

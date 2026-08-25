@@ -163,7 +163,7 @@ As part of the US government's Feed the Future initiative that aims to address g
 	   #irrigation_method = r8$e10,
 	   soil_texture = tolower(gsub("Sand/loam", "sandy loam", r8$e12)),
 	   soil_color = r8$e14,
-	   plot_slope = r8$e15
+	   land_slope = r8$e15
 	)
 	
 	### merge d and d3
