@@ -82,6 +82,7 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r1$date)),
     pest_species = r1$species,
+    pheromone_change = r1$pheromoneChange,
     trapped_pest_count = r1$numberOfIndividuals
   )
   d1 <- tag_events(d1)
@@ -96,8 +97,8 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r3$date)),
     pest_species = r3$species,
-    trapped_pest_count = r3$numberOfIndividuals
-  )
+    pheromone_change = r3$pheromoneChange,
+    trapped_pest_count = r3$numberOfIndividuals)
   d3 <- tag_events(d3)
   
   # --- d4: Spodoptera frugiperda ---
@@ -110,12 +111,24 @@ MX2301A sensor (ONSET)."
     is_survey   = TRUE,
     date        = as.character(as.Date(r4$date)),
     pest_species = r4$species,
-    trapped_pest_count = r4$numberOfIndividuals
-  )
-  d4 <- tag_events(d4)   # sf trap has no notes of its own, but may still land on a shared event date
+    pheromone_change = r4$pheromoneChange,
+    trapped_pest_count = r4$numberOfIndividuals)
+  
+  d4 <- tag_events(d4)
   
   d_pest <- rbind(d1, d3, d4)
   d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record
+  
+  d_pest$pheromone_change_date <- as.Date(NA)
+  
+  last_change <- NA
+  
+  for (i in 1:nrow(d_pest)) {
+     if (d_pest$pheromone_change[i] == TRUE) {
+      last_change <- d_pest$date[i]
+    }
+    d_pest$pheromone_change_date[i] <- last_change
+  }
   
   # --- d2: climate ---
   dt <- as.POSIXct(r2$dateUTC, tz = "UTC")
@@ -126,14 +139,16 @@ MX2301A sensor (ONSET)."
     elevation = 1090,
     geo_from_source = TRUE,
     date = as.character(as.Date(dt)),
-    time = format(dt, "%H:%M:%S"),   # still fails validation
+    time = format(dt, "%H:%M:%S", tz = "UTC"),
     temp = r2$temperature,
     rhum = r2$rh,
-    dewp = r2$dewpoint
+    dewp = r2$dewpoint,
+    stringsAsFactors = FALSE
   )
+  
   d2$country <- "Kenya"
   d2$adm1 <- "Taita-Taveta"
-  
+
   d <- d_pest
   d$country <- "Kenya"
   d$adm1 <- "Taita-Taveta"
@@ -149,6 +164,7 @@ MX2301A sensor (ONSET)."
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
   d$hhid <- as.character(d$record_id)
+
   
   carobiner::write_files(path, meta, wide=d, wth=d2)
 }
