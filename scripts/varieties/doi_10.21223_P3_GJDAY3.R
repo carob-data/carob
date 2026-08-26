@@ -33,19 +33,21 @@ The Observation Trial was carried out in 2017 season B at Gurue Research Station
 	)
 	
 
-	f1 <- ff[basename(ff) == "Dictionary_OFSP OT Gurue.xlsx"]
-	f2 <- ff[basename(ff) == "Data Orange flesh OT2017 Gurue.csv"]
-
-	r1 <- carobiner::read.excel(f1)
-	r2 <- read.csv(f2)
 	
+	f <- ff[basename(ff) == "Data Orange flesh OT2017 Gurue.csv"]
+	#f1 <- ff[basename(ff) == "Dictionary_OFSP OT Gurue.xlsx"]
+
+
+	r <- read.csv(f)
+	
+### process	
 	d <- data.frame(
-	  plot_id = as.character(r2$plot),
-	  rep = r2$rep,
-	  variety = r2$geno,
-	  yield_marketable = r2$RCTHA*1000,
-	  yield = rowSums(r2[, c("RCTHA", "NRCTHA")], na.rm = TRUE)*1000,
-	  fwy_total = r2$FYTHA*1000,
+	  plot_id = as.character(r$plot),
+	  rep = r$rep,
+	  variety = r$geno,
+	  yield_marketable = r$RCTHA*1000,
+	  yield = rowSums(r[, c("RCTHA", "NRCTHA")], na.rm = TRUE)*1000,
+	  fwy_total = r$FYTHA*1000,
 	  planting_date = "2017",
 	  crop = "sweetpotato",
 	  country = "Mozambique",
