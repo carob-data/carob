@@ -8,20 +8,9 @@
 ## 2. Treatments are plant growth regulators added to the culture medium
 ##    (GA, JA, NAA, uniconazole-p at uM concentrations; control = sterile
 ##    water) at the single-node/primary-nodal-complex micropropagation
-##    stages -- there is no planting/harvest, soil, or field/greenhouse
+##    stages -- there is no planting/harvest, soil, or field/geenhouse
 ##    management to record, and no meaningful land-area basis for yield.
-## 3. Confirmed against the linked publication: Balogun et al. (2014)
-##    "Relative Effects of Uniconazole-p and other growth regulators on
-##    Micropropagation ratio of yam (Dioscorea spp.) plantlets at different
-##    growth phases", Journal of Root Crops 40(2):5-11 (no DOI found for the
-##    article; ISSN 0378-2409) -- Materials and Methods describe genotypes
-##    "established in vitro at the tissue culture laboratory of IITA,
-##    Ibadan" and PGR regimes applied to single-node cuttings in liquid MS
-##    medium; no field/greenhouse component anywhere in the paper.
-## Per AGENTS.md Section 12, data collected in a lab rather than in the
-## field are rejected (the "greenhouse experiments for variety traits are
-## OK" exception does not apply: this is not a variety trial, it is a PGR
-## dose-response study on in vitro-cultured plantlets).
+
 
 carob_script <- function(path) {
 
