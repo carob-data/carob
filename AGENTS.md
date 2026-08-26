@@ -16,6 +16,17 @@ It is of fundamental importance that no critical information is lost to analyze 
 
 **You stay in charge.** Using AI to help is fine, but you are responsible for the result — do not blindly trust generated code, mappings, or `## NOTES`/`## ISSUES`. Verify every claim against the actual data and the publication before you leave it in the script. A wrong note or a plausible-but-incorrect mapping is worse than an honest "I could not determine this" (in `## ISSUES`).
 
+### Human review is mandatory (agent must say this)
+
+The **human author** of the script must review **every line of code** and **every comment** (`#`, `## NOTES`, `## ISSUES`, `## NEW VARIABLES`) before submitting. The agent drafts; the human owns the result.
+
+**Agent obligation:** whenever you deliver or hand off a Carob script (draft finished, file moved to `scripts/<group>/`, or a PR is ready), you **must** tell the human clearly and explicitly, in your own message to them, something equivalent to:
+
+> Before you submit: you must personally read every line of code and every comment in this script. Do not trust AI output. Only after that review, fill in `carob_contributor` and put the attestation sentence in the PR.
+
+Do not soft-pedal this. Do not skip it because the script "looks done."
+
+
 ---
 
 ## 1. What a Carob script is
