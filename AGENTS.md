@@ -222,6 +222,7 @@ d$yield_moisture <- as.numeric(NA)    # % moisture if known
 General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
+- **Do not add empty variables just because they are required.** A `write_files()` "missing variables" message means: check whether you have a real value (from the data, codebook, or publication). It does **not** mean invent a column of `NA`s or `""` to satisfy `required_variables.csv`. If you do not have a value, omit the variable and note it in `## ISSUES`. An empty placeholder is worse than a missing-variable message.
 - **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment"). This holds **even when terminag has no matching variable name**: give the treatment its own clear new variable name (ending in an underscore, see "New variable names" below) rather than burying it only in `treatment`. Such a new variable triggers a warning and is dropped from the written output, but that is fine — naming it explicitly is what lets a maintainer add the term to terminag (a separate process). A missing vocabulary term is never a reason to hide a treatment inside the `treatment` code.
 - **Variable (Column) names** should match a variable name from terminag. 
 - **New variable names** where there is not matching name in terminag; propose an appropriate new variable name, that ends in an underscore (e.g. `annual_income_`). List these new variables at the top of the script under ## NEW VARIABLES and describe what they represent, and what their unit is (do not add unit to the variable name). New variables cause a warning and are dropped but that is _not_ a concern. Do not change terminag, that is a separate process.
@@ -313,7 +314,7 @@ carob_script(path = "<root>/carob/carob")
 
 `carobiner::write_files(path, meta, d)` prints messages you must resolve:
 
-- **`missing variables` / `missing metadata`**: a required variable/metadata field is absent. Add it (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`).
+- **`missing variables` / `missing metadata`**: a required variable/metadata field is absent (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`). If you have a real value, add it. If you do not, **do not** add an empty/`NA` column just to clear the message — omit the variable and note it in `## ISSUES`.
 - **`unknown variables`**: a column name is not in the vocabulary. Rename it to a terminag name, or, if it is legitimately non-standard, **keep it** with an underscore name (Section 5). Do **not** delete or omit a meaningful variable just because it is not in terminag — naming it is what lets it be added later.
 - **`out of bounds`**: a numeric value is outside `valid_min`/`valid_max`. Consider fixing the units or the value. DO NOT set outlier values to NA. Add a comment about it, suggesting next steps, but leave the action to the script author.
 - **`bad datatype`**: coerce the column (`as.numeric`, `as.integer`, `as.character`).
@@ -337,6 +338,7 @@ Do **not**:
 - filter/drop rows, coerce blindly, or tweak values **just to silence** a message without understanding it;
 - drop records that have `NA` in a required variable (e.g. `yield`) only to silence the message — the `NA` flags something to check, not to delete; keep the records unless they truly hold nothing else of interest;
 - delete or comment out a variable only to make a warning disappear.
+- add an empty/`NA` column for a required variable you do not actually have a value for, just to silence "missing variables".
 - set outliers to NA
 
 **Coercion warnings are never allowed.** `NAs introduced by coercion` from `as.numeric()`/`as.integer()`/`as.logical()` means the input held text those functions could not parse. Fix it in one of exactly two ways:
@@ -427,7 +429,7 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - [ ] No live geo/online lookups in the script — helpers (`geo_adm`, `gadm`, `geocode`, `adm_pointRadius`) used only to *derive* values, which are then hard-coded.
 - [ ] `carob_script(path)` runs clean in a fresh session with no unresolved `write_files()` messages and no R warnings (incl. `NAs introduced by coercion`).
 - [ ] No `suppressWarnings()`/`suppressMessages()`/`options(warn=-1)` and no "numeric-looking" filters used; every remaining warning is either fixed or left with a `#` comment explaining why.
-- [ ] No records dropped merely to silence a warning; no information silently dropped to fit a single table.
+- [ ] No records dropped merely to silence a warning; no information silently dropped to fit a single table; no empty/`NA` columns added just because a variable is required.
 - [ ] Finished file moved out of `_draft/`; one dataset per PR.
 - [ ] Commit message `<new|edited> <group> script <uri>`; PR message very succinctly lists the `## NOTES`/`## ISSUES` and the remaining `write_files()` messages.
 
