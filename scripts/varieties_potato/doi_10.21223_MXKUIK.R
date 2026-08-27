@@ -15,10 +15,7 @@ carob_script <- function(path) {
   
   ff <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(
-    uri, path, group,
-    major = 1,
-    minor = 1,
+  meta <- carobiner::get_metadata(uri, path, group, major = 1,  minor = 1,
     data_organization = "CIP",
     publication = NA,
     project = NA,
@@ -54,26 +51,20 @@ carob_script <- function(path) {
     trial_id = paste("MXKUIK", gsub("[ ,]+", "_", as.character(r1$Locality)), as.character(r1$Year), sep = "_"),
     plot_id = as.character(r1$Plot),
     rep = as.integer(r1$Rep),
-    variety = as.character(r1$Clone),
-    location = as.character(r1$Locality),
+    variety = r1$Clone,
+    location = r1$Locality,
     country = "Peru",
     crop = "potato",
     crop_rotation = NA,
     on_farm = TRUE,
     is_survey = FALSE,
-    irrigated = NA,
     yield_part = "tubers",
-    yield = as.numeric(r1$MTYA) * 1000,  # t/ha → kg/ha
+    yield = as.numeric(r1$MTYA) * 1000,  
     yield_moisture = NA_real_,
     yield_isfresh = TRUE,
-    planting_date = NA,
-    harvest_date = NA,
-    N_fertilizer = NA_real_,
-    P_fertilizer = NA_real_,
-    K_fertilizer = NA_real_,
-    S_fertilizer = NA_real_,
-    fertilizer_type = NA_character_,
-    lime = NA_real_,
+    planting_date = "2019",
+    harvest_date = "2020",
+
     # NEW: marketable tuber yield (not adjusted, t/ha) - raw value from field
     marketable_yield_raw_ = as.numeric(r1$MTYNA),
     # NEW: total tuber yield (not adjusted, t/ha) - raw value from field
@@ -109,8 +100,7 @@ carob_script <- function(path) {
   d$geo_from_source <- FALSE 
   
   # Remove rows where all key variables are NA
-  d <- d[!is.na(d$yield) | !is.na(d$variety), ]
+  # d <- d[!is.na(d$yield) | !is.na(d$variety), ]
   
-  # Write CAROB files
   carobiner::write_files(path, meta, d)
 }
