@@ -15,7 +15,6 @@
 #                         flower_color (visual color of flower - only one site);
 #                         pod_clearance (first pod height in cm);
 #                         Shattering_score (visual score of pre-harvest pod shattering / seed loss)
-#                         rust_growth_stage (a character, reproductive stage when SBR was observed)
 
 ## ISSUES
 # S04 "harvest_index" exceeds 100% - most likely mislabeled "Harvest count"?
@@ -105,9 +104,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = NA,
     disease = NA,                       # RUST_R3/RUST_R6 absent from site04's
     severity_score = NA,
-    rust_growth_stage = NA,
-    
-    
     flower_color = NA,                  # Suggested term: color of the flower
     maturity_date = as.character(as.Date(r1$Date_PM, format = "%d/%m/%Y")),
     maturity_days = r1$DM,
@@ -151,7 +147,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = NA,
     disease = "rust",
     severity_score = r4$RUST,
-    rust_growth_stage = NA,
     flower_color = NA,      
     
     maturity_date = NA,
@@ -196,7 +191,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = as.character(as.Date(r7$DF_P.1, format = "%d/%m/%Y")),
     disease = NA,                        
     severity_score = NA,
-    rust_growth_stage = NA,
     flower_color = r7$FLW_COLOR,         
     
     maturity_date = as.character(as.Date(r7$DATE_PM, format = "%d/%m/%Y")),
@@ -241,7 +235,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = as.character(as.Date(r10$DF_P.1, format = "%d/%m/%Y")),
     disease = "rust",
     severity_score = r10$RUST_R6,
-    rust_growth_stage = "r6",
     flower_color = NA,                
     
     maturity_date = as.character(as.Date(r10$DATE_PM, format = "%d/%m/%Y")),
