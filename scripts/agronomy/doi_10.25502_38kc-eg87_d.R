@@ -3,7 +3,6 @@
 
 ## ISSUES
 
-# -The biochar application rate is missing from the raw data. According to the publication, biochar was applied at **0, 1, 5, and 10 Mg/ha
 
 carob_script <- function(path) {
 
@@ -20,7 +19,7 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA; SLU",
-		publication = "doi:10.1007/s13593-022-00793-5",
+		publication = "doi:10.1007/s13593-022-00793-5;doi:10.1016/j.fcr.2019.02.015",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
@@ -30,7 +29,7 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-28",
 		carob_completion = 70,	
-		carob_effort = 2
+		carob_effort = 3
 	)
 	
 
@@ -42,7 +41,6 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)
 	r3 <- read.csv(f3)
-	#r4 <- read.csv(f4)
 
 #### yield data 
 	d1 <- data.frame(
@@ -70,37 +68,75 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	## from publication
 	Nfer <- c("Fert" = 60, "Control" = 0, "Biochar" = 0, "Fert+Biochar"= 60)
 	Pfer <- c("Fert" = 67, "Control" = 0, "Biochar" = 0, "Fert+Biochar"= 67)
-	#bc <- c("Fert" = 0, "Control" = 0, "Biochar" = ? , "Fert+Biochar"= ?)
+ 
+	### from publication and from the Authors ( Biochar = 100Mg /ha)
+	bc <- c("Fert" = 0, "Control" = 0, "Biochar" = 100*1000 , "Fert+Biochar"= 100*1000)# kg/ha
 	d1$N_fertilizer <- Nfer[d1$treatment]
 	d1$P_fertilizer <- Pfer[d1$treatment]
+	d1$biochar <- bc[d1$treatment]
 	
-	### process carbon stock
-	# Not sure how to merge this with yield data (different site)
+	### process carbon stock 
+	
 	d2 <- data.frame(
 	  trial_id = paste(r2$Site, r2$ID, sep = "-"),
 	  location = r2$Site,
 	  plot_id = r2$Plot_No,
-	  treatment = r2$Treatment,
+	  treat = r2$Treatment,
 	  depth = r2$Sampling_Depth,
 	  soil_bd = r2$BD,
-	  soil_C = r2$perc_C,
+	  soil_C_total = r2$perc_C,
 	  soil_C_stock = r2$C_Stock_t_C_ha_1*100, # g/m2
-	  longitude = 34.458 ,
-	  latitude = 0.155
+	  longitude = 34.403 ,
+	  latitude = 0.131, ## from publication
+	  geo_from_source = TRUE,
+	  is_survey = FALSE,
+	  yield = NA,
+	  yield_part = "none", 
+	  country = "Kenya"
 	)
 	
 	tret <- c("CROP+FERT" = "Fert", "CROP+FERT+CHARC"= "Fert+Biochar", "CROP" = "Control", "CROP+CHARC" = "Biochar")
-	d2$treatment <- tret[d2$treatment]
-
+	tret1 <- c("CROP+FERT" = "CROP+Fert", "CROP+FERT+CHARC"= "CROP+Fert+Biochar", "CROP" = "CROP", "CROP+CHARC" = "CROP+Biochar")
+	d2$treatment <- tret1[d2$treat]
+	d2$treat <- tret[d2$treat]
+	d2$N_fertilizer <- Nfer[d2$treat]
+	d2$P_fertilizer <- Pfer[d2$treat]
+	d2$biochar <- bc[d2$treat]
+  d2$treat <- NULL
+  
+	# Water holding capacity
+	d3 <- data.frame(
+	  trial_id = paste(r3$Site, r3$ID, sep = "-"),
+	  location = r3$Site,
+	  plot_id = r3$Plot_no,
+	  treat = r3$Treatment,
+	  depth = as.numeric(gsub("-", "", substr(r3$Sampling_Depth, 3, 5))),
+	  soil_bd = r3$BD,
+	  soil_WHC_sat = ((r3$Sample_fresh_weight_g-r3$Sample_dry_weight_g)/r3$Sample_dry_weight_g)*100,
+	  longitude = 34.403 ,
+	  latitude = 0.131, ## from publication
+	  geo_from_source = TRUE,
+	  is_survey = FALSE,
+	  yield = NA,
+	  yield_part = "none", 
+	  country = "Kenya"
+	)
+	
+	tret <- c("CR+F" = "Fert", "CR+F+CH"= "Fert+Biochar", "CN" = "Control", "CN+CH" = "Biochar", "CR"= "Control", "CR+CH"= "Biochar")
+	tret1 <- c("CR+F" = "Crop+Fert", "CR+F+CH"= "CROP+ Fert+Biochar", "CN" = "Control", "CN+CH" = "Biochar", "CR"= "CROP", "CR+CH"= "CROP+Biochar")
+	d3$treatment <- tret1[d3$treat]
+	d3$treat <- tret[d3$treat]
+	d3$N_fertilizer <- Nfer[d3$treat]
+	d3$P_fertilizer <- Pfer[d3$treat]
+	d3$biochar <- bc[d3$treat]
+	d3$treat <- NULL
 	## Adding long and lat 
 	
 	geo <- data.frame(
 	  location = c("Siaya", "Embu" ),
-	  longitude = c(34.2488, 37.6259),
-	  latitude = c(-0.0546, -0.5922),
-	  geo_uncertainty = c(44931, 60722),
-	  geo_source ="GADM 4.1, adm1",
-	  geo_from_source = FALSE,
+	  longitude = c(34.405,  37.5),
+	  latitude = c(0.133, -0.5),
+	  geo_from_source = TRUE, # from publication
 	  country = "Kenya",
 	  soil_clay = c(61.00, 70.33),
 	  soil_sand = c(23.67, 17.67),
@@ -115,7 +151,7 @@ In this project, we report findings from the 15 years of  meta-replicated trials
 	
 	d <- merge(d1, geo, by= "location", all.x = TRUE)
 	
-	### Adding planting and harvest date 
+	### Adding planting and harvest date available
 	
 	ph  <- data.frame(
 	  year =c(rep("2015", 2), "2016", "2017", rep("2015", 2), "2016", "2017"),
@@ -130,6 +166,8 @@ In this project, we report findings from the 15 years of  meta-replicated trials
   d$planting_date[i] <- d$year[i]
   d$year <- NULL
 	
+  ### combine with carbon stock and WHC data
+  d <- carobiner::bindr(d, d2, d3)
 	
 	carobiner::write_files(path, meta, d)
 }
