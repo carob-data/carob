@@ -45,7 +45,7 @@ Agricultural statistics and applied analyses have benefitted from moving from fa
 	d <- data.frame(
 		crop= "maize",
 		country = "Ethiopia",
-		date = r$data$surveyDate,
+		date = format(as.Date(r$data$surveyDate, format = "%m/%d/%Y"), "%Y-%m-%d"),
 		adm1 = r$data$note_demog.region,
 		adm2 = r$data$note_demog.zone,
 		adm3 = r$data$note_demog.woreda, 
