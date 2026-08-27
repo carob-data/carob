@@ -8,6 +8,7 @@
 # no fertiliser, irrigation, or soil management information is provided so these fields are left as NA.
 # coordinates are not provided in the raw data; longitude/latitude were estimated from cgiar.org location pages (buk.csv) or via carobiner::adm_pointRadius() (tofa.csv, tudun-wada.csv).
 # missing values are coded as "." in the files, these were convereted to NA
+# tassling an silking days were only provided for up to 50% tassling/silking
 
 carob_script <- function(path) {
 
