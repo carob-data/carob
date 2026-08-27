@@ -1,3 +1,4 @@
+
 carob_script <- function(path) {
   
   "
@@ -27,9 +28,9 @@ carob_script <- function(path) {
     response_vars = "yield",
     notes = NA,
     carob_contributor = "MARYAM YAHYA",
-    carob_date = "2026-08-26",
-    carob_completion = 80,
-    carob_effort = 0.5
+    carob_date = "2026-08-27",
+    carob_completion = 85,
+    carob_effort = 1.5
   )
   
   # Source file
@@ -48,7 +49,7 @@ carob_script <- function(path) {
                   -75.2593, -75.50000, -75.50000, -77.80000)
   )
   
-  #  Final standardized data.frame
+  # final  data.frame
   d <- data.frame(
     trial_id = paste("MXKUIK", gsub("[ ,]+", "_", as.character(r1$Locality)), as.character(r1$Year), sep = "_"),
     plot_id = as.character(r1$Plot),
@@ -73,8 +74,6 @@ carob_script <- function(path) {
     S_fertilizer = NA_real_,
     fertilizer_type = NA_character_,
     lime = NA_real_,
-    # NEW: number of plants harvested per plot (count)
-    plants_harvested_plot_ = as.numeric(r1$NPH),
     # NEW: marketable tuber yield (not adjusted, t/ha) - raw value from field
     marketable_yield_raw_ = as.numeric(r1$MTYNA),
     # NEW: total tuber yield (not adjusted, t/ha) - raw value from field
@@ -91,17 +90,21 @@ carob_script <- function(path) {
     ffr_color_blanching_ = as.numeric(r1$`French_Fry_ color_Blanching`),
     # NEW: French fry color after 90 days storage (USDA scale 1-5)
     ffr_color_90d_ = as.numeric(r1$`French_Fry_ color_ 90_days_after_harvest`),
-    # NEW: baked flavor score (1-5, 5=Excellent, 3=Good, 1=Bad)
-    flavor_baked_1_ = as.numeric(r1$`Baked Flavor 1`),
-    flavor_baked_2_ = as.numeric(r1$`Baked Flavor 2`),
-    flavor_baked_3_ = as.numeric(r1$`Baked Flavor 3`),
-    # NEW: baked texture score (5=Floury, 3=Intermediate, 1=Watery)
-    texture_baked_1_ = as.numeric(r1$Baked_Texture1),
-    texture_baked_2_ = as.numeric(r1$Baked_Texture2),
-    texture_baked_3_ = as.numeric(r1$Baked_Texture3)
+    # NEW: average baked flavor score (1-5, 5=Excellent, 3=Good, 1=Bad)
+    flavor_baked_ = rowMeans(cbind(
+      as.numeric(r1$`Baked Flavor 1`),
+      as.numeric(r1$`Baked Flavor 2`),
+      as.numeric(r1$`Baked Flavor 3`)
+    ), na.rm = TRUE),
+    # NEW: average baked texture score (5=Floury, 3=Intermediate, 1=Watery)
+    texture_baked_ = rowMeans(cbind(
+      as.numeric(r1$Baked_Texture1),
+      as.numeric(r1$Baked_Texture2),
+      as.numeric(r1$Baked_Texture3)
+    ), na.rm = TRUE)
   )
   
-  # Merge coordinates
+  ## Merge coordinates
   d <- merge(d, coords, by.x = "location", by.y = "Locality", all.x = TRUE)
   d$geo_from_source <- FALSE 
   
