@@ -21,12 +21,9 @@ carob_script <- function(path) {
 		carob_date = "2024-07-13"
 	)
 	
-
 	irri_lte <- carobiner::get_function("IRRI_LTE", path, group)
-	d <- irri_lte(ff)
+	d <- irri_lte(ff, path)
 
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
-	carobiner::write_files(path, meta, d)
+	meta$notes <- d$comm
+	carobiner::write_files(path, meta, d$x)
 }

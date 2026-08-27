@@ -6,7 +6,6 @@ carob_script <- function(path) {
 
 	uri <- "doi:10.7910/DVN/0DRM60"
 	group <- "agronomy"
-
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
@@ -20,13 +19,10 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date = "2024-07-13"
 	)
-	
 
 	irri_lte <- carobiner::get_function("IRRI_LTE", path, group)
-	d <- irri_lte(ff)
+	d <- irri_lte(ff, path)
 
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
-	carobiner::write_files(path, meta, d)
+	meta$notes <- d$comm
+	carobiner::write_files(path, meta, d$x)
 }
