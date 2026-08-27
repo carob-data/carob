@@ -1,3 +1,4 @@
+
 carob_script <- function(path) {
   
   "
@@ -29,7 +30,7 @@ carob_script <- function(path) {
     response_vars = "yield",
     notes = NA,
     carob_contributor = "MARYAM YAHYA",
-    carob_date = "2026-08-26",
+    carob_date = "2026-08-27",
     carob_completion = 85,
     carob_effort = 0.5
   )
@@ -92,8 +93,8 @@ carob_script <- function(path) {
   
   loc_idx <- match(r$location, locations)
   
-  # final data.frame
-  
+  #  final data.frame
+  # NOTE: Baraka does not have MTYA, so yield will be NA for Baraka
   d <- data.frame(
     trial_id = paste("FBZ6JS", gsub("[ ,]+", "_", r$location), sep = "_"),
     plot_id = as.character(r$PLOT),
@@ -107,9 +108,8 @@ carob_script <- function(path) {
     is_survey = FALSE,
     irrigated = NA,
     yield_part = "tubers",
-    # Yield: MTYA is in t/ha, convert to kg/ha.
-    # Baraka does not have MTYA, so yield will be NA for Baraka.
-    yield = ifelse("MTYA" %in% names(r), as.numeric(r$MTYA) * 1000, NA_real_),    yield_moisture = NA_real_,
+    yield = ifelse("MTYA" %in% names(r), as.numeric(r$MTYA) * 1000, NA_real_),
+    yield_moisture = NA_real_,
     yield_isfresh = TRUE,
     latitude = as.numeric(min_latitude[loc_idx]),
     longitude = as.numeric(min_longitude[loc_idx]),
@@ -122,24 +122,10 @@ carob_script <- function(path) {
     S_fertilizer = NA_real_,
     fertilizer_type = NA_character_,
     lime = NA_real_,
-    # NEW: number of tubers planted per plot (count)
-    tubers_planted_plot_ = as.numeric(r$NTP),
-    # NEW: number of plants emerged per plot (count)
-    plants_emerged_plot_ = as.numeric(r$NPE),
     # NEW: percentage of plants emerged (available for most sites, NA for Baraka)
     pct_emergence_ = ifelse("PPE" %in% names(r), as.numeric(r$PPE), NA_real_),
-    # NEW: number of plants harvested per plot (count)
-    plants_harvested_plot_ = as.numeric(r$NPH),
     # NEW: percentage of plants harvested (available for most sites, NA for Baraka)
     pct_harvested_ = ifelse("PPH" %in% names(r), as.numeric(r$PPH), NA_real_),
-    # NEW: number of marketable tubers per plot (count)
-    marketable_tubers_plot_ = as.numeric(r$NMTP),
-    # NEW: number of marketable tubers per plant (count) (available for most sites, NA for Baraka)
-    marketable_tubers_plant_ = ifelse("NMTPL" %in% names(r), as.numeric(r$NMTPL), NA_real_),
-    # NEW: weight of marketable tubers per plot (kg)
-    marketable_tuber_weight_plot_ = as.numeric(r$MTWP),
-    # NEW: weight of marketable tubers per plant (kg)
-    marketable_tuber_weight_plant_ = as.numeric(r$MTWPL),
     # NEW: average marketable tuber weight (g)
     avg_tuber_weight_ = as.numeric(r$ATMW)
   )
