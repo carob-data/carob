@@ -4,23 +4,23 @@
 ## NOTES
 # 4 site files (04, 05, 06, 07), 2017-18 season.
 # Each site has different column structure
-# Three of the sites are IITA-LUSAKA Zambia based on metadata; One (Site 06) is blank (NA)
-# Lat/long for IITA-LUSAKA; https://www.cgiar.org/locations/zambia-iita-zambia-southern-africa-hub
-# Trial_ID hard coded per CSV title because S04 and S06 metadata title are the same
-# plant_density calculated from harvest/plant_count through plot_area
+# Lat/Long hardcoded for CGIAR ocation website; IITA-SARAH for all sites
 
-# suggested terms: severity_score (visual disease severity score, not a character; not stated bounds);
-#                         germplasm_no (enumerated germplasm entry number);
-#                         plant_vigor (Visual score of plant health; no stated bounds);
-#                         flower_color (visual color of flower - only one site);
-#                         pod_clearance (first pod height in cm);
-#                         Shattering_score (visual score of pre-harvest pod shattering / seed loss)
+### provide website and why not use lon/lat provided in metadata ?
 
 ## ISSUES
-# S04 "harvest_index" exceeds 100% - most likely mislabeled "Harvest count"?
-# S05 - No planting/flowering/maturity DATES (only-day counts)
-# S06 has blank location in metadata
-# No actual lat/lon from metadata
+# GRAIN_YIELDPLOT_KG is mislabeled across all 4 sites - metadata
+# confirms it is actually in GRAMS formula: YIELD (kg/ha) = GRAIN_YIELDPLOT_KG(g) * 10000/6/1000,
+# No coordinates found in the source data for any site. 
+# Fertilizer, irrigation, and rotation information not present in any site's columns
+# Disease/quality scores (PL_VIGOR, RUST, RUST_R6, Shattering, FLW_COLOR) for soybean not present
+# DFFL and DF_P are duplicated column names in sites 06/07 (days then date) and in site 04 for DFFL only.
+
+### Suggested new terms
+## rust_score (soybean rust) -> use disease, and disease_incidence or disease_severity and severity_scale
+## harvest_count (number of plants counted at harvest, per plot); -> we have plant_density
+                     
+## there are other new variables. Please describe new variables and provide their unit.
 					 
 
 carob_script <- function(path) {
@@ -58,209 +58,170 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   )
   
   f1  <- ff[basename(ff) == "18pvt-04-site-1.csv"]
-  f2  <- ff[basename(ff) == "metadata-04-site-1.csv"] # metadata for site 4
   f4  <- ff[basename(ff) == "18pvt-05-site-1.csv"]
-  f5  <- ff[basename(ff) == "metadata-05-site-1.csv"] # metadata for site 5
   f7  <- ff[basename(ff) == "18pvt-06-site-1.csv"]
-  f8  <- ff[basename(ff) == "metadata-06-site-1.csv"] # metadata for site 6
   f10 <- ff[basename(ff) == "18pvt-07-site-1.csv"]
-  f11  <- ff[basename(ff) == "meatadata-07-site-1.csv"] # metadata for site 7
   
   r1  <- read.csv(f1)
-  r2  <- read.csv(f2) # Metadata for site 4
   r4  <- read.csv(f4)
-  r5 <- read.csv(f5) # Metadata for site 5
   r7  <- read.csv(f7)
-  r8 <- read.csv(f8) # Metadata for site 6
   r10 <- read.csv(f10)
-  r11 <- read.csv(f11) # Metadata for site 7
   
   ####--------------------------------------------------------------------------
-  # Site 04 - IITA-LUSAKA, Zambia
+  # Site 04 - IITA-SARAH
   ####--------------------------------------------------------------------------
+  ### YIELD confirmed already kg/ha.
+  ### DFFL appears twice - first is days, second (auto-renamed DFFL.1) is date.
   d1 <- data.frame(
-    trial_id = "18pvt-04-site-1",       # hard coded per CSV naming
-    location = r2$coverage[1], 
-    country = r2$coverage.country[1],
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
-    latitude = -15.1809,      
-    longitude = 28.18173,
-    
-    plot_id = as.character(r1$PLOT_NO),
+    trial_id = "18PVT_Site04",
+    plot_id = r1$PLOT_NO,
     rep = r1$REP_NO,
-    block_id = r1$BLOCK_NO,
-    germplasm_no = r1$ENTRY_NO,
+    block = r1$BLOCK_NO,
+    entry_no = r1$ENTRY_NO,
     variety = r1$DESIGNATION,
-    variety_pedigree = r1$CROSS,
+    pedigree = r1$CROSS,
     seed_source = r1$SOURCE,
-    
     planting_date = as.character(as.Date(r1$DATE_PLANTED, format = "%d/%m/%Y")),
-    plant_vigor = r1$PL_VIGOR,          # suggested term for plant health
+    plant_vigor = r1$PL_VIGOR,
     flowering_days = r1$DFFL,
     flowering_date = as.character(as.Date(r1$DFFL.1, format = "%d/%m/%Y")),
-    podding_days = NA,                  # DF_P absent from site04's
+    podding_days = NA,
     podding_date = NA,
-    disease = NA,                       # RUST_R3/RUST_R6 absent from site04's
-    severity_score = NA,
-    flower_color = NA,                  # Suggested term: color of the flower
+    rust_score = NA,
+    flower_color = NA,
     maturity_date = as.character(as.Date(r1$Date_PM, format = "%d/%m/%Y")),
     maturity_days = r1$DM,
     plant_height = r1$PLHT,
-    pod_clearance = r1$POD_CL,          # suggested term; first pod height in cm
-    
+    pod_clearance = r1$POD_CL,
+    harvest_count = r1$HARVEST,
     yield = r1$YIELD,
     yield_part = "seed",
-    plot_area = ifelse(!is.na(r1$YIELD) & r1$YIELD > 0, r1$GRAIN_YIELDPLOT_KG * 10 / r1$YIELD, NA),
-    seed_weight = r1$SWT100 * 10,       # estimate of 1000-seed weight
-    shattering_score = r1$Shattering    # suggested term; pre-harvest pod splitting and seed loss
+    plot_area = ifelse(r1$YIELD > 0, r1$GRAIN_YIELDPLOT_KG * 10 / r1$YIELD, NA),
+    seed_weight = r1$SWT100 * 10,
+    shattering_score = r1$Shattering
   )
-  d1$plant_density <- ifelse(!is.na(d1$plot_area) & d1$plot_area > 0, r1$HARVEST / d1$plot_area * 10000, NA) # Harvest not an index assumed to be count
   
   #####-------------------------------------------------------------------------
-  ### Site 05 - IITA-Lusaka
+  ### Site 05 - IITA- SARAH
   ####--------------------------------------------------------------------------
+  # No planting/flowering/ maturity dates at all in this site
+  ### DFFL and DF_P here are single columns (days only, no date variant).
   d4 <- data.frame(
-    trial_id = "18pvt-05-site-1",
-    location = r5$Coverage[1],
-    country = r5$Coverage.country[1],
+    trial_id = "18PVT_Site05",
+    location = "IITA-SARAH",
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = -15.1809,
-    longitude = 28.18173,
-    
-    plot_id = as.character(r4$PLOT),
+    plot_id = r4$PLOT,
     rep = r4$REP,
-    block_id = r4$BLOCK,
-    germplasm_no = r4$ENTRY,
+    block = r4$BLOCK,
+    entry_no = r4$ENTRY,
     variety = r4$VARIETY,
-    variety_pedigree = r4$PEDIGREE,
-    seed_source = NA,                   
-    
+    pedigree = r4$PEDIGREE,
+    seed_source = NA,
     planting_date = NA,
     plant_vigor = r4$PL_VIGOR,
     flowering_days = r4$DFFL,
     flowering_date = NA,
     podding_days = r4$DF_P,
     podding_date = NA,
-    disease = "rust",
-    severity_score = r4$RUST,
-    flower_color = NA,      
-    
+    rust_score = r4$RUST,
+    flower_color = NA,
     maturity_date = NA,
     maturity_days = r4$DM,
     plant_height = r4$PLHT,
-    pod_clearance = r4$POD_CL,           # first pod height, cm
-    
+    pod_clearance = r4$POD_CL,
+    harvest_count = r4$HARVEST_COUNT,
     yield = r4$YIELD,
     yield_part = "seed",
-    plot_area = ifelse(!is.na(r4$YIELD) & r4$YIELD > 0, r4$GRAIN_YIELDPLOT_KG * 10 / r4$YIELD, NA),
-    seed_weight = r4$SWT100 * 10,        # estimate of 1000-seed weight
+    plot_area = ifelse(r4$YIELD > 0, r4$GRAIN_YIELDPLOT_KG * 10 / r4$YIELD, NA),
+    seed_weight = r4$SWT100 * 10,
     shattering_score = r4$SHATTERING
   )
-  d4$plant_density <- ifelse(!is.na(d4$plot_area) & d4$plot_area > 0, r4$HARVEST_COUNT / d4$plot_area * 10000, NA)
   
   ####--------------------------------------------------------------------------
-  # Site 06 - location NOT stated in this site's own metadata
+  ### Site 06 - IITA=SARAH
   ####--------------------------------------------------------------------------
   d7 <- data.frame(
-    trial_id = "18pvt-06-site-1",
-    location = NA,
-    country = r8$coverage.country[1],
+    trial_id = "18PVT_Site06",
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = NA,
-    longitude = NA,
-    
-    plot_id = as.character(r7$Plot),
+    plot_id = r7$Plot,
     rep = r7$Rep,
-    block_id = r7$Block,
-    germplasm_no = r7$Entry,
+    block = r7$Block,
+    entry_no = r7$Entry,
     variety = r7$Name,
-    variety_pedigree = r7$Pedigree,
-    seed_source = NA,                    
-    
+    pedigree = r7$Pedigree,
+    seed_source = NA,
     planting_date = as.character(as.Date(r7$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r7$PL_VIGOR,
     flowering_days = r7$DFFL,
     flowering_date = as.character(as.Date(r7$DFFL.1, format = "%d/%m/%Y")),
     podding_days = r7$DF_P,
     podding_date = as.character(as.Date(r7$DF_P.1, format = "%d/%m/%Y")),
-    disease = NA,                        
-    severity_score = NA,
-    flower_color = r7$FLW_COLOR,         
-    
+    rust_score = NA,
+    flower_color = r7$FLW_COLOR,
     maturity_date = as.character(as.Date(r7$DATE_PM, format = "%d/%m/%Y")),
     maturity_days = r7$DM,
-    plant_height = r7$PH,                
+    plant_height = r7$PH,
     pod_clearance = r7$POD_CL,
-    
+    harvest_count = r7$HARVEST_COUNT,
     yield = r7$YIELD,
     yield_part = "seed",
-    plot_area = ifelse(!is.na(r7$YIELD) & r7$YIELD > 0, r7$GRAIN_YIELDPLOT_KG * 10 / r7$YIELD, NA),
+    plot_area = ifelse(r7$YIELD > 0, r7$GRAIN_YIELDPLOT_KG * 10 / r7$YIELD, NA),
     seed_weight = r7$SWT100 * 10,
-    shattering_score = NA                
+    shattering_score = NA
   )
-  d7$plant_density <- ifelse(!is.na(d7$plot_area) & d7$plot_area > 0, r7$HARVEST_COUNT / d7$plot_area * 10000, NA)
   
   ####--------------------------------------------------------------------------
-  # Site 07 - IITA-Lusaka, Zambia
-  ####--------------------------------------------------------------------------
+  ### Site 07 - IITA- SARAH
+  ###---------------------------------------------------------------------------
+  ### Adds RUST_R6 and PLANT_COUNT, not seen in any other site. 
+  ### No shattering or flower color recorded.
   d10 <- data.frame(
-    trial_id = "18pvt-07-site-1",
-    location = r11$Coverage[1],
-    country = r11$Coverage.country[1],
+    trial_id = "18PVT_Site07",
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = -15.1809,
-    longitude = 28.18173,
-    
-    plot_id = as.character(r10$PLOT),
+    plot_id = r10$PLOT,
     rep = r10$REP,
-    block_id = r10$BLOCK,
-    germplasm_no = r10$ENTRY,
+    block = r10$BLOCK,
+    entry_no = r10$ENTRY,
     variety = r10$NAME,
-    variety_pedigree = r10$PEDIGREE,
-    seed_source = NA,                   
-    
+    pedigree = r10$PEDIGREE,
+    seed_source = NA,
     planting_date = as.character(as.Date(r10$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r10$PL_VIGOR,
-    flowering_days = r10$DFFL,
-    flowering_date = as.character(as.Date(r10$DFFL.1, format = "%d/%m/%Y")),
-    podding_days = r10$DF_P,
-    podding_date = as.character(as.Date(r10$DF_P.1, format = "%d/%m/%Y")),
-    disease = "rust",
-    severity_score = r10$RUST_R6,
-    flower_color = NA,                
-    
+    flowering_days = r10$DFFL.1,
+    flowering_date = as.character(as.Date(r10$DFFL, format = "%d/%m/%Y")),
+    podding_days = r10$DF_P.1,
+    podding_date = as.character(as.Date(r10$DF_P, format = "%d/%m/%Y")),
+    rust_score = r10$RUST_R6,
+    flower_color = NA,
     maturity_date = as.character(as.Date(r10$DATE_PM, format = "%d/%m/%Y")),
     maturity_days = r10$DM,
     plant_height = r10$PLHT,
     pod_clearance = r10$POD_CL,
-    
+    harvest_count = r10$PLANT_COUNT,
     yield = r10$YIELD,
     yield_part = "seed",
-    plot_area = ifelse(!is.na(r10$YIELD) & r10$YIELD > 0, r10$GRAIN_YIELDPLOT_KG * 10 / r10$YIELD, NA),
+    plot_area = ifelse(r10$YIELD > 0, r10$GRAIN_YIELDPLOT_KG * 10 / r10$YIELD, NA),
     seed_weight = r10$SWT100 * 10,
-    shattering_score = NA             
+    shattering_score = NA
   )
-  d10$plant_density <- ifelse(!is.na(d10$plot_area) & d10$plot_area > 0, r10$PLANT_COUNT / d10$plot_area * 10000, NA)
   
   d <- rbind(d1, d4, d7, d10)
-  
-  # datatype fixes
-  d$block_id <- as.character(d$block_id)
-  d$flowering_days <- as.numeric(d$flowering_days)   # likely coerced to character during rbind - see note below
-  d$podding_days <- as.numeric(d$podding_days)
-  
-  # text cleaning
-  d$variety <- trimws(d$variety)
-  d$variety_pedigree <- trimws(d$variety_pedigree)
-  d$flower_color <- ifelse(is.na(d$flower_color) | trimws(d$flower_color) == "", NA_character_, trimws(d$flower_color))
+
+  d$location <- "IITA-Sarah"
+  d$country = "Zambia"
+  d$adm1 = "Lusaka" # where from? Do not inferred data like this
+  d$adm2 = "Chongwe"  # where from?
+  d$latitude = -15.1809 # source CGIAR locations website 
+  d$longitude = 28.18173
+  d$geo_from_source = FALSE
+  d$on_farm = FALSE
+  d$is_survey = FALSE
   
   d$crop <- "soybean"
   d$yield_moisture <- NA
@@ -270,6 +231,19 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
   d$harvest_date <- NA
+  
+  names(d)[names(d) == "block"] <- "block_id"
+  names(d)[names(d) == "pedigree"] <- "variety_pedigree"
+  names(d)[names(d) == "DM"] <- "dm"
+  
+  d$block_id <- as.character(d$block_id)
+  d$variety <- trimws(d$variety)
+  d$variety_pedigree <- trimws(d$variety_pedigree)
+  
+  d$flower_color <- ifelse(d$flower_color == "" | is.na(d$flower_color), NA_character_, d$flower_color)
+  d$plot_id <- as.character(d$plot_id)
+  d$flowering_days <- as.numeric(d$flowering_days)
+  d$podding_days <- as.numeric(d$podding_days)
    
   carobiner::write_files(path, meta, wide=d)
 }
