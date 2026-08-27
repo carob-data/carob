@@ -46,7 +46,6 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 	r2 <- read.csv(f2, na.strings = c("NA", "."))
 	r3 <- read.csv(f3, na.strings = c("NA", "."))
 	r4 <- read.csv(f4, na.strings = c("NA", "."))
-	browser()
 
 	d1 <- data.frame(
 		trial_id = "buk",
@@ -145,6 +144,4 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 	invisible(d)
 }
 
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
 
