@@ -5,7 +5,7 @@
 # 4 site files (04, 05, 06, 07), 2017-18 season.
 # Each site has different column structure
 # All confirmed to be on the same site but different materials by Creator of the data
-# Coverage lat/lon provided confirmed by data creator as Lat; -15.3000901, Lon; 28.304867
+# Coverage lat/lon provided in data description as Lat; -15.38753, Lon; 28.32282
 # Trial_ID hard coded per CSV title because S04 and S06 metadata title are the same
 # plant_density calculated from harvest/plant_count through plot_area
 
@@ -81,13 +81,13 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d1 <- data.frame(
     trial_id = "18pvt-04-site-1",       # hard coded per CSV naming
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
+    location = r2$coverage[1], 
+    country = r2$coverage.country[1],
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
+    latitude = -15.38753,      
+    longitude = 28.32282,
     
     plot_id = as.character(r1$PLOT_NO),
     rep = r1$REP_NO,
@@ -127,13 +127,13 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d4 <- data.frame(
     trial_id = "18pvt-05-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
+    location = r5$Coverage[1],
+    country = r5$Coverage.country[1],
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
+    latitude = -15.38753,
+    longitude = 28.32282,
     
     plot_id = as.character(r4$PLOT),
     rep = r4$REP,
@@ -172,13 +172,13 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d7 <- data.frame(
     trial_id = "18pvt-06-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
+    location = "IITA-Lusaka",
+    country = r8$coverage.country[1],
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
+    latitude = -15.38753,
+    longitude = 28.32282,
     
     plot_id = as.character(r7$Plot),
     rep = r7$Rep,
@@ -217,8 +217,8 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d10 <- data.frame(
     trial_id = "18pvt-07-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
+    location = r11$Coverage[1],
+    country = r11$Coverage.country[1],
     on_farm = FALSE,
     is_survey = FALSE,
     geo_from_source = FALSE,
