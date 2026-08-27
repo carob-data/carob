@@ -18,11 +18,34 @@ get_elements_from_product <- function(fertab, products) {
 
 
 
-IRRI_LTE <- function(f) {
+IRRI_LTE <- function(f, path) {
 
-	r <- do.call(rbind, lapply(grep("\\.csv$", f, value=TRUE), \(i) read.csv(i, na.strings =".")))
-	r <- unique(r)
+	uri2 <- "doi:10.7910/DVN/HKX9SF"
+	group <- "agronomy"
+	ff2  <- carobiner::get_data(uri2, path, group)
+	f2 <- ff2[basename(ff2) == "LTCCE-HP_2068-2023.csv"]
+	v <- read.csv(f2)
+	names(v)[names(v) == "GYtha"] <- "GYkgha"
+## 1992 has these "varieties" with otherwise useful info:
+## "D1N1 (20x20cm; 2/3 basal, 1/3PI)", "D1N2 (20x20cm; 30% basal, PI and 20% midT and FL)" 
+## "D2N2 (15x15cm; 30%basal, PI and 20% midT and FL)"
+	v[grep("^D.N.", v$B_label), "B_label"] <- NA
+
+	rr <- do.call(rbind, lapply(grep("\\.csv$", f, value=TRUE), \(i) read.csv(i, na.strings =".")))
+	rr$Site[rr$Site == "B5-B8"] <- "IRRI-B5-B8"
+	rr <- unique(rr)
 	
+	stopifnot(nrow(unique(rr[,c("Expt", "Site", "Year")])) == 1)
+	
+	v <- v[v$Year == rr$Year[1], c("Season", "Afactor", "A_label", "Bfactor", "B_label", "Rep", "GYkgha")]
+	comm <- NULL
+
+	r <- merge(rr, v, by=c("Season", "Afactor", "Bfactor", "Rep"), all.x=TRUE)
+	#stopifnot(!( any(is.na(r$GYkgha) & (!(is.na(r$GYtha))))))
+	if (!all(abs(r$GYkgha/1000 - r$GYtha) < 0.01, na.rm=TRUE)) {
+		comm <- "yield differences between the two data sources"
+	}
+
 	x <- data.frame(
 		LTE_name = r$Expt,
 		country="Philippines",
@@ -41,9 +64,11 @@ IRRI_LTE <- function(f) {
 		crop = tolower(r$Crop),
 		yield_part = "grain",
 		rep = r$Rep,
-		yield = r$GYtha * 1000,
+#		yield = r$GYtha * 1000,
+		yield = r$GYkgha,
 		N_fert_level = as.integer(gsub("F", "", r$Afactor)),
 		variety_code = paste0(r$Year, "_", r$Bfactor),
+		variety = r$B_label,
 		trial_id = as.character(r$Crop_no)
 	)
 	# from https://lte.irri.org/ltcce 2025/06/13
@@ -52,11 +77,15 @@ IRRI_LTE <- function(f) {
 	x$N_fertilizer[i] <- c(0,65,130,195)[x$N_fert_level[i]]
 	x$N_fertilizer[!i] <- c(0,45,90,135)[x$N_fert_level[!i]]
 	x$N_fert_level <- NULL
+	
+	if (!all(x$N_fertilizer == r$A_label)) {
+		comm <- paste0(c(comm, "fertilizer app differences between sources"), collapse="; ")
+	}
 
 	x$P_fertilizer <- 26
 	x$K_fertilizer <- 40
 	x$Zn_fertilizer <- 5
-	x$fertilizer_type <- "ZnSO4"
+#	x$fertilizer_type <- "ZnSO4"
 	
 	x$plant_density <- 250000 # 20x20 cm hills, each with three plants
 	x$transplanting_days <- 14
@@ -73,7 +102,10 @@ IRRI_LTE <- function(f) {
 
 	x <- x[!is.na(x$yield), ]
 	x$yield_isfresh <- NA
-	x
+	x$yield_moisture <- as.numeric(NA) 
+	
+	if (!is.null(comm)) print(comm)
+	list(x=unique(x), comm=comm)
 }
 
 
