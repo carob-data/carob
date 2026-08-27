@@ -142,7 +142,6 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 	d$yield_part <- "grain"
 
 	carobiner::write_files(path, meta, d)
-	invisible(d)
 }
 
 
