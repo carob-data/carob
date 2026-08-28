@@ -40,7 +40,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     country= "Côte d'Ivoire",
     location = "M'be",
     plot_id = r1$Plot_ID,
-    date = r1$Year,
+    rep = as.integer(r1$Replicate),
+    date = as.character(r1$Year),
     latitude = 7.8528,
     longitude = -5.1111,
     geo_from_source = TRUE,
@@ -48,8 +49,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     intercrops = r1$Crop_Association,
     intercrop_type = "unknown", # Type of intercropping (e.g. mixed, strip)
     variety= r1$Main_Crop_Variety,
-    planting_date = r1$Main_Crop_Sowing,
-    emergence_date= r1$Emergence,
+    planting_date = r1$Main_Crop_Sowing, #as.Date(as.numeric(r1$Main_Crop_Sowing), origin = "1899-12-30"),
+    emergence_date= r1$Emergence, #as.Date(as.numeric(r1$Emergence), origin = "1899-12-30"),
     flowering_date= r1$Flowering,
     maturity_date = r1$Maturity,
     harvest_date= r1$Harvesting,
@@ -94,6 +95,38 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   d$yield_isfresh <- TRUE
   d$yield_part <- "grain"
   
+  # Some inconsistencies were found in the dates. Below, I am fixing it
+  d$maturity_date <- ifelse(d$maturity_date=="3/11/20017", "3/11/2017", d$maturity_date)
+  d$harvest_date <- ifelse(d$harvest_date=="No harvest", NA, d$harvest_date)
+  d$planting_date <- ifelse(d$planting_date=="Not sown (ants and bees)", NA, d$planting_date)
+  d$flowering_date <- ifelse(d$flowering_date=="16/092018", "16/09/2018", d$flowering_date)
+  
+  
+  # Some of the dates are converted to numerical values after loading the data while some were not. I fix it here
+  convert_mixed_date <- function(x) {
+    x <- as.character(x)
+    x <- ifelse(x=="-", NA, x)
+    
+    # Identify values already in DD-MM-YYYY format and transform them to YYYY-MM-DD format
+    is_date <- grepl("^\\d{1,2}/\\d{2}/\\d{4}$", x)
+    x[is_date] <- format(as.Date(x[is_date], format = "%d/%m/%Y"), "%Y-%m-%d")
+  
+    # For values that are not already dates and are not NA, I convert them using Excel's date origin (1899-12-30)
+    x[!is_date & !is.na(x)] <- format(as.Date(as.numeric(x[!is_date & !is.na(x)]), origin = "1899-12-30"), "%Y-%m-%d")
+    
+    # Return the final vector as character
+    return(x)
+    }
+  
+  # Now I apply it to all the variables recording date
+  date_vars <- c("emergence_date", "flowering_date", "maturity_date", "weeding_dates", "planting_date", "harvest_date")
+  d[date_vars] <- lapply(d[date_vars], convert_mixed_date)
+  
+  # Replace the erroneous planting date (1900-01-16) with NA.
+  # The date is inconsistent with the experiment timeline, as emergence
+  # was recorded on 2018-08-28, which falls within the experiment period.
+  d$planting_date[d$planting_date == "1900-01-16"] <- NA
+  
   # Note that seed treatment was done and no seed treatment was done and yields as well as plot area size were recorded for both. Here I will merge 
   # them and create the seed_treatment variable
   
@@ -111,28 +144,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   rownames(d) <- NULL
   d$row_id <- NULL
   
-  # Some of the dates are converted to numerical values after loading the data while some were not. I fix it here
-  convert_mixed_date <- function(x) {
-    x <- as.character(x)
-    # Identify values already in YYYY-MM-DD format
-    is_date <- grepl("^\\d{4}-\\d{2}-\\d{2}$", x)
-    # For values that are not already dates and are not NA, I convert them using Excel's date origin (1899-12-30)
-    x[!is_date & !is.na(x)] <- format(as.Date(as.numeric(x[!is_date & !is.na(x)]), origin = "1899-12-30"), "%Y-%m-%d")
-    # Return the final vector as character
-    return(x)
-    }
-    
-  # Now I apply it to all the variables recording date
-  date_vars <- c("emergence_date", "flowering_date", "maturity_date", "weeding_dates", "planting_date", "harvest_date")
-  d[date_vars] <- lapply(d[date_vars], convert_mixed_date)
-  
-  # Replace the erroneous planting date (1900-01-16) with NA.
-  # The date is inconsistent with the experiment timeline, as emergence
-  # was recorded on 2018-08-28, which falls within the experiment period.
-  d$planting_date[d$planting_date == "1900-01-16"] <- NA
-  
   s_2015 <- data.frame(
-    date = 2015,
+    date = "2015",
     plot_id = r2$Plot_ID,
     depth_top = ifelse(r2$Horizon=="0-5 cm", 0, ifelse(r2$Horizon=="15-25 cm", 15, ifelse(r2$Horizon=="35-45 cm", 35, NA))),
     depth_bottom = ifelse(r2$Horizon=="0-5 cm", 5, ifelse(r2$Horizon=="15-25 cm", 25, ifelse(r2$Horizon=="35-45 cm", 45, NA))),
@@ -145,7 +158,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     soil_bd = r2$Bulk_Density_g_cm_3)
   
   s_2023 <- data.frame(
-    date = 2023,
+    date = "2023",
     plot_id = r3$Plot_ID,
     depth_top = ifelse(r3$Horizon=="0 -5cm", 0, ifelse(r3$Horizon=="05-10 cm", 5, ifelse(r3$Horizon=="10 -20 cm", 10, ifelse(r3$Horizon=="20 -30 cm", 20, ifelse(r3$Horizon=="30 -50 cm", 30, NA))))),
     depth_bottom = ifelse(r3$Horizon=="0 -5cm", 5, ifelse(r3$Horizon=="05-10 cm", 10, ifelse(r3$Horizon=="10 -20 cm", 20, ifelse(r3$Horizon=="20 -30 cm", 30, ifelse(r3$Horizon=="30 -50 cm", 50, NA))))),
@@ -178,27 +191,11 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     soil_Na_total	= r3$`Na_%`*10000 # To be added in the terminag
     )
   
-  # Calculate depth
-  s_2015$depth <- s_2015$depth_bottom - s_2015$depth_top
-  s_2023$depth <- s_2023$depth_bottom - s_2023$depth_top
-  
-  # Harmonize columns
-  soil_vars <- union(names(s_2015), names(s_2023))
-  
-  s_2015[setdiff(soil_vars, names(s_2015))] <- NA
-  s_2023[setdiff(soil_vars, names(s_2023))] <- NA
-  
-  s_2015 <- s_2015[, soil_vars]
-  s_2023 <- s_2023[, soil_vars]
-  
   # Combine both soil data
-  soil <- rbind(s_2015, s_2023)
+  soil <- carobiner::bindr(s_2015, s_2023)
  
   # Add soil information to d
   d <- merge(d, soil, by = c("plot_id", "date"), all.x = TRUE, sort = FALSE) # Some rows will be duplicated because different layers of soil were sampled and analyzed for that plot
-  
-  # Create an unique id
-  d$trial_id <- paste(d$plot_id, d$date, d$crop, d$variety, d$seed_treatment, d$depth_top, sep = "_")
   
   carobiner::write_files(path, meta, d)
 }
