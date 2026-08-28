@@ -18,17 +18,17 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "IRD",
-                                  publication = NA,
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "survey",
-                                  treatment_vars = "pheromone_change",
-                                  response_vars = "pest_species;pest_number", 
-                                  carob_contributor = "Illiana Kwenda",
-                                  carob_date = "2026-08-05",
-                                  carob_completion = 80,	
-                                  carob_effort = 2
+		data_organization = "IRD",
+		publication = NA,
+		project = NA,
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "pheromone_change",
+		response_vars = "pest_species;pest_number", 
+		carob_contributor = "Illiana Kwenda",
+		carob_date = "2026-08-05",
+		carob_completion = 80,	
+		carob_effort = 2
   )
   
   
