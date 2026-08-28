@@ -15,7 +15,7 @@
 #                         flower_color (visual color of flower - only one site);
 #                         pod_clearance (first pod height in cm);
 #                         Shattering_score (visual score of pre-harvest pod shattering / seed loss)
-#                         rust_growth_stage (a character, reproductive stage when SBR was observed)
+#                         rust_obs_stage (a character, reproductive stage when SBR was observed)
 
 ## ISSUES
 # S04 "harvest_index" exceeds 100% - most likely mislabeled "Harvest count"?
@@ -105,7 +105,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = NA,
     disease = NA,                       # RUST_R3/RUST_R6 absent from site04's
     severity_score = NA,
-    rust_growth_stage = NA,
+    rust_obs_stage = NA,
     
     
     flower_color = NA,                  # Suggested term: color of the flower
@@ -151,7 +151,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = NA,
     disease = "rust",
     severity_score = r4$RUST,
-    rust_growth_stage = NA,
+    rust_obs_stage = NA,
     flower_color = NA,      
     
     maturity_date = NA,
@@ -196,7 +196,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     podding_date = as.character(as.Date(r7$DF_P.1, format = "%d/%m/%Y")),
     disease = NA,                        
     severity_score = NA,
-    rust_growth_stage = NA,
+    rust_obs_stage = NA,
     flower_color = r7$FLW_COLOR,         
     
     maturity_date = as.character(as.Date(r7$DATE_PM, format = "%d/%m/%Y")),
@@ -235,13 +235,13 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     
     planting_date = as.character(as.Date(r10$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r10$PL_VIGOR,
-    flowering_days = r10$DFFL,
-    flowering_date = as.character(as.Date(r10$DFFL.1, format = "%d/%m/%Y")),
-    podding_days = r10$DF_P,
-    podding_date = as.character(as.Date(r10$DF_P.1, format = "%d/%m/%Y")),
+    flowering_days = r10$DFFL.1,
+    flowering_date = as.character(as.Date(r10$DFFL, format = "%d/%m/%Y")),
+    podding_days = r10$DF_P.1,
+    podding_date = as.character(as.Date(r10$DF_P, format = "%d/%m/%Y")),
     disease = "rust",
     severity_score = r10$RUST_R6,
-    rust_growth_stage = "r6",
+    rust_obs_stage = "r6",
     flower_color = NA,                
     
     maturity_date = as.character(as.Date(r10$DATE_PM, format = "%d/%m/%Y")),
@@ -261,18 +261,24 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   
   # datatype fixes
   d$block_id <- as.character(d$block_id)
-  d$flowering_days <- as.numeric(d$flowering_days)   # likely coerced to character during rbind - see note below
-  d$podding_days <- as.numeric(d$podding_days)
   
   # text cleaning
   d$variety <- trimws(d$variety)
   d$variety_pedigree <- trimws(d$variety_pedigree)
   d$flower_color <- ifelse(is.na(d$flower_color) | trimws(d$flower_color) == "", NA_character_, trimws(d$flower_color))
+  d$country[d$country == "ZAMBIA"] <- "Zambia"
   
   d$crop <- "soybean"
   d$yield_moisture <- NA
   d$yield_isfresh <- NA
   d$irrigated <- FALSE
+  
+  d$K_fertilizer <- NA
+  d$N_fertilizer <- NA
+  d$P_fertilizer <- NA
+  d$harvest_date <- as.character(as.Date(NA))
+  d$location <- carobiner::fix_name(d$location, "title")
+  
    
   carobiner::write_files(path, meta, wide=d)
 
