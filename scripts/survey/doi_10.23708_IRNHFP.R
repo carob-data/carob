@@ -76,7 +76,7 @@ MX2301A sensor (ONSET)."
   d1 <- data.frame(
     date        = as.character(as.Date(r1$date)),
     pest_species = r1$species,
-    pheromone_change = r1$pheromoneChange,
+    pheromone_change = as.character(r1$pheromoneChange),
     pest_incidence = r1$numberOfIndividuals
   )
   d1 <- tag_events(d1)
@@ -85,23 +85,23 @@ MX2301A sensor (ONSET)."
   d3 <- data.frame(
     date        = as.character(as.Date(r3$date)),
     pest_species = r3$species,
-    pheromone_change = r3$pheromoneChange,
+    pheromone_change = as.character(r3$pheromoneChange),
     pest_incidence = r3$numberOfIndividuals
   )
   d3 <- tag_events(d3)
   
   # --- d4: Spodoptera frugiperda ---
   d4 <- data.frame(
-    date        = as.character(as.Date(r4$date)),
+    date = as.character(as.Date(r4$date)),
     pest_species = r4$species,
-    pheromone_change = r4$pheromoneChange,
+    pheromone_change = as.character(r4$pheromoneChange),
     pest_incidence = r4$numberOfIndividuals
   )
   d4 <- tag_events(d4)
 
   d_pest <- rbind(d1, d3, d4)
   d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record  
-  d_pest$pheromone_date <- as.Date(NA)
+  d_pest$pheromone_date <- NA
   
   last_change <- d_pest$date[1]
   for (i in 1:nrow(d_pest)) {
