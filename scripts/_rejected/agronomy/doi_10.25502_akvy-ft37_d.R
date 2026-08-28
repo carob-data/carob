@@ -1,13 +1,15 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## Rejected for not providing primary research data. These are summaries from unknown sources.
+
 ## ISSUES
 # "__agwise_wly_modelcalibrationdata_metadata.xlsx" dataset does'nt have usable data so it is ignored
 # "Water_Limited_Yield" (kg/ha per the data dictionary) is sometimes given as a range (e.g. "1400-1700"), in that case the midpoint was used
 # fertilizer, irrigation, rotation, or inoculation information --> not provided
 # planting windows are used to estimate planting and harvest dates, but the actual dates are not reported
 # "Crop_variety" indicates class maturity (Early/Medium/Late), and not a named cultivar
-# no trial-level coordinates are provided; longitude/latitude are estimated from country/adm1 (region) using GADM 4.1
+# no trial-level coordinates are provided; 
 # currently awaiting fertiliser information from author
 
 
