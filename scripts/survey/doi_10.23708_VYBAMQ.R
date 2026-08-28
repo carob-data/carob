@@ -2,9 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## dataset does not have planting and harvest dates
 ##dataset has new variables ie light quality include UV light, infrared and visible spectrum
 #### added pheromone_date = the last date when the pheromone was changed
+
 carob_script <- function(path) {
   
   "
@@ -76,10 +76,9 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   d3 <- data.frame(
     date = r3$date,
     pest_species = r3$species,
-    trapped_pest_count = r3$numberOfIndividuals,
+    pest_incidence = r3$numberOfIndividuals,
     pheromone_change = r3$pheromoneChange
   )
-  
   
   d4 <- data.frame(
     date = r4$date,
@@ -87,26 +86,18 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
     trapped_pest_count = r4$numberOfIndividuals,
     pheromone_change = r4$pheromoneChange
   )
-  
-  
-  long <- carobiner::bindr(d1, d3, d4)
-  long$record_id <- seq_len(nrow(long))
-  
-  
-  long$pheromone_date <- as.Date(NA)
-  
-  last_change <- NA
-  
-  for (i in 1:nrow(long)) {
     
-    if (long$pheromone_change[i] == TRUE) {
+  long <- carobiner::bindr(d1, d3, d4)
+
+  long$pheromone_date <- NA
+  last_change <- NA
+  for (i in 1:nrow(long)) {
+    if (long$pheromone_change[i]) {
       last_change <- long$date[i]
     }
-    
     long$pheromone_date[i] <- last_change
   }
   
-  long$hhid <- as.character(long$record_id)
   
   d <- data.frame(
     country = "Kenya",
@@ -120,8 +111,8 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
     irrigated = FALSE
   )
   
-  d <- d[rep(1, nrow(long)), ]
-  d$record_id <- long$record_id
+  d$record_id <- 1L
+  long$record_id <- 1L
   
   carobiner::write_files(path, meta, d, long=long, wth=wth)
 }
