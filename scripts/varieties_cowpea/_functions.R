@@ -263,6 +263,7 @@ process_cowpea <- function(ff) {
 	d$country[d$country == "Swaziland"] <- "Eswatini"
 	d$country[d$country == "Columbia"] <- "Colombia"
 
+	if (!"yield" %in% names(d)) d$yield <- NA_real_
 	d$yield[d$yield < 0] <- NA
 	d
 }
