@@ -8,34 +8,34 @@ carob_script <- function(path) {
   "
 The dataset includes agronomic and climatic records collected from 2015 to 2025, as well as soil data collected in 2015, 2023, and 2026. Data were collected at the AfricaRice research station in M'Bé, Bouaké, Côte d'Ivoire (7.8528° N, 5.1111° W), from a long-term experiment (LTE) established on upland rice-based cropping systems. The experiment was conducted in large plots, with an elementary plot size of 152 m². The LTE comprises a range of cropping systems differing in: • Soil tillage: conventional tillage (disc ploughing followed by harrowing) or no-till conservation agriculture; • Crop association and rotation: continuous rice cultivation or rice-maize rotations; • Cover crops: annual or perennial legume species; • Cropping season: sowing in March, June, or July; • Upland rice variety: NERICA 4 or WAB 56-50; • Fertilization: no fertilizer application or NPK fertilization; • Seed treatment: with or without fungicide and insecticide treatment. Agronomic data were obtained through field observations and measurements conducted within the LTE plots. 
 "
-  
+
   uri <- "doi:10.7910/DVN/UNHWEI"
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-                                  data_organization = "AfricaRice; CIRAD",
-                                  publication = NA,
-                                  project = "Sustainable and Diversified Rice-based Farming Systems",
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "Ca_fertilizer;seed_treatment;variety;N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;S_fertilizer",
-                                  response_vars = "yield", 
-                                  carob_completion = 100,
-                                  carob_contributor = "Kora Simperegui",
-                                  carob_effort = 12,
-                                  carob_date = "2026-08-26",
-                                  notes = NA, 
-                                  design = NA
+		data_organization = "AfricaRice; CIRAD",
+		publication = NA,
+		project = "Sustainable and Diversified Rice-based Farming Systems",
+		data_type = "on-farm experiment",
+		treatment_vars = "Ca_fertilizer;seed_treatment;variety;N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;S_fertilizer",
+		response_vars = "yield", 
+		carob_completion = 100,
+		carob_contributor = "Kora Simperegui",
+		carob_effort = 12,
+		carob_date = "2026-08-26",
+		notes = NA, 
+		design = NA
   )
   
   f1 <- ff[basename(ff) == "5 Agronomy 2015-2025.xls"]
   f2 <- ff[basename(ff) == "6 Soil  2015.xls"]
   f3 <- ff[basename(ff) == "7 Soil 2023-26.xls"]
   
-  r1 <- carobiner::read.excel(f1, na= c("n/a", "no data"))
+  r1 <- suppressWarnings(carobiner::read.excel(f1, na= c("n/a", "no data")))
   r2 <- carobiner::read.excel(f2, na= c("n/a", "no data"))
   r3 <- carobiner::read.excel(f3, na= c("n/a", "no data"))
-  
+
   d <- data.frame(
     country= "Côte d'Ivoire",
     location = "M'be",
@@ -45,8 +45,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     latitude = 7.8528,
     longitude = -5.1111,
     geo_from_source = TRUE,
-    crop = r1$Main_crop,
-    intercrops = r1$Crop_Association,
+    crop = gsub("\\(|\\)", "", tolower(r1$Main_crop)),
+    intercrops = gsub("\\(|\\)", "", tolower(r1$Crop_Association)),
     intercrop_type = "unknown", # Type of intercropping (e.g. mixed, strip)
     variety= r1$Main_Crop_Variety,
     planting_date = r1$Main_Crop_Sowing, #as.Date(as.numeric(r1$Main_Crop_Sowing), origin = "1899-12-30"),
@@ -54,7 +54,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     flowering_date= r1$Flowering,
     maturity_date = r1$Maturity,
     harvest_date= r1$Harvesting,
-    pod_density = r1$Nbpods_m_2*10000, #Here the number of pods is per meter square. So we timed it per 10,000 to bring it per ha
+	#Here the number of pods is per meter square. So we timed it per 10,000 to bring it per ha
+    pod_density = r1$Nbpods_m_2*10000, 
     weeding_dates = r1$Weeding,
     weeding_done = !is.na(r1$Weeding),
     plant_height = r1$Average_Plant_Height_cm,
@@ -71,25 +72,22 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     S_fertilizer = ifelse(r1$Year==2025 ,12,0),
     Ca_fertilizer = ifelse(r1$Year==2025 ,18,0),
     irrigated = FALSE
-    ) 
+  ) 
+  
   #The name of the crops is not standardized. We need to do it in first place (both crop and intercropped)
-  d$crop <- gsub("\\(|\\)", "", d$crop) # Remove parentheses from crop
-  d$intercrops <- gsub("\\(|\\)", "", d$intercrops)  # Remove parentheses from intercrops
-  d$intercrops <- gsub("\\s*\\+\\s*", " + ", d$intercrops) # Standardize spacing around the "+" sign
+  d$intercrops <- gsub("\\s*\\+\\s*", "_", d$intercrops) # Standardize spacing around the "+" sign
   
   # Keep only the crop occurring after "+" if there is no "+", return a blank
-  d$intercrops <- ifelse(grepl("\\+", d$intercrops), trimws(sub("^[^+]*\\+", "", d$intercrops)), "")
-  d$intercrops <- trimws(d$intercrops) # Remove leading and trailing spaces
+  d$intercrops <- ifelse(grepl("_", d$intercrops), trimws(sub("^[^_]*_", "", d$intercrops)), "")    
+  d$intercrops[d$intercrops == "v. radiata"] <- "mung bean"
+  d$intercrops <- gsub("stylo", "stylosanthes", d$intercrops)
+  d$intercrops[d$intercrops == ""] <- NA
+  d$intercropped <- !is.na(d$intercrops) 
   
-  # Standardize crop names and convert to lowercase
-  d$crop <- carobiner::fix_name(d$crop, case = "lower")
-  d$intercrops <- carobiner::fix_name(d$intercrops, case = "lower")
-  
-  # I have noticed that one associated crop still in the format cassava + stylo (main_crop + associated crop). So I manually change it
-  d$intercrops <- ifelse(d$intercrops == "cassava + stylo" , "stylo", d$intercrops)
-  d$intercropped <- !is.na(d$intercrops) # If the crop is intercropped, the crop_association variable should not be empty
-  
-  d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
+  d$crop[d$crop == "stylo"] <- "stylosanthes"
+
+  #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
+  d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0)  
   d$on_farm <- FALSE
   d$is_survey <- FALSE
   d$yield_isfresh <- TRUE
@@ -98,49 +96,32 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   # Some inconsistencies were found in the dates. Below, I am fixing it
   d$maturity_date <- ifelse(d$maturity_date=="3/11/20017", "3/11/2017", d$maturity_date)
   d$harvest_date <- ifelse(d$harvest_date=="No harvest", NA, d$harvest_date)
-  d$planting_date <- ifelse(d$planting_date=="Not sown (ants and bees)", NA, d$planting_date)
+  d$planting_date <- ifelse(d$planting_date %in% c("Not sown (ants and bees)", "17"), NA, d$planting_date)
   d$flowering_date <- ifelse(d$flowering_date=="16/092018", "16/09/2018", d$flowering_date)
-  
   
   # Some of the dates are converted to numerical values after loading the data while some were not. I fix it here
   convert_mixed_date <- function(x) {
     x <- as.character(x)
-    x <- ifelse(x=="-", NA, x)
-    
+    x[x=="-"] <- NA
     # Identify values already in DD-MM-YYYY format and transform them to YYYY-MM-DD format
     is_date <- grepl("^\\d{1,2}/\\d{2}/\\d{4}$", x)
     x[is_date] <- format(as.Date(x[is_date], format = "%d/%m/%Y"), "%Y-%m-%d")
   
     # For values that are not already dates and are not NA, I convert them using Excel's date origin (1899-12-30)
     x[!is_date & !is.na(x)] <- format(as.Date(as.numeric(x[!is_date & !is.na(x)]), origin = "1899-12-30"), "%Y-%m-%d")
-    
-    # Return the final vector as character
-    return(x)
-    }
+    x
+  }
   
   # Now I apply it to all the variables recording date
   date_vars <- c("emergence_date", "flowering_date", "maturity_date", "weeding_dates", "planting_date", "harvest_date")
   d[date_vars] <- lapply(d[date_vars], convert_mixed_date)
-  
-  # Replace the erroneous planting date (1900-01-16) with NA.
-  # The date is inconsistent with the experiment timeline, as emergence
-  # was recorded on 2018-08-28, which falls within the experiment period.
-  d$planting_date[d$planting_date == "1900-01-16"] <- NA
-  
-  # Note that seed treatment was done and no seed treatment was done and yields as well as plot area size were recorded for both. Here I will merge 
-  # them and create the seed_treatment variable
-  
+    
+  # seed treatment / no seed treatment was done and yields as well as plot area size
+  # were recorded for both. Here I will merge them and create the seed_treatment variable
   d$row_id <- seq_len(nrow(d))
-  
-  d <- reshape(
-    d,
-    varying = list(c("yield_treated", "yield_non_treated"), c("plot_area_treated", "plot_area_non_treated")),
-    v.names = c("yield", "plot_area"),
-    timevar = "seed_treatment",
-    times = c("treated", "untreated"),
-    idvar = "row_id",
-    direction = "long")
-  
+  d <- reshape(d, varying = list(c("yield_treated", "yield_non_treated"), c("plot_area_treated", "plot_area_non_treated")),
+    v.names = c("yield", "plot_area"), timevar = "seed_treatment",  times = c("treated", "untreated"),
+	idvar = "row_id", direction = "long")
   rownames(d) <- NULL
   d$row_id <- NULL
   
@@ -195,7 +176,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   soil <- carobiner::bindr(s_2015, s_2023)
  
   # Add soil information to d
-  d <- merge(d, soil, by = c("plot_id", "date"), all.x = TRUE, sort = FALSE) # Some rows will be duplicated because different layers of soil were sampled and analyzed for that plot
+  #d <- merge(d, soil, by = c("plot_id", "date"), all.x = TRUE, sort = FALSE) # Some rows will be duplicated because different layers of soil were sampled and analyzed for that plot
   
-  carobiner::write_files(path, meta, d)
+  carobiner::write_files(path, meta, d, long=soil)
 }
