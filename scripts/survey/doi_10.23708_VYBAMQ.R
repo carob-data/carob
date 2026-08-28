@@ -42,11 +42,10 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   r3 <- read.csv(f3)
   r4 <- read.csv(f4)
   
-  
   d1 <- data.frame(
     date = r1$date,
     pest_species = r1$species,
-    trapped_pest_count = r1$numberOfIndividuals,
+    pest_incidence = r1$numberOfIndividuals,
     pheromone_change = r1$pheromoneChange ### indicates if the pherome was changes or not
     #treatment = as.character(r1$pheromoneChange)
   )
@@ -82,7 +81,7 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   d4 <- data.frame(
     date = r4$date,
     pest_species = r4$species,
-    trapped_pest_count = r4$numberOfIndividuals,
+    pest_incidence = r4$numberOfIndividuals,
     pheromone_change = r4$pheromoneChange
   )
     
@@ -96,7 +95,7 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
     }
     long$pheromone_date[i] <- last_change
   }
-  
+  long$pheromone_change <- NULL
   
   d <- data.frame(
     country = "Kenya",

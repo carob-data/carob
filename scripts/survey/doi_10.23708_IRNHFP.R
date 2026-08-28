@@ -4,24 +4,12 @@
 ##NOTES
 # Data collection window in the raw files (2021-11-07 to 2024-07-31) starts
 # earlier than the "2022-2024" stated in the dataset title/description.
-# This is continuous pheromone-trap monitoring at one site (Dembwa), not a
-# designed trial - no plots, no treatments, no replicates.
+# This is continuous pheromone-trap monitoring at one site (Dembwa)
 
-## Suggested new terms: trapped_pest_count, pheromone_change
-
-###ISSUES
-# numberOfIndividuals (trap catch count) has no direct terminag field -
-# terminag's pest_number means number of pest SPECIES observed, not a count
-# of individuals - so trap counts are kept in the general variable/value
-# long-format columns instead, with variable="individuals_trapped".
-# pheromoneChange (trap lure maintenance event) and notes (per-row free
-# text) have no terminag field either - kept as interpreted columns.
-# crop = "Maize" is inferred from the dataset description ("maize pests"),
-# not an explicit column in the source data.
 
 carob_script <- function(path) {
   
-  "Corn pest and climate monitoring dataset from Taita Hill, Dembwa, Kenya, 2022-2024
+"Corn pest and climate monitoring dataset from Taita Hill, Dembwa, Kenya, 2022-2024
 
 This dataset corresponds to climate data and maize pests monitoring of
 Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022
