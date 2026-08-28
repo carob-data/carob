@@ -31,24 +31,24 @@ number of individuals, pheromone change dates, and any notes. Climatic
 data include date, temperature, relative humidity and dew point. All
 date and time data are in UTC. Measurements were taken using a Hobo
 MX2301A sensor (ONSET)."
-  
+
   uri <- "doi:10.23708/IRNHFP"
   group <- "survey"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "IRD",
-                                  publication = NA,
-                                  project = NA,
-                                  design = "continuous pheromone-trap monitoring at a single site, 3 maize pest species, plus co-located weather station",
-                                  data_type = "survey",
-                                  treatment_vars = "pheromone_change",
-                                  response_vars = "trapped_pest_count; pest_species",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-08-11",
-                                  carob_completion = 70,
-                                  carob_effort = 2
+		data_organization = "IRD",
+		publication = NA,
+		project = NA,
+		design = "continuous pheromone-trap monitoring at a single site, 3 maize pest species, plus co-located weather station",
+		data_type = "survey",
+		treatment_vars = "pheromone_change",
+		response_vars = "trapped_pest_count; pest_species",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_date = "2026-08-11",
+		carob_completion = 70,
+		carob_effort = 2
   )
   
   f1 <- ff[basename(ff) == "bdd_kenya_dembwa_taitaHills_bf.csv"]        # Busseola fusca trap counts
@@ -74,65 +74,51 @@ MX2301A sensor (ONSET)."
   
   # --- d1: Busseola fusca ---
   d1 <- data.frame(
-    location    = r1$site,
-    latitude    = -3.4467,    # from source description: 3 26'48" S
-    longitude   = 38.3639,    # from source description: 38 21'50" E
-    elevation   = 1090,
-    geo_from_source = TRUE,
-    is_survey   = TRUE,
     date        = as.character(as.Date(r1$date)),
     pest_species = r1$species,
     pheromone_change = r1$pheromoneChange,
-    trapped_pest_count = r1$numberOfIndividuals
+    pest_incidence = r1$numberOfIndividuals
   )
   d1 <- tag_events(d1)
   
   # --- d3: Chilo partellus ---
   d3 <- data.frame(
-    location    = r3$site,
-    latitude    = -3.4467,
-    longitude   = 38.3639,
-    elevation   = 1090,
-    geo_from_source = TRUE,
-    is_survey   = TRUE,
     date        = as.character(as.Date(r3$date)),
     pest_species = r3$species,
     pheromone_change = r3$pheromoneChange,
-    trapped_pest_count = r3$numberOfIndividuals)
+    pest_incidence = r3$numberOfIndividuals
+  )
   d3 <- tag_events(d3)
   
   # --- d4: Spodoptera frugiperda ---
   d4 <- data.frame(
-    location    = r4$site,
-    latitude    = -3.4467,
-    longitude   = 38.3639,
-    elevation   = 1090,
-    geo_from_source = TRUE,
-    is_survey   = TRUE,
     date        = as.character(as.Date(r4$date)),
     pest_species = r4$species,
     pheromone_change = r4$pheromoneChange,
-    trapped_pest_count = r4$numberOfIndividuals)
-  
+    pest_incidence = r4$numberOfIndividuals
+  )
   d4 <- tag_events(d4)
-  
+
   d_pest <- rbind(d1, d3, d4)
-  d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record
+  d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record  
+  d_pest$pheromone_date <- as.Date(NA)
   
-  d_pest$pheromone_change_date <- as.Date(NA)
-  
-  last_change <- NA
-  
+  last_change <- d_pest$date[1]
   for (i in 1:nrow(d_pest)) {
-     if (d_pest$pheromone_change[i] == TRUE) {
+     if (d_pest$pheromone_change[i]) {
       last_change <- d_pest$date[i]
     }
-    d_pest$pheromone_change_date[i] <- last_change
+    d_pest$pheromone_date[i] <- last_change
   }
+  d_pest$record_id = 1L
+  d_pest$pheromone_change <- NULL
+
   
-  # --- d2: climate ---
+  # weather ---
   dt <- as.POSIXct(r2$dateUTC, tz = "UTC")
-  d2 <- data.frame(
+  wth <- data.frame(
+    country = "Kenya",
+	adm1 = "Taita-Taveta",
     location  = "Dembwa",
     latitude  = -3.4467,
     longitude = 38.3639,
@@ -146,25 +132,19 @@ MX2301A sensor (ONSET)."
     stringsAsFactors = FALSE
   )
   
-  d2$country <- "Kenya"
-  d2$adm1 <- "Taita-Taveta"
-
-  d <- d_pest
-  d$country <- "Kenya"
-  d$adm1 <- "Taita-Taveta"
-  d$crop <- "maize"
-  d$on_farm <- TRUE
-  d$trial_id <- NA          # continuous monitoring, not divided into distinct trials
-  d$yield <- NA
-  d$yield_moisture <- NA
-  d$yield_part <- NA
-  d$yield_isfresh <- NA
-  d$irrigated <- NA
-  d$K_fertilizer <- NA
-  d$N_fertilizer <- NA
-  d$P_fertilizer <- NA
-  d$hhid <- as.character(d$record_id)
-
+  d <- data.frame(
+	country = "Kenya",
+	adm1 = "Taita-Taveta",
+    location  = "Dembwa",
+    latitude  = -3.4467,
+    longitude = 38.3639,
+    elevation = 1090,
+    geo_from_source = TRUE,
+	crop = "maize",
+	on_farm = TRUE,
+	is_survey = TRUE,
+	record_id = 1L
+  )
   
-  carobiner::write_files(path, meta, wide=d, wth=d2)
+  carobiner::write_files(path, meta, wide=d, long=d_pest, wth=wth)
 }
