@@ -10,6 +10,9 @@ carob_script <- function(path) {
 Long term Biochar Trials in Kenya
 
 In this project, we report findings from the 15 years of  meta-replicated trials, which are assessing the effect of biochar addition on maize and soybean rotations in smallholder farmers’ fields at three sites in two sub-humid regions of Kenya. Specific objectives were to analyse the effects of biochar input on: i) the yield of maize and soybean without and with inorganic fertiliser, ii) yield reliability, i.e. random variation among seasons, and iii) soil C and N stocks, extractable phosphorus (P) and potassium (K) content, acidity, water-holding capacity and bulk density.
+
+
+Author Thomas Kätterer reported that 'The dataset refers to the long-term trials – not those reported in the paper from 2022 doi:10.1007/s13593-022-00793-5. The application rate was 100 Mg dry weight ha−1, which was divided between two equal doses applied in the growing seasons SR2006 and LR2007'.
 "
 
 	uri <- "doi:10.25502/38kc-eg87/d"
