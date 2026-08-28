@@ -7,7 +7,7 @@
 
 carob_script <- function(path) {
   
-  "
+"
 Corn pest and climate monitoring dataset from Mbita points, Kenya, 2022-2024
 
 This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Mbita Points, Kenya (0°26'12.45'S, 34°12'21.70'E, altitude 1166 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature from a BME680 sensor, temperature from a DS18B20 sensor, relative humidity and atmospheric pressure from a BME680 sensor, and visible, IR and UV light from a SI1145 sensor. All date and time data are in UTC. Date were acquired using a Raspberry Pi 3A+ single-board computer.
@@ -72,7 +72,6 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   )
   
   wth$time[wth$time == ""] <- NA
-  
   d3 <- data.frame(
     date = r3$date,
     pest_species = r3$species,
