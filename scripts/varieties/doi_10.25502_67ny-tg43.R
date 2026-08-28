@@ -5,17 +5,15 @@
 # 4 site files (04, 05, 06, 07), 2017-18 season.
 # Each site has different column structure
 # All confirmed to be on the same site but different materials by Creator of the data
-# Coverage lat/lon provided confirmed by data creator as Lat; -15.3000901, Lon; 28.304867
+# location confirmed by data creator as Lat; -15.3000901, Lon; 28.304867
 # Trial_ID hard coded per CSV title because S04 and S06 metadata title are the same
 # plant_density calculated from harvest/plant_count through plot_area
 
-# suggested terms: severity_score (visual disease severity score, not a character; not stated bounds);
-#                         germplasm_no (enumerated germplasm entry number);
-#                         plant_vigor (Visual score of plant health; no stated bounds);
-#                         flower_color (visual color of flower - only one site);
-#                         pod_clearance (first pod height in cm);
-#                         Shattering_score (visual score of pre-harvest pod shattering / seed loss)
-#                         rust_growth_stage (a character, reproductive stage when SBR was observed)
+# suggested terms: 
+#  plant_vigor (Visual score of plant health; no stated bounds);
+#  flower_color (visual color of flower - only one site);
+#  pod_clearance (first pod height in cm);
+#  Shattering_score (visual score of pre-harvest pod shattering / seed loss)
 
 ## ISSUES
 # S04 "harvest_index" exceeds 100% - most likely mislabeled "Harvest count"?
@@ -81,34 +79,19 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d1 <- data.frame(
     trial_id = "18pvt-04-site-1",       # hard coded per CSV naming
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
     
     plot_id = as.character(r1$PLOT_NO),
     rep = r1$REP_NO,
     block_id = r1$BLOCK_NO,
-    germplasm_no = r1$ENTRY_NO,
+    variety_code = r1$ENTRY_NO,
     variety = r1$DESIGNATION,
     variety_pedigree = r1$CROSS,
-    seed_source = r1$SOURCE,
+##    seed_source = r1$SOURCE, not the seed _source_ (e.g. market). Also same as CROSS
     
     planting_date = as.character(as.Date(r1$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r1$PL_VIGOR,          # suggested term for plant health
     flowering_days = r1$DFFL,
     flowering_date = as.character(as.Date(r1$DFFL.1, format = "%d/%m/%Y")),
-    podding_days = NA,                  # DF_P absent from site04's
-    podding_date = NA,
-    disease = NA,                       # RUST_R3/RUST_R6 absent from site04's
-    severity_score = NA,
-    rust_growth_stage = NA,
-    
-    
-    flower_color = NA,                  # Suggested term: color of the flower
     maturity_date = as.character(as.Date(r1$Date_PM, format = "%d/%m/%Y")),
     maturity_days = r1$DM,
     plant_height = r1$PLHT,
@@ -127,34 +110,19 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d4 <- data.frame(
     trial_id = "18pvt-05-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
     
     plot_id = as.character(r4$PLOT),
     rep = r4$REP,
     block_id = r4$BLOCK,
-    germplasm_no = r4$ENTRY,
+    variety_code = r4$ENTRY,
     variety = r4$VARIETY,
     variety_pedigree = r4$PEDIGREE,
-    seed_source = NA,                   
-    
-    planting_date = NA,
+   
     plant_vigor = r4$PL_VIGOR,
     flowering_days = r4$DFFL,
-    flowering_date = NA,
     podding_days = r4$DF_P,
-    podding_date = NA,
     disease = "rust",
-    severity_score = r4$RUST,
-    rust_growth_stage = NA,
-    flower_color = NA,      
-    
-    maturity_date = NA,
+    disease_severity = r4$RUST,
     maturity_days = r4$DM,
     plant_height = r4$PLHT,
     pod_clearance = r4$POD_CL,           # first pod height, cm
@@ -168,35 +136,24 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   d4$plant_density <- ifelse(!is.na(d4$plot_area) & d4$plot_area > 0, r4$HARVEST_COUNT / d4$plot_area * 10000, NA)
   
   ####--------------------------------------------------------------------------
-  # Site 06 - location NOT stated in this site's own metadata
+  # Site 06 - location NOT stated in data
   ####--------------------------------------------------------------------------
   d7 <- data.frame(
     trial_id = "18pvt-06-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
-    latitude = -15.300901,
-    longitude = 28.304867,
     
     plot_id = as.character(r7$Plot),
     rep = r7$Rep,
     block_id = r7$Block,
-    germplasm_no = r7$Entry,
+    variety_code = r7$Entry,
     variety = r7$Name,
     variety_pedigree = r7$Pedigree,
-    seed_source = NA,                    
-    
+   
     planting_date = as.character(as.Date(r7$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r7$PL_VIGOR,
     flowering_days = r7$DFFL,
     flowering_date = as.character(as.Date(r7$DFFL.1, format = "%d/%m/%Y")),
     podding_days = r7$DF_P,
     podding_date = as.character(as.Date(r7$DF_P.1, format = "%d/%m/%Y")),
-    disease = NA,                        
-    severity_score = NA,
-    rust_growth_stage = NA,
     flower_color = r7$FLW_COLOR,         
     
     maturity_date = as.character(as.Date(r7$DATE_PM, format = "%d/%m/%Y")),
@@ -207,8 +164,7 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     yield = r7$YIELD,
     yield_part = "seed",
     plot_area = ifelse(!is.na(r7$YIELD) & r7$YIELD > 0, r7$GRAIN_YIELDPLOT_KG * 10 / r7$YIELD, NA),
-    seed_weight = r7$SWT100 * 10,
-    shattering_score = NA                
+    seed_weight = r7$SWT100 * 10
   )
   d7$plant_density <- ifelse(!is.na(d7$plot_area) & d7$plot_area > 0, r7$HARVEST_COUNT / d7$plot_area * 10000, NA)
   
@@ -217,32 +173,23 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   ####--------------------------------------------------------------------------
   d10 <- data.frame(
     trial_id = "18pvt-07-site-1",
-    location = "IITA-SARAH", 
-    country = "ZAMBIA",
-    on_farm = FALSE,
-    is_survey = FALSE,
-    geo_from_source = FALSE,
-    latitude = -15.38753,
-    longitude = 28.32282,
     
     plot_id = as.character(r10$PLOT),
     rep = r10$REP,
     block_id = r10$BLOCK,
-    germplasm_no = r10$ENTRY,
+    variety_code = r10$ENTRY,
     variety = r10$NAME,
     variety_pedigree = r10$PEDIGREE,
-    seed_source = NA,                   
     
     planting_date = as.character(as.Date(r10$DATE_PLANTED, format = "%d/%m/%Y")),
     plant_vigor = r10$PL_VIGOR,
-    flowering_days = r10$DFFL,
-    flowering_date = as.character(as.Date(r10$DFFL.1, format = "%d/%m/%Y")),
-    podding_days = r10$DF_P,
-    podding_date = as.character(as.Date(r10$DF_P.1, format = "%d/%m/%Y")),
+    flowering_days = r10$DFFL.1,
+    flowering_date = as.character(as.Date(r10$DFFL, format = "%d/%m/%Y")),
+    podding_days = r10$DF_P.1,
+    podding_date = as.character(as.Date(r10$DF_P, format = "%d/%m/%Y")),
     disease = "rust",
-    severity_score = r10$RUST_R6,
-    rust_growth_stage = "r6",
-    flower_color = NA,                
+    disease_severity = r10$RUST_R6,
+    timing = "R6",
     
     maturity_date = as.character(as.Date(r10$DATE_PM, format = "%d/%m/%Y")),
     maturity_days = r10$DM,
@@ -252,20 +199,28 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
     yield = r10$YIELD,
     yield_part = "seed",
     plot_area = ifelse(!is.na(r10$YIELD) & r10$YIELD > 0, r10$GRAIN_YIELDPLOT_KG * 10 / r10$YIELD, NA),
-    seed_weight = r10$SWT100 * 10,
-    shattering_score = NA             
+    seed_weight = r10$SWT100 * 10
   )
   d10$plant_density <- ifelse(!is.na(d10$plot_area) & d10$plot_area > 0, r10$PLANT_COUNT / d10$plot_area * 10000, NA)
   
-  d <- rbind(d1, d4, d7, d10)
+  d <- carobiner::bindr(d1, d4, d7, d10)
+
+  d$country <- "Zambia"
+  d$location <- "IITA-SARAH"
+  d$latitude <- -15.38753
+  d$longitude <- 28.32282
+  d$on_farm <- FALSE
+  d$is_survey <- FALSE
+  d$geo_from_source <- FALSE
   
   # datatype fixes
   d$block_id <- as.character(d$block_id)
-  d$flowering_days <- as.numeric(d$flowering_days)   # likely coerced to character during rbind - see note below
-  d$podding_days <- as.numeric(d$podding_days)
   
   # text cleaning
   d$variety <- trimws(d$variety)
+  d$variety_code <- as.character(d$variety_code)
+  d$disease_severity <- as.character(d$disease_severity	)
+  
   d$variety_pedigree <- trimws(d$variety_pedigree)
   d$flower_color <- ifelse(is.na(d$flower_color) | trimws(d$flower_color) == "", NA_character_, trimws(d$flower_color))
   
@@ -273,7 +228,6 @@ is a key player in tropical soybean research and a partner of the Soybean Innova
   d$yield_moisture <- NA
   d$yield_isfresh <- NA
   d$irrigated <- FALSE
-   
-  carobiner::write_files(path, meta, wide=d)
 
+  carobiner::write_files(path, meta, wide=d)
 }
