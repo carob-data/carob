@@ -15,15 +15,11 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 
 319 genotypes from twenty-six biparental populations from crosses of wild potato species S. megistacrolobum, S. microdontum, S. tarijense and self-compatible (SC) 2x hybrid derived from crossing 2x landraces with SC sources of S. chacoense were exposed to late blight under natural infection. Statistical Augmented row-column design without replication of 3 hill plots was properly established, five varieties with known late blight response were included as controls. After 30 days after planting (DAP), the percentage of leaf area affected by late blight infection was recorded by plot throughout the season to subsequently compute the area under the disease progress curve (AUDPC).
 "
-
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
+	
 	uri <- "doi:10.21223/xqkkcx"
-	group <- "varieties"
+	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
-
-
+	
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
 		publication = NA,
@@ -44,16 +40,12 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	f3 <- ff[basename(ff) == "03_Crop Managment_CWR_2023_LateBlight_dv_Kenya.xlsx"]
 	f4 <- ff[basename(ff) == "04_Data_dictionary_CWR_2023_LateBlight_dv_Kenya.xlsx"]
 
-	r1 <- carobiner::read.excel(f1)
+	r1 <- carobiner::read.excel(f1, na="nd")
 	r2 <- carobiner::read.excel(f2)
 	r3 <- carobiner::read.excel(f3)
 	r4 <- carobiner::read.excel(f4)
 	
 	r1 <- r1[!is.na(r1$Plot), ]
-	cols <- c("NPH", "Flowering time_DAP", "MTWP")
-	
-	for (x in cols) r1[[x]] <- as.numeric(sub("nd", NA, r1[[x]]))
-	
 
 	d1 <- data.frame(
 	  plot_id = as.character(r1$Plot),
@@ -68,44 +60,37 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	  treatment = r1$CloneID,
 	  variety = r1$CloneID,
 	  variety_type = "crosses of wild potato species",
-	  crop = "potato",
+	  crop = "potato"
+	)
+
+	long <- data.frame(
 	  LB1 = r1$LB1,
 	  LB2 = r1$LB2,
 	  LB3 = r1$LB3,
 	  LB4 = r1$LB4,
 	  LB5 = r1$LB5,
 	  LB6 = r1$LB6,
-	  LB7 = r1$LB7,
-	  record_id = seq_len(nrow(r1))
-	)
-	
-	
-	cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7")
-	
-	long <- d1[, c("record_id", cols)]
-	
-	long <- reshape(long, varying = cols, v.names = "disease_severity", timevar = "disease", direction = "long")
-	
+	  LB7 = r1$LB7
+   )
+
+	d1$record_id <- long$record_id <- seq_len(nrow(d1))
+	cols <- grep("LB", names(long), value=TRUE)
+	long2 <- reshape(long, varying = cols, v.names = "disease_severity", timevar = "date", direction = "long")
 	long$disease <- "potato late blight"
 	long$pathogen <- "Phytophthora infestans"
 	long$disease_severity <- as.character(long$disease_severity)
 	long <- long[!is.na(long$disease_severity), ]
 	long$id <- NULL
-
-	
-	d1 <- d1[, !(names(d1) %in% cols)]
-	
 	
 	d2 <- data.frame(
 	  plot_id = as.character(r2$Ord),
-	  #variety = r2$CIPN,
+	  variety = r2$CIPN,
 	  variety_pedigree = paste("Female:", r2$`Male Pedigri_Female`, "Male:", r2$`Male Pedigri_Male`, sep = "; "),
 	  #accession_name = paste("Female:", r2$Female_AcceNumb, "Male:", r2$Male_AcceNumb, sep = "; "),
-	  accession_id = paste("Female:", r2$Female_codename, "Male:", r2$Male_codename, sep = "; "),
-	  seed_source = r2$`Family cip`
+	  variety_code = paste("Female:", r2$Female_codename, "Male:", r2$Male_codename, sep = "; ")
+	  #seed_source = r2$`Family cip`
 	)
-	
-	
+
 	d3 <- data.frame(
 	  plot_id = r3$Ord, ### where the plant sample plan
 	  date = r3$Date,
@@ -115,40 +100,32 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	)
  
  d3$method[d3$method == "Siembra"] <- "planting"
- 
  d3$method[d3$method %in% paste0("LB", 1:7)] <- "potato late blight"#late blight assessment
- 
  d3$method[d3$method %in% c("NPE","PltHrv","PlVig", "PlUni")] <- "p_asp" #plant assessment
- 
  d3$method[d3$method %in% c("TubUni", "TubApp", "TubSiz",
                                                   "NMTb I", "NMTb II", "NNMTb")] <- "t_asp"## tuber assessment/tuber aspect scores
  
  
  d <- merge(d1, d2, by = "plot_id", all.x = TRUE)
  
- d <- carobiner::bindr(d, d3)
- d$record_id <- seq_len(nrow(d))
+## not OK. d3 should be used to add variables to "d" (e.g. planting date) and to "long" (when where the late blight observations made?)
+## d <- carobiner::bindr(d, d3)
+## d$record_id <- seq_len(nrow(d))
  
   d$on_farm <- TRUE
 	d$is_survey <-FALSE 
 	d$irrigated <- NA
 	
 
-## The dataset does not  have exact location where the experiment was done. But i have assumed that the experiment was conducted at International potato Centre (CIP) in Nairobi Kenya. But this need to be confirmed. It only sates the country which is Kenya
-	d$longitude <- 36.72120
-	d$latitude <- -1.26933
-	d$geo_source <- "Google maps"
+## The dataset does not  have exact location where the experiment was done. But i have assumed that the experiment was conducted at International potato Centre (CIP) in Nairobi Kenya.	But this need to be confirmed. It only sates the country which is Kenya
+## that is a wild guess. Not allowed	
+#	d$longitude <- 36.72120
+#	d$latitude <- -1.26933
+#	d$geo_source <- "Google maps"
 	d$geo_from_source <- FALSE
 
-
-	d$planting_date <- NA ### not indicated in the dataset
-	d$harvest_date  <- NA ### not indicated in the dataset
-
-
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
-
   d$country = "Kenya"
-  d$on_farm <- TRUE
+#  d$on_farm <- TRUE ???? how do you know?
   d$is_survey <- FALSE 
   d$irrigated <- NA
   d$yield_part <- "tubers"
