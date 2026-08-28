@@ -7,7 +7,7 @@
 
 carob_script <- function(path) {
   
-  "
+"
 Corn pest and climate monitoring dataset from Mbita points, Kenya, 2022-2024
 
 This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Mbita Points, Kenya (0°26'12.45'S, 34°12'21.70'E, altitude 1166 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature from a BME680 sensor, temperature from a DS18B20 sensor, relative humidity and atmospheric pressure from a BME680 sensor, and visible, IR and UV light from a SI1145 sensor. All date and time data are in UTC. Date were acquired using a Raspberry Pi 3A+ single-board computer.
@@ -42,11 +42,10 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   r3 <- read.csv(f3)
   r4 <- read.csv(f4)
   
-  
   d1 <- data.frame(
     date = r1$date,
     pest_species = r1$species,
-    trapped_pest_count = r1$numberOfIndividuals,
+    pest_incidence = r1$numberOfIndividuals,
     pheromone_change = r1$pheromoneChange ### indicates if the pherome was changes or not
     #treatment = as.character(r1$pheromoneChange)
   )
@@ -72,7 +71,6 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   )
   
   wth$time[wth$time == ""] <- NA
-  
   d3 <- data.frame(
     date = r3$date,
     pest_species = r3$species,
@@ -83,7 +81,7 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
   d4 <- data.frame(
     date = r4$date,
     pest_species = r4$species,
-    trapped_pest_count = r4$numberOfIndividuals,
+    pest_incidence = r4$numberOfIndividuals,
     pheromone_change = r4$pheromoneChange
   )
     
@@ -97,7 +95,7 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
     }
     long$pheromone_date[i] <- last_change
   }
-  
+  long$pheromone_change <- NULL
   
   d <- data.frame(
     country = "Kenya",
