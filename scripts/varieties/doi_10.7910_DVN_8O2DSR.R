@@ -22,7 +22,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield;pest_severity;disease_severity;drought_stress;bird_damage;plant_height;maturity_days",
-		carob_contributor = "Kwenda Illiana",
+		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-08",
 		carob_completion = 90,	
 		carob_effort = 5
