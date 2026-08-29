@@ -31,7 +31,6 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	)
 	
 	f <- ff[basename(ff) == "4095_02-Data-master.xlsx"]
-
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
@@ -42,19 +41,25 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	  treatment = r$Treatment,
 	  variety = r$Variety,
 	  location = r$Site,
+      trial_id = paste(r$Site, gsub("Season ", "S", r$Season), sep = "_"),
 	  yield = r$`Yield_t/ha`*1000,
 	  yield_part ="tubers",
 	  yield_moisture = NA,
 	  yield_isfresh = NA,
-	  disease_sample_size = 10,
-	  bacterial_wilt = r$`BW_L_%`,  # disease severity columns
+	  record_id = seq_len(nrow(r))
+	)
+
+    disease <- data.frame(
+	  record_id = seq_len(nrow(r)),
+	 # disease severity columns
+  	  bacterial_wilt = r$`BW_L_%`, 
 	  potato_virus_Y = r$`PVY_%`,
 	  potato_virus_X = r$`PVX_%`,
 	  potato_leafroll_virus = r$`PLRV_%`,
 	  potato_virus_A = r$`PVA_%`,
 	  potato_virus_M = r$`PVM_%`,
 	  potato_virus_S = r$`PVS_%`
-	)
+    )
 	
 	# computing plant density
 	rows <- 14
@@ -67,27 +72,22 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
-	d$geo_from_source <- FALSE
-	d$harvest_date  <- NA
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA) 
   
   #adding planting date
-  planting <- data.frame(
-    location = c("Tharuni", "Ngecha", "Lari", "Kuresoi", "Keringet-Sabtet", 
-                "Keringet - Pompo", "Passengga", "Rurii"),
-    planting_date = as.Date(c("31-03-2015","02-04-2015","10-10-2015","18-04-2015",
-                      "17-04-2015","16-04-2015","21-04-2015","20-04-2015"),format="%d-%m-%Y"),
-    stringsAsFactors =FALSE)
-    
-  d <- merge(d,planting,by="location", all.x = T)
-  d$planting_date <- as.character(d$planting_date)
+### where did you get these? Always comment where data come from that otherwise "comes from nowhere"	
+### this is wrong, as there are multiple seasons in each site.	
+   planting <- data.frame(
+        location = c("Tharuni", "Ngecha", "Lari", "Kuresoi", "Keringet-Sabtet", "Keringet - Pompo", "Passengga", "Rurii"),
+        planting_date = c("2015-03-31", "2015-04-02", "2015-10-10", "2015-04-18", "2015-04-17", "2015-04-16", "2015-04-21", "2015-04-20")
+    )  
+    d <- merge(d, planting, by="location", all.x=TRUE)
   
   #adding treatment variable
   abbrev_lookup <- c(
-    "CF"   = "Certified seed",
-    "PS"   = "Positive selection",
-    "RSFS" = "Randomly selected farmer seed",
-    "SSPT" = "Seed Plot Technology"
+    "CF"   = "certified seed",
+    "PS"   = "positive selection",
+    "RSFS" = "randomly selected farmer seed",
+    "SSPT" = "seed plot technology"
   )
   
   d$seed_source <- d$treatment
@@ -95,47 +95,33 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
     d$seed_source <- gsub(abbr, abbrev_lookup[abbr], d$seed_source, fixed = TRUE)}
   
   treatment_lookup <- c(
-    "100% CF" = "100% Certified seed",
-    "100% PS" = "100% PS selected from farmers field in previous season",
-    "5% SSPT + PS" = "5% Certified seed of total seed requirement purchased in previous season and bulked in SSPT - balance filled with PS selected from farmers field of previous season",
-    "20% CF + RSFS" = "20% Certified seed + 80% randomly selected seed from farmers field (RSFS)",
-    "20% CF + PS" = "20% Certified seed + 80% PS seeds selected from previous season",
+    "100% CF" = "Certified seed",
+    "100% PS" = "Positive selection from farm",
+    "5% SSPT + PS" = "5% certified seed of total seed requirement purchased in previous season and bulked in SSPT - balance filled with PS selected from farmers field of previous season",
+    "20% CF + RSFS" = "20% certified seed + 80% randomly selected seed from farmers field",
+    "20% CF + PS" = "20% certified seed + 80% PS seeds selected from previous season",
     "100% RSFS" = "100% randomly selected seed from farmers field (RSFS)",
-    "5% SSPT + RSFS" = "5% Certified seed of total seed requirement purchased in previous season and bulked in SSPT - balance filled with RSFS")
+    "5% SSPT + RSFS" = "5% certified seed of total seed requirement purchased in previous season and bulked in SSPT - balance filled with RSFS")
   
   d$treatment <- treatment_lookup[d$treatment]
   
-  loc <- data.frame(
+  geo <- data.frame(
     location=c("Keringet-Sabtet", "Keringet - Pompo", "Kuresoi", "Lari", "Ngecha","Passengga", "Rurii", "Tharuni"), 
-    longitude=c(35.691,35.691,35.533,36.647,36.671,36.329,36.389,36.625),
-    latitude=c(-0.420,-0.420,-0.303,-0.983,-1.168,-0.219,-0.208,-1.133))
-  
-  d <- merge(d,loc,by="location", all.x = TRUE)
-  
-  d$trial_id <- paste(d$location,d$planting_date,sep = "_")
-  
+    longitude=c(35.691, 35.691, 35.533, 36.647, 36.671, 36.329, 36.389, 36.625),
+    latitude=c(-0.420, -0.420, -0.303, -0.983, -1.168, -0.219, -0.208, -1.133),
+	geo_from_source = FALSE
+  )
+  d <- merge(d, geo, by="location", all.x = TRUE)  
+
   # reshaping disease columns from wide to long
-  d$row_id <- seq_len(nrow(d))
-  disease_cols <- c("bacterial_wilt", "potato_virus_Y", "potato_virus_X",
-                    "potato_leafroll_virus", "potato_virus_A",
-                    "potato_virus_M", "potato_virus_S")
-  
-  disease <- reshape(d[, c("row_id", disease_cols)],
-                 varying = disease_cols,
-                 v.names = "disease_severity",
-                 timevar = "disease",
-                 times = disease_cols,
-                 idvar = "row_id",
-                 direction = "long")
+  disease_cols <- names(disease)[-1]
+  disease <- reshape(disease, varying = disease_cols, v.names = "disease_severity",
+                 timevar = "disease",  times = disease_cols, idvar = "record_id", direction = "long")
   rownames(disease) <- NULL
-  
-  d[, disease_cols] <- NULL
-  d <- merge(d, disease, by = "row_id")
-  d$row_id <- NULL
-  d$disease_severity <- d$disease_severity/10
-  d$disease_severity <- as.character(d$disease_severity)
-  d$severity_scale <- "1-10"
-  
-  carobiner::write_files(path, meta, d)
+  disease$disease <- gsub("_", " ", disease$disease) 
+  disease$disease_severity <- as.character(disease$disease_severity/10)
+  disease$severity_scale <- "1-10"
+
+  carobiner::write_files(path, meta, d, long=disease)
 }
 
