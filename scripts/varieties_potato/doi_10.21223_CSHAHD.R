@@ -51,26 +51,16 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
   r2  <- carobiner::read.excel(f2)
   r3  <- carobiner::read.excel(f3)
   
-  ## extract site information
+  ## site-level extraction, assigned directly
   minimal <- setNames(r1a$Value, r1a$Factor)
-  site_country   <- minimal[["Country"]]
-  site_adm1      <- carobiner::fix_name(minimal[["Admin1"]], "title")
-  site_adm2      <- carobiner::fix_name(minimal[["Admin2"]], "title")
-  site_adm3      <- carobiner::fix_name(minimal[["Admin3"]], "title")
-  site_location  <- gsub("\\s+", " ", trimws(minimal[["Locality"]]))
-  site_elevation <- as.numeric(gsub("[^0-9.]", "", minimal[["Elevation"]]))
-  site_planting  <- as.character(as.Date(as.numeric(minimal[["Planting date"]]), origin="1899-12-30"))
-  site_harvest   <- as.character(as.Date(as.numeric(minimal[["Harvest date"]]), origin="1899-12-30"))
-  site_latitude  <- -(1 + 14.691/60)
-  site_longitude <- 36 + 44.856/60
   
-  ## virus severity codes
+  ## virus severity codes - see NOTES on the L/M/H expansion
   severity_map <- c(L = "low", M = "medium", H = "high")
   
   ## Trial 1: drop trailing blank export rows
   r1c <- r1c[!is.na(r1c$BLOCK), ]
   
-  d1c <- data.frame(
+  d <- data.frame(
     trial_id = "1",
     block_id = as.character(r1c$BLOCK),
     rep = as.integer(r1c$REP),
@@ -79,32 +69,16 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
     virus_severity = severity_map[r1c$VIRUS_SCORING]
   )
   
-  ## Trial 2: same trait set, no BLOCK
-  r1d <- r1d[!is.na(r1d$PLOT), ]
-  
-  d1d <- data.frame(
-    trial_id = "2",
-    block_id = NA_character_,
-    rep = as.integer(r1d$REP),
-    plot_id = as.character(r1d$PLOT),
-    variety = r1d$`Clone ID`,
-    virus_severity = NA_character_
-  )
-  
-  d <- rbind(d1c, d1d)
-  
-  ## check-cultivar alias + floating-point-safe parent accession lookup
+  ## genealogy
   check_alias <- c(Asante = "CIP381381.20", Tigoni = "CIP381381.13")
   genealogy_key <- function(x) ifelse(x %in% names(check_alias), check_alias[x], x)
   fmt_parent <- function(x) ifelse(is.na(x), NA_character_, trimws(format(x, trim=TRUE, scientific=FALSE)))
-  
   pedigree_of <- function(x) {
     gi <- match(genealogy_key(x), r1b[["Accession_Number"]])
     female <- fmt_parent(r1b[["Female_AcceNumb"]][gi])
     male <- fmt_parent(r1b[["Male_AcceNumb"]][gi])
     ifelse(is.na(female) | is.na(male), NA_character_, paste(female, "x", male))
   }
-  
   population_of <- function(x) {
     gi <- match(genealogy_key(x), r1b[["Accession_Number"]])
     p <- trimws(r1b[["Population"]][gi])
@@ -114,32 +88,33 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
   d$variety_pedigree <- pedigree_of(d$variety)
   population <- population_of(d$variety)
   d$variety_type <- ifelse(is.na(population), NA_character_,
-                    ifelse(population == "LTVR", "breeding clone", "released check cultivar"))
+                           ifelse(population == "LTVR", "breeding clone", "released check cultivar"))
   
-  ## site-level fields, constant across all rows
+  ## site-level fields, assigned directly - no intermediate variables
   d$crop <- "potato"
-  d$country <- site_country
-  d$adm1 <- site_adm1
-  d$adm2 <- site_adm2
-  d$adm3 <- site_adm3
-  d$location <- site_location
-  d$elevation <- site_elevation
-  d$latitude <- site_latitude
-  d$longitude <- site_longitude
+  d$country <- minimal[["Country"]]
+  d$adm1 <- carobiner::fix_name(minimal[["Admin1"]], "title")
+  d$adm2 <- carobiner::fix_name(minimal[["Admin2"]], "title")
+  d$adm3 <- carobiner::fix_name(minimal[["Admin3"]], "title")
+  d$location <- gsub("\\s+", " ", trimws(minimal[["Locality"]]))
+  d$elevation <- as.numeric(gsub("[^0-9.]", "", minimal[["Elevation"]]))
+  d$latitude <- -(1 + 14.691/60)
+  d$longitude <- 36 + 44.856/60
   d$geo_from_source <- TRUE
   d$on_farm <- FALSE
   d$is_survey <- FALSE
   d$irrigated <- NA
+  d$planting_date <- as.character(as.Date(as.numeric(minimal[["Planting date"]]), origin="1899-12-30"))
+  d$harvest_date <- as.character(as.Date(as.numeric(minimal[["Harvest date"]]), origin="1899-12-30"))
+  
   d$yield <- NA
   d$yield_moisture <- NA
+  d$yield_isfresh <- NA
   d$yield_part <- "tubers"
   d$K_fertilizer <- NA
   d$N_fertilizer <- NA
   d$P_fertilizer <- NA
-  d$yield_isfresh <- FALSE
-  
-  d$planting_date <- site_planting
-  d$harvest_date <- site_harvest
   
   carobiner::write_files(path, meta, d)
+
 }
