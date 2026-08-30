@@ -62,7 +62,7 @@ Performances of selected CIP clones over two years  at several sites with differ
       variety_pedigree = paste(ifelse(is.na(pf), "?", pf), ifelse(is.na(pm), "?", pm), sep = " x ")
 	)
 
-	long <- merge(long, d2, by = "variety_code", all.x = TRUE)
+	long <- merge(long, vars, by = "variety_code", all.x = TRUE)
 
 	# geo_from_source = FALSE hence geocodes where accessed from the following sources:
 	#  MA  (Machakos)                         - https://www.geodatos.net/en/coordinates/kenya/machakos
