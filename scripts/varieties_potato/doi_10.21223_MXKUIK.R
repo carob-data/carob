@@ -1,4 +1,3 @@
-
 carob_script <- function(path) {
   
   "
@@ -15,10 +14,7 @@ carob_script <- function(path) {
   
   ff <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(
-    uri, path, group,
-    major = 1,
-    minor = 1,
+  meta <- carobiner::get_metadata(uri, path, group, major = 1,  minor = 1,
     data_organization = "CIP",
     publication = NA,
     project = NA,
@@ -31,7 +27,6 @@ carob_script <- function(path) {
     carob_date = "2026-08-27",
     carob_completion = 90,
     carob_effort = 1.5
-                                  
   )
   
   # Source file
@@ -62,7 +57,6 @@ carob_script <- function(path) {
     crop_rotation = NA,
     on_farm = TRUE,
     is_survey = FALSE,
-    irrigated = NA,
     yield_part = "tubers",
     yield = as.numeric(r1$TTYA) * 1000,           # Total yield (adjusted, t/ha → kg/ha)
     marketable_yield = as.numeric(r1$MTYA) * 1000, # Marketable yield (adjusted, t/ha → kg/ha)
@@ -109,6 +103,5 @@ carob_script <- function(path) {
   # Remove rows where all key variables are NA
   d <- d[!is.na(d$yield) | !is.na(d$variety), ]
   
-  # Write CAROB files
   carobiner::write_files(path, meta, d)
 }
