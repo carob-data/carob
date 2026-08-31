@@ -2,8 +2,11 @@
 # license: GPL (>=3)
 
 
-## REJECTED. This appears to be a compilation of data from LCAS and other published surveys. 
+## REJECTED. 
+## This appears to be a compilation of data from LCAS and other published surveys. 
 ## We prefer the original data 
+## this one may be useful in that context (it may have some data that the published original does not have)
+
 
 
 ## ISSUES
