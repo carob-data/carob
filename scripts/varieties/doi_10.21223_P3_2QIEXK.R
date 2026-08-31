@@ -53,6 +53,8 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 		disease_severity = as.character(r1$alt1),
 		yield = r1$RYTHA*1000,
 		fwy_leaves = r1$FYTHA*1000,
+		pest_severity = as.character(r1$wed),
+		pest_species = "weevil",
 		harvest_index = r1$HI,
 		fwy_total = r1$BIOM*1000,
 		crop = "sweetpotato",
