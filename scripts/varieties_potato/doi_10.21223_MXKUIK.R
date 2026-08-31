@@ -1,13 +1,12 @@
 carob_script <- function(path) {
   
-  "
-  Dataset for: New Resistant Potato Varieties to Late Blight and High Quality for French Fries generated in Peru
+"
+Dataset for: New Resistant Potato Varieties to Late Blight and High Quality for French Fries generated in Peru
 
-  Ten potato clones from the B3C1 and B3C2 populations and two Peruvian varieties
-  (UNICA and Canchan) were evaluated in 13 experiments in farmers' fields in Peru
-  during 2019-2020 and 2020-2021, using a randomized complete block design with
-  three replications.
-  "
+Ten potato clones from the B3C1 and B3C2 populations and two Peruvian varieties
+(UNICA and Canchan) were evaluated in 13 experiments in farmers' fields in Peru
+during 2019-2020 and 2020-2021, using a randomized complete block design with three replications.
+"
   
   uri <- "doi:10.21223/MXKUIK"
   group <- "varieties_potato"
@@ -70,7 +69,7 @@ carob_script <- function(path) {
     # NEW: reducing sugars (%)
     tuber_reducing_sugars = r1$`Reducing_sugars_%`,
     # NEW: French fry color
-    fries_color = rowMeans(r1[, c(`French_Fry_ color_At_Harvest`, `French_Fry_ color_ 90_days_after_harvest`)], na.rm=TRUE),
+    fries_color = rowMeans(r1[, c("French_Fry_ color_At_Harvest", "French_Fry_ color_ 90_days_after_harvest")], na.rm=TRUE),
     # NEW: French fry color after blanching (USDA scale 1-5)
     fries_blanching = r1$`French_Fry_ color_Blanching`,
     # NEW: average baked flavor score (1-5, 5=Excellent, 3=Good, 1=Bad)
