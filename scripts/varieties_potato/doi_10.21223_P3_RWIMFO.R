@@ -55,9 +55,9 @@ carob_script <- function(path) {
     is_survey = FALSE,
     irrigated = as.logical(r$irrigated),
     yield_part = "tubers",
-    yield = r$yield_fresh * 1000,      # Total fresh yield (t/ha → kg/ha)
-    yield_marketable = r$mtyna * 1000, # Marketable yield (t/ha → kg/ha)
-    yield_moisture = NA_real_,
+    yield = r$yield_fresh * 1000,  
+    yield_marketable = r$mtyna * 1000,
+    yield_moisture = NA,
     yield_isfresh = TRUE,
     latitude = r$latitude,
     longitude = r$longitude,
