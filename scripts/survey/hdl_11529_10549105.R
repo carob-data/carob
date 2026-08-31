@@ -137,5 +137,10 @@ This database integrates farmer field surveys with secondary environmental data 
 	
 	d <- unique(d) #since some differentiating columns have been removed through standardizing, obs. changed from 91286 to 79809
 	
+	#fixing future dates
+	i <- substr(d$transplanting_date, 1, 4) == "2029"
+	i[is.na(i)] <- FALSE
+	d$transplanting_date[i] <- sub("^2029", "2020", d$transplanting_date[i])
+	
 	carobiner::write_files(path, meta, d)
-}
+ }
