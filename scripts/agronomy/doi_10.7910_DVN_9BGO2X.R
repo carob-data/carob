@@ -13,17 +13,17 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=4,
-                                  data_organization = "CIAT",
-                                  publication = "doi:10.1016/j.agee.2017.11.004",
-                                  project = NA,
-                                  design = "split-split-split plot design",
-                                  data_type = "on-farm experiment",
-                                  treatment_vars = "N_fertilizer;P_fertilizer;crop_rotation;land_prep_method",
-                                  response_vars = "soil_SOC;soil_N_total", 
-                                  carob_contributor = "Premrose Masunungure",
-                                  carob_date = "2026-08-04",
-                                  carob_completion = 85,	
-                                  carob_effort = 15
+		data_organization = "CIAT",
+		publication = "doi:10.1016/j.agee.2017.11.004",
+		project = NA,
+		design = "split-split-split plot design",
+		data_type = "on-farm experiment",
+		treatment_vars = "N_fertilizer;P_fertilizer;crop_rotation;land_prep_method",
+		response_vars = "soil_SOC;soil_N_total", 
+		carob_contributor = "Premrose Masunungure",
+		carob_date = "2026-08-04",
+		carob_completion = 85,	
+		carob_effort = 15
   )
   
   #f1 <- ff[basename(ff) == "01.Dictionary.xls"]
@@ -115,8 +115,8 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
     residue_prevcrop_used = grepl("R\\+", r2$Stover),
     crop_rotation = ifelse(r2$Rotation == "M-M", "maize; maize",
                                ifelse(r2$Rotation == "S-M", "soybean; maize",
-                                      ifelse(r2$Rotation == "M-S", "maize; soybean",
-                                             ifelse(r2$Rotation == "Inter", "maize;soybean", r2$Rotation)))),
+		    ifelse(r2$Rotation == "M-S", "maize; soybean",
+		           ifelse(r2$Rotation == "Inter", "maize;soybean", r2$Rotation)))),
     land_prep_method = ifelse(r2$Tillage == "CT", "conventional",
                               ifelse(r2$Tillage == "0T", "none", r2$Tillage))
   ) 
@@ -133,8 +133,8 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
     rep = as.integer(r3$Rep),
     crop_rotation = ifelse(r3$Rotation == "M-M", "maize; maize",
                                ifelse(r3$Rotation == "T-M", "tephrosia; maize",
-                                      ifelse(r3$Rotation == "M-T", "maize; tephrosia",
-                                             ifelse(r3$Rotation == "Intercr", "maize;tephrosia", r3$Rotation)))),
+		    ifelse(r3$Rotation == "M-T", "maize; tephrosia",
+		           ifelse(r3$Rotation == "Intercr", "maize;tephrosia", r3$Rotation)))),
     N_fertilizer = r3$N,
     P_fertilizer = r3$P,
     K_fertilizer = 60,   #60kg/ha information from the publication

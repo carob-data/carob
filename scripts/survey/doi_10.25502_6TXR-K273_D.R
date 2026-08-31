@@ -303,6 +303,14 @@ carob_script <- function(path) {
 	  elevation = r19$homestead_coord_altitude
 	)
 	
+	d19$elevation <- {
+	  x <- trimws(as.character(d19$elevation))
+	  is_ft <- grepl("ft$", x, ignore.case = TRUE)
+	  num <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", x)))   # strips "m", " m", "ft"
+	  num[is_ft] <- num[is_ft] * 0.3048                              # ft -> m
+	  num
+	}
+	
 	#latitude
 	convert_lat <- function(x) {
 	  x <- trimws(x)

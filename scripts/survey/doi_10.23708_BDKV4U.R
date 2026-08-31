@@ -2,11 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## pheromone_change removed 
-
-## are the differences between the three species real, or a trap/lure
-## artifact? Needs literature verification - unresolved.
-
 ## time datatype still fails validation 
 
 carob_script <- function(path) {
@@ -14,7 +9,11 @@ carob_script <- function(path) {
 "
 Corn pest and climate monitoring dataset from Taita Hill, Maktau, Kenya, 2022-2024
 
-This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Taita Hills, Maktau, Kenya (3°25'33'S, 38°8'23'E, altitude 1090 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature, relative humidity and dew point. All date and time data are in UTC. Measurements were taken using a Hobo MX2301A sensor (ONSET(r)).
+This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, 
+and Spodoptera frugiperda between 2022 and 2024 at Taita Hills, Maktau, Kenya (3°25'33'S, 38°8'23'E, altitude 1090 masl). 
+Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. 
+Climatic data include date, temperature, relative humidity and dew point. 
+All date and time data are in UTC. Measurements were taken using a Hobo MX2301A sensor (ONSET(r)).
 "
 
 	uri <- "doi:10.23708/BDKV4U"
@@ -64,83 +63,79 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
 	
 	# --- d1: Busseola fusca ---
 	d1 <- data.frame(
-	  location    = r1$site,
-	  latitude    = -3.4258,
-	  longitude   = 38.1397,
-	  elevation   = 1090,
-	  geo_from_source = TRUE,
-	  is_survey   = TRUE,
 	  date        = r1$date,
 	  pest_species = r1$species,
-	  trapped_pest_count = r1$numberOfIndividuals
+	  pheromone_change = as.character(r1$pheromoneChange),
+	  pest_incidence = r1$numberOfIndividuals
 	)
 	d1 <- tag_events(d1)
 	
 	# --- d3: Chilo partellus ---
 	d3 <- data.frame(
-	  location    = r3$site,
-	  latitude    = -3.4258,
-	  longitude   = 38.1397,
-	  elevation   = 1090,
-	  geo_from_source = TRUE,
-	  is_survey   = TRUE,
 	  date        = r3$date,
 	  pest_species = r3$species,
-	  trapped_pest_count = r3$numberOfIndividuals
+	  pheromone_change = as.character(r3$pheromoneChange),
+	  pest_incidence = r3$numberOfIndividuals
 	)
 	d3 <- tag_events(d3)
 	
 	# --- d4: Spodoptera frugiperda ---
 	d4 <- data.frame(
-	  location    = r4$site,
-	  latitude    = -3.4258,
-	  longitude   = 38.1397,
-	  elevation   = 1090,
-	  geo_from_source = TRUE,
-	  is_survey   = TRUE,
 	  date        = r4$date,
 	  pest_species = r4$species,
-	  trapped_pest_count = r4$numberOfIndividuals
+	  pheromone_change = as.character(r4$pheromoneChange),
+	  pest_incidence = r4$numberOfIndividuals
 	)
 	
-	d4 <- tag_events(d4)   # sf trap has no notes of its own, but may still land on a shared event date
+	d4 <- tag_events(d4)
 	
 	d_pest <- rbind(d1, d3, d4)
-	d_pest$record_id <- seq_len(nrow(d_pest)) 
+	d_pest$record_id <- seq_len(nrow(d_pest))   # survey data - each row is its own record  
+	d_pest$pheromone_date <- NA
+	
+	last_change <- d_pest$date[1]
+	for (i in 1:nrow(d_pest)) {
+	  if (d_pest$pheromone_change[i]) {
+	    last_change <- d_pest$date[i]
+	  }
+	  d_pest$pheromone_date[i] <- last_change
+	}
+	d_pest$record_id = 1L
+	d_pest$pheromone_change <- NULL
 
 	# --- d2: climate ---
-	d2 <- data.frame(
+	dt <- as.POSIXct(r2$dateUTC, tz = "UTC")
+	wth <- data.frame(
+	  country = "Kenya",
+	  adm1 = "Taita-Taveta",
 	  location  = "Maktau",
 	  latitude  = -3.4258,
 	  longitude = 38.1397,
 	  elevation = 1090,
 	  geo_from_source = TRUE,
-	  date = substr(r2$dateUTC, 1, 10),
-	  time = substr(r2$dateUTC, 12, 19),
+	  date = as.character(as.Date(dt)),
+	  time = format(dt, "%H:%M:%S", tz = "UTC"),
 	  temp = r2$temperature,
 	  rhum = r2$rh,
-	  dewp = r2$dewpoint
+	  dewp = r2$dewpoint,
+	  stringsAsFactors = FALSE
 	)
-	d2$country <- "Kenya"
-	d2$adm1 <- "Taita-Taveta"
 	
-	d <- d_pest
-	d$country <- "Kenya"
-	d$adm1 <- "Taita-Taveta"
-	d$crop <- "maize"
-	d$on_farm <- TRUE
-	d$trial_id <- NA          # continuous monitoring, not divided into distinct trials
-	d$yield <- NA
-	d$yield_moisture <- NA
-	d$yield_part <- NA
-	d$yield_isfresh <- NA
-	d$irrigated <- NA
-	d$K_fertilizer <- NA
-	d$N_fertilizer <- NA
-	d$P_fertilizer <- NA
-	d$hhid <- as.character(d$record_id)
+	d <- data.frame(
+	  country = "Kenya",
+	  adm1 = "Taita-Taveta",
+	  location  = "Maktau",
+	  latitude  = -3.4258,
+	  longitude = 38.1397,
+	  elevation = 1090,
+	  geo_from_source = TRUE,
+	  crop = "maize",
+	  on_farm = TRUE,
+	  is_survey = TRUE,
+	  record_id = 1L
+	)
 	
-	carobiner::write_files(path, meta, wide=d, wth=d2)
+	carobiner::write_files(path, meta, wide=d, long=d_pest, wth=wth)
 	
 }
 
