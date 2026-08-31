@@ -43,7 +43,6 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	  variety = r1$Variety,
 	  farmer_gender = r1$Gender,
 	  plot_area = r1$VarPlotSize,
-	  plant_density = r1$Stand,
 	  yield = r1$Yield_t_ha * 1000,
 	  tuber_density = r1$Total_No_Tuber,
 	  pest_incidence = r1$ScaleIncid,
@@ -51,7 +50,7 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	  nematode_severity = r1$NemaSev,
 	  nematode_incidence = r1$NemaIncid,
 	  nematode_infected_percentage = r1$PERC_Nema,
-	  bettle_severity = r1$MBSev,
+	  bettle_severity = r1$BeetleSev,
 	  bettle_incidence = r1$BeetleIncid,
 	  bettle_infected_percentage = r1$PERC_Beetle,
 	  mealybug_severity = r1$MBSev,
@@ -59,21 +58,32 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	  mealybug_infected_percentage = r1$PERC_MB
 	)
 
+	fill_by_id <- function(x, id) {
+	  grp <- match(id, unique(id))
+	  ave(x, grp, FUN = function(v) v[!is.na(v)][1])
+	}
+	
+	d$farmer_gender <- fill_by_id(r1$Gender, r1$ID)
+	
 	d$farmer_gender[d$farmer_gender==1] <- "male"
 	d$farmer_gender[d$farmer_gender==2] <- "female"
-	d$trial_id <- as.character(as.integer(as.factor(1)))
+	d$plant_density <- (r1$Stand / r1$VarPlotSize) * 10000
+	d$trial_id <- as.character(1)
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- FALSE
-  d$planting_date <- as.character(as.Date(NA))
-	d$harvest_date  <- as.character(as.Date(NA))
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertlizer_type <- NA
+  d$planting_date <- NA
+	d$harvest_date  <- NA
+  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
 	d$yield_part <- "tubers"
 	d$yield_moisture <- NA
   d$yield_isfresh <- NA
   
-  #geolocation_data
+  #geolocation_data - longitude and latitude data for most of the villages were not found
+  #resorted to a Fallback order village ->LGA (adm2) headquarters -> state (adm1) for co-ordinates that were not found
+  #data accessed from https://www.geonames.org/ ,not all coordinates were available here hence
+  #they were accessed from geodatos.net (https://www.geodatos.net/en/coordinates/nigeria/<place>) and https://www.google.com/maps/place/Nassarawa+Egon most adm2 locations
   
   geo <- data.frame(
     location = c(
