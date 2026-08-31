@@ -5,7 +5,7 @@
 
 carob_script <- function(path) {
   
-  "
+"
 The dataset includes agronomic and climatic records collected from 2015 to 2025, as well as soil data collected in 2015, 2023, and 2026. Data were collected at the AfricaRice research station in M'Bé, Bouaké, Côte d'Ivoire (7.8528° N, 5.1111° W), from a long-term experiment (LTE) established on upland rice-based cropping systems. The experiment was conducted in large plots, with an elementary plot size of 152 m². The LTE comprises a range of cropping systems differing in: • Soil tillage: conventional tillage (disc ploughing followed by harrowing) or no-till conservation agriculture; • Crop association and rotation: continuous rice cultivation or rice-maize rotations; • Cover crops: annual or perennial legume species; • Cropping season: sowing in March, June, or July; • Upland rice variety: NERICA 4 or WAB 56-50; • Fertilization: no fertilizer application or NPK fertilization; • Seed treatment: with or without fungicide and insecticide treatment. Agronomic data were obtained through field observations and measurements conducted within the LTE plots. 
 "
 
@@ -41,7 +41,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     location = "M'be",
     plot_id = r1$Plot_ID,
     rep = as.integer(r1$Replicate),
-    date = as.character(r1$Year),
+    trial_id = as.character(r1$Year),
     latitude = 7.8528,
     longitude = -5.1111,
     geo_from_source = TRUE,
