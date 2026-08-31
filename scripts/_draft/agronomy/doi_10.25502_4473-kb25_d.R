@@ -6,9 +6,9 @@
 
 # "Total_dry_matter_g_per_ha" values in tofa.csv and tudun-wada.csv are in kg despite the "_g_per_ha" name (they are ~10x the corresponding *_g_per_m2 columns
 
-# coordinates are not provided in the raw data; longitude/latitude were estimated from cgiar.org location pages (buk.csv) or via carobiner::adm_pointRadius() (tofa.csv, tudun-wada.csv).
-
 # this experiment was conducted in 2023 at three locations in Kano state, Nigeria. the experiment was a split plot design with sowing window as the main plot and varieties as the sub plot. Six varieties representing early, medium and late maturity groups were used. six sowing windows with a week interval were used in the experiment.
+
+# coordinates are not provided in the raw data; obtained from author CK
 
 
 carob_script <- function(path) {
@@ -62,10 +62,8 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 		tassling_days = r1[["Date_to_50_percent_Tasseling"]],
 		silking_days = r1[["Date_of_50_percent_Silking"]],
 		harvest_index = r1[["HI_ha"]],
-
-# coordinates obtained from https://www.cgiar.org/locations/nigeria-icrisat-kano-research-field-buk
-		longitude = 8.4173,
-		latitude = 11.9756
+		longitude = 8.4141,
+		latitude = 11.9779
 	)
 
 	d2 <- data.frame(
@@ -83,9 +81,8 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 		tassling_days = r2[["Date_of_50_percent_Tasseling"]],
 		silking_days = r2[["Date_of_50_percent_Silking"]],
 		harvest_index = r2[["HI"]],
-# coordinates obtained via carobiner::adm_pointRadius
-		longitude = 8.3107,
-		latitude = 11.9957
+		longitude = 8.29,
+		latitude = 11.99
 	)
 
 	d3 <- data.frame(
@@ -103,9 +100,8 @@ The dataset was obtained from 3 locations (BUK, TOFA, and Tudunwada) in Kano sta
 		tassling_days = r3[["Days_to_50_percent_anthesis"]],
 		silking_days = r3[["Days_to_50_percent_Silking"]],
 		harvest_index = r3[["HI_ha"]], 
-# coordinates obtained via carobiner::adm_pointRadius
-		longitude = 8.5570,
-		latitude = 11.2511
+		longitude = 8.27,
+		latitude = 11.29
 	)
 
 	d <- rbind(d1, d2, d3)
