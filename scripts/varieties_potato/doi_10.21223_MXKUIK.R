@@ -3,10 +3,10 @@ carob_script <- function(path) {
   
   "
   Dataset for: New Resistant Potato Varieties to Late Blight and High Quality for French Fries generated in Peru
-  
-  Ten potato clones from the B3C1 and B3C2 populations and two Peruvian varieties 
-  (UNICA and Canchan) were evaluated in 13 experiments in farmers' fields in Peru 
-  during 2019-2020 and 2020-2021, using a randomized complete block design with 
+
+  Ten potato clones from the B3C1 and B3C2 populations and two Peruvian varieties
+  (UNICA and Canchan) were evaluated in 13 experiments in farmers' fields in Peru
+  during 2019-2020 and 2020-2021, using a randomized complete block design with
   three replications.
   "
   
@@ -29,8 +29,9 @@ carob_script <- function(path) {
     notes = NA,
     carob_contributor = "MARYAM YAHYA",
     carob_date = "2026-08-27",
-    carob_completion = 85,
+    carob_completion = 90,
     carob_effort = 1.5
+                                  
   )
   
   # Source file
@@ -41,21 +42,21 @@ carob_script <- function(path) {
   
   # Estimated from Google Maps
   coords <- data.frame(
-    Locality = c("Chinchao", "Chugay", "La Paccha", "Majes", "Majes1", "Majes2", 
+    Locality = c("Chinchao", "Chugay", "La Paccha", "Majes", "Majes1", "Majes2",
                  "Quilcas", "Santa Rita", "Jauja", "Yanac"),
-    latitude = c(-9.63333, -7.78167, -6.51181, -16.36250, -16.36250, -16.36250, 
+    latitude = c(-9.63333, -7.78167, -6.51181, -16.36250, -16.36250, -16.36250,
                  -11.93749, -12.00000, -11.77500, -7.80000),
-    longitude = c(-76.0667, -77.8683, -78.92879, -72.19111, -72.19111, -72.19111, 
+    longitude = c(-76.0667, -77.8683, -78.92879, -72.19111, -72.19111, -72.19111,
                   -75.2593, -75.50000, -75.50000, -77.80000)
   )
   
-  # final  data.frame
+  # Final data.frame
   d <- data.frame(
     trial_id = paste("MXKUIK", gsub("[ ,]+", "_", as.character(r1$Locality)), as.character(r1$Year), sep = "_"),
     plot_id = as.character(r1$Plot),
     rep = as.integer(r1$Rep),
-    variety = as.character(r1$Clone),
-    location = as.character(r1$Locality),
+    variety = r1$Clone,
+    location = r1$Locality,
     country = "Peru",
     crop = "potato",
     crop_rotation = NA,
@@ -63,25 +64,18 @@ carob_script <- function(path) {
     is_survey = FALSE,
     irrigated = NA,
     yield_part = "tubers",
-    yield = as.numeric(r1$MTYA) * 1000,  # t/ha → kg/ha
-    yield_moisture = NA_real_,
+    yield = as.numeric(r1$TTYA) * 1000,           # Total yield (adjusted, t/ha → kg/ha)
+    marketable_yield = as.numeric(r1$MTYA) * 1000, # Marketable yield (adjusted, t/ha → kg/ha)
+    yield_moisture = 100 - as.numeric(r1$`DM_Oven_drying_ method`), # Moisture (%) = 100 - dry matter (%)
     yield_isfresh = TRUE,
-    planting_date = NA,
-    harvest_date = NA,
+    planting_date = "2019",
+    harvest_date = "2020",
     N_fertilizer = NA_real_,
     P_fertilizer = NA_real_,
     K_fertilizer = NA_real_,
     S_fertilizer = NA_real_,
     fertilizer_type = NA_character_,
     lime = NA_real_,
-    # NEW: marketable tuber yield (not adjusted, t/ha) - raw value from field
-    marketable_yield_raw_ = as.numeric(r1$MTYNA),
-    # NEW: total tuber yield (not adjusted, t/ha) - raw value from field
-    total_yield_raw_ = as.numeric(r1$TTYNA),
-    # NEW: total tuber yield (adjusted, t/ha) - corrected value
-    total_yield_adjusted_ = as.numeric(r1$TTYA),
-    # NEW: dry matter content measured by oven drying method (preferred, %)
-    dm_oven_ = as.numeric(r1$`DM_Oven_drying_ method`),
     # NEW: reducing sugars (%)
     reducing_sugars_ = as.numeric(r1$`Reducing_sugars_%`),
     # NEW: French fry color at harvest (USDA scale 1-5)
@@ -104,9 +98,13 @@ carob_script <- function(path) {
     ), na.rm = TRUE)
   )
   
-  ## Merge coordinates
+  # Convert NaN from rowMeans to NA
+  d$flavor_baked_[is.nan(d$flavor_baked_)] <- NA
+  d$texture_baked_[is.nan(d$texture_baked_)] <- NA
+  
+  # Merge coordinates
   d <- merge(d, coords, by.x = "location", by.y = "Locality", all.x = TRUE)
-  d$geo_from_source <- FALSE 
+  d$geo_from_source <- FALSE
   
   # Remove rows where all key variables are NA
   d <- d[!is.na(d$yield) | !is.na(d$variety), ]
