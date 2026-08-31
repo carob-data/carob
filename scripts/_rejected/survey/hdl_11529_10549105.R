@@ -1,11 +1,20 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
+## REJECTED. This appears to be a compilation of data from LCAS and other published surveys. 
+## We prefer the original data 
+
+
 ## ISSUES
 #1. raw data has messy coordinates, which are interconnected within the 3 countries, so i decided to ditch them and intended to use the point radius method, but the raw dataset and the publication only provides adm1 divisions for India only, none for Nepal and Bangladesh, and ultimately i can not estimate the adm1 divisions because the survey spans across atleast 3 adm1 divisions in Nepal(floodplains) and Bangladesh(Terai region), which renders the point radius method unusable. 
 #2. out of bounds values originate from the raw dataset
 #3. dates records are messy
 #4. messy and NA values in yield originate from raw dataset
+
+
+
+
 
 carob_script <- function(path) {
 
@@ -99,6 +108,9 @@ This database integrates farmer field surveys with secondary environmental data 
 	##binding
 	d <- rbind(d1, d2)
 	
+#	i = !is.finite(d$seed_rate)
+
+	
 	d$sex <- gsub("",NA,d$sex)
 	d$fertilizer_type <- "SSP;TSP;KCl;gypsum;ZnSO4;NPK;NPKS;"
 
@@ -137,5 +149,9 @@ This database integrates farmer field surveys with secondary environmental data 
 	
 	d <- unique(d) #since some differentiating columns have been removed through standardizing, obs. changed from 91286 to 79809
 	
+	#fixing future dates, assuming 9 was a typo for 0
+	i <- which(substr(d$transplanting_date, 1, 4) == "2029")
+	d$transplanting_date[i] <- sub("^2029", "2020", d$transplanting_date[i])
+	
 	carobiner::write_files(path, meta, d)
-}
+ }
