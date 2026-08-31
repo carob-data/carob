@@ -3,18 +3,17 @@
 
 ## NOTES
 # No plot area is provided therefore below columns could not be converted to terminag
-#                                :NUM_STEM; could be stem_density (stems/ha)
-#                                :NPE; could be plant_density (plants/ha)
-#                                :NMTCII+MTWCI; could be tuber_density (tubers/ha)
-#                                :MTWCII+NMTCI; could be yield_marketable (kg/ha) - same swap, and
-#                                :NTP; could be tubers_density (plants/ha) 
-# Changed coordinates from "S 010 14.691'", "E 0360 44.856'" to "S 01 14.691'", "E 036 44.856'"
+# :NUM_STEM; could be stem_density (stems/ha)
+# :NPE; could be plant_density (plants/ha)
+# :NMTCII+MTWCI; could be tuber_density (tubers/ha)
+# :MTWCII+NMTCI; could be yield_marketable (kg/ha) - same swap, and
+# :NTP; could be tubers_density (plants/ha) 
 
 
 
 carob_script <- function(path) {
   
-  "
+"
 Dataset for: 3 LTVR introduced for bulking and evaluation in Kenya
 
 Field trial results between LTVR x LBHT testing to generate new progenies.
@@ -25,18 +24,18 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-                                  data_organization = "CIP",
-                                  publication = NA,
-                                  project = "MEL 4038",
-                                  design = "Potato clone evaluation trial",
-                                  data_type = "on-station experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "virus_severity",
-                                  notes = NA,
-                                  carob_contributor = "Stella Muthoni",
-                                  carob_date = "2026-08-26",
-                                  carob_completion = 60,
-                                  carob_effort = 4
+    data_organization = "CIP",
+    publication = NA,
+    project = "MEL 4038",
+    design = "Potato clone evaluation trial",
+    data_type = "on-station experiment",
+    treatment_vars = "variety",
+    response_vars = "virus_severity",
+    notes = NA,
+    carob_contributor = "Stella Muthoni",
+    carob_date = "2026-08-26",
+    carob_completion = 60,
+    carob_effort = 4
   )
   
   f1 <- ff[basename(ff) == "4038_Data_.xlsx"]
@@ -66,7 +65,20 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
     rep = as.integer(r1c$REP),
     plot_id = as.character(r1c$PLOT),
     variety = r1c$INSTN,
-    virus_severity = severity_map[r1c$VIRUS_SCORING]
+    virus_severity = severity_map[r1c$VIRUS_SCORING],
+    crop = "potato",
+    country = minimal[["Country"]],
+    adm1 = carobiner::fix_name(minimal[["Admin1"]], "title"),
+    adm2 = carobiner::fix_name(minimal[["Admin2"]], "title"),
+    adm3 = carobiner::fix_name(minimal[["Admin3"]], "title"),
+    location = gsub("\\s+", " ", trimws(minimal[["Locality"]])),
+    elevation = as.numeric(gsub("[^0-9.]", "", minimal[["Elevation"]])),
+# S 010 14.691', "E 0360 44.856'
+    latitude = -(1 + 14.691/60),
+    longitude = 36 + 44.856/60,
+    geo_from_source = TRUE,
+    planting_date = as.character(as.Date(as.numeric(minimal[["Planting date"]]), origin="1899-12-30")),
+    harvest_date = as.character(as.Date(as.numeric(minimal[["Harvest date"]]), origin="1899-12-30"))
   )
   
   ## genealogy
@@ -88,25 +100,11 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
   d$variety_pedigree <- pedigree_of(d$variety)
   population <- population_of(d$variety)
   d$variety_type <- ifelse(is.na(population), NA_character_,
-                           ifelse(population == "LTVR", "breeding clone", "released check cultivar"))
+                    ifelse(population == "LTVR", "breeding clone", "released check cultivar"))
   
-  ## site-level fields, assigned directly - no intermediate variables
-  d$crop <- "potato"
-  d$country <- minimal[["Country"]]
-  d$adm1 <- carobiner::fix_name(minimal[["Admin1"]], "title")
-  d$adm2 <- carobiner::fix_name(minimal[["Admin2"]], "title")
-  d$adm3 <- carobiner::fix_name(minimal[["Admin3"]], "title")
-  d$location <- gsub("\\s+", " ", trimws(minimal[["Locality"]]))
-  d$elevation <- as.numeric(gsub("[^0-9.]", "", minimal[["Elevation"]]))
-  d$latitude <- -(1 + 14.691/60)
-  d$longitude <- 36 + 44.856/60
-  d$geo_from_source <- TRUE
   d$on_farm <- FALSE
   d$is_survey <- FALSE
   d$irrigated <- NA
-  d$planting_date <- as.character(as.Date(as.numeric(minimal[["Planting date"]]), origin="1899-12-30"))
-  d$harvest_date <- as.character(as.Date(as.numeric(minimal[["Harvest date"]]), origin="1899-12-30"))
-  
   d$yield <- NA
   d$yield_moisture <- NA
   d$yield_isfresh <- NA
@@ -116,5 +114,4 @@ Field trial results between LTVR x LBHT testing to generate new progenies.
   d$P_fertilizer <- NA
   
   carobiner::write_files(path, meta, d)
-
 }
