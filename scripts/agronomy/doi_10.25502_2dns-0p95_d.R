@@ -10,6 +10,7 @@ EiA, Sasakawa Africa Association (SAA) Nigeria Use Case, Nutrient Omission Trial
 
 The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recommendation tools (AKILIMO for cassava, Nutrient Expert (NE) for maize and Rice Advice for rice) in one interface. Following the request of the “demand partner” Sasakwa Africa Association (SAA), Nigeria, the decision support tools (DSTs) for fertilizer will be combined with advice on the planting or sowing windows.
 "
+
 	uri <- "doi:10.25502/2dns-0p95/d"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -21,11 +22,11 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
-	  response_vars = "yield", 
+	    response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Mitchelle",
 		carob_date = "2026-08-30",
-	  carob_completion = 100,	
+	    carob_completion = 100,	
 		carob_effort = 3
 	)
 	
@@ -77,7 +78,7 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		hhid = r2$HHID,
 		treatment = r2$Trt,
 		variety_type = r2$Variety,
-		harvest_date = r2$HarvestDate_E6,
+		harvest_date = as.character(as.Date(r2$HarvestDate_E6, format = "%m/%d/%Y")),
 		plot_area = r2$plot_size,
 		moist = r2$GrainMoisture_perc_E7,
 		yield = r2$GrainYield_kg_per_ha_C,
@@ -95,21 +96,25 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 	  hhid = r3$HHID,
 	  treatment = r3$Trt,
 	  variety_type = r3$Variety,
-	  planting_date = r3$BasalFertApplica_plantingDate_E2,
-	  N_splits = as.integer(3),
+	  planting_date = as.character(as.Date(r3$BasalFertApplica_plantingDate_E2, format = "%m/%d/%Y")),
 	  drought_stress = as.character(r3$Monitoring_flowering_stage_rateDrought_E5),
 	  flood_stress = as.character(r3$Monitoring_flowering_stage_rateWaterLogging_E5),
 	  borer_dam_rat = r3$Monitoring_flowering_stage_rateStemborer_E5,
 	  pest_severity = as.character(r3$Monitoring_flowering_stage_rateOtherPests_E5),
 	  weed_severity = as.character(r3$Monitoring_flowering_stage_rateWeeds_E5),
-	  disease_severity = as.character(r3$Monitoring_flowering_stage_rateOtherDisease_E5),
-	  weeding_times = as.integer(3)
-	  )
+	  disease_severity = as.character(r3$Monitoring_flowering_stage_rateOtherDisease_E5)
+	)
 
-	d3$fertilizer_date <- paste(r3$Date_of_2Nsplit_fertilizer_appliction_E3, r3$Date_of_3rdsplit_fertilizer_appliction_E3, sep = "; ") 
-	d3$fertilizer_dap <- paste(r3$Days_to_2nd_fert_app_E3,r3$Days_to_3rd_fert_app_E3, sep = "; ")
-	d3$weeding_dates <- paste(r3$weedingDetails_dateWeeding1_E5,r3$weedingDetails_dateWeeding2_E5,r3$weedingDetails_dateWeeding3_E5, sep = "; ")
-	d3$weeding_method <- paste(r3$weedingDetails_weedingMethod1_E5,r3$weedingDetails_weedingMethod2_E5,r3$weedingDetails_weedingMethod3_E5, sep = "; ")
+	comb <- function(v) {
+		v <- apply(v, 1, \(x) paste(as.Date(x[x != ""], format = "%m/%d/%Y"), collapse=";"))
+		v[v == ""] <- NA
+		v
+	}
+	
+	d3$fertilizer_date <- comb(r3[, grep("Date_of_.*fertilizer_appliction", names(r3))])
+	d3$fertilizer_dap <- comb(r3[, grep("Days_to_.*_fert_app", names(r3))]) 
+	d3$weeding_dates <- comb(r3[, grep("weedingDetails_dateWeeding", names(r3))])
+	d3$weeding_method <- comb(r3[, grep("weedingDetails_dateMethod", names(r3))])	
 	
 	d4 <- data.frame(
 		country = r4$country,
@@ -119,28 +124,25 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		treatment = r4$Trt,
 		variety_type = r4$Variety,
 		farmland = r4$Farm_Size_ha_E1,
-		OM_type = "farmyard manure; poultry manure; cattle dung; sewage sledge; compost",
-		fertilizer_type = "NPK; DAP; MOP; SSP; urea",
+		OM_type = "farmyard manure; poultry manure; cattle dung; sewage sludge; compost",
+		fertilizer_type = "NPK; DAP; KCl; SSP; urea",
 		N_fertilizer = r4$N_kg_per_ha_E1,
 		P_fertilizer = r4$P2O5_kg_per_ha_E1/2.29,
 		K_fertilizer = r4$K2O_kg_per_ha_E1/1.2051,
 		previous_crop_residue_management = r4$Crop_Residue_MGT_E1
 	)
 	
-	crop_cols <- c(
-	  "pastcrop_Sorghum_E1", "pascrop_Maize_E1", "pascrop_Soybean_E1", "pascrop_Cowpea_E1",
-	  "pascrop_Groundnut_E1", "Event_1_Pepper_E1", "pascrop_Onion_E1", "pascrop_Okro_E1",
-	  "pascrop_Cassava_E1", "pascrop_Yam_E1"
-	)
+	crop_cols <- c("pastcrop_Sorghum_E1", "pascrop_Maize_E1", "pascrop_Soybean_E1", "pascrop_Cowpea_E1",
+	  "pascrop_Groundnut_E1", "Event_1_Pepper_E1", "pascrop_Onion_E1", "pascrop_Okro_E1", "pascrop_Cassava_E1", "pascrop_Yam_E1")
 
-	crop_list <- apply(r4[, crop_cols], 1, function(x) {
-	  x <- x[!is.na(x) & trimws(x) != ""]
-	  paste(x, collapse = "; ")
+    crops = sapply(r4[, grep("crop_|Event_1_Pepper", names(r4))], tolower)
+	crops <- apply(crops, 1, function(x) {
+		x <- x[!is.na(x) & trimws(x) != ""]
+		paste(x, collapse = "; ")
 	})
-	crop_list[crop_list == ""] <- NA
 	
-	d4$crop_rotation <- ifelse(r4$Crop_system_E1 == "Rotation (cereal-legume)", crop_list, NA_character_)
-	d4$intercrops    <- ifelse(r4$Crop_system_E1 == "Mixed or Inter Crop", gsub("; ", "_", crop_list), NA_character_)
+	d4$crop_rotation <- ifelse(r4$Crop_system_E1 == "Rotation (cereal-legume)", crops, NA)
+	d4$intercrops    <- ifelse(r4$Crop_system_E1 == "Mixed or Inter Crop", gsub("; ", "_", crops), NA)
 	
 	d5 <- merge(d1, d2, by = c("country","field_id","plot_id","hhid","treatment","variety_type"), all.x = TRUE)
 	d6 <- merge(d5, d3, by = c("country","field_id","plot_id","hhid","treatment","variety_type"), all.x = TRUE)
@@ -158,56 +160,5 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 	d$crop_rotation <- tolower(d$crop_rotation)
 	d$intercrops <- tolower(d$intercrops)
 	
-	clean_combined <- function(x) {
-	  x <- as.character(x)
-	  
-	  x <- vapply(x, function(value) {
-	    if (is.na(value)) return(NA_character_)
-	    
-	    parts <- trimws(strsplit(value, ";", fixed = TRUE)[[1]])
-	    parts <- parts[nzchar(parts)]
-	    
-	    if (length(parts) == 0) NA_character_ else paste(parts, collapse = ";")
-	  }, character(1))
-	  
-	  unname(x)
-	}
-	
-	convert_multiple_dates <- function(x) {
-	  vapply(x, function(value) {
-	    if (is.na(value) || trimws(value) == "") {
-	      return(NA_character_)
-	    }
-	    
-	    dates <- trimws(strsplit(value, ";", fixed = TRUE)[[1]])
-	    dates <- dates[nzchar(dates)]
-	    
-	    if (length(dates) == 0) {
-	      return(NA_character_)
-	    }
-	    
-	    converted <- as.Date(dates, format = "%m/%d/%Y")
-	    
-	    if (any(is.na(converted))) {
-	      warning("Some dates could not be converted: ",
-	              paste(dates[is.na(converted)], collapse = ", "))
-	    }
-	    
-	    paste(format(converted, "%Y-%m-%d"), collapse = ";")
-	  }, character(1))
-	}
-	
-	d$weeding_dates <- convert_multiple_dates(d$weeding_dates)
-	d$fertilizer_date <- convert_multiple_dates(d$fertilizer_date)
-	
-	d$weeding_dates   <- clean_combined(d$weeding_dates)
-	d$weeding_method <- clean_combined(d$weeding_method)
-	d$harvest_date <- as.Date(d$harvest_date, format = "%m/%d/%Y")
-	d$harvest_date <- format(d$harvest_date, "%Y-%m-%d")
-	d$planting_date <- as.Date(d$planting_date, format = "%m/%d/%Y")
-	d$planting_date <- format(d$planting_date, "%Y-%m-%d")
-	
 	carobiner::write_files(path, meta, d)
 }
-
-
