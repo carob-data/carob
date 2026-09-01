@@ -20,14 +20,16 @@ Forty-one years of data from the Elite Spring Wheat Yield Trials (ESWYT), includ
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = NA,
-		carob_date = "2026-05-15",
+		carob_date = "2026-09-01",
 		design = NA,
 		data_type = NA,
 		treatment_vars = "location;country",
 		response_vars = "yield", 
+		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		carob_effort = 2
+		
 	)
 	
 
@@ -35,7 +37,7 @@ Forty-one years of data from the Elite Spring Wheat Yield Trials (ESWYT), includ
   
 	r1 <- carobiner::read.excel(f1, sheet="Data")
 	#r2 <- carobiner::read.excel(f1, sheet="ReadMe")
-	r3 <- carobiner::read.excel(f1, sheet="Variable names")
+	#r3 <- carobiner::read.excel(f1, sheet="Variable names")
 
 
 
