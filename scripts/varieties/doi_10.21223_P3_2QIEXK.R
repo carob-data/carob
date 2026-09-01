@@ -47,10 +47,10 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 		plot_id = as.character(r1$Plot),
 		variety_code = r1$geno,
 		cross_type = c("P"= "polycross", "C"= "controlled")[r1$crosstype], #hybridization method
-		virus_severity = as.character(r1$vir1),
-		severity_scale = "1-9",
-		disease = "alternaria blight",
-		disease_severity = as.character(r1$alt1),
+		vir1 = as.character(r1$vir1),
+		vir2 = as.character(r1$vir2),
+		alt1 = as.character(r1$alt1),
+		alt2 = as.character(r1$alt2),
 		yield = r1$RYTHA*1000,
 		fwy_leaves = r1$FYTHA*1000,
 		pest_severity = as.character(r1$wed),
@@ -61,7 +61,8 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 		country = "Uganda",
 		trial_id = paste(r1$site, r1$season, sep = "-"),
 		planting_date = "2013",
-		harvest_date = NA_character_
+		harvest_date = NA_character_,
+		record_id = seq_len(nrow(r1))
 		
 	)
 	
@@ -78,6 +79,21 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 	
 	d <- merge(d, geo, by = "location", all.x = TRUE)
 	
+	### long format disease
+	Nm <- names(d)[grepl("alt|vir", names(d))]
+	d_long <- d[, Nm]
+	d_long$record_id <- d$record_id
+	d_long <- reshape(d_long, varying = Nm, v.names = "disease_severity", timevar = "disease", direction = "long")
+	d_long$growth_stage <- c("RG", "none", "RG", "none")[d_long$disease]
+	d_long$disease <- c(rep("sweetpotato virus", 2), rep("alternaria blight", 2))[d_long$disease]
+	d_long$severity_scale <- "1-9"
+	d_long$id <- NULL
+	d_long <- d_long[!is.na(d_long$disease_severity),]
+	
+	#### 
+	col <- grep("alt|vir", names(d))
+	d <- d[, -col]
+	
 	d$is_survey <- FALSE
 	d$on_farm <-  TRUE
 	d$yield_moisture <- NA_real_
@@ -87,6 +103,6 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 	d$irrigated <- NA
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = d_long)
 }
 
