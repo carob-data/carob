@@ -71,61 +71,60 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	  LB5 = r1$LB5,
 	  LB6 = r1$LB6,
 	  LB7 = r1$LB7
-   )
-
+	)
+	
 	d1$record_id <- long$record_id <- seq_len(nrow(d1))
-	cols <- grep("LB", names(long), value=TRUE)
+	
+	cols <- grep("LB", names(long), value = TRUE)
 	long2 <- reshape(long, varying = cols, v.names = "disease_severity", timevar = "date", direction = "long")
-	long$disease <- "potato late blight"
-	long$pathogen <- "Phytophthora infestans"
-	long$disease_severity <- as.character(long$disease_severity)
-	long <- long[!is.na(long$disease_severity), ]
-	long$id <- NULL
+	long2$disease <- "potato late blight"
+	long2$pathogen <- "Phytophthora infestans"
+	long2$disease_severity <- as.character(long2$disease_severity)
+	long2 <- long2[!is.na(long2$disease_severity), ]
+	long2$id <- NULL
+	
 	
 	d2 <- data.frame(
-	  plot_id = as.character(r2$Ord),
+	  sample_id = as.character(r2$Ord),
 	  variety = r2$CIPN,
-	  variety_pedigree = paste("Female:", r2$`Male Pedigri_Female`, "Male:", r2$`Male Pedigri_Male`, sep = "; "),
-	  #accession_name = paste("Female:", r2$Female_AcceNumb, "Male:", r2$Male_AcceNumb, sep = "; "),
-	  variety_code = paste("Female:", r2$Female_codename, "Male:", r2$Male_codename, sep = "; ")
+	  variety_pedigree = r2$`Male Pedigri_Female`,
+	  #accession_name = r2$Female_AcceNumb,
+	  variety_code = r2$Female_codename 
 	  #seed_source = r2$`Family cip`
 	)
 
+ 
 	d3 <- data.frame(
-	  plot_id = r3$Ord, ### where the plant sample plan
+	  sample_id = r3$Ord, ### plant sample plan
 	  date = r3$Date,
 	  DAP = as.integer(r3$DAP),
 	  intervention_category = r3$`Category of intervention`,
 	  method = r3$`Type of intervention`#the specific activity / measurement/assessments that was used to collect data
 	)
  
- d3$method[d3$method == "Siembra"] <- "planting"
- d3$method[d3$method %in% paste0("LB", 1:7)] <- "potato late blight"#late blight assessment
- d3$method[d3$method %in% c("NPE","PltHrv","PlVig", "PlUni")] <- "p_asp" #plant assessment
- d3$method[d3$method %in% c("TubUni", "TubApp", "TubSiz",
-                                                  "NMTb I", "NMTb II", "NNMTb")] <- "t_asp"## tuber assessment/tuber aspect scores
+ d1$planting_date <- d3$date[d3$method == "Siembra"]
+ d1$harvest_date <- NA
+ 
+ lb_dates <- d3[d3$intervention_category %in% cols, c("intervention_category", "date")]
+ long$date <- lb_dates$date[match(paste0("LB", long$disease), lb_dates$intervention_category)]
  
  
- d <- merge(d1, d2, by = "plot_id", all.x = TRUE)
+ d <- merge(d1, d2, by = "variety", all.x = TRUE)
  
-## not OK. d3 should be used to add variables to "d" (e.g. planting date) and to "long" (when where the late blight observations made?)
-## d <- carobiner::bindr(d, d3)
-## d$record_id <- seq_len(nrow(d))
- 
+
   d$on_farm <- TRUE
 	d$is_survey <-FALSE 
 	d$irrigated <- NA
 	
 
-## The dataset does not  have exact location where the experiment was done. But i have assumed that the experiment was conducted at International potato Centre (CIP) in Nairobi Kenya.	But this need to be confirmed. It only sates the country which is Kenya
-## that is a wild guess. Not allowed	
-#	d$longitude <- 36.72120
-#	d$latitude <- -1.26933
-#	d$geo_source <- "Google maps"
+## The dataset does not  have exact location where the experiment was done. 
+	d$longitude <- NA
+	d$latitude <- NA
+  d$geo_source <- NA
 	d$geo_from_source <- FALSE
 
   d$country = "Kenya"
-#  d$on_farm <- TRUE ???? how do you know?
+  d$on_farm <- NA
   d$is_survey <- FALSE 
   d$irrigated <- NA
   d$yield_part <- "tubers"
