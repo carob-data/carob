@@ -73,10 +73,21 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	  LB7 = r1$LB7
 	)
 	
+	long$date <- rep(as.Date(c(
+	  "2023-02-06",
+	  "2023-06-14",
+	  "2023-06-30",
+	  "2023-07-16",
+	  "2023-07-30",
+	  "2023-10-08",
+	  "2023-09-16"
+	)), each = nrow(long) / 7)
+	
+	long$date <- format(long$date, "%Y-%m-%d")
 	d1$record_id <- long$record_id <- seq_len(nrow(d1))
 	
 	cols <- grep("LB", names(long), value = TRUE)
-	long2 <- reshape(long, varying = cols, v.names = "disease_severity", timevar = "date", direction = "long")
+	long2 <- reshape(long, varying = cols, v.names = "disease_severity", timevar = "disease", direction = "long")
 	long2$disease <- "potato late blight"
 	long2$pathogen <- "Phytophthora infestans"
 	long2$disease_severity <- as.character(long2$disease_severity)
@@ -85,7 +96,6 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 	
 	
 	d2 <- data.frame(
-	  sample_id = as.character(r2$Ord),
 	  variety = r2$CIPN,
 	  variety_pedigree = r2$`Male Pedigri_Female`,
 	  #accession_name = r2$Female_AcceNumb,
@@ -95,34 +105,35 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
 
  
 	d3 <- data.frame(
-	  sample_id = r3$Ord, ### plant sample plan
 	  date = r3$Date,
 	  DAP = as.integer(r3$DAP),
 	  intervention_category = r3$`Category of intervention`,
 	  method = r3$`Type of intervention`#the specific activity / measurement/assessments that was used to collect data
 	)
  
- d1$planting_date <- d3$date[d3$method == "Siembra"]
- d1$harvest_date <- NA
+
+	d1$planting_date <- as.character(as.Date(d3$date[d3$method == "Siembra"], format = "%d/%m/%Y"))
+	d1$harvest_date <- NA #### data set did not provide the harvesting date
  
- lb_dates <- d3[d3$intervention_category %in% cols, c("intervention_category", "date")]
- long$date <- lb_dates$date[match(paste0("LB", long$disease), lb_dates$intervention_category)]
- 
- 
- d <- merge(d1, d2, by = "variety", all.x = TRUE)
- 
+  
+  d <- merge(d1, d2, by = "variety", all.x = TRUE)
+  
 
   d$on_farm <- TRUE
 	d$is_survey <-FALSE 
 	d$irrigated <- NA
 	
 
-## The dataset does not  have exact location where the experiment was done. 
+## The dataset does not  have exact location where the experiment was done.It only recorded the country 
 	d$longitude <- NA
 	d$latitude <- NA
   d$geo_source <- NA
 	d$geo_from_source <- FALSE
 
+	
+	d$P_fertilizer <- d$N_fertilizer <- d$K_fertilizer <- as.numeric(NA) 
+	d$fertilizer_type <- NA 
+	
   d$country = "Kenya"
   d$on_farm <- NA
   d$is_survey <- FALSE 
@@ -130,8 +141,9 @@ Dataset for: Novel trait discovery for LB resistance in wild potato background (
   d$yield_part <- "tubers"
   d$yield_isfresh <- TRUE
   d$yield_moisture <- as.numeric(NA)
-   
-  carobiner::write_files(path, meta, d, long=long)
+  
+  
+  carobiner::write_files(path, meta, d, long = long2)
 }
 
 
