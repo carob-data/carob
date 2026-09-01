@@ -18,7 +18,7 @@ carob_script <- function(path) {
                                   publication = NA,
                                   project = NA,
                                   data_type = "survey",
-                                  treatment_vars = "pest_species;pest_number",
+                                  treatment_vars = "pest_species;pest_incidence",
                                   response_vars ="none", 
                                   carob_completion = 100,
                                   carob_effort = 3,
@@ -45,7 +45,7 @@ carob_script <- function(path) {
     location = r1$site,
     date = r1$date,
     pest_species = r1$species,
-    pest_number = r1$numberOfIndividuals,
+    pest_incidence = r1$numberOfIndividuals,
     pheromone_change = r1$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
   )
   
@@ -53,7 +53,7 @@ carob_script <- function(path) {
     location = r2$site,
     date = r2$date,
     pest_species = r2$species,
-    pest_number = r2$numberOfIndividuals,
+    pest_incidence = r2$numberOfIndividuals,
     pheromone_change = r2$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
   )
   
@@ -112,7 +112,7 @@ carob_script <- function(path) {
     location = r6$site,
     date = r6$date,
     pest_species = r6$species,
-    pest_number = r6$numberOfIndividuals,
+    pest_incidence = r6$numberOfIndividuals,
     pheromone_change = r6$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
   )
   
