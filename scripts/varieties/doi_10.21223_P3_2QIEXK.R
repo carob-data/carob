@@ -46,13 +46,14 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 		#season = r1$season,
 		plot_id = as.character(r1$Plot),
 		variety_code = r1$geno,
-		cross_type = c("P"= "polycross", "C"= "controlled")[r1$crosstype], #hybridization method
+		# hybridization method
+		cross_type = c("P"= "polycross", "C"= "controlled")[r1$crosstype],
 		vir1 = as.character(r1$vir1),
 		vir2 = as.character(r1$vir2),
 		alt1 = as.character(r1$alt1),
 		alt2 = as.character(r1$alt2),
-		yield = r1$RYTHA*1000,
-		fwy_leaves = r1$FYTHA*1000,
+		yield = r1$RYTHA * 1000,
+		fwy_leaves = r1$FYTHA * 1000,
 		pest_severity = as.character(r1$wed),
 		pest_species = "weevil",
 		harvest_index = r1$HI,
@@ -61,9 +62,8 @@ Sweetpotato is an important crop in many parts of the world especially in develo
 		country = "Uganda",
 		trial_id = paste(r1$site, r1$season, sep = "-"),
 		planting_date = "2013",
-		harvest_date = NA_character_,
-		record_id = seq_len(nrow(r1))
-		
+		harvest_date = NA,
+		record_id = seq_len(nrow(r1))		
 	)
 	
 	
