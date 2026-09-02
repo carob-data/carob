@@ -3,6 +3,7 @@
 
 ## ISSUES
 
+#Rejected: compilation data that seem to be already in carob
 
 carob_script <- function(path) {
 
@@ -13,7 +14,7 @@ Forty-one years of data from the Elite Spring Wheat Yield Trials (ESWYT), includ
 "
 
 	uri <- "doi:10.71682/10549387"
-	group <- "agronomy"
+	group <- "varieties_wheat"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -22,7 +23,7 @@ Forty-one years of data from the Elite Spring Wheat Yield Trials (ESWYT), includ
 		project = NA,
 		carob_date = "2026-09-01",
 		design = NA,
-		data_type = NA,
+		data_type = "compilation",
 		treatment_vars = "location;country",
 		response_vars = "yield", 
 		notes = NA,
