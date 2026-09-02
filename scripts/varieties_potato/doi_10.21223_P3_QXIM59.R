@@ -11,7 +11,20 @@ carob_script <- function(path) {
   
   ff <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major = 4, minor = 0, data_organization = "CIP", publication = NA, project = NA, design = "randomized complete block design", data_type = "experiment", treatment_vars = "variety", response_vars = "yield", notes = NA, carob_contributor = "MARYAM YAHYA", carob_date = "2026-09-01", carob_completion = 90, carob_effort = 1.5)
+  meta <- carobiner::get_metadata(uri, path, group, major = 4, minor = 0, 
+    data_organization = "CIP", 
+	  publication = NA, 
+	  project = NA, 
+	  design = "RCBD", 
+	  data_type = "experiment", 
+	  treatment_vars = "variety", 
+	  response_vars = "yield", 
+	  notes = NA, 
+	  carob_contributor = "Maryam Yahya", 
+	  carob_date = "2026-09-01", 
+	  carob_completion = 90, 
+	  carob_effort = 1.5
+	)
   
   ## Source files (processed data only)
   f3 <- ff[grepl("201210.*_processed", ff, ignore.case = TRUE)]
@@ -34,10 +47,6 @@ carob_script <- function(path) {
   ## Combine
   r <- carobiner::bindr(r3, r5)
   
-  ## Convert dates to character (YYYY-MM-DD)
-  r$planting_date <- as.character(as.Date(r$planting_date))
-  r$harvest_date <- as.character(as.Date(r$harvest_date))
-  
   ## Create final standardized data.frame
   d <- data.frame(
     trial_id = paste("QXIM59", r$year, sep = "_"),
@@ -52,15 +61,15 @@ carob_script <- function(path) {
     is_survey = FALSE,
     irrigated = r$irrigated,
     yield_part = "tubers",
-    yield = as.numeric(r$yield_fresh) * 1000,      # Total fresh yield (t/ha → kg/ha)
-    marketable_yield = as.numeric(r$mtyna) * 1000, # Marketable yield (t/ha → kg/ha)
+    yield = r$yield_fresh * 1000,     
+    yield_marketable = r$mtyna * 1000, 
     yield_moisture = NA_real_,
     yield_isfresh = TRUE,
     latitude = r$latitude,
     longitude = r$longitude,
     geo_from_source = TRUE,
-    planting_date = r$planting_date,
-    harvest_date = r$harvest_date,
+    planting_date = as.character(as.Date(r$planting_date)),
+    harvest_date = as.character(as.Date(r$harvest_date)),  
     N_fertilizer = r$n_fertilizer,
     P_fertilizer = r$p_fertilizer,
     K_fertilizer = r$k_fertilizer,
@@ -68,13 +77,7 @@ carob_script <- function(path) {
     lime = NA_real_,
     soil_texture = r$soil_texture,
     elevation = r$elevation,
-    # NEW: field type (Mother trial)
-    field_type_ = r$field
-  )
-  
-  ## Remove rows where all key variables are NA
-  d <- d[!is.na(d$yield) | !is.na(d$variety), ]
-  
-  ## Write CAROB files
+    treatment = r$field
+  )  
   carobiner::write_files(path, meta, d)
 }
