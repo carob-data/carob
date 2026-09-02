@@ -18,7 +18,7 @@ carob_script <- function(path) {
                                   design = NA,
                                   data_type = "experiment",
                                   treatment_vars = "variety",
-                                  response_vars = "flavor_baked_;texture_baked_",
+                                  response_vars = "tuber_flavor;tuber_texture",
                                   notes = NA,
                                   carob_contributor = "Maryam Yahya",
                                   carob_date = "2026-09-02",
@@ -79,8 +79,8 @@ carob_script <- function(path) {
     yield_moisture = NA_real_,
     yield_isfresh = NA,
     # NEW: sensory quality scores (1-5)
-    flavor_baked_ = as.integer(r$Flavor),
-    texture_baked_ = as.integer(r$Texture)
+    tuber_flavor = as.integer(r$Flavor),
+    tuber_texture = as.integer(r$Texture)
   )
   
   ## Merge coordinates
