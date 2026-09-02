@@ -3,7 +3,8 @@
 
 ## ISSUES
 
-#Rejected: compilation data that seem to be already in carob
+# Rejected: compilation data that should already be in Carob
+
 
 carob_script <- function(path) {
 
