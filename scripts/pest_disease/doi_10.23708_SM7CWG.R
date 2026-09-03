@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
 
 carob_script <- function(path) {
   
@@ -46,7 +46,7 @@ carob_script <- function(path) {
     date = r1$date,
     pest_species = r1$species,
     pest_incidence = r1$numberOfIndividuals,
-    pheromone_change = r1$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
+    pheromone_change = r1$pheromoneChange  
   )
   
   d2 <- data.frame(
@@ -54,15 +54,17 @@ carob_script <- function(path) {
     date = r2$date,
     pest_species = r2$species,
     pest_incidence = r2$numberOfIndividuals,
-    pheromone_change = r2$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
+    pheromone_change = r2$pheromoneChange 
   )
   
   d3 <- data.frame(
-    locality = "field climate_near trap",     #locality was based on placement of climate sensors in microenvironments (field, adjacent to traps; lab/building)
-    sensor_id = "Hobo MX2301A",               #data on sensors was retained as a distinct variable because multiple sensor models (Hobo MX2301A, BME680, DS18B20, SI1145) independently measured overlapping variables     
+   #site was based on placement of climate sensors in microenvironments (field, adjacent to traps; lab/building)   
+    site = "field climate_near trap",   
+   #multiple sensors (Hobo MX2301A, BME680, DS18B20, SI1145) independently measured overlapping variables 
+    sensor_id = "Hobo MX2301A",               
     temp = r3$temperature,
     rhum = r3$rh,
-    dwep = r3$dewpoint
+    dewp = r3$dewpoint
   ) 
   
   # Create the date and time columns in d3
@@ -70,11 +72,11 @@ carob_script <- function(path) {
   d3$time <- substr(r3$dateUTC, 12, 19)
   
   d4 <- data.frame(
-    locality = "lab climate_near building",     #locality was based on placement of climate sensors in microenvironments (field, adjacent to traps; lab/building)
-    sensor_id = "Hobo MX2301A",                 #data on sensors was retained as a distinct variable because multiple sensor models (Hobo MX2301A, BME680, DS18B20, SI1145) independently measured overlapping variables     
+    site = "lab climate_near building",    
+    sensor_id = "Hobo MX2301A",             
     temp = r4$temperature,
     rhum = r4$rh,
-    dwep = r4$dewpoint
+    dewp = r4$dewpoint
   ) 
   
   # Create the date and time columns in d4
@@ -82,8 +84,8 @@ carob_script <- function(path) {
   d4$time <- substr(r4$dateUTC, 12, 19)
   
   d5 <- data.frame(
-    locality = "rpi_near building",       # data acquired using a Raspberry Pi 3A+ single-board computer in a nearby building
-    sensor_id = "BME680",                 # sensor_id retained as a distinct variable because multiple sensor models (Hobo MX2301A, BME680, DS18B20, SI1145) independently measured overlapping variables
+    site = "rpi_near building",
+    sensor_id = "BME680",
     temp = r5$temperature,
     rhum = r5$rh,
     pressure = r5$pressure,
@@ -96,14 +98,9 @@ carob_script <- function(path) {
   d5$time <- substr(r5$dateUTC, 12, 19)
   
   d6 <- data.frame(
-    locality = "rpi_near building",
-    sensor_id = "DS18B20",                # DS18B20 only measures temperature — all other fields are NA, not borrowed from BME680
+    site = "rpi_near building",
+    sensor_id = "DS18B20",  # DS18B20 only measures temperature
     temp = r5$temperatureDS18B20,
-    rhum = NA,
-    pressure = NA,
-    visible_light = NA,
-    IR_light = NA,
-    UV_light = NA
   )
   d6$date <- as.character(as.Date(r5$dateUTC, format = "%Y-%m-%d %H:%M:%S"))
   d6$time <- substr(r5$dateUTC, 12, 19)
@@ -113,26 +110,19 @@ carob_script <- function(path) {
     date = r6$date,
     pest_species = r6$species,
     pest_incidence = r6$numberOfIndividuals,
-    pheromone_change = r6$pheromoneChange  #pheromone_change included because pheromone monitoring is one of the core tools in integrated pest management
+    pheromone_change = r6$pheromoneChange
   )
   
-  d8 <- carobiner::bindr(d1, d2, d7)
+  d <- carobiner::bindr(d1, d2, d7)
+  d <- unique(d)
   
-  # climate_data is kept separate from d and not merged: pest surveys (d) are 
-  # recorded per trap visit (roughly daily/weekly), while climate readings are logged 
-  # every 10-30 min by automated sensors
-  # carobiner::rbind fills in missing columns across d3-d6 automatically (e.g.
-  # pressure/light fields only present in d5/d6, dwep only present in d3/d4)
+  wth <- carobiner::bindr(d3, d4, d5, d6)
+  wth$location <- "Muhaka"
+  wth$longitude <- 39.48917
+  wth$latitude <- -4.34389
+  wth$geo_from_source <- FALSE
+  wth$temp[wth$temp > 60] <- NA
   
-  climate_data <- carobiner::bindr(d3, d4, d5, d6)
-  
-  climate_data$location <- "Muhaka"
-  climate_data$longitude <- 39.48917
-  climate_data$latitude <- -4.34389
-  climate_data$geo_from_source <- FALSE
-  climate_data$temp[climate_data$temp > 60] <- NA
-  
-  d <- d8
   
   d$country <- "Kenya"
   d$adm1 <- "Kwale"
@@ -144,7 +134,7 @@ carob_script <- function(path) {
   d$treatment <- NA
   d$crop <- "maize"
   d$yield_part <- "grain"
-  d$trial_id <- as.character(1)
+  d$trial_id <- "1"
   d$on_farm <- TRUE
   d$is_survey <- FALSE
   d$irrigated <- FALSE
@@ -152,8 +142,7 @@ carob_script <- function(path) {
   d$harvest_date  <- NA
   d$yield <- d$yield_moisture <- d$yield_isfresh <- NA
   
-  d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- d$S_fertilizer <- d$lime <- d$fertilizer_type <- NA
-  d <- unique(d)
+  d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- NA
   
   carobiner::write_files(path, meta, d, wth = climate_data)
 }
