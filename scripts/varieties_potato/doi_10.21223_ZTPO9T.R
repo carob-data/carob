@@ -1,4 +1,3 @@
-
 carob_script <- function(path) {
   
   "
@@ -13,18 +12,18 @@ carob_script <- function(path) {
   ff <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 2,
-                                  data_organization = "CIP",
-                                  publication = NA,
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "color_fries_1_;color_fries_2_;texture_fries_1_;texture_fries_2_",
-                                  notes = NA,
-                                  carob_contributor = "Maryam Yahya",
-                                  carob_date = "2026-09-02",
-                                  carob_completion = 85,
-                                  carob_effort = 1.5
+    data_organization = "CIP",
+    publication = NA,
+    project = NA,
+    design = NA,
+    data_type = "experiment",
+    treatment_vars = "variety",
+    response_vars = "fries_color;fries_texture",
+    notes = NA,
+    carob_contributor = "Maryam Yahya",
+    carob_date = "2026-09-03",
+    carob_completion = 85,
+    carob_effort = 1.5
   )
   
   ## Source file
@@ -32,6 +31,15 @@ carob_script <- function(path) {
   
   ## Read source data
   r1 <- carobiner::read.excel(f1, na = c("", "#N/D", "#DIV/0!", "NA", "-"))
+  
+  ## Aggregate over evaluators (average of color and texture)
+  ## Each combination of Clone × Repetition × Locality has 3 evaluators
+  r1 <- aggregate(r1[, c("Color sample1", "Color sample2", "Texture sample1", "Texture sample2")],
+                  r1[, c("Clone", "Repetition", "Locality")],
+                  mean, na.rm = TRUE)
+  
+  ## Rename columns for consistency
+  names(r1) <- c("Clone", "Repetition", "Locality", "Color1", "Color2", "Texture1", "Texture2")
   
   ## Coordinates estimated from Google Maps (September 2026)
   coords <- data.frame(
@@ -43,7 +51,7 @@ carob_script <- function(path) {
   ## Management variables set to NA (not in source)
   d <- data.frame(
     trial_id = "ZTPO9T",
-    plot_id = as.character(r1$Numeration),
+    plot_id = paste(r1$Locality, r1$Repetition, r1$Clone, sep = "_"),
     rep = as.integer(r1$Repetition),
     variety = r1$Clone,
     location = r1$Locality,
@@ -61,12 +69,14 @@ carob_script <- function(path) {
     yield = NA_real_,
     yield_moisture = NA_real_,
     yield_isfresh = NA,
-    # NEW: french fries quality scores (color and texture, 1-5)
-    color_fries_1_ = as.integer(r1$`Color sample1`),
-    color_fries_2_ = as.integer(r1$`Color sample2`),
-    texture_fries_1_ = as.integer(r1$`Texture sample1`),
-    texture_fries_2_ = as.integer(r1$`Texture sample2`)
+    # NEW: average french fries quality scores (1-5)
+    fries_color = rowMeans(r1[, c("Color1", "Color2")], na.rm = TRUE),
+    fries_texture = rowMeans(r1[, c("Texture1", "Texture2")], na.rm = TRUE)
   )
+  
+  ## Convert NaN from rowMeans to NA
+  d$fries_color[is.nan(d$fries_color)] <- NA
+  d$fries_texture[is.nan(d$fries_texture)] <- NA
   
   ## Merge coordinates
   d <- merge(d, coords, by = "location", all.x = TRUE)
