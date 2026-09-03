@@ -17,43 +17,49 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	group <- "pest_disease"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-	                                data_organization = "CIP; NARO",
-	                                publication = NA,
-	                                project = "3R potato ML-CFT",
-	                                design = "RCBD",
-	                                data_type = NA,
-	                                treatment_vars = "variety",
-	                                response_vars = "disease", 
-	                                carob_contributor = "Premrose Masunungure",
-	                                carob_date = "2026-08-26",
-	                                carob_completion = 70,	
-	                                carob_effort = 4
+		data_organization = "CIP; NARO",
+		publication = NA,
+		project = "3R potato ML-CFT",
+		design = "RCBD",
+		data_type = NA,
+		treatment_vars = "variety",
+		response_vars = "disease", 
+		carob_contributor = "Premrose Masunungure",
+		carob_date = "2026-08-26",
+		carob_completion = 70,	
+		carob_effort = 4
 	)
 	
-	
-	f1 <- ff[basename(ff) == "Data Dictionary.xlsx"]
+	#f1 <- ff[basename(ff) == "Data Dictionary.xlsx"]
 	f2 <- ff[basename(ff) == "Data.xls"]
 	
-	r1 <- carobiner::read.excel(f1)
-	r2a <- carobiner::read.excel(f2, sheet="CFT Data")
-	r2b <- carobiner::read.excel(f2, sheet="RS 8 9 AGRO ERA-Plant Dev")
+	#r1 <- carobiner::read.excel(f1)
+	#r2a <- carobiner::read.excel(f2, sheet="CFT Data")
+	r2b <- carobiner::read.excel(f2, sheet="RS 8 9 AGRO ERA-Plant Dev", na="No data")
 	r2c <- carobiner::read.excel(f2, sheet="RS9-ERA-NTO")
-	r2d <- carobiner::read.excel(f2, sheet="RS4-LB data")    # no data
+	#r2d <- carobiner::read.excel(f2, sheet="RS4-LB data")    # no data
 	r2e <- carobiner::read.excel(f2, sheet="Harvest data")
-	r2f <- carobiner::read.excel(f2, sheet="Leaf samples")
-	r2g <- carobiner::read.excel(f2, sheet="Tuber samples")
-	
-	
+	#r2f <- carobiner::read.excel(f2, sheet="Leaf samples")
+	#r2g <- carobiner::read.excel(f2, sheet="Tuber samples")
+
 	d1 <- data.frame(
-	  country = "Uganda",
 	  plot_id = as.character(r2b$Plot),
+	  date = r2b$`Actual date`,
 	  variety = r2b$Genotype,
 	  disease = "potato late blight",
-	  disease_incidence = as.character(ifelse(r2b$`Incidence of LB (%)` == "No data", NA, r2b$`Incidence of LB (%)`)),
-	  plant_height = as.numeric(ifelse(r2b$`Estimated average plant height (cm)` == "No data", NA, r2b$`Estimated average plant height (cm)`)),stringsAsFactors = FALSE)
+	  disease_incidence = as.character(r2b$`Incidence of LB (%)`),
+	  plant_height = r2b$`Estimated average plant height (cm)`
+	)
+	d1 <- d1[!(is.na(d1$date) | is.na(d1$variety)), ]
+    d1$date <- gsub("/18", "/2018", d1$date)
+    d1$variety <- gsub("820046.09999999998", "820046.1", d1$variety)
+    d1$variety <- gsub("381381.20000000001", "381381.20", d1$variety)
 	
+    d1$date <- ifelse(grepl("/", d1$date), as.character(as.Date(d1$date, format="%d/%m/%Y")), 
+	           ifelse(grepl("-", d1$date), as.character(as.Date(d1$date, format="%m-%d-%Y")), d1$date))
+	i <- !grepl("-", d1$date)
+	d1$date[i] <- as.character(as.Date("1899-12-29") + as.integer(d1$date[i]))
 	
 	obs_lookup <- c(
 	  "Incidence of early blight (%)"      = "early blight",
@@ -67,41 +73,35 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	  "Incidence of moth (%)"              = "moth"
 	)
 	
-	d2 <- do.call(rbind, lapply(names(obs_lookup), function(cn) {
+	d_long <- do.call(rbind, lapply(names(obs_lookup), function(cn) {
 	  data.frame(
 	    plot_id = as.character(r2c$Plot),
-	    variety = r2c$Genotype,
 	    pest_species = obs_lookup[[cn]],
-	    pest_incidence = as.integer(r2c[[cn]]),
-	    stringsAsFactors = FALSE)}))
-	
-	
+	    pest_incidence = as.integer(r2c[[cn]])
+	  )}))
+	  d_long <- d_long[!is.na(d_long$plot_id), ]
+		
+## the interest in d3 / r2e would be to get to yield?
 	d3 <- data.frame(
 	  plot_id = as.character(r2e$Plot),
-	  variety = r2e$Genotype,
-	  flesh_color = r2e$`Flesh colour`)
+	  flesh_color = tolower(r2e$`Flesh colour`)
+	) |> unique()
 	
-	da <- merge(d1, d2, by = c("plot_id", "variety"), all = TRUE)
+	d <- merge(d1, d3, by = "plot_id", all.x = TRUE)	    
 	
-	d <- merge(da, d3, by = c("plot_id", "variety"), all = TRUE)
-	
-	
-	d$trial_id <- as.character(as.integer(as.factor(1)))
-
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	
-	
+    d$trial_id <- "1"	
+	d$country = "Uganda"
 	d$longitude <- 29.942
 	d$latitude <- -1.254
+	d$geo_source <- "?" # please fill in
 	d$geo_from_source <- FALSE
 	
-	d$planting_date <-as.character(as.Date("27-11-2017", format = "%d-%m-%Y"))
-	
-	d$harvest_date <- as.character(as.Date("20-03-2018", format = "%d-%m-%Y"))
-	
-	
+	d$planting_date <-"2017-11-27"	
+	d$harvest_date <- "2018-03-20"
+		
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- NA
 	d$fertilizer_type <- NA
 	d$yield <- NA
@@ -109,10 +109,7 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	d$yield_moisture <- NA
 	d$crop <- "potato"
 	d$yield_isfresh <- TRUE
-	
-	d <-unique(d)
-	
-	carobiner::write_files(path, meta, d)
-	
+		
+	carobiner::write_files(path, meta, d, long=d_long)	
 }
 
