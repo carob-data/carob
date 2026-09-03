@@ -38,14 +38,13 @@ carob_script <- function(path) {
                   r1[, c("Clone", "Repetition", "Locality")],
                   mean, na.rm = TRUE)
   
-  ## Rename columns for consistency
-  names(r1) <- c("Clone", "Repetition", "Locality", "Color1", "Color2", "Texture1", "Texture2")
-  
   ## Coordinates estimated from Google Maps (September 2026)
-  coords <- data.frame(
+  geo <- data.frame(
     location = c("Majes", "Huancayo", "Chugay", "Yanac", "Chota", "Huanuco"),
     latitude = c(-16.3625, -12.0651, -7.78167, -7.8000, -6.5636, -9.9306),
-    longitude = c(-72.1911, -75.2049, -77.8683, -77.8000, -78.6500, -76.2422)
+    longitude = c(-72.1911, -75.2049, -77.8683, -77.8000, -78.6500, -76.2422),
+    geo_source = "Google Maps",
+    geo_from_source = FALSE
   )
   
   ## Management variables set to NA (not in source)
@@ -69,22 +68,12 @@ carob_script <- function(path) {
     yield = NA_real_,
     yield_moisture = NA_real_,
     yield_isfresh = NA,
-    # NEW: average french fries quality scores (1-5)
-    fries_color = rowMeans(r1[, c("Color1", "Color2")], na.rm = TRUE),
-    fries_texture = rowMeans(r1[, c("Texture1", "Texture2")], na.rm = TRUE)
+    fries_color = rowMeans(r1[, c("Color sample1", "Color sample2")], na.rm = TRUE),
+    fries_texture = rowMeans(r1[, c("Texture sample1", "Texture sample2")], na.rm = TRUE)
   )
   
-  ## Convert NaN from rowMeans to NA
-  d$fries_color[is.nan(d$fries_color)] <- NA
-  d$fries_texture[is.nan(d$fries_texture)] <- NA
-  
   ## Merge coordinates
-  d <- merge(d, coords, by = "location", all.x = TRUE)
-  d$geo_from_source <- FALSE
+  d <- merge(d, geo, by = "location", all.x = TRUE)
   
-  ## Remove rows with missing key variables
-  d <- d[!is.na(d$variety), ]
-  
-  ## Write CAROB files
   carobiner::write_files(path, meta, d)
 }
