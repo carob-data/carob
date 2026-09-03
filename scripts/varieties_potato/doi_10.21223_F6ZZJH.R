@@ -8,22 +8,21 @@ carob_script <- function(path) {
   
   uri <- "doi:10.21223/F6ZZJH"
   group <- "varieties_potato"
-  
   ff <- carobiner::get_data(uri, path, group)
-  
+
   meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 1,
-                                  data_organization = "CIP",
-                                  publication = NA,
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "tuber_flavor;tuber_texture",
-                                  notes = NA,
-                                  carob_contributor = "Maryam Yahya",
-                                  carob_date = "2026-09-02",
-                                  carob_completion = 85,
-                                  carob_effort = 1.5
+		data_organization = "CIP",
+		publication = NA,
+		project = NA,
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "tuber_flavor;tuber_texture",
+		notes = NA,
+		carob_contributor = "Maryam Yahya",
+		carob_date = "2026-09-02",
+		carob_completion = 85,
+		carob_effort = 1.5
   )
   
   ## Source files
@@ -52,12 +51,19 @@ carob_script <- function(path) {
   
   # Combine
   r <- carobiner::bindr(r1, r2, r3, r4, r5, r6)
+
+  # It seems that, generally, an Evaluator evaluates each variety, so not much to correct for and values can be averaged over Evaluators. 
+  # It is not clear if Evaluator 1 is the same person in each file. 
+  # Alternatively, each combination of Repetition/Evaluator could be treated as a repetition
+  r <- aggregate(r[, c("Flavor", "Texture")], r[,c("Clone", "Repetition", "location")], mean, na.rm=TRUE)
   
   # Coordinates estimated from Google Maps (September 2026)
-  coords <- data.frame(
+  geo <- data.frame(
     location = c("Majes", "Huancayo", "Huamachuco Licame", "Huamachuco Yanac", "Cajamarca", "Huanuco"),
     latitude = c(-16.3625, -12.0651, -7.8133, -7.8000, -7.1638, -9.9306),
-    longitude = c(-72.1911, -75.2049, -77.7733, -77.8000, -78.5000, -76.2422)
+    longitude = c(-72.1911, -75.2049, -77.7733, -77.8000, -78.5000, -76.2422),
+    geo_source = "Google Maps",
+    geo_from_source = FALSE
   )
   
   # Management variables set to NA (not in source)
@@ -81,18 +87,11 @@ carob_script <- function(path) {
     yield = NA_real_,
     yield_moisture = NA_real_,
     yield_isfresh = NA,
-    # NEW: sensory quality scores 
-    tuber_flavor = as.integer(r$Flavor),
-    tuber_texture = as.integer(r$Texture)
+    tuber_flavor = r$Flavor,
+    tuber_texture = r$Texture
   )
   
-  # Merge coordinates
-  d <- merge(d, coords, by = "location", all.x = TRUE)
-  d$geo_from_source <- FALSE
-  
-  # Remove rows with missing key variables
-  d <- d[!is.na(d$variety), ]
-  
-  # Write CAROB files
+  d <- merge(d, geo, by = "location", all.x = TRUE)
+    
   carobiner::write_files(path, meta, d)
 }
