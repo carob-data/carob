@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-##Yield was noit specified, it was divided into weight of small, medium and large tubers.
+## The description says the experiment was done on the locations but the dataset has only one location Kachwekano ZARDI
 #Plant height for potatoes were out of bound with maximum value 75.5
 
 carob_script <- function(path) {
@@ -22,7 +22,7 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 		publication = NA,
 		project = "3R potato ML-CFT",
 		design = "RCBD",
-		data_type = NA,
+		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "disease", 
 		carob_contributor = "Premrose Masunungure",
@@ -82,21 +82,32 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	  d_long <- d_long[!is.na(d_long$plot_id), ]
 		
 ## the interest in d3 / r2e would be to get to yield?
+	r2e$tuber_fresh_weight <- with(
+	  r2e,
+	  `Weight of small tubers (g)` +
+	    `Weight of medium tubers (g)` +
+	    `Weight of large tubers (g)`
+	)
+	
 	d3 <- data.frame(
-	  plot_id = as.character(r2e$Plot),
-	  flesh_color = tolower(r2e$`Flesh colour`)
-	) |> unique()
+	  plot_id     = as.character(r2e$Plot),
+	  flesh_color = tolower(r2e$`Flesh colour`),
+	  fw_tubers = r2e$tuber_fresh_weight,   #g per plot
+	  plot_area   = 6.75,  #m2
+	  yield       = (r2e$tuber_fresh_weight / 6.75) * 10 
+	)|> unique()
 	
 	d <- merge(d1, d3, by = "plot_id", all.x = TRUE)	    
 	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-    d$trial_id <- "1"	
+  d$trial_id <- "1"	
 	d$country = "Uganda"
+	d$location = "Kachwekano ZARDI" #location provided in r2a <- carobiner::read.excel(f2, sheet="CFT Data")
 	d$longitude <- 29.942
 	d$latitude <- -1.254
-	d$geo_source <- "?" # please fill in
+	d$geo_source <- "Google maps"   #Kachwekano Zonal Agricultural Research and Development Institute  #actual coordinates were provided
 	d$geo_from_source <- FALSE
 	
 	d$planting_date <-"2017-11-27"	
@@ -104,7 +115,6 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 		
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- NA
 	d$fertilizer_type <- NA
-	d$yield <- NA
 	d$yield_part <- "tubers"
 	d$yield_moisture <- NA
 	d$crop <- "potato"
