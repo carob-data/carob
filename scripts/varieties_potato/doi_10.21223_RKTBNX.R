@@ -1,29 +1,29 @@
 carob_script <- function(path) {
   
-  "
-  Dataset for: Assessment of baked potatoes quality traits during 2019-2020
+"
+Dataset for: Assessment of baked potatoes quality traits during 2019-2020
 
-  In 2020, in the CIP physiology and post-harvest laboratory in La Molina, quality tests were carried out for baked in ten potato clones with high levels of resistance to late blight and two varieties Canchan and Unica, the samples came from 5 localities of Peru, where these clones were planted in adaptation and efficiency experiments for the registration of varieties within the CIP-PODEROSA project, under the tax research law, Law 30309, which encourages the Peruvian government to encourage agricultural research in the country. Tests to determine heat for baking, evaluating flavor and texture of the clones after baking.
-  "
-  
+In 2020, in the CIP physiology and post-harvest laboratory in La Molina, quality tests were carried out for baked in ten potato clones with high levels of resistance to late blight and two varieties Canchan and Unica, the samples came from 5 localities of Peru, where these clones were planted in adaptation and efficiency experiments for the registration of varieties within the CIP-PODEROSA project, under the tax research law, Law 30309, which encourages the Peruvian government to encourage agricultural research in the country. Tests to determine heat for baking, evaluating flavor and texture of the clones after baking.
+"
+
   uri <- "doi:10.21223/RKTBNX"
   group <- "varieties_potato"
   
   ff <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 1,
-                                  data_organization = "CIP",
-                                  publication = NA,
-                                  project = NA,
-                                  design = NA,
-                                  data_type = "experiment",
-                                  treatment_vars = "variety",
-                                  response_vars = "tuber_flavor;tuber_texture",
-                                  notes = NA,
-                                  carob_contributor = "Maryam Yahya",
-                                  carob_date = "2026-09-02",
-                                  carob_completion = 85,
-                                  carob_effort = 1.5
+		data_organization = "CIP",
+		publication = NA,
+		project = NA,
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "tuber_flavor;tuber_texture",
+		notes = NA,
+		carob_contributor = "Maryam Yahya",
+		carob_date = "2026-09-02",
+		carob_completion = 85,
+		carob_effort = 1.5
   )
   
   ## Source files
@@ -69,9 +69,9 @@ carob_script <- function(path) {
     on_farm = FALSE,
     is_survey = FALSE,
     irrigated = NA,
-    N_fertilizer = NA_real_,
-    P_fertilizer = NA_real_,
-    K_fertilizer = NA_real_,
+    N_fertilizer = NA,
+    P_fertilizer = NA,
+    K_fertilizer = NA,
     planting_date = NA,
     harvest_date = NA,
     yield_part = "tubers",
@@ -79,8 +79,8 @@ carob_script <- function(path) {
     yield_moisture = NA_real_,
     yield_isfresh = NA,
     # NEW: sensory quality scores (1-5)
-    tuber_flavor = as.integer(r$Flavor),
-    tuber_texture = as.integer(r$Texture)
+    tuber_flavor = r$Flavor,
+    tuber_texture = r$Texture
   )
   
   ## Merge coordinates
@@ -93,3 +93,5 @@ carob_script <- function(path) {
   ## Write CAROB files
   carobiner::write_files(path, meta, d)
 }
+
+
