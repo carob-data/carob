@@ -65,7 +65,9 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
   #rows <- 14
 	#plants_per_row <- 25
 	plot_area_m2 <- 10 * 7.5
-	d$plant_density <- r$No_of_plants_emerged_per_plot/plot_area_m2 * 10000#initially i assumed planting stations = plants planted, which might be wrong because not all can make it, so instead im using the variables already in the dataset
+	
+	#initially i assumed planting stations = plants planted, which might be wrong because not all can make it, so instead im using the variables already in the dataset
+	d$plant_density <- r$No_of_plants_emerged_per_plot / plot_area_m2 * 10000
 	d$seed_density <- r$No._of_tubers_planted/plot_area_m2 * 10000
 	d$emergence_rate <- d$plant_density/d$seed_density
 	d$on_farm <- TRUE
@@ -85,11 +87,11 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
   
   #adding planting date
   #planting dates were obtained from one of the dataset files "4095_05_Layout-and-Replications", and the planting dates varied per site, without the seasons included
-	   planting <- data.frame(
-        location = c("Tharuni", "Ngecha", "Lari", "Kuresoi", "Keringet-Sabtet", "Keringet - Pompo", "Passengga", "Rurii"),
-        planting_date = c("2015-03-31", "2015-04-02", "2015-10-10", "2015-04-18", "2015-04-17", "2015-04-16", "2015-04-21", "2015-04-20"))  
-    
-	   d <- merge(d, planting, by="location", all.x=TRUE)
+#  planting <- data.frame(
+#        location = c("Tharuni", "Ngecha", "Lari", "Kuresoi", "Keringet-Sabtet", "Keringet - Pompo", "Passengga", "Rurii"),
+#        planting_date = c("2015-03-31", "2015-04-02", "2015-10-10", "2015-04-18", "2015-04-17", "2015-04-16", "2015-04-21", "2015-04-20")
+#	)  
+#   d <- merge(d, planting, by="location", all.x=TRUE)
   
   #adding treatment variable
   abbrev_lookup <- c(
