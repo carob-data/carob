@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+#1 whats left is to add the season
 
 carob_script <- function(path) {
 
@@ -41,7 +41,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	  treatment = r$Treatment,
 	  variety = r$Variety,
 	  location = r$Site,
-      trial_id = paste(r$Site, gsub("Season ", "S", r$Season), sep = "_"),
+    trial_id = paste(r$Site, gsub("Season ", "S", r$Season), sep = "_"),
 	  yield = r$`Yield_t/ha`*1000,
 	  yield_part ="tubers",
 	  yield_moisture = NA,
@@ -49,10 +49,10 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	  record_id = seq_len(nrow(r))
 	)
 
+	# disease severity columns
     disease <- data.frame(
 	  record_id = seq_len(nrow(r)),
-	 # disease severity columns
-  	  bacterial_wilt = r$`BW_L_%`, 
+  	bacterial_wilt = r$`BW_L_%`, 
 	  potato_virus_Y = r$`PVY_%`,
 	  potato_virus_X = r$`PVX_%`,
 	  potato_leafroll_virus = r$`PLRV_%`,
@@ -62,25 +62,34 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
     )
 	
 	# computing plant density
-	rows <- 14
-	plants_per_row <- 25
+  #rows <- 14
+	#plants_per_row <- 25
 	plot_area_m2 <- 10 * 7.5
-	d$plant_density <- rows * plants_per_row
-	d$plant_density <- d$plant_density/plot_area_m2 * 10000
-	
-	d$emergence_rate <- r$`%_Emergence`
+	d$plant_density <- r$No_of_plants_emerged_per_plot/plot_area_m2 * 10000#initially i assumed planting stations = plants planted, which might be wrong because not all can make it, so instead im using the variables already in the dataset
+	d$seed_density <- r$No._of_tubers_planted/plot_area_m2 * 10000
+	d$emergence_rate <- d$plant_density/d$seed_density
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+  d$harvest_date <- NA
+  d$season <- r$Season
+  
+  season <- c(
+    "Season 1" = "first", 
+    "Season 2" = "second",
+    "Season 3" = "third"
+  )
+  
+  d$season <- season[d$season]
   
   #adding planting date
-### where did you get these? Always comment where data come from that otherwise "comes from nowhere"	
-### this is wrong, as there are multiple seasons in each site.	
-   planting <- data.frame(
+  #planting dates were obtained from one of the dataset files "4095_05_Layout-and-Replications", and the planting dates varied per site, without the seasons included
+	   planting <- data.frame(
         location = c("Tharuni", "Ngecha", "Lari", "Kuresoi", "Keringet-Sabtet", "Keringet - Pompo", "Passengga", "Rurii"),
-        planting_date = c("2015-03-31", "2015-04-02", "2015-10-10", "2015-04-18", "2015-04-17", "2015-04-16", "2015-04-21", "2015-04-20")
-    )  
-    d <- merge(d, planting, by="location", all.x=TRUE)
+        planting_date = c("2015-03-31", "2015-04-02", "2015-10-10", "2015-04-18", "2015-04-17", "2015-04-16", "2015-04-21", "2015-04-20"))  
+    
+	   d <- merge(d, planting, by="location", all.x=TRUE)
   
   #adding treatment variable
   abbrev_lookup <- c(
@@ -109,7 +118,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
     location=c("Keringet-Sabtet", "Keringet - Pompo", "Kuresoi", "Lari", "Ngecha","Passengga", "Rurii", "Tharuni"), 
     longitude=c(35.691, 35.691, 35.533, 36.647, 36.671, 36.329, 36.389, 36.625),
     latitude=c(-0.420, -0.420, -0.303, -0.983, -1.168, -0.219, -0.208, -1.133),
-	geo_from_source = FALSE
+	geo_from_source = TRUE
   )
   d <- merge(d, geo, by="location", all.x = TRUE)  
 
