@@ -1,10 +1,10 @@
 carob_script <- function(path) {
   
-  "
-  Dataset for: Assessment of french fries quality traits during 2020-2021
+"
+Dataset for: Assessment of french fries quality traits during 2020-2021
 
-  In 2021, in the CIP physiology and post-harvest laboratory in La Molina, quality tests were carried out for frying in eighth potato clones with high levels of resistance to late blight and excellent quality for frying in french fries and two varieties Canchan and Unica, the samples came from 5 localities of Peru, where these clones were planted in adaptation and efficiency experiments for the registration of varieties within the CIP-PODEROSA project, under the tax research law, Law 30309, which encourages the Peruvian government to encourage agricultural research in the country. Tests to determine the dry matter, frying color, reducing sugar content, and frying with scalding were carried out.
-  "
+In 2021, in the CIP physiology and post-harvest laboratory in La Molina, quality tests were carried out for frying in eighth potato clones with high levels of resistance to late blight and excellent quality for frying in french fries and two varieties Canchan and Unica, the samples came from 5 localities of Peru, where these clones were planted in adaptation and efficiency experiments for the registration of varieties within the CIP-PODEROSA project, under the tax research law, Law 30309, which encourages the Peruvian government to encourage agricultural research in the country. Tests to determine the dry matter, frying color, reducing sugar content, and frying with scalding were carried out.
+"
   
   uri <- "doi:10.21223/ZTPO9T"
   group <- "varieties_potato"
