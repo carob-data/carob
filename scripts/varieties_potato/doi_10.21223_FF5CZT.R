@@ -73,23 +73,23 @@ carob_script <- function(path) {
     rep = as.integer(r$Repetition),
     variety = r$Clone,
     location = r$location,
+    # french fries quality scores (1-5)
+    fries_color = rowMeans(r[, c("Color1", "Color2")], na.rm = TRUE),
+    fries_texture = rowMeans(r[, c("Texture1", "Texture2")], na.rm = TRUE),
     country = "Peru",
     crop = "potato",
-    on_farm = FALSE,
+    on_farm = FALSE, # or NA?
     is_survey = FALSE,
     irrigated = NA,
-    N_fertilizer = NA_real_,
-    P_fertilizer = NA_real_,
-    K_fertilizer = NA_real_,
+    N_fertilizer = NA,
+    P_fertilizer = NA,
+    K_fertilizer = NA,
     planting_date = NA,
     harvest_date = NA,
     yield_part = "tubers",
-    yield = NA_real_,
-    yield_moisture = NA_real_,
-    yield_isfresh = NA,
-    # NEW: average french fries quality scores (1-5)
-    fries_color = rowMeans(r[, c("Color1", "Color2")], na.rm = TRUE),
-    fries_texture = rowMeans(r[, c("Texture1", "Texture2")], na.rm = TRUE)
+    yield = NA,
+    yield_moisture = NA,
+    yield_isfresh = NA
   )
   
   ## Merge coordinates
