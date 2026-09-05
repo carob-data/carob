@@ -32,14 +32,12 @@ carob_script <- function(path) {
   f3 <- ff[grepl("MACULL.*_processed", ff, ignore.case = TRUE)]
   
   ## Read source data
-  r1 <- carobiner::read.excel(f1, na = c("", "#N/D", "#DIV/0!", "NA"))
-  r2 <- carobiner::read.excel(f2, na = c("", "#N/D", "#DIV/0!", "NA"))
-  r3 <- carobiner::read.excel(f3, na = c("", "#N/D", "#DIV/0!", "NA"))
+  r1 <- carobiner::read.excel(f1)
+  r2 <- carobiner::read.excel(f2)
+  r3 <- carobiner::read.excel(f3)
   
-  ## Correct yield units for San Juan Bajo (r1)
-  ## Values in r1 appear to be 10x too high, so divide by 10
-  r1$yield_fresh <- r1$yield_fresh / 10
-  r1$mtyna <- r1$mtyna / 10
+  ## yield adjustment seems of for some cases in r1
+  r1$yield_fresh <- pmin(r1$yield_fresh, r1$ttyna * 1.1)
   
   ## Add location identifiers
   r1$location <- "San Juan Bajo"
@@ -49,43 +47,36 @@ carob_script <- function(path) {
   ## Combine the three trials
   r <- carobiner::bindr(r1, r2, r3)
   
-  ## Create final standardized data.frame
   d <- data.frame(
-    trial_id = paste("RVCHKV", gsub("[ ,]+", "_", r$location), sep = "_"),
+    trial_id = paste0("RVCHKV_", r$location),
     plot_id = as.character(r$plot),
     rep = as.integer(r$rep),
     variety = r$variety,
     location = r$location,
     country = "Peru",
     crop = "potato",
-    crop_rotation = NA,
     on_farm = TRUE,
     is_survey = FALSE,
     irrigated = r$irrigated,
     yield_part = "tubers",
     yield = r$yield_fresh * 1000,
-    marketable_yield = r$mtyna * 1000,
-    yield_moisture = NA_real_,
+    yield_marketable = r$mtyna * 1000,
+    yield_moisture = NA,
     yield_isfresh = TRUE,
     latitude = r$latitude,
     longitude = r$longitude,
     geo_from_source = TRUE,
-    planting_date = as.character(as.Date(r$planting_date)),
-    harvest_date = as.character(as.Date(r$harvest_date)),
+    planting_date = as.character(r$planting_date),
+    harvest_date = as.character(r$harvest_date),
     N_fertilizer = r$n_fertilizer,
     P_fertilizer = r$p_fertilizer,
     K_fertilizer = r$k_fertilizer,
-    fertilizer_type = NA_character_,
-    lime = NA_real_,
     soil_texture = r$soil_texture,
     elevation = r$elevation,
-    # NEW: field type (Mother trial vs Baby trial)
-    field_type_ = r$field
+    # (Mother trial vs Baby trial)
+    treatment = r$field
   )
-  
-  ## Remove rows where all key variables are NA
-  d <- d[!is.na(d$yield) | !is.na(d$variety), ]
-  
-  ## Write CAROB files
+
+  d <- d[!is.na(d$yield), ]
   carobiner::write_files(path, meta, d)
 }
