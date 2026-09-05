@@ -69,13 +69,13 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 	#initially i assumed planting stations = plants planted, which might be wrong because not all can make it, so instead im using the variables already in the dataset
 	d$plant_density <- r$No_of_plants_emerged_per_plot / plot_area_m2 * 10000
 	d$seed_density <- r$No._of_tubers_planted/plot_area_m2 * 10000
-	d$emergence_rate <- d$plant_density/d$seed_density
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-  d$harvest_date <- NA
-  d$season <- r$Season
+    d$planting_date <- NA
+    d$harvest_date <- NA
+    d$season <- r$Season
   
   season <- c(
     "Season 1" = "first", 
