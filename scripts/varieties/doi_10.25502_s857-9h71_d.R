@@ -30,7 +30,6 @@ Data collected from a multi-location variety trial
 		carob_completion = 100,	
 		carob_effort = 1
 	)
-	
 
 	f1 <- ff[basename(ff) == "soybean-gxe-data-.csv"]
 	#f2 <- ff[basename(ff) == "data_dictionary.csv"]
@@ -38,9 +37,9 @@ Data collected from a multi-location variety trial
 	r1 <- read.csv(f1)
 	#r2 <- read.csv(f2)
 
-###### process
 	d <- data.frame(
-	  location = c("IITA_Ibadan"= "Ibadan", "SeedCo_Kujama"= "Kujama", "SeedCo_Saminaka" = "Saminaka", "SeedCo_Sabuwa"= "Sabuwa", "NCRI_Makurdi"= "Makurdi", "NCRI_Mokwa"= "Mokwa", "Zaria"= "Zaria")[r1$env],
+	  location = c("IITA_Ibadan"= "Ibadan", "SeedCo_Kujama"= "Kujama", "SeedCo_Saminaka" = "Saminaka", "SeedCo_Sabuwa"= "Sabuwa", 
+				   "NCRI_Makurdi"= "Makurdi", "NCRI_Mokwa"= "Mokwa", "Zaria"= "Zaria")[r1$env],
 	  rep = r1$rep,
 	  block_id = as.character(r1$block),
 	  variety_code = r1$genotype,
@@ -51,21 +50,19 @@ Data collected from a multi-location variety trial
 	  trial_id =r1$env , 
 	  yield_part = "grain", 
 	  country = "Nigeria", 
-	  geo_from_source = FALSE, 
 	  irrigated = NA, 
-	  yield_moisture = NA_real_,
+	  yield_moisture = NA,
 	  planting_date = "2024", 
-	  harvest_date = NA_character_,
+	  harvest_date = NA,
 	  yield_isfresh = NA
 	)
-	
-	### Adding lon and lat 
 	
 	geo <- data.frame(
 	  location = c("Makurdi", "Zaria", "Sabuwa", "Mokwa", "Ibadan","Kujama", "Saminaka"),
 	  longitude = c(8.5359, 7.7143, 7.0935, 5.1464, 3.897, 7.635, 7.4048),
 	  latitude = c(7.7042, 11.0231, 11.2842, 9.2437, 7.375, 10.480, 10.516),
 	  geo_uncertainty = c(18552, 16966, 22502, 87356, 4390, NA, NA),
+	  geo_from_source = FALSE, 
 	  geo_source = c(rep("GADM 4.1, adm2", 5), rep("Google Maps", 2))
 	)
 	
