@@ -1,9 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## rejected: simulated data
+
 ## ISSUES
-#1.yield is a simulated future parameter, not a field observation, dropping the year as it is up-to 2099 
-#2. out of bounds yield originates from the dataset
+#1.yield is a simulated future parameter, not a field observation
 
 carob_script <- function(path) {
 
