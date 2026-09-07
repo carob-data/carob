@@ -24,7 +24,7 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 	    response_vars = "yield", 
 		notes = NA,
-		carob_contributor = "Mitchelle",
+		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-08-30",
 	    carob_completion = 100,	
 		carob_effort = 3
