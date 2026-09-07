@@ -17,7 +17,7 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
 		data_organization = "AfricaRice",
-		publication = NA,
+		publication = "doi:10.1016/j.atech.2026.102475",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
