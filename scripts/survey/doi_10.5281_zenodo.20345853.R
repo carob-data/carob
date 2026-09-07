@@ -24,7 +24,7 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 		treatment_vars = NA,
 		response_vars = NA, 
 		notes = NA,
-		carob_contributor = "Blessing Dzuda",
+		carob_contributor = "Blessing Dzuda; Kora Simperegui",
 		carob_date = "2026-08-17",
 		carob_completion = 100,	
 		carob_effort = 5
@@ -34,33 +34,22 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 	r <- carobiner::read.excel(f)
 
 	d <- data.frame(
-	  country=r$Country,
-	  longitude=r$Longitude,
-	  latitude=r$Latitude,
-	  crop="rice",
-	  variety=r$Variety,
-	  planting_method=tolower(r$Seedtype),
-	  N_fertilizer=r$`N fertilizer rate`,
-	  P_fertilizer=r$`P fertilizer rate`,
-	  K_fertilizer=r$`K fertilizer rate`,
-	  yield_developed_valleys=r$`Yield Smart-Valleys`*1000,
-	  yield_non_developed_valleys=r$`Yield_non developed IV`*1000,
-	  OM_used=r$`Organic amendment`,
-	  soil_N=r$`Soil N`,
-	  soil_P=r$`Soil P`,
-	  soil_K=r$`Soil K`,
-	  soil_Mg=r$`Soil Mg`,
-	  soil_Ca=r$`Soil Ca`,
-	  soil_Fe=r$`Soil Fe`,
-	  soil_S=r$`Soil S`,
-	  soil_Zn=r$`Soil Zn`,
-	  soil_SOC=r$SOC,
-	  soil_pH=r$`Soil pH`,
-	  soil_clay=r$CLAY,
-	  soil_sand=r$SAND,
-	  soil_silt=r$SILT,
-	  soil_CEC=r$CEC,
-	  soil_bd=r$`Bulk density`
+	  country = r$Country,
+	  longitude = r$Longitude,
+	  latitude = r$Latitude,
+	  crop = "rice",
+	  variety = r$Variety,
+	  planting_method = tolower(r$Seedtype),
+	  N_fertilizer = r$`N fertilizer rate`,
+	  P_fertilizer = r$`P fertilizer rate`,
+	  K_fertilizer = r$`K fertilizer rate`,
+	  N_splits = as.integer(r$NsplitFertilizer),
+	  yield_developed_valleys = r$`Yield Smart-Valleys`*1000,
+	  yield_non_developed_valleys = r$`Yield_non developed IV`*1000,
+	  OM_used = r$`Organic amendment`,
+	  weeding_done = r$Weeding,
+	  insecticide_used = r$Insect_control,
+	  herbicide_used = ifelse(r$Herbicides=="None", FALSE, TRUE) # TRUE when herbicides %in% c("Both",  "Herbicideselected", "Herbicidetotal") and FALSE when herbicides == "None"
 	)
 	
 	d$trial_id <- paste(d$country, 1:nrow(d), sep = "_")
@@ -76,6 +65,8 @@ This dataset contains agronomic, environmental, soil, management, and climatic d
 	d$planting_method <- gsub("directseeding","direct seeding",d$planting_method)
 	d$planting_method <- gsub("broadcastseeding","broadcasting",d$planting_method)
 	d$country <- gsub("Cote d'Ivoire","Côte d'Ivoire",d$country)
+	
+	d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
 	
 	d$country[d$longitude==1.636887] <- "Benin"
 	d$country[d$latitude==7.32685] <- "Benin"
