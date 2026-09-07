@@ -18,7 +18,7 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "MAK; CIP",
-		publication = NA,
+		publication = "10.12688/gatesopenres.12895.4",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
@@ -67,10 +67,9 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  fwy_residue = as.numeric(gsub(",", ".", gsub("S", NA, r1e$VWt))),
 	  yield = as.numeric(r1e$SRY),
 	  pest_severity = r1e$Weevil,
-	  ## ???? harvest_index = as.numeric(r1e$HT), # harvesting time
-	  harvest = r1e$HT,	
-	  vitamin_A = r1e$VAC,
-	  beta_carotene = r1e$BCC,
+	  harvest = r1e$HT,### harvest time in months after planting	
+	  vitamin_A = r1e$VAC,#units of measurement were µg RE/100g of FW
+	  beta_carotene = r1e$BCC,#units of measurement were mg/100g of FW
 	  #internode_count = r1e$Int_D,
 	  #node_length = r1e$Int_L,
 	  yield_marketable = as.numeric(r1e$MkR_w)
@@ -78,6 +77,8 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  #vine_length = r1e$VL,
 	  #root_storage_bulking = r1e$CSRFAB
 	)
+	
+	
 	
 	d2 <- data.frame(
 	  rep = as.integer(r1f$Rep),
@@ -87,15 +88,15 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  fwy_residue = r1f$VWt,
 	  yield = r1f$SRY,
 	  pest_severity = r1f$Weevil,
-	  harvest = r1f$HT, # harvesting time
-	  vitamin_A = r1f$VAC,
-	  beta_carotene = r1f$BCC,
+	  harvest = r1f$HT,##harvest time in months after planting
+	  vitamin_A = r1f$VAC,#units of measurement were µg RE/100g of FW
+	  beta_carotene = r1f$BCC,#units of measurement were mg/100g of FW
 	  #internode_count = r1f$Int_D,
 	  #node_length = r1f$Int_L,
 	  yield_marketable = r1f$MkR_w
 	  #node_count = as.numeric(r1f$UGN), ### underground nodes
 	  #vine_length = r1f$VL,
-	  #root_storage_bulking = r1f$CSRFAB  ## what does this mean?
+	  #root_storage_bulking = r1f$CSRFAB  ## storage root yield in t/ha-1
 	)
 
 	d7 <- data.frame(
@@ -107,27 +108,28 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	d <- carobiner::bindr(d1, d2)	
 	d <- merge(d, d7, by = "variety", all.x = TRUE)
 	
+	d$trial_id < "1"
 	d$crop <- "sweetpotato"	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-    d$country <- "Uganda"
+  d$country <- "Uganda"
   
-## comment where you got this information	
-  d$adm1 = "Central region"
-  d$adm2 = "Wakiso"
-  d$adm3 = "Kyaddondo"
-  d$location = "Namulonge"
+## Publication indicated that the study was conducted at the National Crops Resources Research Institute (NaCRRI), Namulonge, Uganda	
+  d$adm1 = "Wakiso"###  obtained from publication 
+  d$adm2 = "Kyaddondo"#obtained from GADM
+  d$adm3 = "Busukuma"#obtained from GADM
+  d$location = "Namulonge" ### obtained from publication refers to the local village name
 	
 ## see carobiner::geocode
-	d$longitude <- 32.615
-	d$latitude <- 0.525
+	d$longitude <- 32.603
+	d$latitude <- 0.530
 	d$geo_from_source <- FALSE
 	d$geo_source <- "Google Maps"
 
-# The dataset does not indicate the planting dates but only stated that the experiment was done in 2017 and 2018
-	d$planting_date <- NA
-	d$harvest_date <- NA
+# The dataset does not indicate the harvesting date dates only indicated that harvesting was done from January to April no exact dates provided in the publication
+	d$planting_date <- c("2016-09-22", "2017-03-10")
+	d$harvest_date <- NA### not indicated in the publication and can not be derived from either r1e or r1f since its not clearly stated which year belongs to neither of the two
 	d$DAP <- c(90, 120, 150, 180)[d$harvest]
 
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- NA
