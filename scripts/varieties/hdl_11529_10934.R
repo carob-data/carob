@@ -49,6 +49,8 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 		elevation = r1$ALTITUD,
 		yield = r1$GY*1000,
 		plant_height = r1$PH,
+		ear_height = r1$EH,
+		e_rot = as.numeric(gsub("^.$", NA, r1$ER)),
 		crop = "maize",
 		country = "Mexico",
 		trial_id = as.character(r1$ENV),
