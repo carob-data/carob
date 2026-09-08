@@ -94,9 +94,6 @@ carob_script <- function(path) {
   
   ## Merge coordinates
   d <- merge(d, geo, by = "location", all.x = TRUE)
-  ## Remove rows with missing key variables
-  d <- d[!is.na(d$yield), ]
   
-  ## Write CAROB files
   carobiner::write_files(path, meta, d)
 }
