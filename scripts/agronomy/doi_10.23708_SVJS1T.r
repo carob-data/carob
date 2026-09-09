@@ -108,5 +108,8 @@ To this end, during 2019 growing season, we performed experiments in two village
   d$location[d$location=="lissar"] <- "Lissar"
   d$location[d$location=="mbane"] <- "Mbane"
   
+  d$treatment <- ifelse(d$treatment == "pure landrace", "T1", "T2")
+  d$treatment <- ifelse(d$treatment == "T1",paste0("T1_", d$variety),paste0("T2_", d$variety))
+  
 	carobiner::write_files(path, meta, d)
 }
