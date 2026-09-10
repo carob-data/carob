@@ -1,60 +1,40 @@
-# R script for "carob"
-# license: GPL (>=3)
-
-## NOTES
-# 6 site trials, sensory flavor/texture scores (1-9, 3 evaluators/plot),
-# potato clones vs Canchan/Unica reference varieties, Peru. Long format:
-# one row per plot x evaluator. 
-
-## ISSUES
-# r2/r3/r9 appear to have the same flavor/texture data (by clone x locality).
-
-# flavor_score/texture_score: no terminag equivalent, suggested new terms.
-
-
 carob_script <- function(path) {
   
-"
+  "
 Dataset for: Late blight resistant potato varieties for the tropical highlands and mid-elevation
- 
-Sensory evaluation (flavor and texture, scored by 3 independent tasters) of
-8-10 CIP potato clones bred for late blight resistance, alongside reference
-varieties Canchan and Unica, across 6 trial sites in Peru (30 plots per
-site: ~10 clones x 3 reps). Note: the source dataset's own description also
-references tuber yield, dry matter content, and reducing sugar content as
-selection criteria, but none of these variables are present in any of the
-9 files - only sensory flavor/texture scores are provided.
+
+With the objective of selecting potato clones with high resistance to late blight and good quality for frying in French fires, 6 experiments were planted with 8 advanced clones from population B groups B3C1 and B3C2, in contrasting localities in Peru. The clones CIP395123.6, CIP396026.1 and CIP396034.103, were selected for their high tuber yield, good quality for french fries, high content of dry matter, low content of reducing sugars and adapts to the various localities of Peru, these clones will be released as new varieties in 2022 in Peru.
 "
   
   uri <- "doi:10.21223/BJECYK"
   group <- "varieties_potato"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		data_organization = "CIP",
-		publication = NA,
-		project = NA,
-		design = NA,
-		data_type = "experiment",
-		treatment_vars = "variety",
-		response_vars = "flavor_score;texture_score",
-		notes = NA,
-		carob_contributor = "Stella Muthoni",
-		carob_date = "2026-07-23",
-		carob_completion = 75,
-		carob_effort = 4
+  meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 3,
+    data_organization = "CIP",
+    publication = NA,
+    project = NA,
+    design = "RCBD",
+    data_type = "experiment",
+    treatment_vars = "variety",
+    response_vars = "fries_color;tuber_flavor;tuber_texture",
+    notes =NA,
+    carob_contributor = "Maryam Yahya",
+    carob_date = "2026-09-09",
+    carob_completion = 80,
+    carob_effort = 3.5
   )
   
+  ## Source files
   f1 <- ff[basename(ff) == "01_MAJ21_01.xlsx"]
   f2 <- ff[basename(ff) == "02_french_fries.xlsx"]
-  f3 <- ff[basename(ff) == "03_Traditional frying.xlsx"]
-  f4 <- ff[basename(ff) == "04_HYO21_03.xlsx"]
-  f5 <- ff[basename(ff) == "05_HCHO21_02(LICAME).xlsx"]
-  f6 <- ff[basename(ff) == "06_HCHO21_03(YANAC).xlsx"]
-  f7 <- ff[basename(ff) == "07_CAJ21_01.xlsx"]
-  f8 <- ff[basename(ff) == "08_HCO21_03.xlsx"]
-  f9 <- ff[basename(ff) == "Summary.xlsx"]
+  f3 <- ff[basename(ff) == "04_HYO21_03.xlsx"]
+  f4 <- ff[basename(ff) == "05_HCHO21_02(LICAME).xlsx"]
+  f5 <- ff[basename(ff) == "06_HCHO21_03(YANAC).xlsx"]
+  f6 <- ff[basename(ff) == "07_CAJ21_01.xlsx"]
+  f7 <- ff[basename(ff) == "08_HCO21_03.xlsx"]
   
+  ## Read data
   r1 <- carobiner::read.excel(f1)
   r2 <- carobiner::read.excel(f2)
   r3 <- carobiner::read.excel(f3)
@@ -62,69 +42,73 @@ selection criteria, but none of these variables are present in any of the
   r5 <- carobiner::read.excel(f5)
   r6 <- carobiner::read.excel(f6)
   r7 <- carobiner::read.excel(f7)
-  r8 <- carobiner::read.excel(f8)
-  #r9 <- carobiner::read.excel(f9)
   
-  ### Reshape one site's plot-level file into long format (one row per plot x
-  ### evaluator).
-  reshape_site <- function(r, site_code) {
-    do.call(rbind, lapply(1:3, function(i) {
-      data.frame(
-        trial_id = site_code,
-        plot_id = as.character(r$Plot),
-        variety = r$Clone,
-        rep = r$Rep,
-        evaluator = i,
-        flavor_score = r[[paste0("Evaluator", i, "_Flavor")]],
-        texture_score = r[[paste0("Evaluator", i, "_Texture")]]
-      )
-    }))
-  }
+  ## Add location
+  r1$location <- "Majes"
+  r3$location <- "Huancayo"
+  r4$location <- "Licame"
+  r5$location <- "Yanac"
+  r6$location <- "Cajamarca"
+  r7$location <- "Huanuco"
   
-  d <- rbind(
-    reshape_site(r1, "MAJ21_01"),
-    reshape_site(r4, "HYO21_03"),
-    reshape_site(r5, "HCHO21_02"),
-    reshape_site(r6, "HCHO21_03"),
-    reshape_site(r7, "CAJ21_01"),
-    reshape_site(r8, "HCO21_03")
+  ## Combine plot-level data
+  r <- carobiner::bindr(r1, r3, r4, r5, r6, r7)
+  ## Create lookup for fries color from r2
+  fries_lookup <- r2[, c("Locality", "Clone", "French_fries_Mean")]
+  names(fries_lookup) <- c("location", "variety", "fries_color")
+  
+  ## Fix location names
+  fries_lookup$location[fries_lookup$location == "Chota"] <- "Cajamarca"
+  fries_lookup$location[fries_lookup$location == "Chugay"] <- "Licame"
+  ## Coordinates
+ geo <- data.frame(
+    location = c("Majes", "Huancayo", "Licame", "Yanac", "Cajamarca", "Huanuco"),
+    latitude = c(-16.3625, -12.0651, -7.8133, -7.8133, -7.1638, -9.9306),
+    longitude = c(-72.1911, -75.2048, -78.0483, -78.0483, -78.5000, -76.2422),
+    geo_from_source = FALSE
   )
   
-  ### Locality names inferred from site-code correspondence (see ISSUES) -
-  ### trial_id keeps the original source code regardless
-  locality_lookup <- c(
-    MAJ21_01 = "Majes",
-    HYO21_03 = "Huancayo",
-    HCHO21_02 = "Chota",
-    HCHO21_03 = "Yanac",
-    CAJ21_01 = "Chugay",
-    HCO21_03 = "Huanuco"
+  d <- data.frame(
+    trial_id = paste0("BJECYK_", r$location),
+    plot_id = as.character(r$Plot),
+    rep = as.integer(gsub("R", "", r$Rep)),
+    variety = r$Clone,
+    location = r$location,
+    country = "Peru",
+    crop = "potato",
+    crop_rotation = NA,
+    on_farm = NA,
+    is_survey = FALSE,
+    irrigated = NA,
+    planting_date = "2021",
+    harvest_date = "2021",
+    yield = NA_real_,
+    yield_moisture = NA,
+    yield_isfresh= NA,
+    yield_part = "tubers",
+    N_fertilizer = NA,
+    P_fertilizer = NA,
+    K_fertilizer = NA,
+    tuber_flavor = rowMeans(cbind(
+      as.numeric(r$Evaluator1_Flavor),
+      as.numeric(r$Evaluator2_Flavor),
+      as.numeric(r$Evaluator3_Flavor)
+    ), na.rm = TRUE),
+    tuber_texture = rowMeans(cbind(
+      as.numeric(r$Evaluator1_Texture),
+      as.numeric(r$Evaluator2_Texture),
+      as.numeric(r$Evaluator3_Texture)
+    ), na.rm = TRUE)
   )
-  d$location <- unname(locality_lookup[d$trial_id])
   
-  ### Coordinates, geocoded via carobiner::geocode(country="Peru", location=...)
-  geo_lookup <- data.frame(
-    location = c("Majes", "Huancayo", "Chota", "Yanac", "Chugay", "Huanuco"),
-    longitude = c(-72.2878, -75.1608, -79.1800, -77.8528, -77.8352, -75.8050),
-    latitude = c(-16.3243, -12.1722, -6.3829, -8.6220, -7.8108, -9.4029)
-  )
-  d <- merge(d, geo_lookup, by = "location", all.x = TRUE)
-  d$geo_from_source <- FALSE
-  d$country <- "Peru"
-  d$on_farm <- FALSE
-  d$is_survey <- FALSE
-  d$crop <- "potato"
-  d$yield <- NA
-  d$yield_part <- NA
-  d$yield_moisture <- NA
-  d$yield_isfresh <- NA
-  d$N_fertilizer <- NA
-  d$P_fertilizer <- NA
-  d$K_fertilizer <- NA
-  d$planting_date <- NA
-  d$harvest_date <- NA
-  d$irrigated <- NA
-  d$rep <- as.integer(gsub("R", "", d$rep))
+  ## Merge fries color
+  d <- merge(d, fries_lookup, by = c("location", "variety"), all.x = TRUE)
+  
+  
+  d <- merge(d, geo, by = "location", all.x = TRUE)
+  
+  ## Remove rows with missing data
+  d <- d[!is.na(d$variety), ]
   
   carobiner::write_files(path, meta, d)
 }
