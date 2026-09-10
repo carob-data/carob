@@ -46,21 +46,16 @@ carob_script <- function(path) {
   r3$location <- "CHACRAMPA"
   r4$location <- "HUAQUIA"
   r5$location <- "PATAPATA"
-  
+
+  ## Fix column for r1 - it has "y" instead of "PLOT"
+  names(r1)[names(r1) == "y"] <- "PLOT"
+
   ## Combine all yield data
   r <- carobiner::bindr(r1, r2, r3, r4, r5)
-  
-  ## Fix column names - some files have "y" instead of "PLOT"
-  if (!"PLOT" %in% names(r) && "y" %in% names(r)) {
-    names(r)[names(r) == "y"] <- "PLOT"
-  }
-  
+     
   ## Plot area
   plot_area <- 47.25  # m2
-  
-  ## Calculate marketable yield from MTWCI and MTWCII
-  r$MTWP_total <- as.numeric(r$MTWCI) + as.numeric(r$MTWCII)
-  
+    
   ## Coordinates estimated from Google Maps (September 2026)
   geo <- data.frame(
     location = c("ACACHAYO", "CASACANCHA", "CHACRAMPA", "HUAQUIA", "PATAPATA"),
@@ -84,15 +79,13 @@ carob_script <- function(path) {
     planting_date = "2019",
     harvest_date = "2019",
     yield_part = "tubers",
-    yield = NA_real_,
-    yield_marketable = (r$MTWP_total / plot_area) * 10 * 1000,
+    yield = ((r$MTWCI + r$MTWCII + r$NoMTWP) / plot_area) * 10000,
+    yield_marketable = ((r$MTWCI + r$MTWCII) / plot_area) * 10000,
     yield_moisture = NA,
     yield_isfresh = TRUE,
     N_fertilizer = NA,
     P_fertilizer = NA,
-    K_fertilizer = NA,
-    fertilizer_type = NA,
-    lime = NA
+    K_fertilizer = NA
   )
   
   ## Merge coordinates
@@ -103,3 +96,4 @@ carob_script <- function(path) {
   
   carobiner::write_files(path, meta, d)
 }
+
