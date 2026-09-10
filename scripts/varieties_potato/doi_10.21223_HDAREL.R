@@ -36,15 +36,14 @@ carob_script <- function(path) {
 
   ## Create variety lookup from r2 using Accession_code
   r2$variety_name <- ifelse(!is.na(r2$Accession_Name) & r2$Accession_Name != "",
-                            r2$Accession_Name,
-                            r2$Accession_code)
+                            r2$Accession_Name, r2$Accession_code)
   variety_lookup <- setNames(r2$variety_name, r2$Accession_Number)
   
   d <- data.frame(
     trial_id = "HDAREL_Huancayo",
     plot_id = as.character(r1$PLOT),
     rep = as.integer(r1$REP),
-    variety = as.character(variety_lookup[as.character(r1$INSTN)]),
+    variety = variety_lookup[r1$INSTN],
     location = "Huancayo",
     country = "Peru",
     crop = "potato",
@@ -58,13 +57,12 @@ carob_script <- function(path) {
     P_fertilizer = 180 / 2.29,
     K_fertilizer = 160 / 1.2051,
     fertilizer_type = "NPK",
-    lime = NA_real_,
     yield_part = "tubers",
     latitude = -12.0651,
     longitude = -75.2048,
     geo_from_source = FALSE,
     #new variables
-    glycoalkaloid_total_ = as.numeric(r1$GLIDW)
+    glycoalkaloid_total_ = r1$GLIDW
   )
   # Remove rows where all key variables are NA
   d <- d[!is.na(d$glycoalkaloid_total), ]
