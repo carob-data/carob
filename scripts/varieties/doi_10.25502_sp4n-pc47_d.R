@@ -34,7 +34,7 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	
 
 	f1 <- ff[basename(ff) == "seed-company-2017-data.csv"]
-#	f2 <- ff[basename(ff) == "metadata_seed_company_2017.csv"]
+	#f2 <- ff[basename(ff) == "metadata_seed_company_2017.csv"]
 
 	r1 <- read.csv(f1)
 	#r2 <- read.csv(f2)
@@ -103,10 +103,10 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	long <- d[, Nm]
 	long$record_id <- d$record_id
 	
-	long <- reshape(long, varying = list(c("Nema_incid", "Mb_incid", "Beet_incid"), c("Nema_sev", "Mb_sev", "Beet_sev"), c(rep("inid_scale", 3)), c(rep("sev_scale", 3))), 
-	                v.names = c("pest_incidence", "pest_severity", "severity_scale", "incidence_scale"),
+	long <- reshape(long, varying = list(c("Nema_incid", "Mb_incid", "Beet_incid", "inid_scale"), c("Nema_sev", "Mb_sev", "Beet_sev", "sev_scale")), 
+	                v.names = c("pest_incidence", "pest_severity"),
 	                timevar = "pest_species",
-	                times = c("nematode", "mealybug", "beetle"),
+	                times = c("nematode", "mealybug", "beetle", "scale_insect"),
 	                direction = "long")
 	long$id <- NULL
 	long <- long[!is.na(long$pest_severity),]
