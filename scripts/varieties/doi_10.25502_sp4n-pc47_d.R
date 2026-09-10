@@ -106,7 +106,7 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	long <- reshape(long, varying = list(c("Nema_incid", "Mb_incid", "Beet_incid", "inid_scale"), c("Nema_sev", "Mb_sev", "Beet_sev", "sev_scale")), 
 	                v.names = c("pest_incidence", "pest_severity"),
 	                timevar = "pest_species",
-	                times = c("nematode", "mealybug", "beetle", "scale_insect"),
+	                times = c("nematode", "mealybug", "beetle", "scale insect"),
 	                direction = "long")
 	long$id <- NULL
 	long <- long[!is.na(long$pest_severity),]
