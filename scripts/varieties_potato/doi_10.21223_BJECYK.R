@@ -48,27 +48,29 @@ With the objective of selecting potato clones with high resistance to late bligh
   r3$location <- "Huancayo"
   r4$location <- "Licame"
   r5$location <- "Yanac"
-  r6$location <- "Cajamarca"
+  r6$location <- "Chota"
   r7$location <- "Huanuco"
   
   ## Combine plot-level data
   r <- carobiner::bindr(r1, r3, r4, r5, r6, r7)
+
   ## Create lookup for fries color from r2
-  fries_lookup <- r2[, c("Locality", "Clone", "French_fries_Mean")]
-  names(fries_lookup) <- c("location", "variety", "fries_color")
-  
-  ## Fix location names
-  fries_lookup$location[fries_lookup$location == "Chota"] <- "Cajamarca"
-  fries_lookup$location[fries_lookup$location == "Chugay"] <- "Licame"
-  ## Coordinates
- geo <- data.frame(
-    location = c("Majes", "Huancayo", "Licame", "Yanac", "Cajamarca", "Huanuco"),
-    latitude = c(-16.3625, -12.0651, -7.8133, -7.8133, -7.1638, -9.9306),
-    longitude = c(-72.1911, -75.2048, -78.0483, -78.0483, -78.5000, -76.2422),
+  d2 <- data.frame(
+      location = r2$Locality,
+      variety = r2$Clone,
+      fries_color = r2$French_fries_Mean
+  )
+  d2$location[d2$location == "Chugay"] <- "Licame"
+ 
+    
+  geo <- data.frame(
+    location = c("Majes", "Huancayo", "Licame", "Yanac", "Chota", "Huanuco"),
+    latitude = c(-16.3625, -12.0651, -7.76677, -7.8133, -6.5467, -9.9306),
+    longitude = c(-72.1911, -75.2048, -77.83489, -78.0483, -78.6701, -76.2422),
     geo_from_source = FALSE
   )
-  
-  d <- data.frame(
+ 
+  d1 <- data.frame(
     trial_id = paste0("BJECYK_", r$location),
     plot_id = as.character(r$Plot),
     rep = as.integer(gsub("R", "", r$Rep)),
@@ -89,26 +91,15 @@ With the objective of selecting potato clones with high resistance to late bligh
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    tuber_flavor = rowMeans(cbind(
-      as.numeric(r$Evaluator1_Flavor),
-      as.numeric(r$Evaluator2_Flavor),
-      as.numeric(r$Evaluator3_Flavor)
-    ), na.rm = TRUE),
-    tuber_texture = rowMeans(cbind(
-      as.numeric(r$Evaluator1_Texture),
-      as.numeric(r$Evaluator2_Texture),
-      as.numeric(r$Evaluator3_Texture)
-    ), na.rm = TRUE)
+   # like this
+    tuber_flavor = rowMeans(r[, c("Evaluator1_Flavor", "Evaluator2_Flavor", "Evaluator3_Flavor")], na.rm = TRUE),
+   # or like this
+    tuber_texture = rowMeans(r[, grep("Evaluator._Texture", names(r))], na.rm = TRUE)
   )
   
   ## Merge fries color
-  d <- merge(d, fries_lookup, by = c("location", "variety"), all.x = TRUE)
-  
-  
-  d <- merge(d, geo, by = "location", all.x = TRUE)
-  
-  ## Remove rows with missing data
-  d <- d[!is.na(d$variety), ]
+  d <- merge(d1, d2, by = c("location", "variety"))
+  d <- merge(d, geo, by = "location")
   
   carobiner::write_files(path, meta, d)
 }
