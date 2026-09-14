@@ -17,7 +17,7 @@ Twenty-eight advanced clones of the LBHT x LTVR population and three control var
     design = "RCBD",
     data_type = "experiment",
     treatment_vars = "variety",
-    response_vars = "glycoalkaloid_total_",
+    response_vars = "glycoalkaloids",
     notes = NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-09",
@@ -31,17 +31,11 @@ Twenty-eight advanced clones of the LBHT x LTVR population and three control var
   r1 <- carobiner::read.excel(f1)
   r3 <- carobiner::read.excel(f2)
   
-  ## Create variety lookup from r3 using Accession_code
-  r3$variety_name <- ifelse(!is.na(r3$Accession_Name) & r3$Accession_Name != "",
-                            r3$Accession_Name,r3$Accession_code)
-                            
-  variety_lookup <- setNames(r3$variety_name, r3$Accession_Number)
-  
   d <- data.frame(
     trial_id = "FO7KPO_Huamachuco",
     plot_id = as.character(r1$PLOT),
     rep = as.integer(r1$REP),
-    variety = variety_lookup[r1$INSTN],
+    variety = r1$INSTN,
     location = "Huamachuco",
     country = "Peru",
     crop = "potato",
@@ -60,12 +54,25 @@ Twenty-eight advanced clones of the LBHT x LTVR population and three control var
     longitude = -78.0483,
     geo_from_source = FALSE,
     #new variables
-    glycoalkaloid_total_ = r1$GLIDW
-    
+    glycoalkaloids = r1$GLIDW   
   )
-  
-  ## Remove rows without glycoalkaloid data
-  d <- d[!is.na(d$glycoalkaloid_total), ]
-  
+
+  ## Create variety lookup from r3 using Accession_code
+  variety_name <- ifelse(!is.na(r3$Accession_Name) & r3$Accession_Name != "",
+                            r3$Accession_Name,r3$Accession_code)
+                            
+  variety_lookup <- setNames(variety_name, r3$Accession_Number)
+  d$variety_code <- variety_lookup[d$variety]  
+
+  i <- d$variety == "CIP800048"
+  d$variety_code[i] <- d$variety[i]
+  d$variety[i] <- "Desiree"
+  i <- d$variety == "CIP380389.1"
+  d$variety_code[i] <- d$variety[i]
+  d$variety[i] <- "Canchan-INIA"
+  i <- d$variety == "CIP720201"
+  d$variety_code[i] <- d$variety[i]
+  d$variety[i] <- "Yungay"
+
   carobiner::write_files(path, meta, d)
 }
