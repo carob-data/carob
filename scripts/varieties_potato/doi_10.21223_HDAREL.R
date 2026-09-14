@@ -62,10 +62,8 @@ carob_script <- function(path) {
     longitude = -75.2048,
     geo_from_source = FALSE,
     #new variables
-    glycoalkaloid_total_ = r1$GLIDW
+    glycoalkaloids = r1$GLIDW
   )
-  # Remove rows where all key variables are NA
-  d <- d[!is.na(d$glycoalkaloid_total), ]
-  # Write CAROB files
+
   carobiner::write_files(path, meta, d)
 }
