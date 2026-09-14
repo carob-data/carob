@@ -18,7 +18,7 @@ carob_script <- function(path) {
     design = "RCBD",
     data_type = "experiment",
     treatment_vars = "variety",
-    response_vars = "glycoalkaloid_total_",
+    response_vars = "glycoalkaloids",
     notes = NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-09",
