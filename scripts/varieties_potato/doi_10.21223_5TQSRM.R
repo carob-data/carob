@@ -60,6 +60,7 @@ Twenty-eight advanced clones of the LBHT x LTVR population and three control var
   variety_name <- ifelse(!is.na(r2$Accession_Name) & r2$Accession_Name != "",
                             r2$Accession_Name,r2$Accession_code)
   variety_lookup <- setNames(variety_name, r2$Accession_Number)
+
   d$variety_code <- variety_lookup[d$variety]
   i <- d$variety == "CIP800048"
   d$variety_code[i] <- d$variety[i]
@@ -73,3 +74,4 @@ Twenty-eight advanced clones of the LBHT x LTVR population and three control var
   
   carobiner::write_files(path, meta, d)
 }
+
