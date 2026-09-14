@@ -18,7 +18,7 @@ carob_script <- function(path) {
     design = "RCBD",
     data_type = "experiment",
     treatment_vars = "variety",
-    response_vars = "yield_marketable;glycoalkaloid_total_;tuber_flavor",
+    response_vars = "yield_marketable;glycoalkaloids;tuber_flavor",
     notes =NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-10",
@@ -54,74 +54,46 @@ carob_script <- function(path) {
     trial_id = "E1GOGT_Cajamarca",
     variety = r3$Clone,
     yield_marketable = as.numeric(r3$`Marketable tuber yield (t ha−1) CJA`) * 1000,
-    glycoalkaloid_total_ = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) CJA`),
+    glycoalkaloids = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) CJA`),
     tuber_flavor = as.numeric(r3$`Flavour CJA`),
-    location = "Cajamarca",
-    country = "Peru",
-    crop = "potato",
-    on_farm = TRUE,
-    is_survey = FALSE,
-    yield_part = "tubers",
-    yield = NA,
-    yield_moisture = NA,
-    yield_isfresh = NA,
-    irrigated = NA,
-    N_fertilizer = NA,
-    P_fertilizer = NA,
-    K_fertilizer = NA,
-    planting_date = NA,
-    harvest_date = NA
+    location = "Cajamarca"
   )
   
   d_llb <- data.frame(
     trial_id = "E1GOGT_LaLibertad",
     variety = r3$Clone,
     yield_marketable = as.numeric(r3$`Marketable tuber yield (t ha−1) LLB`) * 1000,
-    glycoalkaloid_total_ = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) LLB`),
+    glycoalkaloids = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) LLB`),
     tuber_flavor = as.numeric(r3$`Flavour LLB`),
-    location = "La Libertad",
-    country = "Peru",
-    crop = "potato",
-    on_farm = TRUE,
-    is_survey = FALSE,
-    yield_part = "tubers",
-    yield = NA,
-    yield_moisture = NA,
-    yield_isfresh = NA,
-    irrigated = NA,
-    N_fertilizer = NA,
-    P_fertilizer = NA,
-    K_fertilizer = NA,
-    planting_date = NA,
-    harvest_date = NA
+    location = "La Libertad"
   )
   
   d_hva <- data.frame(
     trial_id = "E1GOGT_Huancavelica",
     variety = r3$Clone,
     yield_marketable = as.numeric(r3$`Marketable tuber yield (t ha−1) HVA`) * 1000,
-    glycoalkaloid_total_ = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) HVA`),
+    glycoalkaloids = as.numeric(r3$`Total glycoalkaloid content (mg/100 g fresh weight) HVA`),
     tuber_flavor = as.numeric(r3$`Flavour HVA`),
-    location = "Huancavelica",
-    country = "Peru",
-    crop = "potato",
-    on_farm = TRUE,
-    is_survey = FALSE,
-    yield_part = "tubers",
-    yield = NA,
-    yield_moisture = NA,
-    yield_isfresh = NA,
-    irrigated = NA,
-    N_fertilizer = NA,
-    P_fertilizer = NA,
-    K_fertilizer = NA,
-    planting_date = NA,
-    harvest_date = NA
+    location = "Huancavelica"
   )
   
   ## Combine all locations
   d <- carobiner::bindr(d_cja, d_llb, d_hva)
-  
+  d$country = "Peru"
+  d$crop = "potato"
+  d$on_farm = TRUE
+  d$is_survey = FALSE
+  d$yield_part = "tubers"
+  d$yield = NA
+  d$yield_moisture = NA
+  d$yield_isfresh = NA
+  d$irrigated = NA
+  d$N_fertilizer = NA
+  d$P_fertilizer = NA
+  d$K_fertilizer = NA
+  d$planting_date = NA
+  d$harvest_date = NA
+ 
   ## Merge coordinates
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
