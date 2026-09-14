@@ -1,10 +1,10 @@
 carob_script <- function(path) {
   
-  "
-  Dataset for: Adaptability 10 CRW to highlands, Peru (Huancavelica and Junin)
+"
+Dataset for: Adaptability 10 CRW to highlands, Peru (Huancavelica and Junin)
 
-  Two CWR-derived pre-breeding clones CIP512010.1 (HER45.1) and CIP512010.20 HER 45.20 were evaluated in ten adaptation and efficiency experiments, planted in ten farming communities, five in Huancavelica Region and five in Junin Region (Huancayo) as required for variety registration. Two local varieties Yungay and Peruanita were used as control. Additionally. The clone CIP512010.1 (HER45.1) was selected as a candidate variety due to its resistance to late blight and yield equal or greater than the local varieties. The commercial tuber yield observed in the candidate variety at Junin region, ranged between 15.31 to 40.31 t/ha with an average of 22.65 t/ha, while the best control Yungay ranged between 7.29 to 33.43 t/ha and 18.49 t/ha on average. These series trials were part of the Peruvian legal regulations for variety registration. The final technical reports of the Adaptation and Efficiency and DHE trials will be presented to SENASA and INDECOPI in March 2021, hoping to carry out the official release in June or July 2021.
-  "
+Two CWR-derived pre-breeding clones CIP512010.1 (HER45.1) and CIP512010.20 HER 45.20 were evaluated in ten adaptation and efficiency experiments, planted in ten farming communities, five in Huancavelica Region and five in Junin Region (Huancayo) as required for variety registration. Two local varieties Yungay and Peruanita were used as control. Additionally. The clone CIP512010.1 (HER45.1) was selected as a candidate variety due to its resistance to late blight and yield equal or greater than the local varieties. The commercial tuber yield observed in the candidate variety at Junin region, ranged between 15.31 to 40.31 t/ha with an average of 22.65 t/ha, while the best control Yungay ranged between 7.29 to 33.43 t/ha and 18.49 t/ha on average. These series trials were part of the Peruvian legal regulations for variety registration. The final technical reports of the Adaptation and Efficiency and DHE trials will be presented to SENASA and INDECOPI in March 2021, hoping to carry out the official release in June or July 2021.
+"
   
   uri <- "doi:10.21223/G3JK72"
   group <- "varieties_potato"
@@ -58,7 +58,7 @@ carob_script <- function(path) {
     
   ## Coordinates estimated from Google Maps (September 2026)
   geo <- data.frame(
-    location = c("ACACHAYO", "CASACANCHA", "CHACRAMPA", "HUAQUIA", "PATAPATA"),
+    location = c("Acachayo", "Casacancha", "Chacrampa", "Huaquia", "Patapata"),
     latitude = c(-12.0000, -11.9500, -12.1000, -11.9800, -11.9200),
     longitude = c(-75.3500, -75.4200, -75.4800, -75.3800, -75.4500),
     geo_from_source = FALSE
@@ -69,7 +69,7 @@ carob_script <- function(path) {
     plot_id = as.character(r$PLOT),
     rep = as.integer(r$REP),
     variety = r$INSTN,
-    location = r$location,
+    location = carobiner::fix_name(r$location, "title"),
     country = "Peru",
     crop = "potato",
     crop_rotation = NA,
@@ -88,11 +88,11 @@ carob_script <- function(path) {
     K_fertilizer = NA
   )
   
-  ## Merge coordinates
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
-  ## Remove rows without yield data
   d <- d[!is.na(d$yield_marketable), ]
+  i <- d$yield > 185003 # 1 record
+  d$yield[i] <- d$yield[i] / 10
   
   carobiner::write_files(path, meta, d)
 }

@@ -56,8 +56,7 @@ carob_script <- function(path) {
     latitude = -10.9856,
     longitude = -75.3625,
     geo_from_source = FALSE,
-    #new variables
-    glycoalkaloid_total_ = r1$GLIDW
+    glycoalkaloids = r1$GLIDW
   )
 
     ## Create variety lookup from r2 using Accession_code
