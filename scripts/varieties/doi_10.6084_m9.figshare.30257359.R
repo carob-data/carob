@@ -1,11 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+# dictionary in doi_10.6084_m9.figshare.30257359\Pan_African_Trials_Network-main\metadata\docs\Supplementary.pdf
+
 ## ISSUES
-#1. i intentionally ommitted other files and other variables because there is no dictionary for the full names and units, so i only standardized the more obvious variables
-#2. (coordinates in wrong country: Nigeria/Mali, Chad/Senegal, Zambia/Malawi)-   i cannot verify the if the coordinates are wrong or the country is wrong because i have no adm1,2 or 3 to cross reference the points. 
-#3. datespan: 279 records with harvest_date within 45 days of planting_date-  these records have their days recorded before the planting date
-#4. datespan: 1 harvest_date more than 366 days after planting_date- 1 date record which has a harvest date 466days after planting
+# (coordinates in wrong country: Zambia/Malawi cannot be fixed as there is no location description
 
 carob_script <- function(path) {
 
@@ -39,14 +38,12 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	f5 <- ff[basename(ff) == "Malawi_covamb.csv"]
 	f6 <- ff[basename(ff) == "Malawi_data.csv"]
 
-	r2 <- read.csv(f2, sep = ";")
 	r3 <- read.csv(f3, sep = ";")
-	r5 <- read.csv(f5, sep = ";")
-	r6 <- read.csv(f6, sep = ";")
+	# r6 <- read.csv(f6, sep = ";")
 
-	d1 <- data.frame(
+	d <- data.frame(
 	  country=r3$COUNTRY,
-	  ID=r3$env,
+	  trial_id=paste0(r3$COUNTRY, "_", r3$loc),
 	  rep=r3$rep,
 	  variety_code=r3$gen,
 	  flowering_days=r3$FLW_DAYS,
@@ -54,61 +51,36 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	  plant_height=r3$PH_R8,
 	  seed_weight=r3$W100G,
 	  yield=r3$GY,
-	  grain_protein=r3$PROT,
-	  grain_oil=r3$OIL,#grain oil content
+	  protein=r3$PROT,
+	  oil_content=r3$OIL,#grain oil content
 	  planting_date=as.character(as.Date(r3$SOWING, format = "%d/%m/%Y")),
 	  harvest_date=as.character(as.Date(r3$HARVEST, format = "%d/%m/%Y")),
-	  elevation=r3$ELEV
-	)
-	
-	d1$irrigated <- !(r3$RAINFED=="Rainfed")
-	
-	loc1 <- unique(data.frame(
-	  ID = r2$env,
-	  latitude = r2$LAT,
-	  longitude = r2$LON
-	))
-	
-	d1 <- merge(d1,loc1,by="ID", all.x=TRUE)
-	
-	d2 <- data.frame(
-	  country=r6$COUNTRY,
-	  ID=r6$env,
-	  rep=r6$rep,
-	  variety_code=r6$gen,
-	  flowering_days=r6$FLW_DAYS,
-	  flower_color=r6$FLW_CL,
-	  plant_height=r6$PH_R8,
-	  seed_weight=r6$W100G*10,
-	  yield=r6$GY,
-	  grain_protein=r6$PROT,
-	  grain_oil=r6$OIL,
-	  planting_date=as.character(as.Date(r6$SOWING, format = "%d/%m/%Y")),
-	  harvest_date=as.character(as.Date(r6$HARVEST, format = "%d/%m/%Y")),
-	  elevation=r6$ELEV
+	  latitude = r3$LAT,
+	  longitude = r3$LON,
+	  elevation=r3$ELEV,
+	  irrigated = r3$RAINFED != "Rainfed"
 	)
 
-	d2$irrigated <- r6$RAINFED=="Irrigation"
-	
-	loc2 <- unique(data.frame(
-	  ID = r5$envi,
-	  latitude = r5$LAT,
-	  longitude = r5$LON
-	))
-	
-	#matching values format for merge
-	d2$ID <- sub("^E0+", "E", d2$ID)
-	loc2$ID <- sub("^E0+", "E", loc2$ID)
-	
-	d2 <- merge(d2,loc2,by="ID", all.x = TRUE)
-	
-	#filling in for the remaining NAs
-	r6$env <- sub("^E0+", "E", r6$env)
-	idx <- is.na(d2$longitude)
-	d2$longitude[idx] <- r6$LON[match(d2$ID[idx], r6$env)]
-	d2$latitude[idx] <- r6$LAT[match(d2$ID[idx], r6$env)]
-	
-	d <- rbind(d1,d2) 
+    # Malawi, seems subset of d1 (but records are not a perfect match)
+	# d2 <- data.frame(
+	#  country=r6$COUNTRY,
+	#  trial_id=paste0(r6$COUNTRY, "_", r6$loc),
+	#  rep=r6$rep,
+	#  variety_code=r6$gen,
+	#  flowering_days=r6$FLW_DAYS,
+	#  flower_color=tolower(r6$FLW_CL),
+	#  plant_height=r6$PH_R8,
+	#  seed_weight=r6$W100G*10,
+ 	#  yield=r6$GY,
+	#  protein=r6$PROT,
+	#  oil_content=r6$OIL,
+	#  planting_date=as.character(as.Date(r6$SOWING, format = "%d/%m/%Y")),
+	#  harvest_date=as.character(as.Date(r6$HARVEST, format = "%d/%m/%Y")),
+	#  latitude = r6$LAT,
+	#  longitude = r6$LON,
+	#  elevation=r6$ELEV,
+	#  irrigated = r6$RAINFED != "Rainfed"
+	#)
 	
 	d$crop <- "soybean"
 	d$trial_id <- paste(d$country,d$ID,sep = ";")
@@ -120,10 +92,26 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	d$yield_moisture <- NA
 	d$yield_isfresh <- NA
 	d$ID <- NULL
-	d$country <- gsub("DRC","Democratic Republic of the Congo",d$country)
-	d$longitude[d$country == "Senegal"] <- -abs(d$longitude[d$country == "Senegal"])
-	d$yield[d$yield < 0] <- NA #eliminating negative yield values since its we cant observe a negative yield in a field
-	
+	d$country <- gsub("DRC","Democratic Republic of the Congo", d$country)
+	i <- which(d$country %in% c("Senegal", "Mali"))
+	d$longitude[i] <- -abs(d$longitude[i])
+	# eliminating negative yield values
+	d$yield[d$yield < 0] <- NA 
+	d$flowering_days[d$flowering_days < 7] <- NA
+	d$seed_weight[d$seed_weight < 1] <- NA
 
+	# fixing bad harvest dates by comparing them to other records
+	d$harvest_date[d$country == "Uganda" & d$harvest_date == "2021-12-16"] <- "2020-12-16"
+    d$harvest_date[d$country == "Zambia" & d$harvest_date == "2020-05-12"] <- "2021-05-12"
+    d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-07-22"] <- "2023-11-22"
+    d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-08-19"] <- "2023-11-19"
+    d$harvest_date[d$country == "Malawi" & d$harvest_date == "2024-03-31"] <- "2024-07-31"
+    d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-05-26"] <- "2023-05-26"
+    d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-04-26"] <- "2023-04-26"
+    i <- d$country == "Mozambique"
+	d$harvest_date[i] <- gsub("2022-11-|2022-12-", "2023-05-", d$harvest_date[i])
+    #i <- i & d$planting_date == "2022-12-22"
+	#d$harvest_date[i] <- gsub("2022-", "2023-", d$harvest_date[i])
+ 	
 	carobiner::write_files(path, meta, d)
 }
