@@ -1,3 +1,5 @@
+# rejected: modeled values, not field observations
+
 carob_script <- function(path) {
   
   "
