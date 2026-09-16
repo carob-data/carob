@@ -14,7 +14,7 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 "
 
 	uri <- "doi:10.21223/P3/Z73PFP"
-	group <- "pest_disease"
+	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
