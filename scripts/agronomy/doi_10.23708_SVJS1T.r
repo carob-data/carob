@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+# rejected: median grain yield is 102 kg/ha whereas median residue yield is 2776 kg/ha	
+
 ## ISSUES
 
 carob_script <- function(path) {
