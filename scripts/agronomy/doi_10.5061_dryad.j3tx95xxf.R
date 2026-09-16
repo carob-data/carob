@@ -35,7 +35,7 @@ Stem rot, caused by Sclerotium oryzae, is a common and important disease of rice
 	
 
 	f1 <- ff[basename(ff) == "SR_data_DRYAD.csv"]
-	f2 <- ff[basename(ff) == "README.md"]
+	#f2 <- ff[basename(ff) == "README.md"]
 
 	r1 <- read.csv(f1, na= c("null", "N/A"))
 
