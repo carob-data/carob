@@ -54,7 +54,7 @@ Stem rot, caused by Sclerotium oryzae, is a common and important disease of rice
 	)
 	
 	### drop treatment that were Not used in the analysis (#from README file)
-	d <- d[!is.na(d1$treatment),]
+	d <- d[!is.na(d$treatment),]
 	
 	trt <- c("1"= "untreated", "22"= "Quadris at tillering", "23"= "Quadris at boot", "24"= "Quadris at heading", "25"= "QuiltXcel at tillering", "26"= "QuiltXcel at boot", "27" = "QuiltXcel at heading")
   d$treatment <- trt[d$treatment]
@@ -69,7 +69,7 @@ Stem rot, caused by Sclerotium oryzae, is a common and important disease of rice
     planting_date = c("2018-05-29", "2018-05-17", "2019-06-15", "2019-05-18", "2019-05-17", "2020-06-01", NA),
     fungicide_dates = c("2018-07-03; 2018-08-20", "2019-06-26;2019-08-03","2019-07-24;2019-08-16;2019-08-30","2019-06-24;2019-07-29;2019-08-12","2019-06-23;2019-07-26;2019-08-10","2020-08-06;2020-08-19",NA),
     harvest_date = c("2018-10-25", "2018-10-11", "2019-10-24", NA, "2019-10-01", "2020-10-20", NA)
-      )
+  )
   
   d <- merge(d, inf_from_pub, by= "trial_id", all.x = TRUE)
   
