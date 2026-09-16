@@ -59,25 +59,30 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	r3a <- carobiner::read.excel(f3, sheet="Material_List")
 	r3b <- carobiner::read.excel(f3, sheet="Crosses_Coding")
 
+	r1e$VWt[r1e$VWt == "S"] <- NA
+	r1e$VWt <- as.numeric(gsub(",", ".", r1e$VWt))
+	
 	d1 <- data.frame(
 	  rep = as.integer(r1e$Rep),
 	  plot_id = r1e$Plot,
 	  variety = as.character(r1e$Entry),
 	  variety_pedigree = paste(r1e$Female, "x", r1e$Male),
-	  fwy_residue = as.numeric(gsub(",", ".", gsub("S", NA, r1e$VWt))),
-	  yield = as.numeric(r1e$SRY),
+	  fwy_residue = (r1e$VWt / 4) * (10000 / (1 * 0.3)),
+	  yield = as.numeric(r1e$SRY)*1000,
 	  pest_severity = r1e$Weevil,
 	  harvest = r1e$HT,### harvest time in months after planting	
-	  vitamin_A = r1e$VAC,#units of measurement were µg RE/100g of FW
-	  beta_carotene = r1e$BCC,#units of measurement were mg/100g of FW
+	  vitamin_A = as.numeric(r1e$VAC),#units of measurement were µg RE/100g of FW
+	  beta_carotene = as.numeric(r1e$BCC),#units of measurement were mg/100g of FW
 	  #internode_count = r1e$Int_D,
 	  #node_length = r1e$Int_L,
-	  yield_marketable = as.numeric(r1e$MkR_w)
+	  yield_marketable = (as.numeric(r1e$MkR_w) / 4) * (10000 / (1 * 0.3))#### the publication indicated the plants were spaced was 1m *0.3m and 4 plants were harvested per plot
 	  #node_count = as.numeric(r1e$UGN), ### underground nodes
 	  #vine_length = r1e$VL,
 	  #root_storage_bulking = r1e$CSRFAB
 	)
 	
+	d1$fwy_residue[d1$fwy_residue == 0] <- NA
+	d1$yield[d1$yield == 0] <- NA
 	
 	
 	d2 <- data.frame(
@@ -85,20 +90,24 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  plot_id = r1f$Plot,
 	  variety = r1f$`Parental genotypes`,
 	  #variety_name = r1f$Female,
-	  fwy_residue = r1f$VWt,
-	  yield = r1f$SRY,
+	  fwy_residue = (r1f$VWt / 4) * (10000 / (1 * 0.3)), #number of plants harvested and plant spacing was taken from publication 
+	  yield = r1f$SRY*1000,
 	  pest_severity = r1f$Weevil,
 	  harvest = r1f$HT,##harvest time in months after planting
-	  vitamin_A = r1f$VAC,#units of measurement were µg RE/100g of FW
-	  beta_carotene = r1f$BCC,#units of measurement were mg/100g of FW
+	  vitamin_A = as.numeric(r1f$VAC),#units of measurement were µg RE/100g of FW
+	  beta_carotene = as.numeric(r1f$BCC),#units of measurement were mg/100g of FW
 	  #internode_count = r1f$Int_D,
 	  #node_length = r1f$Int_L,
-	  yield_marketable = r1f$MkR_w
+	  yield_marketable = (r1f$MkR_w/4)* (10000 / (1 * 0.3))
 	  #node_count = as.numeric(r1f$UGN), ### underground nodes
 	  #vine_length = r1f$VL,
 	  #root_storage_bulking = r1f$CSRFAB  ## storage root yield in t/ha-1
 	)
 
+	
+	d2$fwy_residue[d2$fwy_residue == 0] <- NA
+	d2$yield[d2$yield == 0] <- NA
+	
 	d7 <- data.frame(
 	  variety = r3a$Cross_ID,
 	  variety_code = r3a$Accession_Code,
@@ -108,11 +117,12 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	d <- carobiner::bindr(d1, d2)	
 	d <- merge(d, d7, by = "variety", all.x = TRUE)
 	
-	d$trial_id < "1"
+	
+	d$trial_id <- "1"
 	d$crop <- "sweetpotato"	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
+	d$irrigated <- FALSE ##indicated in the publication
   d$country <- "Uganda"
   
 ## Publication indicated that the study was conducted at the National Crops Resources Research Institute (NaCRRI), Namulonge, Uganda	
@@ -129,9 +139,33 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 
 # The dataset does not indicate the harvesting date dates only indicated that harvesting was done from January to April no exact dates provided in the publication
 	d$planting_date <- c("2016-09-22", "2017-03-10")
-	d$harvest_date <- NA### not indicated in the publication and can not be derived from either r1e or r1f since its not clearly stated which year belongs to neither of the two
 	d$DAP <- c(90, 120, 150, 180)[d$harvest]
-
+	d$harvest_months <- c(3, 4, 5, 6)[as.numeric(d$harvest)]
+	d$harvest_date <- as.character(NA)
+	
+	for (i in seq_len(nrow(d))) {
+	  if (!is.na(d$planting_date[i]) && !is.na(d$harvest_months[i])) {
+	    
+	    p <- as.Date(d$planting_date[i])
+	    m <- d$harvest_months[i]
+	    
+	    d$harvest_date[i] <- as.character(
+	      as.Date(
+	        sprintf(
+	          "%04d-%02d-%02d",
+	          as.integer(format(p, "%Y")) +
+	            ((as.integer(format(p, "%m")) - 1 + m) %/% 12),
+	          ((as.integer(format(p, "%m")) - 1 + m) %% 12) + 1,
+	          as.integer(format(p, "%d"))
+	        )
+	      )
+	    )
+	  }
+	}
+	
+	d$harvest <- NULL
+	d$harvest_months <- NULL
+	
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- NA
   d$fertilizer_type <- NA
 
