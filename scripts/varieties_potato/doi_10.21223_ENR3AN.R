@@ -17,7 +17,6 @@ The Potato NPT Trials Amidst Prolonged Rains in Kenyan Regions took place in Apr
 	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
 		publication = NA,
@@ -35,8 +34,8 @@ The Potato NPT Trials Amidst Prolonged Rains in Kenyan Regions took place in Apr
 	
 	#f1 <- ff[basename(ff) == "08_Data_dictionary.xlsx"]
 	#r1 <- carobiner::read.excel(f1)
-	ff1 <- ff[grepl("PTYL", basename(ff))]
-	
+	ff1 <- grep("xls$", ff[grepl("PTYL", basename(ff))], value=TRUE)
+	ff1 <- 
 	
 	
 #### process 
@@ -65,8 +64,7 @@ The Potato NPT Trials Amidst Prolonged Rains in Kenyan Regions took place in Apr
 	   # plant_density = r$NPE, ## need to be divide by plot area
 	    yield_marketable = r$MTYNA*1000,
 	    trial_id = gsub(".xls", "", basename(f))
-	  )
-	  
+	  )	  
 	}
 	
 	d <- lapply(ff1, proc)
