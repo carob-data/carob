@@ -82,32 +82,27 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	  d_long <- d_long[!is.na(d_long$plot_id), ]
 		
 ## the interest in d3 / r2e would be to get to yield?
-	r2e$tuber_fresh_weight <- with(
-	  r2e,
-	  `Weight of small tubers (g)` +
-	    `Weight of medium tubers (g)` +
-	    `Weight of large tubers (g)`
-	)
 	
 	d3 <- data.frame(
 	  plot_id     = as.character(r2e$Plot),
 	  flesh_color = tolower(r2e$`Flesh colour`),
 	  fw_tubers = r2e$tuber_fresh_weight,   #g per plot
 	  plot_area   = 6.75,  #m2
-	  yield       = (r2e$tuber_fresh_weight / 6.75) * 10 
-	)|> unique()
+	  yield = rowSums(r2e[, c("Weight of small tubers (g)", "Weight of medium tubers (g)", "Weight of large tubers (g)")]) / .675 
+	) |> unique()
 	
 	d <- merge(d1, d3, by = "plot_id", all.x = TRUE)	    
 	
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-  d$trial_id <- "1"	
+    d$trial_id <- "1"	
 	d$country = "Uganda"
-	d$location = "Kachwekano ZARDI" #location provided in r2a <- carobiner::read.excel(f2, sheet="CFT Data")
+	#location provided in r2a <- carobiner::read.excel(f2, sheet="CFT Data")
+	d$location = "Kachwekano ZARDI" 
 	d$longitude <- 29.942
 	d$latitude <- -1.254
-	d$geo_source <- "Google maps"   #Kachwekano Zonal Agricultural Research and Development Institute  #actual coordinates were provided
+	d$geo_source <- "Google maps"   
 	d$geo_from_source <- FALSE
 	
 	d$planting_date <-"2017-11-27"	
@@ -119,7 +114,7 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	d$yield_moisture <- NA
 	d$crop <- "potato"
 	d$yield_isfresh <- TRUE
-		
+
 	carobiner::write_files(path, meta, d, long=d_long)	
 }
 
