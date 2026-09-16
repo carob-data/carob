@@ -142,8 +142,13 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	d1$adm1 <- "Siaya"
 	
 	## Georeference Siaya county (adm1) per https://carob-data.org/contribute/georeference.html
-	xy <- carobiner::adm_pointRadius("Kenya", 1)
-	geo <- xy[xy$adm1 == "Siaya", ]
+	geo <- data.frame(
+	  adm1 = c("Siaya"),
+	  longitude = c(34.2488),
+	  latitude = c(-0.0546),
+	  geo_uncertainty = c(44931),
+	  geo_source = c("GADM 4.1, adm1")
+	)
 	
 	d1$geo_from_source <- FALSE
 	d1$latitude <- geo$latitude
