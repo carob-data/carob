@@ -32,10 +32,7 @@ carob_script <- function(path) {
   
   ff <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(
-    uri, path, group,
-    major = 2,
-    minor = 1,
+  meta <- carobiner::get_metadata(uri, path, group, major = 2, minor = 1,
     data_organization = "CIP",
     publication = NA,
     project = NA,
@@ -70,10 +67,11 @@ carob_script <- function(path) {
   
   ## Create final standardized data.frame
   d <- data.frame(
-    trial_id = paste("EKOYZ1", gsub("[ ,]+", "_", r$location), sep = "_"),
+    trial_id = paste("EKOYZ1_", r$location),
     plot_id = as.character(r$plot),
     rep = as.integer(r$rep),
     variety = r$variety,
+    variety_pedigree = paste(r$female, "x", r$male),
     location = r$locality,
     adm1 = r$admin1,
     adm2 = r$admin2,
@@ -85,27 +83,24 @@ carob_script <- function(path) {
     irrigated = NA,
     yield_part = "tubers",
     ## yield_fresh = TTYA (Total tuber yield adjusted) - t/ha
-    yield = as.numeric(r$yield_fresh) * 1000,
+    yield = r$yield_fresh * 1000,
     ## mtya = MTYA (Marketable tuber yield adjusted) - t/ha
-    yield_marketable = as.numeric(r$mtya) * 1000,
+    yield_marketable = r$mtya * 1000,
     yield_moisture = NA,
     yield_isfresh = TRUE,
-    latitude = as.numeric(r$latitude),
-    longitude = as.numeric(r$longitude),
-    elevation = as.numeric(r$elevation),
+    latitude = r$latitude,
+    longitude = r$longitude,
+    elevation = r$elevation,
     geo_from_source = TRUE,
     planting_date = as.character(as.Date(r$planting_date)),
     harvest_date = as.character(as.Date(r$harvest_date)),
+
+# not clear what this really is, as it was after harvest in La Molina. How measured??
     maturity_date = as.character(as.Date(as.POSIXct(r$maturity_date, origin = "1970-01-01"))),
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    fertilizer_type = NA,
-    soil_texture = tolower(r$soil_texture),
-    ## NEW VARIABLE
-    set_ = as.integer(r$set),
-    parent_female_ = r$female,
-    parent_male_ = r$male
+    soil_texture = tolower(r$soil_texture)
   )
   
   carobiner::write_files(path, meta, d)
