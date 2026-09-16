@@ -17,9 +17,8 @@ Stem rot, caused by Sclerotium oryzae, is a common and important disease of rice
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=NA,
-		data_organization = "UCDANR", # University of California Division of Agriculture and Natural Resources
+		data_organization = "UCANR", 
 		publication = "doi:10.1016/j.cropro.2026.107829",
 		project = NA,
 		design = NA,
