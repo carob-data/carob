@@ -140,12 +140,20 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	d1$crop <- "maize"
 	d1$country <- "Kenya"
 	d1$adm1 <- "Siaya"
+	
+	## Georeference Siaya county (adm1) per https://carob-data.org/contribute/georeference.html
+	xy <- carobiner::adm_pointRadius("Kenya", 1)
+	geo <- xy[xy$adm1 == "Siaya", ]
+	
+	d1$geo_from_source <- FALSE
+	d1$latitude <- geo$latitude
+	d1$longitude <- geo$longitude
+	d1$geo_uncertainty <- geo$geo_uncertainty
+	d1$geo_source <- geo$geo_source
+	
 	d1$is_survey <- FALSE
 	d1$on_farm <- TRUE
 	d1$irrigated <- FALSE
-	d1$geo_from_source <- FALSE
-	d1$latitude <- NA
-	d1$longitude <- NA
 	d1$planting_date <- NA
 	d1$harvest_date <- NA
 	d1$yield_moisture <- NA
