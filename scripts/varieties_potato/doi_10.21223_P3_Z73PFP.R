@@ -80,14 +80,11 @@ Transgenic potato Vic.1 carries three resistance (R) genes from wild potato rela
 	    pest_incidence = as.integer(r2c[[cn]])
 	  )}))
 	  d_long <- d_long[!is.na(d_long$plot_id), ]
-		
-## the interest in d3 / r2e would be to get to yield?
 	
 	d3 <- data.frame(
-	  plot_id     = as.character(r2e$Plot),
+	  plot_id = as.character(r2e$Plot),
 	  flesh_color = tolower(r2e$`Flesh colour`),
-	  fw_tubers = r2e$tuber_fresh_weight,   #g per plot
-	  plot_area   = 6.75,  #m2
+	  plot_area  = 6.75,  #m2
 	  yield = rowSums(r2e[, c("Weight of small tubers (g)", "Weight of medium tubers (g)", "Weight of large tubers (g)")]) / .675 
 	) |> unique()
 	
