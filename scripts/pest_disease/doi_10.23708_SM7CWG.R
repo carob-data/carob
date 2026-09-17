@@ -45,16 +45,14 @@ carob_script <- function(path) {
     location = r1$site,
     date = r1$date,
     pest_species = r1$species,
-    pest_incidence = r1$numberOfIndividuals,
-    pheromone_change = r1$pheromoneChange  
+    pest_incidence = r1$numberOfIndividuals 
   )
   
   d2 <- data.frame(
     location = r2$site,
     date = r2$date,
     pest_species = r2$species,
-    pest_incidence = r2$numberOfIndividuals,
-    pheromone_change = r2$pheromoneChange 
+    pest_incidence = r2$numberOfIndividuals
   )
   
   d3 <- data.frame(
@@ -100,7 +98,7 @@ carob_script <- function(path) {
   d6 <- data.frame(
     site = "rpi_near building",
     sensor_id = "DS18B20",  # DS18B20 only measures temperature
-    temp = r5$temperatureDS18B20,
+    temp = r5$temperatureDS18B20
   )
   d6$date <- as.character(as.Date(r5$dateUTC, format = "%Y-%m-%d %H:%M:%S"))
   d6$time <- substr(r5$dateUTC, 12, 19)
@@ -109,8 +107,7 @@ carob_script <- function(path) {
     location = r6$site,
     date = r6$date,
     pest_species = r6$species,
-    pest_incidence = r6$numberOfIndividuals,
-    pheromone_change = r6$pheromoneChange
+    pest_incidence = r6$numberOfIndividuals
   )
   
   d <- carobiner::bindr(d1, d2, d7)
