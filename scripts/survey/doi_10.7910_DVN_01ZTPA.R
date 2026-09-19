@@ -75,13 +75,13 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	  irrigated = !grepl("Rainfed", r2$IRRTYPE),
 	  cropland_owned = ifelse(grepl("Own",r2$TENURE), as.numeric(gsub(".0.3", 0.3, r2$FSIZE)), NA),
 	  cropland_rentedout = ifelse(grepl("Lent out|Rented out",r2$TENURE), as.numeric(gsub(".0.3", 0.3, r2$FSIZE)), NA),
-	  soil_type = tolower(r2$`SOIL TYPE`),
+	  soil_texture = tolower(r2$`SOIL TYPE`),
 	  plant_spacing = r2$`PLANT SPACING`
 	)
 	
 	## Fixing soil type 
 	
-	P <- carobiner::fix_name(d2$soil_type)
+	P <- carobiner::fix_name(d2$soil_texture)
 	P <- gsub("^sandy$", "sand", P)
 	P <- gsub("sandy loam \\(galas\\)", "sandy loam", P)
 	P <- gsub("^clayee$", "clay", P)
@@ -90,7 +90,7 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	P <- gsub("clay loam \\(mestisong galas\\)", "clay loam", P)
 	P <- gsub("clayee \\(malagkit\\)", "clay", P)
 	P <- gsub("no idea", NA, P)
-	d2$soil_type <- P
+	d2$soil_texture <- P
 	#### merge d1 and d2
 	
 	d <- merge(d1, d2, by= c("hhid", "date", "season"), all  = TRUE)
