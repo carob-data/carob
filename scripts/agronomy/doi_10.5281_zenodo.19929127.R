@@ -7,13 +7,10 @@
 # Root Biomass and Soil Bulk Density were measured once for the whole trial
 
 # Suggested new terms"
-#  str_co4-8 (different weeks of striga count)
+#  striga_count
 #  amend_rate
 #  ammendment_type
 
-## ISSUES
-# id: plot_id(s) do not match between long and wide records
-#   caused by in-situ pH, which has 9 replicates per treatment (vs 3 everywhere else in the trial).
 
 
 carob_script <- function(path) {
@@ -40,7 +37,7 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	          publication = NA,
 	          project = "PyMiCCS",
 	          design = "9 treatments (controls, biochar, basanite, co-application)",
-	          data_type = NA,   # on-farm vs on-station not stated in source - not guessed
+	          data_type = NA,
 	          treatment_vars = "treatment; N_fertilizer; P_fertilizer; K_fertilizer",
 	          response_vars = "yield; dmy_residue",
 	          notes = NA,
@@ -64,10 +61,7 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	  N_fertilizer = c(0,90,90,90,90,90,90,90,90),
 	  P_fertilizer = c(0,0,10,20,0,0,0,0,0),
 	  K_fertilizer = c(0,0,20,40,0,0,0,0,0),
-#	  amendment_type = c(NA,NA,NA,NA,"rock-enhanced biochar","rock-enhanced biochar","biochar+basanite co-application","biochar","basanite (rock powder)"),
-#	  amend_rate = c(NA,NA,NA,NA,5,10,10,5,5),
-# is this correct?
-      amendment_type = c("none","none","none","none","rock-enhanced biochar","rock-enhanced biochar","biochar+basanite co-application","biochar","basanite (rock powder)"),
+    amendment_type = c("none","none","none","none","rock-enhanced biochar","rock-enhanced biochar","biochar+basanite co-application","biochar","basanite (rock powder)"),
 	  amend_rate = c(0,0,0,0,5,10,10,5,5),
 	  OM_used = c(FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE)   # TRUE only for biochar-containing treatments
 	)
@@ -100,18 +94,27 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	names(bd)[3] <- "soil_bd"
 	d1 <- merge(d1, bd, by=c("treatment","replicate"), all.x=TRUE)
 	
-	# Roots biomass
-	## need to be for a particular season??
+	# Roots biomass - measured once for the whole trial
 	roots <- r1[r1$parameter == "Root Biomass g dw", c("treatment","replicate","value")]
 	names(roots)[3] <- "dw_roots"
 	d1 <- merge(d1, roots, by=c("treatment","replicate"), all.x=TRUE)
 	
-	## Extract the striga data
-	## Already defined in terminag: Week 8 = str_co1, 10 weeks = str_co2, 3 weeks = str_co3
-	## that is old stuff from maize varieties that will be removed soon, from before we had long 
-	## variables. Make this a long variable with time in DAP?
-
-	## Suggested for this data: "Week 2"="str_co4", "Week 4"="str_co5", "Week 6"="str_co6", "Week 12"="str_co7", "Week 14"="str_co8" 
+	## Soil pH, wide - averaged per treatment+season
+	ph_exsitu_s1 <- r1[r1$parameter == "Soil pH ex-situ season 1", c("treatment","value")]
+	ph_exsitu_s1$season <- "1"
+	ph_exsitu_s2 <- r1[r1$parameter == "Soil pH ex-situ season 2", c("treatment","value")]
+	ph_exsitu_s2$season <- "2"
+	ph_insitu <- r1[r1$parameter == "Soil pH in-situ season 1", c("treatment","value")]
+	ph_insitu$season <- "1"
+	
+	ph_all <- rbind(ph_exsitu_s1, ph_exsitu_s2, ph_insitu)
+	ph_mean <- aggregate(value ~ treatment + season, data=ph_all, FUN=mean)
+	names(ph_mean)[names(ph_mean)=="value"] <- "soil_pH"
+	
+	d1 <- merge(d1, ph_mean, by=c("treatment","season"), all.x=TRUE)
+	
+	## Extract the striga data - long format,
+	## DAP assumed as week_number * 7
 	striga_s2 <- r1[r1$parameter == "Striga count season 2", c("treatment","replicate","subgroup","value")]
 	names(striga_s2) <- c("treatment","replicate","week","striga_count")
 	striga_s2$trial_id <- "2"
@@ -120,18 +123,13 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	names(striga_s3) <- c("treatment","replicate","week","striga_count")
 	striga_s3$trial_id <- "3"
 	
-	striga_long <- rbind(striga_s2, striga_s3)
-	
-	week_map <- c("Week 8"="str_co1", "Week 10"="str_co2",
-	              "Week 2"="str_co4", "Week 4"="str_co5", "Week 6"="str_co6",
-	              "Week 12"="str_co7", "Week 14"="str_co8")
-	
-	striga_long$col <- week_map[striga_long$week]
-	striga_wide <- reshape(striga_long[, c("treatment","replicate","trial_id","col","striga_count")],
-	                       idvar=c("treatment","replicate","trial_id"), timevar="col", direction="wide")
-	names(striga_wide) <- gsub("^striga_count\\.", "", names(striga_wide))
-	
-	d1 <- merge(d1, striga_wide, by=c("treatment","replicate","trial_id"), all.x=TRUE)
+	d_striga <- rbind(striga_s2, striga_s3)
+	d_striga$DAP <- as.integer(gsub("\\D", "", d_striga$week)) * 7L
+	d_striga$week <- NULL
+	names(d_striga)[names(d_striga)=="replicate"] <- "rep"
+	d_striga$plot_id <- paste(d_striga$trial_id, d_striga$treatment, d_striga$rep, sep="_")
+	d_striga$treatment <- NULL
+	d_striga$rep <- NULL
 	
 	d1$crop <- "maize"
 	d1$country <- "Kenya"
@@ -153,42 +151,11 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	d1$yield_part <- "grain"
 	
 	names(d1)[names(d1)=="replicate"] <- "rep"
+	names(d1)[names(d1)=="season"] <- "trial_id"
 	
 	d1$plot_id <- paste(d1$trial_id, d1$treatment, d1$rep, sep="_")
 	
-	## Soil metrics
-	## Ex-situ pH, both seasons
-	ph_exsitu_s1 <- r1[r1$parameter == "Soil pH ex-situ season 1", c("treatment","replicate","subgroup","value")]
-	names(ph_exsitu_s1) <- c("treatment","replicate","depth","soil_pH")
-	ph_exsitu_s1$trial_id <- "1"
-	ph_exsitu_s1$ph_type <- "exsitu"
-	
-	ph_exsitu_s2 <- r1[r1$parameter == "Soil pH ex-situ season 2", c("treatment","replicate","subgroup","value")]
-	names(ph_exsitu_s2) <- c("treatment","replicate","depth","soil_pH")
-	ph_exsitu_s2$trial_id <- "2"
-	ph_exsitu_s2$ph_type <- "exsitu"
-	
-	## In-situ pH, season 1 only - replicate here spans 1-9
-	ph_insitu <- r1[r1$parameter == "Soil pH in-situ season 1", c("treatment","replicate","subgroup","value")]
-	names(ph_insitu) <- c("treatment","replicate","depth","soil_pH")
-	ph_insitu$trial_id <- "1"
-	ph_insitu$ph_type <- "insitu"
-	
-	d_soil <- rbind(ph_exsitu_s1, ph_exsitu_s2, ph_insitu)
-	
-	## depth_top/depth_bottom
-	depth_top_map <- c("0-15 cm"=0, "15-30 cm"=15, "0-15 cm depth"=0, "15-30 cm depth"=15, "Application Zone (15cm depth)"=15)
-	depth_bottom_map <- c("0-15 cm"=15, "15-30 cm"=30, "0-15 cm depth"=15, "15-30 cm depth"=30, "Application Zone (15cm depth)"=15)
-	
-	d_soil$depth_top <- depth_top_map[d_soil$depth]
-	d_soil$depth_bottom <- depth_bottom_map[d_soil$depth]
-	d_soil$plot_id <- paste(d_soil$trial_id, d_soil$treatment, d_soil$replicate, sep="_")
-	
-	d_soil$depth <- NULL
-	d_soil$treatment <- NULL
-	d_soil$replicate <- NULL
-	
-	carobiner::write_files(path, meta, wide=d1, long=d_soil)
+	carobiner::write_files(path, meta, wide=d1, long=d_striga)
 }
 
 
