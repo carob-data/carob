@@ -22,8 +22,8 @@ The International Potato Center (CIP) has developed a population named LBHT, obt
     notes = NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-22",
-    carob_completion = 100,
-    carob_effort = 2
+    carob_completion = 80,
+    carob_effort = 2.0
   )
   
   ## Source files (processed)
@@ -34,6 +34,9 @@ The International Potato Center (CIP) has developed a population named LBHT, obt
   r1 <- carobiner::read.excel(f1)
   r2 <- carobiner::read.excel(f2)
   r3 <- carobiner::read.excel(f3)
+  
+  ## Fix harvest_date in San Ramon (source: 05-11-2013 was read as 2013-05-11)
+  r1$harvest_date <- "2013-11-05"
   
   ## Add location
   r1$location <- "San Ramon"
@@ -65,7 +68,7 @@ The International Potato Center (CIP) has developed a population named LBHT, obt
     on_farm = TRUE,
     is_survey = FALSE,
     irrigated = r$irrigated,
-    soil_texture = tolower(r$soil_texture),
+    soil_texture = tolower(gsub(" ", "_", r$soil_texture)),
     yield_part = "tubers",
     yield = r$yield_fresh * 1000,
     yield_marketable = r$mtyna * 1000,
