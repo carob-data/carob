@@ -68,7 +68,6 @@ The International Potato Center (CIP) has developed a population named LBHT, obt
     on_farm = TRUE,
     is_survey = FALSE,
     irrigated = r$irrigated,
-    soil_texture = tolower(gsub(" ", "_", r$soil_texture)),
     yield_part = "tubers",
     yield = r$yield_fresh * 1000,
     yield_marketable = r$mtyna * 1000,
