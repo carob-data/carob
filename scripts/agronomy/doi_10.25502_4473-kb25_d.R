@@ -47,25 +47,16 @@ Six sowing windows with a week interval was used in the experiment.
 	f3 <- ff[basename(ff) == "tudun-wada.csv"]        # Tudun Wada LGA
 	f4 <- ff[basename(ff) == "data_dictionary4.csv"]  # column definitions
 	
-	## Source uses "." as a missing-value placeholder - replace with real NA 
-	clean_dots <- function(df) {
-	  df[] <- lapply(df, function(x) {
-	    if (is.character(x)) x[x == "."] <- NA
-	    x
-	  })
-	  df
-	}
-	
-	r1 <- clean_dots(read.csv(f1))
-	r2 <- clean_dots(read.csv(f2))
-	r3 <- clean_dots(read.csv(f3))
+	r1 <- read.csv(f1, na.strings = ".")
+	r2 <- read.csv(f2, na.strings = ".")
+	r3 <- read.csv(f3, na.strings = ".")
 	
 	## BUK
 	d1 <- data.frame(
 	  plot_id = as.character(r1[["Plot_no"]]),
 	  country = "Nigeria",
 	  adm1 = "Kano",
-	  location = "BUK",
+	  location = "Bayero University, Kano",
 	  latitude = NA,
 	  longitude = NA,
 	  geo_uncertainty = NA,
