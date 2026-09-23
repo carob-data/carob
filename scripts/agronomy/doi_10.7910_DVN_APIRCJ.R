@@ -20,7 +20,7 @@ Intensifying upland rice cultivation has resulted in increased weed pressure and
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "(Africa Rice Center (AfricaRice), 01 BP 2031 Cotonou, Benin, Tel.: +229 21 35 01 88; fax: +229 21 35 05 56.E-mail address: k.saito@cgiar.org.); (Africa Rice Center (AfricaRice), 01 BP 2031 Cotonou, Benin); ( African Agricultural Technology Foundation (AATF), P.O. Box 30709-00100, Nairobi, Kenya)",
+		data_organization = "AfricaRice; AATF", #African Agricultural Technology Foundation
 		publication = "",
 		project = NA,
 		carob_date = "2026-09-21",
