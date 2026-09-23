@@ -44,7 +44,7 @@ maize farmers in Ethiopia, Nigeria and Tanzania.
   d <- data.frame(
     plot_id = as.character(r2[["Plotno"]]),
     location = r2[["Loc"]],
-    trial_id = as.character(as.integer(as.factor(paste(r2[["Year"]], d$location)))),
+    trial_id = paste(r2[["Year"]], "_", r2[["Loc"]]),
     variety = r2[["Variety"]],
     planting_date = as.character(as.Date(r2[["PlantingDate"]], format="%m/%d/%Y")),   
     rep = as.integer(r2[["Rep"]]),
