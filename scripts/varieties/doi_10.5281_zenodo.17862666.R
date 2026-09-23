@@ -43,14 +43,14 @@ This dataset provides field and environmental data from multi-location cassava t
 	
 	d1 <- data.frame(
 	  location = r1$Location,
-	  MAP = r1$MAP,  # month After planting
+	  DAP = as.integer(r1$MAP*30),  # month After planting
 	  rep = as.integer(r1$REP),
 	  variety = r1$Cultivar,
 	  LAI = r1$LAI,
 	  plant_height = r1$Height,
 	  yield_moisture = r1$DM,
 	  yield = r1$Yield*1000,
-	  root_HCN = r1$HCN, # hydrogen cyanide
+	  root_HCN = r1$HCN*1000, # hydrogen cyanide 
 	  soil_pH = r1$pH30cm,
 	  soil_P = r1$`P(ug/g)30cm`,
 	  soil_K_exch = r1$`K(Cmol/Kg)30cm`,
@@ -70,7 +70,7 @@ This dataset provides field and environmental data from multi-location cassava t
 
 	d2 <- data.frame(
 		location = r2$Location,
-		MAP = r2$MAP,
+		DAP = as.integer(r2$MAP*30),
 		variety = r2$Cultivar,
 		rain = r2$Total_rainfall,
 		tmax = r2$Tmax,
@@ -79,7 +79,7 @@ This dataset provides field and environmental data from multi-location cassava t
 	)
 	
 	
-	d <- merge(d1, d2, by= c("location", "MAP", "variety"), all.x = TRUE)
+	d <- merge(d1, d2, by= c("location", "DAP", "variety"), all.x = TRUE)
 
 	### Fixing soil texture 
 	P <- carobiner::fix_name(d$soil_texture)
