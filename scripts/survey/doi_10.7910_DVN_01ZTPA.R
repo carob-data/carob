@@ -116,9 +116,10 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	P <- carobiner::fix_name(d3$land_prep_method)
 	P <- gsub("cleaning and repair of dikes|pre lp|dukit", "unknown", P)
 	P <- gsub("rotavating", "rotovating", P)
+	P <- gsub("plowing", "ploughing", P)
 	d3$land_prep_method <- P 
 	
-	d3$land_prep_implement[grepl("tractor|Tractor", d3$land_prep_implement)] <- "tractor"
+	d3$land_prep_implement[grepl("tractor|Tractor", d3$land_prep_implement)] <- "4 wheel tractor"
 	d3$land_prep_implement[grepl("Power|power tiller", d3$land_prep_implement)] <- "2 wheel tractor"
 	d3$land_prep_implement[grepl("Grasscutter|grasscutter|Cow|Carabao", d3$land_prep_implement)] <- "animal"
 	
