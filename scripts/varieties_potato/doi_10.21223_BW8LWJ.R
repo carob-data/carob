@@ -71,9 +71,7 @@ Potato cultivation is one of the three most important foods in the world's diet.
     planting_date = "2021",
     harvest_date = "2022"
   )
-  
-  d$AUDPC <- pmin(d$AUDPC, 150)
-  
+    
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
   carobiner::write_files(path, meta, d)
