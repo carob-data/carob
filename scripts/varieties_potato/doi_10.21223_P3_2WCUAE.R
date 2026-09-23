@@ -27,11 +27,9 @@ carob_script <- function(path) {
     carob_effort = 3.5
   )
   
-  ## Source files
-  f1 <- ff[basename(ff) == "01_PTYield122015_CIPHQ_exp1_processed.xlsx"]
+ f1 <- ff[basename(ff) == "01_PTYield122015_CIPHQ_exp1_processed.xlsx"]
   f2 <- ff[basename(ff) == "02_PTYield122015_MAJ_exp1_processed.xlsx"]
   
-  ## Read source data
   r1 <- carobiner::read.excel(f1)
   r2 <- carobiner::read.excel(f2)
   
@@ -39,17 +37,15 @@ carob_script <- function(path) {
   r1$location <- "La Molina"
   r2$location <- "Majes"
   
-  ## Combine
   r <- carobiner::bindr(r1, r2)
   
-  ## Coordinates estimated from Google Maps
-  coords <- data.frame(
+  geo <- data.frame(
     location = c("La Molina", "Majes"),
     latitude = c(-12.076289, -16.49306),
-    longitude = c(-76.948417, -72.18889)
+    longitude = c(-76.948417, -72.18889),
+    geo_source = "Google Maps"
   )
   
-  ## Create final data.frame
   d <- data.frame(
     trial_id = r$location,
     plot_id = as.character(r$plot),
@@ -79,12 +75,7 @@ carob_script <- function(path) {
     K_fertilizer = r$k_fertilizer
   )
   
-  ## Merge coordinates
-  d <- merge(d, coords, by = "location", all.x = TRUE)
-  
-  ## Remove rows with missing yield
-  d <- d[!is.na(d$yield), ]
-  
-  ## Write CAROB files
+  d <- merge(d, geo, by = "location", all.x = TRUE)
+    
   carobiner::write_files(path, meta, d)
 }
