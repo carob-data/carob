@@ -42,14 +42,16 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   
   r <- carobiner::bindr(r2, r5, r8)
  
-  geo <- data.frame(
+ geo <- data.frame(
     location = c("Huancayo", "Huanuco", "Oxapampa"),
     latitude = c(-12.0651, -9.9306, -10.5775),
     longitude = c(-75.2049, -76.2421, -75.4022),
-    geo_from_source = FALSE
+    geo_from_source = FALSE,
+    planting_date = c("2020-11-16", "2020-10-08", "2020-10-07"),
+    harvest_date = c("2021-04-26", "2021-03-11", "2021-01-27")
   )
   
-  d <- data.frame(
+   d <- data.frame(
     trial_id = paste0("B7HWWH_", r$location),
     plot_id = as.character(r$ID),
     rep = as.integer(r$Rep),
@@ -65,20 +67,21 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     yield_marketable = r$MTYA * 1000,
     yield_moisture = NA,
     yield_isfresh = TRUE,
+    AUDPC = r$AUDPC,
+    rAUDPC = r$rAUDPC,
     N_fertilizer = NA,
     P_fertilizer = NA,
-    K_fertilizer = NA
-# fix, see files    planting_date = "2020",
-# fix, see files   harvest_date = "2021"
+    K_fertilizer = NA,
+    #New variables
+    LB1_ = r$LB1,
+    LB2_ = r$LB2,
+    LB3_ = r$LB3,
+    LB4_ = r$LB4
   )
   
+  d$yield[d$yield == 574494.255] <- 5744.94255
+  
   d <- merge(d, geo, by = "location", all.x = TRUE)
- 
- # record 324
- d$yield[d$yield == 574494.255] <- 5744.94255
- # record 2488
- d$yield[d$yield == 371329.62] <- 3713.2962
- d$yield_marketable[d$yield_marketable == 3666.63] <- 3666.63
-
- carobiner::write_files(path, meta, d)
+  
+  carobiner::write_files(path, meta, d)
 }
