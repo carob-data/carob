@@ -1,3 +1,5 @@
+# rejected. Data on generation of (botanical) seed in a breeding program
+
 carob_script <- function(path) {
 
 "
@@ -37,13 +39,14 @@ With the objective of generating potato progenies to be used in the product prof
   ## Create final data.frame
   d <- data.frame(
     trial_id = "KXYPYO",
-    variety = paste(r1$`Female Accession Number`, "x", r1$`Male Accession Number`),
+    variety = r1$variety
+    variety_pedigree = paste(r1$`Female Accession Number`, "x", r1$`Male Accession Number`),
     location = "Huancayo",
+    site = "CIP-Santa Ana",
     country = "Peru",
     adm1 = "Junin",
     adm2 = "Huancayo",
     adm3 = "El Tambo",
-    adm4 = "CIP-Santa Ana",
     crop = "potato",
     on_farm = FALSE,
     is_survey = FALSE,
@@ -61,10 +64,7 @@ With the objective of generating potato progenies to be used in the product prof
     planting_date = "2019-10",
     harvest_date = r1$`Fruit Harvest Date`,
     ## NEW VARIABLES
-    parent_female_ = r1$`Female Accession Number`,
-    parent_male_ = r1$`Male Accession Number`,
-    tps_count_ = as.numeric(r1$`Total Number of Seeds`)
-    
+    number_seeds = as.numeric(r1$`Total Number of Seeds`)
   )
   
   carobiner::write_files(path, meta, d)
