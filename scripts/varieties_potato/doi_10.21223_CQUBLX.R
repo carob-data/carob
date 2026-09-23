@@ -60,14 +60,8 @@ carob_script <- function(path) {
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    # New variable :percentage of plant cover (%)
-    plant_cover_ = r1$`Coberture_%`
-    
+    ground_cover = r1$`Coberture_%`    
   )
   
-  ## Remove rows with missing variety
-  d <- d[!is.na(d$variety), ]
-  
-  ## Write CAROB files
   carobiner::write_files(path, meta, d)
 }
