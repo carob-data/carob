@@ -27,7 +27,6 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     carob_effort = 3.0
   )
   
-  ## Source files
   f2 <- ff[basename(ff) == "01_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
   f5 <- ff[basename(ff) == "02_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
   f8 <- ff[basename(ff) == "03_LBHTC2-OXAPAMPA 2020-2021_data .xlsx"]
@@ -41,13 +40,8 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   r5$location <- "Huanuco"
   r8$location <- "Oxapampa"
   
-  ## Combine
   r <- carobiner::bindr(r2, r5, r8)
-  ## TTYA and MTYA have outliers up to 574 and 366 t/ha
-  r$TTYA <- pmin(r$TTYA, r$MTYNA * 1.1)
-  r$MTYA <- pmin(r$MTYA, r$MTYNA * 1.1)
-  
-  ## Coordinates
+ 
   geo <- data.frame(
     location = c("Huancayo", "Huanuco", "Oxapampa"),
     latitude = c(-12.0651, -9.9306, -10.5775),
@@ -55,7 +49,6 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     geo_from_source = FALSE
   )
   
-  ## Create final data.frame
   d <- data.frame(
     trial_id = paste0("B7HWWH_", r$location),
     plot_id = as.character(r$ID),
@@ -74,13 +67,18 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     yield_isfresh = TRUE,
     N_fertilizer = NA,
     P_fertilizer = NA,
-    K_fertilizer = NA,
-    planting_date = "2020",
-    harvest_date = "2021"
+    K_fertilizer = NA
+# fix, see files    planting_date = "2020",
+# fix, see files   harvest_date = "2021"
   )
   
-  ## Merge coordinates
   d <- merge(d, geo, by = "location", all.x = TRUE)
-  ## Write CAROB files
-  carobiner::write_files(path, meta, d)
+ 
+ # record 324
+ d$yield[d$yield == 574494.255] <- 5744.94255
+ # record 2488
+ d$yield[d$yield == 371329.62] <- 3713.2962
+ d$yield_marketable[d$yield_marketable == 3666.63] <- 3666.63
+
+ carobiner::write_files(path, meta, d)
 }
