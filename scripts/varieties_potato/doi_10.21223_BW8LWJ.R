@@ -54,6 +54,7 @@ Potato cultivation is one of the three most important foods in the world's diet.
     rep = as.integer(r$Rep),
     variety = r$Clone,
     location = r$Site,
+    trial_type = r$trial_type,
     country = "Peru",
     crop = "potato",
     on_farm = FALSE,
