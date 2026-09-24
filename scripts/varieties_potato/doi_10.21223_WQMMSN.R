@@ -36,18 +36,41 @@ Evaluation of advanced clones from populations: B3C1 and B3C2 for quality of fry
   r1$FF <- as.numeric(gsub("[*]", "", r1$FF))
   r1$CH <- as.numeric(gsub("[*]", "", r1$CH))
   
+  r1$Locality[r1$Locality == "Comas"] <- "COM"
+  r1$Locality[r1$Locality == "Hco"] <- "HCO"
+  
+  locality_map <- c(
+    "COM" = "Comas",
+    "OXA" = "Oxapampa",
+    "AYM" = "Aymara",
+    "HCO" = "Huanuco",
+    "HYO" = "Huancayo",
+    "CAJ" = "Cajamarca",
+    "HRL" = "Huaral",
+    "CHAGLLA - HCO" = "Chaglla",
+    "COCHACALLA-HCO" = "Cochacalla",
+    "HUARAPA-HCO" = "Huarapa",
+    "PACAMARCA" = "Pacamarca",
+    "PILLAO-HCO" = "Pillao",
+    "Cusco" = "Cusco",
+    "Huancani" = "Huancani",
+    "LM" = "La Molina"
+  )
+  
+  r1$locality_full <- locality_map[r1$Locality]
+  
   
   geo <- data.frame(
     location = c("COM", "OXA", "AYM", "HCO", "HYO", "CAJ", "HRL","CHAGLLA - HCO", "COCHACALLA-HCO", "HUARAPA-HCO", "PACAMARCA", "PILLAO-HCO", "Cusco", "Huancani", "LM" ),
-    latitude = c(-11.9500, -10.5775, -14.7967, -9.9306, -12.0651, -7.1638, -11.4950,-9.8696, -10.35858, -9.77057,-11.8547, -9.66667, -13.5183, -13.18333, -12.0833 ),
-    longitude = c(-75.0333, -75.4022, -73.3833, -76.2421, -75.2049, -78.5003, -77.2078, -75.7742, -76.20876, -76.20659, -75.41985, -75.96667, -71.9781, -75.91667, -76.9500),
+    latitude = c(-11.9500, -10.5775, -14.7967, -9.9306, -12.0717, -7.1638, -11.4950,-9.8696, -10.35858, -9.77057,-11.8547, -9.66667, -13.5183, -13.18333, -12.0833 ),
+    longitude = c(-75.0333, -75.4022, -73.3833, -76.2421, -75.205, -78.5003, -77.2078, -75.7742, -76.20876, -76.20659, -75.41985, -75.96667, -71.9781, -75.91667, -76.9500),
     geo_from_source = FALSE
   )
   
   d <- data.frame(
-    trial_id = paste0("WQMMSN_", r1$Year, "_", r1$Locality),
+    trial_id = paste0("WQMMSN_", r1$Year, "_", r1$locality_full),
     variety = as.character(r1$Clone),
-    location = r1$Locality,
+    location = r1$locality_full,
     country = "Peru",
     crop = "potato",
     on_farm = FALSE,
@@ -66,8 +89,9 @@ Evaluation of advanced clones from populations: B3C1 and B3C2 for quality of fry
     ## New variable
     chips_color_ = as.numeric(r1$CH)
   )
-  
-  d <- merge(d, geo, by = "location", all.x = TRUE)
+  d$location_code <- r1$Locality
+  d <- merge(d, geo, by.x = "location_code", by.y = "location", all.x = TRUE)
+  d$location_code <- NULL
   
   carobiner::write_files(path, meta, d)
 }
