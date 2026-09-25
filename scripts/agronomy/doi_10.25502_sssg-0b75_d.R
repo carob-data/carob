@@ -3,8 +3,7 @@
 
 ## ISSUES
 
-# The location indicated as "Iburu" does not directly show in GADM but Google suggest its a village in Kajuru  LGA
-# ipar (frac_int_radiation) is the Intercepted Photsynthetically Active Radiation
+# Iburu location searched on Google Maps: 10.270535, 7.789725
 
 
 carob_script <- function(path) {
@@ -73,12 +72,12 @@ maize farmers in Ethiopia, Nigeria and Tanzania.
   d$crop <- "maize"
   d$country <- "Nigeria"
   
-  #georeference of Iburu did not show but Google suggests its a village in Kajuru LGA
+  # Iburu location searched on Google Maps: 10.270535, 7.789725
   d$adm1 <- "Kaduna"
-  d$longitude <- ifelse(d$location == "Zaria", 7.7143, 7.8851)
-  d$latitude <- ifelse(d$location == "Zaria", 11.0231, 10.2523)
-  d$geo_uncertainty <- ifelse(d$location == "Zaria", 16966, 36812)
-  d$geo_source <- ifelse(d$location == "Zaria", "GADM 4.1, adm2", "GADM 4.1, adm2 (Kajuru LGA, nearest match for Iburu)")
+  d$longitude <- ifelse(d$location == "Zaria", 7.7143, 7.789725)
+  d$latitude <- ifelse(d$location == "Zaria", 11.0231, 10.270535)
+  d$geo_uncertainty <- ifelse(d$location == "Zaria", 16966, NA)
+  d$geo_source <- ifelse(d$location == "Zaria", "GADM 4.1, adm2", "Google Maps")
   d$geo_from_source <- FALSE
   d$is_survey <- FALSE
   d$on_farm <- TRUE
