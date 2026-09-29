@@ -33,10 +33,13 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     x$trial_id <- sub("_processed\\.xlsx$", "", x$trial_id)
     x
   })
-  r <- carobiner::bindr(r[[1]], r[[2]], r[[3]], r[[4]], r[[5]], r[[6]], r[[7]], r[[8]], r[[9]],
-                        r[[10]], r[[11]], r[[12]], r[[13]], r[[14]], r[[15]], r[[16]], r[[17]],
-                        r[[18]], r[[19]], r[[20]], r[[21]], r[[22]], r[[23]], r[[24]], r[[25]], r[[26]])
-  r <- as.data.frame(r)
+  r <- do.call(carobiner::bindr, rlist)
+  
+  for (col in c("lb1", "lb2", "lb3", "lb4", "lb5", "lb6", "lb7")) {
+    r[[col]] <- as.character(r[[col]])
+    r[[col]][r[[col]] == "."] <- NA
+    r[[col]] <- as.numeric(r[[col]])
+  }
   
   xls_files <- ff[grepl("\\.xls$", basename(ff))]
   
@@ -64,19 +67,19 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     country          = "Peru",
     crop             = tolower(r$crop),
     yield_part       = "tubers",
-    yield            = r$ttwp * 1000,
+    yield            = r$yield_fresh * 1000,
     yield_marketable = r$mtyna * 1000,
-    yield_moisture   = NA_real_,
+    yield_moisture   = r$avdm,
     yield_isfresh    = TRUE,
     AUDPC            = r$audpc,
     rAUDPC           = r$raudpc,
-    latitude         = -10.57745,
-    longitude        = -75.4043,
-    elevation        = 1810,
+    latitude         = as.numeric(r$latitude),
+    longitude        = as.numeric(r$longitude),
+    elevation        = as.numeric(r$elevation),
     geo_from_source  = TRUE,
-    N_fertilizer     = r$n_fertilizer,
-    P_fertilizer     = r$p_fertilizer,
-    K_fertilizer     = r$k_fertilizer,
+    N_fertilizer     =NA,
+    P_fertilizer     = NA,
+    K_fertilizer     =NA,
     soil_texture     = tolower(r$soil_texture),
     on_farm          = FALSE,
     is_survey        = FALSE,
@@ -113,7 +116,7 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
   d_long <- d_long[!is.na(d_long$disease_severity), ]
   rownames(d_long) <- NULL
   
+  d_long$disease_severity <- as.character(d_long$disease_severity)
+
   carobiner::write_files(path, meta, d_long)
 }
-
-carob_script(path = "data")
