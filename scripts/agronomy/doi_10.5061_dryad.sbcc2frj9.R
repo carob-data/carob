@@ -50,25 +50,37 @@ A study was conducted in four different environments of Ghana. The aim was to op
 	  yield = as.numeric(r1a$Yield * 1000)
 	)
 	
+	
 	r1b$CHC[r1b$CHC == "n/a"] <- NA
+	r1b$DM[r1b$DM == "n/a"] <- NA
 	
   d2 <- data.frame(
     rep = as.integer(r1b$Rep),
     block_id = as.character(r1b$Block),
     location = r1b$Environment,
     variety = r1b$Genotype,
+    anthesis_days = as.numeric(r1b$DA),
+    maturity_days = as.numeric(r1b$DM),
     SPAD = as.numeric(r1b$CHC),
-    ear_height = r1b$EH,
-    plant_height = r1b$PH,
+    ear_height = as.numeric(r1b$EH),
+    plant_height = as.numeric(r1b$PH),
     slper = r1b$SL,
     rlper = r1b$RL,
-    asi = r1b$ASI,
+    asi = as.numeric(r1b$ASI),
     plant_density = ifelse(r1b$PD == "Low", 53333,
-                           ifelse(r1b$PD == "Medium", 66666,
-                                  ifelse(r1b$PD == "High", 88888, NA)))
+                           ifelse(r1b$PD == "Medium", 66666, 
+                           ifelse(r1b$PD == "High", 88888, NA)))
   )  
 	
   d <- merge(d1, d2, by = c("rep", "block_id", "location", "variety", "plant_density"), all = TRUE)
+  
+  loc <- data.frame(
+    location = c("Fumesua", "Legon_off", "Legon_Mi", "Nyankpala"),
+    latitude = c(6.7147, 5.660, 5.660, 9.391),
+    longitude = c(-1.5397, -0.191, -0.191, -1.008)
+    )
+  
+  d <- merge(d, loc, by = "location", all = TRUE)
   
   d$trial_id <- "1"
 	
@@ -77,9 +89,6 @@ A study was conducted in four different environments of Ghana. The aim was to op
 	d$irrigated <- NA
 	
   d$country <- "Ghana"
-	d$location <- c("Fumesua", "Legon_off", "Legon_Mi", "Nyankpala")
-	d$latitude <- c(6.7147, 5.660, 5.660, 9.391)
-	d$longitude <- c(-1.5397, -0.191, -0.191, -1.008)
 	d$geo_from_source <- TRUE  ##The coordinates were obtained from the publication
 
 
