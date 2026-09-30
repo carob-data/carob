@@ -2,10 +2,10 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# 2 publications were found with regards to this dataset, both doi's were added under publication
-# 1."Replicate" identifies a farm (9 in LR2014 + 10 in LR2015 = the 19 trials in the Data in Brief paper),
+# 1. publications were found with regards to this dataset, both doi's were added under publication
+# 2."Replicate" identifies a farm (9 in LR2014 + 10 in LR2015 = the 19 trials in the Data in Brief paper),
 #    with one replicate per farm; it is used to build trial_id rather than rep.
-# 2. Planting/harvest dates are not given in the papers. The IITA metadata gives data collection from
+# 3. Planting/harvest dates are not given in the papers. The IITA metadata gives data collection from
 #    2013-09 to 2015-09 and harvest was at 12 MAP, so LR2014 is assumed planted 2013-09 and harvested
 #    2014-09 (LR2015: 2014-09 to 2015-09). To be confirmed with the authors.
 
@@ -36,59 +36,60 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		carob_completion = 100,
 		carob_effort = 5
 	)
-
-	f1 <- ff[basename(ff) == "vcr_fertilizer.csv"]
-	f2 <- ff[basename(ff) == "price_nutrient-response.csv"]
-
+  
+	f1 <- ff[basename(ff) == "price_nutrient-response.csv"]
+	f2 <- ff[basename(ff) == "vcr_fertilizer.csv"]
+	
 	r1 <- read.csv(f1)
-	r1 <- r1[!is.na(r1$ID), 1:11]   # drop trailing empty rows and columns
 	r2 <- read.csv(f2)
+	r2 <- r2[!is.na(r2$ID), 1:11]   # drop trailing empty rows and columns
 
-	## improved variety, all 8 treatments (r4)
-	## r4 has two blocks of product columns: amounts in kg/ha (Urea ... FYM) and costs in USD/ha (Urea.1 ... FYM.1)
+	## improved variety, all 8 treatments (r1). r1 has no Variety column, but only the improved variety received
+	## all 8 treatments, and its control and NPK+FYM yields are identical to the "Improve" rows of r2
+	## r2 has two blocks of product columns: amounts in kg/ha (Urea ... FYM) and costs in USD/ha (Urea.1 ... FYM.1)
 	prod <- c(Urea="urea", TSP="TSP", KCl="KCl", CaCO3="CaCO3", MgSO4="MgSO4", ZnSO4="ZnSO4")
-	amt  <- as.matrix(r2[, names(prod)])
-	cost <- as.matrix(r2[, paste0(names(prod), ".1")])
+	amt  <- as.matrix(r1[, names(prod)])
+	cost <- as.matrix(r1[, paste0(names(prod), ".1")])
 	used <- !is.na(amt) & amt > 0
 	uprice <- round(cost / amt, 2)
 
-	d2 <- data.frame(
-		adm2 = r2$Site,
-		location = r2$Village,
-		trial_id = paste0(r2$Season, "_", r2$Replicate),
-		treatment = gsub(" ", "", r2$Fertilizer),
+	d1 <- data.frame(
+		adm2 = r1$Site,
+		location = r1$Village,
+		trial_id = paste0(r1$Season, "_", r1$Replicate),
+		treatment = gsub(" ", "", r1$Fertilizer),
 		variety = "Sawasawa",
 		variety_type = "improved",
-		yield = r2$FW_StorageRoot.1,        # kg/ha
-		crop_value = r2$FW_StorageRoot.2,   # USD/ha = yield * 0.40
-		N_fertilizer = r2$Qt_N,
-		P_fertilizer = r2$Qt_P,
-		K_fertilizer = r2$Qt_K,
-		Ca_fertilizer = r2$Qt_Ca,
-		Mg_fertilizer = r2$Qt_Mg,
-		S_fertilizer = r2$Qt_S,
-		Zn_fertilizer = r2$Qt_Zn,
-		OM_amount = r2$Qt_FYM,
+		yield = r1$FW_StorageRoot.1,        # kg/ha
+		crop_value = r1$FW_StorageRoot.2,   # USD/ha = yield * 0.40
+		N_fertilizer = r1$Qt_N,
+		P_fertilizer = r1$Qt_P,
+		K_fertilizer = r1$Qt_K,
+		Ca_fertilizer = r1$Qt_Ca,
+		Mg_fertilizer = r1$Qt_Mg,
+		S_fertilizer = r1$Qt_S,
+		Zn_fertilizer = r1$Qt_Zn,
+		OM_amount = r1$Qt_FYM,
 		fertilizer_type = apply(used, 1, function(i) if (any(i)) paste(prod[i], collapse=";") else "none"),
 		fertilizer_amount = rowSums(amt, na.rm=TRUE),     # kg product/ha
 		fertilizer_price = sapply(1:nrow(used), function(i) if (any(used[i,])) paste(uprice[i, used[i,]], collapse=";") else NA),
 		fertilizer_cost = rowSums(cost, na.rm=TRUE),      # USD/ha, mineral fertilizers only
-		OM_cost = r2$FYM.1                                # USD/ha
+		OM_cost = r1$FYM.1                                # USD/ha
 	)
   
-	d2$fertilizer_price <- as.numeric(d2$fertilizer_price)
+	#d2$fertilizer_price <- as.numeric(d2$fertilizer_price)
 	
 	## fill the improved-variety control plot missing in r2 from r1
-	imp <- r1[r1$Variety == "Improve", ]
-	i <- match(paste(d2$trial_id, d2$treatment),
+	imp <- r2[r2$Variety == "Improve", ]
+	i <- match(paste(d1$trial_id, d1$treatment),
 			paste(paste0(imp$Season, "_", imp$Replicate), gsub(" ", "", imp$Fertilizer)))
-	fill <- is.na(d2$yield) & !is.na(i)
-	d2$yield[fill] <- imp$FW_StorageRoot.1[i[fill]]
-	d2$crop_value[fill] <- imp$FW_StorageRoot.2[i[fill]]
+	fill <- is.na(d1$yield) & !is.na(i)
+	d1$yield[fill] <- imp$FW_StorageRoot.1[i[fill]]
+	d1$crop_value[fill] <- imp$FW_StorageRoot.2[i[fill]]
 
 	## local variety, control and NPK+FYM (r1)
-	loc <- r1[r1$Variety == "Local", ]
-	d1 <- data.frame(
+	loc <- r2[r2$Variety == "Local", ]
+	d2 <- data.frame(
 		adm2 = loc$Site,
 		location = loc$Village,
 		trial_id = paste0(loc$Season, "_", loc$Replicate),
@@ -99,11 +100,11 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		crop_value = loc$FW_StorageRoot.2
 	)
 	# the inputs of the local-variety treatments are identical to the same treatments on the improved variety
-	inputs <- unique(d2[, c("treatment", setdiff(names(d2), names(d1)))])
-	d1 <- merge(d1, inputs, by="treatment", all.x=TRUE)
+	inputs <- unique(d1[, c("treatment", setdiff(names(d1), names(d2)))])
+	d2 <- merge(d2, inputs, by="treatment", all.x=TRUE)
 
 	## same columns, different plots: bind the rows
-	d <- rbind(d2, d1[, names(d2)])
+	d <- rbind(d1, d2[, names(d1)])
 	d <- d[!is.na(d$yield), ]
 
 	d$treatment[d$treatment == "None"] <- "control"
@@ -111,10 +112,10 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 	d$N_splits <- ifelse(d$N_fertilizer > 0, 2L, 0L)   # urea: half at planting, half at 3 MAP
 	d$OM_used <- d$OM_amount > 0
 	d$OM_type <- ifelse(d$OM_used, "farmyard manure", "none")
-	d$OM_price <- ifelse(d$OM_used, 0.025, NA)          # USD/kg (250 USD for 10 t)
-	d$crop_price <- 0.40                                # USD/kg fresh roots
+	d$OM_price <- ifelse(d$OM_used, d$OM_cost / d$OM_amount, NA)   # USD/kg; 250 USD/ha / 10000 kg/ha = 0.025
+	d$crop_price <- round(d$crop_value / d$yield, 2)              # USD/kg fresh roots; = 0.40 (Data in Brief paper)
 	d$currency <- "USD"
-
+	
 	d$country <- "Democratic Republic of the Congo"
 	d$adm1 <- "Sud-Kivu"
 	d$longitude[d$location == "Kasheke"] <- 28.8594
@@ -135,8 +136,8 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 	d$plot_length <- 6
 	d$plot_width <- 6
 
-	yr <- as.integer(substr(d$trial_id, 3, 6))   # "LR2014_1" -> 2014
-	d$planting_date <- paste0(yr - 1, "-09")      # see ISSUES 4
+	yr <- as.integer(substr(d$trial_id, 3, 6))    # "LR2014_1" -> 2014
+	d$planting_date <- paste0(yr - 1, "-09")      # see ISSUES 3
 	d$harvest_date  <- paste0(yr, "-09")
 	d$harvest_days <- 365                         # harvested at 12 MAP
 	d$yield_part <- "roots"
