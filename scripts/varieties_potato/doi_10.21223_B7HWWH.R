@@ -19,7 +19,7 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     design = "row-column",
     data_type = "experiment",
     treatment_vars = "variety",
-    response_vars = "yield;yield_marketable",
+    response_vars = "yield;yield_marketable;disease_severity",
     notes = NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-23",
@@ -41,7 +41,8 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   r8$location <- "Oxapampa"
   
   r <- carobiner::bindr(r2, r5, r8)
- 
+  names(r) <- trimws(names(r))
+
  geo <- data.frame(
     location = c("Huancayo", "Huanuco", "Oxapampa"),
     latitude = c(-12.0651, -9.9306, -10.5775),
@@ -50,6 +51,10 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     planting_date = c("2020-11-16", "2020-10-08", "2020-10-07"),
     harvest_date = c("2021-04-26", "2021-03-11", "2021-01-27")
   )
+  lb_cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8")
+  for (col in lb_cols) {
+    if (!col %in% names(r)) r[[col]] <- NA
+  }
   
    d <- data.frame(
     trial_id = paste0("B7HWWH_", r$location),
@@ -79,9 +84,24 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     LB4_ = r$LB4
   )
   
-  d$yield[d$yield == 574494.255] <- 5744.94255
-  
+  d$AUDPC[d$AUDPC > 2775] <- NA  
   d <- merge(d, geo, by = "location", all.x = TRUE)
+  d_long <- reshape(
+    d,
+    varying = lb_cols,
+    v.names = "disease_severity",
+    timevar = "order",
+    times = 1:8,
+    direction = "long"
+  )
   
-  carobiner::write_files(path, meta, d)
+  d_long$id <- NULL   
+  d_long$order <- as.integer(d_long$order)
+  d_long$disease_severity <- as.character(d_long$disease_severity)
+  d_long$severity_scale <- "0-100"
+  
+  d_long <- d_long[!is.na(d_long$disease_severity), ]
+  rownames(d_long) <- NULL
+  
+  carobiner::write_files(path, meta, d_long)
 }
