@@ -77,17 +77,15 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    #New variables
-    LB1_ = r$LB1,
-    LB2_ = r$LB2,
-    LB3_ = r$LB3,
-    LB4_ = r$LB4
+    record_id = seq_len(nrow(r))
   )
   
   d$AUDPC[d$AUDPC > 2775] <- NA  
   d <- merge(d, geo, by = "location", all.x = TRUE)
+ lon <- r[, c("record_id", lb_cols)]
+  
   d_long <- reshape(
-    d,
+    lon,
     varying = lb_cols,
     v.names = "disease_severity",
     timevar = "order",
@@ -103,5 +101,5 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   d_long <- d_long[!is.na(d_long$disease_severity), ]
   rownames(d_long) <- NULL
   
-  carobiner::write_files(path, meta, d_long)
+  carobiner::write_files(path, meta, d, long = d_long)
 }
