@@ -51,11 +51,9 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     planting_date = c("2020-11-16", "2020-10-08", "2020-10-07"),
     harvest_date = c("2021-04-26", "2021-03-11", "2021-01-27")
   )
-  lb_cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8")
-  for (col in lb_cols) {
-    if (!col %in% names(r)) r[[col]] <- NA
-  }
+ lb_cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8")
   
+  r$record_id <- seq_len(nrow(r))
    d <- data.frame(
     trial_id = paste0("B7HWWH_", r$location),
     plot_id = as.character(r$ID),
@@ -77,10 +75,10 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    record_id = seq_len(nrow(r))
+   record_id = r$record_id
   )
   
-  d$AUDPC[d$AUDPC > 2775] <- NA  
+  d$yield[d$yield == 574494.255] <- 5744.94255
   d <- merge(d, geo, by = "location", all.x = TRUE)
  lon <- r[, c("record_id", lb_cols)]
   
@@ -88,14 +86,14 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     lon,
     varying = lb_cols,
     v.names = "disease_severity",
-    timevar = "order",
-    times = 1:8,
+    timevar = "DAP",
+    times = as.integer(c(35, 42, 49, 56, 63, 70, 77, 85)),
     direction = "long"
   )
   
   d_long$id <- NULL   
-  d_long$order <- as.integer(d_long$order)
-  d_long$disease_severity <- as.character(d_long$disease_severity)
+  d_long$order <- as.integer(d_long$DAP)
+  d_long$disease_severity <-as.character(d_long$disease_severity)
   d_long$severity_scale <- "0-100"
   
   d_long <- d_long[!is.na(d_long$disease_severity), ]
