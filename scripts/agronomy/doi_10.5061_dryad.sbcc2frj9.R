@@ -34,8 +34,8 @@ A study was conducted in four different environments of Ghana. The aim was to op
 	f1 <- ff[basename(ff) == "Optimizing_maize_yield_in_West_and_Central_Africa.xlsx"]
 	#f2 <- ff[basename(ff) == "README.md"]  #dictionary
 
-	r1a <- carobiner::read.excel(f1, sheet="Harvest & After Harvest")
-	r1b <- carobiner::read.excel(f1, sheet="Before Harvest")
+	r1a <- carobiner::read.excel(f1, sheet="Harvest & After Harvest", na="n/a")
+	r1b <- carobiner::read.excel(f1, sheet="Before Harvest", na="n/a")
 
 
 	d1 <- data.frame(
@@ -44,16 +44,12 @@ A study was conducted in four different environments of Ghana. The aim was to op
 	  variety = r1a$Genotype,
 	  location = r1a$Environment,
 	  plant_density = ifelse(r1b$PD == "Low", 53333,
-	                         ifelse(r1b$PD == "Medium", 66666,
-	                                ifelse(r1b$PD == "High", 88888, NA))),
+	        		  ifelse(r1b$PD == "Medium", 66666,
+	                  ifelse(r1b$PD == "High", 88888, NA))),
 	  seed_weight = r1a$HKW * 10,    
 	  yield = as.numeric(r1a$Yield * 1000)
 	)
-	
-	
-	r1b$CHC[r1b$CHC == "n/a"] <- NA
-	r1b$DM[r1b$DM == "n/a"] <- NA
-	
+		
   d2 <- data.frame(
     rep = as.integer(r1b$Rep),
     block_id = as.character(r1b$Block),
@@ -77,25 +73,20 @@ A study was conducted in four different environments of Ghana. The aim was to op
   loc <- data.frame(
     location = c("Fumesua", "Legon_off", "Legon_Mi", "Nyankpala"),
     latitude = c(6.7147, 5.660, 5.660, 9.391),
-    longitude = c(-1.5397, -0.191, -0.191, -1.008)
-    )
+    longitude = c(-1.5397, -0.191, -0.191, -1.008),
+	geo_from_source <- TRUE  ## coordinates from the publication
+  )
   
   d <- merge(d, loc, by = "location", all = TRUE)
   
-  d$trial_id <- "1"
-	
-	d$on_farm <- NA
-	d$is_survey <- FALSE
+  d$trial_id <- d$location
+  d$on_farm <- NA
+   d$is_survey <- FALSE
 	d$irrigated <- NA
 	
   d$country <- "Ghana"
-	d$geo_from_source <- TRUE  ##The coordinates were obtained from the publication
-
-
-	d$planting_date <- NA
-	d$harvest_date  <- NA
-
-
+  d$planting_date <- NA
+  d$harvest_date  <- NA
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
   
   d$crop <- "maize"
