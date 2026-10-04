@@ -74,7 +74,7 @@ A study was conducted in four different environments of Ghana. The aim was to op
     location = c("Fumesua", "Legon_off", "Legon_Mi", "Nyankpala"),
     latitude = c(6.7147, 5.660, 5.660, 9.391),
     longitude = c(-1.5397, -0.191, -0.191, -1.008),
-	geo_from_source <- TRUE  ## coordinates from the publication
+	geo_from_source = TRUE  ## coordinates from the publication
   )
   
   d <- merge(d, loc, by = "location", all = TRUE)
