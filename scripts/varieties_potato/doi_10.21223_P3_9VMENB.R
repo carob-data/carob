@@ -27,19 +27,13 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
   
   files <- ff[grepl("_processed.xlsx", basename(ff))]
   r <- lapply(files, function(f) {
-    x <- carobiner::read.excel(f)
+    x <- carobiner::read.excel(f, na=".")
     names(x) <- tolower(names(x))
     x$trial_id <- sub("^[0-9]+_", "", basename(f))
     x$trial_id <- sub("_processed\\.xlsx$", "", x$trial_id)
     x
   })
-  r <- do.call(carobiner::bindr, rlist)
-  
-  for (col in c("lb1", "lb2", "lb3", "lb4", "lb5", "lb6", "lb7")) {
-    r[[col]] <- as.character(r[[col]])
-    r[[col]][r[[col]] == "."] <- NA
-    r[[col]] <- as.numeric(r[[col]])
-  }
+  r <- do.call(carobiner::bindr, r)
   
   xls_files <- ff[grepl("\\.xls$", basename(ff))]
   
@@ -49,11 +43,10 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     data.frame(
       trial_id      = vals[["Short name or Title"]],
       planting_date = as.character(as.Date(vals[["Begin date"]])),
-      harvest_date  = as.character(as.Date(vals[["End date"]])),
-      stringsAsFactors = FALSE
+      harvest_date  = as.character(as.Date(vals[["End date"]]))
     )
   }
-  trial_dates <- do.call(rbind, lapply(xls_files, get_dates))
+  trial_dates <- unique(do.call(rbind, lapply(xls_files, get_dates)))
   
   d <- data.frame(
     trial_id         = r$trial_id,
@@ -97,26 +90,23 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     chip_color_    = r$chip_color,
     texture_fries_ = r$texfr       
   )
-  
-  d <- merge(d, trial_dates, by = "trial_id", all.x = TRUE)
-  
-  d <- d[!is.na(d$yield), ]
-  rownames(d) <- NULL
-  
-  d_long <- reshape(
-    d,
-    varying   = c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7"),
-    v.names   = "disease_severity",
-    timevar   = "DAP",
-    times     = c(50, 57, 64, 71, 78, 87, 94),
-    direction = "long"
+
+  d$record_id <- 1:nrow(d) 
+
+  ## this makes no sense. Nothing is added (see all.x=FALSE). Needs to be fixed
+  d <- merge(d, trial_dates, by="trial_id")
+
+  LBvars <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7")
+  d_long <- reshape(d[, c("record_id", "planting_date", LBvars)], varying = LBvars,
+    v.names = "disease_severity", timevar  = "DAP",
+    times = c(50, 57, 64, 71, 78, 87, 94),  direction = "long"
   )
-  d_long$id  <- NULL
-  d_long$DAP <- as.integer(d_long$DAP)
   d_long <- d_long[!is.na(d_long$disease_severity), ]
-  rownames(d_long) <- NULL
-  
+  d_long$date <- as.Date(d_long$planting_date) + as.integer(d_long$DAP)
   d_long$disease_severity <- as.character(d_long$disease_severity)
+  d_long$disease <- "late blight"
+  d_long$id  <- d_long$planting_date <- NULL
+  rownames(d_long) <- NULL
 
   carobiner::write_files(path, meta, d_long)
 }
