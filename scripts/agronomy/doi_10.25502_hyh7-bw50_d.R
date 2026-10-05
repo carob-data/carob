@@ -19,7 +19,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 "
 
 	uri <- "doi:10.25502/hyh7-bw50/d"
-	group <- "agronomy"
+	group <- "reject"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
