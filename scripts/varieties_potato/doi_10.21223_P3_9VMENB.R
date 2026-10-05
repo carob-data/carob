@@ -25,7 +25,9 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     carob_effort = 8.0
   )
   
-  files <- ff[grepl("_processed.xlsx", basename(ff))]
+  files <- ff[grepl("_processed.xlsx", basename(ff)) &
+              !grepl("Data_dictionary", basename(ff))]
+  
   r <- lapply(files, function(f) {
     x <- carobiner::read.excel(f, na=".")
     names(x) <- tolower(names(x))
@@ -41,7 +43,7 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     m <- carobiner::read.excel(f, sheet = "Minimal")
     vals <- setNames(m$Value, m$Factor)
     data.frame(
-      trial_id      = vals[["Short name or Title"]],
+      trial_id      = sub("\\.xls$", "", basename(f)),
       planting_date = as.character(as.Date(vals[["Begin date"]])),
       harvest_date  = as.character(as.Date(vals[["End date"]]))
     )
@@ -91,22 +93,34 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
     texture_fries_ = r$texfr       
   )
 
-  d$record_id <- 1:nrow(d) 
-
-  ## this makes no sense. Nothing is added (see all.x=FALSE). Needs to be fixed
-  d <- merge(d, trial_dates, by="trial_id")
-
+  d$record_id <- 1:nrow(d)
+  
+  d <- merge(d, trial_dates, by = "trial_id")
+  
+  if (any(is.na(d$planting_date))) {
+    stop("there are rows without planting_date")
+  }
+  
   LBvars <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7")
-  d_long <- reshape(d[, c("record_id", "planting_date", LBvars)], varying = LBvars,
-    v.names = "disease_severity", timevar  = "DAP",
-    times = c(50, 57, 64, 71, 78, 87, 94),  direction = "long"
+  
+  d_long <- reshape(
+    d,
+    varying = LBvars,
+    v.names = "disease_severity",
+    timevar = "DAP",
+    times = c(50, 57, 64, 71, 78, 87, 94),
+    direction = "long"
   )
+  
   d_long <- d_long[!is.na(d_long$disease_severity), ]
-  d_long$date <- as.Date(d_long$planting_date) + as.integer(d_long$DAP)
+  d_long$date <- as.character(as.Date(d_long$planting_date) + d_long$DAP)
+  d_long$disease <- "potato late blight"
   d_long$disease_severity <- as.character(d_long$disease_severity)
-  d_long$disease <- "late blight"
-  d_long$id  <- d_long$planting_date <- NULL
+  d_long$DAP <- as.integer(d_long$DAP)
+  d_long$record_id <- 1:nrow(d_long)
+  d_long$id <- NULL
   rownames(d_long) <- NULL
-
+  
   carobiner::write_files(path, meta, d_long)
+}
 }
