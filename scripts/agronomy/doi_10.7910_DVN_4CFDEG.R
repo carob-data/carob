@@ -72,7 +72,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	)
 	
 	d <- merge(d, fert, by= "treatment", all.x = TRUE)
-	trt <- c("T1"= "0-0-0", "T2"= "120-26-50", "T3"= "120-52-100", "T4"= "120-0-0", "T5" = "26-26-50", "T6"= "60-26-50")
+	trt <- c("T1"= "N0-P0-K0", "T2"= "N120-P26-K50", "T3"= "N120-P52-K100", "T4"= "N120-P0-K0", "T5" = "N26-P26-K50", "T6"= "N60-P26-K50")
 	d$treatment <- trt[d$treatment]
 	
 	#### Adding longitude and latitude 
