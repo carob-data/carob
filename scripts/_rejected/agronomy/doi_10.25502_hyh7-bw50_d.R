@@ -1,6 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## REJECTED
+# data was standardised as part of doi:10.25502/bf6e-0181/d
+
+
 ## ISSUES
 # 1. publications were found with regards to this dataset, both doi's were added under publication
 # 2."Replicate" identifies a farm (9 in LR2014 + 10 in LR2015 = the 19 trials in the Data in Brief paper),
@@ -19,7 +23,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 "
 
 	uri <- "doi:10.25502/hyh7-bw50/d"
-	group <- "reject"
+	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
