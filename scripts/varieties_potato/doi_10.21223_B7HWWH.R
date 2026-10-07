@@ -29,11 +29,15 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   
   f2 <- ff[basename(ff) == "01_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
   f5 <- ff[basename(ff) == "02_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
-  f8 <- ff[basename(ff) == "03_LBHTC2-OXAPAMPA 2020-2021_data .xlsx"]
+  f8 <- ff[basename(ff) == "03_LBHTC2-OXAPAMPA 2020-2021_data.xlsx"]
   
   r2 <- carobiner::read.excel(f2)
   r5 <- carobiner::read.excel(f5)
   r8 <- carobiner::read.excel(f8)
+  r2$LB5 <- NA
+  r2$LB6 <- NA
+  r2$LB7 <- NA
+  r2$LB8 <- NA
   
   ## Add location
   r2$location <- "Huancayo"
@@ -95,6 +99,12 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   d_long$order <- as.integer(d_long$DAP)
   d_long$disease_severity <-as.character(d_long$disease_severity)
   d_long$severity_scale <- "0-100"
+  
+  d_long <- merge(d_long,
+                d[, c("record_id", "location", "planting_date", "harvest_date")],
+                by = "record_id", all.x = TRUE)
+  
+  d_long$date <- as.character(as.Date(d_long$planting_date) + d_long$DAP)
   
   d_long <- d_long[!is.na(d_long$disease_severity), ]
   rownames(d_long) <- NULL
