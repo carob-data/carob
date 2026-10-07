@@ -1,6 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
+## REJECTED
+# data was standardised as part of doi:10.25502/bf6e-0181/d
+
 ## ISSUES
 
 carob_script <- function(path) {
