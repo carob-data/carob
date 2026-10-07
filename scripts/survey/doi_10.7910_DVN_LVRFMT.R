@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## REJECTED. It appears that the main variable of interest, greenhouse gas fluxes, were estimated, not measured.
+
 ## ISSUES
 # list processing issues here so that an editor can look at them
 ## added new variables 
@@ -62,17 +64,13 @@ The data was used to estimate annual greenhouse gas fluxes from typical smallhol
 	)
 	
 	d1$crop[d1$crop == "napier"] <- "napier grass" 
-	d1$crop[d1$crop == "grass/grazing"] <- "unknown" #### highlighted as grass/grazing the name of the grass was not identified 
+	d1$crop[d1$crop == "grass/grazing"] <- "grass" #### highlighted as grass/grazing the name of the grass was not identified 
 	d1$crop[d1$crop == "fallow"] <- "none"
-	d1$crop[d1$crop == "trees/shrubs"] <- "unknown" ## indicated that there were trees or shrubs but not identified by species
-	d1$crop[d1$crop == "annuals"] <- "unknown"
 	
 	##### vegetation type refers to vegetation cover
 	d1$vegetation_type[d1$vegetation_type == "napier"] <- "napier grass" 
 	d1$vegetation_type[d1$vegetation_type == "grass/grazing"] <- "grass" 
 	d1$vegetation_type[d1$vegetation_type == "fallow"] <- "none" #### assumed fallow land is the same as bare soil
-	d1$vegetation_type[d1$vegetation_type == "trees/shrubs"] <- "trees" 
-	d1$vegetation_type[d1$vegetation_type == "annuals"] <- "crop"
 	
 	
 	d1$field_type[d1$field_type == "1"] <- "most intensively managed" #(more fertilizer/manure additions)
