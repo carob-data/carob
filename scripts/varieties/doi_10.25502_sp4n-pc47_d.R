@@ -109,8 +109,9 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	                times = c("nematode", "mealybug", "beetle", "scale insect"),
 	                direction = "long")
 	long$id <- NULL
-	long <- long[!is.na(long$pest_severity),]
+	long <- long[!is.na(long$pest_severity),]	
 	row.names(long) <- NULL
+	long$pest_incidence <- as.numeric(long$pest_incidence)
 	
 	col <- grep("Nema|Mb|scale|Beet", names(d))
 	d <- d[, -col]
@@ -122,8 +123,7 @@ The average yam yields of local varieties is less than 25% of the yield of impro
 	d$yield_part <- "tubers"
 	d$irrigated <- NA
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
-	
-	
+		
 	carobiner::write_files(path, meta, d, long = long)
 }
 
