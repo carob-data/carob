@@ -60,6 +60,7 @@ Data on agronomic traits of maturity, plant height, grain yield, resistance/tole
 		on_farm= TRUE,
 		irrigated= NA,
 		yield_moisture= as.numeric(NA),
+		yield_isfresh= NA,
 		geo_from_source= FALSE,
 		trial_id= "1"
 		
