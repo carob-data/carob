@@ -59,6 +59,7 @@ Data on agronomic traits of maturity, grain yield and plant aspect score collect
 		is_survey = FALSE,
 		trial_id = "1",
 		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA,
 		irrigated = NA
 		
 		)
