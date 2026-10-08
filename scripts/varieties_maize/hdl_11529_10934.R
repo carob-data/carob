@@ -12,7 +12,7 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 ^^
 "
 	uri <- "hdl:11529/10934"
-	group <- "varieties_other"
+	group <- "varieties_maize"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
