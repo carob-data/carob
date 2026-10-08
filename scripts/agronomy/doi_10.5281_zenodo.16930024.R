@@ -18,7 +18,7 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-	  data_organization = "UH", # UH:University of Helsinki
+	  data_organization = "UHel", # UH:University of Helsinki
 		publication = "doi:10.1016/j.agwat.2025.109779",
 		project = NA,
 		carob_date = "2026-09-24",
@@ -132,7 +132,7 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 	  location = "Maktau",
 	  country = "Kenya",
 	  longitude = 38.19444,
-	  latitude = - 3.508333
+	  latitude = -3.508333
 	)
 	
 	
