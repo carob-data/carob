@@ -29,23 +29,20 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   
   f2 <- ff[basename(ff) == "01_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
   f5 <- ff[basename(ff) == "02_LBHTC2-HUANCAYO 2020-2021_data.xlsx"]
-  f8 <- ff[basename(ff) == "03_LBHTC2-OXAPAMPA 2020-2021_data.xlsx"]
+   # mine has a space before the extension
+  f8 <- ff[grep("03_LBHTC2-OXAPAMPA 2020-2021_data..xlsx", basename(ff))]
   
   r2 <- carobiner::read.excel(f2)
   r5 <- carobiner::read.excel(f5)
   r8 <- carobiner::read.excel(f8)
-  r2$LB5 <- NA
-  r2$LB6 <- NA
-  r2$LB7 <- NA
-  r2$LB8 <- NA
-  
+
   ## Add location
   r2$location <- "Huancayo"
   r5$location <- "Huanuco"
   r8$location <- "Oxapampa"
   
   r <- carobiner::bindr(r2, r5, r8)
-  names(r) <- trimws(names(r))
+#  names(r) <- trimws(names(r))
 
  geo <- data.frame(
     location = c("Huancayo", "Huanuco", "Oxapampa"),
@@ -55,10 +52,9 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
     planting_date = c("2020-11-16", "2020-10-08", "2020-10-07"),
     harvest_date = c("2021-04-26", "2021-03-11", "2021-01-27")
   )
- lb_cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8")
-  
-  r$record_id <- seq_len(nrow(r))
-   d <- data.frame(
+
+r$record_id <- seq_len(nrow(r))
+d <- data.frame(
     trial_id = paste0("B7HWWH_", r$location),
     plot_id = as.character(r$ID),
     rep = as.integer(r$Rep),
@@ -84,30 +80,22 @@ In the 2020-2021 season, these 500 clones were sown in intermediate trials in th
   
   d$yield[d$yield == 574494.255] <- 5744.94255
   d <- merge(d, geo, by = "location", all.x = TRUE)
- lon <- r[, c("record_id", lb_cols)]
+ 
+  lb_cols <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8")
+  lon <- r[, c("record_id", lb_cols)]
   
-  d_long <- reshape(
-    lon,
-    varying = lb_cols,
-    v.names = "disease_severity",
-    timevar = "DAP",
-    times = as.integer(c(35, 42, 49, 56, 63, 70, 77, 85)),
-    direction = "long"
-  )
+  d_long <- reshape(lon, varying = lb_cols, v.names = "disease_severity", timevar = "DAP",
+    times = as.integer(c(35, 42, 49, 56, 63, 70, 77, 85)), direction = "long")
+  d_long <- d_long[!is.na(d_long$disease_severity), ]
   
   d_long$id <- NULL   
   d_long$order <- as.integer(d_long$DAP)
   d_long$disease_severity <-as.character(d_long$disease_severity)
   d_long$severity_scale <- "0-100"
   
-  d_long <- merge(d_long,
-                d[, c("record_id", "location", "planting_date", "harvest_date")],
-                by = "record_id", all.x = TRUE)
-  
-  d_long$date <- as.character(as.Date(d_long$planting_date) + d_long$DAP)
-  
-  d_long <- d_long[!is.na(d_long$disease_severity), ]
-  rownames(d_long) <- NULL
+  d_long <- merge(d_long, d[, c("record_id", "planting_date")], by = "record_id")
+  d_long$date <- as.character(as.Date(d_long$planting_date) + d_long$DAP)  
+  d_long$planting_date <- NULL
   
   carobiner::write_files(path, meta, d, long = d_long)
 }
