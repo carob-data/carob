@@ -35,9 +35,9 @@ Potato cultivation is one of the three most important foods in the world's diet.
   r2 <- carobiner::read.excel(f2)
   r3 <- carobiner::read.excel(f3)
   
-  r1$trial_label <- "without_LB_control"
-  r2$trial_label <- "with_LB_control"
-  r3$trial_label <- "phenotypic_stability"
+  r1$treatment <- "without_LB_control"
+  r2$treatment <- "with_LB_control"
+  r3$treatment <- NA
 
   r1$fungicide_used <- FALSE
   r2$fungicide_used <- TRUE
@@ -59,7 +59,7 @@ Potato cultivation is one of the three most important foods in the world's diet.
     rep = as.integer(r$Rep),
     variety = r$Clone,
     location = r$Site,
-    trial_type = r$trial_type,
+    treatment = r$treatment,
     country = "Peru",
     crop = "potato",
     on_farm = FALSE,
