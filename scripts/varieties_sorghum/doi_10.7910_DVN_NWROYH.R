@@ -74,8 +74,8 @@ Data on agronomic traits of maturity, plant height, grain yield and plant aspect
 	      on_farm = TRUE,
 	      is_survey = FALSE,
 	      irrigated = NA,
-	      yield_moisture = as.numeric(NA)
-	      
+	      yield_moisture = as.numeric(NA),
+	      yield_isfresh = NA
 	   )
 	}
 
