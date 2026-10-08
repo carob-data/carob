@@ -70,7 +70,7 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  fwy_residue = (r1e$VWt / 4) * (10000 / (1 * 0.3)),
 	  yield = as.numeric(r1e$SRY)*1000,
 	  pest_severity = r1e$Weevil,
-	  harvest = r1e$HT,### harvest time in months after planting	
+	  harvest = as.integer(r1e$HT), # harvest time indicating a month	
 	  vitamin_A = as.numeric(r1e$VAC),#units of measurement were µg RE/100g of FW
 	  beta_carotene = as.numeric(r1e$BCC),#units of measurement were mg/100g of FW
 	  #internode_count = r1e$Int_D,
@@ -84,7 +84,6 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	d1$fwy_residue[d1$fwy_residue == 0] <- NA
 	d1$yield[d1$yield == 0] <- NA
 	
-	
 	d2 <- data.frame(
 	  rep = as.integer(r1f$Rep),
 	  plot_id = r1f$Plot,
@@ -93,7 +92,7 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  fwy_residue = (r1f$VWt / 4) * (10000 / (1 * 0.3)), #number of plants harvested and plant spacing was taken from publication 
 	  yield = r1f$SRY*1000,
 	  pest_severity = r1f$Weevil,
-	  harvest = r1f$HT,##harvest time in months after planting
+	  harvest = as.integer(r1f$HT), ##harvest time indicating a month
 	  vitamin_A = as.numeric(r1f$VAC),#units of measurement were µg RE/100g of FW
 	  beta_carotene = as.numeric(r1f$BCC),#units of measurement were mg/100g of FW
 	  #internode_count = r1f$Int_D,
@@ -104,7 +103,6 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  #root_storage_bulking = r1f$CSRFAB  ## storage root yield in t/ha-1
 	)
 
-	
 	d2$fwy_residue[d2$fwy_residue == 0] <- NA
 	d2$yield[d2$yield == 0] <- NA
 	
@@ -113,11 +111,9 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	  variety_code = r3a$Accession_Code,
 	  date = r3a$Date_Created
 	)
-
+	
 	d <- carobiner::bindr(d1, d2)	
 	d <- merge(d, d7, by = "variety", all.x = TRUE)
-	
-	
 	d$trial_id <- "1"
 	d$crop <- "sweetpotato"	
 	d$on_farm <- TRUE
@@ -139,32 +135,12 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 
 # The dataset does not indicate the harvesting date dates only indicated that harvesting was done from January to April no exact dates provided in the publication
 	d$planting_date <- c("2016-09-22", "2017-03-10")
-	d$DAP <- c(90, 120, 150, 180)[d$harvest]
-	d$harvest_months <- c(3, 4, 5, 6)[as.numeric(d$harvest)]
-	d$harvest_date <- as.character(NA)
 	
-	for (i in seq_len(nrow(d))) {
-	  if (!is.na(d$planting_date[i]) && !is.na(d$harvest_months[i])) {
-	    
-	    p <- as.Date(d$planting_date[i])
-	    m <- d$harvest_months[i]
-	    
-	    d$harvest_date[i] <- as.character(
-	      as.Date(
-	        sprintf(
-	          "%04d-%02d-%02d",
-	          as.integer(format(p, "%Y")) +
-	            ((as.integer(format(p, "%m")) - 1 + m) %/% 12),
-	          ((as.integer(format(p, "%m")) - 1 + m) %% 12) + 1,
-	          as.integer(format(p, "%d"))
-	        )
-	      )
-	    )
-	  }
-	}
+	DAP <- c(90, 120, 150, 180)[d$harvest]
+	harvest_months <- c(3, 4, 5, 6)[as.numeric(d$harvest)]
+	d$harvest_date <- as.character(as.Date(d$planting_date) + DAP)
 	
 	d$harvest <- NULL
-	d$harvest_months <- NULL
 	
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- NA
   d$fertilizer_type <- NA
