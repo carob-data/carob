@@ -97,30 +97,21 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
   
   d <- merge(d, trial_dates, by = "trial_id")
   
-  if (any(is.na(d$planting_date))) {
-    stop("there are rows without planting_date")
-  }
-  
   LBvars <- c("LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7")
   
-  d_long <- reshape(
-    d,
-    varying = LBvars,
-    v.names = "disease_severity",
-    timevar = "DAP",
-    times = c(50, 57, 64, 71, 78, 87, 94),
-    direction = "long"
-  )
-  
+  d_long <- reshape(d[, c("record_id", "planting_date", LBvars)], varying = c(LBvars), v.names = "disease_severity",
+    timevar = "DAP", times = c(50, 57, 64, 71, 78, 87, 94), direction = "long"
+  )  
   d_long <- d_long[!is.na(d_long$disease_severity), ]
   d_long$date <- as.character(as.Date(d_long$planting_date) + d_long$DAP)
   d_long$disease <- "potato late blight"
   d_long$disease_severity <- as.character(d_long$disease_severity)
   d_long$DAP <- as.integer(d_long$DAP)
-  d_long$record_id <- 1:nrow(d_long)
-  d_long$id <- NULL
+  d_long$id <- d_long$planting_date <- NULL
   rownames(d_long) <- NULL
+
+  d[,LBvars] <- NULL
   
-  carobiner::write_files(path, meta, d_long)
+  carobiner::write_files(path, meta, d, d_long)
 }
 
