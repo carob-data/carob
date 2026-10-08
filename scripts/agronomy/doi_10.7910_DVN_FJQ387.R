@@ -22,7 +22,7 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "contours_used",
+		treatment_vars = "contour_banks",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Blessing Dzuda",
@@ -33,32 +33,21 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 
 	f2 <- ff[basename(ff) == "002_yield_cf_contourFarming-1.csv"]
 	f3 <- ff[basename(ff) == "003_yield_ff_contourFarming.csv"]
-	f4 <- ff[basename(ff) == "004_fodder_contourFarming.csv"]
+#	f4 <- ff[basename(ff) == "004_fodder_contourFarming.csv"]
 	f5 <- ff[basename(ff) == "soil_contourFarming.csv"]
 
 	r2 <- read.csv(f2)
 	r3 <- read.csv(f3)
-	r4 <- read.csv(f4)
+#	r4 <- read.csv(f4)  f4 is the same as f2
 	r5 <- read.csv(f5, fileEncoding = "latin1")
 
 	cont1 <- data.frame(
 	  date=r2$Year,
 	  terrain=tolower(r2$Site),
 	  plot_id=as.character(r2$Plot),
-	  treatment=tolower(r2$Contour.),
+	  treatment= gsub("^contour([1-6])$", "contour \\1", tolower(r2$Contour.)),
 	  yield=r2$Grain..t.ha.*1000,
-	  dmy_residue=r2$Stover..t.ha.*1000,
-	  cob_weight=r2$Cob..t.ha.*1000
-	)
-	
-	cont2 <- data.frame(
-	  date=r4$Year,
-	  terrain=tolower(r4$Site),
-	  plot_id=as.character(r4$Plot),
-	  treatment=tolower(r4$Contour.),
-	  yield=r4$Grain..t.ha.*1000,
-	  dmy_residue=r4$Stover..t.ha.*1000,
-	  cob_weight=r4$Cob..t.ha.*1000
+	  dmy_residue=r2$Stover..t.ha.*1000
 	)
 	
 	ctrl <- data.frame(
@@ -67,12 +56,10 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 	  plot_id=NA,
 	  treatment="control",
 	  yield=r3$Grain..t.ha.*1000,
-	  dmy_residue=r3$Stover..t.ha.*1000,
-	  cob_weight=r3$Cob..t.ha.*1000
+	  dmy_residue=r3$Stover..t.ha.*1000
 	)
 	
-	d <- rbind(cont1,cont2,ctrl)
-	d$treatment <- gsub("^contour([1-6])$", "contour \\1", d$treatment)
+	d <- rbind(cont1, ctrl)
 	
 	soil <- data.frame(
 	  treatment=tolower(r5$Plot.ID),
@@ -124,8 +111,6 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 
 	d$soil_texture <- gsub("\u00A0", " ", d$soil_texture)
 	d$soil_texture <- trimws(d$soil_texture)	  
-	
-	d <- unique(d)#rows seem duplicated because of omission of other differentiating variables like caloric and protein yield
 	
 	carobiner::write_files(path, meta, d)
 }
