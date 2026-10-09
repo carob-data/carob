@@ -35,7 +35,6 @@ The Potato NPT Trials Amidst Prolonged Rains in Kenyan Regions took place in Apr
 	#f1 <- ff[basename(ff) == "08_Data_dictionary.xlsx"]
 	#r1 <- carobiner::read.excel(f1)
 	ff1 <- grep("xls$", ff[grepl("PTYL", basename(ff))], value=TRUE)
-	ff1 <- 
 	
 	
 #### process 
