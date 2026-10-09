@@ -18,7 +18,7 @@ This is a data set of the of three years of field trial with sanitised human uri
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=3, minor=NA,
-		data_organization = "INRNA;UHO;IDEMS", # INRNA: National Institute of Agricultural Research of Niger # UHO:University of Hohenheim
+		data_organization = "INRAN;UHoh;IDEMS", # INRNA: National Institute of Agricultural Research of Niger # UHO:University of Hohenheim
 		publication = "10.1007/s13593-021-00675-2",
 		project = NA,
 		design = NA,
@@ -68,7 +68,7 @@ This is a data set of the of three years of field trial with sanitised human uri
 	
 	dd <- reshape(dd, varying = c("yield_c", "yield_trt"), v.names = "yield",
 	              timevar = "treatment",
-	              times = c("conventional sowing", "OGA + OM"),
+	              times = c("conventional sowing", "human urine + OM"),
 	              direction = "long")
   row.names(dd) <- dd$id <- NULL
   
@@ -100,8 +100,8 @@ This is a data set of the of three years of field trial with sanitised human uri
 	d$Fe_organic[i] <- 0.4
 	
 	d$OM_used <- grepl("OM|OGA", d$treatment)
-	d$OM_type <- ifelse(grepl("OGA \\+ OM", d$treatment), "animal dung;Oga",
-	             ifelse(grepl("OGA", d$treatment), "Oga", "none"))
+	d$OM_type <- ifelse(grepl("OGA \\+ OM", d$treatment), "animal dung;human urine",
+	             ifelse(grepl("OGA", d$treatment), "human urine", "none"))
 	
 	### adding lon and lat coordinate 
 	
