@@ -18,7 +18,7 @@ carob_script <- function(path) {
     design = "RCBD",
     data_type = "experiment",
     treatment_vars = "variety",
-    response_vars = "yield",
+    response_vars = "yield;yield_marketable;AUDPC;rAUDPC;sAUDPC;disease_severity",
     notes = NA,
     carob_contributor = "Maryam Yahya",
     carob_date = "2026-09-16",
@@ -26,7 +26,6 @@ carob_script <- function(path) {
     carob_effort = 4.0
   )
   
-  # Source files (processed data only)
   f1 <- ff[basename(ff) == "01_PTLate_blight092015_OXAPMP_processed.xlsx"]
   f2 <- ff[basename(ff) == "02_PTLate_blight092016_OXAPMP_processed.xlsx"]
   f3 <- ff[basename(ff) == "03_PTLate_blight092017_OXAPMP_processed.xlsx"]
@@ -36,7 +35,6 @@ carob_script <- function(path) {
   f7 <- ff[basename(ff) == "07_PTYield112015_CIPHYO_processed.xlsx"]
   f8 <- ff[basename(ff) == "08_PTYield112016_CIPHYO_processed.xlsx"]
   
-  # Read processed data
   r1 <- carobiner::read.excel(f1)
   r2 <- carobiner::read.excel(f2)
   r3 <- carobiner::read.excel(f3)
@@ -46,10 +44,9 @@ carob_script <- function(path) {
   r7 <- carobiner::read.excel(f7)
   r8 <- carobiner::read.excel(f8)
   
-  # Combine all trials
   r <- carobiner::bindr(r1, r2, r3, r4, r5, r6, r7, r8)
   
-  # Create final data.frame
+  r$record_id <- seq_len(nrow(r))
   d <- data.frame(
     trial_id = paste("XVRHST_", r$locality),
     plot_id = as.character(r$plot),
@@ -80,7 +77,28 @@ carob_script <- function(path) {
     P_fertilizer = NA,
     K_fertilizer = NA,
     soil_texture = tolower(r$soil_texture)
+    AUDPC = r$audpc,
+    rAUDPC =r$raudpc,
+    sAUDPC = r$saudpc,
+    record_id = r$record_id
   )
+ rLB <- r[!is.na(r$lb1), ]
   
-  carobiner::write_files(path, meta, d)
+  lb_cols <- c("lb1", "lb2", "lb3", "lb4", "lb5", "lb6")
+  lon <- rLB[, c("record_id", lb_cols)]
+  
+  d_long <- reshape(lon,
+    varying = lb_cols,
+    v.names = "disease_severity",
+    timevar = "DAP",
+    times = as.integer(c(35, 42, 49, 56, 63, 70)),
+    direction = "long")
+  
+  d_long <- d_long[!is.na(d_long$disease_severity), ]
+  d_long$id <- NULL
+  d_long$order <- as.integer(d_long$DAP)
+  d_long$disease_severity <- as.character(d_long$disease_severity)
+  d_long$severity_scale <- "0-100"
+  
+  carobiner::write_files(path, meta, d, long = d_long)
 }
