@@ -31,7 +31,7 @@ The data set evaluate adaptability and suitability of cowpea varieties to differ
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=NA,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=4,
 		data_organization = "IITA;MOFA;SARI",
 		publication = NA,
 		project = "Africa RISING",
@@ -55,46 +55,58 @@ The data set evaluate adaptability and suitability of cowpea varieties to differ
 	r4 <- carobiner::read.excel(f2, sheet="RAW 2015")
 
 	d1 <- data.frame(
-	  trial_id="001_2014", 
-	  year=2014, 
-	  district=NA,
-		rep=r1[[1]], 
-		pdate=r1[[2]], 
-		spray=r1[[3]], 
-		yield=r1[[5]], 
-		plant_height=r1[[6]])
+	  trial_id = "001_2014", 
+	  year = 2014, 
+	  district = NA, 
+	  rep = r1$REP, 
+		pdate = r1$PLNTING,
+		spray = r1$SPRYR,
+		yield = r1$GRAIN...5,
+		plant_height = r1$PLNTH
+		
+		)
 
-	d2 <- data.frame(trial_id="001_2015", year=2015, district=r2[[1]],
-		rep=r2[[2]], pdate=r2[[3]], spray=r2[[4]], yield=r2[[9]], plant_height=r2[[6]])
+	d2 <- data.frame(
+	  trial_id = "001_2015", 
+	  year = 2015,
+	  district = r2$DSTRT,
+	  rep = r2$REP,
+	  pdate = r2$PLNTD,
+	  spray = r2$SPRAY,
+	  yield = r2$GYD...9,
+	  plant_height = r2$PLNTH
+	  
+	  )
 
-	y <- r3[[10]]
-	y[is.na(y)] <- r3[[9]][is.na(y)] * 3125      # see ISSUES 9
-	
 	d3 <- data.frame(
-	  trial_id="002_2014", 
-	  year=2014, 
-	  district=r3[[1]],
-		rep=r3[[2]], 
-		pdate=r3[[3]], 
-		spray=r3[[4]], 
-		yield=y, 
-		plant_height=r3[[5]])
+	  trial_id = "002_2014", 
+	  year = 2014, 
+	  district = r3$DSTRT,
+		rep = r3$REP,
+		pdate = r3$PLNTD,
+		spray = r3$SPRAY,
+		yield = r3$GYD * 3125,
+		plant_height = r3$PLNTH
+		
+	)
 
 	d4 <- data.frame(
-	  trial_id="002_2015", 
-	  year=2015, 
-	  district=NA,
-		rep=r4[[1]], 
-		pdate=r4[[2]], 
-		spray=r4[[3]], 
-		yield=r4[[8]], 
-		plant_height=r4[[5]])
+	  trial_id = "002_2015", 
+	  year = 2015, 
+	  district = NA,
+		rep = r4$REP, 
+		pdate = r4$PLNTD, 
+		spray = r4$SPRAY, 
+		yield = r4$`GYD/ha`, 
+		plant_height = r4$PLNTH
+		
+		)
 
 	## same variables, different plots: bind the rows
 	d <- rbind(d1, d2, d3, d4)
 	d$plant_height[d$plant_height > 500] <- NA
 
-	pd <- c("-07-15", "-07-25", "-08-15")         # mid July, late July, mid August (ISSUES 6)
+	pd <- c("-07-15", "-07-25", "-08-15")         # mid July, late July, mid August
 	d$planting_date <- paste0(d$year, pd[d$pdate])
 	d$insecticide_used <- TRUE
 	d$insecticide_times <- as.integer(d$spray)
@@ -105,8 +117,8 @@ The data set evaluate adaptability and suitability of cowpea varieties to differ
 	d$year <- d$pdate <- d$spray <- d$district <- NULL
 
 	d$country <- "Ghana"
-	d$adm1 <- "Northern"
-	d$longitude <- NA                 # see ISSUES 5
+	d$site <- "Northern"
+	d$longitude <- NA                 
 	d$latitude <- NA
 	d$geo_from_source <- FALSE
 
