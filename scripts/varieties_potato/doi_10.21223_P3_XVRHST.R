@@ -76,7 +76,7 @@ carob_script <- function(path) {
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    soil_texture = tolower(r$soil_texture)
+    soil_texture = tolower(r$soil_texture),
     AUDPC = r$audpc,
     rAUDPC =r$raudpc,
     sAUDPC = r$saudpc,
