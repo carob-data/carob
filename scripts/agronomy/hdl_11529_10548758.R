@@ -101,23 +101,23 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
   d$land_prep <- NULL
   
   i <- grepl("sc1", d$trial_id) & grepl("rice", d$crop)
-  d$intercrops[i] <- "wheat"
+  d$crop_rotation[i] <- "rice;wheat"
   i <- grepl("sc1", d$trial_id) & grepl("wheat", d$crop)
-  d$intercrops[i] <- "rice"
+  d$crop_rotation[i] <- "wheat;rice"
   
   i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("rice", d$crop)
-  d$intercrops[i] <- "wheat;mung bean"
+  d$crop_rotation[i] <- "rice;wheat;mung bean"
   i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("wheat", d$crop)
-  d$intercrops[i] <- "rice;mung bean"
+  d$crop_rotation[i] <- "wheat;rice;mung bean"
   i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("mung bean", d$crop)
-  d$intercrops[i] <- "rice;wheat"
+  d$crop_rotation[i] <- "mung bean;rice;wheat"
   
   i <- grepl("sc4|sc6", d$trial_id) & grepl("maize", d$crop)
-  d$intercrops[i] <- "wheat;mung bean"
+  d$crop_rotation[i] <- "maize;wheat;mung bean"
   i <- grepl("sc4|sc6", d$trial_id) & grepl("wheat", d$crop)
-  d$intercrops[i] <- "maize;mung bean"
+  d$crop_rotation[i] <- "wheat;maize;mung bean"
   i <- grepl("sc4|sc6", d$trial_id) & grepl("mung bean", d$crop)
-  d$intercrops[i] <- "maize;wheat"
+  d$crop_rotation[i] <- "mung bean;maize;wheat"
   
   ## from publication
   fert <- data.frame(
