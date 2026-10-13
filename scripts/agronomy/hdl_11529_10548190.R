@@ -12,7 +12,7 @@ This dataset provides supplementary files for the trials and sites described in 
 "
 
 	uri <- "hdl:11529/10548190"
-	group <- "agronomy"
+	group <- "varieties_maize"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -25,9 +25,8 @@ This dataset provides supplementary files for the trials and sites described in 
 		treatment_vars = "variety_type",
 		response_vars = "yield", 
 		carob_contributor = "Mitchelle Njukuya",
-		completion = 100,	
 		notes = NA,
-	  carob_completion = 100,	
+        carob_completion = 100,	
 		carob_effort = 3
 	)
 	
@@ -35,7 +34,7 @@ This dataset provides supplementary files for the trials and sites described in 
 	f2 <- ff[basename(ff) == "maizedata.lobell.sep2011.csv"]
 	
 	r1 <- read.csv(f1)
-	r2 <- read.csv(f2)
+	r2 <- unique(read.csv(f2))
 	
 	d1 <- data.frame(
 	  country = r1$Country,
@@ -43,15 +42,14 @@ This dataset provides supplementary files for the trials and sites described in 
 	  longitude = r1$Longitude,
 	  latitude = r1$Latitude,
 	  elevation = r1$ElevM,
-	  sitecode = r1$LocationID
-	
-	  )
+	  sitecode = r1$LocationID,
+  	  geo_from_source = TRUE
+    )
 	
 	d1$country <- carobiner::fix_name(d1$country, "title")
 	d1$country[d1$country == "South Africa Rep."] <- "South Africa"
 	d1$country[d1$country == "Swaziland"] <- "Eswatini"
-	d1$country[d1$country %in% c("Zaire","Congo") ] <- "Democratic Republic of the Congo"
-	#d1$country[d1$country == "Congo"] <- "Republic of the Congo"  # see ISSUES note
+	d1$country[d1$country == "Zaire"] <- "Democratic Republic of the Congo"
 	
 	d1$location <- carobiner::fix_name(d1$location, "title")
 	
@@ -65,14 +63,13 @@ This dataset provides supplementary files for the trials and sites described in 
 	  silking_days  = r2$DaysToSilk,
 	  asi           = r2$ASI,
 	  variety_type  = ifelse(grepl("HY$", r2$vargroup), "hybrid", "OPV"),
-	  variety_traits    = ifelse(grepl("^E", r2$vargroup), "early-intermediate", "intermediate-late"),
-	  harvest_date  = r2$yrcode,
+	  variety_traits = ifelse(grepl("^E", r2$vargroup), "early-intermediate", "intermediate-late"),
+	  harvest_date  = as.character(r2$yrcode),
 	  sitecode      = r2$sitecode
 	)
 	
 	d <- merge(d2, d1, by = "sitecode", all.x = TRUE)
 	
-	d$geo_from_source <- TRUE
 	d$trial_id <- paste(d$sitecode, d$harvest_year, sep = "_")
 	d$sitecode <- NULL
 	d$on_farm <- TRUE
@@ -84,16 +81,11 @@ This dataset provides supplementary files for the trials and sites described in 
 	d$longitude[d$location == "Alupe"] <- 34.13   # https://www.geonames.org/search.html?q=Alupe&country=KE
 	d$longitude[d$location == "Maseru"] <- 27.48   # https://www.geonames.org/search.html?q=Maseru&country=LS
 	d$latitude[d$location == "Maseru"] <- -29.31   # https://www.geonames.org/search.html?q=Maseru&country=LS
-	d$longitude[d$location == "Lambo"] <- NA
-	d$latitude[d$location == "Lambo"] <- NA       #unable to find correct coordinates for Lambo 
-	
-	d$asi[d$asi > 15] <- NA   
-	d$harvest_date <- as.character(d$harvest_date)
-	
-	d <- unique(d)
-	
-	carobiner::write_files(path, meta, d)
+	# move to the location in TZA
+	d$longitude[d$location == "Lambo"] <- 37.6350
+	d$latitude[d$location == "Lambo"] <- -3.6633    #unable to find correct coordinates for Lambo 
 
+	carobiner::write_files(path, meta, d)
 }
 
 
