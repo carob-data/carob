@@ -27,7 +27,7 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "ICAR;CIMMYT",
-		publication = "10.1016/j.geoderma.2021.115391",
+		publication = "doi:10.1016/j.geoderma.2021.115391",
 		project = NA,
 		carob_date = "2026-10-12",
 		design = "RCBD",
@@ -38,24 +38,23 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
 		carob_effort = 3
-		
 	)
 	
-
 	f1 <- ff[basename(ff) == "Dibakar et al 2021_Geoderma.xlsx"]
-
 	r1 <- carobiner::read.excel(f1, sheet="Sheet1")
 	
-	
- ## splitting the treatment
-	r1$treat <- c("Transplanted puddled rice * conventional tillage broadcasted wheat (TPR-CTW)", "Transplanted puddled rice * zero tillage wheat * zero tillage mung bean (TPR-ZTWMb)", "Zero tillage Direct seeded rice * zero tillage wheat * zero tillage mungbean (ZTDSR-ZTWMb)", "Zero tillage maize * zero tillage wheat * zero tillage mung bean (ZTM-ZTWMb)", "Zero tillage direct seeded rice * zero tillage wheat * zero tillage mung bean +Sub-surface drip irrigation (ZTDSR-ZTWMb +SDI)", "Zero tillage maize * zero tillage wheat * zero tillage mung bean (ZTM-ZTWMb +SDI)")[r1$Sc]
-	treat <- as.data.frame(stringr::str_split_fixed(r1$treat, "\\s*\\*\\s*", 3))
-	treat[treat == ""] <- NA
+mgmnt <- data.frame(
+	 treatment_id = 1:6,
+	 treatment = c("transplanted puddled rice -> conventional tillage broadcasted wheat (TPR-CTW)", "transplanted puddled rice -> zero-tillage wheat -> zero-tillage mung bean (TPR-ZTWMb)", "zero-tillage direct-seeded rice -> zero-tillage wheat -> zero-tillage mungbean (ZTDSR-ZTWMb)", "zero-tillage maize -> zero-tillage wheat -> zero-tillage mung bean (ZTM-ZTWMb)", "zero-tillage direct seeded rice -> zero-tillage wheat -> zero-tillage mung bean + sub-surface drip irrigation (ZTDSR-ZTWMb+SDI)", "zero-tillage maize -> zero-tillage wheat -> zero-tillage mung bean + sub-surface drip irrigation (ZTM-ZTWMb+SDI)"),
+	 crop = c("rice_wheat", "rice_wheat_mung bean", "rice_wheat_mung bean", "maize_wheat_mung bean", "rice_wheat_mung bean", "maize;wheat;mungbean"),
+	 planting_method = c("transplanting;broadcasting", "transplanting;drilling;drilling", "drilling", "drilling", "drilling", "drilling"),
+	 land_prep_method = c("puddling;conventional", "puddling;none", rep("none", 4)),
+	 irrigation_method = c(rep("flood", 4), "subsurface drip", "subsurface drip")
+ )
 	
   d1 <- data.frame(
     rep = as.integer(r1$Rep),
-    trial_id = paste0("sc", r1$Sc),
-    treatment = r1$treat,
+    treatment_id = r1$Sc,
     depth_bottom = as.numeric(gsub("-", "", substr(r1$Depth,3, 5))) ,
     depth_top = as.numeric(gsub("-", "", substr(r1$Depth,1, 2))),
     #soil_moisture = r1$VWC, ## in %
@@ -75,10 +74,6 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
     soil_ALP = r1$ALKP,
     soil_ACP = r1$ACDP,
     soil_DHA = r1$DHA, # dehydrogenase activity
-    treat_rice = ifelse(grepl("rice", treat$V1),treat$V1, NA ),
-    treat_maize = ifelse(grepl("maize", treat$V1),treat$V1, NA ),
-    treat_wheat = treat$V2,
-    treat_bean = treat$V3,
     country = "India",
     location = "CSSRI, Karnal" ,
     longitude = 76.9555 ,
@@ -88,48 +83,25 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
     CA_years = 10
   )
   
-  d <- reshape(d1, varying = c("treat_rice", "treat_maize", "treat_wheat", "treat_bean"), v.names = "land_prep", timevar = "crop", time = c("rice", "maize", "wheat", "mung bean"), direction = "long")
-  d <- d[!is.na(d$land_prep),]
-  row.names(d) <- d$id <- NULL
-  d$planting_method <- ifelse(grepl("Transplanted", d$land_prep), "transplanted",
-                       ifelse(grepl("Direct seeded", d$land_prep), "direct seeding",
-                       ifelse(grepl("broadcasted", d$land_prep), "broadcasting", "none")))
-  
-  d$land_prep_method <- ifelse(grepl("puddled", d$land_prep), "puddled",
-                        ifelse(grepl("conventional", d$land_prep), "conventional", "none"))
-  d$irrigation_method <- ifelse(grepl("Sub-surface drip irrigation", d$land_prep), "drip", "none")
-  d$land_prep <- NULL
-  
-  i <- grepl("sc1", d$trial_id) & grepl("rice", d$crop)
-  d$crop_rotation[i] <- "rice;wheat"
-  i <- grepl("sc1", d$trial_id) & grepl("wheat", d$crop)
-  d$crop_rotation[i] <- "wheat;rice"
-  
-  i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("rice", d$crop)
-  d$crop_rotation[i] <- "rice;wheat;mung bean"
-  i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("wheat", d$crop)
-  d$crop_rotation[i] <- "wheat;rice;mung bean"
-  i <- grepl("sc2|sc3|sc5", d$trial_id) & grepl("mung bean", d$crop)
-  d$crop_rotation[i] <- "mung bean;rice;wheat"
-  
-  i <- grepl("sc4|sc6", d$trial_id) & grepl("maize", d$crop)
-  d$crop_rotation[i] <- "maize;wheat;mung bean"
-  i <- grepl("sc4|sc6", d$trial_id) & grepl("wheat", d$crop)
-  d$crop_rotation[i] <- "wheat;maize;mung bean"
-  i <- grepl("sc4|sc6", d$trial_id) & grepl("mung bean", d$crop)
-  d$crop_rotation[i] <- "mung bean;maize;wheat"
+#  d <- reshape(d1, varying = c("treat_rice", "treat_maize", "treat_wheat", "treat_bean"), v.names = "land_prep", timevar = "crop", time = #c("rice", "maize", "wheat", "mung bean"), direction = "long")
+#  d <- d[!is.na(d$land_prep),]
+#  row.names(d) <- d$id <- NULL
+
+d <- merge(d1, mgmnt, by="treatment_id")	
   
   ## from publication
   fert <- data.frame(
-    trial_id = c(rep("sc1", 2), rep("sc2", 3), rep("sc3", 3), rep("sc4", 3), rep("sc5", 3), rep("sc6", 3)),
+    treatment_id = c(rep(1, 2), rep(2, 3), rep(3, 3), rep(4, 3), rep(5, 3), rep(6, 3)),
     crop = c("rice", "wheat", "rice", "wheat", "mung bean", "rice", "wheat", "mung bean", "maize", "wheat", "mung bean", "rice", "wheat", "mung bean", "maize", "wheat","mung bean"),
     N_fertilizer = c(175, 150, 150, 150, 0, 160, 150, 0, 175, 150, 0, 160, 150,0, 175, 150, 0),
     P_fertilizer = c(58, 58, 50, 64, 0, 64, 64, 0, 64, 64, 0, 64, 64, 0, 64, 64, 0),
     K_fertilizer = c(0, 0, 60, 32, 0, 62, 32, 0, 62, 32, 0, 62, 32, 0, 62, 32, 0)
   )
-  
-  d <- merge(d, fert, by = c("trial_id", "crop"), all.x = TRUE)
-  
+fert <- aggregate(fert[, c("N_fertilizer", "P_fertilizer", "K_fertilizer")], fert["treatment_id"], sum)
+		   
+  d <- merge(d, fert, by = c"treatment_id", all.x = TRUE)
+  d$treament_id <- NULL
+	
   d$is_survey <- FALSE
   d$on_farm <- TRUE
   d$yield  <- NA
@@ -139,7 +111,7 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
   d$irrigated <- NA
   d$planting_date <- NA
   d$harvest_date <- NA
-  
+  d$trial_id = "1"
   
   carobiner::write_files(path, meta, d)
 }
