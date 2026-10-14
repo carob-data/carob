@@ -4,12 +4,13 @@
 ## ISSUES
 #    bdd_kenya_nairobi_climate.csv has ~3.42 million rows (readings logged
 #    multiple times per minute over 2022-2024) - aggregated to daily
+
 carob_script <- function(path) {
   
 "This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Nairobi, Kenya (1°16’12”S, 36°48’17”E, altitude 1700 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature, relative humidity, and atmospheric pressure from a BME680 sensor acquired using a Raspberry Pi 3A+ single-board computer. All date and time data are in UTC. (2025-03-12)"
   
   uri <- "doi:10.23708/PFDYJQ"
-  group <- "pest_disease"  
+  group <- "survey"  
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -68,10 +69,10 @@ carob_script <- function(path) {
   r3$date <- as.Date(r3$dateUTC)
   wmin <- suppressWarnings(aggregate(r3[, c("temperature", "rh")], r3["date"], min, na.rm=TRUE))
   names(wmin)[2:3] <- c("tmin", "rhmn")
-  wmin$rhmin[!is.finite(wmin$rhmn)] <- NA
+  wmin$rhmn[!is.finite(wmin$rhmn)] <- NA
   wmax <- suppressWarnings(aggregate(r3[, c("temperature", "rh")], r3["date"], max, na.rm=TRUE))
   names(wmax)[2:3] <- c("tmax", "rhmx")
-  wmax$rhmax[!is.finite(wmax$rhmx)] <- NA
+  wmax$rhmx[!is.finite(wmax$rhmx)] <- NA
   weather <- merge(wmin, wmax, by="date")
   #weather$sensor_id = "BME680"
   weather$location <- "Nairobi"
