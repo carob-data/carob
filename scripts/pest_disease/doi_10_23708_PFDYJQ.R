@@ -90,7 +90,7 @@ carob_script <- function(path) {
   d$treatment <- NA
   d$crop <- "maize"
   d$yield_part <- "grain"
-  d$trial_id <- as.character(as.integer(as.factor(1)))
+  d$trial_id <- "1"
   d$on_farm <- TRUE
   d$is_survey <- FALSE
   d$irrigated <- FALSE
