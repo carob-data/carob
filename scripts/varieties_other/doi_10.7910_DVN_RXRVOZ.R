@@ -87,6 +87,7 @@ Bean root rot improvement
 	      is_survey = FALSE,
 	      yield_part = "seed",
 	      yield_moisture = as.numeric(NA),
+	      yield_isfresh = NA,
 	      irrigated = NA,
 	      geo_from_source = FALSE,
 	      stress = "disease"

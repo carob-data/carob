@@ -61,6 +61,7 @@ This database includes the research work carried out to assess the variability a
 		on_farm= FALSE ,
 		irrigated= NA,
 		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA,
 		geo_from_source= TRUE,
 		record_id= as.integer(1:nrow(r))
 	)

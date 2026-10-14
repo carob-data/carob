@@ -80,6 +80,7 @@ Field evaluation of breeding lines developed for drought tolerance for adaptatio
 	     is_survey= FALSE,
 	     irrigated= NA,
 	     yield_moisture= as.numeric(NA),
+	     yield_isfresh= NA,
 	     yield_part= "grain",
 	     stress= "disease"
 	     
