@@ -21,8 +21,8 @@ carob_script <- function(path) {
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	x <- mzfun(ff, sf="Nigeria.csv")
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
+	x <- mz_fun(ff, sf="Nigeria.csv")
 	d <- x$d	
 
 	d$yield[d$yield > 20000] <- NA

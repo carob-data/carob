@@ -58,6 +58,11 @@ affect the variation in the yield of maize. The dataset was created through a co
 			c("Algodon", "Frijol",      "Maiz",  "Pastos", "Yuca"),
 			c("cotton",  "common bean", "maize", "pasture", "cassava"))
 
+	# Spanish USDA texture abbreviations (A=arcilla, Ar=arena, F=franco, L=limo)
+	d$soil_texture <- carobiner::replace_values(d$soil_texture,
+		c("A", "AF", "Ar", "ArA", "ArL", "F", "FA", "FAr", "FrL", "L"),
+		c("clay", "clay loam", "sand", "sandy clay", "loamy sand", "loam", "clay loam", "sandy loam", "silty loam", "silt"))
+
 	d$on_farm <- TRUE
 
 	d$country <- "Colombia"
@@ -73,6 +78,8 @@ affect the variation in the yield of maize. The dataset was created through a co
 	d$planting_date <-	as.character(as.Date(r$Planting_Date, format = '%m/%d/%Y'))
 	d$harvest_date  <-	as.character(as.Date(r$Harvest_Date, format = '%m/%d/%Y'))
 	d$planting_date[is.na(d$planting_date)] <- "2015"
+	# maize harvested 29 days after planting
+	d$harvest_date[d$planting_date == "2014-05-10" & d$harvest_date == "2014-06-08"] <- NA
 	d$yield_part <- "grain"
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

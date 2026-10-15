@@ -28,14 +28,13 @@ and 2015 in over thirty African countries. This dataset contains output of the r
 	)
 
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	x <- mzfun(ff)
+	x <- mz_fun(ff)
 	d <- x$d
 	
 	
 	d$location[	d$location == "Cameroon"] <- NA
-	d$description <- as.character(d$description)
 
 	i <- which(d$location == "Mayo-Galke") 
 	d$longitude[i] <- 14.2421

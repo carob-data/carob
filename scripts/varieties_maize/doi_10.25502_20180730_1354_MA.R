@@ -29,8 +29,8 @@ This dataset contains output of the research for Sierra Leone.
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	x <- mzfun(ff)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
+	x <- mz_fun(ff)
 	d <- x$d
 
 	d$latitude[d$location == "Freetown"] <- 8.4542

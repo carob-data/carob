@@ -25,9 +25,10 @@ The study was carried out by the International Institute of Tropical Agriculture
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	x <- mzfun(ff)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
+	x <- mz_fun(ff)
 	d <- x$d
-
+	d$inst <- NULL
+	
 	carobiner::write_files(meta, d, path=path, long=x$long)
 }

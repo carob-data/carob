@@ -25,9 +25,9 @@ carob_script <- function(path) {
 
 
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	x <- mzfun(ff, sf="Sudan.csv")
+	x <- mz_fun(ff, sf="Sudan.csv")
 	d <- x$d
 
 	

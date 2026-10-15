@@ -57,6 +57,8 @@ carob_script <- function(path) {
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d$irrigated <- NA
+	d$yield_moisture <- NA
+	d$yield_isfresh <- NA
 
 	d <- d[!is.na(d$yield), ]
 	carobiner::write_files(path, meta, d)

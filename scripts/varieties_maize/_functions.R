@@ -68,29 +68,8 @@ intmztrial_striga <- function(ff, sf=NULL) {
 		d$on_farm <- FALSE
 		d$year <- NULL
 		d$aezone <- NULL
-		if (striga) {
-			nms <- names(d)
-			inf <- grep("in$", nms, value=TRUE)
-			unf <- grep("un$", nms, value=TRUE)
-			iu  <- c(inf, unf)
-			nm <- nms[!(nms %in% iu)]
-			din <- d[, c(nm, inf)]
-			dun <- d[, c(nm, unf)]
-			names(din) <- gsub("in$", "", names(din))	
-			names(dun) <- gsub("un$", "", names(dun))
-			din$striga_infected <- TRUE
-			dun$striga_infected <- FALSE
-			# eldun does not exist
-			dun$eld <- NA
-			d <- rbind(din, dun)
-			names(d) <- gsub("_$", "", names(d))
-			d$striga_trial <- TRUE
-		} else {
-			d$striga_trial <- FALSE
-			d$striga_infected <- FALSE
-		}
 
-		d <- carobiner::change_names(d, 
+		d <- carobiner::change_names(d,  
 		 c("str_ra1", "str_ra2", "yld", "r_l", "s_l", "plst", "eld", "borer_dm_rat", "deadheart", "yieldin1", "yieldun2"), 
 		 c("str_rat1", "str_rat2", "yield", "rl", "sl", "pl_st", "eldana", "borer_dam_rat", "dead_heart", "yieldin", "yield2"), must_have=FALSE)
 
@@ -137,6 +116,53 @@ intmztrial_striga <- function(ff, sf=NULL) {
 		} else {
 			d$seed_weight <- as.numeric(d$seed_weight)	
 		}
+
+		if (striga || borer) {
+			# paired infested (*in) / uninfested (*un) plot measurements → two rows
+			# after change_names so aliases such as plst already share the canonical name
+			iu_stem <- function(v, sfx) {
+				b <- sub(paste0("(_)?", sfx, "$"), "", v)
+				tr <- c(easp="e_asp", eharv="e_harv", eht="e_ht", pasp="p_asp", pharv="p_harv",
+					plht="pl_ht", plst="pl_st", dysk="dy_sk", eardam="ear_dam_rat", erot="e_rot",
+					yld="yield", r_l="rl", s_l="sl", eld="eldana")
+				if (b %in% names(tr)) tr[[b]] else b
+			}
+			apply_iu <- function(dd, vars, sfx) {
+				for (v in vars) {
+					b <- iu_stem(v, sfx)
+					if (b == "" || b == v) next
+					dd[[b]] <- dd[[v]]
+				}
+				dd
+			}
+			nms <- names(d)
+			inf <- grep("in$", nms, value=TRUE)
+			unf <- grep("un$", nms, value=TRUE)
+			filled <- function(x) {
+				x <- as.character(x)
+				!is.na(x) & x != ""
+			}
+			has_inf <- rep(FALSE, nrow(d))
+			for (v in inf) {
+				has_inf <- has_inf | filled(d[[v]])
+			}
+			din <- apply_iu(d, inf, "in")
+			dun <- apply_iu(d, unf, "un")
+			drop <- unique(c(inf, unf, "yieldin1", "yieldin"))
+			drop <- drop[drop %in% names(din)]
+			din[drop] <- NULL
+			dun[drop] <- NULL
+			din$striga_infected <- striga
+			dun$striga_infected <- FALSE
+			if (any(has_inf)) {
+				d <- carobiner::bindr(dun, din[has_inf, , drop=FALSE])
+			} else {
+				d <- dun
+			}
+		} else {
+			d$striga_infected <- FALSE
+		}
+
 		qv <- c("yield", "pl_ht", "e_ht", "asi", "dy_sk", "p_asp", "p_harv", "e_asp", "husk", "rl", "sl", "e_rot", "rust", "anthesis", "moist", "pl_st")
 		for (v in qv) {
 			if (!is.null(d[[v]])) {
@@ -145,22 +171,26 @@ intmztrial_striga <- function(ff, sf=NULL) {
 				d[[v]] <- as.numeric(d[[v]])			
 			}
 		}
+		if (!is.null(d$husk)) d$husk <- as.character(d$husk)
 		
 		d$yield_part <- "grain"
 		d$striga_trial <- striga
 		d$borer_trial <- borer
 		d$variety <- trimws(d$variety)
 		d$variety[d$variety == ""] <- NA
+		if (!is.null(d$trial_name)) d$trial_name <- trimws(d$trial_name)
 		d$description <- as.character(d$description)
-		d$description[d$description==""] <- "not provided"
+		d$description[d$description==""] <- NA
 
 		if (inherits(d$latitude, "character")) {
+			d$latitude <- gsub("\u00a0", "", d$latitude)
 			d$latitude <- trimws(d$latitude)
 			d$latitude <- gsub(" ", "", d$latitude)
 			d$latitude[d$latitude == ""] <- NA
 			d$latitude <- as.numeric(d$latitude)
 		}
 		if (inherits(d$longitude, "character")) {
+			d$longitude <- gsub("\u00a0", "", d$longitude)
 			d$longitude <- trimws(d$longitude)
 			d$longitude <- gsub(" ", "", d$longitude)
 			d$longitude[d$longitude == ""] <- NA
@@ -192,8 +222,24 @@ intmztrial_striga <- function(ff, sf=NULL) {
 		d <- doit(sf)
 	}
 	
-	d <- carobiner::change_names(d, c("pl_ht", "dy_sk", "dy_tass", "pl_st", "anthesis", "e_ht"), 
-				c("plant_height", "silking_days", "tassling_days", "plant_density", "anthesis_days", "ear_height"), must_have=FALSE)
+	d <- carobiner::change_names(d, c("pl_ht", "dy_sk", "dy_tass", "pl_st", "anthesis", "e_ht", "p_asp", "e_asp", "gtext"), 
+				c("plant_height", "silking_days", "tassling_days", "plant_density", "anthesis_days", "ear_height", "aspect", "ear_aspect", "grain_texture"), must_have=FALSE)
+
+	if (!is.null(d$dy_poll)) {
+		x <- d$dy_poll
+		if (!is.numeric(x)) {
+			x <- trimws(as.character(x))
+			x[x %in% c("", ".", "S", "NA", "na")] <- NA
+			x <- as.numeric(x)
+		}
+		if (is.null(d$silking_days)) {
+			d$silking_days <- x
+		} else {
+			i <- is.na(d$silking_days) & !is.na(x)
+			d$silking_days[i] <- x[i]
+		}
+		d$dy_poll <- NULL
+	}
 
 	if (!is.null(d$grain_N)) d$grain_N <- as.numeric(d$grain_N)
 	if (!is.null(d$tassling_days)) d$tassling_days <- as.numeric(d$tassling_days)
@@ -216,17 +262,82 @@ intmztrial_striga <- function(ff, sf=NULL) {
 	if (!is.null(d$moist)) {
 		d$yield_moisture <- as.numeric(d$moist)
 		d$moist <- NULL
+		if (all(is.na(d$yield_moisture))) {
+			d$yield_isfresh <- as.logical(NA)
+		}
+	}
+
+	fmt_lodg <- function(x, suffix="") {
+		if (is.null(x)) return(NULL)
+		if (!is.numeric(x)) {
+			x <- trimws(as.character(x))
+			x[x %in% c("", ".", "S", "NA", "na")] <- NA
+		}
+		out <- rep(NA_character_, length(x))
+		i <- !is.na(x)
+		out[i] <- paste0(as.character(x[i]), suffix)
+		out
+	}
+	comb_lodg <- function(...) {
+		args <- list(...)
+		args <- args[!vapply(args, is.null, TRUE)]
+		if (length(args) == 0) return(NULL)
+		out <- args[[1]]
+		for (x in args[-1]) {
+			i <- !is.na(x)
+			j <- i & is.na(out)
+			k <- i & !is.na(out)
+			out[j] <- x[j]
+			out[k] <- paste(out[k], x[k], sep="; ")
+		}
+		out
+	}
+	d$root_lodging <- comb_lodg(fmt_lodg(d$rl), fmt_lodg(d$rl_rat), fmt_lodg(d$rlper, "%"))
+	d$stalk_lodging <- comb_lodg(fmt_lodg(d$sl), fmt_lodg(d$sl_rat), fmt_lodg(d$slper, "%"))
+	d[intersect(c("rl", "rl_rat", "rlper", "sl", "sl_rat", "slper"), names(d))] <- NULL
+
+	if (!is.null(d$gr_maize)) {
+		if (is.logical(d$gr_maize)) {
+			if (any(!is.na(d$gr_maize))) {
+				d$variety_traits <- ifelse(d$gr_maize, "glyphosate resistant", "not glyphosate resistant")
+			}
+			d$gr_maize <- NULL
+		} else {
+			x <- toupper(trimws(as.character(d$gr_maize)))
+			x[x %in% c("", ".", "S", "NA", "NAN")] <- NA
+			tf <- x %in% c("T", "TRUE", "F", "FALSE")
+			if (any(tf)) {
+				d$variety_traits <- ifelse(x %in% c("T", "TRUE"), "glyphosate resistant",
+					ifelse(x %in% c("F", "FALSE"), "not glyphosate resistant", NA_character_))
+			}
+			if (all(is.na(x) | tf)) {
+				d$gr_maize <- NULL
+			}
+		}
 	}
 
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	long <- mz_pd_long(d)
 
-	pdvars <- c("blight", "curv", "diplodia", "dm", "e_rot", "gls", "helm", "rust", "stalk_rot", "streak",
-		"borer", "sb_dam_rat", "borer_dam_rat", "sbdamrat", "stemtunnel", "dead_heart",
+	pdvars <- c("blight", "curv", "diplodia", "dm", "e_rot", "gls", "helm", "hm", "rust", "stalk_rot", "streak",
+		"borer", "borer1", "borer2", "borer3", "borer4", "sb_dam_rat", "borer_dam_rat", "sbdamrat", "stemtunnel", "dead_heart",
 		"leaf_feed", "leaffeed", "lfeed2", "eldana", "mussidia", "insect",
 		"cob_dam_co", "cob_dam_rt", "ear_dam_co", "ear_dam_rat",
 		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2")
 	d[intersect(pdvars, names(d))] <- NULL
+
+	# p_harv / e_harv are plot counts of plants and ears harvested (not per ha)
+	# fwt is plot field weight of ears (not per ha); yield already records production
+	d[intersect(c("p_harv", "e_harv", "fwt"), names(d))] <- NULL
+
+	if (!is.null(d$description) && all(is.na(d$description))) {
+		d$description <- NULL
+	}
+	if (!is.null(d$inst)) {
+		d$inst <- trimws(as.character(d$inst))
+		d$inst[d$inst %in% c("", ".", "NA", "na")] <- NA
+		if (all(is.na(d$inst))) d$inst <- NULL
+	}
 
 	list(d=d, long=long)
 }
@@ -242,9 +353,17 @@ mz_pd_long <- function(d) {
 	num <- function(x) {
 		if (is.null(x)) return(rep(NA_real_, n))
 		if (is.numeric(x)) return(x)
+		# empty Excel columns are often read as logical NA / FALSE
+		if (is.logical(x)) return(rep(NA_real_, n))
 		x <- trimws(as.character(x))
-		x[x %in% c("", ".", "S", "NA", "na")] <- NA
-		as.numeric(x)
+		x[x %in% c("", ".", "-", "*", "**", "***", "****")] <- NA
+		x[toupper(x) %in% c("S", "NA", "N/A", "NAN", "NS", "FALSE", "TRUE")] <- NA
+		out <- suppressWarnings(as.numeric(x))
+		bad <- unique(x[!is.na(x) & is.na(out)])
+		if (length(bad)) {
+			warning("non-numeric pest/disease values: ", paste(bad, collapse=", "), call.=FALSE)
+		}
+		out
 	}
 
 	chr <- function(x, keep) {
@@ -267,7 +386,7 @@ mz_pd_long <- function(d) {
 	}
 
 	add <- function(keep, disease=NA_character_, disease_severity=NA, disease_incidence=NA,
-			pest_species=NA_character_, pest_severity=NA, pest_incidence=NA, DAP=NA) {
+			pest_species=NA_character_, pest_severity=NA, pest_incidence=NA, DAP=NA, order=NA) {
 		if (!any(keep)) return(long)
 		x <- data.frame(
 			record_id = rid[keep],
@@ -277,7 +396,8 @@ mz_pd_long <- function(d) {
 			pest_species = pest_species,
 			pest_severity = chr(pest_severity, keep),
 			pest_incidence = if (length(pest_incidence) == n) as.integer(pest_incidence[keep]) else NA_integer_,
-			DAP = if (length(DAP) == n) as.integer(DAP[keep]) else if (length(DAP) == 1 && !is.na(DAP)) as.integer(DAP) else NA_integer_
+			DAP = if (length(DAP) == n) as.integer(DAP[keep]) else if (length(DAP) == 1 && !is.na(DAP)) as.integer(DAP) else NA_integer_,
+			order = if (length(order) == n) as.integer(order[keep]) else if (length(order) == 1 && !is.na(order)) as.integer(order) else NA_integer_
 		)
 		if (is.null(long)) x else rbind(long, x)
 	}
@@ -289,7 +409,6 @@ mz_pd_long <- function(d) {
 		diplodia = "stenocarpella ear rot",
 		e_rot = "ear rot",
 		gls = "gray leaf spot",
-		helm = "southern leaf blight",
 		rust = "rust",
 		stalk_rot = "stalk rot",
 		streak = "maize streak virus"
@@ -299,6 +418,9 @@ mz_pd_long <- function(d) {
 		keep <- !is.na(x)
 		long <- add(keep, disease=ds[[v]], disease_severity=x)
 	}
+	# Hm (striga files) is the same trait as HELM (borer files): Helminthosporium / maydis leaf blight
+	x <- first_num(d$helm, d$hm)
+	long <- add(!is.na(x), disease="southern leaf blight", disease_severity=x)
 	x <- num(d$dm)
 	long <- add(!is.na(x), disease="maize dwarf mosaic virus", disease_incidence=x)
 
@@ -311,6 +433,10 @@ mz_pd_long <- function(d) {
 	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
 	x <- first_num(d$leaf_feed, d$leaffeed, d$lfeed2)
 	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
+	for (i in 1:4) {
+		x <- num(d[[paste0("borer", i)]])
+		long <- add(!is.na(x), pest_species="borer", pest_severity=x, order=i)
+	}
 
 	x <- num(d$eldana)
 	long <- add(!is.na(x), pest_species="Eldana saccharina", pest_severity=x)

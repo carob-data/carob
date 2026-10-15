@@ -24,9 +24,9 @@ carob_script <- function(path) {
 	)
 
 	
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	x <- mzfun(ff)
+	x <- mz_fun(ff)
 	d <- x$d
 	
 	i <- d$location == "Boni"

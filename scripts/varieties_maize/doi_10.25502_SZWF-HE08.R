@@ -31,31 +31,34 @@ carob_script <- function(path) {
 			## RH: were all locations planted on 04-01?
 			## that seems rather unlikely.
 			planting_date = paste(r$YEAR, "04", "01", sep="-"),
-			anthesis_days = r$DYSK - r$ASI,  
 			variety = r$PEDIGREE,
 			rep = r$REP,
 			yield = r$YIELD,
-			polshed = r$POLLEN,
+			anthesis_days = r$POLLEN,
 			silking_days = r$DYSK,
 			asi = r$ASI,
 			plant_height = r$PLHT,
 			ear_height = r$EHT,
-			p_asp = r$PLASP,
-			e_asp = r$EASP, 
+			aspect = r$PLASP,
+			ear_aspect = r$EASP, 
 			e_rot = r$E_ROT
 		)
 
 		if (is.null(r$RL_PERC)) {
-			d$rlper <- r$RL * 100
+			d$root_lodging <- ifelse(is.na(r$RL * 100), NA_character_, paste0(r$RL * 100, "%"))
+
 		} else {
-			d$rlper <- r$RL_PERC * 100
+			d$root_lodging <- ifelse(is.na(r$RL_PERC * 100), NA_character_, paste0(r$RL_PERC * 100, "%"))
+
 		}
 		if (is.null(r$SL_PERC)) {
-			d$slper = r$SL * 100
+			d$stalk_lodging <- ifelse(is.na(r$SL * 100), NA_character_, paste0(r$SL * 100, "%"))
 		} else {
-			d$slper = r$SL_PERC * 100		
+			d$stalk_lodging <- ifelse(is.na(r$SL_PERC * 100), NA_character_, paste0(r$SL_PERC * 100, "%"))
 		}
-		d$husk <- r$HC
+		hc <- r$HC
+		if (is.null(hc)) hc <- r$HUSK
+		if (!is.null(hc)) d$husk <- as.character(hc)
 		d
 	}
 
@@ -105,7 +108,11 @@ carob_script <- function(path) {
 	d$yield_isfresh <- NA
 	d$geo_from_source <- FALSE
 
-	carobiner::write_files(meta, d, path=path)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 
 
