@@ -2,7 +2,9 @@
 
 carob_script <- function(path) {
 
-"The authors acknowledge and thank the South Africa Agricultural Research Council (ARC) for making the original data available for this study. ARC data in this repository can be used to replicate a forthcoming study on wheat yields and climate change in South Africa. Should the data be used beyond replication, ARC must be acknowledged."
+"
+The authors acknowledge and thank the South Africa Agricultural Research Council (ARC) for making the original data available for this study. ARC data in this repository can be used to replicate a forthcoming study on wheat yields and climate change in South Africa. Should the data be used beyond replication, ARC must be acknowledged.
+"
 
 	uri <- "doi:10.7910/DVN/8Y6Q7F"
 	group <- "varieties_wheat"

@@ -1,7 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-
 ## NOTES
 # English xlsx is the same 6338 records as the Spanish file; only the Spanish file is read.
 # Sand/clay/silt and Bouyoucos columns are complementary (one overlapping row); Bouyoucos used when the other is NA.

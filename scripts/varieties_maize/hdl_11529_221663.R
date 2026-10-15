@@ -3,7 +3,6 @@
 ## ISSUES
 # no specific location data. Since all trials are in Kano, used that to georeference one location based on metadata
 
-
 carob_script <- function(path) {
 
 "This dataset contains information from on-farm validation trials conducted across 30 farmer fields in Local government areas of the sudan savanna AEZ in Kano. In each farmer field 10 plots (30 meter square each) were planted with a different combination of early maturing maize (10 varieties) under 3 different sowing densitie. Each plot is a different combination of variety and sowing data. Data was collected on tops weight at anthesis, cob yield and stover yield. (2017-12-10)"

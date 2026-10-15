@@ -4,7 +4,6 @@
 # lon/lat is missing for the fields. Needs to be requested. Without that of much less use.
 
 
-
 carob_script <- function(path) {
 
 "The data represent 804 cropping events of maize planting in Córdoba - Colombia from 2013 to 2016. Each cropping event has information on climate, soil, and agronomic management. The data was collected with the aim of determining the factors that 
