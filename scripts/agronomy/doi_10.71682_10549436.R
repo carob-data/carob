@@ -2,10 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# Planting, harvest (day), and lime application dates are not in the files (only harvest year).
+# Planting, harvest (day), and lime application dates are not reported (only harvest year).
 # Fertilizer (N/P/K) rates are not reported.
 # Soil sampling dates and after-harvest sample IDs are missing; some before-planting sample IDs are present.
-# Yield moisture is not reported.
 
 ## NOTES
 # On-farm RCBD, 16 farms, three blocks (some relabelled as r_4..r_7), seven lime rates.
@@ -31,11 +30,12 @@ This dataset was generated as part of the Guiding Acid Soil Management Investmen
 
 These soil datasets are available at:
 
-        Predicted Soil Properties Dataset:     hdl:11529/10549138           Predicted Soil Properties Dataset:     doi:10.71682/10549329    
+Predicted Soil Properties Dataset:     hdl:11529/10549138
+Predicted Soil Properties Dataset:     doi:10.71682/10549329    
 
- To facilitate interoperability and harmonization of agronomic terminology, a lookup table is provided that maps variable names and terms used in this dataset to the terminology defined in the terminag GitHub repository. 
+To facilitate interoperability and harmonization of agronomic terminology, a lookup table is provided that maps variable names and terms used in this dataset to the terminology defined in the terminag GitHub repository. 
 
- Data from the first year are available in the related dataset: https://doi.org/10.71682/10549434.
+Data from the first year are available in the related dataset: https://doi.org/10.71682/10549434.
 "
 
 	uri <- "doi:10.71682/10549436"
