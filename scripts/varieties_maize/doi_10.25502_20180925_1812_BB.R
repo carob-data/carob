@@ -28,7 +28,8 @@ carob_script <- function(path) {
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff, sf="Ghana.csv")
+	x <- mzfun(ff, sf="Ghana.csv")
+	d <- x$d
 		
 	
 	i <- d$location == "Babile"
@@ -38,6 +39,6 @@ carob_script <- function(path) {
 	i <- d$location == "Manga"
 	d$longitude[i] <- -0.16
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

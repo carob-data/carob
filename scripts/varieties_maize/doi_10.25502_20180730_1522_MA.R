@@ -31,7 +31,8 @@ This dataset contains output of the research for Togo."
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 
 	#lon/lat reversal
@@ -39,6 +40,6 @@ This dataset contains output of the research for Togo."
 	d$longitude[i] <- 0.98
 	d$latitude[i] <- 8.57
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

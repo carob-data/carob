@@ -29,7 +29,8 @@ The study was carried out by the International Institute of Tropical Agriculture
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 
 	i <- d$location == "Mlingano"
@@ -41,6 +42,6 @@ The study was carried out by the International Institute of Tropical Agriculture
 	d$longitude[i] <- 36.684
 	d$latitude[i] <- -8.139
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

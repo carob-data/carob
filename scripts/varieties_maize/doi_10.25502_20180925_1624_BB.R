@@ -23,7 +23,8 @@ carob_script <- function(path) {
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 	f <- grep("\\.csv$", basename(ff), value=TRUE)
-	d <- mzfun(ff, sf=f)	
+	x <- mzfun(ff, sf=f)
+	d <- x$d	
 	d$country <- "Democratic Republic of the Congo"
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

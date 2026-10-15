@@ -30,14 +30,15 @@ This dataset contains output of the research for Sierra Leone.
 	)
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 
 	d$latitude[d$location == "Freetown"] <- 8.4542
 	d$latitude[d$location == "Masita"] <- 8.29
 	d$longitude[d$location == "Masita"] <- -13
 
 # all scripts must end like this
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }
 
 

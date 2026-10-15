@@ -22,7 +22,8 @@ carob_script <- function(path) {
 	)
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	d <- mzfun(ff, sf="Nigeria.csv")	
+	x <- mzfun(ff, sf="Nigeria.csv")
+	d <- x$d	
 
 	d$yield[d$yield > 20000] <- NA
 
@@ -68,5 +69,5 @@ carob_script <- function(path) {
 	
 	d <- d[!is.na(d$yield), ]
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

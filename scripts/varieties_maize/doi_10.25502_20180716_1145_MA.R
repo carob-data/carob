@@ -27,7 +27,8 @@ The study was carried out by the International Institute of Tropical Agriculture
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 #	d$description <- as.character(d$description)
 
 	d$country   <- "Myanmar"
@@ -35,5 +36,5 @@ The study was carried out by the International Institute of Tropical Agriculture
 	d$longitude <- 96.267
 	d$latitude  <- 19.832
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

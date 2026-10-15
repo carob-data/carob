@@ -31,7 +31,8 @@ This dataset contains output of the research for Thailand."
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 	
 	i <- d$location == "Koktoom"
@@ -42,6 +43,6 @@ This dataset contains output of the research for Thailand."
 	d$longitude[i] <- NA
 	d$latitude[i] <- NA
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

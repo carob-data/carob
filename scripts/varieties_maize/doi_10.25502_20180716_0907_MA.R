@@ -30,7 +30,8 @@ and 2015 in over thirty African countries. This dataset contains output of the r
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 	
 	d$location[	d$location == "Cameroon"] <- NA
@@ -50,5 +51,5 @@ and 2015 in over thirty African countries. This dataset contains output of the r
 	d$latitude[i] <- 9.245833
 
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

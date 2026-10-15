@@ -148,7 +148,7 @@ intmztrial_striga <- function(ff, sf=NULL) {
 		
 		d$yield_part <- "grain"
 		d$striga_trial <- striga
-		d$borer_trial <- striga
+		d$borer_trial <- borer
 		d$variety <- trimws(d$variety)
 		d$variety[d$variety == ""] <- NA
 		d$description <- as.character(d$description)
@@ -213,5 +213,135 @@ intmztrial_striga <- function(ff, sf=NULL) {
 	d$irrigated <- as.logical(NA)
 	d$geo_from_source <- TRUE
 
-	d
+	if (!is.null(d$moist)) {
+		d$yield_moisture <- as.numeric(d$moist)
+		d$moist <- NULL
+	}
+
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- mz_pd_long(d)
+
+	pdvars <- c("blight", "curv", "diplodia", "dm", "e_rot", "gls", "helm", "rust", "stalk_rot", "streak",
+		"borer", "sb_dam_rat", "borer_dam_rat", "sbdamrat", "stemtunnel", "dead_heart",
+		"leaf_feed", "leaffeed", "lfeed2", "eldana", "mussidia", "insect",
+		"cob_dam_co", "cob_dam_rt", "ear_dam_co", "ear_dam_rat",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2")
+	d[intersect(pdvars, names(d))] <- NULL
+
+	list(d=d, long=long)
+}
+
+
+## pest/disease columns from the IITA maize trials → long records
+mz_pd_long <- function(d) {
+
+	rid <- d$record_id
+	n <- length(rid)
+	long <- NULL
+
+	num <- function(x) {
+		if (is.null(x)) return(rep(NA_real_, n))
+		if (is.numeric(x)) return(x)
+		x <- trimws(as.character(x))
+		x[x %in% c("", ".", "S", "NA", "na")] <- NA
+		as.numeric(x)
+	}
+
+	chr <- function(x, keep) {
+		if (length(x) != n) return(NA_character_)
+		z <- x[keep]
+		out <- rep(NA_character_, length(z))
+		i <- !is.na(z)
+		out[i] <- as.character(z[i])
+		out
+	}
+
+	first_num <- function(...) {
+		out <- rep(NA_real_, n)
+		for (x in list(...)) {
+			x <- num(x)
+			i <- is.na(out)
+			out[i] <- x[i]
+		}
+		out
+	}
+
+	add <- function(keep, disease=NA_character_, disease_severity=NA, disease_incidence=NA,
+			pest_species=NA_character_, pest_severity=NA, pest_incidence=NA, DAP=NA) {
+		if (!any(keep)) return(long)
+		x <- data.frame(
+			record_id = rid[keep],
+			disease = disease,
+			disease_severity = chr(disease_severity, keep),
+			disease_incidence = chr(disease_incidence, keep),
+			pest_species = pest_species,
+			pest_severity = chr(pest_severity, keep),
+			pest_incidence = if (length(pest_incidence) == n) as.integer(pest_incidence[keep]) else NA_integer_,
+			DAP = if (length(DAP) == n) as.integer(DAP[keep]) else if (length(DAP) == 1 && !is.na(DAP)) as.integer(DAP) else NA_integer_
+		)
+		if (is.null(long)) x else rbind(long, x)
+	}
+
+	# diseases
+	ds <- list(
+		blight = "maize leaf blight",
+		curv = "curvularia leaf spot",
+		diplodia = "stenocarpella ear rot",
+		e_rot = "ear rot",
+		gls = "gray leaf spot",
+		helm = "southern leaf blight",
+		rust = "rust",
+		stalk_rot = "stalk rot",
+		streak = "maize streak virus"
+	)
+	for (v in names(ds)) {
+		x <- num(d[[v]])
+		keep <- !is.na(x)
+		long <- add(keep, disease=ds[[v]], disease_severity=x)
+	}
+	x <- num(d$dm)
+	long <- add(!is.na(x), disease="maize dwarf mosaic virus", disease_incidence=x)
+
+	# stem borer (rating aliases combined; other measures kept as separate rows)
+	x <- first_num(d$borer_dam_rat, d$sb_dam_rat, d$sbdamrat, d$borer)
+	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
+	x <- num(d$dead_heart)
+	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
+	x <- num(d$stemtunnel)
+	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
+	x <- first_num(d$leaf_feed, d$leaffeed, d$lfeed2)
+	long <- add(!is.na(x), pest_species="stem borer", pest_severity=x)
+
+	x <- num(d$eldana)
+	long <- add(!is.na(x), pest_species="Eldana saccharina", pest_severity=x)
+	x <- num(d$mussidia)
+	long <- add(!is.na(x), pest_species="Mussidia nigrivenella", pest_severity=x)
+	x <- num(d$insect)
+	long <- add(!is.na(x), pest_species="insect", pest_severity=x)
+
+	co <- num(d$cob_dam_co)
+	rt <- num(d$cob_dam_rt)
+	keep <- !is.na(co) | !is.na(rt)
+	long <- add(keep, pest_species="stem borer", pest_severity=rt, pest_incidence=co)
+
+	co <- num(d$ear_dam_co)
+	rt <- num(d$ear_dam_rat)
+	keep <- !is.na(co) | !is.na(rt)
+	long <- add(keep, pest_species="stem borer", pest_severity=rt, pest_incidence=co)
+
+	# Striga counts/ratings at weeks after planting
+	for (spec in list(
+		list(co="str_co1", rat="str_rat1", DAP=56L),
+		list(co="str_co2", rat="str_rat2", DAP=70L),
+		list(co="str_co3", rat=NULL, DAP=21L)
+	)) {
+		co <- num(d[[spec$co]])
+		rt <- if (is.null(spec$rat)) rep(NA_real_, n) else num(d[[spec$rat]])
+		keep <- !is.na(co) | !is.na(rt)
+		long <- add(keep, pest_species="Striga", pest_severity=rt, pest_incidence=co, DAP=spec$DAP)
+	}
+
+	if (is.null(long) || nrow(long) == 0) return(NULL)
+	rownames(long) <- NULL
+	long
 }

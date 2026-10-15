@@ -30,11 +30,12 @@ This dataset contains output of the research for Cote D'Ivoire.
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 	d$country <- "Côte d'Ivoire"
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }
 

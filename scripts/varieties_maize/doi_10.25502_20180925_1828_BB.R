@@ -27,10 +27,11 @@ carob_script <- function(path) {
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff, sf="Kenya.csv")
+	x <- mzfun(ff, sf="Kenya.csv")
+	d <- x$d
 
 	
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

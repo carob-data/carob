@@ -31,7 +31,8 @@ This dataset contains output of the research for Mali."
 
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	d$country <- "Democratic Republic of the Congo"
 	
 	
@@ -66,5 +67,5 @@ This dataset contains output of the research for Mali."
 	d$latitude[i] <- -5.439
 
 
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

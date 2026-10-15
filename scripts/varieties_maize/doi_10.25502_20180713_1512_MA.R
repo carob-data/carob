@@ -26,7 +26,8 @@ carob_script <- function(path) {
 	
 	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mzfun(ff)
+	d <- x$d
 	
 	i <- d$location == "Boni"
 	d$longitude[i] <- -3.39
@@ -36,7 +37,7 @@ carob_script <- function(path) {
 	d$longitude[i] <- -3.4
 	d$latitude[i] <- 13.17
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }
 
