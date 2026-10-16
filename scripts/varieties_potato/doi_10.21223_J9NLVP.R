@@ -61,8 +61,8 @@ The CIP-PODEROSA CROCANTE, CIP-PODEROSA POLLERA and CIP-PODEROSA WATIA potato va
     fries_color = r1$`French Fry color scale At Harvest`,
     tuber_flavor = rowMeans(r1[, c("Baked Flavor M1_1", "Baked Flavor M1_2", "Baked Flavor M1_3")]),
     tuber_texture = rowMeans(r1[, c("Baked Texture M1_1", "Baked Texture M1_2", "Baked Texture M1_3")]),
+    tuber_reducing_sugars = r1$`Reducing sugars %`,
     # New variable
-    reducing_sugars_ = r1$`Reducing sugars %`,
     acrylamide_ = r1$`Acrylamides ug/Kg french fries`
   )
   
