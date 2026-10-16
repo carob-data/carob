@@ -132,13 +132,14 @@ The data set for the 'Transgressive Segregation for Continuous Storage Root Form
 	d$latitude <- 0.530
 	d$geo_from_source <- FALSE
 	d$geo_source <- "Google Maps"
-
+	
+##The publication indicated planting dates ("2016-09-22", "2017-03-10") but the dataset does not establish which planting date belongs to which observations
 # The dataset does not indicate the harvesting date dates only indicated that harvesting was done from January to April no exact dates provided in the publication
-	d$planting_date <- c("2016-09-22", "2017-03-10")
+	d$planting_date <- NA
 	
 	DAP <- c(90, 120, 150, 180)[d$harvest]
 	harvest_months <- c(3, 4, 5, 6)[as.numeric(d$harvest)]
-	d$harvest_date <- as.character(as.Date(d$planting_date) + DAP)
+	d$harvest_date <- NA
 	
 	d$harvest <- NULL
 	
