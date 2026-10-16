@@ -1,5 +1,6 @@
 # R script for "carob"
 
+
 carob_script <- function(path) {
    
 "Panel evaluation for resistance to late blight in advanced potato clones from populations: B: B1C5, B3C1, B3C2 - 369 clones with resistance to Late Blight and LTVR- 294 clones with resistance to virus PVX, PVY and/or PLRV and BW - 24 clones with Bacterial Wilt resistant, under natural infection in Oxapampa, planted in September 2014 and harvested in January 2015, using observation plots, three replications/ten plants. Clones from population B showed in average AUDPC value of 185, and clones from population LTVR showed AUDPC average of 1630. This inforamtion will be used in manuscript “Global multi-environment resistance QTL for foliar late blight resistance in tetraploid potato with tropical adaptation"
