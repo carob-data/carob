@@ -15,7 +15,7 @@ carob_script <- function(path) {
 		project=NA,
 		data_type= "experiment",
 		response_vars = "yield",
-		treatment_vars = "variety;longitude;latitude",
+		treatment_vars = "variety",
 		carob_contributor= "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date="2024-03-12"
@@ -29,8 +29,9 @@ carob_script <- function(path) {
 		variety=r$BreedersPedigree1, 
 		yield=as.numeric(r$GrainYieldTons_FieldWt) * 1000, 
 		anthesis_days=as.integer(round(as.numeric(r$AnthesisDate))),
-		rlper=r$RootLodgingPer,
-		moist=r$GrainMoisturePer
+		root_lodging = ifelse(is.na(r$RootLodgingPer), NA_character_, paste0(r$RootLodgingPer, "%")),
+
+		yield_moisture=as.numeric(r$GrainMoisturePer)
 #		plant_density=as.numeric(r$PlantStand_NumPerPlot)
 	) 
     
@@ -54,6 +55,7 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d <- d[!is.na(d$yield) & !is.na(d$variety) & trimws(d$variety) != "", ]
 		
 	carobiner::write_files(meta, d, path=path)
 }
