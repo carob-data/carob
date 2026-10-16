@@ -32,7 +32,6 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		carob_effort = 5
 	)
 	
-
 	f1 <- ff[basename(ff) == "data_dictionary.csv"]
 	f2 <- ff[basename(ff) == "maize-experimental-data.csv"]
 
@@ -44,7 +43,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	  location = r2$loc,
 	  plot_id = as.character(r2$Plot_No),
 	  variety = r2$Variety,
-	  planting_date = format(as.Date(r2$Planting_Date, format = "%m/%d/%Y"), "%Y-%m-%d"),
+	  planting_date = as.character(as.Date(r2$Planting_Date, format = "%m/%d/%Y")),
 	  yield = r2$yield,
 	  #treatment = r2$ID,
 	  plant_height = r2$PLHT,
@@ -61,35 +60,29 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	  crop = "maize"
 	)
 	
-	d$location[d$location == "Buk"] <- "Bayero Faculty of Agriculture"		
+	d$location[d$location == "Buk"] <- "Bayero University"		
 	d$harvest_date <- NA
 	d$trial_id <- "1"
 	
-## about the data (TRUE/FALSE)
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE 
-	d$irrigated <- NA
-	
+	d$irrigated <- NA	
 
-	### The dataset discription says the study was done in Kano state, yet if you check in the variable location the study seems to have been done in two different locations Buk and Zaria. With Buk =  could be Bayero University Kano but Zaria is not found in Kano state it is in Kuduna State
-
-	#Geo-coordinates for Zaria were obtained from GADM = adm2, while coordinates for Bayero University, Faculty of Agriculture, were obtained from Google Maps	  
-	 
+	### The dataset discription says the study was done in Kano state, yet the data has two locations Buk and Zaria. With Buk = University Kano but Zaria is Kuduna State
+	 ## 
 	geo <- data.frame(
 	    adm1 = c("Kaduna", "Kano"),
 	    adm2 = c("Zaria", "Kano"),
-	    location = c("Zaria", "Bayero Faculty of Agriculture"), 
+	    location = c("Zaria", "Bayero University"), # assuming BUK Agricultue Faculty
 	    longitude = c(7.7143, 8.423),
 	    latitude = c(11.0231, 11.973),
-	    geo_uncertainty = c(16966, 4791),
-	    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2")
-	  )
-	  
-	 d <- merge(d, geo, by = "location", all.x = TRUE)
-	 
-	 d$geo_from_source <- FALSE
-	 
-	 
+	    geo_uncertainty = c(16966, NA),
+	    geo_source = c("GADM 4.1, adm2", "Google Maps")
+	)
+
+	d <- merge(d, geo, by = "location", all.x = TRUE) 
+	d$geo_from_source <- FALSE
+		 
    d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    d$fertilizer_type <- NA
    
