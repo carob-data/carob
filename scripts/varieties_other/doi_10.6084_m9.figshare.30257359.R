@@ -48,7 +48,7 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	  flowering_days=r3$FLW_DAYS,
 	  flower_color=tolower(r3$FLW_CL),
 	  plant_height=r3$PH_R8,
-	  seed_weight=r3$W100G,
+	  seed_weight=r3$W100G*1000,
 	  yield=r3$GY,
 	  protein=r3$PROT,
 	  oil_content=r3$OIL,#grain oil content
@@ -60,8 +60,7 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	  irrigated = r3$RAINFED != "Rainfed",
 	  germination_rate=r3$PL_EMERG_PCT,
 	  pod_shattering=r3$Pod_Shattering,
-	  severity_scale="1-5",#level of pod shattering
-	  seed_weight=r3$W100G*1000
+	  severity_scale="1-5" #level of pod shattering
 	)
 	#plant density can not be determined because the variable "r3$PL_EMERG_COUNT" requires plot area since the unit is plants/plot
 	#the variable "NDM" is not listed in the supplementary data, therefore i can not determine which growth parameter it focused on
