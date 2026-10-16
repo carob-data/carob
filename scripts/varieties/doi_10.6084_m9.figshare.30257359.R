@@ -102,15 +102,15 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 
 	# fixing bad harvest dates by comparing them to other records
 	d$harvest_date[d$country == "Uganda" & d$harvest_date == "2021-12-16"] <- "2020-12-16"
-    d$harvest_date[d$country == "Zambia" & d$harvest_date == "2020-05-12"] <- "2021-05-12"
-    d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-07-22"] <- "2023-11-22"
-    d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-08-19"] <- "2023-11-19"
-    d$harvest_date[d$country == "Malawi" & d$harvest_date == "2024-03-31"] <- "2024-07-31"
-    d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-05-26"] <- "2023-05-26"
-    d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-04-26"] <- "2023-04-26"
-    i <- d$country == "Mozambique"
+  d$harvest_date[d$country == "Zambia" & d$harvest_date == "2020-05-12"] <- "2021-05-12"
+  d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-07-22"] <- "2023-11-22"
+  d$harvest_date[d$country == "Mali" & d$harvest_date == "2023-08-19"] <- "2023-11-19"
+  d$harvest_date[d$country == "Malawi" & d$harvest_date == "2024-03-31"] <- "2024-07-31"
+  d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-05-26"] <- "2023-05-26"
+  d$harvest_date[d$country == "Mozambique" & d$harvest_date == "2022-04-26"] <- "2023-04-26"
+  i <- d$country == "Mozambique"
 	d$harvest_date[i] <- gsub("2022-11-|2022-12-", "2023-05-", d$harvest_date[i])
-    #i <- i & d$planting_date == "2022-12-22"
+  #i <- i & d$planting_date == "2022-12-22"
 	#d$harvest_date[i] <- gsub("2022-", "2023-", d$harvest_date[i])
  	
 	carobiner::write_files(path, meta, d)
