@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## added varible IPAR = intercepted photosyntehically active radiation
+## added varible IPAR = intercepted photosynthetic active radiation
 #### location is confusing the dataset discription only mentions one study site, yet location data inside mentions two sites which are located in two different states
 
 carob_script <- function(path) {
@@ -41,7 +41,6 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 
 	d <- data.frame(
 	  country = "Nigeria",
-	  adm2 = "Kano",
 	  location = r2$loc,
 	  plot_id = as.character(r2$Plot_No),
 	  variety = r2$Variety,
@@ -61,7 +60,8 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	  N_fertilizer = as.numeric(sub("N", "", r2$Nrate)),
 	  crop = "maize"
 	)
-			
+	
+	d$location[d$location == "Buk"] <- "Bayero Faculty of Agriculture"		
 	d$harvest_date <- NA
 	d$trial_id <- "1"
 	
@@ -73,14 +73,23 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 
 	### The dataset discription says the study was done in Kano state, yet if you check in the variable location the study seems to have been done in two different locations Buk and Zaria. With Buk =  could be Bayero University Kano but Zaria is not found in Kano state it is in Kuduna State
 
-	## geo_cordinates displayed here were obtained from GADM adm2 = Kano State in Nigeria
-	  d$longitude <- 8.4775
-	  d$latitude <- 11.9405
-	  d$geo_uncertainty <-  4791
-	  d$geo_source <- "GADM 4.1, adm2"
-	  d$geo_from_source <- FALSE
+	#Geo-coordinates for Zaria were obtained from GADM = adm2, while coordinates for Bayero University, Faculty of Agriculture, were obtained from Google Maps	  
+	 
+	geo <- data.frame(
+	    adm1 = c("Kaduna", "Kano"),
+	    adm2 = c("Zaria", "Kano"),
+	    location = c("Zaria", "Bayero Faculty of Agriculture"), 
+	    longitude = c(7.7143, 8.423),
+	    latitude = c(11.0231, 11.973),
+	    geo_uncertainty = c(16966, 4791),
+	    geo_source = c("GADM 4.1, adm2", "GADM 4.1, adm2")
+	  )
 	  
-	  
+	 d <- merge(d, geo, by = "location", all.x = TRUE)
+	 
+	 d$geo_from_source <- FALSE
+	 
+	 
    d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    d$fertilizer_type <- NA
    
