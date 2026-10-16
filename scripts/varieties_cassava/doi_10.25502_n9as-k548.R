@@ -1,10 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
-### location is confusing the location names says the says the study was conducted in adm2 = Ibadan yet the study discription says it was done in adm2 = Iseyin, adm4 = Ajapero village
-## missing harvest date
+## REJECTED 
+# exeperiment without response data 
 
 carob_script <- function(path) {
 
@@ -13,9 +11,6 @@ Fertilizer Experiment with 18 clones at Obasanjo Farm Ajepero-Oyo-Iseyin Road
 
 Fertilizer Experiment with 18 clones at Obasanjo Farm Ajepero-Oyo-Iseyin Road
 "
-
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
 
 	uri <- "doi:10.25502/n9as-k548"
 	group <- "varieties_cassava"
@@ -43,20 +38,13 @@ Fertilizer Experiment with 18 clones at Obasanjo Farm Ajepero-Oyo-Iseyin Road
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2)
 
-## select the variables of interest and assign them to the correct name
-
-
-	
 	d1 <- data.frame(
 	  country = "Nigeria",
-	  adm1 = "Oyo",
-	  adm2 = "Iseyin",### obtained from studyption and name
-	  location = "Ajepero",#obtained from studyption and name
 		plot_id = as.character(r1$plotNumber),
 		planting_date = "2006", ### from the study year
-		harvest_date = NA, #not indicated in the dataset
-		#location = r1$locationDbId,
-		#location = r1$locationName,#this column highlights that the study was done in Ibadan
+		harvest_date = NA,
+		#location = r1$locationName, #this variables suggests that the study was done in Ibadan
+        location <- "Obasanjo Farm, Ajepero, Oyo-Iseyin Road"
 		field_size = r1$fieldSize,
 		plot_area = (r1$plotLength)*(r1$plotWidth),
 		variety = r1$germplasmName,
@@ -76,15 +64,10 @@ Fertilizer Experiment with 18 clones at Obasanjo Farm Ajepero-Oyo-Iseyin Road
 	d$irrigated <- NA
 	
 
-## see carobiner::geocode
-	#### The geo_coordinates are for adm2 = Iseyin sourced from GADM. I could not find exact location  for Ajapero farm in google maps
-	
-	  d$longitude <- 3.5333
-	  d$latitude <- 7.8647
-	  d$geo_uncertainty <- 32578
-	  d$geo_source <- "GADM 4.1, adm2"
-	  d$geo_from_source <- FALSE
-
+  d$longitude <- 3.6972
+  d$latitude <- 7.9175
+  d$geo_source <- "Google Maps"
+  d$geo_from_source <- FALSE
 
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
   d$fertilizer_type <- NA
