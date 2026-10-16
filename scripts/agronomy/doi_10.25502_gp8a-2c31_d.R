@@ -2,8 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-## added varible PAR = photosyntehically active radiation intercepted
+## added varible IPAR = intercepted photosyntehically active radiation
 #### location is confusing the dataset discription only mentions one study site, yet location data inside mentions two sites which are located in two different states
 
 carob_script <- function(path) {
@@ -13,9 +12,6 @@ Agronomy Data, Kano, Nigeria under KSADP project
 
 A 5-year development project titled; Kano State Agro-Pastoral Development Project (KSADP). The project aims to reach 450,000 smallholder farmers and enhance crop production and livestock productivity in Kano State
 "
-
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
 
 	uri <- "doi:10.25502/gp8a-2c31/d"
 	group <- "agronomy"
@@ -28,7 +24,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		project = "Kano State Agro-Pastoral Development Project (KSADP)",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "fertilizer_used;fertilizer_amount",
+		treatment_vars = "N_fertilizer",
 		response_vars = "yield;flowering_days;maturity_days;harvest_index", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-09-25",
@@ -43,8 +39,7 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	#r1 <- read.csv(f1)
 	r2 <- read.csv(f2)
 
-
-	d1 <- data.frame(
+	d <- data.frame(
 	  country = "Nigeria",
 	  adm2 = "Kano",
 	  location = r2$loc,
@@ -60,19 +55,13 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	  harvest_index = r2$HI,
 	  rep = r2$rep,
 	  LAI = r2$LAI,
-	  PAR = r2$IPAR, ### added variable intercepted photosynthetic active radiation
-	  seed_weight = r2$swt100,
+	  IPAR = r2$IPAR, ### added variable intercepted photosynthetic active radiation
+	  seed_weight = r2$swt100 * 10,
 	  SPAD = r2$SPAD,
-	  fertilizer_amount = r2$Nrate,
-	  fertilizer_used = TRUE,
+	  N_fertilizer = as.numeric(sub("N", "", r2$Nrate)),
 	  crop = "maize"
 	)
-	
-	
-	d1$fertilizer_amount <- as.numeric(sub("N", "", d1$fertilizer_amount))
-	
-	d <- d1
-	
+			
 	d$harvest_date <- NA
 	d$trial_id <- "1"
 	
@@ -82,8 +71,8 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	d$irrigated <- NA
 	
 
-## see carobiner::geocode
 	### The dataset discription says the study was done in Kano state, yet if you check in the variable location the study seems to have been done in two different locations Buk and Zaria. With Buk =  could be Bayero University Kano but Zaria is not found in Kano state it is in Kuduna State
+
 	## geo_cordinates displayed here were obtained from GADM adm2 = Kano State in Nigeria
 	  d$longitude <- 8.4775
 	  d$latitude <- 11.9405
@@ -93,7 +82,6 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 	  
 	  
    d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-   d$N_fertilizer <- as.numeric(d$fertilizer_amount)
    d$fertilizer_type <- NA
    
    d$yield_part <- "grain"
