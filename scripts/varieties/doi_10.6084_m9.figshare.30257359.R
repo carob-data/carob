@@ -58,8 +58,14 @@ This repository contains a comprehensive dataset and full analysis pipeline for 
 	  latitude = r3$LAT,
 	  longitude = r3$LON,
 	  elevation=r3$ELEV,
-	  irrigated = r3$RAINFED != "Rainfed"
+	  irrigated = r3$RAINFED != "Rainfed",
+	  germination_rate=r3$PL_EMERG_PCT,
+	  pod_shattering=r3$Pod_Shattering,
+	  severity_scale="1-5",#level of pod shattering
+	  seed_weight=r3$W100G*1000
 	)
+	#plant density can not be determined because the variable "r3$PL_EMERG_COUNT" requires plot area since the unit is plants/plot
+	#the variable "NDM" is not listed in the supplementary data, therefore i can not determine which growth parameter it focused on
 
     # Malawi, seems subset of d1 (but records are not a perfect match)
 	# d2 <- data.frame(
