@@ -46,9 +46,11 @@ carob_script <- function(path) {
 	    anthesis_days = as.numeric(r$mAnthesisDate),
 	    silking_days = as.numeric(r$mDaysToSilk),
 	    asi = as.numeric(r$mASI),
-	    rlper = r$mRootLodgingPer,
-	    slper = r$mStemLodgingPer,
-	    husk = r$mBadHuskCoverPer,
+	    root_lodging = ifelse(is.na(r$mRootLodgingPer), NA_character_, paste0(r$mRootLodgingPer, "%")),
+
+	    stalk_lodging = ifelse(is.na(r$mStemLodgingPer), NA_character_, paste0(r$mStemLodgingPer, "%")),
+
+	    husk = as.character(r$mBadHuskCoverPer),
 	    e_rot = r$mEarRotTotalPer,
 	    plant_height = as.numeric(r$mPlantHeightCm),
 	    ear_height = as.numeric(r$mEarHeightCm),
@@ -74,7 +76,7 @@ carob_script <- function(path) {
 	d$adm1 <- "Mexico"
 	d$adm2 <- "Texcoco"
 	d$location <- "El Batán"
-	d$site <- "CIMMYT"
+	d$site <- "Cimmyt"
 	d$elevation <- 2200
 	d$latitude<-19.5293
 	d$longitude<- -98.8492
@@ -93,8 +95,13 @@ carob_script <- function(path) {
   d$ear_height[d$ear_height < 2] <- NA
   d$plant_height[d$plant_height==0] <- NA
   d$yield[d$yield < 0] <- NA
-  
-  carobiner::write_files(path, meta, d)
+	d <- d[!is.na(d$yield), ]
+
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 
 

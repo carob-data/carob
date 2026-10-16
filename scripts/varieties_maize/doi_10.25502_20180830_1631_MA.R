@@ -27,11 +27,11 @@ The study was carried out by the International Institute of Tropical Agriculture
 	)
 
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mz_fun(ff)
+	d <- x$d
 	
-	d$description <- as.character(d$description)
 	d$yield <- d$yield * 1000
 	
 	# Dalabani is in Guinea
@@ -39,5 +39,5 @@ The study was carried out by the International Institute of Tropical Agriculture
 	d$country[i] <- "Guinea"
 
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }
