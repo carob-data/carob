@@ -51,7 +51,7 @@ The push-pull system, a stimulo-deterrent cropping strategy consisting of interc
 	)
 
 	d$trap_crop_used <- r$Napier=="With Napier"
-	d$trap_crop_type <- "napier grass"
+	d$trap_crop_type <- ifelse(grepl("With Napier", r$Napier),"napier grass","none")
 	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
@@ -75,7 +75,7 @@ The push-pull system, a stimulo-deterrent cropping strategy consisting of interc
 	d$trial_id <- paste(d$adm2,seq(nrow(d)), sep = "_")
 	
 	d$intercrops[d$intercrops=="MD"] <- "maize_desmodium"
-	d$intercrops[d$intercrops=="M"] <- "maize"
+	d$intercrops[d$intercrops=="M"] <- "none"
 	d$intercrops[d$intercrops=="MB"] <- "maize_common bean"
 	
 	carobiner::write_files(path, meta, d)
