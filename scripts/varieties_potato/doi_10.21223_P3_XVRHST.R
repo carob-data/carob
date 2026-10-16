@@ -1,10 +1,10 @@
 carob_script <- function(path) {
   
-  "
+"
   Dataset for: Phenotypic Stability for Tuber Yield and Late Blight Resistance in Advanced Clones from B3C3
   
   The objective of these experiments were to study the phenotypic stability of late blight resistance and tuber yield in 30 advanced clones belonging to population B group B3, third cycle 3 - B3C3. From 2016 to 2018, eight experiments were performed. Three in Oxapampa (2000masl) to study the phenotypic stability of resistance to late blight. And five in La Molina (150masl), Huancayo (3200 masl) and San Ramon (800masl) for the tuber yield. The randomized complete block statistical design was used, with three repetitions of 10 plants each. Information of late blight resistance was recorded, such as: percentage of leaf area damaged by this disease for 6 weeks, at 7-day intervals. With the information obtained, the area under the disease progress curve (AUDPC) and the scale of susceptibility to late blight (SAUDPC), were calculated. At harvest, for tuber yield: the number of plants harvested, the number and weight of commercial and non-commercial tubers were recorded. Then, the commercial (MTY) and total yield (TTY) per hectare were calculated.
-  "
+"
   
   uri <- "doi:10.21223/P3_XVRHST"
   group <- "varieties_potato"

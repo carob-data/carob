@@ -3,7 +3,6 @@
 
 ## ISSUES
 
-
 carob_script <- function(path) {
 
 "
@@ -70,6 +69,7 @@ P. coccineus interspecific lines (Agronomic quality, resistance levels in Fusari
        is_survey= FALSE,
        yield_part= "seed",
        yield_moisture= as.numeric(NA),
+	   yield_isfresh = NA,
        irrigated= NA,
        geo_from_source= FALSE,
        stress= "disease"
@@ -135,7 +135,6 @@ P. coccineus interspecific lines (Agronomic quality, resistance levels in Fusari
  ## correcting yield errors probably happen during the data entry process
  i <- which(grepl("19933.333|15853.333|13940", d$yield))
  d$yield[i] <- d$yield[i]/10  
-
  
 carobiner::write_files(path, meta, d, long = x)
 

@@ -81,7 +81,11 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
 	
-	carobiner::write_files(path, meta, d)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 
 

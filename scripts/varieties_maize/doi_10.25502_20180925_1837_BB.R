@@ -22,8 +22,9 @@ carob_script <- function(path) {
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	d <- mzfun(ff, sf="Mali.csv")	
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
+	x <- mz_fun(ff, sf="Mali.csv")
+	d <- x$d	
 	
 	i <- d$location == "Sapu"
 	d$country[i] <- "Gambia"
@@ -32,5 +33,5 @@ carob_script <- function(path) {
 	d$longitude[i] <- -5.69
 	d$latitude[i] <- 12.621
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

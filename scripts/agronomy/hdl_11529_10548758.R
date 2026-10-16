@@ -46,9 +46,9 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 	mgmnt <- data.frame(
 		treatment_id = 1:6,
 		treatment = c("transplanted puddled rice -> conventional tillage broadcasted wheat (TPR-CTW)", "transplanted puddled rice -> zero-tillage wheat -> zero-tillage mung bean (TPR-ZTWMb)", "zero-tillage direct-seeded rice -> zero-tillage wheat -> zero-tillage mungbean (ZTDSR-ZTWMb)", "zero-tillage maize -> zero-tillage wheat -> zero-tillage mung bean (ZTM-ZTWMb)", "zero-tillage direct seeded rice -> zero-tillage wheat -> zero-tillage mung bean + sub-surface drip irrigation (ZTDSR-ZTWMb+SDI)", "zero-tillage maize -> zero-tillage wheat -> zero-tillage mung bean + sub-surface drip irrigation (ZTM-ZTWMb+SDI)"),
-		crop = c("rice_wheat", "rice_wheat_mung bean", "rice_wheat_mung bean", "maize_wheat_mung bean", "rice_wheat_mung bean", "maize;wheat;mungbean"),
+		crop = c("rice_wheat", "rice_wheat_mung bean", "rice_wheat_mung bean", "maize_wheat_mung bean", "rice_wheat_mung bean", "maize_wheat_mung bean"),
 		planting_method = c("transplanting;broadcasting", "transplanting;drilling;drilling", "drilling", "drilling", "drilling", "drilling"),
-		land_prep_method = c("puddling;conventional", "puddling;none", rep("none", 4)),
+		land_prep_method = c("puddled;conventional", "puddled;none", rep("none", 4)),
 	 irrigation_method = c(rep("flood", 4), "subsurface drip", "subsurface drip")
 	)
 	
@@ -100,7 +100,7 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 	fert <- aggregate(fert[, c("N_fertilizer", "P_fertilizer", "K_fertilizer")], fert["treatment_id"], sum)
 		   
   d <- merge(d, fert, by = "treatment_id", all.x = TRUE)
-  d$treament_id <- NULL
+  d$treatment_id <- NULL
 	
   d$is_survey <- FALSE
   d$on_farm <- TRUE
