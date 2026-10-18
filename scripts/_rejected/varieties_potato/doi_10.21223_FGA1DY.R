@@ -1,5 +1,7 @@
 carob_script <- function(path) {
 
+#REJECTED because the response_vars values are all NA
+
 "
 Dataset for: Variety release documentation
 
