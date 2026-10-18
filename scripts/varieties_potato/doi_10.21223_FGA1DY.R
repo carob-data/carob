@@ -20,7 +20,6 @@ Distinction, Homogeneity, and Stability (DHE) trials were installed in two locat
     response_vars = "yield;yield_marketable",
     notes = NA,
     carob_contributor = "Maryam Yahya",
-    carob_LLM = "Claude Opus 5.5",
     carob_date = "2026-10-18",
     carob_completion = 50,
     carob_effort = 1.0
