@@ -31,16 +31,16 @@ Cluster analysis separated the maize germplasm into five major groups, different
 		variety_code = as.character(r$ENTRY),
 		planting_date = as.character(r$YEAR),
 		rep = r$REP,
-		dy_poll = r$POLLEN,
+		anthesis_days = r$POLLEN,
 		silking_days = r$DYSK, 
 		asi = r$ASI,
 		plant_height= r$PLHT, 
 		ear_height=r$EHT, 
-		p_asp=r$PASP, 
+		aspect=r$PASP, 
 		e_rot=r$EROT, 
-		e_asp=r$EASP, 
+		ear_aspect=r$EASP, 
 		yield=r$YIELD, 
-		husk=r$HUSK,
+		husk=as.character(r$HUSK),
 		crop="maize",
 		yield_part="grain"
    )
@@ -67,8 +67,15 @@ Cluster analysis separated the maize germplasm into five major groups, different
 	d$K_fertilizer <- 60
 	d$fertilizer_type <- "NPK; urea"
 	d$is_survey <- FALSE
+	d$geo_from_source <- FALSE
+	d$yield_moisture <- NA
+	d$yield_isfresh <- NA	
 
-	carobiner::write_files(meta, d, path=path)	
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 
 

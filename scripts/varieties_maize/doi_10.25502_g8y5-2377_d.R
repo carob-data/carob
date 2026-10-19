@@ -38,22 +38,19 @@ carob_script <- function(path) {
 		trial_id=paste0(r1$TRIAL, "_", r1$LOC),
 		rep=r1$Rep,
 		variety_code=r1$Pedigree,
-		dy_poll=r1$POLLEN,
+		anthesis_days=r1$POLLEN,
 		silking_days=r1$DYSK,
 		asi=r1$ASI,
 		plant_height=r1$PLHT,
 		ear_height=r1$EHT,
-		rl=r1$RL,
-		rlper=r1$RLPERCT,
-		sl=r1$SL,
-		slper=r1$SLPERCT,
-		husk=r1$HC,
-		p_asp=r1$PASP,
-		e_asp=r1$EASP,
-		p_harv=r1$PHARV,
-		e_harv=r1$EHARV,
+		root_lodging = ifelse(is.na(r1$RLPERCT), NA_character_, paste0(r1$RLPERCT, "%")),
+		stalk_lodging = ifelse(is.na(r1$SLPERCT), NA_character_, paste0(r1$SLPERCT, "%")),
+
+		husk=as.character(r1$HC),
+		aspect=r1$PASP,
+		ear_aspect=r1$EASP,
 		e_rot=r1$EROT,
-		moist=r1$MOIST,
+		yield_moisture=r1$MOIST,
 		yield = r1$YIELD,
 		#fertilizer rates from publication
 		N_fertilizer=90,
@@ -76,20 +73,18 @@ carob_script <- function(path) {
 	  trial_id=paste0(r2$TRIAL, "_", r2$LOC),
 	  rep=r2$Rep,
 	  variety_code=r2$Pedigree,
-	  dy_poll=r2$POLLEN,
+	  anthesis_days=r2$POLLEN,
 	  silking_days=r2$DYSK,
 	  asi=r2$ASI,
 	  plant_height=r2$PLHT,
 	  ear_height=r2$EHT,
-	  rl=r2$RL,
-	  sl=r2$SL,
-	  husk=r2$HC,
-	  p_asp=r2$PASP,
-	  e_asp=r2$EASP,
-	  p_harv=r2$PHARV,
-	  e_harv=r2$EHARV,
+	  root_lodging = ifelse(is.na(r2$RL), NA_character_, as.character(r2$RL)),
+	  stalk_lodging = ifelse(is.na(r2$SL), NA_character_, as.character(r2$SL)),
+	  husk=as.character(r2$HC),
+	  aspect=r2$PASP,
+	  ear_aspect=r2$EASP,
 	  e_rot=r2$EROT,
-	  moist=r2$MOIST,
+	  yield_moisture=r2$MOIST,
 	  yield = r2$YIELD,
       #fertilizer rates from publication
 	  N_fertilizer=90,
@@ -111,20 +106,18 @@ carob_script <- function(path) {
 	  trial_id=paste0(r3$TRIAL, "_", r3$LOC),
 	  rep=r3$Rep,
 	  variety_code=r3$Pedigree,
-	  dy_poll=r3$POLLENIN,
+	  anthesis_days=r3$POLLENIN,
 	  silking_days=r3$DYSKIN,
 	  asi=r3$ASIIN,
 	  plant_height=r3$PLHTIN,
-	  rlper=r3$RLINPERCT,
-	  slper=r3$SLINPERCT,
-	  ehtin=r3$EHTIN,
-	  rl=r3$RLIN,
-	  sl=r3$SLIN,
-	  e_asp =r3$EASPIN,
-	  p_harv=r3$PHARVIN,
-	  e_harv=r3$EHARVIN,
+	  root_lodging = ifelse(is.na(r3$RLINPERCT), NA_character_, paste0(r3$RLINPERCT, "%")),
+
+	  stalk_lodging = ifelse(is.na(r3$SLINPERCT), NA_character_, paste0(r3$SLINPERCT, "%")),
+
+	  ear_height=r3$EHTIN,
+	  ear_aspect =r3$EASPIN,
 	  e_rot=r3$EROTIN,
-	  moist=r3$MOISTIN,
+	  yield_moisture=r3$MOISTIN,
 	  str_co1=r3$CO1,
 	  str_co2=r3$CO2,
 	  str_rat1=r3$RAT1,
@@ -168,10 +161,16 @@ carob_script <- function(path) {
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$borer_trial <- FALSE
+	d$geo_from_source <- FALSE
 	d$crop <- "maize"
 	d$yield_part <- "grain"
+	d$variety_code <- trimws(as.character(d$variety_code))
 	
-	carobiner::write_files(path, meta, d)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 
 
