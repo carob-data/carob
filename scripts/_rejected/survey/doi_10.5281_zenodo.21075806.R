@@ -2,7 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# rejected because dataset was modelled using baseline data, can't standardize the baseline data because nothing was being tested (no treatments)
+
+# Rejected because no provenance is provided, but the N, P, K and yield data are likely from LSMS-ISA and the original sources should be used for that. Also, most variables are clearly derived from lon/lat, not actual observations 
 
 
 carob_script <- function(path) {
