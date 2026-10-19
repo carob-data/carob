@@ -62,7 +62,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  cover_crop = r1$cover,
 	  flux_CO2 = r1$CO2,
 	  soil_temp = r1$soiltemp, # soil temperature (Celsius)
-	  soil_C = r1$MinC, ## mineral carbon (mg CO2 kg-1 soil)
+	  soil_C_inorg = r1$MinC/10000, ## ppm to %
 	  soil_moisture = r1$soilmoist, # %
 	  residue_prevcrop = r1$cc_biomass,
 	  trial_id  = paste0("onlyorg", "-", r1$event)
@@ -112,7 +112,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  cover_crop = r5$cover,
 	  soil_moisture = r5$soilmoist, # %
 	  soil_temp = r5$soiltemp, # soil temperature (Celsius)
-	  soil_C = r5$MinC, ## mineral carbon (mg CO2 kg-1 soil)
+	  soil_C_inorg = r5$MinC/10000, ## from ppm to %
 	  flux_CO2 = r5$CO2,
 	  residue_prevcrop = r5$cc_biomass,
 	  trial_id  = paste0("OrgCon", "-", r5$event)
