@@ -52,8 +52,9 @@ Tanzania Performance Trials 2016
     soil_P=r$P_soil_value,
     soil_K=r$K_soil_value,
     yield_part="grain",
-    yield_isfresh=FALSE,  # unlikely, how do you know?
-    yield_moisture=NA
+    yield_isfresh=TRUE,  
+    yield_moisture=NA,
+    geo_from_source=FALSE
   )
   d$trial_id <- 1:nrow(d)
 
@@ -88,27 +89,47 @@ Tanzania Performance Trials 2016
 	d$harvest_date  <- NA
 	
 	#manually adding location data based on adm4(Tanzania GADM has upto 3 levels only)
+  #Google Maps coordinates
 	geo <- data.frame(
-	  adm3 = c("Isale", "Kate", "Laela", "Magamba", "Mtunduru", "Nyimbili", "Mlowo", "Santilya", "Iyunga Mapinduzi", "Isuto", "Ulembwe", "Makoga", "Uwemba", "Maposeni",
-	    "Kilagano", "Mgombasi", "Rwinga", "Ikweha", "Bumilayinga", "Igombavanu", "Ulanda", "Maboga", "Irole", "Uhambingeto", "Lembeni", "Shighatini", "Msangeni", "Kahe",
-	    "Kahe Mashariki", "Siha Kati", "Siha Kaskazini", "Kikatiti", "Maji ya chai", "Kikwe", "Sepeko", "Karatu", "Qurus", "Tlawi", "Bashay", "Sanu", "Tumati", "Dareda", "Riroda", "Measkron",
-	    "Endasak", "Hidet", "Njoro", "Olbolot"),
-	  
-	  longitude = c( 31.0762, 31.1837, 32.0427, 38.3010, 34.5140, 33.0561, 32.9949, 33.3691, 33.3879, 33.2683, 34.6280, 34.5709, 34.7876, 35.4238,
-	    35.2872, 36.0587, 36.2063, 34.9189, 35.0599, 35.1235, 35.5289, 35.2713, 35.9000, 35.9732, 37.6078, 37.6435, 37.6552, 37.4332,
-	    37.5254, 37.1047, 37.1239, 36.9469, 36.9237, 36.8304, 36.3562, 35.6657, 35.6351, 35.4821, 35.3499, 35.5521, 35.4397, 35.5215, 35.6449, 35.4923,
-	    35.5164, 35.5258, 36.4652, 36.3007),
-	  
-	  latitude = c( -7.64086, -7.85418, -8.58138, -4.75779, -4.82126, -9.20269, -9.01897, -9.11111, -9.06403, -9.07271, -9.34524, -9.34118, -9.46611, -10.49900,
-	    -10.40110, -10.22040, -10.47010, -8.43673, -8.38015, -8.22465, -7.82165, -7.97206, -7.79871, -7.57183, -3.78384, -3.67032, -3.64501, -3.50037,
-	    -3.31906, -3.23197, -3.13050, -3.40028, -3.33673, -3.41973, -3.42236, -3.34835, -3.39242, -3.91656, -4.00012, -3.86088, -4.07794, -4.23638, -4.29954, -4.45380,
-	    -4.42158, -4.49937, -5.25531, -5.17758),
-     geo_from_source = FALSE,
-	 geo_source = "Google Maps"
-	)
+	  location = c(
+	    "Ntuchi - Kanondo", "Kitosi", "Mvimwa - Mission", "Maporomoko", "Mlombo", "Nyimbili", "Hasamba", "Mpanda", "Hantesya", "Kiruru Ibweijewa", "Mbambua", "Rau river",
+	    "Ghona", "Ngasinyi", "Kyomu", "Ngaritati", "Koboko", "Kikatiti", "Ngurdoto", "Kikwe", "Lendikinya", "Gyekrum-Arusha", "Qurus", "Gongali", "Tlawi", "Masqaroda",
+	    "Harsha", "Silaloda", "Mangisa", "Dareda Kati", "Nakwa", "Riroda", "Measkron", "Endasiwold", "Bassotughang", "Ndaleta", "Mwitikira"
+	  ),
+	  latitude = c(
+	    -7.714, -7.748, -7.809, -9.308, -8.403, -9.205, -9.146, -6.363, -9.213, -3.714, -3.759, -3.394,
+	    -3.455, -3.239, -3.476, -3.267, -3.192, -3.4, -3.327, -3.425, -3.339, -3.351, -3.392, -3.392, -3.916, -3.895,
+	    -3.995, -3.836, -4.001, -4.213, -4.247, -4.299, -4.453, -4.407, -4.343, -5.231, -6.584
+	  ),
+	  longitude = c(
+	    31.152, 31.157, 31.122, 32.774, 32.009, 33.056, 33.006, 31.064, 32.985, 37.588, 37.603, 37.372,
+	    37.529, 37.358, 37.512, 37.044, 37.077, 36.946, 36.913, 36.832, 36.362, 35.671, 35.652, 35.652, 35.482, 35.37,
+	    35.342, 35.443, 35.37, 35.553, 35.702, 35.644, 35.492, 35.499, 35.312, 36.499, 35.661
+	  ),
+	  geo_uncertainty = rep(NA,37),
+	  geo_source = rep("Google Maps",37)
+	)	
+	d <- merge(d, geo, by="location", all.x = TRUE)
 	
-	d <- merge(d, geo, by="adm3", all.x = TRUE)
+	#Using point radius method for location names not found on google maps and location names with NA 
+	no_coords <- is.na(d$latitude) | is.na(d$longitude)
 	
+	missing <- d[no_coords, ]
+	geo <- data.frame(
+	adm3 = c("Maboga", "Ulanda", "Irole", "Uhambingeto", "Bumilayinga", "Igombavanu", "Ikweha", "Magamba", "Msangeni", "Shighatini", "Isuto", "Iyunga Mapinduzi", "Santilya", "Uwemba", "Makoga", "Ulembwe", "Laela", "Mgombasi", "Rwinga", "Kilagano", "Maposeni", "Mtunduru", "Magamba","Siha Kati"),
+	longitude = c(35.3159, 35.5286, 35.9024, 35.9739, 35.0826, 35.1137, 34.9102, 31.103, 37.626, 37.6252, 33.2568, 33.3825, 33.3923, 34.7912, 34.5651, 34.6364, 31.9902, 36.0826, 36.2022, 35.2825, 35.4496, 34.4987, 32.9134,37.0856),
+	latitude = c(-7.9289, -7.819, -7.7725, -7.5688, -8.3955, -8.2315, -8.3269, -6.4313, -3.6166, -3.6667, -9.0753, -9.073, -9.1373, -9.4737, -9.334, -9.3502, -8.6096, -10.0367, -10.471, -10.4174, -10.4874, -4.8578, -8.621, -3.1887),
+	geo_uncertainty = c(18441, 13891, 19683, 12957, 10467, 12765, 20473, 4735, 6779, 5535, 10868, 5990, 7536, 12589, 10832, 11787, 15617, 37083, 16201, 22605, 18046, 15815, 10943,2585),
+	geo_source = rep("GADM 4.1, adm3",24))
+	
+  #filling only NA places 
+	i <- match(d$adm3, geo$adm3)
+	use <- no_coords & !is.na(i)
+	
+	d$longitude[use]       <- geo$longitude[i[use]]
+	d$latitude[use]        <- geo$latitude[i[use]]
+	d$geo_uncertainty[use] <- geo$geo_uncertainty[i[use]]
+	d$geo_source[use]      <- geo$geo_source[i[use]]
+
 	carobiner::write_files(path, meta, d)
 }
-
