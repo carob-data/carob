@@ -39,7 +39,7 @@ Although Texas is not widely known for organic production, it is responsible for
 
 	f1 <- ff[basename(ff) == "dataset_organic_and_conventional_management.xlsx"]
 	f2 <- ff[basename(ff) == "README.md"]
-
+	
 	r1 <- carobiner::read.excel(f1, sheet="ConventionalOnly", na = ".")
 	r2 <- carobiner::read.excel(f1, sheet="ConventionalOnly_PLFA", na = ".")
 	r3 <- carobiner::read.excel(f1, sheet="ConventionalOnly_CumulativeCO2", na= ".")
@@ -48,72 +48,77 @@ Although Texas is not widely known for organic production, it is responsible for
 	r6 <- carobiner::read.excel(f1, sheet="OrgCon_PLFA", na = ".")
 	r7 <- carobiner::read.excel(f1, sheet="OrgCon_CumulativeCO2", na = ".")
 	#r8 <- carobiner::read.excel(f1, sheet="OrgCon_Nodules")
-
-#### process
 	
-#### Conventional Only
+	#### process
+	
+	#### Conventional Only
 	d1 <- data.frame(
-		location = r1$location,
-		depth = r1$depth,
-		plot_id = r1$plot_no,
-		rep = as.integer(r1$rep),
-		treatment = r1$trt,
-		land_prep_method = r1$orgcon,
-		cover_crop = r1$cover,
-		flux_CO2 = r1$CO2,
-		soil_temp = r1$soiltemp, # soil temperature (Celsius)
-		soil_moisture = r1$soilmoist, # %
-		residue_prevcrop = r1$cc_biomass
+	  location = r1$location,
+	  depth = r1$depth,
+	  plot_id = r1$plot_no,
+	  rep = as.integer(r1$rep),
+	  treatment = r1$trt,
+	  land_prep_method = r1$orgcon,
+	  cover_crop = r1$cover,
+	  flux_CO2 = r1$CO2,
+	  soil_temp = r1$soiltemp, # soil temperature (Celsius)
+	  minC = r1$MinC, ## mineral carbon (mg CO2 kg-1 soil)
+	  soil_moisture = r1$soilmoist, # %
+	  residue_prevcrop = r1$cc_biomass,
+	  trial_id  = paste0("onlyorg", "-", r1$event)
+	  
 	)
-
+	
 	d2 <- data.frame(
-		location = r2$location,
-		plot_id = r2$plot_no,
-		treatment = r2$trt,
-		depth = r2$depth,
-		land_prep_method = r2$orgcon,
-		cover_crop = r2$cover,
-		soil_PLFA = r2$TotalPLFA, #  phospholipid fatty acids (pmol/g)
-		yield = r2$yield,
-		trial_id  = "1"
+	  location = r2$location,
+	  plot_id = r2$plot_no,
+	  treatment = r2$trt,
+	  depth = r2$depth,
+	  land_prep_method = r2$orgcon,
+	  cover_crop = r2$cover,
+	  soil_PLFA = r2$TotalPLFA, #  phospholipid fatty acids (pmol/g)
+	  yield = r2$yield
+	  
 	)
 	
 	### merge d1 and d2
-  dd <- merge(d1, d2, by = c("location", "plot_id", "treatment", "depth", "land_prep_method", "cover_crop"), all.x  = TRUE)	
-
+	dd <- merge(d1, d2, by = c("location", "plot_id", "treatment", "depth", "land_prep_method", "cover_crop"), all.x  = TRUE)	
+	
 	d3 <- data.frame(
-		location = r3$location,
-		plot_id = r3$plot_no,
-		rep = as.integer(r3$rep),
-		depth = r3$depth,
-		treatment = r3$trt,
-		land_prep_method = r3$orgcon,
-		cover_crop = r3$cover,
-		emission_CO2 = r3$CumulativeCO2
+	  location = r3$location,
+	  plot_id = r3$plot_no,
+	  rep = as.integer(r3$rep),
+	  depth = r3$depth,
+	  treatment = r3$trt,
+	  land_prep_method = r3$orgcon,
+	  cover_crop = r3$cover,
+	  emission_CO2 = r3$CumulativeCO2
 	)
-
-### merge dd and d3
 	
-  dd <- merge(dd, d3, by = c("location", "plot_id", "rep", "treatment", "depth", "land_prep_method", "cover_crop"), all = TRUE)	
+	### merge dd and d3
 	
-  
-##  Conventional and organic
-  
+	dd <- merge(dd, d3, by = c("location", "plot_id", "rep", "treatment", "depth", "land_prep_method", "cover_crop"), all = TRUE)	
+	
+	
+	##  Conventional and organic
+	
 	d5 <- data.frame(
-		location = r5$location,
-		plot_id = r5$plot_no,
-		rep = as.integer(r5$rep),
-		depth = r5$depth,
-		treatment = r5$trt,
-		land_prep_method = r5$orgcon,
-		cover_crop = r5$cover,
-		soil_moisture = r5$soilmoist, # %
-		soil_temp = r5$soiltemp, # soil temperature (Celsius)
-		flux_CO2 = r5$CO2,
-		residue_prevcrop = r5$cc_biomass
+	  location = r5$location,
+	  plot_id = r5$plot_no,
+	  rep = as.integer(r5$rep),
+	  depth = r5$depth,
+	  treatment = r5$trt,
+	  land_prep_method = r5$orgcon,
+	  cover_crop = r5$cover,
+	  soil_moisture = r5$soilmoist, # %
+	  soil_temp = r5$soiltemp, # soil temperature (Celsius)
+	  minC = r5$MinC, ## mineral carbon (mg CO2 kg-1 soil)
+	  flux_CO2 = r5$CO2,
+	  residue_prevcrop = r5$cc_biomass,
+	  trial_id  = paste0("OrgCon", "-", r5$event)
 	)
-
-
+	
+	
 	d6 <- data.frame(
 	  location = r6$location,
 	  plot_id = r6$plot_no,
@@ -122,11 +127,10 @@ Although Texas is not widely known for organic production, it is responsible for
 	  land_prep_method = r6$orgcon,
 	  cover_crop = r6$cover,
 	  soil_PLFA = r6$TotalPLFA,#  phospholipid fatty acids (pmol/g)
-	  yield = r6$yield,
-	  trial_id = "2"
+	  yield = r6$yield
 	)
-
-### merge d5 and d6
+	
+	### merge d5 and d6
 	dd1 <- merge(d5, d6, by = c("location", "plot_id", "treatment", "depth", "land_prep_method", "cover_crop"), all.x  = TRUE)	
 	
 	
@@ -155,6 +159,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	d$depth_bottom <- c(10, 20)[d$depth]
 	d$depth <- NULL
 	d$OM_used <- grepl("o", d$land_prep_method)
+	d$OM_type <- ifelse(grepl("o", d$land_prep_method), "compost", "none") 
 	d$land_prep_method <- c("c" = "conventional", "o" = "none")[d$land_prep_method]
 	d$crop <- "groundnut"
 	d$crop_rotation <- "cotton;groundnut"
@@ -165,6 +170,8 @@ Although Texas is not widely known for organic production, it is responsible for
 	  location = c("Lubbock", "Vernon"),
 	  longitude = c(-101.828, -99.365),
 	  latitude = c(33.693, 34.091),
+	  irrigation_amount = c(51, 32)*10,# mm
+	  irrigation_number = c(5L, 9L),
 	  geo_from_source = TRUE
 	)
 	
@@ -183,10 +190,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	
-	### drop duplicate record
 	
-	d <- unique(d)
-
 	carobiner::write_files(path, meta, d)
 }
 
