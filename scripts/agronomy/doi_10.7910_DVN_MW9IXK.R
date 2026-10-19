@@ -2,9 +2,6 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## There were some 0 values on row_spacing which resulted in out of bounds warning
-## There is a row where the subsample_dw_grain is larger than subsample_fw_grain creating a negative value, creating out of bounds warning for the yield_moisture
-## There were some missing values for subsample_fw_grain and subsample_dw_grain creating NA values on yield_moisture
 
 carob_script <- function(path) {
 
@@ -25,7 +22,7 @@ This dataset contains raw and extrapolated yield data from on farm mother demos 
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "fertilizer_used;variety",
+		treatment_vars = "fertilizer_used;seed_treatment;variety",
 		response_vars = "yield", 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-09-17",
@@ -37,14 +34,15 @@ This dataset contains raw and extrapolated yield data from on farm mother demos 
 
 	r1 <- carobiner::read.excel(f1)
 
-
+	r1$`If row, Average Row spacing from three measurements`[r1$`If row, Average Row spacing from three measurements` == 0] <- NA
+	
 	d <- data.frame(
 	  country = "Tanzania",
 		adm2 = r1$District,
 		latitude = r1$Latitude,
 		longitude = r1$Longitude,
-		location_id = as.character(r1$`ID (Location, Treatment)(Put this ID on sample bags)`),
 		fertilizer_used = grepl("Fertilizer|Fert", r1$Treatment),
+		seed_treatment = as.character(grepl("Apron star|Apron", r1$Treatment)),
 		plot_id = as.character(r1$`Plot number(see map)`),
 		variety = r1$Variety,
 		rep = as.integer(r1$Rep),
@@ -54,9 +52,8 @@ This dataset contains raw and extrapolated yield data from on farm mother demos 
 		yield = as.numeric(r1$`Yield per Hactare`)
 	)
 	
-	
 	d$trial_id <- "1"
-	d$on_farm <- TRUE      #based on data description
+	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA
 	d$geo_from_source <- TRUE
@@ -68,8 +65,10 @@ This dataset contains raw and extrapolated yield data from on farm mother demos 
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$fertilizer_type <- NA
   d$inoculated <- NA
 	d$yield_part <- "grain"
-	d$yield_moisture <- as.numeric(((d$subsample_fw_grain - d$subsample_dw_grain) / d$subsample_fw_grain) * 100)
 	d$crop <- "common bean"
+	d$yield_moisture <- as.numeric(((d$subsample_fw_grain - d$subsample_dw_grain) / d$subsample_fw_grain) * 100)
+	d$yield_moisture[d$yield_moisture < 0] <- NA
+	d$yield_moisture[is.nan(d$yield_moisture)] <- NA
 
 
 	carobiner::write_files(path, meta, d)
