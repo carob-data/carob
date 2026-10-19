@@ -20,7 +20,7 @@ The push-pull system, a stimulo-deterrent cropping strategy consisting of interc
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "intercrops;trap_crop_used",
+		treatment_vars = "intercrops;trap_crop",
 		response_vars = "tunnelling_length;yield", 
 		notes = NA,
 		carob_contributor = "Blessing Dzuda",
