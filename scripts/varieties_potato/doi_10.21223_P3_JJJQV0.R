@@ -115,7 +115,7 @@ The assessment of late blight resistance in TON panel genotypes was conducted in
   d_long$id <- NULL
   d_long$trial_id <- NULL
   d_long$DAP <- as.integer(d_long$DAP)
-  d_long$disease_severity <- as.numeric(d_long$disease_severity)
+  d_long$disease_severity <- d_long$disease_severity
   d_long$severity_scale <- "0-100"
   d_long$disease <- "potato late blight"
   
