@@ -46,15 +46,15 @@ carob_script <- function(path) {
 		asi = as.numeric(r$ASI),
 		plant_height = as.numeric(r$PLHT),
 		ear_height = as.numeric(r$EHT),
-		rlper = r$RLPERCT,
-		slper = r$SLPERCT,
-		husk = r$HC,
-		p_asp = r$PASP,
-		e_asp = r$EASP,
+		root_lodging = ifelse(is.na(r$RLPERCT), NA_character_, paste0(r$RLPERCT, "%")),
+
+		stalk_lodging = ifelse(is.na(r$SLPERCT), NA_character_, paste0(r$SLPERCT, "%")),
+
+		husk = as.character(r$HC),
+		aspect = r$PASP,
+		ear_aspect = r$EASP,
 		e_rot = r$EROT,
-		p_harv = r$PHARV,
-		e_harv = r$EHARV,
-		moist = r$MOIST,
+		yield_moisture = r$MOIST,
 		yield = as.numeric(r$YIELD)
 	  )
 	}
@@ -65,6 +65,7 @@ carob_script <- function(path) {
 	d4 <- sort_data("Opt.csv", "high_N", skip=1538)  
 
 	d <- rbind(d1, d2, d3, d4)
+	d$variety <- trimws(as.character(d$variety))
 	
 	d <- d[d$location != "LOC", ]
 	d <- d[d$location != "", ]
@@ -110,6 +111,7 @@ carob_script <- function(path) {
 	d$herbicide_product <- ifelse(d$treatment=="high_N", "primextra;paraquat dichloride", NA)
 	d$herbicide_amount <- ifelse(d$treatment=="high_N", 5, 0)
 	
+	d$trial_id <- paste(d$location, d$treatment, d$planting_date, sep = "_")
 	d$harvest_date <- as.character(d$planting_date + 1)
 	d$planting_date <- as.character(d$planting_date)
 	 
@@ -124,7 +126,11 @@ carob_script <- function(path) {
 	d$plant_height[d$plant_height < 10] <- NA
 	
 	
-	carobiner::write_files(path, meta, d)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 
 
