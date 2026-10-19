@@ -1,7 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
+## NOTE
 #    bdd_kenya_nairobi_climate.csv has ~3.42 million rows (readings logged
 #    multiple times per minute over 2022-2024) - aggregated to daily
 

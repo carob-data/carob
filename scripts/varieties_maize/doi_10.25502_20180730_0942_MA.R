@@ -29,9 +29,10 @@ This dataset contains output of the research for Kenya."
 	)
 
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mz_fun(ff)
+	d <- x$d
 
 	
 
@@ -40,6 +41,6 @@ This dataset contains output of the research for Kenya."
 	i <- d$location == "Alupe"
 	d$longitude[i] <- 34.13
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }
