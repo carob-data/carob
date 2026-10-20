@@ -8,6 +8,12 @@
 # - Combined conventional and organic management
 # - Cover cropping
 
+## New variable: 
+
+# soil_temp: soil temperature in degrees Celsius (°C)
+# soil_moisture: soil moisture content (%)
+# soil_PLFA: phospholipid fatty acids (pmol/g of soil)
+
 
 carob_script <- function(path) {
 
