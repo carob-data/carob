@@ -3,6 +3,11 @@
 
 ## ISSUES
 
+# We introduced two new variables:
+# soil_mite: soil mite taxonomic name
+# soil_mite_abundance: soil mite abundance (individuals/m²)
+
+
 
 carob_script <- function(path) {
 
@@ -22,7 +27,7 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;irrigation_amount",
-		response_vars = "count", 
+		response_vars = "soil_mite_abundance", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-19",
@@ -31,35 +36,36 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	)
 	
 
+	
 	f1 <- ff[basename(ff) == "Soil mite taxon abundance.xlsx"]
-
+	
 	r1 <- carobiner::read.excel(f1)
-	taxon <- names(r1)[!grepl("Year|Nitrogen|Irrigation", names(r1))]
-  
-	r <- reshape(r1, varying = taxon, v.names = "count", times = taxon, timevar = "taxon" , direction = "long")
+	mite <- names(r1)[!grepl("Year|Nitrogen|Irrigation", names(r1))]
+	
+	r <- reshape(r1, varying = mite, v.names = "soil_mite_abundance", times = mite, timevar = "soil_mite" , direction = "long")
 	
 	## process
 	
 	d <- data.frame(
 	  planting_date = as.character(r$Year),
-		N_fertilizer = r$Nitrogen,
-		treatment = r$Irrigation,
-		taxon = tolower(r$taxon),
-		count = r$count,
-		irrigated = TRUE,
-		crop = "wheat",
-		yield = NA,
+	  N_fertilizer = r$Nitrogen,
+	  treatment = r$Irrigation,
+	  soil_mite = tolower(r$soil_mite),
+	  soil_mite_abundance = r$soil_mite_abundance, # individual/m2
+	  irrigated = TRUE,
+	  crop = "wheat",
+	  yield = NA,
 	  geo_from_source = TRUE,
-		country = "China",
-		harvest_date = NA,
-		location = "Yucheng Comprehensive Experimental Station",
-		longitude = 116.6, ## from publication
-		latitude = 36.95,
-		elevation = 20
+	  country = "China",
+	  harvest_date = NA,
+	  location = "Yucheng Comprehensive Experimental Station",
+	  longitude = 116.6, ## from publication
+	  latitude = 36.95,
+	  elevation = 20
 	)
 	
 	d$N_fertilizer <- c("N0" = 0,"N1" = 70 , "N2" = 140, "N3" = 210, "N4" = 280)[d$N_fertilizer]
-  d$irrigation_amount <- ifelse(grepl("CIR", d$treatment), 280, 220)
+	d$irrigation_amount <- ifelse(grepl("CIR", d$treatment), 280, 220)
 	d$treatment <- c("CIR" = "conventional irrigation", "RIR" = "reduced irrigation")[d$treatment]
 	
 	d$is_survey <- FALSE
@@ -69,10 +75,8 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	d$yield_isfresh <- NA
 	d$yield_part <- "none"
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
-
+	
 	
 	
 	carobiner::write_files(path, meta, d)
 }
-
-
