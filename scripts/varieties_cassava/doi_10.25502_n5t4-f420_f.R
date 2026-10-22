@@ -23,7 +23,7 @@ Evaluation of yield benefits of certified cassava seed.
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "seed_source;variety",
+		treatment_vars = "variety",
 		response_vars = "yield", 
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-09-23",
@@ -47,10 +47,6 @@ Evaluation of yield benefits of certified cassava seed.
 	  elevation=r1$Altitude,
 	  plot_area=r1$Plot_Size,
 	  harvest_index=r1$HI,
-	  cassava_brown_streak_sev=r1$lCBSDSev,
-	  cassava_brown_streak_inc=r1$lCBSDinc,
-	  cassava_mossaic_sev=r1$CMD_sev,
-	  cassava_mossaic_inc=r1$CMDinc,
 	  crop="cassava",
 	  yield=r1$tFRY*1000,
 	  yield_part="roots",
@@ -59,25 +55,16 @@ Evaluation of yield benefits of certified cassava seed.
 	)
 
 	#Reshaping disease from wide to long
-	d$row_id <- seq_len(nrow(d))
+	d$record_id <- seq_len(nrow(d))
 	
-	#grouping and matching the order of columns
-	sev_cols <- c("cassava_brown_streak_sev", "cassava_mossaic_sev")
-	inc_cols <- c("cassava_brown_streak_inc", "cassava_mossaic_inc")
-	
-	disease_names <- c("cassava brown streak", "cassava mosaic")
-	
-	d <- reshape(
-	  d,varying = list(disease_severity = sev_cols, disease_incidence = inc_cols),
-	  v.names = c("disease_severity", "disease_incidence"),timevar = "disease",
-	  times = disease_names,idvar = "row_id",direction = "long")
-	
-	rownames(d) <- NULL
-	d$row_id <- NULL
-	
-	d$severity_scale <- NA
-	d$disease_severity <- as.character(d$disease_severity)
-	d$disease_incidence <- as.character(d$disease_severity)
+	##disease data in long format, kept separate from d
+	d_lon <- data.frame(
+	  record_id = rep(d$record_id, 2),
+	  disease = rep(c("cassava brown streak", "cassava mosaic"), each = nrow(r1)),
+	  disease_severity = as.character(c(r1$lCBSDSev, r1$CMD_sev)),
+	  disease_incidence = as.character(c(r1$lCBSDinc, r1$CMDinc)),
+	  severity_scale = NA
+	)
 	
 	d$trial_id <- paste(d$adm2,seq_len(nrow(d)), sep = "_")
 	
@@ -101,6 +88,6 @@ Evaluation of yield benefits of certified cassava seed.
 
   d <- merge(d,geo,by="adm2", all.x = TRUE)
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = d_lon)
 }
 
