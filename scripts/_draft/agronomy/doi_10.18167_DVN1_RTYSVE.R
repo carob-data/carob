@@ -95,7 +95,6 @@ Backgrounds and Aims Root production and turnover are key drivers of belowground
 	d$N_fertilizer[d$treatment == "N" & d$season == "1st ratoon"] <- 336
 	d$N_fertilizer[d$treatment == "N" & d$season == "2nd ratoon"] <- NA  # sampling
 
-   	d_check <<- d
 	carobiner::write_files(path, meta, d)
 }
 
