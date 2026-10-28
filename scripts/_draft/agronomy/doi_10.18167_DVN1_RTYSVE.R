@@ -2,11 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# aRB_gm2 was recorded per soil layer (0-10cm, 10-30cm, 30-50cm). the layers were summed (0-50cm) from the rows and then avged to get one val per plot and date
-# N treatment rates are from the preprint (346 kg/ha plant crop, 336 kg/ha 1st ratoon). the rate for the 2nd ratoon (R2) is not given, so it is NA. P and K rates are in table S1 of the paper (not available), so they are NA.
-# coords listed as incorrect, but publication says otherwise
-# dmy_roots flagged as out of bounds
-# 6 harvest_date more than 366 days after planting_date
+# root biomass (aRB_gm2) was recorded per soil layer (0-10cm, 10-30cm, 30-50cm). the layers were summed (0-50cm) from the rows and then averaged to get one value per plot and date
+# N treatment rates are from the preprint (346 kg/ha plant crop, 336 kg/ha 1st ratoon). 
+# P and K rates for the 2nd ratoon (R2) are in table S1 of the paper (not available); so these are currently NA
 
 carob_script <- function(path) {
 
@@ -22,7 +20,7 @@ Backgrounds and Aims Root production and turnover are key drivers of belowground
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
-		publication = "HAL Id: hal-05563134",
+		publication = "hal-05563134",
 		project = NA,
 		design = "Two N fertilisation treatments, arranged in three blocks(TA3, TA4, TA5) and monitored over two years",
 		data_type = "experiment",
@@ -55,6 +53,7 @@ Backgrounds and Aims Root production and turnover are key drivers of belowground
 	d2 <- data.frame(
 		plot_id = rp$Plot,
 		date = as.character(as.Date(rp$Date)),
+		# planting_date is not a great term here, this is a permenant crop and the date is the date of the previous harvest 
 		planting_date = as.character(as.Date(rp$Date_harvest)),
 		season = c(P0 = "plant crop", R1 = "1st ratoon", R2 = "2nd ratoon")[rp$Cycle],
 		DAP = as.integer(rp$DAP),
@@ -65,12 +64,13 @@ Backgrounds and Aims Root production and turnover are key drivers of belowground
 
 	d <- merge(d2, d1, by=c("plot_id", "DAP"))
 
+	# why?
 	d <- d[d$season != "2nd ratoon", ]
+	
 	d$site <- "Soere"
 	d$location <- "La Mare"
-	d$country <- "Reunion"
-
-	d$trial_id <- as.character(as.integer(as.factor(d$location)))
+	d$country <- "Réunion"
+	d$trial_id <- "1"
 	
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
@@ -80,7 +80,6 @@ Backgrounds and Aims Root production and turnover are key drivers of belowground
 	d$irrigated <- TRUE 
 	d$crop <- "sugarcane"
 	d$variety <- "R579"
-	d$yield_part <- "stems"
 
 	d$longitude <- 55.5297
 	d$latitude <- -20.9031
