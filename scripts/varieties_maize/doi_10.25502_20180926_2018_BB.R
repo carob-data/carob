@@ -22,7 +22,8 @@ carob_script <- function(path) {
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
-	d <- mzfun(ff, sf="Zambia.csv")	
-	carobiner::write_files(meta, d, path=path)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
+	x <- mz_fun(ff, sf="Zambia.csv")
+	d <- x$d	
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

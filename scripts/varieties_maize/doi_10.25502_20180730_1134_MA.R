@@ -29,16 +29,17 @@ This dataset contains output of the research for Republic of Benin.
 
 	
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mz_fun(ff)
+	d <- x$d
 	
 	d$country <- "Benin"
 	
 	i <- d$location == "Bagou"
 	d$latitude[i] <- 10.70
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }
 
