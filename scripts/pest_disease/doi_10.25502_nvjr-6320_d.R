@@ -2,23 +2,32 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# 1. The source files have different levels of observation, so they are not bound into one table:
-#    - d  (written): one record per plot and crop: 24 plantain plots (3 blocks x 4 varieties x 2 cropping systems)
-#         and 12 cassava records (the intercropped plots) with the cassava yield.
-#    - dd (NOT written): 5686 repeated observations over time (21 dates, Dec 2013 - Sep 2015) of BBTD incidence
-#         per plot, aphids and BBTV per plantain plant, aphids per sticky trap, and cassava plant height per plant.
-# 2. Cassava yield is entered as it is in the source (grams); there are no data on the harvested area or number of
-#    plants harvested, so it cannot be converted to kg/ha. Per-root weights (350-600 g) confirm the unit is grams.
+# 1. Two tables are written:
+#    - d  (wide): one record per plot and crop: 24 plantain plots (3 blocks x 4 varieties x 2 cropping systems)
+#         and 12 cassava records (the intercropped plots).
+#    - dd (long): repeated observations over time (21 dates, Dec 2013 - Sep 2015) of BBTD incidence per plot,
+#         aphids and BBTV per plantain plant, aphids per sticky trap, and cassava plant height per plant.
+#         dd is linked to d with record_id (plot and crop).
+# 2. Cassava yield is not included. The source gives the total root weight (g) per plot, but there are no data on the
+#    harvested area, plot size, or number of plants harvested (Metadata.csv and the dataset page do not give them),
+#    so it cannot be expressed in kg/ha. Can be added if the plot size or cassava spacing is obtained from the authors.
 # 3. There is no plantain yield in the raw dataset.
 # 4. In yield_data.csv "Treatment" is coded 1-4 without a key and differs between blocks for the same variety, so it
 #    appears to be a plot position. All 12 rows are cassava in the intercropped plots.
-# 5. "Biom" ("biomass of the plant in gram") is not included: it is not specified whether it is fresh or dry weight.
-# 6. bbtd_incidence.csv: BBTD_Incidence does not equal Total_diseased / Total_planted * 100 in 14 rows (block 3, PITA23,
-#    from 2014-12-20); incidence is recomputed from the counts. The "death" column is empty.
-# 7. "banana bunchy top" is not in the terminag disease vocabulary. The BBTV severity scale (1-3) is not documented.
-# 8. Not included (no standard variable): apterous and alate aphid counts, flowering, crop cycle, cassava branching
-#    score, number of marketable and non-marketable roots (used only to compute root_infection).
-# 9. The species of aphids counted on plants is not given (probably Pentalonia nigronervosa, the banana aphid).
+# 5. "Biom" ("biomass of the plant in gram") in yield_data.csv is not included for the same reason as ISSUES 2: it is
+#    one value per plot and the number of plants or area it refers to is not given (nor if it is fresh or dry weight).
+# 6. "banana bunchy top" is used as disease name but is not yet in the terminag disease vocabulary.
+#    The BBTV severity scale (1-3) is not documented. In aphid_on_plant.csv, 2820 of 2821 plants without BBTV have
+#    score 1, so 1 appears to mean "no symptoms". In bbtd_incidence.csv "score" is a plot mean (e.g. 2.33, 2.8) over
+#    the diseased plants only, and is empty when no plants are diseased (except 3 rows with score 0, block 1,
+#    PITA23, intercropped, Jul-Sep 2014).
+# 7. Variables without a terminag term are included under provisional names:
+#    aphids_apterous, aphids_alate (counts per plantain plant), flowering, crop_cycle (plantain plants),
+#    branching_score (cassava plants), root_number_marketable, root_number_nonmarketable (cassava, per plot).
+# 8. The species of aphids counted on plants is not given (probably Pentalonia nigronervosa, the banana aphid).
+# 9. "Cycle" ("cropping cycle") is 1 (2108 rows), 2 (908) or 3 (3); assumed to be mother plant and ratoon
+#     cycles. One row has Cycle = 0 (2014-12-19, block 2, Ebang, intercropped, plant 5, with 250 aphids); set to NA.
+
 
 carob_script <- function(path) {
   
@@ -39,7 +48,7 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
                                   design = "3 blocks; 4 plantain varieties x 2 cropping systems (intercropped with cassava TMS 96/0023, sole plantain); 24 plantain plants per plot",
                                   data_type = "experiment",
                                   treatment_vars = "intercrops",
-                                  response_vars = "yield;root_infection",
+                                  response_vars = "disease_incidence;pest_incidence;root_infection",
                                   notes = NA,
                                   carob_contributor = "Mitchelle Njukuya",
                                   carob_date = "2026-09-30",
@@ -68,7 +77,7 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
     intercrops = ifelse(r1$Treatment == "Intercropping", "cassava", "none")
   ))
   
-  ## cassava yield in the intercropped plots
+  ## cassava roots in the intercropped plots (no yield, see ISSUES 2)
   nroots <- r2$number_marketable_Root + r2$number_non_marketable_root
   d2 <- data.frame(
     block_id = as.character(r2$Block),
@@ -76,25 +85,27 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
     treatment = "Intercropping",
     crop = "cassava",
     intercrops = "plantain",
-    yield = r2$Weight_of_Marketable_root + r2$weight_of_non_marketable_root,   # g, see ISSUES 2
-    yield_marketable = r2$Weight_of_Marketable_root,                          # g
-    root_infection = round(100 * r2$RT_rot / nroots, 1)                      # % of roots with root rot
+    root_number_marketable = r2$number_marketable_Root,          # provisional, see ISSUES 8
+    root_number_nonmarketable = r2$number_non_marketable_root,   # provisional, see ISSUES 8
+    root_infection = round(100 * r2$RT_rot / nroots, 1)          # % of roots with root rot
   )
   
   d <- carobiner::bindr(d1, d2)
   
   d$treatment <- tolower(d$treatment)
   d$trial_id <- "1"
+  d$yield <- as.numeric(NA)
   d$yield_part <- ifelse(d$crop == "cassava", "roots", "fruit")
   d$yield_isfresh <- TRUE
   d$country <- "Cameroon"
+  d$adm1 <- "South"
   d$longitude <- NA
   d$latitude <- NA
-  d$geo_from_source <- FALSE
+  d$geo_from_source <- TRUE
   d$on_farm <- NA
   d$is_survey <- FALSE
   d$irrigated <- FALSE
-  d$planting_date <- as.character(NA)
+  d$planting_date <- "2013-09"   # "A field experiment was planted in September 2013" (dataset description)
   d$yield_moisture <- d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- d$harvest_date <- NA
   
   
@@ -106,7 +117,7 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
     date = as.character(as.Date(r1$Date, format="%m/%d/%Y")),
     crop = "plantain",
     disease = "banana bunchy top",
-    disease_incidence = round(100 * r1$Total_diseased / r1$Total_planted, 2),   # recomputed, see ISSUES 6
+    disease_incidence = round(100 * r1$Total_diseased / r1$Total_planted, 2),   
     disease_severity = as.character(r1$score)
   )
   
@@ -122,8 +133,14 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
     disease_incidence = 100 * r3$BBTV_presence_absence,     # 0 = absent, 100 = present on the plant
     disease_severity = as.character(r3$BBTVscore),
     pest_species = "aphids",
-    pest_incidence = r3$total_aphids
+    pest_incidence = r3$total_aphids,
+    aphids_apterous = r3$Apterous,    # provisional, see ISSUES 8
+    aphids_alate = r3$Alates,         # provisional
+    flowering = r3$Flowering == 1,    # provisional; 0/1 "vegetative state of the plant"
+    crop_cycle = r3$Cycle             # provisional; 1 = mother plant, 2-3 = ratoons? see ISSUES 10
   )
+  d4$crop_cycle[d4$crop_cycle == 0] <- NA   # one row, see ISSUES 10
+  d4 <- d4[!is.na(d4$pest_incidence), ]    # one empty row (2013-12-01, block 1, Essong, sole, plant 3)
   
   ## aphids on sticky traps: one row for P. nigronervosa and one for other aphids
   d5 <- data.frame(
@@ -144,7 +161,8 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
     date = as.character(as.Date(r5$Date, format="%m/%d/%Y")),
     crop = "cassava",
     plant_id = as.character(r5$Plant),
-    plant_height = r5$PLHT
+    plant_height = r5$PLHT,
+    branching_score = r5$Branching_1_3    # provisional, see ISSUES 8 (scale 1-3)
   )
   
   dd <- carobiner::bindr(d3, d4, d5, d6)
@@ -161,11 +179,18 @@ Research examining how intercropping affects the spread of Banana Bunchy Top Dis
   ## plot_id is made after fixing the variety names so that d and dd match
   d$plot_id <- paste(d$block_id, d$variety, d$treatment, sep="_")
   dd$plot_id <- paste(dd$block_id, dd$variety, tolower(dd$treatment), sep="_")
-  dd$block_id <- dd$variety <- dd$treatment <- NULL
-  
+
+  ## link dd to d with record_id (plot and crop, as each intercropped plot has a plantain and a cassava record)
+  d$record_id <- 1:nrow(d)
+  dd$record_id <- d$record_id[match(paste(dd$plot_id, dd$crop), paste(d$plot_id, d$crop))]
+  stopifnot(!any(is.na(dd$record_id)))
+  dd$block_id <- dd$variety <- dd$treatment <- dd$plot_id <- dd$crop <- NULL
+
   d$variety_type <- ifelse(d$variety %in% c("Ebang", "Essong"), "local", "hybrid")
   d$variety[d$crop == "cassava"] <- "TMS 96/0023"
   d$variety_type[d$crop == "cassava"] <- "improved"
-  
-  carobiner::write_files(path, meta, d)
+  dd$plant_height[dd$plant_height < 10] <- NA  
+  dd$disease_incidence <- as.numeric(dd$disease_incidence)
+
+  carobiner::write_files(path, meta, d, dd)
 }
