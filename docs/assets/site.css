@@ -108,19 +108,19 @@ table.gridjs-table {
 }
 
 .gridjs-th[data-col="title"],
-.gridjs-td[data-col="title"] { width: 36%; }
+.gridjs-td[data-col="title"] { width: 48%; }
 
-.gridjs-th[data-col="source"],
-.gridjs-td[data-col="source"] { width: 30%; }
+.gridjs-th[data-col="draft-script"],
+.gridjs-td[data-col="draft-script"] { width: 18%; }
 
 .gridjs-th[data-col="region"],
 .gridjs-td[data-col="region"] { width: 12%; }
 
 .gridjs-th[data-col="crop"],
-.gridjs-td[data-col="crop"] { width: 10%; }
+.gridjs-td[data-col="crop"] { width: 12%; }
 
 .gridjs-th[data-col="group"],
-.gridjs-td[data-col="group"] { width: 12%; }
+.gridjs-td[data-col="group"] { width: 10%; }
 
 .gridjs-temp table.gridjs-table {
 	width: 100% !important;
