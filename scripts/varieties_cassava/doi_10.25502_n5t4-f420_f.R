@@ -13,7 +13,7 @@ Evaluation of yield benefits of certified cassava seed.
 "
 
 	uri <- "doi:10.25502/n5t4-f420/f"
-	group <- "varieties"
+	group <- "varieties_cassava"
 	ff  <- carobiner::get_data(uri, path, group)
 
 
