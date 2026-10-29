@@ -28,7 +28,7 @@ The main objective of the research is to advise Norad on the relevance of contin
 "
 
 	uri <- "doi:10.25502/0fa9-dm27/d"
-	group <- "fertilizer"
+	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
