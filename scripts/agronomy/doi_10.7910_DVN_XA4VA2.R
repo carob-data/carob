@@ -30,19 +30,20 @@ and Plant & Food Research. Includes final harvest components, in-season growth r
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-		data_organization = "INRAE; New Zealand Institute for Plant & Food Research; Technical University of Munich; UIA; Foundation for Arable Research; UFL; CIMMYT; Pir Mehr Ali Shah Arid Agriculture University; IASU; MSU; National Institute of Agricultural Research (INIA); University of Göttingen; PURDUE; Chinese Academy of Science, Beijing; UOR; ZALF; UFL; UFL; UHoh; CSIRO; ZALF; AARU; Natural Resources Institute Finland (Luke), Helsinki; Helmholtz Zentrum München-German Research Center for Environmental Health; Technic University of Madrid; ROTH; MSU; Wageningen University; Chinese Academy of Science; Zhejiang University; HEBAU; HEBAU",
+		authors = "Craigie, Rob; Brown, Hamish; George, Mike, McCloy, Bede, O'Hara, Mark", # NZ_AgMIP_Persons.txt
+        data_organization = "FAR; PFR; NZA", # NZ_AgMIP_Institutions.txt
 		publication = NA,
-		project = "20t/ha by 2020 programme",
+		project = "AgMIP",
 		design = "split plot; 4 replicates",
 		data_type = "experiment",
 		treatment_vars = "planting_date;plant_density",
-		response_vars = "yield;dmy_total;harvest_index",
+		response_vars = "yield;dmy_total",
 		notes = NA,
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-10-19",
-		carob_completion = 100,
+		carob_completion = 60,
 		carob_effort = 7
-		)
+	)
 
 	f <- ff[basename(ff) == "NZ_AgMIP_dataset.xlsx"]
 
