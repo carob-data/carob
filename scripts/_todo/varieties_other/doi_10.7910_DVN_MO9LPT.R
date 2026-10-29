@@ -24,7 +24,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 "
 
 	uri <- "doi:10.7910/DVN/MO9LPT"
-	group <- "varieties"
+	group <- "varieties_other"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
