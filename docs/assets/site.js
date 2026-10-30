@@ -93,12 +93,13 @@
 			region: idx("region") >= 0 ? String(row[idx("region")] ?? "").trim() : "",
 			crop: idx("crop") >= 0 ? String(row[idx("crop")] ?? "").trim() : "",
 			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : "",
-			script: idx("script") >= 0 ? String(row[idx("script")] ?? "").trim() : ""
+			script: idx("script") >= 0 ? String(row[idx("script")] ?? "").trim() : "",
+			difficulty: idx("difficulty") >= 0 ? String(row[idx("difficulty")] ?? "").replace(/^NA$/, "").trim() : ""
 		}));
 
 		return {
-			headers: ["title", "script", "region", "crop", "group", "source", "uri"],
-			rows: records.map(r => [r.title, r.script, r.region, r.crop, r.group, r.source, r.uri])
+			headers: ["title", "script", "difficulty", "region", "crop", "group", "source", "uri"],
+			rows: records.map(r => [r.title, r.script, r.difficulty, r.region, r.crop, r.group, r.source, r.uri])
 		};
 	}
 

@@ -108,10 +108,13 @@ table.gridjs-table {
 }
 
 .gridjs-th[data-col="title"],
-.gridjs-td[data-col="title"] { width: 48%; }
+.gridjs-td[data-col="title"] { width: 42%; }
 
 .gridjs-th[data-col="draft-script"],
-.gridjs-td[data-col="draft-script"] { width: 18%; }
+.gridjs-td[data-col="draft-script"] { width: 16%; }
+
+.gridjs-th[data-col="difficulty"],
+.gridjs-td[data-col="difficulty"] { width: 8%; text-align: center; }
 
 .gridjs-th[data-col="region"],
 .gridjs-td[data-col="region"] { width: 12%; }
