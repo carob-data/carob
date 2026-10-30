@@ -71,8 +71,7 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 		trial_id = trimws(as.character(r$season)),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 
 	carobiner::write_files(path, meta, d)

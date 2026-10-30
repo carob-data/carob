@@ -65,14 +65,12 @@ The baseline survey for Viable Sweetpotato Technologies in Africa (VISTA) projec
 		adm1 = lab(id$A01),
 		adm2 = lab(id$A02),
 		adm3 = lab(id$A03),
-		location = lab(id$A04),
-		stringsAsFactors = FALSE
+		location = lab(id$A04)
 	)
 	q <- data.frame(
 		hhid = lab(sp$T_RG),
 		upland_fields_ = num(sp$G02A),
-		lowland_fields_ = num(sp$G03A),
-		stringsAsFactors = FALSE
+		lowland_fields_ = num(sp$G03A)
 	)
 	d <- merge(d, q, by="hhid", all.x=TRUE)
 	d$country <- "Mozambique"

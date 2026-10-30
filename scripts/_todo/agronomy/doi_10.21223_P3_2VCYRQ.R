@@ -62,8 +62,7 @@ The objective of this study was to evaluate the UNICA potato crop variety's yiel
 	d <- unique(data.frame(
 		plot_id = as.character(bio$plot),
 		block_id = as.character(bio$block),
-		treatment = unname(lab[as.character(bio$treatment)]),
-		stringsAsFactors = FALSE
+		treatment = unname(lab[as.character(bio$treatment)])
 	))
 	d$record_id <- as.integer(d$plot_id)
 	d$crop <- "potato"
@@ -98,32 +97,27 @@ The objective of this study was to evaluate the UNICA potato crop variety's yiel
 		dry_leaf_ = num(bio$DL),
 		dry_stem_ = num(bio$DS),
 		dry_root_ = num(bio$DR),
-		dry_tuber_ = num(bio$DT),
-		stringsAsFactors = FALSE
+		dry_tuber_ = num(bio$DT)
 	)
 	c <- data.frame(
 		record_id = as.integer(cc$plot),
 		DAP = as.integer(cc$dap),
-		canopy_cover_ = num(cc$CC),
-		stringsAsFactors = FALSE
+		canopy_cover_ = num(cc$CC)
 	)
 	h <- data.frame(
 		record_id = as.integer(hum$plot),
 		DAP = as.integer(hum$dap),
-		soil_GWC = num(hum$Hv),
-		stringsAsFactors = FALSE
+		soil_GWC = num(hum$Hv)
 	)
 	v <- data.frame(
 		record_id = as.integer(ir$plot),
 		DAP = as.integer(ir$dap),
-		irrigation_volume_ = num(ir$V),
-		stringsAsFactors = FALSE
+		irrigation_volume_ = num(ir$V)
 	)
 	w <- data.frame(
 		record_id = as.integer(cw$plot),
 		DAP = as.integer(cw$dap),
-		cwsi_ = num(cw$CWSI),
-		stringsAsFactors = FALSE
+		cwsi_ = num(cw$CWSI)
 	)
 	dlong <- carobiner::bindr(b, c, h, v, w)
 

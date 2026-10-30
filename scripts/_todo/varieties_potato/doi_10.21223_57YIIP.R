@@ -90,8 +90,7 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 		irrigated = NA,
 		geo_from_source = TRUE,
 		geo_uncertainty = 12000,
-		geo_source = "HIDAP Minimal sheet",
-		stringsAsFactors = FALSE
+		geo_source = "HIDAP Minimal sheet"
 	)
 
 	w <- carobiner::read.excel(f, sheet="Weather_daily")
@@ -105,8 +104,7 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 		temp = as.numeric(w$TMEAN),
 		latitude = d$latitude[1],
 		longitude = d$longitude[1],
-		geo_from_source = TRUE,
-		stringsAsFactors = FALSE
+		geo_from_source = TRUE
 	)
 	wth <- unique(wth[!is.na(wth$date), ])
 

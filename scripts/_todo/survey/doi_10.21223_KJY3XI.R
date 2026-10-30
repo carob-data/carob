@@ -68,8 +68,7 @@ Background: Persistent prevalence of high malnutrition in poor households in dev
 		grew_ofsp_ = chr(r$grew_ofsp),
 		sale_quantity_ = num(r$quantity),
 		sale_units_ = chr(r$units),
-		sale_price_ = num(r$price),
-		stringsAsFactors = FALSE
+		sale_price_ = num(r$price)
 	)
 	miss <- is.na(d$hhid) | !nzchar(d$hhid)
 	d$hhid[miss] <- paste0("row", seq_len(nrow(d))[miss])

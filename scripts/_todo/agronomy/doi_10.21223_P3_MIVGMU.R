@@ -62,7 +62,7 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 
 	# Physiology sheets repeat the header for the second timing, with different DAT columns.
 	sheet_blocks <- function(sheet) {
-		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE), stringsAsFactors=FALSE)
+		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
 		lab <- trimws(as.character(x[[1]]))
 		heads <- which(lab == "T")
 		if (length(heads) == 0) stop("no header in ", sheet)
@@ -111,8 +111,7 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 		trial_id = "LaMolina_2009",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = TRUE,
-		stringsAsFactors = FALSE
+		irrigated = TRUE
 	)
 	d$treatment <- paste(d$irrigation_timing_, d$irrigation_regime_, sep="_")
 	d$plot_id <- paste(d$treatment, d$block_id, sep="_")
@@ -132,8 +131,7 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 			for (j in dats) {
 				piece <- data.frame(
 					plot_id = paste(trimws(as.character(x$T)), trimws(as.character(x$TRT)), trimws(as.character(x$B)), sep="_"),
-					dat_ = as.integer(sub("DAT$", "", j, ignore.case=TRUE)),
-					stringsAsFactors = FALSE
+					dat_ = as.integer(sub("DAT$", "", j, ignore.case=TRUE))
 				)
 				piece[[value_name]] <- as.numeric(x[[j]])
 				out[[length(out) + 1]] <- piece
@@ -164,8 +162,7 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 		location = "La Molina",
 		latitude = -12.076289,
 		longitude = -76.948417,
-		geo_from_source = TRUE,
-		stringsAsFactors = FALSE
+		geo_from_source = TRUE
 	)
 
 	carobiner::write_files(path, meta, d, long=dlong, wth=wth)

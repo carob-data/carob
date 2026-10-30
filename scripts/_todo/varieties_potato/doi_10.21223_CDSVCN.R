@@ -77,8 +77,7 @@ New CWR LB- resistant sources
 		trial_id = "CWR_LB",
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$female_parent <- NA_character_
 	d$male_parent <- NA_character_

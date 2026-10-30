@@ -78,12 +78,11 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		panicle_density_ = num(r$PDE),
 		geo_from_source = FALSE,
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
-	spad1 <- data.frame(record_id=d$record_id, DAP=98L, SPAD=num(r[["SPAD 98DAP"]]), stringsAsFactors=FALSE)
-	spad2 <- data.frame(record_id=d$record_id, DAP=123L, SPAD=num(r[["SPAD 123DAP"]]), stringsAsFactors=FALSE)
+	spad1 <- data.frame(record_id=d$record_id, DAP=98L, SPAD=num(r[["SPAD 98DAP"]]))
+	spad2 <- data.frame(record_id=d$record_id, DAP=123L, SPAD=num(r[["SPAD 123DAP"]]))
 	dlong <- rbind(spad1, spad2)
 	dlong <- dlong[!is.na(dlong$SPAD), ]
 

@@ -65,8 +65,7 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		potato_produced_kg_2021_ = as.numeric(r[[kg21]]),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

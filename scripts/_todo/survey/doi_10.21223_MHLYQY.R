@@ -76,8 +76,7 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 			hhid = id,
 			adm2 = txt(r$district_name),
 			adm3 = txt(r$sector_name),
-			location = txt(r$vill_name),
-			stringsAsFactors = FALSE
+			location = txt(r$vill_name)
 		)
 		pcols <- grep("^p[0-9]+$", names(r), value=TRUE)
 		for (i in seq_along(pcols)) {
@@ -86,8 +85,7 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 				date = as_date(r$date),
 				auction_round_ = round,
 				bid_index_ = i,
-				bid_ = as.numeric(r[[pcols[i]]]),
-				stringsAsFactors = FALSE
+				bid_ = as.numeric(r[[pcols[i]]])
 			)
 		}
 	}

@@ -56,8 +56,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 	variety <- trimws(as.character(r$INSTN))
 	alias <- data.frame(
 		variety = trimws(as.character(ml$Accession)),
-		variety_type = trimws(as.character(ml[["Taxon full name"]])),
-		stringsAsFactors = FALSE
+		variety_type = trimws(as.character(ml[["Taxon full name"]]))
 	)
 	alias <- alias[!duplicated(alias$variety) & nzchar(alias$variety), ]
 
@@ -79,8 +78,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	one <- function(day, order, values) {
 		data.frame(
@@ -89,8 +87,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 			days_after_inoculation_ = day,
 			disease_severity = as.character(values),
 			severity_scale = "0-100",
-			disease = "potato late blight",
-			stringsAsFactors = FALSE
+			disease = "potato late blight"
 		)
 	}
 	dlong <- rbind(one(3, 1, r$LB1), one(5, 2, r$LB2))

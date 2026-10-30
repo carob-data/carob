@@ -74,8 +74,7 @@ These datasets correspond to the field experiments in Comas.
 		emergence_date = "1999-01-28",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	iso <- function(x) as.character(as.Date(x))
@@ -93,8 +92,7 @@ These datasets correspond to the field experiments in Comas.
 			biomass_fresh_g_plot_ = NA_real_,
 			biomass_fresh_g_plant_ = NA_real_,
 			biomass_dm_g_plot_ = NA_real_,
-			biomass_dm_recorded_ = NA_real_,
-			stringsAsFactors = FALSE
+			biomass_dm_recorded_ = NA_real_
 		)
 	}
 
@@ -120,8 +118,7 @@ These datasets correspond to the field experiments in Comas.
 			biomass_fresh_g_plot_ = NA_real_,
 			biomass_fresh_g_plant_ = NA_real_,
 			biomass_dm_g_plot_ = NA_real_,
-			biomass_dm_recorded_ = NA_real_,
-			stringsAsFactors = FALSE
+			biomass_dm_recorded_ = NA_real_
 		)
 	}
 
@@ -146,8 +143,7 @@ These datasets correspond to the field experiments in Comas.
 		biomass_fresh_g_plot_ = as.numeric(ry$TBFw_Cp_gplot),
 		biomass_fresh_g_plant_ = as.numeric(ry$TBFw_Cp_gplant),
 		biomass_dm_g_plot_ = as.numeric(ry$TBDMC_Cp_gplot),
-		biomass_dm_recorded_ = as.numeric(ry$TBDMt_ha),
-		stringsAsFactors = FALSE
+		biomass_dm_recorded_ = as.numeric(ry$TBDMt_ha)
 	)
 
 	dlong <- do.call(rbind, parts)

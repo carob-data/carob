@@ -72,8 +72,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 			rep = as.integer(num(r$REP)),
 			yield = num(r$TTWP),
 			ttya_ = num(r$TTYA),
-			trial_type_ = kind,
-			stringsAsFactors = FALSE
+			trial_type_ = kind
 		)
 	}
 	d <- rbind(

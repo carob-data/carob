@@ -70,8 +70,7 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 		dmy_residue = as.numeric(r$DFWkgha),
 		seed_weight = as.numeric(r$HSW) * 10,
 		shelling_percentage = as.numeric(r[["Shelling ratio"]]),
-		sound_mature_kernel_ = as.numeric(r$SMK),
-		stringsAsFactors = FALSE
+		sound_mature_kernel_ = as.numeric(r$SMK)
 	)
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"
@@ -95,8 +94,7 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 	long <- data.frame(
 		record_id = rep(d$record_id, 3),
 		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = as.character(c(r$ELS, r$LLS, r$RUST)),
-		stringsAsFactors = FALSE
+		disease_severity = as.character(c(r$ELS, r$LLS, r$RUST))
 	)
 	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))
 

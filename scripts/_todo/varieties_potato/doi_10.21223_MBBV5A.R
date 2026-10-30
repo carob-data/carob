@@ -52,7 +52,7 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 	)
 
 	f <- ff[basename(ff) == "4030_Data.xlsx"]
-	x <- as.data.frame(carobiner::read.excel(f, sheet=1, col_names=FALSE), stringsAsFactors=FALSE)
+	x <- as.data.frame(carobiner::read.excel(f, sheet=1, col_names=FALSE))
 	lab <- trimws(as.character(x[[2]]))
 	i <- which(lab == "Accession_Number")[1]
 	y <- x[(i + 1):nrow(x), ]
@@ -70,8 +70,7 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 		trial_id = "Rwanda_2015",
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$treatment <- d$variety
 	d$plot_id <- as.character(seq_len(nrow(d)))

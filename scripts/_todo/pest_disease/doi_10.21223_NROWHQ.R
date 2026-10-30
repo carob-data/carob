@@ -77,8 +77,7 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 			trial_id = if (stress == "pests") "psyllid" else "purple_top",
 			on_farm = TRUE,
 			is_survey = TRUE,
-			irrigated = NA,
-			stringsAsFactors = FALSE
+			irrigated = NA
 		)
 	}
 

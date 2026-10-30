@@ -87,8 +87,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		ground_cover = as.numeric(r$Coberture),
 		irrigated = TRUE,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

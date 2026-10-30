@@ -73,8 +73,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		adm1 = txt(r$Departamento),
 		adm2 = txt(r$Provincia),
 		adm3 = txt(r$Distrito),
-		location = txt(r$Comunidad),
-		stringsAsFactors = FALSE
+		location = txt(r$Comunidad)
 	)
 
 	parts <- lapply(blocks, function(cols) {
@@ -82,8 +81,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 			base,
 			variety = txt(r[[cols[1]]]),
 			area_ha = num(r[[cols[2]]]),
-			tonnes = num(r[[cols[3]]]),
-			stringsAsFactors = FALSE
+			tonnes = num(r[[cols[3]]])
 		)
 	})
 	d <- do.call(rbind, parts)

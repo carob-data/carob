@@ -94,8 +94,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		pathogen = "Phytophthora infestans",
 		stress = "disease",
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	daps <- c(LB1=NA_integer_, LB2=NA_integer_, LB3=NA_integer_, LB4=NA_integer_)
@@ -113,8 +112,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 				z
 			},
 			severity_scale = "0-100",
-			disease = "potato late blight",
-			stringsAsFactors = FALSE
+			disease = "potato late blight"
 		)
 	})
 	dlong <- do.call(rbind, pieces)
@@ -131,8 +129,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		ped[grepl("^NA x NA$|^x$", ped)] <- NA_character_
 		alias <- data.frame(
 			variety = trimws(as.character(ml[[code]])),
-			variety_pedigree = ped,
-			stringsAsFactors = FALSE
+			variety_pedigree = ped
 		)
 		alias <- alias[!duplicated(alias$variety) & nzchar(alias$variety), ]
 		d <- merge(d, alias, by="variety", all.x=TRUE, sort=FALSE)

@@ -60,7 +60,7 @@ Prelinimary testing of plant extracts as insecticides in organic cultivation
 	)
 
 	f <- ff[basename(ff) == "effect-of-neem-seed-oil-at-different-doses-on-insect-pests-of-cabbage.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE, fileEncoding="latin1")
+	r <- read.csv(f, check.names=FALSE, fileEncoding="latin1")
 	stopifnot(names(r)[4] == "culture", names(r)[8] == "bloc", ncol(r) == 56)
 
 	crop <- trimws(r$culture)
@@ -88,8 +88,7 @@ Prelinimary testing of plant extracts as insecticides in organic cultivation
 		yield_part = "leaves",
 		insecticide_used = pest != "control",
 		OM_used = TRUE,
-		OM_type = "poultry manure",
-		stringsAsFactors = FALSE
+		OM_type = "poultry manure"
 	)
 	d$country <- "Cameroon"
 	d$latitude <- 3.84803
@@ -110,8 +109,7 @@ Prelinimary testing of plant extracts as insecticides in organic cultivation
 			insect_stage_ = stage,
 			organism_role_ = role,
 			pest_incidence = if (what == "count") v else NA_integer_,
-			pest_severity = if (what == "severity") as.character(v) else NA_character_,
-			stringsAsFactors = FALSE
+			pest_severity = if (what == "severity") as.character(v) else NA_character_
 		)
 	}
 	# Column positions follow the file header. See NOTES.

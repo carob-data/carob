@@ -83,7 +83,7 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 		out
 	}
 	paste_cols <- function(cols) {
-		m <- as.data.frame(lapply(cols, function(z) trimws(as.character(z))), stringsAsFactors=FALSE)
+		m <- as.data.frame(lapply(cols, function(z) trimws(as.character(z))))
 		apply(m, 1, function(z) {
 			z <- z[nzchar(z) & !is.na(z) & z != "NA"]
 			if (!length(z)) NA_character_ else paste(z, collapse="; ")
@@ -156,8 +156,7 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 		n_sprays_early_ = num(r$NFEachS),
 		pot_yield_bags_ = num(r$Potyield),
 		lb_yield_bags_ = num(r$Lbyield),
-		dif_yield_bags_ = num(r$Difyield),
-		stringsAsFactors = FALSE
+		dif_yield_bags_ = num(r$Difyield)
 	)
 	d$variety[!nzchar(d$variety) | d$variety == "NA"] <- NA_character_
 	d$crop <- "potato"

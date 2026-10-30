@@ -68,8 +68,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		household_size_ = num(r[["2.4.a. Nro. de integrantes del hogar:"]]),
 		children_under_18_ = num(r[["2.4.b. ¿Cuántos menores de 18 años?"]]),
 		occupation_ = chr(r[["2.5. Ocupación:"]]),
-		purchase_kg_ = num(r[["3.6.a. ¿Cuántos kilos de papa nativa surtida suele comprar en cada oportunidad?"]]),
-		stringsAsFactors = FALSE
+		purchase_kg_ = num(r[["3.6.a. ¿Cuántos kilos de papa nativa surtida suele comprar en cada oportunidad?"]])
 	)
 	d$crop <- "potato"
 	d$country <- "Peru"

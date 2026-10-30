@@ -82,8 +82,7 @@ International Potato Center (CIP) and partners collaborated to develop orange-fl
 		ofsp_ever_ = ofsp[pick],
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

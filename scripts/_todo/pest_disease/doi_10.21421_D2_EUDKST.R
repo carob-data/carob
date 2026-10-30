@@ -52,8 +52,7 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 		rep = as.integer(r[["Replication number"]]),
 		block_id = as.character(r$Block),
 		plot_id = as.character(r[["Plot no"]]),
-		yield = as.numeric(r$DPWkgha),
-		stringsAsFactors = FALSE
+		yield = as.numeric(r$DPWkgha)
 	)
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"

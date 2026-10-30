@@ -54,8 +54,7 @@ Molecular markers dataset of 662 sweetpotato parents from CIP Peru Breeding plat
 		trial_id = "CIP_sweetpotato_parents",
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$plot_id <- as.character(seq_len(nrow(d)))
 

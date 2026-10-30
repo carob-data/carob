@@ -44,7 +44,7 @@ Field trial and in-vitro batch experiment data. This dataset contains the raw ex
 	)
 
 	f <- ff[basename(ff) == "Data_Meyer_zu_Drewer_Kenya.csv"]
-	r <- read.csv(f, sep=";", skip=1, stringsAsFactors=FALSE)
+	r <- read.csv(f, sep=";", skip=1)
 	r$value <- as.numeric(r$value)
 
 	gy <- r[r$parameter == "Grain Yield 1st season t ha", ]

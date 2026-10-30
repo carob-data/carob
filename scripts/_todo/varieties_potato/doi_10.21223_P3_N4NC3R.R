@@ -65,8 +65,7 @@ This dataset comes from an exploratory field study with 21 farmers in the distri
 		trial_id = "Pazos_Quilcas",
 		on_farm = TRUE,
 		is_survey = TRUE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$plot_id <- as.character(seq_len(nrow(d)))
 	carobiner::write_files(path, meta, d)

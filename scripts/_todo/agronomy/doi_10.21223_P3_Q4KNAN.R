@@ -84,8 +84,7 @@ Field experiment to compare physiological performance and crop yield among diffe
 		dry_tuber_ = num(r[["dw-tuber"]]),
 		trial_id = "LaMolina_UNICA_irrigation",
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	rownames(d) <- NULL
 

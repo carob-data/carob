@@ -66,7 +66,7 @@ Evaluation of yield benefits of certified cassava seed.
 	)
 
 	f <- ff[basename(ff) == "best-cassava-yield-study-data-2020.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA"), check.names=FALSE)
+	r <- read.csv(f, na.strings=c("", "NA"), check.names=FALSE)
 	r <- r[!is.na(r$Cultivar) & trimws(r$Cultivar) != "", ]
 
 	num <- function(x) {
@@ -120,9 +120,9 @@ Evaluation of yield benefits of certified cassava seed.
 	d$trial_id <- as.character(as.integer(as.factor(paste(d$adm2, d$location, "2020"))))
 
 	long <- rbind(
-		data.frame(record_id=d$record_id, disease="cassava mosaic", disease_severity=as.character(num(r$CMD_sev)), disease_incidence=as.character(num(r$CMDinc)), tissue_="leaf", stringsAsFactors=FALSE),
-		data.frame(record_id=d$record_id, disease="cassava brown streak", disease_severity=as.character(num(r$CBSDsev)), disease_incidence=as.character(num(r$LCBSDinc)), tissue_="leaf", stringsAsFactors=FALSE),
-		data.frame(record_id=d$record_id, disease="cassava brown streak", disease_severity=as.character(num(r$rCBSDsev)), disease_incidence=as.character(num(r$tCBSDinc)), tissue_="root", stringsAsFactors=FALSE)
+		data.frame(record_id=d$record_id, disease="cassava mosaic", disease_severity=as.character(num(r$CMD_sev)), disease_incidence=as.character(num(r$CMDinc)), tissue_="leaf"),
+		data.frame(record_id=d$record_id, disease="cassava brown streak", disease_severity=as.character(num(r$CBSDsev)), disease_incidence=as.character(num(r$LCBSDinc)), tissue_="leaf"),
+		data.frame(record_id=d$record_id, disease="cassava brown streak", disease_severity=as.character(num(r$rCBSDsev)), disease_incidence=as.character(num(r$tCBSDinc)), tissue_="root")
 	)
 	long <- long[!(is.na(long$disease_severity) & is.na(long$disease_incidence)), ]
 

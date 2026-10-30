@@ -57,11 +57,11 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		carob_effort = 0.5
 	)
 
-	resp <- read.csv(ff[basename(ff) == "responses.csv"], stringsAsFactors=FALSE)
-	land <- read.csv(ff[basename(ff) == "section-a.-land.csv"], stringsAsFactors=FALSE)
-	mz <- read.csv(ff[basename(ff) == "section-c.-crop-budget.csv"], stringsAsFactors=FALSE)
-	harv <- read.csv(ff[basename(ff) == "section-d.-harvest-.csv"], stringsAsFactors=FALSE)
-	oth <- read.csv(ff[basename(ff) == "section-e.-other-crop.csv"], stringsAsFactors=FALSE)
+	resp <- read.csv(ff[basename(ff) == "responses.csv"])
+	land <- read.csv(ff[basename(ff) == "section-a.-land.csv"])
+	mz <- read.csv(ff[basename(ff) == "section-c.-crop-budget.csv"])
+	harv <- read.csv(ff[basename(ff) == "section-d.-harvest-.csv"])
+	oth <- read.csv(ff[basename(ff) == "section-e.-other-crop.csv"])
 
 	gps <- strsplit(as.character(resp$GPS), ",", fixed=TRUE)
 	lat <- lon <- elev <- rep(NA_real_, length(gps))
@@ -82,8 +82,7 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		adm2 = carobiner::fix_name(dist, "title"),
 		longitude = lon,
 		latitude = lat,
-		elevation = elev,
-		stringsAsFactors = FALSE
+		elevation = elev
 	)
 	hh <- hh[!is.na(hh$Response), ]
 	hh <- hh[!duplicated(hh$Response), ]
@@ -99,8 +98,7 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 	land_key <- data.frame(
 		Response = land$Response,
 		plot = trimws(land$Plt_farm),
-		field_size = land$field_size,
-		stringsAsFactors = FALSE
+		field_size = land$field_size
 	)
 	land_key <- land_key[!duplicated(land_key[, c("Response", "plot")]), ]
 
@@ -127,8 +125,7 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		crop = "maize",
 		yield_part = "grain",
 		fertilizer_type = ifelse(tolower(trimws(mz$applyfert)) == "yes", "NPK", NA_character_),
-		fertilizer_amount_ = mz$Qtyfert_1st,
-		stringsAsFactors = FALSE
+		fertilizer_amount_ = mz$Qtyfert_1st
 	)
 	d1 <- merge(d1, land_key, by.x=c("Response", "plot_id"), by.y=c("Response", "plot"), all.x=TRUE)
 	d1 <- merge(d1, harv_key, by.x=c("Response", "plot_id"), by.y=c("Response", "plot"), all.x=TRUE)
@@ -147,8 +144,7 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		harvest_reported_ = oth$Value_Yield,
 		harvest_unit_ = trimws(oth$Yield_Unit),
 		fertilizer_type = NA_character_,
-		fertilizer_amount_ = NA_real_,
-		stringsAsFactors = FALSE
+		fertilizer_amount_ = NA_real_
 	)
 	d2$harvest_kg <- kg_from(d2$harvest_reported_, d2$harvest_unit_)
 	d2$yield_part <- ifelse(d2$crop == "pearl millet", "grain", ifelse(d2$crop %in% c("soybean", "common bean", "bambara groundnut"), "seed", NA_character_))

@@ -62,8 +62,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		adm2 = c(NA_character_, "Chanchamayo"),
 		location = c("La Molina", "San Ramon"),
 		latitude = c(-12.076289, -11.1275),
-		longitude = c(-76.948417, -75.356389),
-		stringsAsFactors = FALSE
+		longitude = c(-76.948417, -75.356389)
 	)
 
 	d1 <- data.frame(
@@ -75,8 +74,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		tuber_Fe_ = as.numeric(g$FeFW),
 		tuber_Zn_ = as.numeric(g$ZnFW),
 		dm_ = as.numeric(g$DM),
-		trial_id = paste(trimws(as.character(g$ENVIRONMENT)), "composition"),
-		stringsAsFactors = FALSE
+		trial_id = paste(trimws(as.character(g$ENVIRONMENT)), "composition")
 	)
 	d1 <- merge(d1, sites, by="environment", all.x=TRUE)
 	d1$environment <- NULL
@@ -93,8 +91,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		trial_id = "cooking",
 		country = "Peru",
 		geo_from_source = NA,
-		on_farm = NA,
-		stringsAsFactors = FALSE
+		on_farm = NA
 	)
 
 	d3 <- data.frame(
@@ -107,8 +104,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		trial_id = "storage",
 		country = "Peru",
 		geo_from_source = NA,
-		on_farm = NA,
-		stringsAsFactors = FALSE
+		on_farm = NA
 	)
 
 	d <- carobiner::bindr(d1, d2, d3)

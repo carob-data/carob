@@ -49,7 +49,7 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 	)
 
 	f <- ff[grepl("^TMIN", basename(ff))]
-	raw <- as.data.frame(carobiner::read.excel(f, sheet="Minerals", col_names=FALSE), stringsAsFactors=FALSE)
+	raw <- as.data.frame(carobiner::read.excel(f, sheet="Minerals", col_names=FALSE))
 	hdr <- trimws(as.character(unlist(raw[6, ])))
 	hdr[!nzchar(hdr) | is.na(hdr)] <- paste0("blank_", seq_along(hdr))[!nzchar(hdr) | is.na(hdr)]
 	body <- raw[7:nrow(raw), ]
@@ -100,8 +100,7 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 		tuber_dry_matter_ = col("^Percentage Dry matter"),
 		trial_id = "Comas_phureja_2006",
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	elems <- c("Fe", "Mn", "B", "Cu", "Zn", "Ca", "Mg", "K", "P", "S", "Na", "Al", "Ti", "Cr", "Se", "Pb", "Cd", "Mo", "Co", "Ni")
 	for (el in elems) {

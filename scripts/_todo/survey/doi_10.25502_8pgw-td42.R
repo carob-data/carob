@@ -190,8 +190,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	}
 
 	f <- ff[basename(ff) == "c_land_holding_management_2.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE)
-	g <- read.csv(ff[basename(ff) == "a_general_1.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(f)
+	g <- read.csv(ff[basename(ff) == "a_general_1.csv"])
 
 	# Plain numbers are kg. "20/70" is the harvest of each crop in a mixture, summed.
 	# A piece >= 1900 is a date typed into the harvest field and is left NA.
@@ -273,8 +273,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		longitude = lon,
 		latitude = lat,
 		elevation = g$gps_altitude_dec,
-		date = date,
-		stringsAsFactors = FALSE
+		date = date
 	)
 	loc <- loc[!duplicated(loc$farm_id), ]
 
@@ -288,8 +287,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		fertilizer_type = clean_fert(r$min_fert_type),
 		fertilizer_amount_ = fert_amt,
 		OM_used = yn(r$organic_input_applied),
-		inoculated = yn(r$inoculant_applied),
-		stringsAsFactors = FALSE
+		inoculated = yn(r$inoculant_applied)
 	)
 	d$variety[d$variety %in% c("", "NA", "N/A", "-88")] <- NA
 	d$farm_id <- r$farm_id

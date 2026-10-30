@@ -71,8 +71,7 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "GROWING_baseline",
-		stringsAsFactors = FALSE
+		trial_id = "GROWING_baseline"
 	)
 	carobiner::write_files(path, meta, d)
 }

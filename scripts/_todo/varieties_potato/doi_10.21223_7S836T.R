@@ -58,7 +58,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		raw <- readBin(f, "raw", file.info(f)$size)
 		if (length(raw) && raw[length(raw)] != as.raw(10L)) raw <- c(raw, as.raw(10L))
 		txt <- iconv(rawToChar(raw), from="Latin1", to="UTF-8")
-		x <- read.delim(text=txt, check.names=FALSE, stringsAsFactors=FALSE,
+		x <- read.delim(text=txt, check.names=FALSE,
 			sep="\t", quote="", comment.char="", na.strings=c("", "NA", "-"))
 		names(x) <- gsub("\\s+", " ", trimws(names(x)))
 		x
@@ -80,7 +80,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 			if (length(grep(dw, names(x))) == 1) out[[paste0("tuber_", el, "_dw_")]] <- col_one(x, dw)
 			if (length(grep(fw, names(x))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(x, fw)
 		}
-		as.data.frame(out, stringsAsFactors=FALSE)
+		as.data.frame(out)
 	}
 
 	minf <- ff[grepl("^01_Fieldbook_TMIN", basename(ff))]
@@ -125,8 +125,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		harvest_date = meta_val("End date"),
 		trial_id = "Muqui_B3C1_2003",
 		tuber_dry_matter_ = col_one(m, "^Percentage Dry matter"),
-		key = paste(instn, as.integer(m$REP)),
-		stringsAsFactors = FALSE
+		key = paste(instn, as.integer(m$REP))
 	)
 	mins <- add_minerals(m)
 	d <- cbind(d, mins)
@@ -136,8 +135,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		key = paste(vinst, as.integer(v$REP)),
 		tuber_ascorbate_dw_ = col_one(v, "Ascorbic acid.*DW"),
 		tuber_ascorbate_fw_ = col_one(v, "Ascorbic acid.*FW"),
-		tuber_dry_matter_vitamin_ = col_one(v, "^Percentage Dry matter"),
-		stringsAsFactors = FALSE
+		tuber_dry_matter_vitamin_ = col_one(v, "^Percentage Dry matter")
 	)
 	vv <- vv[!duplicated(vv$key), ]
 	d <- merge(d, vv, by="key", all.x=TRUE)

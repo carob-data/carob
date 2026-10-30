@@ -60,8 +60,7 @@ El presente informe tiene como objetivo principal describir la situación inicia
 		survey_group_ = trimws(as.character(r$Grupo)),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

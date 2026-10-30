@@ -71,8 +71,7 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		location = loc$location[match(ids, loc$ID_QGIS)],
 		geo_from_source = FALSE,
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	spad <- trimws(as.character(s$SPAD))
@@ -86,16 +85,14 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		DAP = as.integer(s$DAP),
 		SPAD = as.numeric(spad),
 		row_yield_kg_ = NA_real_,
-		plants_per_row_ = NA_real_,
-		stringsAsFactors = FALSE
+		plants_per_row_ = NA_real_
 	)
 	long_y <- data.frame(
 		record_id = y$ID_QGIS,
 		DAP = as.integer(y$DAP),
 		SPAD = NA_real_,
 		row_yield_kg_ = as.numeric(y[["Yield (Kg/Row)"]]),
-		plants_per_row_ = as.numeric(y[["Number plants"]]),
-		stringsAsFactors = FALSE
+		plants_per_row_ = as.numeric(y[["Number plants"]])
 	)
 	dlong <- rbind(long_s, long_y)
 	rownames(dlong) <- NULL

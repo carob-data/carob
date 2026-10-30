@@ -65,8 +65,7 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 			environment_ = env,
 			chipping_color_ = num(x[[color]]),
 			reducing_sugar_mg_dl_ = if (is.na(sugar)) NA_real_ else num(x[[sugar]]),
-			oil_absorption_pct_ = num(x[[oil]]),
-			stringsAsFactors = FALSE
+			oil_absorption_pct_ = num(x[[oil]])
 		)
 	}
 	d <- rbind(

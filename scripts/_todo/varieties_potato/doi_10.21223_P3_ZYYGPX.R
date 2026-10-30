@@ -51,7 +51,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 	)
 
 	f <- ff[grepl("Resistance_Data", basename(ff))]
-	raw <- as.data.frame(carobiner::read.excel(f, sheet="Late Blight", col_names=FALSE), stringsAsFactors=FALSE)
+	raw <- as.data.frame(carobiner::read.excel(f, sheet="Late Blight", col_names=FALSE))
 	lab1 <- trimws(as.character(unlist(raw[1, ])))
 	lab3 <- trimws(as.character(unlist(raw[3, ])))
 	lab1[lab1 == "NA" | !nzchar(lab1)] <- NA_character_
@@ -101,8 +101,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 			trial_number = trial_of(block),
 			planting_date = ifelse(grepl("^[0-9]{4}$", year), year, NA_character_),
 			AUDPC = num(body[[j]]),
-			late_blight_saudpc_ = num(body[[j + 1]]),
-			stringsAsFactors = FALSE
+			late_blight_saudpc_ = num(body[[j + 1]])
 		)
 	})
 	d <- do.call(rbind, parts)
@@ -139,8 +138,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 			reading_ = as.integer(sub("[^0-9].*$", "", lab3[j])),
 			disease_severity = sev,
 			disease = "potato late blight",
-			severity_scale = "0-100",
-			stringsAsFactors = FALSE
+			severity_scale = "0-100"
 		)
 	})
 	dlong <- do.call(rbind, longs)

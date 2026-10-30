@@ -82,14 +82,12 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 		variety = chr(s1$INSTN),
 		water_regime_ = chr(s1$Treatment),
 		yield = num(s1$TTYA),
-		ttwp_ = num(s1$TTWP),
-		stringsAsFactors = FALSE
+		ttwp_ = num(s1$TTWP)
 	)
 	ped <- data.frame(
 		variety = chr(s5[["CIP.code"]]),
 		female_parent = chr(s5[["female.parent"]]),
-		male_parent = chr(s5[["male.parent"]]),
-		stringsAsFactors = FALSE
+		male_parent = chr(s5[["male.parent"]])
 	)
 	ped <- ped[!is.na(ped$variety) & !duplicated(ped$variety), ]
 	d1 <- merge(d1, ped, by="variety", all.x=TRUE)
@@ -97,8 +95,7 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 	mets <- setdiff(names(s2), c("Genotype", "Treatment"))
 	d2 <- data.frame(
 		variety = chr(s2$Genotype),
-		water_regime_ = chr(s2$Treatment),
-		stringsAsFactors = FALSE
+		water_regime_ = chr(s2$Treatment)
 	)
 	for (k in mets) d2[[slug(k)]] <- num(s2[[k]])
 

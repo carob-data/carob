@@ -59,7 +59,7 @@ IPM of aphid pests of vegetables
 	)
 
 	f <- ff[basename(ff) == "okra_adaptation_and_yield_stability.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA"), check.names=FALSE)
+	r <- read.csv(f, na.strings=c("", "NA"), check.names=FALSE)
 
 	sowing <- as.character(as.Date(trimws(r$SowingDate), "%d/%m/%Y"))
 	# a few dates are d/m/yyyy with a one-digit month (5/4/2014)

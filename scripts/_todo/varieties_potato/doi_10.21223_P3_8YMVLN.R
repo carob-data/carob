@@ -65,8 +65,8 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 	}
 	num <- function(x) as.numeric(blank(x))
 
-	h <- read.csv(ff[basename(ff) == "Harvest_isotopes.csv"], stringsAsFactors=FALSE, check.names=FALSE)
-	p <- read.csv(ff[basename(ff) == "Photosynthesis_isototes.csv"], stringsAsFactors=FALSE, check.names=FALSE)
+	h <- read.csv(ff[basename(ff) == "Harvest_isotopes.csv"], check.names=FALSE)
+	p <- read.csv(ff[basename(ff) == "Photosynthesis_isototes.csv"], check.names=FALSE)
 
 	dh <- data.frame(
 		plot_id = paste("H", blank(h$ID), sep="_"),
@@ -78,8 +78,7 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 		agb_g_ = num(h$AGB),
 		tb_g_ = num(h$TB),
 		leaflet_d13c_ = num(h$DeltaLeaflet),
-		tuber_d13c_ = num(h$DeltaT),
-		stringsAsFactors = FALSE
+		tuber_d13c_ = num(h$DeltaT)
 	)
 	dp <- data.frame(
 		plot_id = paste("P", blank(p$ID), sep="_"),
@@ -88,8 +87,7 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 		tio_days_ = num(p[["Days after TIO"]]),
 		gs_ = num(p$gs),
 		A_ = num(p$A),
-		ags_ = num(p[["A/gs"]]),
-		stringsAsFactors = FALSE
+		ags_ = num(p[["A/gs"]])
 	)
 	d <- carobiner::bindr(dh, dp)
 	d$crop <- "potato"

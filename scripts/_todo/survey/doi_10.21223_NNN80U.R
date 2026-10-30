@@ -53,8 +53,7 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 		Agrodealer_index = a$Agrodealer_index,
 		adm2 = trimws(as.character(a$District)),
 		location = trimws(as.character(a$Sector)),
-		date = as.character(as.Date(a$Date)),
-		stringsAsFactors = FALSE
+		date = as.character(as.Date(a$Date))
 	)
 	loc <- loc[!duplicated(loc$Agrodealer_index), ]
 
@@ -74,8 +73,7 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 		package_quantity_ = num(p$Quantity_per_package),
 		package_unit_ = trimws(as.character(p$Quantity_unit)),
 		price_per_kg_ = num(p$Original_price_per_kg),
-		subsidized_price_per_kg_ = num(p$Subsidized_price_per_kg),
-		stringsAsFactors = FALSE
+		subsidized_price_per_kg_ = num(p$Subsidized_price_per_kg)
 	)
 	d <- merge(d, loc, by.x="shop_id_", by.y="Agrodealer_index", all.x=TRUE)
 	d$hhid <- d$shop_id_

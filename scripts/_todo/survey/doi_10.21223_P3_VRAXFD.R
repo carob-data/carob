@@ -93,15 +93,13 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		area_recorded_ = num(r$Area),
 		planting_date = as_date(r[["Planting date"]]),
 		harvest_date = as_date(r[["Harvest date"]]),
-		rotation_code_ = chr(r$Cultivar_Final),
-		stringsAsFactors = FALSE
+		rotation_code_ = chr(r$Cultivar_Final)
 	)
 	v <- carobiner::read.excel(fv, sheet="Lista_Area")
 	d2 <- data.frame(
 		country = "Peru",
 		variety = chr(v$Variedad),
-		area_m2_ = num(v[["Area m2"]]),
-		stringsAsFactors = FALSE
+		area_m2_ = num(v[["Area m2"]])
 	)
 	d <- carobiner::bindr(d1, d2)
 	miss <- is.na(d$hhid) | !nzchar(d$hhid)

@@ -85,8 +85,7 @@ An experimental potato trial based on conservation agriculture in the second sea
 		yield_part = "tubers",
 		dry_matter_percent_ = as.numeric(dmc),
 		on_farm = TRUE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

@@ -74,8 +74,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "COVID_producers",
-		stringsAsFactors = FALSE
+		trial_id = "COVID_producers"
 	)
 	adm <- take("departamento")
 	if (!is.null(adm)) d$adm1 <- adm

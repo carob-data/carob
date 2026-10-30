@@ -86,8 +86,7 @@ Tarwi (Lupinus mutabilis S.) is a legume native to the andes that stands out for
 		pods_per_plant_ = as.numeric(r$TNPP),
 		days_to_harvest_ = as.numeric(r$DH),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

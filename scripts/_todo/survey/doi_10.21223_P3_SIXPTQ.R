@@ -99,8 +99,7 @@ The baseline survey is designed with an aim of determining the level of communit
 		elevation = num(a$BPAL),
 		potato_area_m2_ = num(a$BPP),
 		sweetpotato_area_m2_ = num(a$BSPP),
-		ofsp_area_m2_ = num(a$BOFSP),
-		stringsAsFactors = FALSE
+		ofsp_area_m2_ = num(a$BOFSP)
 	)
 	pf <- data.frame(
 		hhid = chr(p$HH_ID),
@@ -109,8 +108,7 @@ The baseline survey is designed with an aim of determining the level of communit
 		variety = chr(p$VU_1),
 		variety_2_ = chr(p$VU_2),
 		variety_3_ = chr(p$VU_3),
-		fertilizer_inorganic_ = chr(p$F12),
-		stringsAsFactors = FALSE
+		fertilizer_inorganic_ = chr(p$F12)
 	)
 	pf <- pf[!duplicated(pf$hhid), ]
 	d <- merge(d, pf, by="hhid", all.x=TRUE)

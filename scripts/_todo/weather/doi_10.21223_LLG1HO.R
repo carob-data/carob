@@ -50,8 +50,7 @@ In the present dataset, daily weather data at La Victoria Experimental Station f
 		adm1 = "Junin",
 		location = "La Victoria",
 		is_survey = FALSE,
-		on_farm = FALSE,
-		stringsAsFactors = FALSE
+		on_farm = FALSE
 	)
 
 	wth <- data.frame(
@@ -60,8 +59,7 @@ In the present dataset, daily weather data at La Victoria Experimental Station f
 		tmax = as.numeric(r$max_temp),
 		tmin = as.numeric(r$min_temp),
 		prec = as.numeric(r$precip),
-		irad = as.numeric(r$radiation),
-		stringsAsFactors = FALSE
+		irad = as.numeric(r$radiation)
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

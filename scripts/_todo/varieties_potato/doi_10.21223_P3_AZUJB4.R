@@ -77,8 +77,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		ascorbic_acid_mg_100g_fw_ = num(r[["Vict. C (mg/100FW)"]]),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

@@ -92,7 +92,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		vname <- gsub("\u00a0", " ", as.character(mat[["Clone or variety name"]]), fixed=TRUE)
 		vname <- trimws(vname)
 		vname[!nzchar(vname)] <- NA_character_
-		alias <- data.frame(variety_code=code, variety=vname, stringsAsFactors=FALSE)
+		alias <- data.frame(variety_code=code, variety=vname)
 		alias <- alias[!duplicated(alias$variety_code), ]
 
 		fb$variety_code <- trimws(as.character(fb$INSTN))
@@ -160,8 +160,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 			soil_Cu = soil_val(soil, "SOILCU"),
 			soil_Zn = soil_val(soil, "SOILZN"),
 			soil_B = soil_val(soil, "SOILB"),
-			soil_Mn = soil_val(soil, "SOILMN"),
-			stringsAsFactors = FALSE
+			soil_Mn = soil_val(soil, "SOILMN")
 		)
 	})
 

@@ -84,8 +84,7 @@ The measured variables included pH (1:1 soil–water suspension), electrical con
 		soil_d15N_ = as.numeric(r$N15),
 		geo_from_source = TRUE,
 		on_farm = TRUE,
-		is_survey = TRUE,
-		stringsAsFactors = FALSE
+		is_survey = TRUE
 	)
 
 	carobiner::write_files(path, meta, d)

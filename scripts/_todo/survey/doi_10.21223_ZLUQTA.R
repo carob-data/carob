@@ -59,8 +59,7 @@ New LB-resistant potato varieties with improved yield, resistance, and nutrition
 			treatment = trimws(as.character(r$INSTN)),
 			tuber_class_ = tuber_class_,
 			yield = as.numeric(r$TTYNA) * 1000,
-			yield_marketable = as.numeric(r$MTYNA) * 1000,
-			stringsAsFactors = FALSE
+			yield_marketable = as.numeric(r$MTYNA) * 1000
 		)
 	}
 

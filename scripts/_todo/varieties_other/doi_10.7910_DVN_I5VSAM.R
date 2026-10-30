@@ -79,8 +79,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 			vals <- as.numeric(vals)
 			piece <- data.frame(
 				variety = variety[keep],
-				loc_key = lab,
-				stringsAsFactors = FALSE
+				loc_key = lab
 			)
 			piece[[varname]] <- vals
 			out[[length(out) + 1]] <- piece
@@ -121,8 +120,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 			"Banfora", "Sokwae", "Kilissi", "Seredou",
 			"Samogossoni", "Longorolla", "Badeggi", "Edozhigi", "Jima",
 			"Bo", "Rokupr"
-		),
-		stringsAsFactors = FALSE
+		)
 	)
 
 	bad <- setdiff(unique(d$loc_key), sites$loc_key)
@@ -149,8 +147,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		trial_id = paste(d$location, "2018"),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = FALSE,
-		stringsAsFactors = FALSE
+		irrigated = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

@@ -82,8 +82,7 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 				sweetness_ = if (length(sw)) num(r[[sw[1]]]) else NA_real_,
 				firmness_ = if (length(fi)) num(r[[fi[1]]]) else NA_real_,
 				mealiness_ = if (length(me)) num(r[[me[1]]]) else NA_real_,
-				crop = "sweetpotato",
-				stringsAsFactors = FALSE
+				crop = "sweetpotato"
 			)
 		})
 		d <- do.call(rbind, parts)
@@ -101,8 +100,7 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 			liked_ = pick(r, "like the most"),
 			disliked_ = pick(r, "dislike the most"),
 			crop = "potato",
-			trial_place_ = place,
-			stringsAsFactors = FALSE
+			trial_place_ = place
 		)
 	}
 	bybase <- function(pattern) ff[grepl(pattern, basename(ff))]

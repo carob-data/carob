@@ -98,8 +98,7 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 	books <- data.frame(
 		file = c("4034_Bugeshi.xlsx", "4034_Burera.xlsx", "4034_Gihonga.xlsx", "4034_Muhoza.xlsx", "4034_Nyabihu.xlsx"),
 		meta = c("Minimal", "Burera Summary", "Gihonga Summary", "Minimal", "Nyabihu Summary"),
-		fieldbook = c("Bugeshi Fieldbook", "Burera Fieldbook", "Gihonga Fieldbook", "Muhoza Fieldbook", "Nyabihu Fieldbook"),
-		stringsAsFactors = FALSE
+		fieldbook = c("Bugeshi Fieldbook", "Burera Fieldbook", "Gihonga Fieldbook", "Muhoza Fieldbook", "Nyabihu Fieldbook")
 	)
 	parts <- lapply(seq_len(nrow(books)), function(i) {
 		f <- ff[basename(ff) == books$file[i]]
@@ -123,8 +122,7 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 			latitude = dms(val("Latitude")),
 			longitude = dms(val("Longitude")),
 			planting_date = as_date(val("Planting_date")),
-			harvest_date = as_date(val("Harvest date")),
-			stringsAsFactors = FALSE
+			harvest_date = as_date(val("Harvest date"))
 		)
 	})
 	d <- do.call(rbind, parts)

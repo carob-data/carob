@@ -56,8 +56,7 @@ This data set details information collected on preferred characteristics of urba
 		on_farm = FALSE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "urban_consumers",
-		stringsAsFactors = FALSE
+		trial_id = "urban_consumers"
 	)
 
 	carobiner::write_files(path, meta, d)

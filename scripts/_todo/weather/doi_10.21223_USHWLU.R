@@ -3,21 +3,19 @@
 
 ## NOTES
 # Hourly Vantage Pro Plus records. Temperature, humidity, dew point, wind speed, rain, solar radiation, and evapotranspiration are the station columns.
-# Wind direction is a compass-rose cardinal, not degrees. Stored as wind_dir_. The text NULL is missing.
+# Wind direction is a 16-point compass label. It is stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90). The text NULL is missing.
 # Solar energy is Wh/m2 in the dictionary (vatios-hora/m2). Multiplied by 3.6 to kJ/m2.
-# ET is mm per hourly interval, not mm/day. Barometric pressure is hPa.
+# ET is the mm recorded for that hour, stored as ETo. Barometric pressure is hPa.
 # Coordinates, admin names, and elevation are columns in the workbook.
 # The description lists vapor pressure deficit. This workbook has dew point, not vapor-pressure deficit.
 
 ## ISSUES
 # Comfort indices, UV, indoor temperature, rain rate, and wind run are not mapped.
 # A few temperature, maximum temperature, minimum temperature, and dew-point values are -67.8. They are left as recorded.
-# write_files: missing carob_contributor. unknown variables: wind_dir_, wind_dir_max_, pressure_, par_, soil_moist_, soil_temp1_, soil_temp2_, soil_temp3_, leaf_wet_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4).
+# write_files: missing carob_contributor. unknown variables: wind_dir_max_, par_, soil_moist_, soil_temp1_, soil_temp2_, soil_temp3_, leaf_wet_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4).
 
 ## NEW VARIABLES
-# wind_dir_: compass-rose wind direction (N, NE, ...). Not degrees.
-# wind_dir_max_: compass direction of the maximum wind speed in the interval.
-# pressure_: barometric pressure, hPa.
+# wind_dir_max_: direction of the maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name.
 # par_: photosynthetically active radiation, as recorded.
 # soil_moist_: soil moisture sensor, percent.
 # soil_temp1_, soil_temp2_, soil_temp3_: soil temperature sensors, C.
@@ -68,10 +66,19 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		x[!nzchar(x)] <- NA_character_
 		x
 	}
-	card <- function(x) {
-		x <- trimws(as.character(x))
-		x[!nzchar(x)] <- NA_character_
-		x
+	compass_deg <- function(x) {
+		x <- toupper(trimws(as.character(x)))
+		x[!nzchar(x) | x %in% c("NA", "NULL", "NAN", "---", "------")] <- NA_character_
+		rose <- c(
+			N=0, NNE=22.5, NE=45, ENE=67.5, E=90, ESE=112.5, SE=135, SSE=157.5,
+			S=180, SSW=202.5, SW=225, WSW=247.5, W=270, WNW=292.5, NW=315, NNW=337.5
+		)
+		out <- rep(NA_real_, length(x))
+		known <- !is.na(x) & x %in% names(rose)
+		out[known] <- unname(rose[x[known]])
+		bad <- unique(x[!is.na(x) & !known])
+		if (length(bad) > 0) stop("unmapped wind direction: ", paste(utils::head(bad, 30), collapse=", "))
+		out
 	}
 
 	adm1 <- carobiner::fix_name(as.character(r$Adm1), "title")
@@ -98,21 +105,20 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		rhum = num(r[["Out Hum"]]),
 		dewp = num(r[["Dew Pt."]]),
 		wspd = num(r[["Wind Speed"]]),
-		wind_dir_ = card(r[["Wind Dir"]]),
+		wdir = compass_deg(r[["Wind Dir"]]),
 		wspdmx = num(r[["Hi Speed"]]),
-		wind_dir_max_ = card(r[["Hi Dir"]]),
+		wind_dir_max_ = compass_deg(r[["Hi Dir"]]),
 		prec = num(r$Rain),
 		irad = num(r[["Solar Rad."]]),
 		srad = num(r[["Solar Energy"]]) * 3.6,
 		ETo = num(r$ET),
-		pressure_ = num(r$Bar),
+		pressure = num(r$Bar),
 		par_ = num(r$PAR),
 		soil_moist_ = num(r[["Soil 1 Moist."]]),
 		soil_temp1_ = num(r[["Soil  Temp 1"]]),
 		soil_temp2_ = num(r[["Soil  Temp 2"]]),
 		soil_temp3_ = num(r[["Soil  Temp 3"]]),
-		leaf_wet_ = num(r[["Leaf Wet 1"]]),
-		stringsAsFactors = FALSE
+		leaf_wet_ = num(r[["Leaf Wet 1"]])
 	)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
 	rownames(wth) <- NULL
@@ -130,8 +136,7 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		latitude = latitude[1],
 		longitude = longitude[1],
 		elevation = elevation[1],
-		geo_from_source = TRUE,
-		stringsAsFactors = FALSE
+		geo_from_source = TRUE
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

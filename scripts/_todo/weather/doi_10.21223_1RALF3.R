@@ -7,22 +7,19 @@
 # HOURW mixes Excel day-fractions and clock strings such as 15:59:41.0. Both are stored as HH:MM.
 
 ## ISSUES
-# Evapotranspiration is mm per recording interval, not mm/day. Wind direction is a compass code, not degrees.
+# Evapotranspiration is the mm recorded for that hour, stored as ETo. Wind direction is a 16-point compass label, stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90).
 # Wind Dir and Hi Dir are read as text. Guessing the type treats them as logical and drops codes such as SSE.
 # Indoor temperature, UV, degree-days and wind-chill indexes are not primary outdoor observations.
 # Some temperature readings are -67.8 C and wind speed reaches 70 m/s. Those values are left as recorded.
-# write_files: missing carob_contributor. unknown variables: wind_dir_, hi_dir_, par_wm2_, pressure_hpa_, rain_rate_mm_h_, et_mm_, soil_moist_pct_, soil_temp_1_, soil_temp_2_, soil_temp_3_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4), wspd (0, 70.2), wspdmx (0, 70.2).
+# write_files: missing carob_contributor. unknown variable: hi_dir_ (wdir?). Hi Dir is the direction of the maximum wind speed, so it is not stored in wdir. unknown variables: par_wm2_, rain_rate_mm_h_, soil_moist_pct_, soil_temp_1_, soil_temp_2_, soil_temp_3_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4), wspd (0, 70.2), wspdmx (0, 70.2).
 
 ## NOT PROCESSED
 # Month, Day, Year: the same day as Date.
 # WeatherType, Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Hi Solar Rad, UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Leaf Wet, Wind Samp, ISS Recept, Arc. Int.
 
 ## NEW VARIABLES
-# wind_dir_: wind direction as recorded.
-# hi_dir_: direction at maximum wind speed, as recorded.
-# pressure_hpa_: barometric pressure (hPa).
+# hi_dir_: direction at maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name.
 # rain_rate_mm_h_: rain rate (mm/h).
-# et_mm_: evapotranspiration in the recording interval (mm).
 # par_wm2_: photosynthetically active radiation (W/m2).
 # soil_moist_pct_: soil moisture (%).
 # soil_temp_1_, soil_temp_2_, soil_temp_3_: soil temperature (C).
@@ -108,13 +105,27 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		location = loc,
 		latitude = lat,
 		longitude = lon,
-		elevation = num(r$Altitude),
-		stringsAsFactors = FALSE
+		elevation = num(r$Altitude)
 	)
 	d <- d[!duplicated(d$station_id), ]
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$is_survey <- FALSE
 	d$on_farm <- NA
+
+	compass_deg <- function(x) {
+		x <- toupper(trimws(as.character(x)))
+		x[!nzchar(x) | x %in% c("NA", "NULL", "NAN", "---", "------")] <- NA_character_
+		rose <- c(
+			N=0, NNE=22.5, NE=45, ENE=67.5, E=90, ESE=112.5, SE=135, SSE=157.5,
+			S=180, SSW=202.5, SW=225, WSW=247.5, W=270, WNW=292.5, NW=315, NNW=337.5
+		)
+		out <- rep(NA_real_, length(x))
+		known <- !is.na(x) & x %in% names(rose)
+		out[known] <- unname(rose[x[known]])
+		bad <- unique(x[!is.na(x) & !known])
+		if (length(bad) > 0) stop("unmapped wind direction: ", paste(utils::head(bad, 30), collapse=", "))
+		out
+	}
 
 	wth <- data.frame(
 		station_id = sid,
@@ -127,22 +138,19 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		dewp = num(r[["Dew Pt"]]),
 		wspd = num(r[["Wind Speed"]]),
 		wspdmx = num(r[["Hi Speed"]]),
-		wind_dir_ = trimws(as.character(r[["Wind Dir"]])),
-		hi_dir_ = trimws(as.character(r[["Hi Dir"]])),
+		wdir = compass_deg(r[["Wind Dir"]]),
+		hi_dir_ = compass_deg(r[["Hi Dir"]]),
 		prec = num(r$Rain),
 		irad = num(r[["Solar Rad"]]),
 		par_wm2_ = num(r$PAR),
-		pressure_hpa_ = num(r$Bar),
+		pressure = num(r$Bar),
 		rain_rate_mm_h_ = num(r[["Rain Rate"]]),
-		et_mm_ = num(r$ET),
+		ETo = num(r$ET),
 		soil_moist_pct_ = num(r[["Soil 1 Moist"]]),
 		soil_temp_1_ = num(r[["Soil  Temp 1"]]),
 		soil_temp_2_ = num(r[["Soil  Temp 2"]]),
-		soil_temp_3_ = num(r[["Soil  Temp 3"]]),
-		stringsAsFactors = FALSE
+		soil_temp_3_ = num(r[["Soil  Temp 3"]])
 	)
-	wth$wind_dir_[!nzchar(wth$wind_dir_)] <- NA_character_
-	wth$hi_dir_[!nzchar(wth$hi_dir_)] <- NA_character_
 	wth <- wth[!is.na(wth$date), ]
 
 	carobiner::write_files(path, meta, d, wth=wth)

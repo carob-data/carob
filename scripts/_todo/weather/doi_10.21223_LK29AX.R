@@ -3,20 +3,14 @@
 
 ## NOTES
 # Records are the station interval (often 30 minutes, sometimes one hour). Temperature, humidity, wind, rain, solar radiation, and evapotranspiration are as recorded for that interval.
-# Wind direction is a compass-rose cardinal. Stored as wind_dir_.
-# Vapor pressure deficit is kPa. It is not vapour pressure, so it is vpd_ rather than vapr.
-# Atmospheric pressure is hPa. Solar radiation is W/m2. Precipitation and Eo are mm for the interval, not per day.
+# Wind direction is a 16-point compass label. It is stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90).
+# Vapor pressure deficit in the file is kPa. It is stored as vpd in hPa. Atmospheric pressure is stored as pressure, in hPa. Solar radiation is W/m2. Precipitation is mm. Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
 # Latitude -7.81 and longitude -77.87 are the Dataverse bounding box (south latitude and west longitude only, two decimals). geo_uncertainty is 2000 m.
 # Country Peru and department La Libertad are the geographic coverage. Pishauli and Chugay district are in the dataset title.
 
 ## ISSUES
 # The province is not in the file.
-# write_files: missing carob_contributor. Unknown variables are the underscore names.
-
-## NEW VARIABLES
-# wind_dir_: compass-rose wind direction. Not degrees.
-# vpd_: vapor pressure deficit, kPa.
-# pressure_: atmospheric pressure, hPa.
+# write_files: missing carob_contributor.
 
 ## NOT PROCESSED
 # 02_Data_dictionary.xlsx: column definitions.
@@ -63,10 +57,19 @@ In the present dataset, meteorological data in the Pishauli locality - Chugay di
 		x[!nzchar(x)] <- NA_character_
 		x
 	}
-	card <- function(x) {
-		x <- trimws(as.character(x))
-		x[!nzchar(x)] <- NA_character_
-		x
+	compass_deg <- function(x) {
+		x <- toupper(trimws(as.character(x)))
+		x[!nzchar(x) | x %in% c("NA", "NULL", "NAN", "---", "------")] <- NA_character_
+		rose <- c(
+			N=0, NNE=22.5, NE=45, ENE=67.5, E=90, ESE=112.5, SE=135, SSE=157.5,
+			S=180, SSW=202.5, SW=225, WSW=247.5, W=270, WNW=292.5, NW=315, NNW=337.5
+		)
+		out <- rep(NA_real_, length(x))
+		known <- !is.na(x) & x %in% names(rose)
+		out[known] <- unname(rose[x[known]])
+		bad <- unique(x[!is.na(x) & !known])
+		if (length(bad) > 0) stop("unmapped wind direction: ", paste(utils::head(bad, 30), collapse=", "))
+		out
 	}
 	date <- r$Date
 	if (inherits(date, "POSIXt") || inherits(date, "Date")) date <- as.character(as.Date(date))
@@ -80,14 +83,13 @@ In the present dataset, meteorological data in the Pishauli locality - Chugay di
 		tmax = num(r$Tmax),
 		tmin = num(r$Tmin),
 		rhum = num(r$RH),
-		vpd_ = num(r$VPD),
+		vpd = num(r$VPD) * 10,
 		wspd = num(r$Ws),
-		wind_dir_ = card(r$Dir),
-		pressure_ = num(r$Pa),
+		wdir = compass_deg(r$Dir),
+		pressure = num(r$Pa),
 		prec = num(r$P),
 		irad = num(r$SR),
-		ETo = num(r$Eo),
-		stringsAsFactors = FALSE
+		ETo = num(r$Eo)
 )
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
 	rownames(wth) <- NULL
@@ -105,8 +107,7 @@ In the present dataset, meteorological data in the Pishauli locality - Chugay di
 		longitude = -77.87,
 		geo_from_source = TRUE,
 		geo_uncertainty = 2000,
-		geo_source = "CIP Dataverse bounding box",
-		stringsAsFactors = FALSE
+		geo_source = "CIP Dataverse bounding box"
 )
 
 	carobiner::write_files(path, meta, d, wth=wth)

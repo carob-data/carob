@@ -50,7 +50,7 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 	)
 
 	f <- ff[grepl("^Tabla 12", basename(ff))]
-	x <- as.data.frame(carobiner::read.excel(f, sheet="Tabla 12_data", col_names=FALSE), stringsAsFactors=FALSE)
+	x <- as.data.frame(carobiner::read.excel(f, sheet="Tabla 12_data", col_names=FALSE))
 	hdr <- trimws(as.character(unlist(x[1, ])))
 	y <- x[-1, ]
 	names(y) <- make.names(hdr, unique=TRUE)
@@ -72,8 +72,7 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 		trial_id = "PVS_sierra",
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$treatment <- d$variety
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]

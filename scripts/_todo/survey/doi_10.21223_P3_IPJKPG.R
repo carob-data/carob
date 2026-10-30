@@ -78,8 +78,7 @@ Rwanda Sweetpotato Super Foods Project Endline Survey  This endline survey was d
 		valley_bottom_ = chr(c$a08b2),
 		farmer_group_ = chr(c$a08b3),
 		elevation = num(c$a15e),
-		date = ymd(c$a17c, c$a17b, c$a17a),
-		stringsAsFactors = FALSE
+		date = ymd(c$a17c, c$a17b, c$a17a)
 	)
 	sp <- data.frame(
 		hhid = chr(s$hhid),
@@ -89,8 +88,7 @@ Rwanda Sweetpotato Super Foods Project Endline Survey  This endline survey was d
 		sp_upland_c_ = num(s$g02c),
 		sp_lowland_b_ = num(s$g03a),
 		sp_lowland_a_ = num(s$g03b),
-		sp_lowland_c_ = num(s$g03c),
-		stringsAsFactors = FALSE
+		sp_lowland_c_ = num(s$g03c)
 	)
 	sp <- sp[!duplicated(sp$hhid), ]
 	d <- merge(d, sp, by="hhid", all.x=TRUE)

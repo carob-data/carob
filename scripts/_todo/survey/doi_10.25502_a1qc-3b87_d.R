@@ -147,8 +147,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	}
 
 	f <- ff[basename(ff) == "f_crop_production_1.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE)
-	g <- read.csv(ff[basename(ff) == "a_b_general_1.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(f)
+	g <- read.csv(ff[basename(ff) == "a_b_general_1.csv"])
 
 	c1 <- map_one(r$crop_1)
 	c2 <- map_one(r$crop_2)
@@ -185,8 +185,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		longitude = g$gps_longitude_dec,
 		latitude = g$gps_latitude_dec,
 		elevation = g$gps_altitude_dec,
-		date = date,
-		stringsAsFactors = FALSE
+		date = date
 	)
 	loc <- loc[!duplicated(loc$farm_id), ]
 	loc$longitude[loc$longitude == 0] <- NA
@@ -204,8 +203,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		yield = yield,
 		fertilizer_type = clean_fert(r$min_fert_type),
 		OM_used = yn(r$organic_input_applied),
-		inoculated = yn(r$inoculant_applied),
-		stringsAsFactors = FALSE
+		inoculated = yn(r$inoculant_applied)
 	)
 	d$variety[d$variety %in% c("", "NA", "N/A", "no")] <- NA
 	d$farm_id <- r$farm_id

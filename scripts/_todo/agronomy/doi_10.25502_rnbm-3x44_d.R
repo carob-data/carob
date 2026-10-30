@@ -80,7 +80,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	)
 
 	f <- ff[basename(ff) == "onstation2018_lagon_all_locations_datafile_rft.csv"]
-	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), stringsAsFactors = FALSE, check.names = FALSE)
+	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), check.names = FALSE)
 	r <- r[!is.na(r$UniqueID), ]
 
 	num <- function(x) {
@@ -159,8 +159,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		post_adjuvant_ = grepl("Adjuvant", ifelse(is.na(r$Posttreat), "", r$Posttreat)),
 		weeding_times = as.integer(pmax(hoe_n(r$Pretreat), hoe_n(r$Posttreat))),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$weeding_done <- d$weeding_times > 0
 	d$weeding_method <- ifelse(d$weeding_done, "hoe", NA_character_)
@@ -188,8 +187,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			weed_dmy_sedge_ = col(paste0("Sedge_gm2_", tag, "WAP")) * 10,
 			weed_dmy_ = if (w == 15) col("WeedBMass_gm2_15WAP") * 10 else rep(NA_real_, nrow(r)),
 			weed_density = col(paste0("Wddenm2_", tag, "WAP")) * 10000,
-			sprout_density_ = col(paste0("CasSprt_ha_", tag, "WAP")),
-			stringsAsFactors = FALSE
+			sprout_density_ = col(paste0("CasSprt_ha_", tag, "WAP"))
 		)
 	}
 	dlong <- do.call(rbind, lapply(c(2, 4, 6, 8, 10, 12, 15), one_wap))

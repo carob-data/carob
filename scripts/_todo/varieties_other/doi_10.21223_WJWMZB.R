@@ -67,8 +67,7 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 			ndvi_ = as.numeric(r[[6]]),
 			ndvi_green_ = as.numeric(r[[8]]),
 			ci_ = as.numeric(r[[10]]),
-			cover_percent_ = as.numeric(r[[12]]),
-			stringsAsFactors = FALSE
+			cover_percent_ = as.numeric(r[[12]])
 		)
 	}
 	x <- rbind(

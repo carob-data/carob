@@ -63,16 +63,14 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 		variety = chr(m$ACCENUMB),
 		fe_dw_ = num(m$FeDW),
 		zn_dw_ = num(m$ZnDw),
-		dm_ = num(m$DM),
-		stringsAsFactors = FALSE
+		dm_ = num(m$DM)
 	)
 	minr <- minr[!is.na(minr$variety) & !duplicated(minr$variety), ]
 	d <- data.frame(
 		variety = chr(y$ACCENUMB),
 		treatment = chr(y$ACCENUMB),
 		block_id = chr(y$BLOCK),
-		yield = num(y$TTWP),
-		stringsAsFactors = FALSE
+		yield = num(y$TTWP)
 	)
 	d <- merge(d, minr, by="variety", all.x=TRUE)
 	d$crop <- "potato"

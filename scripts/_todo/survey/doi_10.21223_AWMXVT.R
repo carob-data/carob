@@ -67,14 +67,12 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 		adm3 = txt(who$parroquia),
 		location = txt(who$recinto),
 		elevation = as.numeric(who[["gps-Altitude"]]),
-		crop = "potato",
-		stringsAsFactors = FALSE
+		crop = "potato"
 	)
 	q <- data.frame(
 		hhid = txt(prod$unique_id),
 		area_ha_ = as.numeric(prod$quant_ha_M03_01_3_1),
-		production_quintals_ = as.numeric(prod$quant_quint_M3a_01A7_1),
-		stringsAsFactors = FALSE
+		production_quintals_ = as.numeric(prod$quant_quint_M3a_01A7_1)
 	)
 	d <- merge(d, q, by="hhid", all.x=TRUE)
 	d$geo_from_source <- FALSE

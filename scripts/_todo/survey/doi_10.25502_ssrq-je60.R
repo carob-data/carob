@@ -107,8 +107,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		ifelse(x == "Y", TRUE, ifelse(x == "N", FALSE, NA))
 	}
 
-	r <- read.csv(ff[basename(ff) == "legumes_area_and_management.csv"], stringsAsFactors=FALSE)
-	g <- read.csv(ff[basename(ff) == "general.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "legumes_area_and_management.csv"])
+	g <- read.csv(ff[basename(ff) == "general.csv"])
 
 	leg <- tolower(trimws(r$type_legume_variety))
 	crop <- map_legume(r$type_legume_variety)
@@ -159,8 +159,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		fertilizer_type = fert,
 		fertilizer_product_kg_ = r$amount_fert_kg,
 		OM_used = yn(r$organic_fert_applied),
-		inoculated = yn(r$inoculant_applied),
-		stringsAsFactors = FALSE
+		inoculated = yn(r$inoculant_applied)
 	)
 
 	dist <- trimws(g$district_lga)
@@ -183,8 +182,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		location = carobiner::fix_name(g$village, "title"),
 		ward_ = trimws(g$sector_ward),
 		planting_date = plant,
-		date = date,
-		stringsAsFactors = FALSE
+		date = date
 	)
 	loc$ward_[loc$ward_ == ""] <- NA
 	loc <- loc[!duplicated(loc$farm_id), ]

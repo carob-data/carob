@@ -59,7 +59,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	)
 
 	f <- ff[basename(ff) == "onstation2019_lagon_all_locs_wdspecies_datafile_rft.csv"]
-	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), stringsAsFactors = FALSE, check.names = FALSE)
+	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), check.names = FALSE)
 
 	# Header is shifted; see NOTES. Do not read PlotNo/Replicate/Pretreat/Posttreat by those names.
 	pretreat <- r$PlotNo
@@ -126,8 +126,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		weeding_times = as.integer(pmax(hoe_n(pretreat), hoe_n(posttreat))),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	d$weeding_done <- d$weeding_times > 0
 	d$weeding_method <- ifelse(d$weeding_done, "hoe", NA_character_)
@@ -146,8 +145,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		pieces[[length(pieces) + 1]] <- data.frame(
 			record_id = d$record_id[keep],
 			DAP = as.integer(w * 7),
-			weed_density = dens[keep],
-			stringsAsFactors = FALSE
+			weed_density = dens[keep]
 		)
 	}
 	dlong <- do.call(rbind, pieces)

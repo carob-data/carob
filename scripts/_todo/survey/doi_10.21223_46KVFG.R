@@ -77,8 +77,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		geo_from_source = FALSE,
 		is_survey = TRUE,
 		on_farm = NA,
-		trial_id = "stakeholders_Peru_2020",
-		stringsAsFactors = FALSE
+		trial_id = "stakeholders_Peru_2020"
 	)
 	d$location[!nzchar(d$location)] <- NA_character_
 	d$adm2[!nzchar(d$adm2)] <- NA_character_

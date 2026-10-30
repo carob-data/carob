@@ -73,8 +73,7 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		pvy_infection_ = num(v[["Percentage of PVY infection"]]),
 		plrv_infection_ = num(v[["Percentage of PLRV infection"]]),
 		pvs_infection_ = num(v[["Percentage of PVS infection"]]),
-		trial_id = "virus",
-		stringsAsFactors = FALSE
+		trial_id = "virus"
 	)
 
 	d2 <- data.frame(
@@ -83,8 +82,7 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		treatment = trimws(as.character(lb$ACCENUMB)),
 		rAUDPC = num(lb$rAUDPC_Yunnan2015),
 		location = "Yunnan",
-		trial_id = "late_blight_2015",
-		stringsAsFactors = FALSE
+		trial_id = "late_blight_2015"
 	)
 	d2b <- d2
 	d2b$record_id <- as.integer(seq_len(nrow(lb)) + nrow(v) + nrow(lb))
@@ -96,8 +94,7 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		record_id = id,
 		variety = trimws(as.character(bk$ACCENUMB)),
 		treatment = trimws(as.character(bk$ACCENUMB)),
-		trial_id = "early_bulking",
-		stringsAsFactors = FALSE
+		trial_id = "early_bulking"
 	)
 	wts <- c("MTWP 80 days after planting", "MTWP 100 days after planting", "MTWP 120 days after planting")
 	days <- c(80L, 100L, 120L)
@@ -105,8 +102,7 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		data.frame(
 			record_id = id,
 			DAP = days[i],
-			mtwp_ = num(bk[[wts[i]]]),
-			stringsAsFactors = FALSE
+			mtwp_ = num(bk[[wts[i]]])
 		)
 	})
 	dlong <- do.call(rbind, pieces)

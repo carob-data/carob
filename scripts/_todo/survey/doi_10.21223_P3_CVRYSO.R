@@ -63,8 +63,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "Huancavelica_households",
-		stringsAsFactors = FALSE
+		trial_id = "Huancavelica_households"
 	)
 	carobiner::write_files(path, meta, d)
 }

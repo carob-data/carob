@@ -52,13 +52,12 @@ This data was collected under a project called “Sustainable Intensification of
 		carob_effort = 0.4
 	)
 
-	r <- read.csv(ff[basename(ff) == "simleza.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "simleza.csv"])
 
 	slots <- data.frame(
 		crop = c("CROP_01", "CROP_02", "CROP_03", "CROP_04", "CROP_05", "CROP_06", "CROP_07", "CROP_08", "CROP_09", "CROP_10"),
 		area = c("CURRENT_AREA_01", "CURRENT_AREA_02", "CURRENT_LEVEL_OF_PLANTING_AREA", "CURRENT_LEVEL_OF_PLANTING_AREA_0", "CURRENT_LEVEL_OF_PLANTING_AREA_1", "CURRENT_LEVEL_OF_PLANTING__AREA2", "CURRENT_LEVEL_OF_PLANTING__AREA3", "CURRENT_LEVEL_OF_PLANTING__AREA4", "CURRENT_LEVEL_OF_PLANTING__AREA5", "CURRENT_LEVEL_OF_PLANTING__AREA6"),
-		variety = c("NAMF_01", "VARNAME_1", "NAMF_03", "NAMF_04", "NAMF_05", "NAMF_06", "NAMF_07", "NAMF_08", "NAMF_09", "NAMF_10"),
-		stringsAsFactors = FALSE
+		variety = c("NAMF_01", "VARNAME_1", "NAMF_03", "NAMF_04", "NAMF_05", "NAMF_06", "NAMF_07", "NAMF_08", "NAMF_09", "NAMF_10")
 	)
 
 	parts <- list()
@@ -72,8 +71,7 @@ This data was collected under a project called “Sustainable Intensification of
 			field_size = as.numeric(r[[slots$area[i]]]),
 			variety = variety,
 			farm_area_ha_ = r$FARM_SIZEHA,
-			planting_date = as.character(r$YEAR),
-			stringsAsFactors = FALSE
+			planting_date = as.character(r$YEAR)
 		)
 	}
 	d <- do.call(rbind, parts)

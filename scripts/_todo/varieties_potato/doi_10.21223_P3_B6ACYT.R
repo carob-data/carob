@@ -52,7 +52,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 
 	f <- ff[grepl("incidence.xls$", basename(ff))]
 	sh <- readxl::excel_sheets(f)
-	raw <- as.data.frame(carobiner::read.excel(f, sheet=sh[3], col_names=FALSE), stringsAsFactors=FALSE)
+	raw <- as.data.frame(carobiner::read.excel(f, sheet=sh[3], col_names=FALSE))
 	txt <- function(x) {
 		z <- trimws(as.character(x))
 		z[!nzchar(z) | z == "NA"] <- NA_character_
@@ -92,8 +92,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		pathogen = "Phytophthora infestans",
 		geo_from_source = FALSE,
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d1$record_id <- seq_len(nrow(d1))
 	longs <- lapply(seq_along(ev), function(i) {
@@ -103,8 +102,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 			date = format(when[i], "%Y-%m-%d"),
 			DAP = dap[i],
 			late_blight_severity_ = num(body[[j]]),
-			disease = "potato late blight",
-			stringsAsFactors = FALSE
+			disease = "potato late blight"
 		)
 	})
 	dlong <- do.call(rbind, longs)
@@ -112,7 +110,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 	dlong$record_id <- as.integer(dlong$record_id)
 	dlong$DAP <- as.integer(dlong$DAP)
 
-	inc <- as.data.frame(carobiner::read.excel(f, sheet=sh[2]), stringsAsFactors=FALSE)
+	inc <- as.data.frame(carobiner::read.excel(f, sheet=sh[2]))
 	affected <- num(inc[["IFLate Blight"]])
 	d2 <- data.frame(
 		variety = txt(inc$Variety),
@@ -131,8 +129,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		place_code_ = txt(inc[["Place code"]]),
 		foliage_late_blight_severity_ = num(inc[["SFLate Blight"]]),
 		late_blight_affected_ = ifelse(affected == 1, TRUE, ifelse(affected == 0, FALSE, NA)),
-		tuber_number_ = num(inc[["Tuber number harvested"]]),
-		stringsAsFactors = FALSE
+		tuber_number_ = num(inc[["Tuber number harvested"]])
 	)
 	d2 <- d2[!is.na(d2$variety), ]
 	d1$place_code_ <- NA_character_

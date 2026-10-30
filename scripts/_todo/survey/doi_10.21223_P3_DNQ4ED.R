@@ -70,8 +70,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		geo_from_source = FALSE,
 		is_survey = TRUE,
 		on_farm = TRUE,
-		trial_id = "Junin_potato_mapping",
-		stringsAsFactors = FALSE
+		trial_id = "Junin_potato_mapping"
 	)
 	d <- d[!is.na(d$country) | !is.na(d$location), ]
 	rownames(d) <- NULL

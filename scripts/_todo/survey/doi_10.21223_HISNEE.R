@@ -51,8 +51,7 @@ The Jump-starting project had the goal of sustainable and inclusive market-drive
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "Ghana_OFSP_baseline",
-		stringsAsFactors = FALSE
+		trial_id = "Ghana_OFSP_baseline"
 	)
 	carobiner::write_files(path, meta, d)
 }

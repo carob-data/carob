@@ -84,7 +84,7 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 			sugarcane="sugarcane", sugurcan="sugarcane", turmeric="turmeric")[key]
 	}
 	col <- function(nm) names(r)[grepl(nm, names(r), fixed=TRUE)][1]
-	alt <- data.frame(hhid=txt(a[["Household ID"]]), elevation=num(a[["GPS Altitude"]]), stringsAsFactors=FALSE)
+	alt <- data.frame(hhid=txt(a[["Household ID"]]), elevation=num(a[["GPS Altitude"]]))
 	alt <- alt[!duplicated(alt$hhid), ]
 
 	d <- data.frame(
@@ -97,8 +97,7 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 		variety = txt(r[[col("D2.5 Main variety cultivated")]]),
 		area_decimal_ = num(r[[col("D2.4 Area")]]),
 		harvest_kg_ = num(r[[col("D2.10 Quantity harvested")]]),
-		seed_kg_ = num(r[[col("D2.8a Amount of seed")]]),
-		stringsAsFactors = FALSE
+		seed_kg_ = num(r[[col("D2.8a Amount of seed")]])
 	)
 	d$crop <- as.character(crop_of(d$local_crop_))
 	d$local_crop_[!is.na(d$crop)] <- NA_character_

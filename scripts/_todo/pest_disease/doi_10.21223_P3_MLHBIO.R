@@ -112,8 +112,7 @@ Surveys to study the occurrence and distribution of leafminer fly and their asso
 		stress = "pests",
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	d$damage_class_[!nzchar(d$damage_class_)] <- NA_character_
 	d$disease_severity[!nzchar(d$disease_severity)] <- NA_character_
@@ -137,8 +136,7 @@ Surveys to study the occurrence and distribution of leafminer fly and their asso
 			record_id = d$record_id,
 			order = i,
 			taxon_ = taxa[i],
-			insect_count_ = as.numeric(r[[taxa[i]]]),
-			stringsAsFactors = FALSE
+			insect_count_ = as.numeric(r[[taxa[i]]])
 		)
 	}
 	dlong <- do.call(rbind, pieces)

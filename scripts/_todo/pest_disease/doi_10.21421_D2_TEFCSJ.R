@@ -80,8 +80,7 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		dmy_residue = as.numeric(a$DFWkgha),
 		seed_weight = as.numeric(a[["SW_ M_g100sd"]]) * 10,
 		shelling_percentage = as.numeric(a$SH_Calc_pct),
-		sound_mature_kernel_ = as.numeric(a$SMK),
-		stringsAsFactors = FALSE
+		sound_mature_kernel_ = as.numeric(a$SMK)
 	)
 	b$plot_id <- as.character(b[["Plot No"]])
 	d <- merge(d, b[, c("plot_id", "DROUGHT")], by="plot_id", all.x=TRUE, sort=FALSE)
@@ -116,8 +115,7 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		reading_ = NA_character_,
 		canopy_temperature_ = NA_real_,
 		SPAD = NA_real_,
-		NDVI = NA_real_,
-		stringsAsFactors = FALSE
+		NDVI = NA_real_
 	)
 	ph <- data.frame(
 		record_id = rep(d$record_id, 4),
@@ -126,8 +124,7 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		reading_ = rep(c("150days", "250days", "NDVI1", "NDVI2"), each=n),
 		canopy_temperature_ = c(b$CT150DAY[ib], b$CT250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
 		SPAD = c(b$SPAD150Days[ib], b$SPAD250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
-		NDVI = c(rep(NA_real_, n), rep(NA_real_, n), a$NDVI1[ia], a$NDVI2[ia]),
-		stringsAsFactors = FALSE
+		NDVI = c(rep(NA_real_, n), rep(NA_real_, n), a$NDVI1[ia], a$NDVI2[ia])
 	)
 	long <- rbind(dis, ph)
 	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))

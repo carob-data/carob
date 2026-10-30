@@ -65,8 +65,7 @@ Root and tuber crops (RTC) play an important role in diverse Asian agri-food sys
 		location = unname(brgy[as.character(as.integer(s0[["0.5"]]))]),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

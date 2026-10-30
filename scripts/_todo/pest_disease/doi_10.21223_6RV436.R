@@ -58,8 +58,7 @@ Integrated management of late blight on potato
 	sites <- data.frame(
 		SITE = c("UoN", "Koibatek", "Njabini", "Limuru"),
 		location = c("University of Nairobi", "Koibatek", "Njabini", "Limuru"),
-		adm2 = c("Nairobi", "Koibatek", "Nyandarua", "Kiambu"),
-		stringsAsFactors = FALSE
+		adm2 = c("Nairobi", "Koibatek", "Nyandarua", "Kiambu")
 	)
 	bad <- setdiff(unique(r$SITE), sites$SITE)
 	if (length(bad) > 0) stop("unmapped site: ", paste(bad, collapse=", "))
@@ -102,8 +101,7 @@ Integrated management of late blight on potato
 		trial_id = paste(r$SITE, year, season_code),
 		on_farm = NA,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

@@ -112,8 +112,7 @@ This dataset consists of daily weather data collected from diverse locations in 
 		rhmn = meas(r$Rhmin),
 		rh90_ = meas(r$RH90),
 		par_wm2_ = meas(r$PAR),
-		leaf_wetness_ = meas(r[["Leaf Wet"]]),
-		stringsAsFactors = FALSE
+		leaf_wetness_ = meas(r[["Leaf Wet"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 

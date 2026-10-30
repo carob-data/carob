@@ -54,7 +54,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 	)
 
 	f <- ff[basename(ff) == "report_data_pot21a-4.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA", "None"), check.names=TRUE)
+	r <- read.csv(f, na.strings=c("", "NA", "None"), check.names=TRUE)
 	gps <- strsplit(trimws(r$Farm_Geolocation), "\\s+")
 	lat <- as.numeric(vapply(gps, function(z) z[1], ""))
 	lon <- as.numeric(vapply(gps, function(z) z[2], ""))
@@ -83,8 +83,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 		best_y = one(r$Which_variety_gives_the_best_yield),
 		worst_y = one(r$Which_variety_gives_the_worst_yield),
 		best_o = one(r$Which_variety_did_you_like_best_overall),
-		worst_o = one(r$Which_variety_did_you_like_least_overall),
-		stringsAsFactors = FALSE
+		worst_o = one(r$Which_variety_did_you_like_least_overall)
 	)
 
 	d <- do.call(rbind, lapply(c("A", "B", "C"), function(v) {
@@ -100,8 +99,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 			best_yield_ = base$best_y == v,
 			worst_yield_ = base$worst_y == v,
 			best_overall_ = base$best_o == v,
-			worst_overall_ = base$worst_o == v,
-			stringsAsFactors = FALSE
+			worst_overall_ = base$worst_o == v
 		)
 	}))
 	d$country <- "Rwanda"

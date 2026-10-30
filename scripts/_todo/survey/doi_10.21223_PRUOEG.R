@@ -121,8 +121,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		p40_ = chr(r$P40),
 		p40a_ = chr(r$P40a),
 		p40b_ = chr(r$P40b),
-		p40c_ = chr(r$P40c),
-		stringsAsFactors = FALSE
+		p40c_ = chr(r$P40c)
 	)
 	d$variety[!nzchar(d$variety) | is.na(d$variety)] <- NA_character_
 	d$crop <- "potato"

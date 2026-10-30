@@ -65,8 +65,7 @@ A total of 53 accessions were evaluated for sweetpotato virus disease resistance
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$treatment <- d$variety
 	carobiner::write_files(path, meta, d)

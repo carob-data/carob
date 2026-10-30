@@ -66,8 +66,7 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 		treatment = trimws(as.character(r$INSTN)),
 		yield = as.numeric(r$TTYA) * 1000,
 		yield_marketable = as.numeric(r$MTYA) * 1000,
-		plant_density = as.numeric(r$NPE) * 10000 / plot_m2,
-		stringsAsFactors = FALSE
+		plant_density = as.numeric(r$NPE) * 10000 / plot_m2
 	)
 
 	name <- trimws(as.character(ml[["Clone or variety name"]]))
@@ -79,8 +78,7 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 	alias <- data.frame(
 		variety = trimws(as.character(ml[["Institutional number"]])),
 		variety_alt = name,
-		variety_pedigree = ped,
-		stringsAsFactors = FALSE
+		variety_pedigree = ped
 	)
 	alias <- alias[!is.na(alias$variety) & nzchar(alias$variety), ]
 	alias <- alias[!duplicated(alias$variety), ]
@@ -118,8 +116,7 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 		rhum = as.numeric(w0[["Relative humidity (%)"]]),
 		dewp = as.numeric(w0[["Dew point (°C)"]]),
 		wspd = as.numeric(w0[["Wind speed (m/s)"]]),
-		wdir = as.numeric(w0[["Wind direction"]]),
-		stringsAsFactors = FALSE
+		wdir = as.numeric(w0[["Wind direction"]])
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

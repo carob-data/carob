@@ -82,8 +82,7 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 		record_id = seq_len(nrow(r)),
 		species_ = trimws(as.character(r$specie)),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	for (i in seq_along(cols)) {
 		d[[cols[i]]] <- trimws(as.character(r[[paste0("D", i)]]))

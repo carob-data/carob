@@ -82,8 +82,7 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 		trial_id = txt(r$Set),
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$plot_id <- as.character(seq_len(nrow(d)))
 	d <- d[!is.na(d$variety), ]

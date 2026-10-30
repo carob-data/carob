@@ -53,7 +53,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for micronutrient content Data.xls"]
 	one <- function(sheet) {
-		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE), stringsAsFactors=FALSE)
+		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
 		y <- x[3:nrow(x), ]
 		num <- function(v) {
 			y <- trimws(as.character(v))
@@ -67,8 +67,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 			dm_recorded_ = num(y[[4]]),
 			dw = num(y[[6]]),
 			fw = num(y[[8]]),
-			eval_label_ = lab,
-			stringsAsFactors = FALSE
+			eval_label_ = lab
 		)
 	}
 	fe <- one("Fe CONT.")

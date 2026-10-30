@@ -77,8 +77,7 @@ Field experiment to assess physiological performance of 24 different genotypes, 
 		trial_id = "Minicore_2017",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$variety[is.na(d$variety) | !nzchar(d$variety)] <- d$variety_code[is.na(d$variety) | !nzchar(d$variety)]
 	d$treatment <- d$variety

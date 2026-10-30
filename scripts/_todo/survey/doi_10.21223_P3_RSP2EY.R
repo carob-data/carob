@@ -63,8 +63,7 @@ La metodología SEP, es una herramienta de gestión de proyectos que se aplica c
 		geo_from_source = FALSE,
 		is_survey = TRUE,
 		on_farm = TRUE,
-		trial_id = "Colombia_papa_criolla_2008",
-		stringsAsFactors = FALSE
+		trial_id = "Colombia_papa_criolla_2008"
 	)
 	d <- d[!is.na(d$hhid), ]
 	nice <- function(x) ifelse(!is.na(x) & toupper(x) == x, tools::toTitleCase(tolower(x)), x)

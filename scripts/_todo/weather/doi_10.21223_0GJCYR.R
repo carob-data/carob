@@ -5,20 +5,18 @@
 # Hourly record from the CIP La Molina station, 15 April 2013 to 6 April 2025.
 # Dictionary units: air temperature C, relative humidity %, wind speed m/s, wind direction degrees, solar radiation W/m2, rain mm, pressure hPa.
 # Solar radiation is the hourly mean intensity, stored as irad (W/m2 = J s-1 m-2).
-# Eo is the ASCE standardized reference evapotranspiration for that hour, in mm. The vocabulary unit for ETo is mm/day.
-# Vapor pressure deficit is kPa. Atmospheric pressure is hPa. PAR is umol s-1 m-2. None of those three names is in the weather vocabulary.
+# Eo is the ASCE standardized reference evapotranspiration for that hour, in mm, stored as ETo.
+# Vapor pressure deficit in the file is kPa and is stored as vpd in hPa. Atmospheric pressure is stored as pressure. PAR is umol s-1 m-2 and has no vocabulary name.
 
 ## ISSUES
 # The Dataverse record has no bounding box, so this station is not georeferenced.
-# Eo is an hourly amount in mm, not a daily rate.
+# Eo is an hourly amount in mm.
 # Some Eo cells are the text NAN. Those are missing.
 # Time is an integer hour on some rows and an Excel fraction of a day on others. Both are stored as hh:mm.
 # Eo includes a few small negative values. They are kept.
-# write_files: missing variables: carob_contributor, latitude, longitude. unknown variables: vpd_, par_umol_, pressure_hpa_. out of bounds: ETo (-0.049, 1.142).
+# write_files: missing variables: carob_contributor, latitude, longitude. unknown variables: par_umol_. out of bounds: ETo (-0.049, 1.142).
 
 ## NEW VARIABLES
-# vpd_: vapor pressure deficit, kPa
-# pressure_hpa_: atmospheric pressure, hPa
 # par_umol_: photosynthetically active radiation, umol s-1 m-2
 
 ## NOT PROCESSED
@@ -89,15 +87,14 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		time = time,
 		temp = num(r[["Ta (°C)"]]),
 		rhum = num(r[["RH (%)"]]),
-		vpd_ = num(r[["VPD (kPa)"]]),
+		vpd = num(r[["VPD (kPa)"]]) * 10,
 		wspd = num(r[["WS (m/s)"]]),
 		wdir = num(r[["Dir (°)"]]),
 		irad = num(r[["SR (W/m2)"]]),
 		par_umol_ = num(r[["PAR (umol s-1 m-2)"]]),
 		prec = num(r[["P (mm)"]]),
-		pressure_hpa_ = num(r[["Pa (hPa)"]]),
-		ETo = num(r[["Eo (mm)"]]),
-		stringsAsFactors = FALSE
+		pressure = num(r[["Pa (hPa)"]]),
+		ETo = num(r[["Eo (mm)"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 	wth <- wth[order(wth$date, wth$time), ]
@@ -111,8 +108,7 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		adm1 = "Lima",
 		geo_from_source = FALSE,
 		is_survey = FALSE,
-		on_farm = FALSE,
-		stringsAsFactors = FALSE
+		on_farm = FALSE
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

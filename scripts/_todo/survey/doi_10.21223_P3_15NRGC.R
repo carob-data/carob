@@ -61,8 +61,7 @@ The baseline study was conducted to assess and understand the socio-economic sit
 		geo_from_source = FALSE,
 		is_survey = TRUE,
 		on_farm = TRUE,
-		trial_id = "Malawi_potato_inputs",
-		stringsAsFactors = FALSE
+		trial_id = "Malawi_potato_inputs"
 	)
 	# A few household-seasons have a second part-4 line. The line number keeps those rows distinct.
 	d$input_line_ <- ave(seq_len(nrow(d)), d$hhid, d$season_code_, FUN=seq_along)

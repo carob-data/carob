@@ -86,8 +86,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 		emergence_date = "2000-01-02",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	iso <- function(x) as.character(as.Date(x))
@@ -99,8 +98,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 			date = lb_date[i],
 			disease_severity = as.character(r[[paste0("LB", i)]]),
 			ground_cover = NA_real_,
-			dmy_total = NA_real_,
-			stringsAsFactors = FALSE
+			dmy_total = NA_real_
 		)
 	}
 	cc_names <- paste0("CC_G_Et_%_", seq_len(21))
@@ -111,8 +109,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 			date = cc_date[i],
 			disease_severity = NA_character_,
 			ground_cover = as.numeric(rc[[cc_names[i]]]),
-			dmy_total = NA_real_,
-			stringsAsFactors = FALSE
+			dmy_total = NA_real_
 		)
 	}
 	bm_names <- paste0("TBDMC_kg_ha_Ev", seq_len(5))
@@ -123,8 +120,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 			date = bm_date[i],
 			disease_severity = NA_character_,
 			ground_cover = NA_real_,
-			dmy_total = as.numeric(ry[[bm_names[i]]]),
-			stringsAsFactors = FALSE
+			dmy_total = as.numeric(ry[[bm_names[i]]])
 		)
 	}
 	dlong <- do.call(rbind, parts)

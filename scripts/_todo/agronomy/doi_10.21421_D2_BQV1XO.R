@@ -208,8 +208,7 @@ Yield and agronomic trait assessment
 			fwy_residue = if (dry) rep(NA_real_, n) else haulm * 10,
 			dmy_residue = if (dry) haulm * 10 else rep(NA_real_, n),
 			shelling_percentage = shell,
-			seed_yield_ = to_num(col(i_seed)[ok]) * 10,
-			stringsAsFactors = FALSE
+			seed_yield_ = to_num(col(i_seed)[ok]) * 10
 		)
 	}
 

@@ -76,8 +76,7 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		trial_id = trimws(as.character(r$SITE)),
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$female_parent <- NA_character_
 	d$male_parent <- NA_character_

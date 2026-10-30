@@ -60,8 +60,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		kilos_purchased_ = trimws(as.character(r[[kilos]])),
 		on_farm = FALSE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

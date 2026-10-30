@@ -68,9 +68,9 @@ RTB crops are of strategic importance to the future food security of Africa unde
 	f1 <- ff[basename(ff) == "pest-and-disease-data.csv"]
 	f2 <- ff[basename(ff) == "yield-data.csv"]
 	f3 <- ff[basename(ff) == "parasitism-data.csv"]
-	r1 <- read.csv(f1, check.names=FALSE, stringsAsFactors=FALSE)
-	r2 <- read.csv(f2, check.names=FALSE, stringsAsFactors=FALSE)
-	r3 <- read.csv(f3, check.names=FALSE, stringsAsFactors=FALSE)
+	r1 <- read.csv(f1, check.names=FALSE)
+	r2 <- read.csv(f2, check.names=FALSE)
+	r3 <- read.csv(f3, check.names=FALSE)
 
 	fix_trt <- function(x) {
 		x <- trimws(x)
@@ -83,8 +83,7 @@ RTB crops are of strategic importance to the future food security of Africa unde
 	id1 <- unique(data.frame(
 		hhid = trimws(r1$Farmer),
 		treatment = r1$Treatment,
-		plant_number_ = as.integer(r1$Plant),
-		stringsAsFactors = FALSE
+		plant_number_ = as.integer(r1$Plant)
 	))
 	y <- data.frame(
 		hhid = trimws(r2$Farmer),
@@ -96,8 +95,7 @@ RTB crops are of strategic importance to the future food security of Africa unde
 		root_infected_ = as.integer(r2$Total_Infected_Roots),
 		root_infection = as.numeric(r2$CBSD_Incidence_infected),
 		plant_height = as.numeric(r2$Stem_Height),
-		stem_number_ = as.integer(r2$Stem_Numbers),
-		stringsAsFactors = FALSE
+		stem_number_ = as.integer(r2$Stem_Numbers)
 	)
 	d1 <- merge(id1, y, by=c("hhid", "treatment", "plant_number_"), all=TRUE)
 	d1 <- d1[order(d1$hhid, d1$treatment, d1$plant_number_), ]
@@ -128,8 +126,7 @@ RTB crops are of strategic importance to the future food security of Africa unde
 			pest_incidence = incidence,
 			pest_severity = severity,
 			disease = disease,
-			disease_severity = dsev,
-			stringsAsFactors = FALSE
+			disease_severity = dsev
 		)
 	}
 	dd <- rbind(
@@ -161,8 +158,7 @@ RTB crops are of strategic importance to the future food security of Africa unde
 		pest_incidence = as.integer(r3$Total_nymphs),
 		nymphs_healthy_ = as.integer(r3$Healthy_nymphs),
 		nymphs_parasitized_ = as.integer(r3$Parasitized_nymphs),
-		sample_month_ = as.integer(r3$Month),
-		stringsAsFactors = FALSE
+		sample_month_ = as.integer(r3$Month)
 	)
 
 	d <- carobiner::bindr(d1, d3)

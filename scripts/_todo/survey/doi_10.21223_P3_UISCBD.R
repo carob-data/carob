@@ -76,8 +76,7 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 		adm2 = txt(r$Provincia),
 		adm3 = txt(r$Distrito),
 		location = txt(r$Comunidad),
-		elevation = num(r$Altitud),
-		stringsAsFactors = FALSE
+		elevation = num(r$Altitud)
 	)
 	blocks <- list(
 		c("P1cultivo1", "p1cantcul1(kg)"),
@@ -85,7 +84,7 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 		c("p1cultivo3", "p1cantcul3(kg)")
 	)
 	parts <- lapply(blocks, function(cols) {
-		data.frame(base, local_crop_ = txt(r[[cols[1]]]), harvest_kg_ = num(r[[cols[2]]]), stringsAsFactors = FALSE)
+		data.frame(base, local_crop_ = txt(r[[cols[1]]]), harvest_kg_ = num(r[[cols[2]]]))
 	})
 	d <- do.call(rbind, parts)
 	d <- d[!is.na(d$local_crop_) | !is.na(d$harvest_kg_), ]

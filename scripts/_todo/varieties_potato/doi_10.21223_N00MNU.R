@@ -74,16 +74,14 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 		AUDPC = num(r$AUDPC) / 100,
 		rAUDPC = num(r$rAUDPC),
 		ttwp_ = num(r$TTWP),
-		mtwp_ = num(r$MTWP),
-		stringsAsFactors = FALSE
+		mtwp_ = num(r$MTWP)
 	)
 
 	ctrl <- tolower(trimws(as.character(ml$Is_control)))
 	alias <- data.frame(
 		variety = trimws(as.character(ml$CIPNumber)),
 		variety_alt = trimws(as.character(ml$Accesion_Name)),
-		variety_type = ifelse(ctrl == "yes", "check", NA_character_),
-		stringsAsFactors = FALSE
+		variety_type = ifelse(ctrl == "yes", "check", NA_character_)
 	)
 	alias$variety_alt[!nzchar(alias$variety_alt)] <- NA_character_
 	alias <- alias[!duplicated(alias$variety), ]
@@ -122,8 +120,7 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 		data.frame(
 			record_id = id,
 			order = i,
-			disease_severity = as.character(r[[paste0("LB", i)]]),
-			stringsAsFactors = FALSE
+			disease_severity = as.character(r[[paste0("LB", i)]])
 		)
 	})
 	dlong <- do.call(rbind, pieces)

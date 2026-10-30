@@ -112,8 +112,7 @@ Four native varieties of bitter potatoes were used to analyze mineral concentrat
 		tuber_Co_mg_kg_dw_ = as.numeric(r$CODW),
 		tuber_Ni_mg_kg_dw_ = as.numeric(r$NIDW),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

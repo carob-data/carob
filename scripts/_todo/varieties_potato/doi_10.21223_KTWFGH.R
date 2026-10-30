@@ -72,8 +72,7 @@ Potato seed degeneration threatens productivity of small-scale potato producers 
 		plrv_pct_ = as.numeric(r$perl),
 		aplv_pct_ = as.numeric(r$peraplv),
 		apmov_pct_ = as.numeric(r$perapmov),
-		clean_seed_pct_ = as.numeric(r$perno_virus),
-		stringsAsFactors = FALSE
+		clean_seed_pct_ = as.numeric(r$perno_virus)
 	)
 	d$crop <- "potato"
 	d$country <- "Ecuador"

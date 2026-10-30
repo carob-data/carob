@@ -56,8 +56,7 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 			variety = trimws(r$Genotype),
 			rep = as.integer(r[["Replication number"]]),
 			location = site,
-			disease_incidence = as.character(r[[site]]),
-			stringsAsFactors = FALSE
+			disease_incidence = as.character(r[[site]])
 		)
 	}
 	d <- do.call(rbind, lapply(sites, one))
@@ -78,8 +77,7 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 		location = c("Akola", "Badnapur", "Bangalore", "Coimbatore", "Dholi", "Rahuri", "Patancheru", "Vamban"),
 		adm1 = c("Maharashtra", "Maharashtra", "Karnataka", "Tamil Nadu", NA_character_, "Maharashtra", "Telangana", "Tamil Nadu"),
 		latitude = c(20 + 42/60, 19 + 23/60, 12 + 58/60, 10 + 59/60, 25 + 59/60, 19 + 23/60, 17 + 31/60, 10 + 25/60),
-		longitude = c(76 + 59/60, 75 + 43/60, 77 + 35/60, 76 + 57/60, 85 + 35/60, 74 + 42/60, 78 + 15/60, 76 + 49/60),
-		stringsAsFactors = FALSE
+		longitude = c(76 + 59/60, 75 + 43/60, 77 + 35/60, 76 + 57/60, 85 + 35/60, 74 + 42/60, 78 + 15/60, 76 + 49/60)
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE, sort=FALSE)
 

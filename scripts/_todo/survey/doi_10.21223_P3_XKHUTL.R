@@ -92,8 +92,7 @@ This contains potato seed system data collected for a network analysis. It is fr
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "CONPAPA_2015",
-		stringsAsFactors = FALSE
+		trial_id = "CONPAPA_2015"
 	)
 
 	carobiner::write_files(path, meta, d)

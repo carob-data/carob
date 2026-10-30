@@ -105,8 +105,7 @@ An experimental potato trial based on organic agriculture in the second season (
 		marketable_equivalent_yield_ = num(y$MEY) * 1000,
 		geo_from_source = FALSE,
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	if (!"DMCt" %in% names(dm)) stop("dry matter column DMCt not found")
@@ -137,8 +136,7 @@ An experimental potato trial based on organic agriculture in the second season (
 			depth_bottom = bottom,
 			soil_SOC = num(s[[occol]]) / 10,
 			soil_C_gkg_ = num(s[[ccol]]),
-			soil_N_mgg_ = num(s[[ncol]]),
-			stringsAsFactors = FALSE
+			soil_N_mgg_ = num(s[[ncol]])
 		)
 	}
 	dlong <- rbind(

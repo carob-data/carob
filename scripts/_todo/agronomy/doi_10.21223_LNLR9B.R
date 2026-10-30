@@ -105,8 +105,7 @@ This dataset has been specially created to estimate carbon footprint in potato f
 		`Assessment name` = water[["Assessment name"]],
 		litres = litres,
 		irrigation_method = ifelse(method == "Drip irrigation", "drip", method),
-		check.names = FALSE,
-		stringsAsFactors = FALSE
+		check.names = FALSE
 	)
 
 	area <- num(crop[["Crop area"]])
@@ -135,8 +134,7 @@ This dataset has been specially created to estimate carbon footprint in potato f
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE,
-		irrigated = TRUE,
-		stringsAsFactors = FALSE
+		irrigated = TRUE
 	)
 
 	d <- merge(d, fert_sum, by.x="plot_id", by.y="Assessment name", all.x=TRUE, sort=FALSE)
@@ -153,8 +151,7 @@ This dataset has been specially created to estimate carbon footprint in potato f
 	soil_key <- data.frame(
 		plot_id = trimws(as.character(soil[["Assessment name"]])),
 		soil_pH = num(soil[["Soil pH"]]),
-		soil_SOM = num(soil[["Soil organic matter"]]),
-		stringsAsFactors = FALSE
+		soil_SOM = num(soil[["Soil organic matter"]])
 	)
 	d <- merge(d, soil_key, by="plot_id", all.x=TRUE, sort=FALSE)
 

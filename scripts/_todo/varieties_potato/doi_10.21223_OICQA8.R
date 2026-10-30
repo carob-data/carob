@@ -57,8 +57,7 @@ National performance trials and durability data.
 			y <- trimws(as.character(r[[s]]))
 			y[y == "."] <- NA_character_
 			as.numeric(y) * 1000
-		},
-			stringsAsFactors = FALSE
+		}
 		)
 	})
 	d <- do.call(rbind, parts)

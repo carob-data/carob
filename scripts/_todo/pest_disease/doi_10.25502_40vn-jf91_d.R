@@ -97,7 +97,7 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 	)
 
 	f <- ff[basename(ff) == "maize-survey-database.csv"]
-	s <- read.csv(f, check.names = TRUE, fileEncoding = "latin1", stringsAsFactors = FALSE)
+	s <- read.csv(f, check.names = TRUE, fileEncoding = "latin1")
 
 	rawd <- trimws(s$Date)
 	obs <- rep(NA_character_, length(rawd))
@@ -256,8 +256,7 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		stem_diameter_cm_ = as.numeric(dia),
 		trial_id = paste(hhid, s$Plot, sep = "_"),
 		on_farm = TRUE,
-		is_survey = TRUE,
-		stringsAsFactors = FALSE
+		is_survey = TRUE
 	)
 
 	med <- function(z) {

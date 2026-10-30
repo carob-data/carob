@@ -47,7 +47,7 @@ Smallholder dairy farmers constitute up to 85% of dairy farmers in Uganda (Atuha
 	)
 
 	f <- ff[basename(ff) == "01_Sweetpotato_Vine_Silage_Dataset.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, check.names=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 	to_ha <- function(qty, unit) {
 		q <- as.numeric(qty)
 		u <- trimws(as.character(unit))
@@ -84,8 +84,7 @@ Smallholder dairy farmers constitute up to 85% of dairy farmers in Uganda (Atuha
 		crop = ifelse(grow, "sweetpotato", NA_character_),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 
 	carobiner::write_files(path, meta, d)

@@ -81,8 +81,7 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 		stress = "drought",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 
 	carobiner::write_files(path, meta, d)

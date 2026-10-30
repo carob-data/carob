@@ -50,8 +50,8 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 		carob_effort = 0.4
 	)
 
-	id <- read.csv(ff[basename(ff) == "ID_Information.csv"], sep=";", stringsAsFactors=FALSE, na.strings=c("NA", ""))
-	v <- read.csv(ff[basename(ff) == "Virus.csv"], sep=";", stringsAsFactors=FALSE, na.strings=c("NA", ""))
+	id <- read.csv(ff[basename(ff) == "ID_Information.csv"], sep=";", na.strings=c("NA", ""))
+	v <- read.csv(ff[basename(ff) == "Virus.csv"], sep=";", na.strings=c("NA", ""))
 	key <- function(a, b) paste(trimws(as.character(a)), trimws(as.character(b)))
 	ik <- key(id$ID, id$Variety)
 	vk <- key(v$ID, v$Variety)
@@ -80,8 +80,7 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 		stress = "disease",
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

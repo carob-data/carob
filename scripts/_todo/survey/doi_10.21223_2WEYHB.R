@@ -73,8 +73,7 @@ Dataset for: Sweetpotato value chain actors in Mbale and Gulu markets, Uganda
 			age = as.numeric(r$Age_trader),
 			sex = sex,
 			bags_sold_ = as.numeric(bags),
-			loan_amount_ = as.numeric(loan),
-			stringsAsFactors = FALSE
+			loan_amount_ = as.numeric(loan)
 		)
 	}
 

@@ -90,8 +90,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 			seed_weight = num("GW1000"),
 			panicle_length_ = num("PNL"),
 			# Dictionnary.txt: paddy yield at 14% moisture, t/ha
-			yield = as.numeric(r$YIELD) * 1000,
-			stringsAsFactors = FALSE
+			yield = as.numeric(r$YIELD) * 1000
 		)
 	})
 	d <- do.call(rbind, d)

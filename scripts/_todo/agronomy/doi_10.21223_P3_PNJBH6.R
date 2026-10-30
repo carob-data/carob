@@ -64,7 +64,7 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 	trat <- trimws(as.character(h$trat))
 	regime <- lab[trat]
 	regime[is.na(regime)] <- trat[is.na(regime)]
-	plots <- unique(data.frame(plot = h$plot, regime = regime, stringsAsFactors = FALSE))
+	plots <- unique(data.frame(plot = h$plot, regime = regime))
 
 	d <- data.frame(
 		trial_id = "LaMolina_CWSI",
@@ -85,8 +85,7 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		irrigated = TRUE,
 		yield_part = "tubers",
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	cw <- carobiner::read.excel(ff[basename(ff) == "CWSI.xlsx"], na=c("", "NA"))
@@ -106,8 +105,7 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		n_tubers_ = as.numeric(h$nT),
 		cwsi_ = NA_real_,
 		canopy_temp_c_ = NA_real_,
-		air_temp_c_ = NA_real_,
-		stringsAsFactors = FALSE
+		air_temp_c_ = NA_real_
 	)
 	stress <- data.frame(
 		plot_id = as.character(cw$pot),
@@ -118,8 +116,7 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		n_tubers_ = NA_real_,
 		cwsi_ = as.numeric(cw$CWSI),
 		canopy_temp_c_ = as.numeric(cw$Tf),
-		air_temp_c_ = as.numeric(cw$Ta),
-		stringsAsFactors = FALSE
+		air_temp_c_ = as.numeric(cw$Ta)
 	)
 	dlong <- rbind(plants, stress)
 	dlong$trial_id <- "LaMolina_CWSI"

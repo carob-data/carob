@@ -98,8 +98,7 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 		tuber_n_46_60mm_ = as.numeric(r[["# tubers 46-60mm"]]),
 		tuber_wt_kg_46_60mm_ = as.numeric(r[["Weight tubers 46-60mm (Kg)"]]),
 		tuber_n_gt_60mm_ = as.numeric(r[["# tubers > 60mm"]]),
-		tuber_wt_kg_gt_60mm_ = as.numeric(r[["Weight tubers > 60mm (Kg)"]]),
-		stringsAsFactors = FALSE
+		tuber_wt_kg_gt_60mm_ = as.numeric(r[["Weight tubers > 60mm (Kg)"]])
 	)
 
 	carobiner::write_files(path, meta, d)

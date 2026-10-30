@@ -93,8 +93,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		harvest_date = "2009-10-20",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = TRUE,
-		stringsAsFactors = FALSE
+		geo_from_source = TRUE
 	)
 
 	carobiner::write_files(path, meta, d)

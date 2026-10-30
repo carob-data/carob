@@ -70,8 +70,7 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 		area_total_ = num(r[["9AreaTotal"]]),
 		crop_name_ = chr(r[["10Cultivo01"]]),
 		crop_area_ = num(r[["10Area01"]]),
-		crop_harvest_ = num(r[["10CantCosec01"]]),
-		stringsAsFactors = FALSE
+		crop_harvest_ = num(r[["10CantCosec01"]])
 	)
 	d$crop <- NA_character_
 	d$crop[grepl("papa", tolower(d$crop_name_))] <- "potato"

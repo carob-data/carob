@@ -71,7 +71,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 	vname <- trimws(vname)
 	vname[!nzchar(vname)] <- NA_character_
 	species <- trimws(as.character(mat[["Species acronym"]]))
-	alias <- data.frame(variety_code=code, variety=vname, variety_type=species, stringsAsFactors=FALSE)
+	alias <- data.frame(variety_code=code, variety=vname, variety_type=species)
 	alias <- alias[!duplicated(alias$variety_code), ]
 
 	fb$variety_code <- trimws(as.character(fb$INSTN))
@@ -114,8 +114,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		tuber_dry_matter_ = num(fb$DM),
 		crop = "potato",
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
 	d$record_id <- seq_len(nrow(d))

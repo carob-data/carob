@@ -78,8 +78,7 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		sensory_score_ = as.numeric(trimws(as.character(r$data))),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

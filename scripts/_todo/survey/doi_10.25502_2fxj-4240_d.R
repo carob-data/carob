@@ -59,8 +59,8 @@ This Activity was anchored on the most promising tools and approaches that IITA,
 
 	f <- ff[basename(ff) == "eraal-endline-survey.csv"]
 	fd <- ff[basename(ff) == "data_dictionary_eraal-endline-survey.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
-	dict <- read.csv(fd, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
+	dict <- read.csv(fd, check.names=FALSE)
 	dict <- dict[nzchar(dict$Column), ]
 
 	g <- function(desc) {
@@ -119,8 +119,7 @@ This Activity was anchored on the most promising tools and approaches that IITA,
 		longitude = as.numeric(r$GPS_longitude),
 		elevation = as.numeric(r$GPS_altitude),
 		land_owned_ = as.numeric(g("Total_land_owned")),
-		land_cultivated_ = as.numeric(g("Total_land_cultivated")),
-		stringsAsFactors = FALSE
+		land_cultivated_ = as.numeric(g("Total_land_cultivated"))
 	)
 
 	one <- function(crop, season, area, yield, variety, om, fert, herb, irr, area_both) {

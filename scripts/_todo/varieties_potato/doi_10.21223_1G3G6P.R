@@ -99,8 +99,7 @@ An evaluation of 11 potato clones was carried out in the cities of Mugerero and 
 			planting_date = as.character(as.Date(info[["Begin date"]])),
 			harvest_date = as.character(as.Date(info[["End date"]])),
 			plant_density = as.numeric(inst[["Planting density (plants/Ha)"]]),
-			trial_id = paste(loc, substr(info[["Begin date"]], 1, 4)),
-			stringsAsFactors = FALSE
+			trial_id = paste(loc, substr(info[["Begin date"]], 1, 4))
 		)
 		w <- carobiner::read.excel(f, sheet="Weather_daily")
 		wth <- data.frame(
@@ -113,8 +112,7 @@ An evaluation of 11 potato clones was carried out in the cities of Mugerero and 
 			temp = as.numeric(w$TMEAN),
 			latitude = d$latitude[1],
 			longitude = d$longitude[1],
-			geo_from_source = TRUE,
-			stringsAsFactors = FALSE
+			geo_from_source = TRUE
 		)
 		list(d=d, wth=wth)
 	}

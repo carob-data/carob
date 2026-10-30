@@ -76,8 +76,7 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	one <- function(day, order, values) {
@@ -86,8 +85,7 @@ This data set includes information of late blight severity readings at 4 and 6 d
 			order = as.integer(order),
 			days_after_inoculation_ = day,
 			disease_severity = as.character(values),
-			disease = "potato late blight",
-			stringsAsFactors = FALSE
+			disease = "potato late blight"
 		)
 	}
 	dlong <- rbind(one(4, 1, r$LB1), one(6, 2, r$LB2))

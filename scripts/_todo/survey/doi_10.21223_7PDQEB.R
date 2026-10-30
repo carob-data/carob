@@ -66,8 +66,7 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		trial_id = "LaLibertad_2021_2022",
 		on_farm = TRUE,
 		is_survey = TRUE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 
 	carobiner::write_files(path, meta, d)

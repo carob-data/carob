@@ -62,8 +62,7 @@ El proyecto tuvo como objetivo general 'Mejorar la calidad de vida de pequeños 
 		crop = "potato",
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

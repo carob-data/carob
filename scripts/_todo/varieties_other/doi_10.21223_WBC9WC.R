@@ -94,8 +94,7 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 		harvest_index = num(r$HI),
 		geo_from_source = FALSE,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$trial_id <- paste(d$location, d$season_code_, sep="_")
 	d$yield_part[is.na(d$yield)] <- NA_character_

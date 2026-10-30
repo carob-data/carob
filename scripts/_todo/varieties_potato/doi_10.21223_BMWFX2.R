@@ -79,8 +79,7 @@ Dataset for yield and stability advanced trial for late blight and heat tolerant
 		yield_part = "tubers",
 		dry_matter_percent_ = as.numeric(r[["DM %"]]),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

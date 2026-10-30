@@ -64,7 +64,7 @@ Assess the link between damage, abundance and yield
 	)
 
 	f <- ff[basename(ff) == "yield-data.csv"]
-	r <- read.csv(f, check.names = FALSE, stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 
 	tr <- trimws(r$Treatment)
 	variety <- rep(NA_character_, nrow(r))
@@ -107,8 +107,7 @@ Assess the link between damage, abundance and yield
 		trial_id = paste(loc, site, year, season, sep = "_"),
 		on_farm = TRUE,
 		is_survey = FALSE,
-		yield_part = "grain",
-		stringsAsFactors = FALSE
+		yield_part = "grain"
 	)
 
 	carobiner::write_files(path, meta, d)

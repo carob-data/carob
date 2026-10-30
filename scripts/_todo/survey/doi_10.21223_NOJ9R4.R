@@ -66,8 +66,7 @@ Roots and tuber crops (RTCs) play an important role in diverse Asian agri-food s
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "Bangladesh_potato_sweetpotato",
-		stringsAsFactors = FALSE
+		trial_id = "Bangladesh_potato_sweetpotato"
 	)
 	carobiner::write_files(path, meta, d)
 }

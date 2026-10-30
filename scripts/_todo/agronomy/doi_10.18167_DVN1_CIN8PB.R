@@ -41,7 +41,7 @@ The dataset contains experimental data on maize growth for crop model calibratio
 	)
 
 	f <- ff[basename(ff) == "AgMIP_Smallholder_Observation_summary_average.txt"]
-	r <- read.table(f, header=TRUE, sep="\t", stringsAsFactors=FALSE, check.names=FALSE)
+	r <- read.table(f, header=TRUE, sep="\t", check.names=FALSE)
 	r$Yield[r$Yield == "na"] <- NA
 	r$`Biom-ma`[r$`Biom-ma` == "na"] <- NA
 	r$MaxLAI[r$MaxLAI == "na"] <- NA
@@ -55,8 +55,7 @@ The dataset contains experimental data on maize growth for crop model calibratio
 		longitude = c(1.07, 37.1, 0.06, -5.7, 30.27),
 		elevation = c(213, 1850, 22, 302, 1400),
 		N_fertilizer = c(0, 87, 80, 85, 64),
-		variety_type = c("OPV", "hybrid", "OPV", "OPV", "OPV"),
-		stringsAsFactors = FALSE
+		variety_type = c("OPV", "hybrid", "OPV", "OPV", "OPV")
 	)
 
 	s <- sites[match(r$Site.name, sites$Site.name), ]

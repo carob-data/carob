@@ -148,8 +148,7 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 			variety_type = vt,
 			field_size = field_size,
 			fertilizer_note_ = note,
-			yield_part = vapply(crop, part_of, character(1)),
-			stringsAsFactors = FALSE
+			yield_part = vapply(crop, part_of, character(1))
 		)
 	}
 

@@ -52,7 +52,7 @@ Mineral and vitamin C assessments were conducted on five potato varieties: Canch
 	)
 
 	f <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_Varieties.txt"]
-	r <- utils::read.delim(f, fileEncoding="latin1", check.names=FALSE, stringsAsFactors=FALSE)
+	r <- utils::read.delim(f, fileEncoding="latin1", check.names=FALSE)
 	names(r) <- trimws(names(r))
 	pick <- function(pattern) {
 		i <- grep(pattern, names(r))[1]
@@ -87,8 +87,7 @@ Mineral and vitamin C assessments were conducted on five potato varieties: Canch
 		trial_id = "Muqui_2004",
 		on_farm = NA,
 		is_survey = FALSE,
-		irrigated = NA,
-		stringsAsFactors = FALSE
+		irrigated = NA
 	)
 	d$treatment <- d$variety
 	d$country[d$country %in% c("Perú", "Peru ")] <- "Peru"

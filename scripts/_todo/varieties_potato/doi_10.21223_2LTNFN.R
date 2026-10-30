@@ -58,9 +58,9 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 	fm <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_B1C5_RanchaII.txt"]
 	fv <- ff[basename(ff) == "02_Fieldbook_TVIT200312_MUQUI_B1C5_RanchaII.txt"]
 	fl <- ff[basename(ff) == "03_Material_list.txt"]
-	m <- read.delim(fm, check.names=FALSE, fileEncoding="latin1", quote="\"", stringsAsFactors=FALSE)
-	v <- read.delim(fv, check.names=FALSE, fileEncoding="latin1", quote="\"", stringsAsFactors=FALSE)
-	ml <- read.delim(fl, check.names=FALSE, fileEncoding="latin1", quote="\"", stringsAsFactors=FALSE)
+	m <- read.delim(fm, check.names=FALSE, fileEncoding="latin1", quote="\"")
+	v <- read.delim(fv, check.names=FALSE, fileEncoding="latin1", quote="\"")
+	ml <- read.delim(fl, check.names=FALSE, fileEncoding="latin1", quote="\"")
 	names(m) <- trimws(names(m))
 	names(v) <- trimws(names(v))
 	names(ml) <- trimws(names(ml))
@@ -129,8 +129,7 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		ascorbic_acid_mg_100g_fw_ = num(v[[names(v)[14]]][vi]),
 		dry_matter_vitamin_c_percent_ = num(v[[names(v)[15]]][vi]),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

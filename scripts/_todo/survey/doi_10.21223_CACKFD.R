@@ -96,8 +96,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		would_buy_sprouted_ = chr(r$P.31),
 		sprouted_why_ = chr(r$P.32),
 		suggestion_ = chr(r$P.33),
-		would_recommend_ = chr(r$P.34),
-		stringsAsFactors = FALSE
+		would_recommend_ = chr(r$P.34)
 	)
 	d$crop <- "potato"
 	d$country <- "Peru"

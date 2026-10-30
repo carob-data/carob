@@ -103,8 +103,7 @@ This study contains data from different cereal legume rotation systems in northe
 			plant_density=rep(NA_real_, n), maturity_days=rep(NA_real_, n), flowering_days=rep(NA_real_, n),
 			tassling_days=rep(NA_real_, n),
 			plot_area=rep(NA_real_, n), N_fertilizer=rep(NA_real_, n), P_fertilizer=rep(NA_real_, n),
-			K_fertilizer=rep(NA_real_, n), land_equivalent_ratio_=rep(NA_real_, n),
-			stringsAsFactors=FALSE
+			K_fertilizer=rep(NA_real_, n), land_equivalent_ratio_=rep(NA_real_, n)
 		)
 	}
 

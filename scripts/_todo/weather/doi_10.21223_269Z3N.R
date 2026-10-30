@@ -3,23 +3,17 @@
 
 ## NOTES
 # Hourly series from sheet Hourly. Dictionary units: Ta °C, RH %, WS m/s, SR W/m2, PP mm, Eo mm, VPD kPa, Pa hPa.
-# Wind direction is either a compass label or a degree value. Compass labels are stored as the sector center (N = 0). "---" and "------" are missing.
+# Wind direction is either a compass label or a degree value. Compass labels are stored as the center of that wedge (N = 0, NE = 45, E = 90). "---" and "------" are missing.
 # Coordinates and elevation are the dataset characteristicOfSources text: "South Latitude 11.1 / West Longitude 75.4 / Elevation 848".
 
 ## ISSUES
-# Eo is mm on an hourly row. It is not stored as ETo because that term is mm/day.
-# VPD and atmospheric pressure have no vocabulary names.
+# Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
+# VPD in the file is kPa. It is stored as vpd in hPa.
 # The published coordinates are to 0.1 degree.
 # write_files: missing variables: carob_contributor.
-# write_files: unknown variables: vpd_, pressure_, Eo_.
 
 ## NOT PROCESSED
 # 03_Photo_San Ramon CIP Station.jpg.
-
-## NEW VARIABLES
-# vpd_: vapor pressure deficit, kPa, hourly
-# pressure_: atmospheric pressure, hPa, hourly
-# Eo_: potential evapotranspiration, mm, hourly amount as recorded
 
 carob_script <- function(path) {
 
@@ -80,14 +74,13 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		time = format(as.POSIXct(r$Time), "%H:%M:%S", tz="UTC"),
 		temp = num(r$Ta),
 		rhum = num(r$RH),
-		vpd_ = num(r$VPD),
+		vpd = num(r$VPD) * 10,
 		wspd = num(r$WS),
 		wdir = wdir,
-		pressure_ = num(r$Pa),
+		pressure = num(r$Pa),
 		irad = num(r$SR),
 		prec = num(r$PP),
-		Eo_ = num(r$Eo),
-		stringsAsFactors = FALSE
+		ETo = num(r$Eo)
 	)
 	wth <- wth[!is.na(wth$date), ]
 
@@ -104,8 +97,7 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		geo_uncertainty = 12000,
 		geo_source = "Dataverse characteristicOfSources: South Latitude 11.1, West Longitude 75.4, Elevation 848",
 		is_survey = FALSE,
-		on_farm = FALSE,
-		stringsAsFactors = FALSE
+		on_farm = FALSE
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

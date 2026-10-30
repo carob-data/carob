@@ -90,8 +90,7 @@ The evaluation of 10 potato clones was conducted in the Tajikistan region, speci
 			harvest_date = harvest,
 			on_farm = FALSE,
 			is_survey = FALSE,
-			geo_from_source = TRUE,
-			stringsAsFactors = FALSE
+			geo_from_source = TRUE
 		)
 	}
 

@@ -53,9 +53,9 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 	f <- ff[basename(ff) == "STC_Survey_2017_Febrero09-2018.accdb"]
 	ch <- RODBC::odbcConnectAccess2007(f)
 	on.exit(RODBC::odbcClose(ch))
-	geo <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P0Latitud, P0Longitud, P0Altitud FROM [Pag02DatosGenerales]", stringsAsFactors=FALSE)
-	land <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P3ANroParcela, P3ACantidad, P3AMedida FROM [Pag04Tenencia de Tierra]", stringsAsFactors=FALSE)
-	pot <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P4AParcela, P4AVariedadNomb, P4ACosCant, P4ACosUnid, P4ACosMed FROM [Pag07-08ProduccionDePapa]", stringsAsFactors=FALSE)
+	geo <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P0Latitud, P0Longitud, P0Altitud FROM [Pag02DatosGenerales]")
+	land <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P3ANroParcela, P3ACantidad, P3AMedida FROM [Pag04Tenencia de Tierra]")
+	pot <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P4AParcela, P4AVariedadNomb, P4ACosCant, P4ACosUnid, P4ACosMed FROM [Pag07-08ProduccionDePapa]")
 
 	dms <- function(x) {
 		x <- trimws(as.character(x))
@@ -93,8 +93,7 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 		hhid = pot$hhid,
 		parcel = pot$parcel,
 		variety = trimws(as.character(pot$P4AVariedadNomb)),
-		production_kg_ = pot$production_kg_,
-		stringsAsFactors = FALSE
+		production_kg_ = pot$production_kg_
 	)
 	d$variety[!nzchar(d$variety) | d$variety == "NA"] <- NA_character_
 	d <- merge(d, land, by=c("hhid", "parcel"), all.x=TRUE)
@@ -119,8 +118,7 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 		production_kg_ = d$production_kg_,
 		latitude = -dms(d$P0Latitud),
 		longitude = -dms(d$P0Longitud),
-		elevation = num(d$P0Altitud),
-		stringsAsFactors = FALSE
+		elevation = num(d$P0Altitud)
 	)
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$is_survey <- TRUE

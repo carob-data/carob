@@ -66,7 +66,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 
 	read_piece <- function(fname, vtype) {
 		f <- ff[basename(ff) == fname]
-		r <- read.csv(f, stringsAsFactors = FALSE)
+		r <- read.csv(f)
 		variety <- clean_chr(r$Pedigree)
 		env <- trimws(r$Env)
 		data.frame(
@@ -104,8 +104,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 			# CKAN coverage_x = 7° 27' 59.99" N, coverage_y = 4° 33' 59.99" E
 			latitude = 7 + 27 / 60 + 59.99 / 3600,
 			longitude = 4 + 33 / 60 + 59.99 / 3600,
-			geo_from_source = TRUE,
-			stringsAsFactors = FALSE
+			geo_from_source = TRUE
 		)
 	}
 
@@ -132,8 +131,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 			pest_incidence = rep(NA_integer_, n),
 			# column is weeks after planting
 			DAP = rep(as.integer(dap), n),
-			order = rep(as.integer(ord), n),
-			stringsAsFactors = FALSE
+			order = rep(as.integer(ord), n)
 		)
 		if (is.null(long)) long <<- x else long <<- rbind(long, x)
 	}

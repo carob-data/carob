@@ -56,7 +56,7 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 	)
 
 	f <- ff[basename(ff) == "data.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA"))
+	r <- read.csv(f, na.strings=c("", "NA"))
 
 	d <- data.frame(
 		trial_id = r$FILE_NAME,

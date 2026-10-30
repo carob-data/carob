@@ -57,13 +57,11 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		isolate_ = trimws(as.character(r$Isolate)),
 		AUDPC = as.numeric(r$AUDPC),
 		rAUDPC = as.numeric(r$rAUDPC),
-		saudpc_ = as.numeric(r$SAUDPC),
-		stringsAsFactors = FALSE
+		saudpc_ = as.numeric(r$SAUDPC)
 	)
 	alias <- data.frame(
 		variety = trimws(as.character(ml[["Accession number"]])),
-		variety_alt = trimws(as.character(ml[["Accession name"]])),
-		stringsAsFactors = FALSE
+		variety_alt = trimws(as.character(ml[["Accession name"]]))
 	)
 	alias <- alias[!duplicated(alias$variety), ]
 	d <- merge(d, alias, by="variety", all.x=TRUE)
@@ -79,8 +77,8 @@ This data set includes information of late blight severity readings at 4 and 6 d
 	d$pathogen <- "Phytophthora infestans"
 
 	pieces <- list(
-		data.frame(record_id=id, DAP=4L, disease_severity=as.character(r$LB1), stringsAsFactors=FALSE),
-		data.frame(record_id=id, DAP=6L, disease_severity=as.character(r$LB2), stringsAsFactors=FALSE)
+		data.frame(record_id=id, DAP=4L, disease_severity=as.character(r$LB1)),
+		data.frame(record_id=id, DAP=6L, disease_severity=as.character(r$LB2))
 	)
 	dlong <- do.call(rbind, pieces)
 	dlong <- dlong[!is.na(dlong$disease_severity) & nzchar(dlong$disease_severity), ]

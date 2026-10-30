@@ -82,7 +82,7 @@ Assess the field biophysical efficacy of different products against FAW and dete
 	)
 
 	f <- ff[basename(ff) == "local_innovation_data.csv"]
-	r <- read.csv(f, check.names = FALSE, stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 	r <- r[!is.na(r$Treatment) & trimws(r$Treatment) != "", ]
 
 	mon <- c(jan = "01", feb = "02", mar = "03", apr = "04", may = "05", jun = "06",
@@ -170,8 +170,7 @@ Assess the field biophysical efficacy of different products against FAW and dete
 		leaffolder_severity_ = ifelse(is.na(r$LeafFolderSev), NA_character_, as.character(r$LeafFolderSev)),
 		trial_id = paste(loc, site, year, season, sep = "_"),
 		on_farm = TRUE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$agroecosystem_[!is.na(d$agroecosystem_) & d$agroecosystem_ == ""] <- NA_character_
 	d$record_id <- seq_len(nrow(d))

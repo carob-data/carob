@@ -104,8 +104,7 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 		soil_Na_exch = as.numeric(r[["Exchangeable Sodium"]]),
 		soil_ex_acidity = as.numeric(r[["Exchangeable Aluminium + hidrogenum"]]),
 		soil_BS = as.numeric(r[["Base Saturation"]]),
-		soil_N_total = as.numeric(r[["Total nitrogen"]]) * 10000,
-		stringsAsFactors = FALSE
+		soil_N_total = as.numeric(r[["Total nitrogen"]]) * 10000
 	)
 
 	d$geo_from_source <- NA

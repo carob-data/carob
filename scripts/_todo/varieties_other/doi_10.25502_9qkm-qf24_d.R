@@ -57,7 +57,7 @@ IPM of aphid pests of vegetables
 	)
 
 	f <- ff[basename(ff) == "okra_performance_and_effect_of_agroecology.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA"), check.names=TRUE)
+	r <- read.csv(f, na.strings=c("", "NA"), check.names=TRUE)
 
 	d <- data.frame(
 		country = "Cameroon",
@@ -91,8 +91,7 @@ IPM of aphid pests of vegetables
 			pest_species = species,
 			stratum_ = stratum,
 			pest_incidence = as.integer(round(value)),
-			pest_severity = if (is.null(severity)) NA_character_ else as.character(severity),
-			stringsAsFactors = FALSE
+			pest_severity = if (is.null(severity)) NA_character_ else as.character(severity)
 		)
 		out[!is.na(value), ]
 	}

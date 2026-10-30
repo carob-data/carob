@@ -48,8 +48,7 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		tmax = as.numeric(r$max_temp),
 		tmin = as.numeric(r$min_temp),
 		prec = as.numeric(r$precip),
-		irad = as.numeric(r$radiation),
-		stringsAsFactors = FALSE
+		irad = as.numeric(r$radiation)
 	)
 	wth <- wth[!is.na(wth$date), ]
 
@@ -60,8 +59,7 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		adm1 = "Lima",
 		location = "La Molina",
 		is_survey = FALSE,
-		on_farm = FALSE,
-		stringsAsFactors = FALSE
+		on_farm = FALSE
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

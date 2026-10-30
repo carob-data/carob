@@ -60,8 +60,7 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 		intervention_ = chr(r$INTVGPNAME),
 		adm2 = tools::toTitleCase(tolower(chr(r$DISTNAME))),
 		location = tools::toTitleCase(tolower(chr(r$VILLNAME))),
-		sublocation_ = chr(r$SLOCNAME),
-		stringsAsFactors = FALSE
+		sublocation_ = chr(r$SLOCNAME)
 	)
 	d <- d[!is.na(d$hhid) | !is.na(d$location), ]
 	d$crop <- "sweetpotato"

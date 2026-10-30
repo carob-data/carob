@@ -52,13 +52,11 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 		variety = variety,
 		treatment = variety,
 		yield = as.numeric(r$TTWP),
-		yield_marketable = as.numeric(r$MTWP),
-		stringsAsFactors = FALSE
+		yield_marketable = as.numeric(r$MTWP)
 	)
 	alias <- data.frame(
 		variety = trimws(as.character(ml$Accession_Number)),
-		variety_alt = trimws(as.character(ml$Accession_Name)),
-		stringsAsFactors = FALSE
+		variety_alt = trimws(as.character(ml$Accession_Name))
 	)
 	alias$variety_alt[!nzchar(alias$variety_alt)] <- NA_character_
 	alias <- alias[!duplicated(alias$variety), ]

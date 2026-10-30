@@ -74,8 +74,7 @@ Relevant information on the challenges and opportunities of the project were con
 		latitude = -(num(r$DEGREES) + (num(r$MINUTES) + num(r$D_MINTS) / 1000) / 60),
 		longitude = num(r$DEG_E) + (num(r$MIN_E) + num(r$D_M_E) / 1000) / 60,
 		elevation = num(r$ELEVATION),
-		interview_date_ = interview,
-		stringsAsFactors = FALSE
+		interview_date_ = interview
 	)
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$is_survey <- TRUE

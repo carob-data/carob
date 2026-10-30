@@ -80,8 +80,7 @@ Most local farmers practice traditional small scale agriculture with focus on po
 		n_plots_ = num(r[[13]]),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	ok <- !is.na(d$hhid) & nzchar(d$hhid)
 	d <- d[ok, ]

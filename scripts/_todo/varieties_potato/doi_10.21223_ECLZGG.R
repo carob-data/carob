@@ -75,8 +75,7 @@ Evaluation of yield parameters of 6 clones introduced to Rwanda as processing va
 		yield_recorded_ = as.numeric(r$YIELD),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

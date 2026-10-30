@@ -84,8 +84,7 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		ascorbic_acid_mg_100g_fw_ = as.numeric(r$ASC_FW),
 		dry_matter_percent_ = as.numeric(r$PDM),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

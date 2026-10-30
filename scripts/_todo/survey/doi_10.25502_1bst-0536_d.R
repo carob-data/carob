@@ -63,7 +63,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 	)
 
 	f <- ff[basename(ff) == "usaid_eraal_activity_iita-naro_annual_outcome_survey.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE)
+	r <- read.csv(f)
 
 	yn <- function(x) {
 		x <- trimws(tolower(as.character(x)))
@@ -112,8 +112,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		longitude = as.numeric(r$longitude),
 		elevation = as.numeric(r$altitude),
 		land_owned_ = as.numeric(r$ERAAL31),
-		land_cultivated_ = as.numeric(r$ERAAL34),
-		stringsAsFactors = FALSE
+		land_cultivated_ = as.numeric(r$ERAAL34)
 	)
 
 	one <- function(crop, season, area, yield, variety, om, fert, herb, irr, area_both) {

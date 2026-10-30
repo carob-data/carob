@@ -85,10 +85,10 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	fs <- ff[basename(ff) == "input_short_rainy_season.csv"]
 	fi <- ff[basename(ff) == "household_identifies.csv"]
 	fh <- ff[basename(ff) == "hh_compostion_characteristic.csv"]
-	ru <- read.csv(fu, na.strings = na_str, stringsAsFactors = FALSE, fileEncoding = "latin1")
-	rs <- read.csv(fs, na.strings = na_str, stringsAsFactors = FALSE, fileEncoding = "latin1")
-	ri <- read.csv(fi, na.strings = na_str, stringsAsFactors = FALSE, fileEncoding = "latin1")
-	rh <- read.csv(fh, na.strings = na_str, stringsAsFactors = FALSE, fileEncoding = "latin1")
+	ru <- read.csv(fu, na.strings = na_str, fileEncoding = "latin1")
+	rs <- read.csv(fs, na.strings = na_str, fileEncoding = "latin1")
+	ri <- read.csv(fi, na.strings = na_str, fileEncoding = "latin1")
+	rh <- read.csv(fh, na.strings = na_str, fileEncoding = "latin1")
 
 	pos <- function(x) {
 		x <- as.numeric(x)
@@ -123,8 +123,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		dry = as.numeric(ru$T_harvst_dry),
 		fresh = as.numeric(ru$T_harvst_fresh),
 		season = NA_character_,
-		season_module_ = "input_use",
-		stringsAsFactors = FALSE
+		season_module_ = "input_use"
 	)
 	s <- data.frame(
 		hhid = as.character(rs$HHID),
@@ -151,8 +150,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		dry = as.numeric(rs$T_harvt_dry),
 		fresh = as.numeric(rs$T_harvt_fresh),
 		season = "short rains",
-		season_module_ = "short rains",
-		stringsAsFactors = FALSE
+		season_module_ = "short rains"
 	)
 	r <- rbind(u, s)
 	r <- r[keep_row(r$area, r$dry, r$fresh, r$q1, r$q2, r$omq, r$seed_own, r$seed_buy), ]
@@ -188,8 +186,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		vcode = as.character(ri$Village_Sun_colline),
 		adm2 = canon_dist(ri$DistrictCefferieCommune),
 		adm3 = carobiner::fix_name(place, "title"),
-		location = carobiner::fix_name(vill, "title"),
-		stringsAsFactors = FALSE
+		location = carobiner::fix_name(vill, "title")
 	)
 	id$adm3[is.na(place)] <- NA
 	id$location[is.na(vill)] <- NA
@@ -391,8 +388,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		yield = yield,
 		yield_part = unname(parts[crop]),
 		yield_isfresh = yield_isfresh,
-		vcode = r$vcode,
-		stringsAsFactors = FALSE
+		vcode = r$vcode
 	)
 	d$yield_part[is.na(d$crop)] <- NA
 	d$OM_amount[!use_om] <- 0
@@ -412,7 +408,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	gend <- rep(NA_character_, length(hh_type))
 	gend[grepl("female", hh_type)] <- "female"
 	gend[grepl("male headed", hh_type) & !grepl("female", hh_type)] <- "male"
-	hg <- data.frame(hhid = as.character(rh$HHID), farmer_gender = gend, stringsAsFactors = FALSE)
+	hg <- data.frame(hhid = as.character(rh$HHID), farmer_gender = gend)
 	hg <- hg[!duplicated(hg$hhid), ]
 	d <- merge(d, hg, by = "hhid", all.x = TRUE)
 

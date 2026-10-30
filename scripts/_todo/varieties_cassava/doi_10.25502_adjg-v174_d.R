@@ -57,7 +57,7 @@ RTB is a partnership collaboration of five research centers, led by the Internat
 	)
 
 	f <- ff[basename(ff) == "cassava_pyt_2013_2014.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE)
+	r <- read.csv(f)
 
 	# Yield_t_ha is fresh t/ha. DM is root dry-matter percent.
 	d <- data.frame(

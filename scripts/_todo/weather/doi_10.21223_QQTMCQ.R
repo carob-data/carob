@@ -6,20 +6,16 @@
 # Early dates are month/day/year text. From 13 June 2023 the date is an Excel serial (origin 1899-12-30). Time is an Excel fraction of a day.
 # Dictionary: temperatures C, RH %, wind speed m/s, solar radiation W/m2, rain and Eo mm, pressure hPa, VPD kPa.
 # Tmax and Tmin are the extremes during that interval, not daily extremes.
-# Wind direction is a compass-rose code, not degrees.
+# Wind direction is a 16-point compass label. It is stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90).
 # Solar radiation is interval mean intensity, stored as irad.
 # The Dataverse bounding box stores westLongitude 77.61 and southLatitude 7.82 without a sign. The coverage is Peru, so both are stored as negative. The point is about 20 km from the El Progreso-Chugay station in the same province.
 
 ## ISSUES
 # Confirm the sign correction on the bounding box.
-# write_files: missing variables: carob_contributor. unknown variables: vpd_, wind_dir_, pressure_hpa_.
-# Eo is the potential evapotranspiration for the recording interval, in mm. The vocabulary unit for ETo is mm/day.
+# VPD in the file is kPa. It is stored as vpd in hPa.
+# write_files: missing variables: carob_contributor.
+# Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
 # Sites need a check that Vista Florida in this file is the Pataz site named in the title, which is what the coordinates support.
-
-## NEW VARIABLES
-# vpd_: vapor pressure deficit, kPa
-# pressure_hpa_: atmospheric pressure, hPa
-# wind_dir_: compass-rose wind direction
 
 ## NOT PROCESSED
 # 02_Data_dictionary.xlsx: column definitions, already used.
@@ -83,8 +79,20 @@ In the present dataset, meteorological data at Vista Florida locality - Pataz, L
 	ok <- !is.na(tv)
 	time[ok] <- sprintf("%02d:%02d", hh[ok], mm[ok])
 
-	wd <- trimws(as.character(r$Dir))
-	wd[!nzchar(wd)] <- NA_character_
+	compass_deg <- function(x) {
+		x <- toupper(trimws(as.character(x)))
+		x[!nzchar(x) | x %in% c("NA", "NULL", "NAN", "---", "------")] <- NA_character_
+		rose <- c(
+			N=0, NNE=22.5, NE=45, ENE=67.5, E=90, ESE=112.5, SE=135, SSE=157.5,
+			S=180, SSW=202.5, SW=225, WSW=247.5, W=270, WNW=292.5, NW=315, NNW=337.5
+		)
+		out <- rep(NA_real_, length(x))
+		known <- !is.na(x) & x %in% names(rose)
+		out[known] <- unname(rose[x[known]])
+		bad <- unique(x[!is.na(x) & !known])
+		if (length(bad) > 0) stop("unmapped wind direction: ", paste(utils::head(bad, 30), collapse=", "))
+		out
+	}
 
 	wth <- data.frame(
 		station_id = "VistaFlorida_Pataz",
@@ -94,14 +102,13 @@ In the present dataset, meteorological data at Vista Florida locality - Pataz, L
 		tmax = num(r$Tmax),
 		tmin = num(r$Tmin),
 		rhum = num(r$RH),
-		vpd_ = num(r$VPD),
+		vpd = num(r$VPD) * 10,
 		wspd = num(r$Ws),
-		wind_dir_ = wd,
-		pressure_hpa_ = num(r$Pa),
+		wdir = compass_deg(r$Dir),
+		pressure = num(r$Pa),
 		prec = num(r$P),
 		irad = num(r$SR),
-		ETo = num(r$Eo),
-		stringsAsFactors = FALSE
+		ETo = num(r$Eo)
 	)
 	wth <- wth[!is.na(wth$date), ]
 	wth <- wth[order(wth$date, wth$time), ]
@@ -119,8 +126,7 @@ In the present dataset, meteorological data at Vista Florida locality - Pataz, L
 		latitude = -7.82,
 		geo_from_source = TRUE,
 		is_survey = FALSE,
-		on_farm = FALSE,
-		stringsAsFactors = FALSE
+		on_farm = FALSE
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

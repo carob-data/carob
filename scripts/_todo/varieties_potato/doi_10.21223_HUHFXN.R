@@ -72,8 +72,7 @@ Assessment of the current status of agronomy practices in potato cultivation in 
 		geo_from_source = TRUE,
 		crop = "potato",
 		on_farm = TRUE,
-		is_survey = TRUE,
-		stringsAsFactors = FALSE
+		is_survey = TRUE
 	)
 
 	carobiner::write_files(path, meta, d)

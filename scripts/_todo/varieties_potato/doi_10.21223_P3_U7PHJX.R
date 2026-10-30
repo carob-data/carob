@@ -88,8 +88,7 @@ Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic
 		stress = "pests",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	# Control block: cultivar name is column 4, CIP number is column 3, scores start at column 5.
@@ -118,8 +117,7 @@ Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic
 		stress = "pests",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	d <- rbind(d1, d2)
 	d$record_id <- seq_len(nrow(d))

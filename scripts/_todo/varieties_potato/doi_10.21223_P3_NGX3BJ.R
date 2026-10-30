@@ -64,13 +64,12 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	dlong <- rbind(
-		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 3, severity_percent_ = as.numeric(r$LB1), stringsAsFactors = FALSE),
-		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 5, severity_percent_ = as.numeric(r$LB2), stringsAsFactors = FALSE)
+		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 3, severity_percent_ = as.numeric(r$LB1)),
+		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 5, severity_percent_ = as.numeric(r$LB2))
 	)
 
 	carobiner::write_files(path, meta, d, long=dlong)

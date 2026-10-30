@@ -94,8 +94,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		is_survey = FALSE,
 		irrigated = NA,
 		geo_from_source = TRUE,
-		geo_source = "HIDAP Minimal sheet",
-		stringsAsFactors = FALSE
+		geo_source = "HIDAP Minimal sheet"
 	)
 
 	w <- carobiner::read.excel(f, sheet="Weather_data")
@@ -111,8 +110,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		tmin = as.numeric(w[["Minimum temperature (°C)"]]),
 		tmax = as.numeric(w[["Maximum temperature (°C)"]]),
 		rhum = as.numeric(w[["Relative humidity (%)"]]),
-		wspd = as.numeric(w[["Wind speed (m/s)"]]),
-		stringsAsFactors = FALSE
+		wspd = as.numeric(w[["Wind speed (m/s)"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 	if (all(is.na(wth$wspd))) wth$wspd <- NULL

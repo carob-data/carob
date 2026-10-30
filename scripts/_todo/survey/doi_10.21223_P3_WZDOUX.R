@@ -62,8 +62,7 @@ El presente es un informe del estudio de base de la metodología 'Mama y Bebé' 
 		geo_from_source = FALSE,
 		is_survey = TRUE,
 		on_farm = TRUE,
-		trial_id = "Colombia_mother_baby_2009",
-		stringsAsFactors = FALSE
+		trial_id = "Colombia_mother_baby_2009"
 	)
 	d <- d[!is.na(d$hhid), ]
 	rownames(d) <- NULL

@@ -65,8 +65,7 @@ The goal of this study was to assess sweet potato seed (vine) transactions and a
 			date = as.character(as.Date(serial, origin="1899-12-30")),
 			variety = trimws(as.character(r$Variety)),
 			bundles_sold_ = as.numeric(r$BundlesSold),
-			bundle_price_ = as.numeric(r[["Selling Price /Bundle(big Size)"]]),
-			stringsAsFactors = FALSE
+			bundle_price_ = as.numeric(r[["Selling Price /Bundle(big Size)"]])
 		)
 	}
 	d <- carobiner::bindr(one("2013 All Data"), one("2014 All Data"))

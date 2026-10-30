@@ -51,7 +51,7 @@ This dataset presents the results of a screening for heat stress tolerance of 19
 	)
 
 	f <- ff[basename(ff) == "harvest_traits_mean_across_rep.csv"]
-	r <- utils::read.csv(f, sep=";", dec=",", check.names=FALSE, colClasses=c(CIPNumber="character"), stringsAsFactors=FALSE)
+	r <- utils::read.csv(f, sep=";", dec=",", check.names=FALSE, colClasses=c(CIPNumber="character"))
 	num <- function(x) {
 		z <- trimws(as.character(x))
 		z <- gsub(",", ".", z, fixed=TRUE)
@@ -78,8 +78,7 @@ This dataset presents the results of a screening for heat stress tolerance of 19
 		geo_from_source = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE,
-		trial_id = "Piura_sweetpotato_heat",
-		stringsAsFactors = FALSE
+		trial_id = "Piura_sweetpotato_heat"
 	)
 	d$yield_part[is.na(d$yield)] <- NA_character_
 	d <- d[!is.na(d$variety) & nzchar(d$variety) & !is.na(d$treatment), ]

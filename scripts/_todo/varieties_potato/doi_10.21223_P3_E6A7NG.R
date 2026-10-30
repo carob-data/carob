@@ -67,8 +67,7 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 		stress = "pests",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	d$plot_id <- paste(d$variety, seq_len(nrow(d)), sep = "_")
 
@@ -76,8 +75,7 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 	blocks <- data.frame(
 		start = c(4, 7, 10, 13),
 		pressure = c("intermediate", "intermediate", "high", "high"),
-		exposure = c(1, 2, 1, 2),
-		stringsAsFactors = FALSE
+		exposure = c(1, 2, 1, 2)
 	)
 	parts <- list()
 	for (b in seq_len(nrow(blocks))) {
@@ -91,8 +89,7 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 				pressure_ = blocks$pressure[b],
 				exposure_ = blocks$exposure[b],
 				order = ev,
-				foliar_damage_percent_ = val,
-				stringsAsFactors = FALSE
+				foliar_damage_percent_ = val
 			)
 		}
 	}

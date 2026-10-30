@@ -63,10 +63,10 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 	fy23 <- ff[basename(ff) == "2023-root-yield.csv"]
 	fw24 <- ff[basename(ff) == "2024-whitefly-virus.csv"]
 	fy24 <- ff[basename(ff) == "2024-root-yield.csv"]
-	w23 <- read.csv(fw23, check.names=FALSE, stringsAsFactors=FALSE)
-	y23 <- read.csv(fy23, check.names=FALSE, stringsAsFactors=FALSE)
-	w24 <- read.csv(fw24, check.names=FALSE, stringsAsFactors=FALSE)
-	y24 <- read.csv(fy24, check.names=FALSE, stringsAsFactors=FALSE)
+	w23 <- read.csv(fw23, check.names=FALSE)
+	y23 <- read.csv(fy23, check.names=FALSE)
+	w24 <- read.csv(fw24, check.names=FALSE)
+	y24 <- read.csv(fy24, check.names=FALSE)
 
 	align23 <- function(x) {
 		x <- trimws(x)
@@ -107,16 +107,14 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 			trial_year_ = year,
 			block_id = w$block_id,
 			treatment = w$treatment,
-			plant_number_ = w$plant_number_,
-			stringsAsFactors = FALSE
+			plant_number_ = w$plant_number_
 		))
 		yy <- data.frame(
 			block_id = y$block_id,
 			treatment = y$treatment,
 			plant_number_ = y$plant_number_,
 			root_number_ = as.integer(y$Root_numbers),
-			root_weight_g_ = as.numeric(y$Root_weight),
-			stringsAsFactors = FALSE
+			root_weight_g_ = as.numeric(y$Root_weight)
 		)
 		m <- merge(id, yy, by=c("block_id", "treatment", "plant_number_"), all=TRUE)
 		m
@@ -151,8 +149,7 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		base <- data.frame(
 			record_id = w$record_id,
 			months_after_planting_ = w$months_after_planting_,
-			observation_month_ = w$observation_month_,
-			stringsAsFactors = FALSE
+			observation_month_ = w$observation_month_
 		)
 		a <- base
 		a$pest_species <- "Bemisia tabaci"

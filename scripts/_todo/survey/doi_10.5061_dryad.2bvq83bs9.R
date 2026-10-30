@@ -138,8 +138,7 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 				yield = yld[has_crop],
 				yield_part = "grain",
 				season = unname(season_name[s]),
-				planting_date = unname(season_year[s]),
-				stringsAsFactors = FALSE
+				planting_date = unname(season_year[s])
 			)
 		}
 	}

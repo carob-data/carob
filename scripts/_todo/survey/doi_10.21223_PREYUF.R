@@ -87,8 +87,7 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 		adm1 = txt(r$P06a),
 		adm2 = txt(r$P06b),
 		adm3 = txt(r$P06c),
-		location = txt(r$P06d),
-		stringsAsFactors = FALSE
+		location = txt(r$P06d)
 	)
 	main <- base
 	main$local_crop_ <- txt(r$P09)
@@ -106,7 +105,7 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 	)
 	parts <- lapply(blocks, function(cols) {
 		data.frame(base, local_crop_ = txt(r[[cols[1]]]), crop = as.character(crop_of(r[[cols[1]]])),
-			field_area_m2_ = num(r[[cols[2]]]), crop_record_ = cols[3], stringsAsFactors = FALSE)
+			field_area_m2_ = num(r[[cols[2]]]), crop_record_ = cols[3])
 	})
 	extra <- do.call(rbind, parts)
 	extra <- extra[!is.na(extra$local_crop_) | !is.na(extra$field_area_m2_), ]

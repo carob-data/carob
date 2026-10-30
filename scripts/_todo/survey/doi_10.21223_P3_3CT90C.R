@@ -94,8 +94,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		latitude = num(loc$Latitude[ih]),
 		longitude = num(loc$Longitude[ih]),
 		planting_date = as.character(as.Date(loc[["Planting date"]][ih])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ih])),
-		stringsAsFactors = FALSE
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ih]))
 	)
 
 	el <- carobiner::read.excel(f("ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="ELISA Data")
@@ -118,8 +117,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		latitude = num(loc$Latitude[ie]),
 		longitude = num(loc$Longitude[ie]),
 		planting_date = as.character(as.Date(loc[["Planting date"]][ie])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ie])),
-		stringsAsFactors = FALSE
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ie]))
 	)
 
 	ap <- carobiner::read.excel(f("Aphids_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Aphids data")
@@ -136,8 +134,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		latitude = num(loc$Latitude[ia]),
 		longitude = num(loc$Longitude[ia]),
 		planting_date = as.character(as.Date(loc[["Planting date"]][ia])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ia])),
-		stringsAsFactors = FALSE
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ia]))
 	)
 
 	d <- carobiner::bindr(d1, d2, d3)
@@ -165,8 +162,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		time = time,
 		temp = num(w$Temp),
 		humidity_ = num(w$HR),
-		rain_recorded_ = num(w$Rain),
-		stringsAsFactors = FALSE
+		rain_recorded_ = num(w$Rain)
 	)
 	wth <- wth[!is.na(wth$date), ]
 

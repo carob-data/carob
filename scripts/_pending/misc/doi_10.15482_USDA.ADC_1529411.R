@@ -5,7 +5,7 @@ carob_script <- function(path) {
 
 "
 
-    This dataset consists of growth and yield data for each season when sorghum [Sorghum bicolor (L.)] was grown at the USDA-ARS Conservation and Production Laboratory (CPRL), Soil and Water Management Research Unit (SWMRU) research weather station, Bushland, Texas 
+This dataset consists of growth and yield data for each season when sorghum [Sorghum bicolor (L.)] was grown at the USDA-ARS Conservation and Production Laboratory (CPRL), Soil and Water Management Research Unit (SWMRU) research weather station, Bushland, Texas 
 
 "
 

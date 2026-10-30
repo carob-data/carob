@@ -74,8 +74,7 @@ The use of high quality seed is one of the current strategies to increase seed a
 		irrigated = irrigated,
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

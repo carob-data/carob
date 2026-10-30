@@ -65,8 +65,7 @@ The endline survey for Viable Sweetpotato Technologies in Africa (VISTA) project
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "VISTA_2018",
-		stringsAsFactors = FALSE
+		trial_id = "VISTA_2018"
 	)
 
 	carobiner::write_files(path, meta, d)

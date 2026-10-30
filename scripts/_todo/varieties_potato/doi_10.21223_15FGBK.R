@@ -70,8 +70,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	lookup <- data.frame(
 		INSTN = code,
 		variety = variety,
-		variety_pedigree = ped,
-		stringsAsFactors = FALSE
+		variety_pedigree = ped
 	)
 	lookup <- lookup[!is.na(lookup$INSTN) & nzchar(lookup$INSTN), ]
 
@@ -118,8 +117,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		stress = "heat",
 		trial_id = "Tashkent_2008",
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

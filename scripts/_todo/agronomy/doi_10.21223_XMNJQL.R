@@ -49,7 +49,7 @@ A set of 260 validation trials was conducted from the season 2021B onwards to co
 	)
 
 	f <- ff[basename(ff) == "01_Scaling_AKILIMO_yield_data.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 	country <- trimws(r$country)
 	if (any(country != "RW")) stop("unexpected country code")
 
@@ -72,8 +72,7 @@ A set of 260 validation trials was conducted from the season 2021B onwards to co
 		yield = as.numeric(r$tuberY) * 1000,
 		yield_part = "tubers",
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

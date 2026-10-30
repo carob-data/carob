@@ -69,8 +69,7 @@ This dataset contains information from the monitoring of native potatoes registe
 		crop = "potato",
 		geo_from_source = TRUE,
 		on_farm = TRUE,
-		is_survey = TRUE,
-		stringsAsFactors = FALSE
+		is_survey = TRUE
 	)
 
 	carobiner::write_files(path, meta, d)
