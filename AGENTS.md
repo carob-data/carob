@@ -18,7 +18,7 @@ It is of fundamental importance that no critical information is lost to analyze 
 
 ### Human review is mandatory (agent must say this)
 
-The **human author** of the script must review **every line of code** and **every comment** (`#`, `## NOTES`, `## ISSUES`, `## NEW VARIABLES`) before submitting. The agent drafts; the human owns the result.
+The **human author** of the script must review **every line of code** and **every comment** (`#`, `## NOTES`, `## ISSUES`, `## NEW VARIABLES`, `## NOT PROCESSED`) before submitting. The agent drafts; the human owns the result.
 
 **Agent obligation:** whenever you deliver or hand off a Carob script (draft finished, file moved to `scripts/<group>/`, or a PR is ready), you **must** tell the human clearly and explicitly, in your own message to them, something equivalent to:
 
@@ -222,6 +222,7 @@ d$yield_moisture <- as.numeric(NA)    # % moisture if known
 General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
+- **Unprocessed variables list.** At the top of the script, under `## NOT PROCESSED`, list every raw variable (column, sheet, or file) that is possibly relevant but was not processed, one per line, with the source file/sheet, the original name, what it seems to represent, and why it was not processed (e.g. unclear unit or code, no terminag match yet, needs a decision). Do not list purely administrative or redundant columns (e.g. row numbers, enumerator names, values already used to compute a processed variable). This lets the reviewer see at a glance what information is left in the raw data.
 - **Do not add empty variables just because they are required.** A `write_files()` "missing variables" message means: check whether you have a real value (from the data, codebook, or publication). It does **not** mean invent a column of `NA`s or `""` to satisfy `required_variables.csv`. If you do not have a value, omit the variable and note it in `## ISSUES`. An empty placeholder is worse than a missing-variable message.
 - **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment"). This holds **even when terminag has no matching variable name**: give the treatment its own clear new variable name (ending in an underscore, see "New variable names" below) rather than burying it only in `treatment`. Such a new variable triggers a warning and is dropped from the written output, but that is fine — naming it explicitly is what lets a maintainer add the term to terminag (a separate process). A missing vocabulary term is never a reason to hide a treatment inside the `treatment` code.
 - **Variable (Column) names** should match a variable name from terminag. 
@@ -416,6 +417,7 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - [ ] `## NOTES` describe peculiarities --- make these succinct!
 - [ ] `## ISSUES` notes any caveats that need attention --- make these succinct!
 - [ ] `## NOTES`/`## ISSUES` are correct — verified against the data and paper, not blindly trusted.
+- [ ] `## NOT PROCESSED` lists all possibly relevant raw variables that were not processed, and why.
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
 - [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields; treatments and responses not swapped.
 - [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists) a RIS added to `references/`.
