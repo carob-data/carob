@@ -1,10 +1,26 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# 2013 Peru potato-adoption survey. The measurements are in STC_Survey_2017_Febrero09-2018.accdb, read with RODBC and the Access ACE driver.
+# GPS strings have no hemisphere. The study is in Peru, so latitude is stored south and longitude west.
+# P4ACosMed is the kilograms of one harvest unit, as stored (1 for KG, 1000 for TN, and the recorded sack or arroba weight). Production in kg is quantity times that factor. Status values such as NO COSECHO have no factor and are left missing.
+# P3AMedida is the square meters of one land unit, as stored (10000 for HA, 1 for M2). Area in hectares is quantity times that factor, divided by 10000.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Yield is production divided by parcel area only when that parcel has a single potato row. A parcel with several varieties keeps production_kg_ and does not get the whole parcel area as its yield. One potato yield reaches 1,020,000 kg/ha; it is left as recorded.
+# A few GPS strings fall outside Peru, including in Brazil, or not on land. They are left as parsed.
+# CodigoGeog is a code, not a place name.
+# Farmer names are not copied.
+# write_files: missing carob_contributor. unknown variables: production_kg_. out of bounds: yield (17.25, 1020000). high crop yield: potato: 1020000. coordinates not on land: Peru. coordinates in wrong country: Peru/Brazil. duplicates. NA detected: yield, latitude, longitude.
+
+## NOT PROCESSED
+# Pag03 capital social, Pag06 adoption knowledge, Pag09 variety scores, Pag10 inputs, Pag11 labor and chemicals, Pag12-16 constraints, market, assets, extension.
+# Seed quantity on the potato-production page.
+# Data_dictionary_STC_Survey.xls.
+
+## NEW VARIABLES
+# production_kg_: harvested quantity times the recorded kilograms per unit.
 
 
 carob_script <- function(path) {
@@ -17,34 +33,101 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 
 	uri <- "doi:10.21223/P3/MDNLI6"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "variety",
+		response_vars = "yield",
+		notes = NA,
 		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Potato producing households; universe: Potato households in Peru; timeMethod: Cross-sectional; dataCollector: International Potato Center; samplingProcedure: The estimation of sample size, the selection of the random sample, and the data cleaning and analysis followed a novel fifth-step optimization method that considered prior information regarding perceived adoption levels, heterogeneity of the sampled population, the desired level of precision in the estimation and the study budget constraints. The data collected in 11 different Departments represents 86% (275,000 hectares) of the total potato area of Peru in 2013.; collectionMode: Six teams of six enumerators and one supervisor per team were formed. Enumerators were undergraduate agricultural science students or recently graduated agronomist or related disciplines. Supervisors were agronomist with survey experience in previous CIP studies in the Andes. Enumerators and supervisors underwent a three-day training on survey enumeration. During training, the objectives of the project, the methodology, and the data collection techniques were covered. In the field, supervisors organized the logistics to enter into communities if needed as well as transportation, and lodging of the team, while the enumerators administered the household surveys. Data collection occurred from late November 2013 to mid July 2013. A hundred and twenty villages were visited in 45 provinces in Peru. In each village, the supervisor would organize the random selection of households. Enumerators would then conduct the survey with the household member who was most knowledgeable about potato production. Each household interview took approximately 40 to 60 minutes to complete.; researchInstrument: Structured household survey. The survey had eight modules. Module 1 described the composition and characteristics of the household. Module 2 gathered information on household social capital and networks. Module 3 asked about land tenancy, land use, crops under production and potato varieties knowledge and information sources, including to rate the importance of different potato traits of the main varieties planted. Module 4 asked respondents to detail their potato production (at varietal level) from planting to harvesting during the 2012-2013 main cropping season as well as constraints faced in potato production. Module 5 details the marketing of the potato at varietal level. Module 6 include questions about housing characteristics, while Module 7 recorded questions about household and farm assets. Finally, Module 8 asked questions about access to agricultural training, access to credits, production constraints.",
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 45,
+		carob_effort = 0.8
 	)
-	
 
-	f1 <- ff[basename(ff) == "Data_dictionary_STC_Survey.xls"]
-	f2 <- ff[basename(ff) == "STC_Survey_2017_Febrero09-2018.accdb"]
+	f <- ff[basename(ff) == "STC_Survey_2017_Febrero09-2018.accdb"]
+	ch <- RODBC::odbcConnectAccess2007(f)
+	on.exit(RODBC::odbcClose(ch))
+	geo <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P0Latitud, P0Longitud, P0Altitud FROM [Pag02DatosGenerales]", stringsAsFactors=FALSE)
+	land <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P3ANroParcela, P3ACantidad, P3AMedida FROM [Pag04Tenencia de Tierra]", stringsAsFactors=FALSE)
+	pot <- RODBC::sqlQuery(ch, "SELECT CodigoEnc, P4AParcela, P4AVariedadNomb, P4ACosCant, P4ACosUnid, P4ACosMed FROM [Pag07-08ProduccionDePapa]", stringsAsFactors=FALSE)
 
-	r1 <- carobiner::read.excel(f1)
-	#r2 <- read.???(f2)
-	return(FALSE)
+	dms <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x == "NA"] <- NA_character_
+		out <- rep(NA_real_, length(x))
+		ok <- !is.na(x)
+		parts <- strsplit(gsub("[^0-9.]+", " ", x[ok]), " +")
+		out[ok] <- vapply(parts, function(p) {
+			p <- p[nzchar(p)]
+			if (!length(p)) return(NA_real_)
+			d <- as.numeric(p[1])
+			m <- if (length(p) >= 2) as.numeric(p[2]) else 0
+			s <- if (length(p) >= 3) as.numeric(p[3]) else 0
+			d + m / 60 + s / 3600
+		}, numeric(1))
+		out
+	}
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		ok <- grepl("^-?[0-9.]+$", x)
+		x[!ok] <- NA_character_
+		as.numeric(x)
+	}
+
+	pot$hhid <- trimws(as.character(pot$CodigoEnc))
+	pot$parcel <- trimws(as.character(pot$P4AParcela))
+	pot$production_kg_ <- num(pot$P4ACosCant) * num(pot$P4ACosMed)
+	land$hhid <- trimws(as.character(land$CodigoEnc))
+	land$parcel <- trimws(as.character(land$P3ANroParcela))
+	land$area_ha <- num(land$P3ACantidad) * num(land$P3AMedida) / 10000
+	land <- land[!is.na(land$hhid) & !is.na(land$parcel), c("hhid", "parcel", "area_ha")]
+	land <- land[!duplicated(land[, c("hhid", "parcel")]), ]
+
+	d <- data.frame(
+		hhid = pot$hhid,
+		parcel = pot$parcel,
+		variety = trimws(as.character(pot$P4AVariedadNomb)),
+		production_kg_ = pot$production_kg_,
+		stringsAsFactors = FALSE
+	)
+	d$variety[!nzchar(d$variety) | d$variety == "NA"] <- NA_character_
+	d <- merge(d, land, by=c("hhid", "parcel"), all.x=TRUE)
+	n_on_parcel <- ave(d$hhid, d$hhid, d$parcel, FUN=length)
+	one <- n_on_parcel == 1 & !is.na(d$area_ha) & d$area_ha > 0 & !is.na(d$production_kg_)
+	d$yield <- NA_real_
+	d$yield[one] <- d$production_kg_[one] / d$area_ha[one]
+	d$area_ha[!one] <- NA_real_
+
+	geo$hhid <- trimws(as.character(geo$CodigoEnc))
+	geo <- geo[!duplicated(geo$hhid), ]
+	d <- merge(d, geo[, c("hhid", "P0Latitud", "P0Longitud", "P0Altitud")], by="hhid", all.x=TRUE)
+
+	d <- data.frame(
+		country = "Peru",
+		hhid = d$hhid,
+		variety = d$variety,
+		treatment = d$variety,
+		crop = "potato",
+		yield = d$yield,
+		yield_part = "tubers",
+		production_kg_ = d$production_kg_,
+		latitude = -dms(d$P0Latitud),
+		longitude = -dms(d$P0Longitud),
+		elevation = num(d$P0Altitud),
+		stringsAsFactors = FALSE
+	)
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	d$is_survey <- TRUE
+	d$on_farm <- TRUE
+	d$trial_id <- d$hhid
+	keep <- !is.na(d$variety) | !is.na(d$production_kg_)
+	d <- d[keep, ]
+
+	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

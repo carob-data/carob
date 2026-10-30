@@ -1,8 +1,18 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# School monitoring of native potato varieties in farmers' fields at Patacancha, Cusco, Peru. Coordinates are in the file. The country value Perú is stored as Peru.
+# Observation dates are calendar dates. There is no yield.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No yield or management. The group still expects a yield column.
+# Some rows are identical in the source file.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. duplicate records detected.
+
+## NOT PROCESSED
+# numeration, variety_id, user_id, location_id: internal ids. The second latitude and longitude copy the first.
+# Nota: contest label, not a measurement.
 
 
 carob_script <- function(path) {
@@ -13,131 +23,55 @@ Dataset for: Monitoring of Native potato varieties in Patacancha - Cusco
 This dataset contains information from the monitoring of native potatoes registered by students from the Patacancha school, in Cusco -Peru. Nine students participated, recording around 338 observations with 100 unique varieties.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/HLRIVB"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 70,
+		carob_effort = 0.3
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_data_monitoreo_Patacancha_Cusco.xlsx"]
+	f <- ff[basename(ff) == "01_data_monitoreo_Patacancha_Cusco.xlsx"]
+	r <- carobiner::read.excel(f)
+	latn <- grep("^latitude", names(r))[1]
+	lonn <- grep("^longitude", names(r))[1]
+	loc <- trimws(as.character(r$Locality))
+	loc[!nzchar(loc)] <- NA_character_
+	loc[is.na(loc)] <- "Patacancha"
+	when <- as.character(as.Date(substr(as.character(r$observation_date), 1, 10)))
+	alt <- trimws(as.character(r$cu_variety_name))
+	alt[!nzchar(alt)] <- NA_character_
 
-	r1 <- carobiner::read.excel(f1)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		variety = r1[["variety_observation_id"]],
-		location = r1[["location_id"]],
-		country = r1[["country"]],
-		hhid = r1[["farmer_id"]],
-		latitude = r1[["latitude...11"]],
-		longitude = r1[["longitude...12"]],
-		adm1 = carobiner::fix_name(r1[["adm1_region"]], "title"),
-		adm2 = carobiner::fix_name(r1[["adm2_province"]], "title"),
-		adm3 = carobiner::fix_name(r1[["adm3_district"]], "title")
+	d <- data.frame(
+		variety = trimws(as.character(r$variety_name)),
+		variety_alt = alt,
+		hhid = as.character(r$farmer_id),
+		country = "Peru",
+		adm1 = trimws(as.character(r$adm1_region)),
+		adm2 = trimws(as.character(r$adm2_province)),
+		adm3 = trimws(as.character(r$adm3_district)),
+		location = loc,
+		latitude = as.numeric(r[[latn]]),
+		longitude = as.numeric(r[[lonn]]),
+		date = when,
+		trial_id = paste("Patacancha", r$farmer_id),
+		crop = "potato",
+		geo_from_source = TRUE,
+		on_farm = TRUE,
+		is_survey = TRUE,
+		stringsAsFactors = FALSE
 	)
-##r1: "numeration", "variety_id", "variety_name", "cu_variety_name", "user_id", "observation_date", "latitude...13", "longitude...14", "Locality", "Nota"
 
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

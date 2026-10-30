@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Farmer survey of potato seed degeneration in the Andes of Ecuador. median_yield is bags of 45.45 kg harvested per bag of 45.45 kg planted, not kg/ha.
+# Virus columns are the percentage of the seed lot (DAS-ELISA). farmtype is a cluster code (1, 2, 3) with no legend.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No coordinates or place names below the country.
+# No kg/ha yield.
+# The source has 184 rows, 181 IDs, two fully repeated rows, and one ID that occurs twice with different values. Each row keeps its own trial_id.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: farm_type_, seed_age_, yield_ratio_, and the virus percentage columns.
+
+## NOT PROCESSED
+# None. Combination columns are kept.
+
+## NEW VARIABLES
+# farm_type_: farmer typology code.
+# seed_age_: how long the seed lot was kept without renewal.
+# yield_ratio_: bags harvested per bag planted (45.45 kg bags).
+# virus percentage columns (pvs_pct_ and the combination names): percent of the seed lot.
 
 
 carob_script <- function(path) {
@@ -13,133 +29,58 @@ Dataset for: Seed degeneration in a Andean highland landscape
 Potato seed degeneration threatens productivity of small-scale potato producers in Ecuador. For this reason, two studies were carried out a socio-economical survey and a exploratory survey to identify the presence of viruses in the seed lots of small-scale potato farmers. This relates with internal report to understand potato seed degeneration in the Andes of Ecuador.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/KTWFGH"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; Wageningen University and Research Centre - WUR",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 80,
+		carob_effort = 0.35
 	)
-	
 
-	f1 <- ff[basename(ff) == "Seed_degeneration_in_a_Andean_highland_landscape.xlsx"]
-
-	r1a <- carobiner::read.excel(f1, sheet="Metadata")
-	r1b <- carobiner::read.excel(f1, sheet="Dictionary")
-	r1c <- carobiner::read.excel(f1, sheet="Data")
-
-## select the variables of interest and assign them to the correct name
-
-	d1a <- data.frame()
-##r1a: "Metadata Template", "...2", "...3"
-
-
-	d1b <- data.frame()
-##r1b: "Abbreviation", "Description", "Method", "Unit", "Reference"
-
-
-	d1c <- data.frame(
-		yield = r1c[["median_yield"]]
+	f <- ff[basename(ff) == "Seed_degeneration_in_a_Andean_highland_landscape.xlsx"]
+	r <- carobiner::read.excel(f, sheet="Data")
+	d <- data.frame(
+		hhid = as.character(r$ID),
+		farm_type_ = as.character(r$farmtype),
+		seed_age_ = trimws(as.character(r$timeclass)),
+		yield_ratio_ = as.numeric(r$median_yield),
+		pvs_pvx_pvy_plrv_pct_ = as.numeric(r$perfour),
+		pvs_pvx_pvy_pct_ = as.numeric(r$persxy),
+		pvs_pvx_plrv_pct_ = as.numeric(r$persxl),
+		pvx_pvy_plrv_pct_ = as.numeric(r$perxyl),
+		pvs_pvy_plrv_pct_ = as.numeric(r$persyl),
+		pvs_pvx_pct_ = as.numeric(r$persx),
+		pvs_pvy_pct_ = as.numeric(r$persy),
+		pvx_pvy_pct_ = as.numeric(r$perxy),
+		pvx_plrv_pct_ = as.numeric(r$perxl),
+		pvs_plrv_pct_ = as.numeric(r$persl),
+		pvy_plrv_pct_ = as.numeric(r$peryl),
+		pvs_pct_ = as.numeric(r$pers),
+		pvx_pct_ = as.numeric(r$perx),
+		pvy_pct_ = as.numeric(r$pery),
+		plrv_pct_ = as.numeric(r$perl),
+		aplv_pct_ = as.numeric(r$peraplv),
+		apmov_pct_ = as.numeric(r$perapmov),
+		clean_seed_pct_ = as.numeric(r$perno_virus),
+		stringsAsFactors = FALSE
 	)
-##r1c: "ID", "farmtype", "timeclass", "perfour", "persxy", "persxl", "perxyl", "persyl", "persx", "persy", "perxy", "perxl", "persl", "peryl", "pers", "perx", "pery", "perl", "peraplv", "perapmov", "perno_virus"
+	d$crop <- "potato"
+	d$country <- "Ecuador"
+	d$trial_id <- paste0("Ecuador_seed_", d$hhid, "_", seq_len(nrow(d)))
+	d$on_farm <- TRUE
+	d$is_survey <- TRUE
+	d$stress <- "disease"
 
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

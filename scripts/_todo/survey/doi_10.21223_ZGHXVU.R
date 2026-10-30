@@ -1,8 +1,29 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Farmer survey in Ulcumayo, Junin, Peru. Same questionnaire as the Paucartambo survey. Coordinates in the file are degrees, minutes and seconds (S and W) and were converted to decimal degrees.
+# Potyield and Lbyield are counts of 70 kg bags, not kg/ha. Plot area is not in the file, so they were not converted.
+# The farmer-name column was not copied. hhid is the data number.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# The dictionary formula for Difyield does not match its description. The column is kept as recorded.
+# Pest and spray-timing columns are the numeric codes in the file.
+# Some GPS cells are empty. Some data-number cells are empty; those rows use rowN as hhid.
+# write_files: missing carob_contributor. unknown variables are the questionnaire columns in NEW VARIABLES (farmer_age_, education_, cause_rain_, fungicide_humid_, and the code, cultivar, dose, and bag-count columns). NA detected: latitude, longitude.
+
+## NOT PROCESSED
+# Farmer name was not copied.
+
+## NEW VARIABLES
+# education_, farmer_gender: as recorded.
+# lb_code_ and the other pest and spray-timing codes: numeric codes from the questionnaire.
+# pot_yield_bags_, lb_yield_bags_, dif_yield_bags_: 70 kg bags.
+# other_cultivars_, susceptible_cultivars_, resistant_cultivars_: names given by the farmer.
+# fungicide_humid_, fungicide_early_: commercial names, in the order given.
+# spray_interval_humid_days_, spray_interval_early_days_: days between sprays.
+# dose_humid_1_ to dose_humid_5_ and dose_early_1_ to dose_early_4_: tablespoons per 20 L.
+# n_fungicides_humid_, n_fungicides_early_, n_sprays_humid_, n_sprays_early_: counts as recorded.
 
 
 carob_script <- function(path) {
@@ -13,133 +34,147 @@ Dataset for: Farmers' perception on late blight in Peruvian highlands - Ulcumayo
 A questionnaire with 25 questions, many with multiple answers, was used in the village of Ulcumayo (Junin) in the Central Peruvian highlands to learn more about the perceptions of farmers regarding potato production with particular emphasis on management practices for the disease late blight (LB), caused by the oomycete, Phytophthora infestans.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/ZGHXVU"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = "unitOfAnalysis: farmers; universe: Ulcumayo (Junin, Peru); timeMethod: Cross-sectional; dataCollector: International Potato Center; samplingProcedure: 146 women and 396 men, also of different ages.; researchInstrument: Structured  survey questionnaire",
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 80,
+		carob_effort = 0.5
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Data_survey_Ulcumayo.xlsx"]
-	f2 <- ff[basename(ff) == "02_DataDictionary_Ulcumayo (1).xlsx"]
+	f <- ff[basename(ff) == "01_Data_survey_Ulcumayo.xlsx"]
+	r <- carobiner::read.excel(f, sheet="Database Ulcumayo")
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		ok <- grepl("^-?[0-9.]+$", x)
+		x[!ok] <- NA_character_
+		as.numeric(x)
+	}
+	# Sexagesimal text such as S10°46'03.1" . Several prime characters occur in the file.
+	dms <- function(x) {
+		x <- gsub("[\u2019\u02B9\u2032\u00B4`]", "'", as.character(x), perl=TRUE)
+		x <- gsub("[\u201c\u201d\u2033\"]", "", x)
+		x <- gsub("[[:space:]]+", "", x)
+		x <- gsub(",", ".", x)
+		x <- sub("'+$", "", x)
+		m <- regexec("^([NSEW])([0-9]+).([0-9]+)'([0-9.]+)$", x, perl=TRUE)
+		g <- regmatches(x, m)
+		out <- rep(NA_real_, length(x))
+		ok <- lengths(g) == 5L
+		if (!any(ok)) return(out)
+		hemi <- vapply(g[ok], function(z) z[2], "")
+		dec <- as.numeric(vapply(g[ok], function(z) z[3], "")) +
+			as.numeric(vapply(g[ok], function(z) z[4], "")) / 60 +
+			as.numeric(vapply(g[ok], function(z) z[5], "")) / 3600
+		dec[hemi %in% c("S", "W")] <- -dec[hemi %in% c("S", "W")]
+		out[ok] <- dec
+		out
+	}
+	paste_cols <- function(cols) {
+		m <- as.data.frame(lapply(cols, function(z) trimws(as.character(z))), stringsAsFactors=FALSE)
+		apply(m, 1, function(z) {
+			z <- z[nzchar(z) & !is.na(z) & z != "NA"]
+			if (!length(z)) NA_character_ else paste(z, collapse="; ")
+		})
+	}
 
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		hhid = r1[["Farmer name"]],
-		longitude = r1[["Longitude"]],
-		latitude = r1[["Latitude"]],
-		elevation = r1[["Altitude"]],
-		yield = r1[["Potyield"]]
+	d <- data.frame(
+		hhid = {
+			h <- trimws(as.character(r$Data))
+			miss <- is.na(h) | !nzchar(h) | h == "NA"
+			h[miss] <- paste0("row", seq_len(nrow(r))[miss])
+			h
+		},
+		farmer_age_ = num(r$Age),
+		education_ = trimws(as.character(r[["Education level"]])),
+		farmer_gender = trimws(as.character(r$Gender)),
+		location = tools::toTitleCase(tolower(trimws(as.character(r$Place)))),
+		latitude = dms(r$Latitude),
+		longitude = dms(r$Longitude),
+		elevation = num(r$Altitude),
+		lb_code_ = num(r$LB),
+		apw_code_ = num(r$APW),
+		black_scurf_code_ = num(r$BS),
+		early_blight_code_ = num(r$EB),
+		frost_code_ = num(r$F),
+		ptm_code_ = num(r$PTM),
+		pfb_code_ = num(r$PFB),
+		tuber_rot_code_ = num(r$TR),
+		leafminer_code_ = num(r$PLM),
+		cutworm_code_ = num(r$CW),
+		other_pest_code_ = num(r$Othr1),
+		cause_sun_ = num(r$Sun),
+		cause_rain_ = num(r$Rai),
+		cause_mist_ = num(r$Mi),
+		cause_mixed_ = num(r$SRM),
+		cause_insects_ = num(r$Insc),
+		cause_fungi_ = num(r$Fun),
+		cause_other_ = num(r$Othr2),
+		spray_planting_ = num(r$PD),
+		spray_emergence_ = num(r$Eme),
+		spray_20_30d_ = num(r[["30d"]]),
+		spray_rainy_ = num(r$Rainy),
+		spray_rain_sun_ = num(r[["Rain/sun"]]),
+		spray_spots_ = num(r$Nspot),
+		spray_neighbour_ = num(r$NeighLB),
+		spray_other_ = num(r$Others3),
+		advice_seller_ = num(r$AgSell),
+		advice_agronomist_ = num(r$Agron),
+		advice_neighbour_ = num(r$Neigh),
+		advice_experience_ = num(r$Ownexp),
+		advice_course_ = num(r$Course),
+		advice_media_ = num(r$RTV),
+		advice_other_ = num(r$Others4),
+		variety = trimws(as.character(r$Cv1)),
+		other_cultivars_ = paste_cols(r[, c("Cv2", "Cv3", "Cv4", "Cv5", "Cv6", "CV7")]),
+		n_cultivars_ = num(r$TotCv),
+		susceptible_cultivars_ = paste_cols(r[, c("S1", "S2", "S3", "S4", "S5")]),
+		resistant_cultivars_ = paste_cols(r[, c("R1", "R2", "R3", "R4", "R5")]),
+		fungicide_humid_ = paste_cols(r[, c("FHS1", "FHS2", "FHS3", "FHS4", "FHS5")]),
+		n_fungicides_humid_ = num(r$TotF),
+		spray_interval_humid_days_ = num(r$FfreqHS),
+		dose_humid_1_ = num(r$DF1),
+		dose_humid_2_ = num(r$DF2),
+		dose_humid_3_ = num(r$DF3),
+		dose_humid_4_ = num(r$DF4),
+		dose_humid_5_ = num(r$DF5),
+		n_sprays_humid_ = num(r$NFS),
+		fungicide_early_ = paste_cols(r[, c("FES1", "FES2", "FES3", "FES4")]),
+		n_fungicides_early_ = num(r$TFRF),
+		spray_interval_early_days_ = num(r$FfreqES),
+		dose_early_1_ = num(r$DFES1),
+		dose_early_2_ = num(r$DFES2),
+		dose_early_3_ = num(r$DFES3),
+		dose_early_4_ = num(r$DFES4),
+		n_sprays_early_ = num(r$NFEachS),
+		pot_yield_bags_ = num(r$Potyield),
+		lb_yield_bags_ = num(r$Lbyield),
+		dif_yield_bags_ = num(r$Difyield),
+		stringsAsFactors = FALSE
 	)
-##r1: "Data", "Age", "Education level", "Gender", "Place", "LB", "APW", "BS", "EB", "F", "PTM", "PFB", "TR", "PLM", "CW", "Othr1", "Sun", "Rai", "Mi", "SRM", "Insc", "Fun", "Othr2", "PD", "Eme", "30d", "Rainy", "Rain/sun", "Nspot", "NeighLB", "Others3", "AgSell", "Agron", "Neigh", "Ownexp", "Course", "RTV", "Others4", "Cv1", "Cv2", "Cv3", "Cv4", "Cv5", "Cv6", "CV7", "TotCv", "S1", "S2", "S3", "S4", "S5", "R1", "R2", "R3", "R4", "R5", "FHS1", "FHS2", "FHS3", "FHS4", "FHS5", "TotF", "FfreqHS", "DF1", "DF2", "DF3", "DF4", "DF5", "NFS", "FES1", "FES2", "FES3", "FES4", "TFRF", "FfreqES", "DFES1", "DFES2", "DFES3", "DFES4", "NFEachS", "Lbyield", "Difyield"
+	d$variety[!nzchar(d$variety) | d$variety == "NA"] <- NA_character_
+	d$crop <- "potato"
+	d$country <- "Peru"
+	d$adm1 <- "Junin"
+	d$adm2 <- "Ulcumayo"
+	d$trial_id <- paste0("Ulcumayo_", d$hhid)
+	d$on_farm <- TRUE
+	d$is_survey <- TRUE
+	d$stress <- "disease"
+	d$pathogen <- "Phytophthora infestans"
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 
-
-	d2 <- data.frame()
-##r2: "Variable_name", "Abbreviation", "Method", "Formula", "Unit", "Reference", "Categories"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

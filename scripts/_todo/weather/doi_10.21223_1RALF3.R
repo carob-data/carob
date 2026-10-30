@@ -1,8 +1,31 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Hourly Davis Vantage Pro records from Peru, 2004-2012. Place and coordinates are columns on each row. Country is the dataset description (Peru).
+# NULL is missing. Temperature is C, humidity is %, wind speed is m/s, rain is mm, solar radiation and PAR are W/m2, barometric pressure is hPa, dew point is C.
+# HOURW mixes Excel day-fractions and clock strings such as 15:59:41.0. Both are stored as HH:MM.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Evapotranspiration is mm per recording interval, not mm/day. Wind direction is a compass code, not degrees.
+# Wind Dir and Hi Dir are read as text. Guessing the type treats them as logical and drops codes such as SSE.
+# Indoor temperature, UV, degree-days and wind-chill indexes are not primary outdoor observations.
+# Some temperature readings are -67.8 C and wind speed reaches 70 m/s. Those values are left as recorded.
+# write_files: missing carob_contributor. unknown variables: wind_dir_, hi_dir_, par_wm2_, pressure_hpa_, rain_rate_mm_h_, et_mm_, soil_moist_pct_, soil_temp_1_, soil_temp_2_, soil_temp_3_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4), wspd (0, 70.2), wspdmx (0, 70.2).
+
+## NOT PROCESSED
+# Month, Day, Year: the same day as Date.
+# WeatherType, Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Hi Solar Rad, UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Leaf Wet, Wind Samp, ISS Recept, Arc. Int.
+
+## NEW VARIABLES
+# wind_dir_: wind direction as recorded.
+# hi_dir_: direction at maximum wind speed, as recorded.
+# pressure_hpa_: barometric pressure (hPa).
+# rain_rate_mm_h_: rain rate (mm/h).
+# et_mm_: evapotranspiration in the recording interval (mm).
+# par_wm2_: photosynthetically active radiation (W/m2).
+# soil_moist_pct_: soil moisture (%).
+# soil_temp_1_, soil_temp_2_, soil_temp_3_: soil temperature (C).
 
 
 carob_script <- function(path) {
@@ -13,135 +36,114 @@ Dataset for: Compilation of Hourly Data
 This dataset comprises hourly data collected from diverse locations from Peru (from 2004 to 2012), detailing a comprehensive range of meteorological, environmental, and indoor parameters. It includes variables grouped under the following categories: weather conditions, temperature metrics, humidity, wind data, solar and UV metrics, rainfall and barometric data, evapotranspiration and more.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/1RALF3"
 	group <- "weather"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "compilation",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 55,
+		carob_effort = 0.5
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_hourly_data.xlsx"]
-	f2 <- ff[basename(ff) == "data_dictionary.xlsx"]
+	f <- ff[basename(ff) == "01_hourly_data.xlsx"]
+	# Wind direction is a compass cardinal. Guessing the type warns on SSE, SE, and similar.
+	nms <- names(carobiner::read.excel(f, n_max=0))
+	types <- rep("text", length(nms))
+	r <- carobiner::read.excel(f, na=c("NULL", "NA"), col_types=types)
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x %in% c("NA", "NULL", "NAN", "---")] <- NA_character_
+		as.numeric(x)
+	}
+	clock <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x)] <- NA_character_
+		out <- rep(NA_character_, length(x))
+		hm <- !is.na(x) & grepl("^[0-9]{1,2}:[0-9]{2}", x)
+		if (any(hm)) {
+			parts <- strsplit(x[hm], ":")
+			hh <- as.integer(vapply(parts, `[`, "", 1))
+			mm <- as.integer(vapply(parts, `[`, "", 2))
+			out[hm] <- sprintf("%02d:%02d", hh, mm)
+		}
+		ser <- !hm & !is.na(x) & grepl("^-?[0-9.]+([eE][+-]?[0-9]+)?$", x)
+		if (any(ser)) {
+			mins <- round(as.numeric(x[ser]) * 24 * 60)
+			out[ser] <- sprintf("%02d:%02d", mins %/% 60, mins %% 60)
+		}
+		out
+	}
+	date_of <- function(x) {
+		x <- trimws(as.character(x))
+		out <- rep(NA_character_, length(x))
+		iso <- !is.na(x) & grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}", x)
+		if (any(iso)) out[iso] <- as.character(as.Date(substr(x[iso], 1, 10)))
+		ser <- !iso & !is.na(x) & grepl("^[0-9]+(\\.[0-9]+)?$", x)
+		if (any(ser)) out[ser] <- as.character(as.Date(as.numeric(x[ser]), origin="1899-12-30"))
+		out
+	}
 
-## select the variables of interest and assign them to the correct name
+	loc <- trimws(as.character(r$Locality))
+	loc[!nzchar(loc)] <- NA_character_
+	lat <- num(r$Latitude)
+	lon <- num(r$Longitude)
+	sid <- paste(loc, lat, lon, sep="|")
 
-	d1 <- data.frame(
-		year = r1[["Year"]],
-		adm1 = carobiner::fix_name(r1[["Adm1"]], "title"),
-		adm2 = carobiner::fix_name(r1[["Adm2"]], "title"),
-		adm3 = carobiner::fix_name(r1[["Adm3"]], "title"),
-		latitude = r1[["Latitude"]],
-		longitude = r1[["Longitude"]],
-		elevation = r1[["Altitude"]]
+	d <- data.frame(
+		station_id = sid,
+		station_name = loc,
+		country = "Peru",
+		adm1 = carobiner::fix_name(as.character(r$Adm1), "title"),
+		adm2 = carobiner::fix_name(as.character(r$Adm2), "title"),
+		adm3 = carobiner::fix_name(as.character(r$Adm3), "title"),
+		location = loc,
+		latitude = lat,
+		longitude = lon,
+		elevation = num(r$Altitude),
+		stringsAsFactors = FALSE
 	)
-##r1: "Month", "Day", "Date", "WeatherType", "HOURW", "Tmean", "Tmax", "Tmin", "Rhum", "Dew Pt", "Wind Speed", "Wind Dir", "Wind Run", "Hi Speed", "Hi Dir", "Wind Chill", "Heat Index", "THW Index", "THSW Index", "Bar", "Rain", "Rain Rate", "Solar Rad", "Solar Energy", "Hi Solar Rad", "UV Index", "UV Dose", "Hi UV", "Heat D-D", "Cool D-D", "In Temp", "In Hum", "ET", "Soil 1 Moist", "Soil  Temp 1", "Soil  Temp 2", "Soil  Temp 3", "Leaf Wet", "Wind Samp", "ISS  Recept", "Arc. Int.", "PAR", "Locality"
+	d <- d[!duplicated(d$station_id), ]
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	d$is_survey <- FALSE
+	d$on_farm <- NA
 
+	wth <- data.frame(
+		station_id = sid,
+		date = date_of(r$Date),
+		time = clock(r$HOURW),
+		temp = num(r$Tmean),
+		tmax = num(r$Tmax),
+		tmin = num(r$Tmin),
+		rhum = num(r$Rhum),
+		dewp = num(r[["Dew Pt"]]),
+		wspd = num(r[["Wind Speed"]]),
+		wspdmx = num(r[["Hi Speed"]]),
+		wind_dir_ = trimws(as.character(r[["Wind Dir"]])),
+		hi_dir_ = trimws(as.character(r[["Hi Dir"]])),
+		prec = num(r$Rain),
+		irad = num(r[["Solar Rad"]]),
+		par_wm2_ = num(r$PAR),
+		pressure_hpa_ = num(r$Bar),
+		rain_rate_mm_h_ = num(r[["Rain Rate"]]),
+		et_mm_ = num(r$ET),
+		soil_moist_pct_ = num(r[["Soil 1 Moist"]]),
+		soil_temp_1_ = num(r[["Soil  Temp 1"]]),
+		soil_temp_2_ = num(r[["Soil  Temp 2"]]),
+		soil_temp_3_ = num(r[["Soil  Temp 3"]]),
+		stringsAsFactors = FALSE
+	)
+	wth$wind_dir_[!nzchar(wth$wind_dir_)] <- NA_character_
+	wth$hi_dir_[!nzchar(wth$hi_dir_)] <- NA_character_
+	wth <- wth[!is.na(wth$date), ]
 
-	d2 <- data.frame()
-##r2: "Abbreviation", "Name of Variable", "Other abbreviation", "Unit"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth=wth)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Quinoa germplasm trial at the National University of San Antonio Abad of Cusco. Country Peru is the Dataverse geographic coverage. The description states a randomized complete block design with four blocks and 25 accessions. Ten plants were measured in each plot, so the table keeps the plant rows (1000).
+# SY is t/ha (dictionary). yield is SY * 1000. TSW is g per 1000 seeds (seed_weight). Plant height, panicle diameter, stem diameter, leaf length, leaf width, petiole length, and panicle length are cm. Panicle density is panicles/m2.
+# SPAD at 98 and 123 days after planting is in the long table. There is no calendar planting date and no coordinate.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# The Cusco trial site needs georeferencing.
+# TSW is stored in the recorded numbers. The dictionary says g/1000 seeds. Most values are far above a quinoa thousand-seed weight in grams and were not rescaled.
+# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: plant_sample_, panicle_diameter_, primary_branches_, stem_diameter_, leaf_length_, leaf_width_, petiole_length_, panicle_length_, panicle_density_. out of bounds: seed_weight (3.876, 6035).
+
+## NEW VARIABLES
+# plant_sample_: plant measured within the plot (REP).
+# panicle_diameter_, stem_diameter_, leaf_length_, leaf_width_, petiole_length_, panicle_length_: cm.
+# primary_branches_: number of primary branches.
+# panicle_density_: panicles per m2.
+
+## NOT PROCESSED
+# Dictionary reference rows.
 
 
 carob_script <- function(path) {
@@ -13,129 +29,63 @@ Dataset for: Agro-morphological Evaluation of Quinoa Germplasm from the Cusco Qu
 Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), native to the inter-Andean valleys, obtained from the Germplasm Bank of the Andean Crops Research Center (CICA), Faculty of Agricultural Sciences, National University of San Antonio Abad of Cusco (FCA-UNSAAC), were used to conduct a field trial under a randomized complete block design with four replications, resulting in a total of 100 experimental units evenly distributed across four blocks. For each experimental unit, 10 plants were randomly selected from the central row, excluding those located at the borders and row ends. The selected plants were properly labeled at the middle third of the stem, and several phenotypic (agro-morphological) traits, including panicle diameter, panicle density, plant height, number of primary branches, among others, were evaluated according to the descriptors proposed by Bioversity International et al. (2013), Descriptors for Quinoa and Wild Relatives.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/P3/STJM66"
 	group <- "varieties_other"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "RCBD",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield;plant_height",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 80,
+		carob_effort = 0.35
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Data_Agro-morphological.xlsx"]
-	f2 <- ff[basename(ff) == "02_Data_dictionary_Agro-morphological.xlsx"]
+	f <- ff[grepl("^01_Data", basename(ff))]
+	r <- carobiner::read.excel(f)
+	num <- function(x) as.numeric(as.character(x))
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		rep = r1[["REP"]]
+	variety <- trimws(as.character(r$Accession))
+	d <- data.frame(
+		record_id = seq_len(nrow(r)),
+		trial_id = "Cusco_quinoa",
+		plot_id = paste(variety, r$BLOQ, sep="_"),
+		rep = as.integer(sub("^B", "", as.character(r$BLOQ))),
+		plant_sample_ = as.integer(sub("^R", "", as.character(r$REP))),
+		crop = "quinoa",
+		variety = variety,
+		treatment = variety,
+		country = "Peru",
+		location = "Cusco",
+		yield = num(r$SY) * 1000,
+		yield_part = "seed",
+		seed_weight = num(r$TSW),
+		plant_height = num(r$PLH),
+		panicle_diameter_ = num(r$PAD),
+		primary_branches_ = num(r$NPB),
+		stem_diameter_ = num(r$STD),
+		leaf_length_ = num(r$LEL),
+		leaf_width_ = num(r$LEW),
+		petiole_length_ = num(r$PEL),
+		panicle_length_ = num(r$PAL),
+		panicle_density_ = num(r$PDE),
+		geo_from_source = FALSE,
+		on_farm = NA,
+		is_survey = FALSE,
+		stringsAsFactors = FALSE
 	)
-##r1: "Accession", "BLOQ", "PAD", "NPB", "STD", "PLH", "LEL", "LEW", "PAL", "PEL", "PDE", "TSW", "SY", "SPAD 98DAP", "SPAD 123DAP"
 
+	spad1 <- data.frame(record_id=d$record_id, DAP=98L, SPAD=num(r[["SPAD 98DAP"]]), stringsAsFactors=FALSE)
+	spad2 <- data.frame(record_id=d$record_id, DAP=123L, SPAD=num(r[["SPAD 123DAP"]]), stringsAsFactors=FALSE)
+	dlong <- rbind(spad1, spad2)
+	dlong <- dlong[!is.na(dlong$SPAD), ]
 
-	d2 <- data.frame()
-##r2: "Variable name", "Abbreviation", "Unit", "Variable type", "Description", "Method", "Formula", "References"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

@@ -1,8 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Open-field late-blight trial of the HERLB population at Oxapampa, Peru, rainy season 2022. Row-column design, four plants per plot, no replication. Elevation 1810 m is from the description.
+# Coordinates and the soil test are the Soil_Data sheet (one sample for the field). Soil pH is a 1:1 suspension. Sand, silt, clay, organic matter and CaCO3 are percent. P and K are ppm. Exchangeable cations are meq/100g. Texture "Fr" is stored as loam (franco).
+# LB1 to LB8 are percent leaf area. AUDPC is divided by 100 so it is on a fraction scale. rAUDPC is already a fraction in the file.
+# Tuber weights have no unit and the plot area is not given, so they are not converted to kg/ha.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No planting or harvest date, and no fertilizer or irrigation rate.
+# Weather_data has Date, Time and GMT that do not form an obvious clock time (Time 0.5 with GMT AM), so the series was not written.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: ttwp_, mtwp_.
+
+## NOT PROCESSED
+# 03 layout and 06 layout files: plot arrangement, not measurements.
+# Fieldbook NTP, NPE, NPH, NMTP, NNoMTP, NMTPL, ATMW, TNTP, TNTPL, NoMTWP, TTWPL: counts and per-plant weights. Plot tuber weights are kept as ttwp_ and mtwp_.
+# 04_Weather_data: see ISSUES.
+# Soil Requester, Operator, Date, total cations, total bases, exchangeable sodium percentage: administration or sums.
+
+## NEW VARIABLES
+# ttwp_: total tuber weight per plot. Unit is not stated.
+# mtwp_: marketable tuber weight per plot. Unit is not stated.
 
 
 carob_script <- function(path) {
@@ -13,163 +31,105 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 'An open-field trial was conducted in Oxapampa, Peru, at an elevation of 1810 meters above sea level during the rainy season of 2022 to assess the Late Blight (LB) response in the HERLB population. This population originated from crosses between advanced clones, referred to as LBHT, and HER clones (4x hybrids obtained from pre-breeding). The evaluation encompassed 2996 genotypes, organized in a row-column statistical design with four plants per plot and no replication. The varieties included in the trial had a known response to late infection, with Kory, Amarilis, and Yungay representing high resistance, moderate resistance, and susceptibility to LB, respectively. At 40 days after planting (DAP), a meticulous recording of the percentage of leaf area affected by late blight infection per plot was undertaken throughout the season. Subsequently, the area under the disease progress curve (AUDPC) was calculated, offering a comprehensive measure of the impact of late blight infection.'
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/N00MNU"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "row-column",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "AUDPC;rAUDPC",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 60,
+		carob_effort = 0.6
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Fieldbook_HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f2 <- ff[basename(ff) == "02_Material_List_HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f3 <- ff[basename(ff) == "03_RRC_G2_serp-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f4 <- ff[basename(ff) == "04_Weather_data-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f5 <- ff[basename(ff) == "05_Soil_Data-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f6 <- ff[basename(ff) == "06_Layout-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
-	f7 <- ff[basename(ff) == "07_Data_dictionary-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
+	f <- ff[basename(ff) == "01_Fieldbook_HERLB_PER_2022_LateBlight_Oxa.xlsx"]
+	r <- carobiner::read.excel(f)
+	ml <- carobiner::read.excel(ff[basename(ff) == "02_Material_List_HERLB_PER_2022_LateBlight_Oxa.xlsx"])
+	s <- carobiner::read.excel(ff[basename(ff) == "05_Soil_Data-HERLB_PER_2022_LateBlight_Oxa.xlsx"])
+	sval <- function(nm) {
+		hit <- s$Data[trimws(as.character(s$Abbreviture)) == nm]
+		if (length(hit) == 0) return(NA_character_)
+		trimws(as.character(hit[1]))
+	}
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
-	r7 <- carobiner::read.excel(f7)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		plot_id = r1[["plot"]]
+	id <- seq_len(nrow(r))
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x %in% c("NA", "NULL")] <- NA_character_
+		as.numeric(x)
+	}
+	d <- data.frame(
+		record_id = id,
+		plot_id = as.character(r$plot),
+		variety = trimws(as.character(r$cip_number)),
+		treatment = trimws(as.character(r$cip_number)),
+		AUDPC = num(r$AUDPC) / 100,
+		rAUDPC = num(r$rAUDPC),
+		ttwp_ = num(r$TTWP),
+		mtwp_ = num(r$MTWP),
+		stringsAsFactors = FALSE
 	)
-##r1: "row", "column", "rowgroup", "colgroup", "crgroup", "cip_number", "family", "type", "NTP", "NPE", "NPH", "LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8", "AUDPC", "rAUDPC", "NMTP", "NNoMTP", "MTWP", "NoMTWP", "NMTPL", "ATMW", "TNTP", "TNTPL", "TTWP", "TTWPL"
 
-
-	d2 <- data.frame()
-##r2: "ord", "CIPNumber", "Accesion_Name", "Is_control", "Family_AcceNumb", "Female_AcceNumb", "Female_codename", "Male_AcceNumb", "Population", "Seed_source", "Previous_trials"
-
-
-	d3 <- data.frame(
-		treatment = r3[["treatment"]],
-		rep = r3[["Rep"]]
+	ctrl <- tolower(trimws(as.character(ml$Is_control)))
+	alias <- data.frame(
+		variety = trimws(as.character(ml$CIPNumber)),
+		variety_alt = trimws(as.character(ml$Accesion_Name)),
+		variety_type = ifelse(ctrl == "yes", "check", NA_character_),
+		stringsAsFactors = FALSE
 	)
-##r3: "row", "column", "rowgroup", "colgroup", "RC.group", "Item", "CIP_Number", "Family_Number", "Type"
+	alias$variety_alt[!nzchar(alias$variety_alt)] <- NA_character_
+	alias <- alias[!duplicated(alias$variety), ]
+	d <- merge(d, alias, by="variety", all.x=TRUE)
 
+	d$crop <- "potato"
+	d$country <- "Peru"
+	d$location <- "Oxapampa"
+	d$elevation <- 1810
+	d$latitude <- as.numeric(sval("Latitude"))
+	d$longitude <- as.numeric(sval("Longitude"))
+	d$geo_from_source <- TRUE
+	d$trial_id <- "HERLB_Oxapampa_2022"
+	d$on_farm <- NA
+	d$is_survey <- FALSE
+	d$stress <- "disease"
+	d$pathogen <- "Phytophthora infestans"
+	d$soil_sand <- as.numeric(sval("Sand"))
+	d$soil_silt <- as.numeric(sval("Silt"))
+	d$soil_clay <- as.numeric(sval("Clay"))
+	d$soil_texture <- "loam"
+	d$soil_BS <- as.numeric(sval("Base saturation"))
+	d$soil_CaCO3 <- as.numeric(sval("CaCO3")) * 10
+	d$soil_EC <- as.numeric(sval("Soil Electrical conductivity"))
+	d$soil_pH <- as.numeric(sval("Soil PH"))
+	d$soil_P <- as.numeric(sval("Phosphorus"))
+	d$soil_SOM <- as.numeric(sval("Organic matter"))
+	d$soil_K <- as.numeric(sval("Potassium"))
+	d$soil_Ca_exch <- as.numeric(sval("Exchangeable Calcium"))
+	d$soil_Mg_exch <- as.numeric(sval("Exchangeable Magnesium"))
+	d$soil_Na_exch <- as.numeric(sval("Exchangeable Sodium"))
+	d$soil_K_exch <- as.numeric(sval("Exchangeable Potassium"))
+	d$soil_ex_acidity <- as.numeric(sval("Aluminium + hidrogenum"))
 
-	d4 <- data.frame()
-##r4: "Date", "Time", "GMT", "TEMP", "RH"
+	pieces <- lapply(1:8, function(i) {
+		data.frame(
+			record_id = id,
+			order = i,
+			disease_severity = as.character(r[[paste0("LB", i)]]),
+			stringsAsFactors = FALSE
+		)
+	})
+	dlong <- do.call(rbind, pieces)
+	dlong <- dlong[!is.na(dlong$disease_severity) & nzchar(dlong$disease_severity), ]
+	dlong$disease <- "potato late blight"
+	dlong$severity_scale <- "0-100"
 
-
-	d5 <- data.frame()
-##r5: "Variables", "Abbreviture", "Unit", "Data"
-
-
-	d6 <- data.frame()
-
-
-	d7 <- data.frame(
-		crop = tolower(r7[["Crop_Ontology"]])
-	)
-##r7: "Ord", "Variable name", "Abbreviations"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

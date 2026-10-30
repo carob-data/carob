@@ -1,8 +1,35 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Daily weather for localities in Peru and one locality in Uganda (Kalengyere), 1974-2012.
+# NULL is the missing-value flag. Coordinates and altitude are in the data file (decimal degrees, m).
+# Dictionary: temperatures C, rain mm/day, relative humidity %, solar radiation and PAR w/m2, leaf wetness on a 0-15 scale.
+# Solar radiation values in the file run from about 1.5 to 34. That is low for an irradiance in W/m2 and closer to a daily integral, but the dictionary says w/m2, so the numbers are stored as irad without conversion.
+# Rain uses the tokens T. and NJL. Those are not amounts, so they are missing in prec.
+# -999 in rain and humidity is a missing code, not a measurement.
+# Adm2 "Cocepcion" is stored as Concepcion. "oxapampa" is stored as Oxapampa.
+# Weather type is recorded as "Hobo / Watchdog" or "Cambell".
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# RHmean reaches 103.6, above the 0-100 vocabulary limit. Values are kept.
+# Solar radiation and PAR units should be confirmed. The dictionary says w/m2 and the numbers are small.
+# Independencia has no admin names in the file.
+# Kabale is stored in adm1 as recorded. It is a district, not a Ugandan region.
+# No planting dates. This is a station series, not a crop trial.
+# Humidity above 100 is kept.
+# write_files: missing variables: carob_contributor. NA detected: latitude, longitude. unknown variables: weather_type_, rh90_, par_wm2_, leaf_wetness_. out of bounds: rhum (0, 103.6), rhmx (46.9, 104), rhmn (8.5, 103.6).
+
+## NEW VARIABLES
+# weather_type_: instrument or station type as recorded (Hobo / Watchdog, Cambell)
+# par_wm2_: photosynthetic radiation, dictionary unit w/m2
+# rh90_: relative humidity above 90%, dictionary unit %
+# leaf_wetness_: leaf wetness. The dictionary says a 0-15 score. The file also has fractional values.
+
+## NOT PROCESSED
+# data_dictionary.xlsx: column definitions, already used.
+# Month, Day, Year: the same day as Date.
+# HOURW: hour of observation. Every value is missing.
 
 
 carob_script <- function(path) {
@@ -13,136 +40,97 @@ Dataset for: Compilation of Daily Data
 This dataset consists of daily weather data collected from diverse locations in Peru, spanning from 1974 to 2012. It includes the following variables: weather type, temperature metrics, rainfall, solar radiation, humidity metrics and leaf wetness.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/JTYQA6"
 	group <- "weather"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "compilation",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 75,
+		carob_effort = 0.5
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_daily_data.xlsx"]
-	f2 <- ff[basename(ff) == "data_dictionary.xlsx"]
+	f <- ff[basename(ff) == "01_daily_data.xlsx"]
+	nms <- names(carobiner::read.excel(f, n_max=0))
+	r <- carobiner::read.excel(f, na="NULL", col_types=rep("text", length(nms)))
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	blank <- function(x) {
+		x <- trimws(x)
+		x[!nzchar(x)] <- NA_character_
+		x
+	}
+	num <- function(x) {
+		s <- blank(x)
+		as.numeric(s)
+	}
+	# -999 is the missing code used in rain and humidity. It is not a measured value.
+	meas <- function(x) {
+		v <- num(x)
+		v[!is.na(v) & v <= -99] <- NA_real_
+		v
+	}
 
-## select the variables of interest and assign them to the correct name
+	rain <- blank(r$Rain)
+	rain[rain %in% c("T.", "NJL")] <- NA_character_
+	date <- blank(r$Date)
+	iso <- !is.na(date) & grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}", date)
+	out_date <- rep(NA_character_, length(date))
+	out_date[iso] <- substr(date[iso], 1, 10)
+	if (any(is.na(out_date) & !is.na(date))) {
+		stop("unparsed date")
+	}
 
-	d1 <- data.frame(
-		year = r1[["Year"]],
-		country = r1[["COUNTRY"]],
-		adm1 = carobiner::fix_name(r1[["Adm1"]], "title"),
-		adm2 = carobiner::fix_name(r1[["Adm2"]], "title"),
-		adm3 = carobiner::fix_name(r1[["Adm3"]], "title"),
-		latitude = r1[["Latitude"]],
-		longitude = r1[["Longitude"]],
-		elevation = r1[["Altitude"]]
+	adm2 <- carobiner::fix_name(r$Adm2, "title")
+	adm2[adm2 == "Cocepcion"] <- "Concepcion"
+	loc <- carobiner::fix_name(r$Locality, "title")
+
+	wth <- data.frame(
+		country = blank(r$COUNTRY),
+		adm1 = carobiner::fix_name(r$Adm1, "title"),
+		adm2 = adm2,
+		adm3 = carobiner::fix_name(r$Adm3, "title"),
+		location = loc,
+		latitude = num(r$Latitude),
+		longitude = num(r$Longitude),
+		elevation = num(r$Altitude),
+		date = out_date,
+		weather_type_ = blank(r$WeatherType),
+		temp = meas(r$Tmean),
+		tmax = meas(r$Tmax),
+		tmin = meas(r$Tmin),
+		prec = meas(rain),
+		irad = meas(r[["Solar Rad"]]),
+		rhum = meas(r$RHmean),
+		rhmx = meas(r$Rhmax),
+		rhmn = meas(r$Rhmin),
+		rh90_ = meas(r$RH90),
+		par_wm2_ = meas(r$PAR),
+		leaf_wetness_ = meas(r[["Leaf Wet"]]),
+		stringsAsFactors = FALSE
 	)
-##r1: "Month", "Day", "Date", "WeatherType", "HOURW", "Tmean", "Tmax", "Tmin", "Rain", "Solar Rad", "RHmean", "Rhmax", "Rhmin", "RH90", "PAR", "Leaf Wet", "Locality"
+	wth <- wth[!is.na(wth$date), ]
 
+	place <- paste(wth$country, wth$adm1, wth$adm2, wth$adm3, wth$location, wth$latitude, wth$longitude)
+	wth$station_id <- paste0("s", as.integer(factor(place, levels=unique(place))))
 
-	d2 <- data.frame()
-##r2: "Abbreviation", "Name of Variable", "Unit"
+	d <- wth[!duplicated(wth$station_id), c("station_id", "country", "adm1", "adm2", "adm3", "location", "latitude", "longitude", "elevation")]
+	d$station_name <- d$location
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	d$is_survey <- FALSE
+	d$on_farm <- NA
+	rownames(d) <- NULL
 
+	keep <- c("station_id", "date", "weather_type_", "temp", "tmax", "tmin", "prec", "irad", "rhum", "rhmx", "rhmn", "rh90_", "par_wm2_", "leaf_wetness_")
+	wth <- wth[, keep]
+	wth <- wth[order(wth$station_id, wth$date), ]
+	rownames(wth) <- NULL
 
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth=wth)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

@@ -1,10 +1,22 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Baseline CAP survey of potato-producing households in La Libertad, Peru, between 28 September and 21 October 2021. Country is Peru. The department in the abstract and the dataset description is La Libertad. The crop is potato.
+# Grupo is the intervention or control assignment. The abstract counts 142 intervention households and 100 control households.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Eleven rows have no ID. They are not household records. A few of those rows have values in P54-P61, P74, and P76.
+# The districts named in the abstract are not a column on the data sheet, so they are not assigned to every row.
+# No latitude or longitude.
+# The dictionary is a questionnaire layout, not a table of units, so the Pxx answers are not mapped.
+# missing variables: carob_contributor
+# missing variables: latitude, longitude
+# unknown variables: survey_group_
+
+## NOT PROCESSED
+# P01 through P133, including production questions. The question text is not joined, and production is not mapped to kg/ha.
+# 02_DataDictionary and the docx questionnaire.
 
 
 carob_script <- function(path) {
@@ -17,34 +29,40 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 
 	uri <- "doi:10.21223/KYD5D7"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		data_organization = "CIP; Instituto de Investigación Nutricional - IIN; PATAZ",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
+		design = NA,
+		data_type = "survey",
+		notes = NA,
 		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Smallholder potato producing households; universe: Potato producing households in Julcán, and Sánchez Carrión; timeMethod: Cross-sectional; dataCollector: International Potato Center; samplingProcedure: We purposively selected two provinces in Julcán, and Sanchez Carrión, in northern Peru. In each district, we also purposively selected 242 smallholder potato producing households, 142 households in the intervention area of Sánchez Carrión and 100 households in the control group in Julcan. This is the endline survey, and farmers that participated in the baseline survey were interview in this survey.; collectionMode: Enumerators visited selected random households in each village and collected the information required in the 15-page questionnaire with 133 questions in 4 sections including a informed consent using Microsoft Form survey template.; researchInstrument: Structured household survey questionnaire",
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 25,
+		carob_effort = 0.3
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_DataSet_CAP Anemia - La Libertad 2021 - Linea de Salida v2.xlsx"]
-	f2 <- ff[basename(ff) == "02_DataDictionary_CAP Anemia - La Libertad 2021 - Linea de Salida v2.xlsx"]
+	f <- ff[grepl("^01_DataSet", basename(ff))]
+	r <- carobiner::read.excel(f, na=c("", "NA"))
+	id <- trimws(as.character(r$ID))
+	keep <- !is.na(id) & nzchar(id)
+	r <- r[keep, ]
+	id <- id[keep]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	return(FALSE)
+	d <- data.frame(
+		trial_id = "CAP_anemia_LaLibertad_2021",
+		hhid = id,
+		country = "Peru",
+		adm1 = "La Libertad",
+		crop = "potato",
+		survey_group_ = trimws(as.character(r$Grupo)),
+		on_farm = TRUE,
+		is_survey = TRUE,
+		geo_from_source = FALSE,
+		stringsAsFactors = FALSE
+	)
+
+	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

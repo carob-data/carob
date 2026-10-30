@@ -1,8 +1,28 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Sub-hourly record at Vista Florida, Pataz, 13 July 2022 to 31 October 2023.
+# Early dates are month/day/year text. From 13 June 2023 the date is an Excel serial (origin 1899-12-30). Time is an Excel fraction of a day.
+# Dictionary: temperatures C, RH %, wind speed m/s, solar radiation W/m2, rain and Eo mm, pressure hPa, VPD kPa.
+# Tmax and Tmin are the extremes during that interval, not daily extremes.
+# Wind direction is a compass-rose code, not degrees.
+# Solar radiation is interval mean intensity, stored as irad.
+# The Dataverse bounding box stores westLongitude 77.61 and southLatitude 7.82 without a sign. The coverage is Peru, so both are stored as negative. The point is about 20 km from the El Progreso-Chugay station in the same province.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Confirm the sign correction on the bounding box.
+# write_files: missing variables: carob_contributor. unknown variables: vpd_, wind_dir_, pressure_hpa_.
+# Eo is the potential evapotranspiration for the recording interval, in mm. The vocabulary unit for ETo is mm/day.
+# Sites need a check that Vista Florida in this file is the Pataz site named in the title, which is what the coordinates support.
+
+## NEW VARIABLES
+# vpd_: vapor pressure deficit, kPa
+# pressure_hpa_: atmospheric pressure, hPa
+# wind_dir_: compass-rose wind direction
+
+## NOT PROCESSED
+# 02_Data_dictionary.xlsx: column definitions, already used.
 
 
 carob_script <- function(path) {
@@ -13,129 +33,95 @@ Dataset for: Meteorological data at Vista Florida locality, Pataz - La Libertad 
 In the present dataset, meteorological data at Vista Florida locality - Pataz, La Libertad during July 13th 2022 to October 31st 2023 are available. The meteorological variables are the following variables: Air temperature (°C), relative humidity (%), vapor pressure deficit (kPa), wind speed (m s^-1), wind direction (cardinals direction of compass rose), solar radiation (W m^-2), atmospheric pressure (hPa), precipitation (mm) and potential evapotranspiration (mm).
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/QQTMCQ"
 	group <- "weather"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; Pataz Association - AP",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "compilation",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 80,
+		carob_effort = 0.35
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Meteorological data_Vista Florida_2022-2023.xlsx"]
-	f2 <- ff[basename(ff) == "02_Data_dictionary.xlsx"]
+	f <- ff[basename(ff) == "01_Meteorological data_Vista Florida_2022-2023.xlsx"]
+	# Date is month/day/year text in early rows and an Excel serial later. Read every column as text.
+	r <- carobiner::read.excel(f, na=c("NAN", "NaN", "NA"), col_types=rep("text", 14))
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	num <- function(x) {
+		s <- trimws(as.character(x))
+		s[!nzchar(s)] <- NA_character_
+		as.numeric(s)
+	}
 
-## select the variables of interest and assign them to the correct name
+	raw_date <- trimws(as.character(r$Date))
+	raw_date[!nzchar(raw_date)] <- NA_character_
+	date <- rep(NA_character_, length(raw_date))
+	mdy <- !is.na(raw_date) & grepl("^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$", raw_date)
+	date[mdy] <- as.character(as.Date(raw_date[mdy], format="%m/%d/%Y"))
+	iso <- !is.na(raw_date) & grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}", raw_date)
+	date[iso] <- substr(raw_date[iso], 1, 10)
+	ser <- !is.na(raw_date) & grepl("^[0-9]{4,6}$", raw_date)
+	date[ser] <- as.character(as.Date(as.numeric(raw_date[ser]), origin="1899-12-30"))
+	if (any(is.na(date) & !is.na(raw_date))) {
+		stop("unparsed date")
+	}
 
-	d1 <- data.frame(
-		P_fertilizer = r1[["P"]]
+	# Time is an Excel fraction of a day (0.5 = 12:00).
+	tv <- num(r$Time)
+	mins <- round(tv * 1440)
+	hh <- mins %/% 60
+	mm <- mins %% 60
+	hh[hh == 24] <- 0
+	time <- rep(NA_character_, length(tv))
+	ok <- !is.na(tv)
+	time[ok] <- sprintf("%02d:%02d", hh[ok], mm[ok])
+
+	wd <- trimws(as.character(r$Dir))
+	wd[!nzchar(wd)] <- NA_character_
+
+	wth <- data.frame(
+		station_id = "VistaFlorida_Pataz",
+		date = date,
+		time = time,
+		temp = num(r$Ta),
+		tmax = num(r$Tmax),
+		tmin = num(r$Tmin),
+		rhum = num(r$RH),
+		vpd_ = num(r$VPD),
+		wspd = num(r$Ws),
+		wind_dir_ = wd,
+		pressure_hpa_ = num(r$Pa),
+		prec = num(r$P),
+		irad = num(r$SR),
+		ETo = num(r$Eo),
+		stringsAsFactors = FALSE
 	)
-##r1: "ID", "Date", "Time", "Ta", "Tmax", "Tmin", "RH", "VPD", "Ws", "Dir", "Pa", "SR", "Eo"
+	wth <- wth[!is.na(wth$date), ]
+	wth <- wth[order(wth$date, wth$time), ]
+	rownames(wth) <- NULL
 
+	d <- data.frame(
+		station_id = "VistaFlorida_Pataz",
+		station_name = "Vista Florida",
+		country = "Peru",
+		adm1 = "La Libertad",
+		adm2 = "Pataz",
+		location = "Vista Florida",
+		# Dataverse westLongitude 77.61 and southLatitude 7.82, unsigned. Peru is west and south of 0.
+		longitude = -77.61,
+		latitude = -7.82,
+		geo_from_source = TRUE,
+		is_survey = FALSE,
+		on_farm = FALSE,
+		stringsAsFactors = FALSE
+	)
 
-	d2 <- data.frame()
-##r2: "Variable name", "Abbreviation", "Unit", "Description", "Method", "Formula", "Reference"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth=wth)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

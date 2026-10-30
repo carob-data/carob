@@ -1,10 +1,25 @@
-# REJECTED 
-# Reason: no .xlsx/.xls/.csv/.dta/.rds files in download (draft cannot auto-map columns)
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Niassa baseline household survey, July-August 2013. The deposit is SPSS .sav pages from one CSPro questionnaire, read with haven::read_sav.
+# Country is the dataset (Niassa, Mozambique). District names are the CSPro dictionary labels for the codes that occur. All of those labels say Niassa, so adm1 is Niassa.
+# The dictionary calls A14 longitude and A15 latitude. The numbers are about 13 S and 35 E, which is Niassa, so A14 is latitude and A15 is longitude. The "(S)" and "(E)" marks are used. Decimal-in-minutes is stored as thousandths (970 means 0.970).
+# A16 is the interview date, not a planting date.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# The crop, sweetpotato, sales, and diet pages have 402 rows but no household-number column that matches A05. Page 9's HHID is 1 or 2, not the household number. Those pages were not attached by row order.
+# Ward and village are empty on the identification page. Some household numbers are missing, and some are repeated.
+# A few coordinates fall in Malawi, Tanzania, or Angola, or not on land, and elevation runs from 25 m to 6061 m. Those values are left as recorded.
+# write_files: missing carob_contributor. unknown variable: interview_date_. out of bounds: elevation (25, 6061). coordinates not on land: Mozambique. coordinates in wrong country include Malawi, Angola, and Tanzania. duplicates. NA detected: hhid.
+
+## NOT PROCESSED
+# Pages 2-22 of the baseline .sav files (membership, crop flags, sweetpotato, labor, diet, assets, livestock). They are not joined.
+# Names of household heads, interviewees, enumerators, and digitizers.
+# BaseLineSurvey Data Dictionary.txt and the narrative PDF.
+
+## NEW VARIABLES
+# interview_date_: date of interview (A16).
 
 
 carob_script <- function(path) {
@@ -17,95 +32,55 @@ Relevant information on the challenges and opportunities of the project were con
 
 	uri <- "doi:10.21223/P3/SL0ALD"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Households; universe: The study targeted households with mainly children aged 6-23 months and their mothers.; timeMethod: Cross-sectional survey; dataCollector: CIP; collectorTraining: A group of 12 enumerators supervised by the CIP Monitoring and Evaluation Specialist and the IIAM socio-economist based in Niassa were previously trained on interviewing methods using survey and structured questionnaires. A pre-test of the questionnaire was conducted before the survey was administrated in the selected Villages.; samplingProcedure: This baseline survey was conducted between from July 8 to August 23, 2013. The selected households were the ones located in project targeted areas in the three regions of Niassa province. The districts in the survey are all part of the project target area. Additionally, each village in the district was selected according to the agriculture potential, that is, a list of villages with relatively high level of production was provided by the local agriculture authorities, and from that, 3 villages with potential and tradition of sweetpotato production and existence of lowlands were selected for the interview. In total, 24 villages were visited during the survey in 8 districts.  
-Apart from being part of a group of vulnerable household, for them to qualify for the interview must at least one child with less than 5 years. The households interviewed were selected using a systematic sampling, that is, upon reach the villages, the local agriculture extension guided the group to the local traditional leader, and from there, usually starting with the leaders, the households were systematically picked up.; collectionMode: The data collection was conducted using a structured questionnaire developed to capture the most important aspects related to sweetpotato production, seed systems, nutrition, and attitudes, knowledge, food diversity and food security, and household assets and other poverty related and local development questions in general.; controlOperations: After data collection, a quick verification and pre-cleaning was conducted prior to data entry to check for logic incoherencies in the questionnaires. Data clerks were trained on how to double enter the data using CSPro software. During and after data entry, consistency checks were conducted by both times in Lichinga and Maputo.",
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 35,
+		carob_effort = 0.6
 	)
-	
 
-	f1 <- ff[basename(ff) == "BaseLineSurvey Data Dictionary.txt"]
-	f2 <- ff[basename(ff) == "Niass baseline pag_4.sav"]
-	f3 <- ff[basename(ff) == "Niassa baseline pag 7.sav"]
-	f4 <- ff[basename(ff) == "Niassa baseline pag_1.sav"]
-	f5 <- ff[basename(ff) == "Niassa baseline pag_10.sav"]
-	f6 <- ff[basename(ff) == "Niassa baseline pag_101.sav"]
-	f7 <- ff[basename(ff) == "Niassa baseline pag_11.sav"]
-	f8 <- ff[basename(ff) == "Niassa baseline pag_12.sav"]
-	f9 <- ff[basename(ff) == "Niassa baseline pag_13.sav"]
-	f10 <- ff[basename(ff) == "Niassa baseline pag_14.sav"]
-	f11 <- ff[basename(ff) == "Niassa baseline pag_15.sav"]
-	f12 <- ff[basename(ff) == "Niassa baseline pag_16.sav"]
-	f13 <- ff[basename(ff) == "Niassa baseline pag_17.sav"]
-	f14 <- ff[basename(ff) == "Niassa baseline pag_18.sav"]
-	f15 <- ff[basename(ff) == "Niassa baseline pag_19.sav"]
-	f16 <- ff[basename(ff) == "Niassa baseline pag_2.sav"]
-	f17 <- ff[basename(ff) == "Niassa baseline pag_20.sav"]
-	f18 <- ff[basename(ff) == "Niassa baseline pag_21.sav"]
-	f19 <- ff[basename(ff) == "Niassa baseline pag_22.sav"]
-	f20 <- ff[basename(ff) == "Niassa Baseline pag_3.sav"]
-	f21 <- ff[basename(ff) == "Niassa baseline pag_32.sav"]
-	f22 <- ff[basename(ff) == "Niassa baseline pag_4_new.sav"]
-	f23 <- ff[basename(ff) == "Niassa baseline pag_41.sav"]
-	f24 <- ff[basename(ff) == "Niassa baseline pag_5.sav"]
-	f25 <- ff[basename(ff) == "Niassa baseline pag_51.sav"]
-	f26 <- ff[basename(ff) == "Niassa baseline pag_6.sav"]
-	f27 <- ff[basename(ff) == "Niassa baseline pag_62.sav"]
-	f28 <- ff[basename(ff) == "Niassa baseline pag_63.sav"]
-	f29 <- ff[basename(ff) == "Niassa baseline pag_71.sav"]
-	f30 <- ff[basename(ff) == "Niassa baseline pag_72.sav"]
-	f31 <- ff[basename(ff) == "Niassa baseline pag_8.sav"]
-	f32 <- ff[basename(ff) == "Niassa baseline pag_9.sav"]
+	num <- function(x) as.numeric(haven::zap_labels(x))
+	f <- ff[basename(ff) == "Niassa baseline pag_1.sav"]
+	r <- haven::read_sav(f)
 
-	#r1 <- read.???(f1)
-	#r2 <- read.???(f2)
-	#r3 <- read.???(f3)
-	#r4 <- read.???(f4)
-	#r5 <- read.???(f5)
-	#r6 <- read.???(f6)
-	#r7 <- read.???(f7)
-	#r8 <- read.???(f8)
-	#r9 <- read.???(f9)
-	#r10 <- read.???(f10)
-	#r11 <- read.???(f11)
-	#r12 <- read.???(f12)
-	#r13 <- read.???(f13)
-	#r14 <- read.???(f14)
-	#r15 <- read.???(f15)
-	#r16 <- read.???(f16)
-	#r17 <- read.???(f17)
-	#r18 <- read.???(f18)
-	#r19 <- read.???(f19)
-	#r20 <- read.???(f20)
-	#r21 <- read.???(f21)
-	#r22 <- read.???(f22)
-	#r23 <- read.???(f23)
-	#r24 <- read.???(f24)
-	#r25 <- read.???(f25)
-	#r26 <- read.???(f26)
-	#r27 <- read.???(f27)
-	#r28 <- read.???(f28)
-	#r29 <- read.???(f29)
-	#r30 <- read.???(f30)
-	#r31 <- read.???(f31)
-	#r32 <- read.???(f32)
-	return(FALSE)
+	# Dictionary names for the district codes present in this file. Source: BaseLineSurvey Data Dictionary.txt.
+	dist <- c(
+		"19" = "Lago", "20" = "Sanga", "21" = "Muembe", "22" = "Chimbunila",
+		"23" = "Lichinga-cidade", "27" = "Mandimba", "28" = "Cuamba", "29" = "Mecanhelas"
+	)
+	code <- as.character(as.integer(num(r$DISTRICT)))
+	adm2 <- dist[code]
+	adm2[is.na(adm2)] <- code[is.na(adm2)]
+
+	dmy <- grepl("^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$", as.character(r$A16_DATE))
+	interview <- rep(NA_character_, nrow(r))
+	interview[dmy] <- as.character(as.Date(as.character(r$A16_DATE)[dmy], "%d/%m/%Y"))
+
+	d <- data.frame(
+		country = "Mozambique",
+		adm1 = "Niassa",
+		adm2 = adm2,
+		hhid = as.character(num(r$A05HHID)),
+		latitude = -(num(r$DEGREES) + (num(r$MINUTES) + num(r$D_MINTS) / 1000) / 60),
+		longitude = num(r$DEG_E) + (num(r$MIN_E) + num(r$D_M_E) / 1000) / 60,
+		elevation = num(r$ELEVATION),
+		interview_date_ = interview,
+		stringsAsFactors = FALSE
+	)
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	d$is_survey <- TRUE
+	d$on_farm <- TRUE
+	d$trial_id <- d$hhid
+
+	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

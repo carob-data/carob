@@ -1,11 +1,8 @@
-# REJECTED 
-# Reason: get_data() returned no files
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
-
+## REJECTED
+# The deposit is a questionnaire PDF (11 Baseline Survey.pdf) and the zip. There is no data table.
 
 carob_script <- function(path) {
 
@@ -17,32 +14,23 @@ We will investigate how to make group-based ICT extension work better among pota
 
 	uri <- "doi:10.21223/P3/W1CNK1"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "CIP; Pataz Assosiation",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Social and Nutritional Sciences DivisionMetadata; universe: Total 102 communities in the highlands of the Provinces of Sanchez Carrión, and Pataz (La Libertad region, northern Peru); timeMethod: Between 20 and 31 of July, 2025; samplingProcedure: To test the incentives, between September 2024 and August 2025 we organized groups of 10-15 farmers in 102 communities in the highlands of the Provinces of Sanchez Carrión and Pataz (Department of La Libertad, northern Peru), involving a total of 1,242 potato growing households. We facilitated discussions about whom to designate as their focal point, but ultimately this was a participatory process. Then communities were randomly assigned to one of three treatment arms (40 communities each of the incentives treatments and 21 for the control treatment arm) with: (a) individual incentives for focal points (40 groups), (b) social incentives for the community (41 groups), and (c) no incentive (21 groups); collectionMode: Survey Endline.; researchInstrument: Endline Survey - The endline survey was administered also by CEDEP between 20 and 31 of July, 2025.",
+		design = NA,
 		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
+		carob_date = "2026-10-30",
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 0,
+		carob_effort = 0.1
 	)
-	
 
-
-
-
-	return(FALSE)
+	message("No measurement table in the local raw files for ", uri)
+	invisible(meta)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

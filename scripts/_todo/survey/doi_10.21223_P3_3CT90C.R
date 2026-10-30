@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Field trials and farmer plots of seed degeneration in Ecuador. Tuber weight in the harvest file is g per plant (dictionary), so it is not stored as yield in kg/ha.
+# Coordinates, altitude, and planting and harvest dates come from Locations_Data. Virus columns are DAS-ELISA incidence coded 0 or 1.
+# Weather Temp is degrees C. The dictionary describes rain as cubic millimeters per hour and also labels the unit m3. The number is kept as recorded and is not stored as precipitation in mm. HR has no unit in the dictionary.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No fertilizer rates. Plot area in the description is 49 m2, and plants per plot are not in the harvest file, so g/plant was not converted to kg/ha.
+# write_files: missing carob_contributor, hhid. unknown variables: seed_management_, cycle_, plot_manager_, plant_number_, tuber_number_, tuber_weight_g_, the tuber-symptom columns, the virus columns, aphid_count_, humidity_, rain_recorded_.
+
+## NOT PROCESSED
+# None of the measurement sheets were dropped. The dictionary workbook is documentation.
+
+## NEW VARIABLES
+# seed_management_: positive selection, roguing, or random selection.
+# tuber_weight_g_, tuber_number_: grams and tubers per plant.
+# Virus incidence columns and tuber-symptom columns: proportion or 0/1 as recorded.
+# aphid_count_: aphids in the trap.
+# humidity_, rain_recorded_: weather columns whose units are not stated as percent and mm.
 
 
 carob_script <- function(path) {
@@ -13,175 +29,146 @@ Dataset for: Potato seed degeneration in Ecuador
 Vegetative multiplication of potato in the field can lead to an accumulation of pest and pathogens such as fungi, bacteria and mainly virus in the seed over successive cycles of reproduction. This process is known as seed degeneration, where the main vectors for virus infection and transmission are aphids. This study was carried out to evaluate the rate of seed degeneration in two potato cultivars, at different altitudes and considering the use of different on-farm seed management options in the Ecuadorian Andes with the aim to support the promotion of an integrated seed health strategy. The study involved the cultivars INIAP-Fripapa and Superchola (susceptible and resistant to degeneration, respectively, according to farmers' perceptions). The field trials were carried out at three altitudes ( 3400 masl) during 3 cropping cycles of successive vegetative reproduction. Twelve plots of 49 m2 were planted each year; 2 plots of each cultivar at each altitude/site, in which 3 types of seed management were carried out: positive selection, roguing and random selection. We evaluated: (1) virus incidence (PVX, PVY, PVS, PLRV, APLV and APMoV) in plants at emergence, flowering and in tubers using the DAS-ELISA; (2) abundance of aphids; (3) incidence and severity of pest damage and diseases in tubers; and (4) tuber yield. Similar data were taken from 10 farmers' fields, and separate trials were done to estimate the efficiency of auto-infection (percentage of infected progeny tubers from an infected mother tuber) of PVY at the three altitudes.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/P3/3CT90C"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=3,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety;seed_management_",
+		response_vars = "tuber_weight_g_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 75,
+		carob_effort = 0.6
 	)
-	
 
-	f1 <- ff[basename(ff) == "Aphids_Data_Potato_seed_degeneration_in_Ecuador.xls"]
-	f2 <- ff[basename(ff) == "Dictionary_Potato_seed_degeneration_in_Ecuador.xls"]
-	f3 <- ff[basename(ff) == "ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"]
-	f4 <- ff[basename(ff) == "Harvest_Data_Potato_seed_degeneration_in_Ecuador.xls"]
-	f5 <- ff[basename(ff) == "Locations_Data_Potato_seed_degeneration_in_Ecuador.xls"]
-	f6 <- ff[basename(ff) == "Weather_Data_Potato_seed_degeneration_in_Ecuador_v2.xls"]
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		ok <- grepl("^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$", x)
+		x[!ok] <- NA_character_
+		as.numeric(x)
+	}
+	chr <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x == "NA"] <- NA_character_
+		x
+	}
+	f <- function(name) ff[basename(ff) == name]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
+	loc <- carobiner::read.excel(f("Locations_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Locations data")
+	loc$key <- paste(loc$Cycle, loc$Control, loc$Location)
+	loc <- loc[!duplicated(loc$key), ]
 
-## select the variables of interest and assign them to the correct name
-
+	h <- carobiner::read.excel(f("Harvest_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Harvest Data")
+	ih <- match(paste(h$Cycle, h$Control, h$Location), loc$key)
 	d1 <- data.frame(
-		elevation = r1[["Altitude"]],
-		location = r1[["Location"]],
-		variety = r1[["Variety"]],
-		planting_date = r1[["Planting date"]]
+		variety = chr(h$Variety),
+		seed_management_ = chr(h$Management),
+		location = chr(h$Location),
+		elevation = num(h$Altitude),
+		cycle_ = chr(h$Cycle),
+		plot_manager_ = chr(h$Control),
+		plant_number_ = num(h$Plantnum),
+		tuber_number_ = num(h$TubN_Ct_plant),
+		tuber_weight_g_ = num(h$TubWg_Cp_plant),
+		black_scurf_ = num(h$BScurf_Inci_0t01),
+		wireworm_ = num(h$WWorm_Inci_0to1),
+		powdery_scab_ = num(h$PScab_Inci_0to1),
+		common_scab_ = num(h$CScab_Inci_0to1),
+		malformation_ = num(h$Malform_Inci_0to1),
+		pcn_ = num(h$PCN_Inci_0to1),
+		black_leg_ = num(h$BLeg_Inci_0to1),
+		physical_damage_ = num(h$PhysDam_Inci_0to1),
+		cracking_ = num(h$Cracking_Inci_0to1),
+		surface_cracking_ = num(h$Scracking_Inci_0to1),
+		insect_damage_ = num(h$DamOtherInsects_Inci_0to1),
+		mechanical_damage_ = num(h$MechDamage_Inci_0to1),
+		dry_rot_ = num(h$DryRut_Inci_0to1),
+		smut_ = num(h$Smut_Inci_0to1),
+		latitude = num(loc$Latitude[ih]),
+		longitude = num(loc$Longitude[ih]),
+		planting_date = as.character(as.Date(loc[["Planting date"]][ih])),
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ih])),
+		stringsAsFactors = FALSE
 	)
-##r1: "Cycle", "Control", "Management", "TID", "DS", "DAP", "DBS", "Aphids_numb"
 
+	el <- carobiner::read.excel(f("ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="ELISA Data")
+	ie <- match(paste(el$Cycle, el$Control, el$Location), loc$key)
+	d2 <- data.frame(
+		variety = chr(el$Variety),
+		seed_management_ = chr(el$Management),
+		location = chr(el$Location),
+		elevation = num(el$Altitude),
+		cycle_ = chr(el$Cycle),
+		plot_manager_ = chr(el$Control),
+		growth_stage = chr(el$Stage),
+		DAP = as.integer(round(num(el$DAP))),
+		pvx_ = num(el$PPVX_Inci_0to1),
+		pvy_ = num(el$PPVY_Inci_0to1),
+		pvs_ = num(el$PPVS_Inci_0to1),
+		plrv_ = num(el$PPLRV_Inci_0to1),
+		aplv_ = num(el$AAPLV_Inci_0to1),
+		apmov_ = num(el$AAPMoV_Inci_0to1),
+		latitude = num(loc$Latitude[ie]),
+		longitude = num(loc$Longitude[ie]),
+		planting_date = as.character(as.Date(loc[["Planting date"]][ie])),
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ie])),
+		stringsAsFactors = FALSE
+	)
 
-	d2 <- data.frame()
-##r2: "Abbreviation", "Description", "Method", "Formula", "Unit", "Reference"
-
-
+	ap <- carobiner::read.excel(f("Aphids_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Aphids data")
+	ia <- match(paste(ap$Cycle, ap$Control, ap$Location), loc$key)
 	d3 <- data.frame(
-		elevation = r3[["Altitude"]],
-		location = r3[["Location"]],
-		variety = r3[["Variety"]]
+		variety = chr(ap$Variety),
+		seed_management_ = chr(ap$Management),
+		location = chr(ap$Location),
+		elevation = num(ap$Altitude),
+		cycle_ = chr(ap$Cycle),
+		plot_manager_ = chr(ap$Control),
+		DAP = as.integer(round(num(ap$DAP))),
+		aphid_count_ = num(ap$Aphids_numb),
+		latitude = num(loc$Latitude[ia]),
+		longitude = num(loc$Longitude[ia]),
+		planting_date = as.character(as.Date(loc[["Planting date"]][ia])),
+		harvest_date = as.character(as.Date(loc[["Harvest date"]][ia])),
+		stringsAsFactors = FALSE
 	)
-##r3: "Cycle", "Control", "Stage", "DAP", "Management", "Platenum", "well", "sample", "PPVX_Inci_0to1", "PPVY_Inci_0to1", "PPVS_Inci_0to1", "PPLRV_Inci_0to1", "AAPLV_Inci_0to1", "AAPMoV_Inci_0to1"
 
+	d <- carobiner::bindr(d1, d2, d3)
+	d$treatment <- trimws(paste(d$variety, d$seed_management_))
+	d$crop <- "potato"
+	d$country <- "Ecuador"
+	d$on_farm <- tolower(d$plot_manager_) == "farmer"
+	d$is_survey <- FALSE
+	d$stress <- "disease"
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	d$trial_id <- paste("Ecuador_seed", d$location, d$cycle_, d$variety, d$seed_management_, seq_len(nrow(d)), sep="_")
+	miss <- is.na(d$variety) | !nzchar(d$variety)
+	d$variety[miss] <- paste("unlabeled", seq_len(nrow(d))[miss])
+	d$seed_management_[is.na(d$seed_management_) | !nzchar(d$seed_management_)] <- "not recorded"
+	d$treatment <- trimws(paste(d$variety, d$seed_management_))
 
-	d4 <- data.frame(
-		elevation = r4[["Altitude"]],
-		location = r4[["Location"]],
-		variety = r4[["Variety"]]
+	w <- carobiner::read.excel(f("Weather_Data_Potato_seed_degeneration_in_Ecuador_v2.xls"), sheet="Weather Data")
+	mins <- round(num(w$Time) * 24 * 60)
+	time <- rep(NA_character_, length(mins))
+	ok <- !is.na(mins)
+	time[ok] <- sprintf("%02d:%02d", (mins[ok] %/% 60) %% 24, mins[ok] %% 60)
+	wth <- data.frame(
+		station_id = chr(w$Location),
+		date = as.character(as.Date(w$Date, "%m/%d/%Y")),
+		time = time,
+		temp = num(w$Temp),
+		humidity_ = num(w$HR),
+		rain_recorded_ = num(w$Rain),
+		stringsAsFactors = FALSE
 	)
-##r4: "Cycle", "Control", "Management", "Plantnum", "TubN_Ct_plant", "TubWg_Cp_plant", "BScurf_Inci_0t01", "WWorm_Inci_0to1", "PScab_Inci_0to1", "CScab_Inci_0to1", "Malform_Inci_0to1", "PCN_Inci_0to1", "BLeg_Inci_0to1", "PhysDam_Inci_0to1", "Cracking_Inci_0to1", "Scracking_Inci_0to1", "DamOtherInsects_Inci_0to1", "MechDamage_Inci_0to1", "DryRut_Inci_0to1", "Smut_Inci_0to1"
+	wth <- wth[!is.na(wth$date), ]
 
-
-	d5 <- data.frame(
-		elevation = r5[["Altitude"]],
-		location = r5[["Location"]],
-		variety = r5[["Variety"]],
-		latitude = r5[["Latitude"]],
-		longitude = r5[["Longitude"]],
-		planting_date = r5[["Planting date"]],
-		harvest_date = r5[["Harvest date"]]
-	)
-##r5: "Cycle", "Control"
-
-
-	d6 <- data.frame(
-		elevation = r6[["Altitude"]],
-		location = r6[["Location"]]
-	)
-##r6: "Cycle", "Control", "Date", "Time", "Temp", "HR", "Rain"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth=wth)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

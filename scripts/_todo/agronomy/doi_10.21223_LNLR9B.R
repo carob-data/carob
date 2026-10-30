@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Cool Farm Tool records for three potato trials of variety UNICA at CIP La Molina and UNALM, Lima. Country Peru and the city Lima are in the description. The Dataverse box is only south -12.10 and west -77, so it is not used as a plot coordinate.
+# Dictionary: crop area is m2 and harvested amount, rejected amount, seed amount, and farm-gate amount are kg. Yield (kg/ha) is harvested kg / m2 * 10000. Farm-gate amount is yield_marketable on the same basis. Residue amount is t/ha of dry matter (dictionary unit tn/ha) and is stored as dmy_residue in kg/ha. Every row is 2.09, the value entered in the tool.
+# Fertiliser application rate is kg/ha. "Product" means kg product/ha. The nutrient fractions are the percentages printed in the product name. P2O5 is divided by 2.29 and K2O by 1.2051. Phosphoric acid is the one row whose unit cell says "units of P2O5", so that rate is already kg P2O5/ha and is not multiplied by 85%.
+# Magnesium nitrate is 30 kg product/ha and the name gives no N percentage, so it is not added to N_fertilizer. Sheep digestate is 0.7% N. That N is included. The product mass is OM_amount. "sheep digestate" is not an OM_type value.
+# Weekly water columns are litres (dictionary). irrigation_amount (mm) is the sum of litres divided by the crop area in m2. "Drip irrigation" is drip. "Furrow irrigation or Flooding" is kept as printed because the tool uses one label for both.
+# Soil organic matter and pH are the soil sheet. "Sandy" is the tool class, not the texture term sand.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# CIP La Molina and UNALM need georeferencing.
+# Seed kg on the stated m2 is above 3000 kg/ha. The dictionary units are used and the rate is left as calculated.
+# write_files: missing carob_contributor, yield_moisture, latitude, longitude. out of bounds: seed_rate (12800, 15189.873). invalid terms: irrigation_method: Furrow irrigation or Flooding.
+
+## NOT PROCESSED
+# Crop protection inputs: category, doses, rate (kg/ha), and active ingredient. Several applications per plot, not mapped to one pesticide column.
+# Energy and Transport sheets: fuel, storage, and freight for the carbon-footprint tool.
+# Soil texture Sandy, soil moisture "Moist", and drainage "Poor": tool classes, not texture or a drainage rate.
+# Fertiliser application method and emissions inhibitors.
 
 
 carob_script <- function(path) {
@@ -13,167 +29,134 @@ Replication Data for: Estimating carbon footprint in potato trials under drip an
 This dataset has been specially created to estimate carbon footprint in potato field trials using Cool Farm Tool (CFT) Online. Includes three field trials were performed at CIP and National Agrarian University La Molina (UNALM) experimental stations in Lima during July 5th to October 10th, 2017 (E1-CIP), October 5th, 2017 to January 15th, 2018 (E2-CIP), and June 13th to September 13th, 2018 (E3-UNALM).
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/LNLR9B"
 	group <- "agronomy"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "treatment;irrigation_method",
+		response_vars = "yield;yield_marketable",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 60,
+		carob_effort = 0.5
 	)
-	
 
-	f1 <- ff[basename(ff) == "CFT_PNIA 2017-2018.xlsx"]
-	f2 <- ff[basename(ff) == "Data_dictionary.xlsx"]
+	f <- ff[basename(ff) == "CFT_PNIA 2017-2018.xlsx"]
+	crop <- carobiner::read.excel(f, sheet="Crop-details")
+	soil <- carobiner::read.excel(f, sheet="Soil-characteristics")
+	fert <- carobiner::read.excel(f, sheet="Fertiliser inputs")
+	water <- carobiner::read.excel(f, sheet="Water")
 
-	r1a <- carobiner::read.excel(f1, sheet="Crop-details")
-	r1b <- carobiner::read.excel(f1, sheet="Soil-characteristics")
-	r1c <- carobiner::read.excel(f1, sheet="Fertiliser inputs")
-	r1d <- carobiner::read.excel(f1, sheet="Crop protection inputs")
-	r1e <- carobiner::read.excel(f1, sheet="Energy")
-	r1f <- carobiner::read.excel(f1, sheet="Water")
-	r1g <- carobiner::read.excel(f1, sheet="Transport")
-	r2 <- carobiner::read.excel(f2)
+	as_date <- function(x) {
+		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
+		trimws(as.character(x))
+	}
+	num <- function(x) as.numeric(as.character(x))
 
-## select the variables of interest and assign them to the correct name
+	npk_one <- function(name, rate, units) {
+		out <- c(N=0, P=0, K=0, OM=0)
+		if (is.na(name) || is.na(rate)) return(out)
+		if (grepl("P2O5", units, fixed=TRUE)) {
+			out["P"] <- rate / 2.29
+			return(out)
+		}
+		if (grepl("33%N, 3% P2O5", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.33
+			out["P"] <- rate * 0.03 / 2.29
+		} else if (grepl("33%N", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.33
+		} else if (grepl("50% K2O", name, fixed=TRUE)) {
+			out["K"] <- rate * 0.50 / 1.2051
+		} else if (grepl("18%N, 46%P2O5", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.18
+			out["P"] <- rate * 0.46 / 2.29
+		} else if (grepl("45% K2O and 13.5%N", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.135
+			out["K"] <- rate * 0.45 / 1.2051
+		} else if (grepl("15.5%N", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.155
+		} else if (grepl("0.7% N", name, fixed=TRUE)) {
+			out["N"] <- rate * 0.007
+			out["OM"] <- rate
+		}
+		out
+	}
 
-	d1a <- data.frame(
-		crop = tolower(r1a[["Crop"]]),
-		variety = r1a[["Variety"]],
-		year = r1a[["Harvest year"]],
-		planting_date = r1a[["Planting / sowing date"]],
-		harvest_date = r1a[["Harvest date"]]
+	rates <- t(mapply(npk_one, fert$Name, num(fert[["Application rate"]]), as.character(fert[["Fertiliser weight, or units?"]])))
+	fert$N <- rates[, "N"]
+	fert$P <- rates[, "P"]
+	fert$K <- rates[, "K"]
+	fert$OM <- rates[, "OM"]
+	fert_sum <- aggregate(cbind(N, P, K, OM) ~ `Assessment name`, data=fert, FUN=sum)
+
+	tw <- water[, grepl("^TW_Week", names(water))]
+	twm <- as.matrix(as.data.frame(lapply(tw, num)))
+	litres <- rowSums(twm, na.rm=TRUE)
+	litres[rowSums(!is.na(twm)) == 0] <- NA_real_
+	method <- trimws(as.character(water$Method))
+	water_sum <- data.frame(
+		`Assessment name` = water[["Assessment name"]],
+		litres = litres,
+		irrigation_method = ifelse(method == "Drip irrigation", "drip", method),
+		check.names = FALSE,
+		stringsAsFactors = FALSE
 	)
-##r1a: "Experiment  name", "Assessment name", "Crop area", "Harvested amount", "Amount rejected at harvest", "Seed amount", "Farm-gate ready amount", "Amount of unharvested crops", "Residue amount", "Residue management"
 
+	area <- num(crop[["Crop area"]])
+	assess <- trimws(as.character(crop[["Assessment name"]]))
+	experiment <- trimws(as.character(crop[["Experiment  name"]]))
+	loc <- ifelse(grepl("^UNALM", experiment), "National Agrarian University La Molina", "CIP La Molina")
+	treat <- sub("^E[0-9]+_(DI|FI)_", "", assess)
 
-	d1b <- data.frame(
-		soil_texture = tolower(r1b[["Soil texture"]])
+	d <- data.frame(
+		trial_id = experiment,
+		plot_id = assess,
+		treatment = treat,
+		crop = "potato",
+		variety = trimws(as.character(crop$Variety)),
+		country = "Peru",
+		adm1 = "Lima",
+		location = loc,
+		planting_date = as_date(crop[["Planting / sowing date"]]),
+		harvest_date = as_date(crop[["Harvest date"]]),
+		plot_area = area,
+		yield = num(crop[["Harvested amount"]]) / area * 10000,
+		yield_marketable = num(crop[["Farm-gate ready amount"]]) / area * 10000,
+		yield_part = "tubers",
+		seed_rate = num(crop[["Seed amount"]]) / area * 10000,
+		dmy_residue = num(crop[["Residue amount"]]) * 1000,
+		on_farm = FALSE,
+		is_survey = FALSE,
+		geo_from_source = FALSE,
+		irrigated = TRUE,
+		stringsAsFactors = FALSE
 	)
-##r1b: "Experiment  name", "Assessment name", "Soil type", "Soil organic matter", "Soil moisture average", "Soil moisture at sowing", "Soil drainage", "Soil pH", "Your field name"
 
+	d <- merge(d, fert_sum, by.x="plot_id", by.y="Assessment name", all.x=TRUE, sort=FALSE)
+	names(d)[names(d) == "N"] <- "N_fertilizer"
+	names(d)[names(d) == "P"] <- "P_fertilizer"
+	names(d)[names(d) == "K"] <- "K_fertilizer"
+	names(d)[names(d) == "OM"] <- "OM_amount"
+	d$OM_amount[d$OM_amount == 0] <- NA_real_
 
-	d1c <- data.frame()
-##r1c: "Assessment name", "Fertiliser application", "Name", "Fertiliser type", "Manufactured in", "Application rate", "Fertiliser weight, or units?", "Application method", "Emissions inhibitors"
+	d <- merge(d, water_sum, by.x="plot_id", by.y="Assessment name", all.x=TRUE, sort=FALSE)
+	d$irrigation_amount <- d$litres / d$plot_area
+	d$litres <- NULL
 
-
-	d1d <- data.frame()
-##r1d: "Assessment name", "Applications", "Category", "Applications (doses)", "Applications rate", "Active ingredient"
-
-
-	d1e <- data.frame()
-##r1e: "Assessment name", "Type", "Energy source", "Energy used 1", "Category", "Machine", "Energy used 2", "Fuel use", "Number of operations", "Custom", "Do you store this product?", "Percentage stored", "Store loading", "Unloading", "Storage", "Time in storage", "Temperature", "CIPC applications", "CIPC dose"
-
-
-	d1f <- data.frame()
-##r1f: "Experiment  name", "Assessment name", "Method", "Water source", "Pumping depth", "Horizontal distance", "Power source", "TW_Week 1", "TW_Week 2", "TW_Week 3", "TW_Week 4", "TW_Week 5", "TW_Week 6", "TW_Week 7", "TW_Week 8", "TW_Week 9", "TW_Week 10", "TW_Week 11", "TW_Week 12", "TW_Week 13", "TW_Week 14"
-
-
-	d1g <- data.frame()
-##r1g: "Experiment  name", "Assessment name", "Mode", "Weight", "Distance"
-
-
-	d2 <- data.frame(
-		crop = tolower(r2[["Crop"]])
+	soil_key <- data.frame(
+		plot_id = trimws(as.character(soil[["Assessment name"]])),
+		soil_pH = num(soil[["Soil pH"]]),
+		soil_SOM = num(soil[["Soil organic matter"]]),
+		stringsAsFactors = FALSE
 	)
-##r2: "Group", "Subgroup", "Variable", "TraitName", "Description", "TraitUnit", "TraitDataType", "TraitValidation", "category"
+	d <- merge(d, soil_key, by="plot_id", all.x=TRUE, sort=FALSE)
 
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

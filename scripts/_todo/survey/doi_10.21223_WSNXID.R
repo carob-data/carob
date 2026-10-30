@@ -1,11 +1,10 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-
+# The local folder has the household dictionary only. The Vietnam homegarden modules are marked restricted and were not extracted.
+# Files on disk: Dictionary_vn_households.xlsx, doi_10.21223_WSNXID.zip.
+# No data table was written.
 
 carob_script <- function(path) {
 
@@ -17,32 +16,23 @@ Agrobiodiversity faces a current decline influenced by diverse factors, includin
 
 	uri <- "doi:10.21223/WSNXID"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
-		data_organization = "CIP; Plant Resources Center",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Household; universe: Farmers living in Son La and Lao Cai in the following villages: Mòn, Hòa_Sử_Pán, Kim, Lếch_Dao, Mờn_2, Tân_Thảo, Thào Hồng Dến, and Ý_Lường; timeMethod: Cross-sectional; dataCollector: International Potato Center (CIP) and Agrosavia; samplingProcedure: We employed a random sampling approach by collaborating with representatives from each village. Together, we compiled a list of individuals maintaining homegardens. Subsequently, from this list, we randomly selected potential interviewees. The interviews were conducted in the local language.; targetSampleSize: list(targetSampleActualSize = list(typeName = "targetSampleActualSize", multiple = FALSE, typeClass = "primitive", value = "198")); collectionMode: Surveys",
+		design = NA,
 		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
+		carob_date = "2026-10-30",
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 0,
+		carob_effort = 0.1
 	)
-	
 
-	f1 <- ff[basename(ff) == "Dictionary_vn_households.xlsx"]
-
-	r1 <- carobiner::read.excel(f1)
-	return(FALSE)
+	message("No measurement table in the local raw files for ", uri)
+	invisible(meta)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

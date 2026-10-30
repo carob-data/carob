@@ -1,8 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Clone-level virus reactions, late-blight rAUDPC, and marketable tuber weight at 80, 100 and 120 days. Not plot replicates.
+# The Dataverse geographic coverage is Peru. The late-blight columns are named Yunnan 2015 and Yunnan 2016.
+# Marketable tuber weight has no unit.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Country for the Yunnan columns is not stated. Rows use the dataset country, Peru. Confirm whether those trials were in China.
+# No coordinates, dates, or fertilizer.
+# rAUDPC includes -0.003, below 0. Left as recorded.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: pvx_class_, pvy_class_, plrv_class_, pvs_class_, pvx_infection_, pvy_infection_, plrv_infection_, pvs_infection_, mtwp_. out of bounds rAUDPC (-0.003, 0.924).
+
+## NOT PROCESSED
+# Virus absorbance and infected-plant counts: the resistance class and the infection proportion are kept.
+# SLOPE and the early-bulking label: derived from the three tuber weights.
+# Material list pedigree.
+
+## NEW VARIABLES
+# pvx_class_, pvy_class_, plrv_class_, pvs_class_: resistance class as recorded.
+# pvx_infection_, pvy_infection_, plrv_infection_, pvs_infection_: infection proportion as recorded.
+# mtwp_: marketable tuber weight. Unit is not stated.
 
 
 carob_script <- function(path) {
@@ -13,153 +31,95 @@ Dataverse for: Evaluation of CIP advanced clones for late blight and virus resis
 This dataset contains the evaluation of the International Potato Center (CIP) advanced clones for late blight and virus resistance and early bulking
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/DSRBEV"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=5, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "rAUDPC",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 55,
+		carob_effort = 0.4
 	)
-	
 
-	f1 <- ff[basename(ff) == "13394_Data.xlsx"]
-	f2 <- ff[basename(ff) == "13394_DataDictionary_ElementDescription.xlsx"]
-	f3 <- ff[basename(ff) == "13394_DataDictionary_UniqueIdentifier.xlsx"]
-	f4 <- ff[basename(ff) == "13394_Material_List.xlsx"]
+	f <- ff[basename(ff) == "13394_Data.xlsx"]
+	v <- carobiner::read.excel(f, sheet="virus resistance")
+	lb <- carobiner::read.excel(f, sheet="Late blight resistance")
+	bk <- carobiner::read.excel(f, sheet="MTW at 80-100-120 d")
 
-	r1a <- carobiner::read.excel(f1, sheet="virus resistance")
-	r1b <- carobiner::read.excel(f1, sheet="Late blight resistance")
-	r1c <- carobiner::read.excel(f1, sheet="MTW at 80-100-120 d")
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-
-## select the variables of interest and assign them to the correct name
-
-	d1a <- data.frame()
-##r1a: "NUM", "ACCENUMB", "CODE", "NPE", "Number of PVX infected plants", "PVX (Absorbance average value)", "Percentage of PVX infection", "PVX", "Number of PVY infected plants", "PVY (Absorbance average value)", "Percentage of PVY infection", "PVY", "Number of PLRV infected plants", "PLRV (Absorbance average value)", "Percentage of PLRV infection", "PLRV", "Number of PVS infected plants", "PVS (Absorbance average value)", "Percentage of PVS infection"
-
-
-	d1b <- data.frame(
-		latitude = r1b[["Late blight resistance"]]
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		ok <- grepl("^-?[0-9.]+([eE][+-]?[0-9]+)?$", x)
+		x[!ok] <- NA_character_
+		as.numeric(x)
+	}
+	d1 <- data.frame(
+		record_id = as.integer(seq_len(nrow(v))),
+		variety = trimws(as.character(v$ACCENUMB)),
+		treatment = trimws(as.character(v$ACCENUMB)),
+		pvx_class_ = trimws(as.character(v$PVX)),
+		pvy_class_ = trimws(as.character(v$PVY)),
+		plrv_class_ = trimws(as.character(v$PLRV)),
+		pvs_class_ = trimws(as.character(v$PVS)),
+		pvx_infection_ = num(v[["Percentage of PVX infection"]]),
+		pvy_infection_ = num(v[["Percentage of PVY infection"]]),
+		plrv_infection_ = num(v[["Percentage of PLRV infection"]]),
+		pvs_infection_ = num(v[["Percentage of PVS infection"]]),
+		trial_id = "virus",
+		stringsAsFactors = FALSE
 	)
-##r1b: "ACCENUMB", "POPULATION", "ACCENAME", "rAUDPC_Yunnan2015", "rAUDPC_Yunnan2016"
-
-
-	d1c <- data.frame()
-##r1c: "ACCENUMB", "MTWP 80 days after planting", "MTWP 100 days after planting", "MTWP 120 days after planting", "SLOPE", "Early bulking 80 days after planting"
-
 
 	d2 <- data.frame(
-		crop = tolower(r2[["Crop"]])
+		record_id = as.integer(seq_len(nrow(lb)) + nrow(v)),
+		variety = trimws(as.character(lb$ACCENUMB)),
+		treatment = trimws(as.character(lb$ACCENUMB)),
+		rAUDPC = num(lb$rAUDPC_Yunnan2015),
+		location = "Yunnan",
+		trial_id = "late_blight_2015",
+		stringsAsFactors = FALSE
 	)
-##r2: "Variable ID", "Variable name", "Variable synonyms", "Other name", "Context of use", "Growth stage", "Variable status", "Variable Xref", "Institution", "Scientist", "Date", "Language", "Trait ID", "Trait name", "Trait class", "Trait description", "Trait synonyms", "Main trait abbreviation", "Alternative trait abbreviations", "Entity", "Attribute", "Trait status", "Trait Xref", "Method ID", "Method name", "Method class", "Method description", "Formula", "Method reference", "Scale ID", "Scale name", "Scale class", "Decimal places", "Lower limit", "Upper limit", "Scale Xref", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5", "Category 6", "Category 7", "Category 8", "Category 9", "Category 10"
+	d2b <- d2
+	d2b$record_id <- as.integer(seq_len(nrow(lb)) + nrow(v) + nrow(lb))
+	d2b$rAUDPC <- num(lb$rAUDPC_Yunnan2016)
+	d2b$trial_id <- "late_blight_2016"
 
+	id <- as.integer(seq_len(nrow(bk)) + nrow(v) + 2L * nrow(lb))
+	d3 <- data.frame(
+		record_id = id,
+		variety = trimws(as.character(bk$ACCENUMB)),
+		treatment = trimws(as.character(bk$ACCENUMB)),
+		trial_id = "early_bulking",
+		stringsAsFactors = FALSE
+	)
+	wts <- c("MTWP 80 days after planting", "MTWP 100 days after planting", "MTWP 120 days after planting")
+	days <- c(80L, 100L, 120L)
+	pieces <- lapply(seq_along(days), function(i) {
+		data.frame(
+			record_id = id,
+			DAP = days[i],
+			mtwp_ = num(bk[[wts[i]]]),
+			stringsAsFactors = FALSE
+		)
+	})
+	dlong <- do.call(rbind, pieces)
+	dlong <- dlong[!is.na(dlong$mtwp_), ]
 
-	d3 <- data.frame()
-##r3: "Spreadsheet_Tab", "Element_DisplayName", "Unique_Identifier", "Source"
+	d <- carobiner::bindr(d1, d2, d2b, d3)
+	d$crop <- "potato"
+	d$country <- "Peru"
+	d$on_farm <- NA
+	d$is_survey <- FALSE
+	d$stress <- "disease"
+	d$pathogen <- NA_character_
+	d$pathogen[d$trial_id %in% c("late_blight_2015", "late_blight_2016")] <- "Phytophthora infestans"
 
-
-	d4 <- data.frame()
-##r4: "Numeration", "Accession_Number", "Accession_Name", "Accession_Code", "Scale_audpc", "Family_AcceNumb", "Female_AcceNumb", "Male_AcceNumb", "Population", "Cycle", "Is_control", "Seed_source", "Simultaneous_trials", "Previous_trials", "list_name", "Date_Created"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

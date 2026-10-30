@@ -1,11 +1,9 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-
+# Measurement files are restricted on CIP Dataverse and were not downloaded. Only unrestricted documentation is in the raw folder, so no data table was built.
+# Restricted files not on disk: Modulo A_informacion_preliminar_y_hogar.tab; Modulo B_Cultivos_de_shagra.xlsx; Modulo C_ Cultivos_anuales.xlsx; Modulo D_Cultivos_perennes.xlsx; Modulo E1_Agrobiodiversidad y redes de intercambio.xlsx; Modulo E2_Conservacion_y_tendencias_de_agrobiodiversidad.xlsx; Modulo F_Ganaderia.xlsx; Modulo G_Colecta y Caza.xlsx; Modulo H_Soluciones_basadas_en_la_naturaleza.xlsx; Modulo I_Crisis y Cambio climatico.xlsx; Modulo J_Manejo del suelo.xlsx; Modulo K_Manejo y uso agua.xlsx; Modulo L_Calidad de aire y ruido ambiental.xlsx; Modulo M_Valoracion_paisaje.xlsx; Modulo N_Residuos agricolas.tab.
 
 carob_script <- function(path) {
 
@@ -17,32 +15,24 @@ Agrobiodiversity is currently on the decline, attributed to various factors such
 
 	uri <- "doi:10.21223/GIRW3W"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
-		data_organization = "CIP; Agrosavia",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: Household; universe: Farmers living in the resguardo Cumbal in the following veredas: Boyera, Cuaical, Cuaspud, Cuetial, Guan, Llano de Piedras, Quilismal, and Tasmag; timeMethod: cross-sectional; dataCollector: International Potato Center (CIP) and Agrosavia; samplingProcedure: We followed a snowball sampling approach. For this, we contacted representatives of the shagreros groups to create a list of people with shagras that we could interview.  After we interviewed each people we asked the interviewees whether they knew about other shagreros in the area. We performed the same exercise until we reached 206 people.; targetSampleSize: list(targetSampleActualSize = list(typeName = "targetSampleActualSize", multiple = FALSE, typeClass = "primitive", value = "206")); collectionMode: Use the survey123",
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 0,
+		carob_effort = 0.15
 	)
-	
 
-	f1 <- ff[basename(ff) == "Dictionary.xlsx"]
-
-	r1 <- carobiner::read.excel(f1)
+	# No measurement table is available in the raw folder.
 	return(FALSE)
 }
 
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

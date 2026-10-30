@@ -1,8 +1,30 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# The tab-separated fieldbooks are the data tables. The Excel Minerals sheet is not used.
+# Mineral and vitamin C columns are tuber concentrations, not fertilizer and not soil. Dry-weight minerals are mg/kg. Fresh-weight minerals and ascorbic acid are mg/100 g. Dry matter is percent. The vitamin-file dry matter is kept separately because it does not match the mineral-file dry matter on the same clone.
+# Accession name is B3C1 for every row, so the variety is the CIP number. B3C1 is stored as population_.
+# Country, department, province, district, and locality are columns in the fieldbook. The Minimal sheet has the same place names, begin date 2003-12-04, and end date 2004-05-04, and blank latitude and longitude. The Dataverse bounding box publishes only south -11.8336 and west -75.4343. Those two values are used as the point. The installation design cell is blank. The description says a completely randomized design with three replications. The installation repetition count is 3. Plot size and spacing are blank. Crop management lists fertilizing, weed, pest, disease, and irrigation with no product or dose.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No yield in the fieldbooks.
+# The coordinate is the bounding-box corner, not a plot GPS point.
+# Rows with no CIP number are dropped.
+# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: population_, tuber_dry_matter_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Mn_dw_, tuber_Mn_fw_, tuber_B_dw_, tuber_B_fw_, tuber_Cu_dw_, tuber_Cu_fw_, tuber_Zn_dw_, tuber_Zn_fw_, tuber_Ca_dw_, tuber_Ca_fw_, tuber_Mg_dw_, tuber_Mg_fw_, tuber_K_dw_, tuber_K_fw_, tuber_P_dw_, tuber_P_fw_, tuber_S_dw_, tuber_S_fw_, tuber_Na_dw_, tuber_Na_fw_, tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_vitamin_.
+
+## NEW VARIABLES
+# population_: accession or population name when it is not the clone.
+# tuber_dry_matter_: dry matter from the mineral file, percent.
+# tuber_dry_matter_vitamin_: dry matter from the vitamin C file, percent.
+# tuber_<element>_dw_: tuber mineral, mg/kg dry weight.
+# tuber_<element>_fw_: tuber mineral, mg/100 g fresh weight.
+# tuber_ascorbate_dw_, tuber_ascorbate_fw_: ascorbic acid, mg/100 g.
+
+## NOT PROCESSED
+# 04_Datadictionary.txt and the Excel summary and notes sheets.
+# Crop_management: categories without a product or dose.
+# Breeder code is "-" in this file.
 
 
 carob_script <- function(path) {
@@ -13,243 +35,125 @@ Dataset for:Analysis of Minerals and Vitamin C in Varieties of the B3C1 Populati
 Laboratory assessments of minerals and vitamin C were carried out on raw samples with peel, based on dry weight, for the B3C1 population group planted in the Muqui locality in Jauja, Junin. The analysis methodology involved the use of chemical spectrophotometry. Eleven clones from the B3C1 population were analyzed with three replications following a Completely Randomized Design (CRD) during the year 2004.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/7S836T"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "CRD",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "tuber_Fe_dw_;tuber_Zn_dw_;tuber_ascorbate_dw_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 65,
+		carob_effort = 0.4
 	)
-	
 
-	f1 <- ff[basename(ff) == "TMIN200312_MUQUI_B3C1_RanchaI.xls"]
-	f2 <- ff[basename(ff) == "TVIT200312_MUQUI_B3C1_RanchaI.xls"]
-	f3 <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_B3C1_RanchaI.txt"]
-	f4 <- ff[basename(ff) == "02_Fieldbook_TVIT_MUQUI_B3C1_Rancha_VitaminC.txt"]
-	f5 <- ff[basename(ff) == "03_Material_list.txt"]
-	f6 <- ff[basename(ff) == "04_Datadictionary.txt"]
+	read_txt <- function(f) {
+		raw <- readBin(f, "raw", file.info(f)$size)
+		if (length(raw) && raw[length(raw)] != as.raw(10L)) raw <- c(raw, as.raw(10L))
+		txt <- iconv(rawToChar(raw), from="Latin1", to="UTF-8")
+		x <- read.delim(text=txt, check.names=FALSE, stringsAsFactors=FALSE,
+			sep="\t", quote="", comment.char="", na.strings=c("", "NA", "-"))
+		names(x) <- gsub("\\s+", " ", trimws(names(x)))
+		x
+	}
+	col_one <- function(x, pattern) {
+		hit <- grep(pattern, names(x))
+		if (length(hit) != 1) return(rep(NA_real_, nrow(x)))
+		z <- trimws(as.character(x[[hit]]))
+		# Below-detection results are stored as "< 0.2" and similar. They are missing concentrations, not zeros.
+		z[grepl("^<", z)] <- NA_character_
+		as.numeric(z)
+	}
+	add_minerals <- function(x) {
+		elements <- c("Fe","Mn","B","Cu","Zn","Ca","Mg","K","P","S","Na","Al","Ti","Cr","Se","Pb","Cd","Mo","Co","Ni")
+		out <- list()
+		for (el in elements) {
+			dw <- paste0("^", el, " \\(mg/kg, ?DW\\)?$")
+			fw <- paste0("^", el, " \\(mg/100 ?g, ?FW\\)?$")
+			if (length(grep(dw, names(x))) == 1) out[[paste0("tuber_", el, "_dw_")]] <- col_one(x, dw)
+			if (length(grep(fw, names(x))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(x, fw)
+		}
+		as.data.frame(out, stringsAsFactors=FALSE)
+	}
 
-	r1a <- carobiner::read.excel(f1, sheet="Minimal")
-	r1b <- carobiner::read.excel(f1, sheet="Identification")
-	r1c <- carobiner::read.excel(f1, sheet="Installation")
-	r1d <- carobiner::read.excel(f1, sheet="Field")
-	r1e <- carobiner::read.excel(f1, sheet="Crop_management")
-	r1f <- carobiner::read.excel(f1, sheet="Material List")
-	r1g <- carobiner::read.excel(f1, sheet="Minerals")
-	r1h <- carobiner::read.excel(f1, sheet="Summary by clone")
-	r1i <- carobiner::read.excel(f1, sheet="Notes")
-	r2a <- carobiner::read.excel(f2, sheet="Minimal")
-	r2b <- carobiner::read.excel(f2, sheet="Identification")
-	r2c <- carobiner::read.excel(f2, sheet="Installation")
-	r2d <- carobiner::read.excel(f2, sheet="Field")
-	r2e <- carobiner::read.excel(f2, sheet="Crop_management")
-	r2f <- carobiner::read.excel(f2, sheet="Material List")
-	r2g <- carobiner::read.excel(f2, sheet="VitaminC")
-	r2h <- carobiner::read.excel(f2, sheet="Summary by clone")
-	r2i <- carobiner::read.excel(f2, sheet="Lists")
-	r2j <- carobiner::read.excel(f2, sheet="Notes")
-	r2k <- carobiner::read.excel(f2, sheet="ICPAES Results")
-	#r3 <- read.???(f3)
-	#r4 <- read.???(f4)
-	#r5 <- read.???(f5)
-	#r6 <- read.???(f6)
+	minf <- ff[grepl("^01_Fieldbook_TMIN", basename(ff))]
+	vitf <- ff[grepl("^02_Fieldbook_TVIT", basename(ff))]
+	xls <- ff[grepl("^TMIN.*\\.xls$", basename(ff))]
+	m <- read_txt(minf)
+	v <- read_txt(vitf)
+	mini <- carobiner::read.excel(xls, sheet="Minimal")
+	meta_val <- function(nm) {
+		hit <- mini$Value[trimws(as.character(mini$Factor)) == nm]
+		x <- hit[1]
+		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
+		trimws(as.character(x))
+	}
 
-## select the variables of interest and assign them to the correct name
+	instn <- trimws(as.character(m$INSTN))
+	acc <- trimws(as.character(m[["Accession name"]]))
+	variety <- instn
+	population <- acc
+	if (length(unique(stats::na.omit(acc))) >= 2) {
+		variety <- acc
+		miss <- is.na(variety) | !nzchar(variety)
+		variety[miss] <- instn[miss]
+		population <- NA_character_
+	}
 
-	d1a <- data.frame()
-##r1a: "Factor", "Value", "ID", "ID2"
+	country <- trimws(as.character(m$Country))
+	country[country %in% c("Perú", "Peru")] <- "Peru"
 
-
-	d1b <- data.frame()
-##r1b: "Factor", "Value"
-
-
-	d1c <- data.frame()
-##r1c: "Factor", "Value", "ID1", "ID2", "ID3"
-
-
-	d1d <- data.frame()
-##r1d: "Factor", "Value"
-
-
-	d1e <- data.frame()
-##r1e: "Intervention category", "Intervention type", "Date of intervention", "Name of product *", "Product concentration", "Dose of application", "Observations"
-
-
-	d1f <- data.frame(
-		variety = r1f[["Clone/variety name"]]
+	d <- data.frame(
+		variety_code = instn,
+		variety = variety,
+		population_ = population,
+		treatment = variety,
+		rep = as.integer(m$REP),
+		country = country,
+		adm1 = trimws(as.character(m$Departament)),
+		adm2 = trimws(as.character(m$Province)),
+		adm3 = trimws(as.character(m$District)),
+		location = trimws(as.character(m$Locality)),
+		planting_date = meta_val("Begin date"),
+		harvest_date = meta_val("End date"),
+		trial_id = "Muqui_B3C1_2003",
+		tuber_dry_matter_ = col_one(m, "^Percentage Dry matter"),
+		key = paste(instn, as.integer(m$REP)),
+		stringsAsFactors = FALSE
 	)
-##r1f: "Numeration", "Control", "CIP number", "Code", "Pedigree", "Species", "Origin", "Seed source1", "References to silmultaneous trials", "References to previous trials", "Breeder Code or Collecting Number", "Accession name"
+	mins <- add_minerals(m)
+	d <- cbind(d, mins)
 
-
-	d1g <- data.frame(
-		plot_id = r1g[["#Plot"]]
+	vinst <- trimws(as.character(v$INSTN))
+	vv <- data.frame(
+		key = paste(vinst, as.integer(v$REP)),
+		tuber_ascorbate_dw_ = col_one(v, "Ascorbic acid.*DW"),
+		tuber_ascorbate_fw_ = col_one(v, "Ascorbic acid.*FW"),
+		tuber_dry_matter_vitamin_ = col_one(v, "^Percentage Dry matter"),
+		stringsAsFactors = FALSE
 	)
-##r1g: "1", "33", "...4", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "...12", "...13", "...14", "...15", "...16", "...17", "...18", "...19", "...20", "...21", "...22", "...23", "...24", "...25", "...26", "...27", "...28", "...29", "...30", "...31", "...32", "...33", "...34", "...35"
+	vv <- vv[!duplicated(vv$key), ]
+	d <- merge(d, vv, by="key", all.x=TRUE)
+	d$key <- NULL
+	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
+	if (all(is.na(d$population_))) d$population_ <- NULL
+	rownames(d) <- NULL
+	d$crop <- "potato"
+	d$latitude <- -11.8336
+	d$longitude <- -75.4343
+	d$geo_from_source <- TRUE
+	d$geo_uncertainty <- 2000
+	d$geo_source <- "CIP Dataverse bounding box (south and west only)"
+	d$on_farm <- NA
+	d$is_survey <- FALSE
+	d$record_id <- seq_len(nrow(d))
 
-
-	d1h <- data.frame(
-		N_fertilizer = r1h[["n"]],
-		year = r1h[["Year"]],
-		country = r1h[["Country"]],
-		adm2 = carobiner::fix_name(r1h[["Province"]], "title")
-	)
-##r1h: "INSTN", "Breeder Code or Collecting Number", "Accession name", "Departament", "District", "Locality", "Percentage Dry matter(%) _mean", "Percentage Dry matter(%) _sd", "Fe (mg/kg,DW) _mean", "Fe (mg/kg,DW) _sd", "Fe  (mg/100g,FW) _mean", "Fe  (mg/100g,FW) _sd", "Mn (mg/kg,DW) _mean", "Mn (mg/kg,DW) _sd", "Mn (mg/100g,FW) _mean", "Mn (mg/100g,FW) _sd", "B (mg/kg,DW) _mean", "B (mg/kg,DW) _sd", "B (mg/100g,FW) _mean", "B (mg/100g,FW) _sd", "Cu (mg/kg,DW) _mean", "Cu (mg/kg,DW) _sd", "Cu (mg/100g,FW) _mean", "Cu (mg/100g,FW) _sd", "Zn (mg/kg,DW) _mean", "Zn (mg/kg,DW) _sd", "Zn (mg/100g,FW) _mean", "Zn (mg/100g,FW) _sd", "Ca (mg/kg,DW) _mean", "Ca (mg/kg,DW) _sd", "Ca (mg/100g,FW) _mean", "Ca (mg/100g,FW) _sd", "Mg (mg/kg,DW) _mean", "Mg (mg/kg,DW) _sd", "Mg (mg/100g,FW) _mean", "Mg (mg/100g,FW) _sd", "K (mg/kg,DW) _mean", "K (mg/kg,DW) _sd", "K (mg/100g,FW) _mean", "K (mg/100g,FW) _sd", "P (mg/kg,DW) _mean", "P (mg/kg,DW) _sd", "P (mg/100g,FW) _mean", "P (mg/100g,FW) _sd", "S (mg/kg,DW) _mean", "S (mg/kg,DW) _sd", "S (mg/100g,FW) _mean", "S (mg/100g,FW) _sd", "Na (mg/kg,DW) _mean", "Na (mg/kg,DW) _sd", "Na (mg/100g,FW) _mean", "Na (mg/100g,FW) _sd"
-
-
-	d1i <- data.frame()
-##r1i: "type", "desc_type"
-
-
-	d2a <- data.frame()
-##r2a: "Factor", "Value"
-
-
-	d2b <- data.frame()
-##r2b: "Factor", "Value"
-
-
-	d2c <- data.frame()
-##r2c: "Factor", "Value", "...3"
-
-
-	d2d <- data.frame()
-##r2d: "Factor", "Value"
-
-
-	d2e <- data.frame()
-##r2e: "Intervention category", "Intervention type", "Date of intervention", "Name of product *", "Product concentration", "Dose of application", "Observations"
-
-
-	d2f <- data.frame(
-		variety = r2f[["Clone/variety name"]]
-	)
-##r2f: "Numeration", "Control", "CIP number", "Code", "Pedigree", "Species", "Origin", "Seed source1", "References to silmultaneous trials", "References to previous trials", "Breeder Code or Collecting Number", "Accession name"
-
-
-	d2g <- data.frame()
-##r2g: "EVALUATION OF VITAMIN C", "...2", "...3", "...4", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "...12", "...13", "...14", "...15"
-
-
-	d2h <- data.frame(
-		N_fertilizer = r2h[["n"]],
-		year = r2h[["Year"]],
-		country = r2h[["Country"]],
-		adm2 = carobiner::fix_name(r2h[["Province"]], "title")
-	)
-##r2h: "INSTN", "Breeder Code or  Collecting number", "Accession name", "Departament", "District", "Locality", "Ascorbic acid (mg/100 g, DW) _mean", "Ascorbic acid (mg/100 g, DW) _sd", "Ascorbic acid (mg/100g,FW) _mean", "Ascorbic acid (mg/100g,FW) _sd", "Percentage Dry matter(%)_mean", "Percentage Dry matter(%)_sd"
-
-
-	d2i <- data.frame()
-##r2i: "DES...1", "ID...2", "...3", "DES...4", "ID...5", "...6", "DES...7", "ID...8", "...9", "DES...10", "ID...11", "...12", "DES...13", "ID...14", "...15", "DES...16", "ID...17", "...18", "DES...19", "ID...20", "...21", "DES...22", "ID...23", "ID2", "ID3", "ID4", "ID5", "...28", "DES...29", "ID...30", "...31", "LIST1_EVALUATIONS", "...33", "LIST_DESIGN", "ID_DESIGN", "...36", "LIST_SOIL", "...38", "LIST_METO", "...40", "LIST_DEPA", "...42", "LIST_PRO", "...44", "LIST_DIST"
-
-
-	d2j <- data.frame()
-##r2j: "type", "desc_type"
-
-
-	d2k <- data.frame(
-		rep = r2k[["Final Report 1"]]
-	)
-##r2k: "...1", "...2", "Waite Ref. : ipc403", "...4", "Order No. n.a.", "...6", "...7", "...8", "...10", "...11", "...12", "...13", "...14", "Date Reported :", "38189.383069097225", "...17", "...18", "...19", "...20", "...21"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

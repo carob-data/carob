@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Seed production from rooted cuttings in nine districts of Uganda, season 2019A. The abstract names the districts and the varieties Kachpot 1 and Victoria.
+# The sheet records tuber counts and tuber weights. Yield is the column Tons/ha times 1000.
+# Weights in the size-class columns are kg per bed, as the headers say. Counts are tuber numbers.
+# Sex M and F are male and female. The value Research is not a sex.
+# Individual seed businesses are on-farm. Government plots are not.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# The sheet does not say the crop name. The product is tubers of Kachpot 1 and Victoria, stored as potato.
+# No coordinates. The villages need georeferencing.
+# No fertilizer rates.
+# Survival rate is left as recorded. The summary sheet shows values such as 0.70, so it is not converted to a percentage.
+# write_files: missing variables: carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: season_ (season?). unknown variable: dehaulming_date_ (date?). unknown variables: cuttings_planted_, cuttings_harvested_, survival_rate_, and the tuber size-class columns. NA detected: yield.
+
+## NOT PROCESSED
+# Sheet1, Sheet2, Sheet3, Sheet4, and Sheet8: pivot summaries of the RAC 2019A sheet.
+# Average tuber counts and average weights. The size-class totals and Tons/ha are kept.
+# Off Type, rows in a bed, and supplier.
 
 
 carob_script <- function(path) {
@@ -13,154 +29,78 @@ Dataset for: Data production of seed from cuttings 2019
 Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 districts of Uganda (Bugizardi, Kabale, Kanungu, Kapchorwa, Kazardi, Kisoro, Kween, Mbale and Rubanda ) in two varieties (Kachpot1  and Victoria).
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/NHADZO"
 	group <- "varieties_other"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = "unitOfAnalysis: Seed business; universe: Seed business; timeMethod: Cross-sectional; samplingProcedure: We evaluated 206 seed business  have been reached through CIP and partner interventions.
-Number of users was:  26 female, 171 male and 9 research .",
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 55,
+		carob_effort = 0.4
 	)
-	
 
-	f1 <- ff[basename(ff) == "Data_production_of_seed_out_of_cuttings_2019_A1.xlsx"]
+	f <- ff[basename(ff) == "Data_production_of_seed_out_of_cuttings_2019_A1.xlsx"]
+	r <- carobiner::read.excel(f, sheet="RAC 2019A", na=c("", "NA"))
+	names(r) <- trimws(names(r))
+	sex <- trimws(as.character(r[["Gender (M, F, Research)"]]))
+	sex[sex == "M"] <- "male"
+	sex[sex == "F"] <- "female"
+	sex[sex == "Research"] <- NA_character_
+	biz <- trimws(as.character(r[["Seed business type (individual, group, government)"]]))
+	variety <- trimws(as.character(r[["Variety planted"]]))
+	iso <- function(x) {
+		x <- as.Date(x)
+		out <- rep(NA_character_, length(x))
+		ok <- !is.na(x)
+		out[ok] <- as.character(x[ok])
+		out
+	}
 
-	r1a <- carobiner::read.excel(f1, sheet="RAC 2019A")
-	r1b <- carobiner::read.excel(f1, sheet="Sheet1")
-	r1c <- carobiner::read.excel(f1, sheet="Sheet2")
-	r1d <- carobiner::read.excel(f1, sheet="Sheet3")
-	r1e <- carobiner::read.excel(f1, sheet="Sheet4")
-	r1f <- carobiner::read.excel(f1, sheet="Sheet8")
-
-## select the variables of interest and assign them to the correct name
-
-	d1a <- data.frame(
-		season = r1a[["Season"]],
-		adm1 = carobiner::fix_name(r1a[["Region"]], "title"),
-		adm2 = carobiner::fix_name(r1a[["District"]], "title"),
-		location = r1a[["Village"]],
-		plot_id = r1a[["Plot No"]],
-		variety = r1a[["Variety planted"]]
+	d <- data.frame(
+		trial_id = "Uganda_cuttings_2019A",
+		country = "Uganda",
+		adm1 = trimws(as.character(r$Region)),
+		adm2 = trimws(as.character(r$District)),
+		adm3 = trimws(as.character(r[["Sub-county"]])),
+		location = trimws(as.character(r$Village)),
+		season_ = "2019A",
+		crop = "potato",
+		variety = variety,
+		treatment = variety,
+		plot_id = paste(r[["Plot No"]], r[["Bed No"]], sep="_"),
+		planting_date = iso(r[["Date of planting"]]),
+		harvest_date = iso(r[["Date of harvesting"]]),
+		dehaulming_date_ = iso(r[["Date of dehaulming"]]),
+		sex = sex,
+		on_farm = biz == "Individual",
+		is_survey = FALSE,
+		geo_from_source = FALSE,
+		yield_part = "tubers",
+		yield = as.numeric(r[["Tons/ha"]]) * 1000,
+		cuttings_planted_ = as.numeric(r[["# cuttings planted"]]),
+		cuttings_harvested_ = as.numeric(r[["# cuttings harvested"]]),
+		survival_rate_ = as.numeric(r[["Survival rate"]]),
+		tuber_n_lt_20mm_ = as.numeric(r[["# tubers < 20mm"]]),
+		tuber_wt_kg_lt_20mm_ = as.numeric(r[["Weight tubers < 20mm (Kg)"]]),
+		tuber_n_20_30mm_ = as.numeric(r[["# tubers 20-30mm"]]),
+		tuber_wt_kg_20_30mm_ = as.numeric(r[["Weight tubers 20-30mm (Kg)"]]),
+		tuber_n_31_45mm_ = as.numeric(r[["# tubers 31-45mm"]]),
+		tuber_wt_kg_31_45mm_ = as.numeric(r[["Weight tubers 31-45mm (Kg)"]]),
+		tuber_n_46_60mm_ = as.numeric(r[["# tubers 46-60mm"]]),
+		tuber_wt_kg_46_60mm_ = as.numeric(r[["Weight tubers 46-60mm (Kg)"]]),
+		tuber_n_gt_60mm_ = as.numeric(r[["# tubers > 60mm"]]),
+		tuber_wt_kg_gt_60mm_ = as.numeric(r[["Weight tubers > 60mm (Kg)"]]),
+		stringsAsFactors = FALSE
 	)
-##r1a: "Sub-county", "Name of the seed business", "Seed business type (individual, group, government)", "Gender (M, F, Research)", "Supplier of rooted apical cuttings", "Date of planting", "Off Type", "Bed No", "# rows in a bed", "# cuttings planted", "# cuttings harvested", "Survival rate", "Date of dehaulming", "Date of harvesting", "# tubers < 20mm", "Weight tubers < 20mm (Kg)", "# tubers 20-30mm", "Weight tubers 20-30mm (Kg)", "# tubers 31-45mm", "Weight tubers 31-45mm (Kg)", "# tubers 46-60mm", "Weight tubers 46-60mm (Kg)", "# tubers > 60mm", "Weight tubers > 60mm (Kg)", "Total # tubers < 20mm / bed", "Total # tubers ≥ 20mm / bed", "Total # tubers / bed", "Average # tubers < 20mm / plant", "Average # tubers ≥ 20mm / plant", "Average # tubers / plant", "Total weight tubers < 20mm / bed (Kg)", "Total weight tubers ≥ 20mm / bed (Kg)", "Total weight tubers / bed (Kg)", "Average weight tubers < 20mm / plant (gms)", "Average weight tubers ≥ 20mm / plant (gms)", "Average weight per tuber < 20mm (gms)", "Average weight per tuber ≥ 20mm (gms)", "Tons/ha", "% seed (weight basis / plant)", "% seed ( # tubers/plant)"
 
-
-	d1b <- data.frame()
-##r1b: "Row Labels", "Average of Survival rate", "Average of Average # tubers < 20mm / plant", "Average of Average # tubers ≥ 20mm / plant", "Average of Average # tubers / plant", "Average of Average weight per tuber < 20mm (gms)", "Average of Average weight per tuber ≥ 20mm (gms)"
-
-
-	d1c <- data.frame()
-##r1c: "Row Labels", "Average of Survival rate"
-
-
-	d1d <- data.frame()
-##r1d: "Row Labels", "Sum of # cuttings planted"
-
-
-	d1e <- data.frame()
-##r1e: "Row Labels", "Average of % seed ( # tubers/plant)"
-
-
-	d1f <- data.frame()
-##r1f: "Row Labels", "Average of Average # tubers < 20mm / plant", "Average of Average # tubers ≥ 20mm / plant", "Average of Average # tubers / plant", "Average of % seed ( # tubers/plant)"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

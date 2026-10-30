@@ -1,11 +1,10 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-
+# The local folder has a unique-identifier dictionary only. No plot measurements were extracted.
+# Files on disk: DataDictionary_UniqueIdentifier.xls, doi_10.21223_IZGBE0.zip.
+# No data table was written.
 
 carob_script <- function(path) {
 
@@ -17,32 +16,23 @@ In Ecuador, the emergence of two new pests is causing economical problems and yi
 
 	uri <- "doi:10.21223/IZGBE0"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
-		data_organization = "CIP; Wageningen University & Research Centre - WUR",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		carob_date = "2026-10-30",
 		design = NA,
 		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
+		carob_date = "2026-10-30",
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 0,
+		carob_effort = 0.1
 	)
-	
 
-	f1 <- ff[basename(ff) == "DataDictionary_UniqueIdentifier.xls"]
-
-	r1 <- carobiner::read.excel(f1)
-	return(FALSE)
+	message("No measurement table in the local raw files for ", uri)
+	invisible(meta)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

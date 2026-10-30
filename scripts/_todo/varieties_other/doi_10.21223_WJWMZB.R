@@ -1,8 +1,28 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Umbeluzi Research Station, Mozambique, planted 20-23 December 2018. Row-column design, two replications, plots of 25 m2. The Dataverse keyword is Sweetpotato.
+# Five water and fertilizer treatments. NPK is mentioned with no rate, so no N, P or K column is filled.
+# Coordinates are in Image_description_Moz1.xlsx and match the bounding box (longitude 32.358583, latitude -26.046829).
+# Each workbook sheet is one flight date (19 March 2019 and 15 June 2019). The first row under the grouped header is Plot, Trial, Genotype, then mean and stdev pairs. Means are kept. Stdev is not.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No yield in the files. A single irrigated flag does not describe the timed drought treatments.
+# Replication is described but not labeled on the rows. Genotypes repeat within a treatment.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: canopy_temperature_, ndvi_, ndvi_green_, ci_, cover_percent_.
+
+## NOT PROCESSED
+# Image_description_Moz1.xlsx: image file names, altitude, sensor and pixel size. Coordinates were taken from it.
+# Standard-deviation columns on both dates.
+# Soil analysis is mentioned in the description and is not in these files.
+
+## NEW VARIABLES
+# canopy_temperature_: mean canopy temperature (C).
+# ndvi_: mean NDVI.
+# ndvi_green_: mean green NDVI.
+# ci_: the CI column. Unit is not stated.
+# cover_percent_: canopy cover (%).
 
 
 carob_script <- function(path) {
@@ -15,140 +35,65 @@ The trial had 24 clones. Check clones were 199062.1, Nhacoongo 1, Caromex, Xiadl
 Experimental design: row column design (6 rows x 8 columns per each treatment), 2 replications per treatment. Soil analysis done for each field. The trial was mainly supported by irrigation.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/WJWMZB"
 	group <- "varieties_other"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; International Potato Center - CIP-SSA",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "row-column",
+		data_type = "experiment",
+		treatment_vars = "variety;treatment",
+		response_vars = "canopy_temperature_;ndvi_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 55,
+		carob_effort = 0.45
 	)
-	
 
-	f1 <- ff[basename(ff) == "Data_Dictionary_Moz1.xlsx"]
-	f2 <- ff[basename(ff) == "Image_description_Moz1.xlsx"]
-	f3 <- ff[basename(ff) == "Umbeluzi_2019_Moz1.xlsx"]
-
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3a <- carobiner::read.excel(f3, sheet="190319")
-	r3b <- carobiner::read.excel(f3, sheet="150619")
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame()
-##r1: "Abbreviation", "Variable name", "Description", "Method", "Formula", "Unit", "Reference"
-
-
-	d2 <- data.frame(
-		latitude = r2[["Lat"]]
+	f <- ff[basename(ff) == "Umbeluzi_2019_Moz1.xlsx"]
+	one <- function(sheet, date) {
+		r <- carobiner::read.excel(f, sheet=sheet)
+		r <- r[-1, ]
+		data.frame(
+			plot_id = trimws(as.character(r[[1]])),
+			treatment = trimws(as.character(r[[2]])),
+			variety = trimws(as.character(r[[3]])),
+			date = date,
+			canopy_temperature_ = as.numeric(r[[4]]),
+			ndvi_ = as.numeric(r[[6]]),
+			ndvi_green_ = as.numeric(r[[8]]),
+			ci_ = as.numeric(r[[10]]),
+			cover_percent_ = as.numeric(r[[12]]),
+			stringsAsFactors = FALSE
+		)
+	}
+	x <- rbind(
+		one("190319", "2019-03-19"),
+		one("150619", "2019-06-15")
 	)
-##r2: "Image", "DAP", "IF", "FA", "SR", "FW", "FH", "Lon", "Adquisition System"
+	x$record_id <- as.integer(as.factor(paste(x$treatment, x$plot_id, x$variety)))
 
+	checks <- c("199062.1", "Nhacoongo 1", "Caromex", "Xiadlaxakau", "TIS2534", "Irene", "Xitsekele")
+	d <- x[!duplicated(x$record_id), c("record_id", "plot_id", "treatment", "variety")]
+	d$variety_type <- ifelse(d$variety %in% checks, "check", NA_character_)
+	d$crop <- "sweetpotato"
+	d$country <- "Mozambique"
+	d$adm1 <- "Maputo"
+	d$adm2 <- "Boane"
+	d$location <- "Umbeluzi"
+	d$longitude <- 32.358583
+	d$latitude <- -26.046829
+	d$geo_from_source <- TRUE
+	d$planting_date <- "2018-12"
+	d$trial_id <- "Umbeluzi_2019"
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
 
-	d3a <- data.frame()
-##r3a: "...1", "...2", "...3", "Canopy Temperature (°C)", "...5", "NDVI", "...7", "NDVIGreen", "...9", "CI", "...11", "Coberture"
+	dlong <- x[, c("record_id", "date", "canopy_temperature_", "ndvi_", "ndvi_green_", "ci_", "cover_percent_")]
 
-
-	d3b <- data.frame()
-##r3b: "...1", "...2", "...3", "Canopy Temperature (°C)", "...5", "NDVI", "...7", "NDVIgreen", "...9", "CI", "...11", "Coberture"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

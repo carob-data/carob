@@ -1,8 +1,38 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Only two of the six sites named in the description are in the raw folder: Mariscal Caceres (Conayca) and Sotopampa. Ccasapata, Ccollpaccasa, La Victoria, and Rangra are not here.
+# Coordinates, elevation, dates, and plot layout are the Minimal and Installation sheets. Design is RCBD, 3 reps, 10 plants on 2.7 m2, 0.30 m between plants and 0.90 m between rows. The description says one hill per plot and gives Sotopampa as 3754 m. The Sotopampa workbook elevation is 3730 m. The workbook values are used.
+# Planting and harvest dates are Begin date and End date. Crop_management also records vine killing (2010-05-13 at Mariscal Caceres) with no product or dose.
+# Dictionary: DM is percent dry matter. CH is chlorogenic acid, CafAc is caffeic acid, and Trip is tryptophan, all mg/100 g. TP_DW and TP_FW are the synonyms for total phenolics on a chlorogenic-acid basis, which is a different row from HPLC total phenolics (Tphe) and from chlorogenic acid (CH). TA is not in the dictionary. AntCap is the fieldbook column. A dictionary row named antheraxanthin (ug/100 g, upper limit 100) uses the synonym Ant and a method that mentions an ascorbic-acid standard curve. AntCap values are about 400 to 1060, so they are kept under their own names and not called antheraxanthin.
+# Soil is one sample per site, repeated on the plot rows. P, K, Fe, Cu, Zn, B, and Mn are ppm and stored as mg/kg. EC is mmho/cm, the same number as mS/cm. Exchangeable cations and CEC are meq/100 g, the same number as cmol/kg. CaCO3 is percent in the file and is stored as g/kg (times 10). The sand, Lime, and clay percentages sum to 100, so Lime is the silt fraction. Franco arenoso is sandy loam and Franco is loam. Total N has a blank unit cell and is not mapped to soil_N.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No tuber yield in the fieldbooks.
+# The description's other four sites are absent.
+# Conayca exchangeable potassium is 4.87 meq/100 g and total bases is also 4.87, which does not match the sum of the exchangeable cations. Values are left as recorded.
+# Some chlorogenic-acid and total-phenolic numbers are above the dictionary upper limit of 100 mg/100 g. They are left as recorded.
+# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. Unknown variables are the tuber chemistry names and soil_N_total_.
+
+## NEW VARIABLES
+# lab_sample_: laboratory sample number (1 or 2) for the same plot.
+# tuber_dry_matter_: tuber dry matter, percent.
+# tuber_chlorogenic_dw_, tuber_chlorogenic_fw_: chlorogenic acid, mg/100 g dry and fresh weight.
+# tuber_caffeic_dw_, tuber_caffeic_fw_: caffeic acid, mg/100 g.
+# tuber_tryptophan_dw_, tuber_tryptophan_fw_: tryptophan, mg/100 g.
+# tuber_TP_dw_, tuber_TP_fw_: total phenolics on a chlorogenic-acid basis. Unit is not on the dictionary scale row.
+# tuber_TA_dw_, tuber_TA_fw_: TA columns. The dictionary does not name TA or give a unit.
+# antcap_dw_, antcap_fw_: AntCap columns. See NOTES for the antheraxanthin conflict.
+# soil_N_total_: total nitrogen. The unit cell is blank.
+
+## NOT PROCESSED
+# Summary by clone and Results all: means and statistical summaries.
+# Weather_data: header only, no rows.
+# Crop_management: planting and harvest dates already used. Vine killing has no product.
+# Var List: overlaps the material list.
+# Soil soluble ions (calcium, magnesium, potassium, sodium, chloride, carbonate, bicarbonate, nitrate, sulfate): unit cells are blank.
+# Soil requester, operator, laboratory code, and field code.
 
 
 carob_script <- function(path) {
@@ -17,247 +47,130 @@ Forty native potato cultivars were evaluated to analyze the magnitude and nature
 Statistical analyses included ANOVA to assess differences between genotypes and environments, as well as the AMMI model (Additive Main Effects and Multiplicative Interaction) to study genotype stability and adaptability. This comprehensive approach provides critical information for breeding programs, strategies to conserve native varieties, and the development of cultivars with outstanding nutritional characteristics that meet market demands and contribute to agricultural biodiversity.'
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/FH5RX0"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; YANAPAI",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "RCBD",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "tuber_dry_matter_;tuber_chlorogenic_dw_;tuber_caffeic_dw_;tuber_tryptophan_dw_;tuber_TP_dw_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 70,
+		carob_effort = 0.55
 	)
-	
 
-	f1 <- ff[basename(ff) == "07_Data_dictionary_Stability_phenolic.xlsx"]
-	f2 <- ff[basename(ff) == "TPHE200911_MRSCAC_Stability_Field.xls"]
-	f3 <- ff[basename(ff) == "TPHE200912_SOTOP_Stability_Field.xls"]
+	num <- function(x) as.numeric(as.character(x))
+	one <- function(sheet, name) {
+		hit <- sheet$Value[trimws(as.character(sheet$Factor)) == name]
+		if (length(hit) == 0) return(NA_character_)
+		x <- hit[1]
+		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
+		trimws(as.character(x))
+	}
+	soil_val <- function(soil, abbrev) {
+		hit <- soil$Data1[trimws(as.character(soil$Abbreviture)) == abbrev]
+		if (length(hit) == 0) return(NA_real_)
+		num(hit[1])
+	}
 
-	r1 <- carobiner::read.excel(f1)
-	r2a <- carobiner::read.excel(f2, sheet="Minimal")
-	r2b <- carobiner::read.excel(f2, sheet="Installation")
-	r2c <- carobiner::read.excel(f2, sheet="Material List")
-	r2d <- carobiner::read.excel(f2, sheet="Soil_analysis")
-	r2e <- carobiner::read.excel(f2, sheet="Weather_data")
-	r2f <- carobiner::read.excel(f2, sheet="Crop_management")
-	r2g <- carobiner::read.excel(f2, sheet="Var List")
-	r2h <- carobiner::read.excel(f2, sheet="Fieldbook")
-	r2i <- carobiner::read.excel(f2, sheet="Summary by clone")
-	r2j <- carobiner::read.excel(f2, sheet="Results all")
-	r3a <- carobiner::read.excel(f3, sheet="Minimal")
-	r3b <- carobiner::read.excel(f3, sheet="Installation")
-	r3c <- carobiner::read.excel(f3, sheet="Material List")
-	r3d <- carobiner::read.excel(f3, sheet="Soil_analysis")
-	r3e <- carobiner::read.excel(f3, sheet="Weather_data")
-	r3f <- carobiner::read.excel(f3, sheet="Crop_management")
-	r3g <- carobiner::read.excel(f3, sheet="Var List")
-	r3h <- carobiner::read.excel(f3, sheet="Fieldbook")
-	r3i <- carobiner::read.excel(f3, sheet="Summary by clone")
-	r3j <- carobiner::read.excel(f3, sheet="Results all")
+	files <- ff[grepl("Stability_Field.xls$", basename(ff))]
+	parts <- lapply(files, function(f) {
+		mini <- carobiner::read.excel(f, sheet="Minimal")
+		inst <- carobiner::read.excel(f, sheet="Installation")
+		mat <- carobiner::read.excel(f, sheet="Material List")
+		fb <- carobiner::read.excel(f, sheet="Fieldbook")
+		soil <- carobiner::read.excel(f, sheet="Soil_analysis")
 
-## select the variables of interest and assign them to the correct name
+		code <- trimws(as.character(mat[["Institutional number"]]))
+		vname <- gsub("\u00a0", " ", as.character(mat[["Clone or variety name"]]), fixed=TRUE)
+		vname <- trimws(vname)
+		vname[!nzchar(vname)] <- NA_character_
+		alias <- data.frame(variety_code=code, variety=vname, stringsAsFactors=FALSE)
+		alias <- alias[!duplicated(alias$variety_code), ]
 
-	d1 <- data.frame(
-		crop = tolower(r1[["Crop"]])
-	)
-##r1: "numeration", "Variable ID", "Variable name", "Variable label", "Variable synonyms", "Variable description", "Context of use", "Growth stage", "Variable status", "Variable Xref", "Institution", "Scientist", "Date", "Language", "Trait ID", "Trait name", "Trait class", "Trait description", "Trait synonyms", "Main trait abbreviation", "Alternative trait abbreviations", "Entity", "Attribute", "Trait status", "Trait Xref", "Method ID", "Method name", "Method class", "Method description", "Formula", "Method reference", "Scale ID", "Scale name", "Scale class", "Decimal places", "Lower limit", "Upper limit", "Scale Xref"
+		fb$variety_code <- trimws(as.character(fb$INSTN))
+		fb <- merge(fb, alias, by="variety_code", all.x=TRUE)
+		fb$variety[is.na(fb$variety)] <- fb$variety_code[is.na(fb$variety)]
 
+		tex <- trimws(as.character(soil$Data1[trimws(as.character(soil$Abbreviture)) == "STEX"]))
+		texture <- c("Franco arenoso"="sandy loam", "Franco"="loam")
+		if (!tex %in% names(texture)) stop("unexpected soil texture: ", tex)
 
-	d2a <- data.frame()
-##r2a: "Factor", "Value"
+		data.frame(
+			variety_code = fb$variety_code,
+			variety = fb$variety,
+			treatment = fb$variety,
+			rep = as.integer(fb$REP),
+			plot_id = as.character(fb$PLOT),
+			lab_sample_ = as.integer(fb$Sample),
+			country = one(mini, "Country"),
+			adm1 = one(mini, "Admin1"),
+			adm2 = one(mini, "Admin2"),
+			adm3 = one(mini, "Admin3"),
+			location = one(mini, "Locality"),
+			elevation = num(one(mini, "Elevation")),
+			latitude = num(one(mini, "Latitude")),
+			longitude = num(one(mini, "Longitude")),
+			planting_date = one(mini, "Begin date"),
+			harvest_date = one(mini, "End date"),
+			trial_id = paste(one(mini, "Site short name"), substr(one(mini, "Begin date"), 1, 4), sep="_"),
+			plot_area = num(one(inst, "Plot size (m2)")),
+			plant_spacing = num(one(inst, "Distance between plants (m)")) * 100,
+			row_spacing = num(one(inst, "Distance between rows (m)")) * 100,
+			seed_density = num(one(inst, "Planting density (plants/Ha)")),
+			tuber_dry_matter_ = num(fb$DM),
+			tuber_TP_dw_ = num(fb$TP_DW),
+			tuber_TP_fw_ = num(fb$TP_FW),
+			tuber_TA_dw_ = num(fb$TA_DW),
+			tuber_TA_fw_ = num(fb$TA_FW),
+			tuber_chlorogenic_dw_ = num(fb$CH_DW),
+			tuber_chlorogenic_fw_ = num(fb$CH_FW),
+			tuber_tryptophan_dw_ = num(fb$Trip_DW),
+			tuber_tryptophan_fw_ = num(fb$Trip_FW),
+			tuber_caffeic_dw_ = num(fb$CafAc_DW),
+			tuber_caffeic_fw_ = num(fb$CafAc_FW),
+			antcap_dw_ = num(fb$AntCap_DW),
+			antcap_fw_ = num(fb$AntCap_FW),
+			soil_pH = soil_val(soil, "SOILPH"),
+			soil_EC = soil_val(soil, "SOILEC"),
+			soil_CaCO3 = soil_val(soil, "CACO3") * 10,
+			soil_SOM = soil_val(soil, "ORGM"),
+			soil_N_total_ = soil_val(soil, "NITR"),
+			soil_P = soil_val(soil, "PHOS"),
+			soil_K = soil_val(soil, "POT"),
+			soil_sand = soil_val(soil, "SAND"),
+			soil_silt = soil_val(soil, "LIME"),
+			soil_clay = soil_val(soil, "CLAY"),
+			soil_texture = unname(texture[tex]),
+			soil_CEC = soil_val(soil, "SCEC"),
+			soil_Ca_exch = soil_val(soil, "EXCA2"),
+			soil_Mg_exch = soil_val(soil, "EXMG2"),
+			soil_K_exch = soil_val(soil, "EXK"),
+			soil_Na_exch = soil_val(soil, "EXNA"),
+			soil_ex_acidity = soil_val(soil, "AL3H"),
+			soil_BS = soil_val(soil, "BSAT"),
+			soil_Fe = soil_val(soil, "SOILFE"),
+			soil_Cu = soil_val(soil, "SOILCU"),
+			soil_Zn = soil_val(soil, "SOILZN"),
+			soil_B = soil_val(soil, "SOILB"),
+			soil_Mn = soil_val(soil, "SOILMN"),
+			stringsAsFactors = FALSE
+		)
+	})
 
+	d <- do.call(rbind, parts)
+	d$crop <- "potato"
+	d$geo_from_source <- TRUE
+	d$on_farm <- NA
+	d$is_survey <- FALSE
+	d$record_id <- seq_len(nrow(d))
 
-	d2b <- data.frame()
-##r2b: "Factor", "Value"
-
-
-	d2c <- data.frame(
-		variety = r2c[["Clone or variety name"]]
-	)
-##r2c: "Numeration", "Control", "Institutional number", "Code of clone", "Family Institutional number", "Female Institutional number", "Female code", "Male Institutional number", "Male code", "Seed source1", "References to silmultaneous trials", "References to previous trials", "Species acronym"
-
-
-	d2d <- data.frame()
-##r2d: "Variables", "Abbreviture", "Unit", "Data1", "Data2", "Data3", "Data4", "Data5", "Data6", "Data7", "Data8", "Data9", "Data10"
-
-
-	d2e <- data.frame(
-		year = r2e[["Year"]]
-	)
-##r2e: "Day", "Month", "Time", "Intervale time", "Rainfall (mm)", "Average temperature (°C)", "Relative humidity (%)", "Dew point (°C)", "Solar Radiation (w/m2)", "Temperature Soil 1", "Temperature Soil 2", "Temperature Soil 3", "Temperature Soil 4", "Water Content 1", "Water Content 2", "Water Content 3", "Water Content 4"
-
-
-	d2f <- data.frame()
-##r2f: "Intervention category", "Intervention type", "Date", "Operator", "Observations", "Active Ingredient", "Product concentration", "Dose of application", "Uncertainty of Measurement"
-
-
-	d2g <- data.frame()
-##r2g: "Factor.Variables", "Abbreviations", "Fieldbook", "Summarize", "Analyze", "Selection direction", "Selection weight"
-
-
-	d2h <- data.frame(
-		plot_id = r2h[["PLOT"]],
-		rep = r2h[["REP"]]
-	)
-##r2h: "INSTN", "Sample", "Code Laboratory", "DM", "TP_DW", "TP_FW", "TA_DW", "TA_FW", "CH_DW", "CH_FW", "Trip_DW", "Trip_FW", "CafAc_DW", "CafAc_FW", "AntCap_DW", "AntCap_FW"
-
-
-	d2i <- data.frame(
-		N_fertilizer = r2i[["n"]]
-	)
-##r2i: "INSTN", "AntCap_FW_Mean", "AntCap_FW_SD", "AntCap_DW_Mean", "AntCap_DW_SD", "Trip_FW_Mean", "Trip_FW_SD", "Trip_DW_Mean", "Trip_DW_SD", "CafAc_FW_Mean", "CafAc_FW_SD", "CafAc_DW_Mean", "CafAc_DW_SD", "CH_FW_Mean", "CH_FW_SD", "CH_DW_Mean", "CH_DW_SD", "TA_FW_Mean", "TA_FW_SD", "TA_DW_Mean", "TA_DW_SD", "TP_FW_Mean", "TP_FW_SD", "TP_DW_Mean", "TP_DW_SD", "DM_Mean", "DM_SD"
-
-
-	d2j <- data.frame(
-		location = r2j[["Total phenolic compounds (CFT), total anthocyanin, chlorogenic acid, cafeic acid and tryptophan concentration and antioxidant capacity of 8 native potato varieties in 5 locations"]]
-	)
-##r2j: "...2", "...3", "...4", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "...12", "...13", "...14", "...15"
-
-
-	d3a <- data.frame()
-##r3a: "Factor", "Value"
-
-
-	d3b <- data.frame()
-##r3b: "Factor", "Value"
-
-
-	d3c <- data.frame(
-		variety = r3c[["Clone or variety name"]]
-	)
-##r3c: "Numeration", "Control", "Institutional number", "Code of clone", "Family Institutional number", "Female Institutional number", "Female code", "Male Institutional number", "Male code", "Seed source1", "References to silmultaneous trials", "References to previous trials", "Species acronym"
-
-
-	d3d <- data.frame()
-##r3d: "Variables", "Abbreviture", "Unit", "Data1", "Data2", "Data3", "Data4", "Data5", "Data6", "Data7", "Data8", "Data9", "Data10"
-
-
-	d3e <- data.frame(
-		year = r3e[["Year"]]
-	)
-##r3e: "Day", "Month", "Time", "Intervale time", "Rainfall (mm)", "Average temperature (°C)", "Relative humidity (%)", "Dew point (°C)", "Solar Radiation (w/m2)", "Temperature Soil 1", "Temperature Soil 2", "Temperature Soil 3", "Temperature Soil 4", "Water Content 1", "Water Content 2", "Water Content 3", "Water Content 4"
-
-
-	d3f <- data.frame()
-##r3f: "Intervention category", "Intervention type", "Date", "Operator", "Observations", "Active Ingredient", "Product concentration", "Dose of application", "Uncertainty of Measurement"
-
-
-	d3g <- data.frame()
-##r3g: "Factor.Variables", "Abbreviations", "Fieldbook", "Summarize", "Analyze", "Selection direction", "Selection weight"
-
-
-	d3h <- data.frame(
-		plot_id = r3h[["PLOT"]],
-		rep = r3h[["REP"]]
-	)
-##r3h: "INSTN", "Sample", "Code Laboratory", "DM", "TP_DW", "TP_FW", "TA_DW", "TA_FW", "CH_DW", "CH_FW", "Trip_DW", "Trip_FW", "CafAc_DW", "CafAc_FW", "AntCap_DW", "AntCap_FW"
-
-
-	d3i <- data.frame(
-		N_fertilizer = r3i[["n"]]
-	)
-##r3i: "INSTN", "AntCap_FW_Mean", "AntCap_FW_SD", "AntCap_DW_Mean", "AntCap_DW_SD", "Trip_FW_Mean", "Trip_FW_SD", "Trip_DW_Mean", "Trip_DW_SD", "CafAc_FW_Mean", "CafAc_FW_SD", "CafAc_DW_Mean", "CafAc_DW_SD", "CH_FW_Mean", "CH_FW_SD", "CH_DW_Mean", "CH_DW_SD", "TA_FW_Mean", "TA_FW_SD", "TA_DW_Mean", "TA_DW_SD", "TP_FW_Mean", "TP_FW_SD", "TP_DW_Mean", "TP_DW_SD", "DM_Mean", "DM_SD"
-
-
-	d3j <- data.frame(
-		location = r3j[["Total phenolic compounds (CFT), total anthocyanin, chlorogenic acid, cafeic acid and tryptophan concentration and antioxidant capacity of 8 native potato varieties in 5 locations"]]
-	)
-##r3j: "...2", "...3", "...4", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "...12", "...13", "...14"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

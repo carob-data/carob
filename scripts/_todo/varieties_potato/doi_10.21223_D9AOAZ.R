@@ -1,8 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Late blight field experiment at Comas, Junin. The title gives the place. The files do not name the country.
+# Late blight scores LB1 to LB19 and canopy cover are repeated measurements. Dates come from the evaluation-date files.
+# Canopy cover is a percentage in the variable name (Canopy cover using grid in percentage). A cell with only a dot is missing.
+# AUDPC in the file is 3.9 to 80 and rAUDPC is 0.039 to 0.80, which matches the AUDPC and rAUDPC terms.
+# Fresh biomass is grams per plot and grams per plant, and plot dry matter is grams per plot, from the biomass date file.
+# Emergence is the Emergency_date 1999-01-28. That spelling is the column name in the canopy date file.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No coordinates. Comas needs georeferencing.
+# Frequency is 0, 4, 7, or 14. The files do not say what was applied.
+# TBDMt_ha is named like t/ha, but the date file describes that abbreviation as dry matter per plant. The number is stored as biomass_dm_recorded_ and is not used as yield.
+# No fertilizer rate and no planting or harvest date.
+# The daily weather file does not state units, so it is not in the weather table.
+# AUDPC scale is not stated.
+# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: frequency_, scale_r_, biomass_fresh_g_plot_, biomass_fresh_g_plant_, biomass_dm_g_plot_, biomass_dm_recorded_.
+
+## NOT PROCESSED
+# 03-DailyWeather-Data-Comas.xlsx: daily weather with no units.
+# Scale is not applied to the late blight scores.
 
 
 carob_script <- function(path) {
@@ -13,168 +31,131 @@ Dataset for: Effect of potato late blight in the field in Comas - Junin
 These datasets correspond to the field experiments in Comas.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/D9AOAZ"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety;frequency_",
+		response_vars = "disease_severity",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 45,
+		carob_effort = 0.55
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Data_LateBlightSeverity_Comas.xlsx"]
-	f2 <- ff[basename(ff) == "02_LateBlight_Evaluation_date-Comas.xls"]
-	f3 <- ff[basename(ff) == "03-DailyWeather-Data-Comas.xlsx"]
-	f4 <- ff[basename(ff) == "04_TotalYield_Comas.xls"]
-	f5 <- ff[basename(ff) == "05_Evaluation_date_Total biomass dry matter content_Comas.xls"]
-	f6 <- ff[basename(ff) == "06_Data_Canopy_cover_Comas.xls"]
-	f7 <- ff[basename(ff) == "07_canopy_evaluation_days_Comas-1.xls"]
+	f <- ff[grepl("01_Data_LateBlight", basename(ff))]
+	r <- carobiner::read.excel(f, na=c("", "NA"))
+	names(r) <- trimws(names(r))
+	variety <- trimws(as.character(r$Variety))
+	freq <- as.character(r$Frequency)
+	plot_id <- paste(variety, freq, r$Repetition, sep="_")
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
-	r7 <- carobiner::read.excel(f7)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		rep = r1[["Repetition"]],
-		variety = r1[["Variety"]]
+	d <- data.frame(
+		trial_id = "Comas_1999",
+		adm1 = "Junin",
+		location = "Comas",
+		crop = "potato",
+		variety = variety,
+		frequency_ = freq,
+		treatment = paste(variety, freq, sep="_"),
+		rep = as.integer(r$Repetition),
+		plot_id = plot_id,
+		AUDPC = as.numeric(r$AUDPC),
+		rAUDPC = as.numeric(r$RAUDPC),
+		scale_r_ = as.character(r[["Scale R"]]),
+		stress = "disease",
+		emergence_date = "1999-01-28",
+		on_farm = FALSE,
+		is_survey = FALSE,
+		geo_from_source = FALSE,
+		stringsAsFactors = FALSE
 	)
-##r1: "Frequency", "LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB8", "LB9", "LB10", "LB11", "LB12", "LB13", "LB14", "LB15", "LB16", "LB17", "LB18", "LB19", "AUDPC", "RAUDPC", "Scale R"
 
+	iso <- function(x) as.character(as.Date(x))
+	fd <- ff[grepl("02_LateBlight_Evaluation", basename(ff))]
+	rd <- carobiner::read.excel(fd)
+	lb_date <- iso(rd$Evaluation_date[match(paste0("LB", seq_len(19)), trimws(rd$Abbreviation))])
 
-	d2 <- data.frame()
-##r2: "Abbreviation", "Evaluation_date", "Variable name", "Id ontology"
+	parts <- vector("list", 19)
+	for (i in seq_len(19)) {
+		parts[[i]] <- data.frame(
+			plot_id = plot_id,
+			date = lb_date[i],
+			disease_severity = as.character(r[[paste0("LB", i)]]),
+			ground_cover = NA_real_,
+			biomass_fresh_g_plot_ = NA_real_,
+			biomass_fresh_g_plant_ = NA_real_,
+			biomass_dm_g_plot_ = NA_real_,
+			biomass_dm_recorded_ = NA_real_,
+			stringsAsFactors = FALSE
+		)
+	}
 
+	fc <- ff[grepl("06_Data_Canopy", basename(ff))]
+	rc <- carobiner::read.excel(fc, na=c("", "NA"))
+	names(rc) <- trimws(names(rc))
+	fcd <- ff[grepl("07_canopy", basename(ff))]
+	rcd <- carobiner::read.excel(fcd)
+	cc_names <- paste0("CC_G_Et_%_", seq_len(13))
+	cc_date <- iso(rcd$Evaluation_date_CCG[match(cc_names, trimws(as.character(rcd$Abbreviation)))])
+	cc_id <- paste(trimws(as.character(rc$Variety)), as.character(rc$Frequency), rc$Repetition, sep="_")
+	cc_num <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x %in% c(".", "-", "NA")] <- NA_character_
+		as.numeric(x)
+	}
+	for (i in seq_along(cc_names)) {
+		parts[[length(parts) + 1]] <- data.frame(
+			plot_id = cc_id,
+			date = cc_date[i],
+			disease_severity = NA_character_,
+			ground_cover = cc_num(rc[[cc_names[i]]]),
+			biomass_fresh_g_plot_ = NA_real_,
+			biomass_fresh_g_plant_ = NA_real_,
+			biomass_dm_g_plot_ = NA_real_,
+			biomass_dm_recorded_ = NA_real_,
+			stringsAsFactors = FALSE
+		)
+	}
 
-	d3 <- data.frame()
-##r3: "Numeration", "DAE", "Date", "Prec", "Tmin", "Tmax", "Tm", "Tavg", "WetTmp", "RH90", "Rhmax", "Rhmin", "Rhavg", "ETP", "PAR"
-
-
-	d4 <- data.frame(
-		rep = r4[["Repetition"]],
-		variety = r4[["Variety"]],
-		treatment = r4[["Treatment"]],
-		plot_id = r4[["TBFw_Cp_gplot"]]
+	fy <- ff[grepl("04_TotalYield", basename(ff))]
+	ry <- carobiner::read.excel(fy, na=c("", "NA"))
+	names(ry) <- trimws(names(ry))
+	when <- c(
+		"Inicio" = "1999-01-28",
+		"1ra evaluacion" = "1999-02-25",
+		"2da evaluacion" = "1999-03-24",
+		"3ra evaluacion" = "1999-04-14",
+		"4ta evaluacion" = "1999-05-06"
 	)
-##r4: "Date-evaluation", "Frequency", "Number_plants", "TBFw_Cp_gplant", "TBDMC_Cp_gplot", "TBDMt_ha"
-
-
-	d5 <- data.frame()
-##r5: "Numeration", "Abbreviation", "Date", "Variable_name", "Id ontology"
-
-
-	d6 <- data.frame(
-		rep = r6[["Repetition"]],
-		variety = r6[["Variety"]]
+	lab <- trimws(as.character(ry[["Date-evaluation"]]))
+	if (any(!lab %in% names(when))) stop("unmapped biomass date")
+	yid <- paste(trimws(as.character(ry$Variety)), as.character(ry$Frequency), ry$Repetition, sep="_")
+	parts[[length(parts) + 1]] <- data.frame(
+		plot_id = yid,
+		date = unname(when[lab]),
+		disease_severity = NA_character_,
+		ground_cover = NA_real_,
+		biomass_fresh_g_plot_ = as.numeric(ry$TBFw_Cp_gplot),
+		biomass_fresh_g_plant_ = as.numeric(ry$TBFw_Cp_gplant),
+		biomass_dm_g_plot_ = as.numeric(ry$TBDMC_Cp_gplot),
+		biomass_dm_recorded_ = as.numeric(ry$TBDMt_ha),
+		stringsAsFactors = FALSE
 	)
-##r6: "Frequency", "CC_G_Et_%_1", "CC_G_Et_%_2", "CC_G_Et_%_3", "CC_G_Et_%_4", "CC_G_Et_%_5", "CC_G_Et_%_6", "CC_G_Et_%_7", "CC_G_Et_%_8", "CC_G_Et_%_9", "CC_G_Et_%_10", "CC_G_Et_%_11", "CC_G_Et_%_12", "CC_G_Et_%_13"
 
+	dlong <- do.call(rbind, parts)
+	dlong$trial_id <- "Comas_1999"
+	keep <- !(is.na(dlong$disease_severity) & is.na(dlong$ground_cover) & is.na(dlong$biomass_fresh_g_plot_) & is.na(dlong$biomass_dm_g_plot_) & is.na(dlong$biomass_dm_recorded_))
+	dlong <- dlong[keep, ]
+	dlong <- dlong[order(dlong$plot_id, dlong$date), ]
+	rownames(dlong) <- NULL
 
-	d7 <- data.frame()
-##r7: "Numeration", "Abbreviation", "Variable_name", "Number_evaluation_days", "Evaluation_date_CCG", "ID Ontology"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

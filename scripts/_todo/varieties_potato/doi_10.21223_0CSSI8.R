@@ -1,8 +1,25 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Heat-tolerance yield trial at Ladol, Gujarat, India. The Minimal sheet gives the site, coordinates, elevation, and RCBD.
+# Crop management: planted 2010-10-15, vines killed 2011-01-12, harvested 2011-01-27.
+# Installation: plot 2.4 m2, 0.20 m between plants, 0.60 m between rows.
+# TTWP is kg/plot. 10.11 kg on 2.4 m2 is 42.1 t/ha, which matches TTYNA. TTYA is the adjusted total tuber yield in t/ha, so yield is TTYA * 1000.
+# MTYA is marketable tuber yield on the same scale.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No fertilizer rate and no irrigation statement in the crop-management sheet.
+# No yield moisture.
+# Weather, soil, and score sheets are not in the plot table.
+# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+
+## NOT PROCESSED
+# Soil_analysis, Hobo_data, Weather_data: site weather and soil, not plot yields.
+# Summary by clone, Charts, Ranks by Clone, Fieldbook_backup, 2010-11, serial wise clone name: summaries or working sheets.
+# Var List and 03_Data_dictionary.txt: column definitions. The dictionary does not state units.
+# Crop_management rows that only name the measurements already in the fieldbook.
+# NTP, NPH, PPH, NoMTWP, TTWP, TTWPL, TTYNA, MTWP, MTYNA: used to check units or left as plot counts. NPH is used for plant_density.
 
 
 carob_script <- function(path) {
@@ -13,206 +30,73 @@ Dataset for: Assessment of Heat-Tolerant Potato Varieties in India (2010)
 Trials featuring heat-tolerant potato varieties were conducted in South West Central Asia (SWCA),  in Ladol, India, during the year 2010. In this study, 16 potato clones were evaluated using a randomized complete block design (RCBD) with three repetitions
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/0CSSI8"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "Randomized Complete Block Design (RCBD)",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield;yield_marketable",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 60,
+		carob_effort = 0.45
 	)
-	
 
-	f1 <- ff[basename(ff) == "PTYL201010_LADOL.xls"]
-	f2 <- ff[basename(ff) == "01_Fieldbook_PTYL201010_LADOL.txt"]
-	f3 <- ff[basename(ff) == "02_Material_list_PTYL201010_LADOL.txt"]
-	f4 <- ff[basename(ff) == "03_Data_dictionary.txt"]
+	f <- ff[basename(ff) == "PTYL201010_LADOL.xls"]
+	r <- carobiner::read.excel(f, sheet="Fieldbook", na="NA")
+	names(r) <- trimws(names(r))
+	ml <- carobiner::read.excel(f, sheet="Material List", na="NA")
+	names(ml) <- trimws(names(ml))
 
-	r1a <- carobiner::read.excel(f1, sheet="Minimal")
-	r1b <- carobiner::read.excel(f1, sheet="Installation")
-	r1c <- carobiner::read.excel(f1, sheet="Material List")
-	r1d <- carobiner::read.excel(f1, sheet="Soil_analysis")
-	r1e <- carobiner::read.excel(f1, sheet="Hobo_data")
-	r1f <- carobiner::read.excel(f1, sheet="Weather_data")
-	r1g <- carobiner::read.excel(f1, sheet="Crop_management")
-	r1h <- carobiner::read.excel(f1, sheet="Var List")
-	r1i <- carobiner::read.excel(f1, sheet="Fieldbook")
-	r1j <- carobiner::read.excel(f1, sheet="Fieldbook_backup")
-	r1k <- carobiner::read.excel(f1, sheet="Summary by clone")
-	r1l <- carobiner::read.excel(f1, sheet="Charts")
-	r1m <- carobiner::read.excel(f1, sheet="Ranks by Clone")
-	r1n <- carobiner::read.excel(f1, sheet="2010-11")
-	r1o <- carobiner::read.excel(f1, sheet="serial wise clone name")
-	#r2 <- read.???(f2)
-	#r3 <- read.???(f3)
-	#r4 <- read.???(f4)
+	instn <- trimws(as.character(r$INSTN))
+	vname <- trimws(as.character(ml[["Clone or variety name"]]))
+	vname[!nzchar(vname)] <- NA_character_
+	key <- trimws(as.character(ml[["Institutional number"]]))
+	nm <- vname[match(instn, key)]
+	variety <- ifelse(is.na(nm), instn, nm)
+	female <- trimws(as.character(ml[["Female code"]]))
+	female[!nzchar(female)] <- NA_character_
+	male <- trimws(as.character(ml[["Male code"]]))
+	male[!nzchar(male)] <- NA_character_
 
-## select the variables of interest and assign them to the correct name
-
-	d1a <- data.frame()
-##r1a: "Factor", "Value"
-
-
-	d1b <- data.frame()
-##r1b: "Factor", "Value"
-
-
-	d1c <- data.frame(
-		variety = r1c[["Clone or variety name"]]
+	d <- data.frame(
+		trial_id = "Ladol_2010",
+		crop = "potato",
+		variety = variety,
+		variety_code = instn,
+		treatment = variety,
+		female_parent = female[match(instn, key)],
+		male_parent = male[match(instn, key)],
+		rep = as.integer(r$REP),
+		plot_id = as.character(r$PLOT),
+		yield = as.numeric(r$TTYA) * 1000,
+		yield_marketable = as.numeric(r$MTYA) * 1000,
+		yield_part = "tubers",
+		plot_area = 2.4,
+		plant_spacing = 20,
+		row_spacing = 60,
+		plant_density = as.numeric(r$NPH) / 2.4 * 10000,
+		country = "India",
+		adm1 = "Gujarat",
+		adm2 = "Mahesana",
+		location = "Ladol",
+		elevation = 118,
+		latitude = 23.6167,
+		longitude = 72.733,
+		planting_date = "2010-10-15",
+		harvest_date = "2011-01-27",
+		on_farm = FALSE,
+		is_survey = FALSE,
+		geo_from_source = TRUE,
+		stringsAsFactors = FALSE
 	)
-##r1c: "Numeration", "Control", "Institutional number", "Code of clone", "Family Institutional number", "Female Institutional number", "Female code", "Male Institutional number", "Male code", "Seed source1", "References to silmultaneous trials", "References to previous trials"
 
-
-	d1d <- data.frame()
-##r1d: "Variables", "Abbreviture", "Unit", "Data1", "Data2", "Data3", "Data4", "Data5", "Data6", "Data7", "Data8", "Data9", "Data10"
-
-
-	d1e <- data.frame()
-##r1e: "Date", "Hour of weather observation", "Temperature °C", "Relative humidity (%)"
-
-
-	d1f <- data.frame()
-##r1f: "Date of weather observation", "Hour of weather observation", "Rainfall (mm)", "Average temperature (°C)", "Minimum temperature (°C)", "Maximum temperature (°C)", "Temperature amplitude °C", "Humidity (%) Min", "Humidity (%) Max", "Relative humidity (%)", "Solar Radiation (w/m2)", "Barometric Pressure (mm)", "Dew point (°C)", "Wind speed (m/s)", "Gust speed", "Wind direction"
-
-
-	d1g <- data.frame()
-##r1g: "Intervention category", "Intervention type", "Date", "Operator", "Observations", "Active Ingredient", "Product concentration", "Dose of application", "Uncertainty of Measurement"
-
-
-	d1h <- data.frame()
-##r1h: "Factor.Variables", "Abbreviations", "Fieldbook", "Summarize", "Analyze", "Selection direction", "Selection weight", "Min....8", "1st Qu....9", "Median...10", "Mode...11", "3rd Qu....12", "Max....13", "Mean...14", "St.Dev....15", "N Valid...16", "N Miss....17", "Min....18", "1st Qu....19", "Median...20", "Mode...21", "3rd Qu....22", "Max....23", "Mean...24", "St.Dev....25", "N Valid...26", "N Miss....27"
-
-
-	d1i <- data.frame(
-		plot_id = r1i[["PLOT"]],
-		rep = r1i[["REP"]]
-	)
-##r1i: "INSTN", "NTP", "NPH", "PPH", "NoMTWP", "TTWP", "TTWPL", "TTYA", "TTYNA", "MTWP", "MTYA", "MTYNA"
-
-
-	d1j <- data.frame(
-		plot_id = r1j[["PLOT"]],
-		rep = r1j[["REP"]]
-	)
-##r1j: "INSTN", "NTP", "NPH", "PPH", "NoMTWP", "TTWP", "TTWPL", "TTYA", "TTYNA", "MTWP", "MTYA", "MTYNA"
-
-
-	d1k <- data.frame()
-##r1k: "INSTN", "NPH_n", "NPH_Mean", "NPH_sd", "PPH_n", "PPH_Mean", "PPH_sd", "NoMTWP_n", "NoMTWP_Mean", "NoMTWP_sd", "TTWP_n", "TTWP_Mean", "TTWP_sd", "TTWPL_n", "TTWPL_Mean", "TTWPL_sd", "TTYA_n", "TTYA_Mean", "TTYA_sd", "TTYNA_n", "TTYNA_Mean", "TTYNA_sd", "MTWP_n", "MTWP_Mean", "MTWP_sd", "MTYA_n", "MTYA_Mean", "MTYA_sd", "MTYNA_n", "MTYNA_Mean", "MTYNA_sd"
-
-
-	d1l <- data.frame()
-
-
-	d1m <- data.frame()
-##r1m: "INSTN", "TTYA_Mean", "TTYNA_Mean", "TTYA_Rank", "TTYNA_Rank", "RSS", "SWD", "EIM"
-
-
-	d1n <- data.frame(
-		plot_id = r1n[["NMTY/plot"]]
-	)
-##r1n: "...1", "...2", "...3", "...4", "MTY/plot", "...7", "...8", "...9", "...10"
-
-
-	d1o <- data.frame()
-##r1o: "For 2009-10-1", "...2", "...3", "...4", "...5", "...6", "For 2009-10-2", "...8", "...9", "...10", "...11", "For 2010-11", "...13", "...14", "...15"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

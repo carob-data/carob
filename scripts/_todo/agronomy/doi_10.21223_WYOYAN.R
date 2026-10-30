@@ -1,8 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Conservation-agriculture potato trial at Licame, Chugay, Sánchez Carrión, La Libertad, Peru. Variety INIA-325 Poderosa.
+# The dictionary states FTY and MTY in t ha-1. Yield and yield_marketable are those columns times 1000. DMCt is tuber dry matter in percent.
+# The abstract gives plots of 3 x 4 m and spacing of 0.3 m between plants and 1 m between furrows. Spacing is stored in cm.
+# The dataset geographic coverage is one west longitude and one south latitude.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# The abstract gives the season as 23 October 2023 to 15 April 2024. Those dates are not labeled planting and harvest.
+# No fertilizer rate and no irrigation statement.
+# Benefit-cost ratio and carbon footprint are in the yield file. The columns were not mapped because the dictionary was not used to separate CF, CF_ha, and CF_ton.
+# Soil moisture, soil temperature, decomposition, and soil analysis are repeated or laboratory tables and are not in the plot table.
+# The data include minimum tillage as well as conventional and zero tillage, and a mulch level of 0. The abstract names conventional and zero tillage and mulch of 10, 20, and 30 cm.
+# mulch in the vocabulary is kg/ha. The factor here is thickness in cm, so it is not stored as mulch.
+# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: tillage_ (age?). unknown variable: mulch_thickness_ (mulch?). unknown variables: plastic_, dry_matter_percent_.
+
+## NOT PROCESSED
+# 1_Harvest: tuber weights in kg per inner plot. FTY is the per-area yield.
+# 4_Descomposition rate, 5_Gravimetric soil moisture, 6_Soil temperature, 7_Soil analysis.
+# Design Schematic_AC.xlsx: a layout sheet.
+# BCR, CF, CF_ha, CF_ton.
 
 
 carob_script <- function(path) {
@@ -13,191 +31,63 @@ Dataset for: Conservation agriculture trial in the locality of Licame, Chugay di
 An experimental potato trial based on conservation agriculture in the second season (October 23rd, 2023 to April 15th, 2024) was conducted in a total area of 987 m2 with the support of the 'Asociación de Productores Agropecuarios Mi Licame Unido' of the locality of Licame, district of Chugay, province of Sánchez Carrión, La Libertad. For this trial, the improved potato variety INIA-325 Poderosa was used with a split-plit plot design considering three factors: tillage (conventional and zero tillage), plastic barriers (with and without barrier) and amount of oat/barley of mulching (10, 20 and 30 cm thickness). The combination of these factors generated a total of 12 treatments; and an additional control treatment (conventional practices in the area). Four replicates were established, with a total of 52 plots of 3x4 m2 each (distance between plant and furrow of 0.3 m and 1 m, respectively). The variables evaluated were: fresh tuber yield (t ha-1), cost-benefit ratio, carbon footprint (kg CO2e Total), descompositio rate, soil moisture (%), soil temperature (°C) and soil analysis at different times during the vegetative period of the crop.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/WYOYAN"
 	group <- "agronomy"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; Pataz Association - AP",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
-		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		design = "split-split plot",
+		data_type = "experiment",
+		treatment_vars = "tillage_;plastic_;mulch_thickness_",
+		response_vars = "yield;yield_marketable",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 40,
+		carob_effort = 0.45
 	)
-	
 
-	f1 <- ff[basename(ff) == "1_Harvest LI2.xlsx"]
-	f2 <- ff[basename(ff) == "2_Yield-BCR-CF LI2.xlsx"]
-	f3 <- ff[basename(ff) == "3_Dry matter of tubers LI2.xlsx"]
-	f4 <- ff[basename(ff) == "4_Descomposition rate LI2.xlsx"]
-	f5 <- ff[basename(ff) == "5_Gravimetric soil moisture LI2.xlsx"]
-	f6 <- ff[basename(ff) == "6_Soil temperature LI2.xlsx"]
-	f7 <- ff[basename(ff) == "7_Soil analysis LI2.xlsx"]
-	f8 <- ff[basename(ff) == "8_Data_Dictionary LI2.xlsx"]
-	f9 <- ff[basename(ff) == "Design Schematic_AC.xlsx"]
-	f10 <- ff[basename(ff) == "Licame S2.jpg"]
+	fy <- ff[grepl("^2_Yield", basename(ff))]
+	fd <- ff[grepl("^3_Dry", basename(ff))]
+	y <- carobiner::read.excel(fy, na=c("", "NA"))
+	dm <- carobiner::read.excel(fd, na=c("", "NA"))
+	names(y) <- trimws(names(y))
+	names(dm) <- trimws(names(dm))
+	dmc <- dm$DMCt[match(y$ID, dm$ID)]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
-	r7 <- carobiner::read.excel(f7)
-	r8 <- carobiner::read.excel(f8)
-	r9 <- carobiner::read.excel(f9)
-	#r10 <- read.???(f10)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		plot_id = r1[["Plot"]],
-		treatment = r1[["Treatment"]]
+	d <- data.frame(
+		trial_id = "Licame_2023",
+		country = "Peru",
+		adm1 = "La Libertad",
+		adm2 = "Sánchez Carrión",
+		adm3 = "Chugay",
+		location = "Licame",
+		# dataset geographic coverage: one west longitude and one south latitude
+		latitude = -7.76,
+		longitude = -77.85,
+		geo_from_source = TRUE,
+		crop = "potato",
+		variety = "INIA-325 Poderosa",
+		treatment = trimws(as.character(y$Code)),
+		tillage_ = trimws(as.character(y$TT_f1)),
+		plastic_ = trimws(as.character(y$PB_f2)),
+		mulch_thickness_ = trimws(as.character(y$M_f3)),
+		rep = as.integer(y$Block),
+		plot_id = as.character(y$ID),
+		plot_area = 3 * 4,
+		plant_spacing = 0.3 * 100,
+		row_spacing = 1 * 100,
+		yield = as.numeric(y$FTY) * 1000,
+		yield_marketable = as.numeric(y$MTY) * 1000,
+		yield_part = "tubers",
+		dry_matter_percent_ = as.numeric(dmc),
+		on_farm = TRUE,
+		is_survey = FALSE,
+		stringsAsFactors = FALSE
 	)
-##r1: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "MT_f3", "dap", "MTW", "NoMTW", "WDT", "nMTW", "nNoMTW", "nWDT", "nPH", "Tub_Unif"
 
-
-	d2 <- data.frame(
-		plot_id = r2[["Plot"]],
-		treatment = r2[["Treatment"]]
-	)
-##r2: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "M_f3", "FTY", "MTY", "BCR", "CF", "CF_ha", "CF_ton"
-
-
-	d3 <- data.frame(
-		plot_id = r3[["Plot"]],
-		treatment = r3[["Treatment"]]
-	)
-##r3: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "MT_f3", "dap", "FWt", "DWt", "DMCt"
-
-
-	d4 <- data.frame(
-		plot_id = r4[["Plot"]],
-		treatment = r4[["Treatment"]]
-	)
-##r4: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "MT_f3", "dap", "ITB_1", "ITB_2", "ITB_3", "FTB_1", "FTB_2", "FTB_3", "BRT", "DR", "...20", "...21", "...22"
-
-
-	d5 <- data.frame(
-		plot_id = r5[["Plot"]],
-		treatment = r5[["Treatment"]]
-	)
-##r5: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "MT_f3", "dap", "Hg"
-
-
-	d6 <- data.frame()
-##r6: "ID", "Date", "Time", "ST_25_M30", "ST_25_WM", "ST_0_M30", "ST_10_WM", "ST_10_M30", "Ta", "RH", "PP"
-
-
-	d7 <- data.frame(
-		plot_id = r7[["Plot"]],
-		treatment = r7[["Treatment"]],
-		P_fertilizer = r7[["P"]],
-		K_fertilizer = r7[["K"]]
-	)
-##r7: "ID", "Block", "Sub-Plot", "Sub-Sub-Plot", "Code", "TT_f1", "PB_f2", "MT_f3", "dap", "pH", "EC", "CaCO3", "OM1", "Sand", "Silt", "Clay", "TC", "CEC", "Ca2+", "Mg2+", "K+", "Na+", "Al+3 + H+3", "Scat", "Sbas", "Bsat", "BD", "Clevel A", "OClevel A", "OM2level A", "Nlevel A", "Clevel B", "OClevel B", "OM2level B", "Nlevel B"
-
-
-	d8 <- data.frame()
-##r8: "Variable name", "Abbreviation", "Unit", "Description", "Method", "Formula", "Reference"
-
-
-	d9 <- data.frame()
-##r9: "EXPERIMENTAL DESIGN OF CONSERVATION AGRICULTURE TRIAL AT LÍCAME-CHUGAY 2023-2024", "...2", "...3", "...4", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "...12", "...13", "...14", "...15", "...16", "...17", "...18", "...19", "...20", "...21", "...22", "...23", "...24", "...25", "...26"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

@@ -1,9 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
+## NOTES
+# Rows are the Boiling sheet. Cooking time is minutes.
+# Flavor AVG and texture AVG are kept under tuber_flavor and tuber_texture when they are numeric. The vocabulary scale is 1-5.
+# Country Peru is the dataset geographic coverage. The sheet has no location, so the La Molina and Huancayo boxes are not assigned to rows.
 
+## ISSUES
+# No yield, fertilizer, or dates. The metadata spans 2000-2016 and is not one planting date.
+# Sites need georeferencing. Two places are named in the metadata and are not linked to rows.
+# Rows with a blank clone were removed.
+# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: unknown variables: cooking_time_, cooking_type_, cooking_darkening_, flesh_color_cooked_, cooking_class_.
+
+## NEW VARIABLES
+# cooking_time_: minutes
+# cooking_type_: cooking type or quality text
+# cooking_darkening_: after-cooking darkening text
+# flesh_color_cooked_: flesh color after cooking
+# cooking_class_: classification text
 
 carob_script <- function(path) {
 
@@ -13,132 +28,65 @@ Dataset for:  Standard evaluation trial  for cooking quality documentation of CI
 The primary objective of evaluating post-harvest traits is obtain information about the potential or aptitude of  advanced clones for diverse end-uses, ranging from fresh consumption to processed products. The interpretation of these evaluations provides important information to guide potato breeding and selection programs, as well as for the recommendation of varieties for specific uses. Therefore, CIP has adopted standard procedure for determining cooking quality for evaluation of advanced clonal selections. Variables such as  cooking time, cooking type/quality, darkening and flesh color were evaluated for each clone. In addition if a taste panel is available taste and texture is are assessed. The clones are classified as: slightly soggy, moderately soggy  and very mealy.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/P3/RM1D5W"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "cooking_time_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 55,
+		carob_effort = 0.3
 	)
-	
 
-	f1 <- ff[basename(ff) == "Standard Evaluation Trial for cooking quality Data.xls"]
-	f2 <- ff[basename(ff) == "Standard Evaluation Trial for cooking quality Dictionary.xls"]
+	f <- ff[basename(ff) == "Standard Evaluation Trial for cooking quality Data.xls"]
+	r <- carobiner::read.excel(f, sheet="Boiling")
+	txt <- function(x) {
+		y <- trimws(as.character(x))
+		y[!nzchar(y) | y %in% c("NA")] <- NA_character_
+		y
+	}
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		variety = r1[["Clone"]],
-		soil_texture = tolower(r1[["Texture of tuber after cooking AVG"]])
+	d <- data.frame(
+		crop = "potato",
+		variety = txt(r$Clone),
+		treatment = txt(r$Clone),
+		cooking_time_ = {
+			y <- txt(r[["Cooking Time (minutes)"]])
+			y[y %in% c("NA", ".", "-")] <- NA_character_
+			as.numeric(y)
+		},
+		cooking_type_ = txt(r[["Cooking Type/Quality"]]),
+		cooking_darkening_ = txt(r[["After cooking darkening"]]),
+		flesh_color_cooked_ = txt(r[["Flesh Color after cooking"]]),
+		tuber_flavor = {
+			y <- txt(r[["Flavor AVG"]])
+			y[y %in% c("NA", ".", "-")] <- NA_character_
+			as.numeric(y)
+		},
+		tuber_texture = {
+			y <- txt(r[["Texture of tuber after cooking AVG"]])
+			y[y %in% c("NA", ".", "-")] <- NA_character_
+			as.numeric(y)
+		},
+		cooking_class_ = txt(r$Classification),
+		country = "Peru",
+		trial_id = txt(r$Set),
+		on_farm = NA,
+		is_survey = FALSE,
+		irrigated = NA,
+		stringsAsFactors = FALSE
 	)
-##r1: "Set", "Primary Trait", "Cooking Time (minutes)", "Cooking Type/Quality", "After cooking darkening", "Flesh Color after cooking", "Flavor AVG", "Classification", "...11"
+	d$plot_id <- as.character(seq_len(nrow(d)))
+	d <- d[!is.na(d$variety), ]
 
-
-	d2 <- data.frame(
-		crop = tolower(r2[["Crop"]])
-	)
-##r2: "Num", "Variable label", "Variable synonyms", "Context of use", "Variable status", "Institution", "Date", "Language", "Trait ID", "Trait", "Trait class", "Trait description", "Trait status", "Method ID", "Method", "Method class", "Method description", "Method reference", "Scale ID", "Scale name", "Scale class", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5", "Category 6", "Category 7", "Category 8", "Category 9", "Category 10"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

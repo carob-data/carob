@@ -1,8 +1,30 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Potato irrigation experiment at La Molina, Lima, Peru. The dataset geographic coverage is one west longitude and one south latitude.
+# The abstract gives plots of 3.6 by 5 m and spacing of 0.3 m between plants and 1 m between furrows. Spacing is stored in cm. Plot area is 18 m2, which the irrigation description also states.
+# The dictionary says fresh tuber biomass (column PF) is grams per plant, and nT is tubers per plant.
+# Dictionary treatments: T1 full irrigation, T2 gs_max 0.15, T3 gs_max 0.05. The abstract numbers the thresholds the other way around and calls the frequent irrigation a control.
+# Canopy temperature, air temperature, and the wet-surface temperature are degrees C. CWSI is the crop water stress index. Those readings are repeated by days after planting and hour, so they are in the long table.
+# The citation is a Potato Research paper identified by ISSN, not a DOI.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No calendar planting or harvest date. Days after planting are not a date.
+# No fertilizer rate.
+# Fresh weight is grams per plant. It is not converted to kg/ha. The abstract says 60 plants were sown per plot and the harvest file has fewer plants per plot.
+# Soil moisture, biomass, isotopes, and irrigation volumes are not in the plot table.
+# missing variables: carob_contributor
+# missing variables: yield, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
+# unknown variables: irrigation_regime_
+# unknown variable: n_tubers_ (fw_tubers?)
+# unknown variables: hour_, tuber_fresh_g_plant_, cwsi_, canopy_temp_c_, air_temp_c_
+
+## NOT PROCESSED
+# Dry_biomass.xlsx: fresh and dry sample weights in g per plant, a different table from the harvest plants.
+# Eco-physiological.xlsx and Tuber_isotopes.xlsx: conductance, water potential, and isotope values.
+# Irrigation.xlsx: soil water and irrigation volume by day. Lr is mm.
+# Data_dictionary.xls: the definitions used above.
 
 
 carob_script <- function(path) {
@@ -13,167 +35,96 @@ Replication Data for: Analyze Crop Water Stress Index (CWSI) values for an optim
 It developed a field experiment, with the aim to analyze Crop Water Stress Index (CWSI) under humid conditions with testing two irrigation timing treatments with pre-established gs_max threshold (0.15 [T1] and 0.050 [T2] mol H2O m−2 s−1) against a control (frequently irrigated). The experiment was conducted in a 416 m2 total area, divided in 12 plots (3.6×5 m2 each) and sixty plants per plot were sown in five rows with a plant and furrow distance of 0.3 and 1 m, respectively. Seven furrow irrigations were provided at 0, 4, 7, 11, 17, 22 and 30 days after planting watering every plot with approximately 67 mm per irrigation; after that, a drip irrigation system was set up independently for each plot.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
-	uri <- "doi:10.21223/P3/PNJBH6"
+	uri <- "doi:10.21223/P3_PNJBH6"
 	group <- "agronomy"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "irrigation_regime_",
+		response_vars = "tuber_fresh_g_plant_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 45,
+		carob_effort = 0.45
 	)
-	
 
-	f1 <- ff[basename(ff) == "CWSI.xlsx"]
-	f2 <- ff[basename(ff) == "Data_dictionary.xls"]
-	f3 <- ff[basename(ff) == "Dry_biomass.xlsx"]
-	f4 <- ff[basename(ff) == "Eco-physiological.xlsx"]
-	f5 <- ff[basename(ff) == "Harvest.xlsx"]
-	f6 <- ff[basename(ff) == "Irrigation.xlsx"]
-	f7 <- ff[basename(ff) == "Tuber_isotopes.xlsx"]
-
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-	r4 <- carobiner::read.excel(f4)
-	r5 <- carobiner::read.excel(f5)
-	r6 <- carobiner::read.excel(f6)
-	r7 <- carobiner::read.excel(f7)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame()
-##r1: "ID", "eval", "dap", "pot", "trat", "hour", "Tf", "Tw", "Ta", "dT", "CWSI"
-
-
-	d2 <- data.frame()
-##r2: "Variable name", "Abbreviation", "Description", "Method", "Formula", "Unit", "Reference"
-
-
-	d3 <- data.frame(
-		plot_id = r3[["plot"]]
+	lab <- c(
+		T1 = "full irrigation",
+		T2 = "gs_max 0.15",
+		T3 = "gs_max 0.05"
 	)
-##r3: "ID", "trat", "plant", "FW", "DW", "DBC"
+	h <- carobiner::read.excel(ff[basename(ff) == "Harvest.xlsx"], na=c("", "NA"))
+	names(h) <- trimws(names(h))
+	trat <- trimws(as.character(h$trat))
+	regime <- lab[trat]
+	regime[is.na(regime)] <- trat[is.na(regime)]
+	plots <- unique(data.frame(plot = h$plot, regime = regime, stringsAsFactors = FALSE))
 
-
-	d4 <- data.frame(
-		plot_id = r4[["plot"]]
+	d <- data.frame(
+		trial_id = "LaMolina_CWSI",
+		country = "Peru",
+		adm1 = "Lima",
+		location = "La Molina",
+		# dataset geographic coverage: one west longitude and one south latitude
+		latitude = -12.08,
+		longitude = -76.95,
+		geo_from_source = TRUE,
+		crop = "potato",
+		plot_id = as.character(plots$plot),
+		treatment = plots$regime,
+		irrigation_regime_ = plots$regime,
+		plot_area = 3.6 * 5,
+		plant_spacing = 0.3 * 100,
+		row_spacing = 1 * 100,
+		irrigated = TRUE,
+		yield_part = "tubers",
+		on_farm = FALSE,
+		is_survey = FALSE,
+		stringsAsFactors = FALSE
 	)
-##r4: "ID", "eval", "dap", "trat", "gs_max", "LWP", "ldw", "dleaf", "Dleaf"
 
-
-	d5 <- data.frame(
-		plot_id = r5[["plot"]]
+	cw <- carobiner::read.excel(ff[basename(ff) == "CWSI.xlsx"], na=c("", "NA"))
+	names(cw) <- trimws(names(cw))
+	hh <- cw$hour
+	if (inherits(hh, "POSIXt")) {
+		hh <- format(hh, "%H:%M", tz = "UTC")
+	} else {
+		hh <- sub(".* ([0-9]{2}:[0-9]{2}).*", "\\1", as.character(hh))
+	}
+	plants <- data.frame(
+		plot_id = as.character(h$plot),
+		order = as.integer(h$plant),
+		DAP = NA_integer_,
+		hour_ = NA_character_,
+		tuber_fresh_g_plant_ = as.numeric(h$PF),
+		n_tubers_ = as.numeric(h$nT),
+		cwsi_ = NA_real_,
+		canopy_temp_c_ = NA_real_,
+		air_temp_c_ = NA_real_,
+		stringsAsFactors = FALSE
 	)
-##r5: "ID", "trat", "plant", "PF", "nT"
-
-
-	d6 <- data.frame(
-		plot_id = r6[["plot"]]
+	stress <- data.frame(
+		plot_id = as.character(cw$pot),
+		order = NA_integer_,
+		DAP = as.integer(cw$dap),
+		hour_ = hh,
+		tuber_fresh_g_plant_ = NA_real_,
+		n_tubers_ = NA_real_,
+		cwsi_ = as.numeric(cw$CWSI),
+		canopy_temp_c_ = as.numeric(cw$Tf),
+		air_temp_c_ = as.numeric(cw$Ta),
+		stringsAsFactors = FALSE
 	)
-##r6: "ID", "dds", "trat", "Hg", "Hv", "Vr", "Lr"
+	dlong <- rbind(plants, stress)
+	dlong$trial_id <- "LaMolina_CWSI"
+	dlong <- dlong[order(dlong$plot_id, dlong$DAP, dlong$order), ]
+	rownames(dlong) <- NULL
 
-
-	d7 <- data.frame(
-		plot_id = r7[["plot"]]
-	)
-##r7: "ID", "trat", "plant", "tdw", "dtuber", "Dtuber"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

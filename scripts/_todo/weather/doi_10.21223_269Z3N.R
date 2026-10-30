@@ -1,11 +1,25 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# list processing issues here so that an editor can look at them
+## NOTES
+# Hourly series from sheet Hourly. Dictionary units: Ta °C, RH %, WS m/s, SR W/m2, PP mm, Eo mm, VPD kPa, Pa hPa.
+# Wind direction is either a compass label or a degree value. Compass labels are stored as the sector center (N = 0). "---" and "------" are missing.
+# Coordinates and elevation are the dataset characteristicOfSources text: "South Latitude 11.1 / West Longitude 75.4 / Elevation 848".
 
+## ISSUES
+# Eo is mm on an hourly row. It is not stored as ETo because that term is mm/day.
+# VPD and atmospheric pressure have no vocabulary names.
+# The published coordinates are to 0.1 degree.
+# write_files: missing variables: carob_contributor.
+# write_files: unknown variables: vpd_, pressure_, Eo_.
+
+## NOT PROCESSED
+# 03_Photo_San Ramon CIP Station.jpg.
+
+## NEW VARIABLES
+# vpd_: vapor pressure deficit, kPa, hourly
+# pressure_: atmospheric pressure, hPa, hourly
+# Eo_: potential evapotranspiration, mm, hourly amount as recorded
 
 carob_script <- function(path) {
 
@@ -17,36 +31,82 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 
 	uri <- "doi:10.21223/269Z3N"
 	group <- "weather"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=4, minor=0,
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		carob_date = "2026-10-30",
 		design = NA,
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		data_type = "compilation",
+		notes = NA,
+		carob_date = "2026-10-30",
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 80,
+		carob_effort = 0.45
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Meteorology data_San Ramon CIP station 2019-2026.xlsx"]
-	f2 <- ff[basename(ff) == "02_Data_dictionary Meteorology data_San Ramon CIP station.xlsx"]
-	f3 <- ff[basename(ff) == "03_Photo_San Ramon CIP Station.jpg"]
+	f <- ff[basename(ff) == "01_Meteorology data_San Ramon CIP station 2019-2026.xlsx"]
+	r <- carobiner::read.excel(f, sheet="Hourly", na=c("---", "------"))
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	#r3 <- read.???(f3)
-	return(FALSE)
+	blank <- function(x) {
+		y <- trimws(as.character(x))
+		y[y %in% c("", "---", "------", "NA")] <- NA_character_
+		y
+	}
+	num <- function(x) {
+		y <- blank(x)
+		as.numeric(y)
+	}
+
+	compass <- c(
+		N=0, NNE=22.5, NE=45, ENE=67.5, E=90, ESE=112.5, SE=135, SSE=157.5,
+		S=180, SSW=202.5, SW=225, WSW=247.5, W=270, WNW=292.5, NW=315, NNW=337.5
+	)
+	dir <- blank(r$Dir)
+	is_num <- !is.na(dir) & grepl("^[0-9]+(\\.[0-9]+)?$", dir)
+	wdir <- rep(NA_real_, length(dir))
+	wdir[is_num] <- as.numeric(dir[is_num])
+	lab <- dir[!is_num & !is.na(dir)]
+	unknown <- setdiff(unique(lab), names(compass))
+	if (length(unknown) > 0) {
+		stop("unmapped wind direction: ", paste(utils::head(unknown, 30), collapse=", "))
+	}
+	wdir[!is_num] <- unname(compass[dir[!is_num]])
+
+	wth <- data.frame(
+		station_id = "CIP-SanRamon",
+		date = as.character(as.Date(r$Date)),
+		time = format(as.POSIXct(r$Time), "%H:%M:%S", tz="UTC"),
+		temp = num(r$Ta),
+		rhum = num(r$RH),
+		vpd_ = num(r$VPD),
+		wspd = num(r$WS),
+		wdir = wdir,
+		pressure_ = num(r$Pa),
+		irad = num(r$SR),
+		prec = num(r$PP),
+		Eo_ = num(r$Eo),
+		stringsAsFactors = FALSE
+	)
+	wth <- wth[!is.na(wth$date), ]
+
+	d <- data.frame(
+		station_id = "CIP-SanRamon",
+		station_name = "San Ramon CIP experimental station",
+		country = "Peru",
+		location = "San Ramon",
+		adm1 = "Junin",
+		latitude = -11.1,
+		longitude = -75.4,
+		elevation = 848,
+		geo_from_source = TRUE,
+		geo_uncertainty = 12000,
+		geo_source = "Dataverse characteristicOfSources: South Latitude 11.1, West Longitude 75.4, Elevation 848",
+		is_survey = FALSE,
+		on_farm = FALSE,
+		stringsAsFactors = FALSE
+	)
+
+	carobiner::write_files(path, meta, d, wth=wth)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

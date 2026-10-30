@@ -1,8 +1,20 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Greenhouse late-blight screen of potato landraces at CIP-Lima, May to December 2019.
+# The description says severity was read 4 and 6 days after inoculation. LB1 is stored at 4 days and LB2 at 6 days.
+# AUDPC and rAUDPC are used as recorded. The dictionary does not say to rescale them.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No yield, fertilizer, or coordinates. CIP-Lima still needs a georeference.
+# AUDPC reaches 180, above the terminag maximum of 150. Values are left as recorded.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: saudpc_, isolate_. out of bounds: AUDPC (0, 180).
+
+## NOT PROCESSED
+# Experiment, Taxon code, Family, Genus, Taxon full name, SAUDPC_mean: taxonomy or a mean of SAUDPC.
+# Material list parents and biological status, except the accession name used as variety_alt.
+# SAUDPC is kept.
 
 
 carob_script <- function(path) {
@@ -13,137 +25,67 @@ Dataset for: Screening for resistance to late blight in traditional landraces un
 This data set includes information of late blight severity readings at 4 and 6 days after inoculation under greenhouse conditions, calculated values of Area Under Disease Progress Curve (AUDPC) and Relative Area Under Disease Progress Curve (rAUDPC) from experiments carried out in CIP-Lima during May to December 2019. Vegetal material tested was potato landraces accessions hold in CIP's potato germplasm.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/66XOT9"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		# include the data provider and/or all institutes listed as authors (if any)
-		data_organization = "CIP; Pedro Ruiz Gallo National University- UNPRG",
-		publication = "",
+		data_organization = "CIP",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "AUDPC;rAUDPC",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 65,
+		carob_effort = 0.35
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
-	f2 <- ff[basename(ff) == "02_Material_list_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
-	f3 <- ff[basename(ff) == "03_Datadictionary_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
+	f <- ff[grepl("^01_Data_Screening", basename(ff))]
+	r <- carobiner::read.excel(f)
+	ml <- carobiner::read.excel(ff[grepl("^02_Material_list", basename(ff))])
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	r3 <- carobiner::read.excel(f3)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		rep = r1[["Rep"]]
+	id <- seq_len(nrow(r))
+	d <- data.frame(
+		record_id = id,
+		variety = trimws(as.character(r$Accesion_number)),
+		treatment = trimws(as.character(r$Accesion_number)),
+		rep = as.integer(r$Rep),
+		isolate_ = trimws(as.character(r$Isolate)),
+		AUDPC = as.numeric(r$AUDPC),
+		rAUDPC = as.numeric(r$rAUDPC),
+		saudpc_ = as.numeric(r$SAUDPC),
+		stringsAsFactors = FALSE
 	)
-##r1: "Experiment", "Taxon code", "Family", "Genus", "Taxon full name", "Accesion_number", "Isolate", "Place", "LB1", "LB2", "AUDPC", "rAUDPC", "SAUDPC", "SAUDPC_mean"
-
-
-	d2 <- data.frame(
-		crop = tolower(r2[["Crop Name CIP"]])
+	alias <- data.frame(
+		variety = trimws(as.character(ml[["Accession number"]])),
+		variety_alt = trimws(as.character(ml[["Accession name"]])),
+		stringsAsFactors = FALSE
 	)
-##r2: "Accession number", "Collecting number/Breeder code/Biosafety code", "Accession name", "Population Group", "Genus", "Taxon full name", "Biological Status CIP", "Parent Female", "Parent Male"
+	alias <- alias[!duplicated(alias$variety), ]
+	d <- merge(d, alias, by="variety", all.x=TRUE)
 
+	d$crop <- "potato"
+	d$country <- "Peru"
+	d$location <- "CIP Lima"
+	d$planting_date <- "2019"
+	d$trial_id <- paste("CIP_Lima_2019", d$isolate_, sep="_")
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
+	d$stress <- "disease"
+	d$pathogen <- "Phytophthora infestans"
 
-	d3 <- data.frame()
-##r3: "Abbreviation", "Description", "Method", "Formula", "Unit", "Reference"
+	pieces <- list(
+		data.frame(record_id=id, DAP=4L, disease_severity=as.character(r$LB1), stringsAsFactors=FALSE),
+		data.frame(record_id=id, DAP=6L, disease_severity=as.character(r$LB2), stringsAsFactors=FALSE)
+	)
+	dlong <- do.call(rbind, pieces)
+	dlong <- dlong[!is.na(dlong$disease_severity) & nzchar(dlong$disease_severity), ]
+	dlong$disease <- "potato late blight"
+	dlong$severity_scale <- "0-100"
 
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-

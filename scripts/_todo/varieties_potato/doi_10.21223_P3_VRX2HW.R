@@ -1,11 +1,9 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
-
+# The published files are dictionaries only (bacterial wilt and potato leaf roll virus standard evaluation trials). There is no measurement table, so no data table was built.
+# Files on disk: Standard Evaluation Trial for Bacterial Wilt Resistance Dictionary.xls; Standard Evaluation Trial for Potato Leaf Roll Virus Resistance Dictionary.xls.
 
 carob_script <- function(path) {
 
@@ -17,34 +15,24 @@ Potato leaf roll virus (PLRV) is one of the most important virus diseases of pot
 
 	uri <- "doi:10.21223/P3/VRX2HW"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		carob_date = "2026-10-30",
 		design = NA,
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		data_type = "experiment",
+		treatment_vars = NA,
+		response_vars = NA,
+		notes = NA,
+		carob_date = "2026-10-30",
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 0,
+		carob_effort = 0.15
 	)
-	
 
-	f1 <- ff[basename(ff) == "Standard Evaluation Trial for Bacterial Wilt Resistance Dictionary.xls"]
-	f2 <- ff[basename(ff) == "Standard Evaluation Trial for Potato Leaf Roll Virus Resistance Dictionary.xls"]
-
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	# No measurement table is available in the raw folder.
 	return(FALSE)
 }
 
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

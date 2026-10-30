@@ -1,10 +1,22 @@
-# REJECTED 
-# Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Baseline household survey of CONPAPA in Bolivar and Tungurahua, Ecuador, 2009. Country, province, canton, parish, and community are columns in the database. The province column is spelled 2Provinvia in the file.
+# 10Area01 and 10CantCosec01 have no unit in the column name, so they were not converted to hectares or kg/ha. Crop is set to potato only when the first crop name contains "papa".
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# No coordinates. Communities need georeferencing.
+# No fertilizer rate.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude. unknown variables: household_size_, area_total_, crop_name_, crop_area_, crop_harvest_.
+
+## NOT PROCESSED
+# Household-member blocks 8Nombre_01 through 8Educacion_13, the later crop columns 10Cultivo02 to 10Cultivo06, variety sale blocks, and the association and housing modules in 01_Database SEP CONPAPA Ecuador.xlsx.
+# The questionnaire document and PDF.
+
+## NEW VARIABLES
+# crop_name_, area_total_, crop_area_, crop_harvest_: first-crop fields, units not stated.
+# household_size_.
 
 
 carob_script <- function(path) {
@@ -17,34 +29,55 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 
 	uri <- "doi:10.21223/P3/BO6PJL"
 	group <- "survey"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
+		design = NA,
+		data_type = "survey",
+		treatment_vars = "none",
+		response_vars = "none",
+		notes = NA,
 		carob_date = "2026-10-30",
-		design = "unitOfAnalysis: La unidad de análisis es principalmente la familia de los agricultores que participan en la aplicación del SEP, y el informante ha sido el representante de la familia que pertenece a las organizaciones de base que forma parte de la aplicación del SEP (Trabajadores Autónomos San Francisco de Rumipampa y Señor de Justicia). Los registros de datos dado los productores de papas nativas.; universe: Los 82 productores de papas nativas en Ecuador, de las comunidades el grupo objetivo lo formaron las comunidades San Fco. de Rumipampa (30) y Shaushi (26), el grupo control por las comunidades San Luis (11) y Cochabamba (15).; timeMethod: Cross-sectional; dataCollector: International Potato Center; samplingProcedure: La técnica que se utilizó en el grupo objetivo fue el censo, es decir se entrevistó a todos los socios de las dos asociaciones.; collectionMode: La encuesta se aplicó a los productores del grupo objetivo como de Control, la cual consta de 46 preguntas.; researchInstrument: Se aplico una encuesta con preguntas estructuradas.",
-		data_type = NA,
-		treatment_vars = "",
-		response_vars = "", 
-		carob_contributor = "Your Name",
-		completion = 0,	
-		notes = "",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 20,
+		carob_effort = 0.35
 	)
-	
 
-	f1 <- ff[basename(ff) == "01_Database SEP CONPAPA Ecuador.xlsx"]
-	f2 <- ff[basename(ff) == "02_Data_dictionary SEP CONPAPA Ecuador.xlsx"]
+	chr <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x) | x == "NA"] <- NA_character_
+		x
+	}
+	num <- function(x) {
+		x <- trimws(as.character(x))
+		ok <- grepl("^-?[0-9.]+$", x)
+		x[!ok] <- NA_character_
+		as.numeric(x)
+	}
+	f <- ff[basename(ff) == "01_Database SEP CONPAPA Ecuador.xlsx"]
+	r <- carobiner::read.excel(f, sheet="Data")
+	d <- data.frame(
+		hhid = chr(r$NroEnc),
+		country = chr(r[["1Pais"]]),
+		adm1 = chr(r[["2Provinvia"]]),
+		adm2 = chr(r[["3Canton"]]),
+		adm3 = chr(r[["4Parroquia"]]),
+		location = chr(r[["5Comunidad"]]),
+		household_size_ = num(r[["7NroMiembros"]]),
+		area_total_ = num(r[["9AreaTotal"]]),
+		crop_name_ = chr(r[["10Cultivo01"]]),
+		crop_area_ = num(r[["10Area01"]]),
+		crop_harvest_ = num(r[["10CantCosec01"]]),
+		stringsAsFactors = FALSE
+	)
+	d$crop <- NA_character_
+	d$crop[grepl("papa", tolower(d$crop_name_))] <- "potato"
+	d$is_survey <- TRUE
+	d$on_farm <- TRUE
+	d$trial_id <- paste0("CONPAPA_", d$hhid)
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	return(FALSE)
+	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)

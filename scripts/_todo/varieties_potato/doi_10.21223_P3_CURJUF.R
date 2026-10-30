@@ -1,8 +1,24 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## NOTES
+# Chipping color, reducing sugar (mg/dL), and oil absorption (%) for advanced clones. The sheet has two header rows under those traits: Lowland Tropic (winter, spring) and Highland Tropic (dry, rain). Average columns were not copied.
+# Country Peru is the Dataverse geographic coverage. The coverage also names La Molina and San Agustin / La Victoria and gives two bounding-box points. The chip sheet does not say which point belongs to Lowland Tropic or Highland Tropic, so those coordinates were not attached to rows.
+
 ## ISSUES
-# list processing issues here so that an editor can look at them
+# Sites need georeferencing once the lowland and highland labels are tied to La Molina and Junin.
+# No yield and no fertilizer.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: environment_, chipping_color_, reducing_sugar_mg_dl_, oil_absorption_pct_.
+
+## NOT PROCESSED
+# Pigment and the AVG columns in Standard Evaluation Trial for chipping quality Data.xls.
+# The dictionary workbook.
+
+## NEW VARIABLES
+# environment_: lowland winter, lowland spring, highland dry, or highland rain.
+# chipping_color_: score as recorded.
+# reducing_sugar_mg_dl_: mg/dL.
+# oil_absorption_pct_: percent.
 
 
 carob_script <- function(path) {
@@ -13,131 +29,59 @@ Dataset for: Standard evaluation trial for chipping quality documentation of CIP
 The primary objective of evaluating post-harvest traits is obtain information about the potential or aptitude of advanced clones for diverse end-uses, ranging from fresh consumption to processed products. The interpretation of these evaluations provides important information to guide potato breeding and selection programs, as well as for the recommendation of varieties for specific uses. Procedures for determining chipping quality, reducing sugar content, and percentage of oil content have been standardized to document processing quality of advanced clones.
 "
 
-## when done, remove all the default comments, such as this one, from the script
-## only keep the comments you added that are specific to this dataset
-
 	uri <- "doi:10.21223/P3/CURJUF"
 	group <- "varieties_potato"
-	ff  <- carobiner::get_data(uri, path, group)
-
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		# include the data provider and/or all institutes listed as authors (if any)
 		data_organization = "CIP",
-		publication = "",
+		publication = NA,
 		project = NA,
-		# if available report the experimental or survey design
 		design = NA,
-		
-		# data_type can be e.g. "on-farm experiment", "survey", "compilation"
-		data_type = NA,
-		
-		# treatment_vars has semi-colon separated variable names that represent the
-		# treatments if the data is from an experiment. E.g. "N_fertilizer;P_fertilizer;K_fertilizer"
-		treatment_vars = "",
-		
-		# response variables of interest such as yield, fwy_residue, disease incidence, etc. Do not include variables
-		# that describe management for all treatments or other observations that were not related to the aim of 
-		# the trial (e.g. the presence of a disease).
-		response_vars = "", 
-
-		# notes for the end-user
-		notes = "",
-
-		carob_contributor = "Your Name",
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "chipping_color_",
+		notes = NA,
 		carob_date = "2026-10-30",
-		# The percentage of relevant variables that have been standardized (between 0 and 100%) 
-		carob_completion = 0,	
-		# The number of hours spent creating this script
-		carob_effort = -1
+		carob_LLM = "Cursor Grok 4.7",
+		carob_completion = 70,
+		carob_effort = 0.4
 	)
-	
 
-	f1 <- ff[basename(ff) == "Standard Evaluation Trial for chipping quality Data.xls"]
-	f2 <- ff[basename(ff) == "Standard Evaluation Trial for chipping quality Dictionary.xls"]
-
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-
-## select the variables of interest and assign them to the correct name
-
-	d1 <- data.frame(
-		variety = r1[["Clone"]]
+	f <- ff[grepl("chipping quality Data", basename(ff))]
+	x <- readxl::read_excel(f, col_names=FALSE, .name_repair="minimal")
+	x <- x[-c(1, 2, 3), ]
+	num <- function(v) {
+		v <- trimws(as.character(v))
+		ok <- grepl("^-?[0-9.]+$", v)
+		v[!ok] <- NA_character_
+		as.numeric(v)
+	}
+	variety <- trimws(as.character(x[[2]]))
+	piece <- function(env, color, sugar, oil) {
+		data.frame(
+			variety = variety,
+			treatment = variety,
+			environment_ = env,
+			chipping_color_ = num(x[[color]]),
+			reducing_sugar_mg_dl_ = if (is.na(sugar)) NA_real_ else num(x[[sugar]]),
+			oil_absorption_pct_ = num(x[[oil]]),
+			stringsAsFactors = FALSE
+		)
+	}
+	d <- rbind(
+		piece("lowland winter", 4, NA, 16),
+		piece("lowland spring", 5, NA, 17),
+		piece("highland dry", 7, 12, 19),
+		piece("highland rain", 8, 13, 20)
 	)
-##r1: "Set", "Primary Trait", "Chipping color", "...5", "...6", "...7", "...8", "...9", "...10", "...11", "Reducing Sugar Content  (mg/dL)", "...13", "...14", "...15", "Oil Absorption Rate %", "...17", "...18", "...19", "...20", "...21", "...22"
+	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
+	d <- d[!(is.na(d$chipping_color_) & is.na(d$reducing_sugar_mg_dl_) & is.na(d$oil_absorption_pct_)), ]
+	d$crop <- "potato"
+	d$country <- "Peru"
+	d$trial_id <- paste("chipping", d$variety, d$environment_, seq_len(nrow(d)), sep="_")
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
 
-
-	d2 <- data.frame(
-		crop = tolower(r2[["Crop"]])
-	)
-##r2: "Num", "Variable label", "Variable synonyms", "Context of use", "Variable status", "Institution", "Date", "Language", "Trait ID", "Trait", "Trait class", "Trait description", "Trait status", "Method ID", "Method", "Method class", "Method description", "Formula", "Method reference", "Scale ID", "Scale name", "Scale class", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5", "Category 6", "Category 7", "Category 8", "Category 9", "Category 10"
-
-
-## separate individual trials. For example trials in different locations or years. 
-## do _not_ separate by treatments within a trial. For a survey, each row gets a unique trial_id
-	d$trial_id <- as.character(as.integer(as.factor( ____ )))
-	
-## about the data (TRUE/FALSE)
-	d$on_farm <- 
-	d$is_survey <- 
-	d$irrigated <-
-	
-## crop rotation. If available, add all crops, including "d$crop". Use an underscore for intercrops 
-    d$crop_rotation <- "crop1;crop2;crop3_crop4"
-	
-## each site must have corresponding longitude and latitude
-## if the raw data do not provide them you can estimate them from the location/adm data 
-## see carobiner::geocode
-	d$longitude <- 
-	d$latitude <- 
-# are the coordinates from the source (data/publication) or estimated by you?	
-	d$geo_from_source <- TRUE/FALSE
-
-
-## time can be year ("2023", four characters), year-month ("2023-07", 7 characters) or date ("2023-07-21", 10 characters).
-## if dates come as character values, you can use as.character(as.Date()) for dates to assure the correct format.
-	d$planting_date <- as.character(as.Date(   ))
-	d$harvest_date  <- as.character(as.Date(    ))
-
-### Fertilizers 
-## note that we use P and K, not P2O5 and K2O
-## P <- P2O5 / 2.29
-## K <- K2O / 1.2051
-   d$P_fertilizer <- 
-   d$K_fertilizer <-
-   d$N_fertilizer <- 
-   d$S_fertilizer <- 
-   d$lime <- 
-## normalize names 
-   d$fertlizer_type <- 
-
-## for legumes   
-   d$inoculated <- TRUE or FALSE
-   d$inoculant <- "name of inoculant"
-   
-### in general, add comments to your script if computations are
-### based on information gleaned from metadata, a publication, 
-### or when they are not immediately obvious for other reasons
-
-### Yield
-
-	yield <- r$yield_tonha * 1000
-	#what plant part does yield refer to?
-	d$yield_part <- "tubers"
-	d$yield_moisture <- r$moisture * 100
-
-#NOTE: yield is the _fresh weight_ production (kg/ha) of the "yield_part 
-# Also record fresh and/or dry weight production of other organs (or "residue" or "total")
-# if the data allow for that 
-
-	d$fwy_storage <- r$yield_tonha * 1000
-	d$dmy_storage <- (1-r$moisture) * r$yield_tonha * 1000
-	d$dmy_totat <- r$dry_biomass
-	
-# all scripts must end like this
 	carobiner::write_files(path, meta, d)
 }
-
-## now test your function in a _clean_ R environment (no packages loaded, no other objects available)
-# carob_script(path=_____)
-
