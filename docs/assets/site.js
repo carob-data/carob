@@ -40,9 +40,10 @@
 		return lead || provider;
 	}
 
-	function titleUriCell(title, uri) {
+	function titleUriCell(title, uri, source) {
 		title = String(title || "").trim();
 		uri = String(uri || "").trim();
+		source = String(source || "").trim();
 		const parts = [];
 		if (title) parts.push(escapeHtml(title));
 		if (uri) {
@@ -53,8 +54,28 @@
 				parts.push(escapeHtml(uri));
 			}
 		}
-		if (!parts.length) return "";
-		return gridjs.html(parts.join(" "));
+		let html = parts.join(" ");
+		if (source) html = html ? `${html}. ${escapeHtml(source)}` : escapeHtml(source);
+		if (!html) return "";
+		return gridjs.html(html);
+	}
+
+	function scriptHref(path) {
+		const p = String(path || "").trim().replace(/\\/g, "/").replace(/^\.\//, "");
+		if (!p || !repoUrl) return null;
+		const branch = cfg.branch || "main";
+		return `${repoUrl}/blob/${encodeURIComponent(branch).replace(/%2F/g, "/")}/${p.split("/").map(encodeURIComponent).join("/")}`;
+	}
+
+	function scriptCell(path) {
+		const p = String(path || "").trim().replace(/\\/g, "/");
+		if (!p) return "";
+		const label = p.split("/").pop();
+		const href = scriptHref(p);
+		if (href) {
+			return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`);
+		}
+		return label;
 	}
 
 	function transformTodoTable(headers, rows) {
@@ -71,12 +92,14 @@
 			),
 			region: idx("region") >= 0 ? String(row[idx("region")] ?? "").trim() : "",
 			crop: idx("crop") >= 0 ? String(row[idx("crop")] ?? "").trim() : "",
-			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : ""
+			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : "",
+			script: idx("script") >= 0 ? String(row[idx("script")] ?? "").trim() : "",
+			difficulty: idx("difficulty") >= 0 ? String(row[idx("difficulty")] ?? "").replace(/^NA$/, "").trim() : ""
 		}));
 
 		return {
-			headers: ["title", "source", "region", "crop", "group", "uri"],
-			rows: records.map(r => [r.title, r.source, r.region, r.crop, r.group, r.uri])
+			headers: ["title", "script", "difficulty", "region", "crop", "group", "source", "uri"],
+			rows: records.map(r => [r.title, r.script, r.difficulty, r.region, r.crop, r.group, r.source, r.uri])
 		};
 	}
 
@@ -134,13 +157,15 @@
 		headers = transformed.headers;
 		rows = transformed.rows;
 
-		if (subtitle) {
-			const rowCount = meta ? meta.rows : rows.length;
-			subtitle.textContent = `${rowCount.toLocaleString()} rows \u00b7 5 columns`;
-		}
-
 		const colKeys = headers.map(h => String(h).trim().toLowerCase());
 		const uriColIdx = colKeys.indexOf("uri");
+		const sourceColIdx = colKeys.indexOf("source");
+		const visibleCols = colKeys.filter(k => k !== "uri" && k !== "source").length;
+
+		if (subtitle) {
+			const rowCount = meta ? meta.rows : rows.length;
+			subtitle.textContent = `${rowCount.toLocaleString()} rows \u00b7 ${visibleCols} columns`;
+		}
 
 		host.innerHTML = "";
 		const initialPageSize = readPageSize();
@@ -149,18 +174,22 @@
 			columns: headers.map((h, idx) => {
 				const key = colKeys[idx];
 				const col = {
-					name: h,
+					name: key === "script" ? "draft script" : h,
 					sort: true,
-					attributes: () => ({ "data-col": key })
+					attributes: () => ({ "data-col": key === "script" ? "draft-script" : key })
 				};
-				if (key === "uri") {
+				if (key === "uri" || key === "source") {
 					col.hidden = true;
 				}
 				if (key === "title") {
 					col.formatter = (cell, row) => {
 						const uri = row.cells[uriColIdx]?.data ?? "";
-						return titleUriCell(cell, uri);
+						const source = row.cells[sourceColIdx]?.data ?? "";
+						return titleUriCell(cell, uri, source);
 					};
+				}
+				if (key === "script") {
+					col.formatter = (cell) => scriptCell(cell);
 				}
 				return col;
 			}),
