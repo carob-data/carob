@@ -40,7 +40,7 @@
 		return lead || provider;
 	}
 
-	function titleUriCell(title, uri, source) {
+	function titleUriCell(title, uri, source, script) {
 		title = String(title || "").trim();
 		uri = String(uri || "").trim();
 		source = String(source || "").trim();
@@ -56,6 +56,11 @@
 		}
 		let html = parts.join(" ");
 		if (source) html = html ? `${html}. ${escapeHtml(source)}` : escapeHtml(source);
+		const scriptUrl = scriptHref(script);
+		if (scriptUrl) {
+			const link = `<a href="${escapeHtml(scriptUrl)}" target="_blank" rel="noopener">draft script</a>`;
+			html = html ? `${html}. ${link}` : link;
+		}
 		if (!html) return "";
 		return gridjs.html(html);
 	}
@@ -65,17 +70,6 @@
 		if (!p || !repoUrl) return null;
 		const branch = cfg.branch || "main";
 		return `${repoUrl}/blob/${encodeURIComponent(branch).replace(/%2F/g, "/")}/${p.split("/").map(encodeURIComponent).join("/")}`;
-	}
-
-	function scriptCell(path) {
-		const p = String(path || "").trim().replace(/\\/g, "/");
-		if (!p) return "";
-		const label = p.split("/").pop();
-		const href = scriptHref(p);
-		if (href) {
-			return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`);
-		}
-		return label;
 	}
 
 	function transformTodoTable(headers, rows) {
@@ -160,7 +154,8 @@
 		const colKeys = headers.map(h => String(h).trim().toLowerCase());
 		const uriColIdx = colKeys.indexOf("uri");
 		const sourceColIdx = colKeys.indexOf("source");
-		const visibleCols = colKeys.filter(k => k !== "uri" && k !== "source").length;
+		const scriptColIdx = colKeys.indexOf("script");
+		const visibleCols = colKeys.filter(k => k !== "uri" && k !== "source" && k !== "script").length;
 
 		if (subtitle) {
 			const rowCount = meta ? meta.rows : rows.length;
@@ -174,22 +169,20 @@
 			columns: headers.map((h, idx) => {
 				const key = colKeys[idx];
 				const col = {
-					name: key === "script" ? "draft script" : h,
+					name: h,
 					sort: true,
-					attributes: () => ({ "data-col": key === "script" ? "draft-script" : key })
+					attributes: () => ({ "data-col": key })
 				};
-				if (key === "uri" || key === "source") {
+				if (key === "uri" || key === "source" || key === "script") {
 					col.hidden = true;
 				}
 				if (key === "title") {
 					col.formatter = (cell, row) => {
 						const uri = row.cells[uriColIdx]?.data ?? "";
 						const source = row.cells[sourceColIdx]?.data ?? "";
-						return titleUriCell(cell, uri, source);
+						const script = row.cells[scriptColIdx]?.data ?? "";
+						return titleUriCell(cell, uri, source, script);
 					};
-				}
-				if (key === "script") {
-					col.formatter = (cell) => scriptCell(cell);
 				}
 				return col;
 			}),

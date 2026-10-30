@@ -108,10 +108,7 @@ table.gridjs-table {
 }
 
 .gridjs-th[data-col="title"],
-.gridjs-td[data-col="title"] { width: 42%; }
-
-.gridjs-th[data-col="draft-script"],
-.gridjs-td[data-col="draft-script"] { width: 16%; }
+.gridjs-td[data-col="title"] { width: 58%; }
 
 .gridjs-th[data-col="difficulty"],
 .gridjs-td[data-col="difficulty"] { width: 8%; text-align: center; }
