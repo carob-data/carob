@@ -1,90 +1,78 @@
 # R script for "carob"
+# license: GPL (>=3)
+
+## ISSUES
+# The previous draft asked what the location codes DT, OPT, LN and HN mean, and
+# assigned coordinates that are not in the file: Minjibir 12.177, 8.659; Ikenne
+# 6.901, 3.698; Kadawa 11.633, 8.434; Mokwa 9.29, 5.06; Ile-Ife 6.7604, 6.207;
+# Abuja 9.064, 7.489. Confirm them before using them.
+# YIELD units are not stated in the column name.
+# str_co, str_rat, pollen, silking, plant and ear aspect, and lodging columns
+# from BA15188 ACROSS.csv are not yet mapped to current names.
+# The associated paper is doi:10.1038/s41598-019-50345-3. A RIS file has not been added.
+# The year below is taken from the location code (15 = 2015), as in the previous draft.
+
 
 carob_script <- function(path) {
-	
-"Availability of multiple-stress tolerant maize is critical for improvement in maize production in West and Central Africa (WCA). A study was carried out to (i) assess a set of inbred lines for combining ability under stressed and optimal conditions, (ii) determine the performance of the testcrosses under different conditions, and (iii) identify outstanding hybrids across the conditions. Two hundred and five testcrosses were planted with five hybrid checks under Striga-infested, low soil nitrogen, drought and optimal conditions between 2015 and 2016 in Nigeria. The grain yield inheritance under optimal condition was largely regulated by additive gene effect whereas non-additive gene effects largely regulated grain yield under the three stresses. Four of the inbreds had significant positive general combining ability effects each under low N and drought, and three under Striga infestation for grain yield. The inbreds could be vital sources of beneficial alleles for development and improvement of tropical yellow maize hybrids and populations. Hybrids TZEI 443 x ENT 13 and TZEI 462 x TZEI 10 were high yielding and stable; they out-performed the three early maturing released hybrids in WCA. The new hybrids should be extensively assessed and released in the sub-region to improve food security.
+
 "
-	
-	uri <-  "doi:10.25502/K7Q1-BW26/D"
-	group <- "maize_trials" 
+Availability of multiple-stress tolerant maize is critical for improvement in maize production in West and Central Africa. Two hundred and five testcrosses of early maturing yellow maize inbreds were grown with five hybrid checks under Striga, low soil nitrogen, drought and optimal conditions in Nigeria in 2015 and 2016.
+"
+
+	uri <- "doi:10.25502/K7Q1-BW26/D"
+	group <- "varieties_maize"
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		publication= "doi: 10.1038/s41598-019-50345-3",
 		data_organization = "IITA",
-		carob_contributor="Cedric Ngakou",
-		data_type="experiment",
-		project=NA,
-		carob_date="2023-10-03"	  
+		publication = "doi:10.1038/s41598-019-50345-3",
+		project = NA,
+		design = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield",
+		carob_completion = 25,
+		carob_effort = 0,
+		carob_contributor = "Your Name",
+		carob_date = "2026-10-30",
+		notes = "",
+		
 	)
-	
-	bn <- basename(ff)
-	r <- read.csv(ff[bn=="BA15188 ACROSS.csv"])  
-	
-	d <- r[,c("ID","LOC","Rep","Entry","Pedigree","YIELD","PLST","POLLEN","DYSK","ASI","PLHT","EHT","PASP","PHARV","EHARV","EROT","FWT","CO1","CO2","RAT1","RAT2")]#
-	 
-	colnames(d) <- c("ID","location","rep","variety_code","variety","yield","pl_st","dy_poll","dy_sk","asi","pl_ht","e_ht","p_asp","p_harv","e_harv","e_rot","fwtun","str_co1","str_co2","str_rat1","str_rat2")#,
-	
-	d$country <- "Nigeria"
-	d$crop <- "maize" 
-	
-	d$trial_id <- paste(d$ID,d$location,sep = "-")
-	d$yield_part <- "grain" 
-	d$on_farm <- TRUE
-	d$is_survey <- FALSE
-	d$irrigated <- FALSE
-	d$borer_trial <- FALSE
-	d$striga_infected <- FALSE
-	d$ID <- NULL
-	d$striga_trial <- FALSE
 
-	d$treatment <- d$treatment
-	d$treatment[i] <- "striga"
-	i <- grepl("STR", d$treatment)
-	d$striga_trial[i] <- TRUE
+	r <- read.csv(ff[basename(ff) == "BA15188 ACROSS.csv"])
 
+	d <- data.frame(
+		location = r$LOC,
+		rep = r$Rep,
+		variety_code = as.character(r$Entry),
+		variety = r$Pedigree,
+		yield = r$YIELD,
+		plant_height = r$PLHT,
+		ear_height = r$EHT,
+		asi = r$ASI,
+		country = "Nigeria",
+		crop = "maize",
+		on_farm = FALSE,
+		is_survey = FALSE,
+		irrigated = FALSE,
+		yield_part = "grain",
+		borer_trial = FALSE,
+		striga_trial = grepl("STR", r$LOC),
+		striga_infected = grepl("STR", r$LOC)
+	)
 
-message("Cedric: what are DT, OPT, LN, HN?")
-
-	#add season 
+	d$trial_id <- paste(r$ID, d$location, sep = "-")
 	d$planting_date <- "2015"
-	d$season <- "2015"
-	j <- grepl("16", d$location)
-	d$season[j] <- "2016"
-	d$planting_date[j] <- "2016"
-	j <- grepl("KDW16DT" ,d$location) 
-	d$season[j] <- "2015-2016"
-	d$planting_date[j] <- "2015"
-	j <- grepl("IK15DT" ,d$location) | grepl("MI15DT",d$location)
-	d$season[j] <- "2014-2015"
-	d$planting_date[j] <- "2014"
-# fix location 
- 
-	d$location[grepl("MI15DT", d$location)] <- "Minjibir"
-	d$location[grepl("^IK1", d$location)] <- "Ikenne"
-	d$location[d$location == "KDW16DT"] <- "Kadawa"	
-	d$location[grepl("^MK1" ,d$location)] <- "Mokwa"
-	
-	d$location[grepl("^IF1", d$location)] <- "Ile-Ife"  
-	d$location[grepl("^AB1", d$location)] <- "Abuja"
-	### add coordinates
-	geo <- data.frame(location=c("Minjibir","Ikenne","Kadawa","Mokwa","Ile-Ife","Abuja"),
-						  latitude=c(12.177, 6.901, 11.633, 9.29, 6.7604,9.064),
-						  longitude=c( 8.659, 3.698,  8.434, 5.06, 6.207, 7.489))
-	
-	
-	d <- merge(d, geo, by="location")
+	d$planting_date[grepl("16", d$location)] <- "2016"
+	d$planting_date[grepl("KDW16DT", r$LOC)] <- "2015"
+	d$planting_date[grepl("IK15DT|MI15DT", r$LOC)] <- "2014"
 
-	# fill whitespace in str_co1, str_rat1, str_rat2
-	d$str_co1[d$str_co1==""] <- NA
-	d$str_rat1[d$str_rat1==""] <- NA
-	d$str_rat2[d$str_rat2==""] <- NA
-	#data type
-	d$variety_code <- as.character(d$variety_code)
-	
+	d$location[grepl("MI15DT", r$LOC)] <- "Minjibir"
+	d$location[grepl("^IK1", r$LOC)] <- "Ikenne"
+	d$location[r$LOC == "KDW16DT"] <- "Kadawa"
+	d$location[grepl("^MK1", r$LOC)] <- "Mokwa"
+	d$location[grepl("^IF1", r$LOC)] <- "Ile-Ife"
+	d$location[grepl("^AB1", r$LOC)] <- "Abuja"
 
-	carobiner::write_files(meta, d, path=path)
-	
+	carobiner::write_files(path, meta, d)
 }
-
-
