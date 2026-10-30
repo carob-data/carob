@@ -24,6 +24,7 @@ Joint evaluation in Mokwa 2000/2001 breeding season (minimum of 2years)preceding
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

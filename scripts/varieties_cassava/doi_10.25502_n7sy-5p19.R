@@ -25,6 +25,7 @@ Clonal evaluation of cassava varieties (691 clones) for high dry matter in 2018-
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

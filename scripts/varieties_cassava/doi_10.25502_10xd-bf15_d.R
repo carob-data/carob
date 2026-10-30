@@ -25,6 +25,7 @@ Preliminary Yield Trial Maintenance (264 clones) in Namulonge 2016-2017 Breeding
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

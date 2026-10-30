@@ -24,6 +24,7 @@ Clonal Evaluation Trial using 1143 accessions in Ibadan selected from 2016.GS.C3
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

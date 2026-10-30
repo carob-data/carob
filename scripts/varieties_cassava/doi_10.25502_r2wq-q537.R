@@ -24,6 +24,7 @@ Genetic gain (420 clones) in Zaria 2004-2005 Breeding Season (old trial name was
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

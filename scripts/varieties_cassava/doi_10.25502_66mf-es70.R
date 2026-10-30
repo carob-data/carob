@@ -25,6 +25,7 @@ Genomic selection cycle 4b Preliminary Yield Trial using 88 accessions in Ago-ow
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

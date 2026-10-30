@@ -26,6 +26,7 @@ GPR Trial established using 3 clones and 3 treatments in July for 2021-22 breedi
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

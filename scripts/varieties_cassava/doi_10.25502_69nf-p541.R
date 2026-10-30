@@ -25,6 +25,7 @@ This experiment is comprised 2 by 4 plots, 8 clones and 6 blocks. Goal is to stu
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

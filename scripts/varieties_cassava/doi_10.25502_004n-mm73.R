@@ -4,6 +4,7 @@
 ## NOTES
 # IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
 
+
 ## ISSUES
 # None.
 
@@ -24,6 +25,7 @@ Genomic selection cycle 3 Preliminary Yield Trial using 45 accessions in Ibadan 
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

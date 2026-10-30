@@ -24,6 +24,7 @@ Genomic Selection Cycle 0 and Cycle 1 Clonal Evaluation (conservation) of 244 cl
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

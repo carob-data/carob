@@ -25,6 +25,7 @@ Seedling Nursery Trial using 1480 families in Cycle 4B in Ibadan 2018/2019 Breed
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

@@ -25,6 +25,7 @@ Genomic Selection cycle 4 crossing block of 149 in Ubiaja selected from 16.GS.C4
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,

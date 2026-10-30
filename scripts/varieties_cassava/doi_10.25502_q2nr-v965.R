@@ -26,6 +26,7 @@ Evaluation of NCRP Trial using 12 yellow root clones in 2020-2021 breeding seaso
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Claude Opus 5.5",
 		carob_completion = 90,
