@@ -5,7 +5,7 @@
 # IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
 
 ## ISSUES
-# @@ISSUES@@
+# Does not run with process_cassava(): Dataset or resource not reachable. Status code: 403 || ERROR: no files found
 
 carob_script <- function(path) {
 

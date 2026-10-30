@@ -5,7 +5,7 @@
 # IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
 
 ## ISSUES
-# @@ISSUES@@
+# Does not run with process_cassava(): ERROR: arguments imply differing number of rows: 1, 0
 
 carob_script <- function(path) {
 

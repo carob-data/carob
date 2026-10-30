@@ -5,7 +5,7 @@
 # IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
 
 ## ISSUES
-# @@ISSUES@@
+# Does not run with process_cassava(): URL 'https://data.iita.org/dataset/0e73a75c-ab6f-4231-82be-9fe6a045903f/resource/5a4f3b82-1088-41c4-a046-ab8628722e3e/download/2020-03-24t035503phenotype_download.csv': status was 'SSL connect error' || ERROR: invalid 'description' argument
 
 carob_script <- function(path) {
 

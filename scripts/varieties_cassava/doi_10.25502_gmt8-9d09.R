@@ -1,0 +1,39 @@
+# R script for "carob"
+# license: GPLv3
+
+## NOTES
+# IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
+
+## ISSUES
+# out of bounds: yield_moisture (55.7, 97)
+# NA detected: yield
+
+carob_script <- function(path) {
+
+"
+Genomic Selection cycle 4 CE of 435 set B clones evaluated at Onne in 2018/2019 Breeding season selected from 18.C4B.SN.IB
+"
+
+	uri <- "doi:10.25502/gmt8-9d09"
+	group <- "varieties_cassava"
+	ff  <- carobiner::get_data(uri, path, group)
+
+	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
+		data_organization = "IITA",
+		publication = NA,
+		project = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield",
+		carob_date = "2026-10-29",
+		carob_LLM = "Cursor Claude Opus 5.5",
+		carob_completion = 90,
+		carob_effort = NA,
+		notes = NA
+	)
+
+	process_cassava <- carobiner::get_function("process_cassava", path, group)
+	d <- process_cassava(ff)
+	carobiner::write_files(path, meta, d$records, d$timerecs)
+}
+
