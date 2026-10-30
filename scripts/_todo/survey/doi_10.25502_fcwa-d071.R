@@ -16,7 +16,7 @@
 # crops_grown still has free-text mixtures; unrecognised tokens are left as typed.
 # d_crop_production_use.csv is a second farm-level production table and was not merged.
 # No publication DOI in the deposit.
-# write_files: expect invalid fertilizer terms, possible out-of-range yields, and missing carob_contributor.
+# write_files: missing carob_contributor; unknown fertilizer_amount_; yield 0 to 250000; invalid crop "ground beans"; invalid fertilizer_type 0, 1, 11:21, 21, 23, A, Chitowe, Cotton fertlizer, N, STP, Super-D, Super compound, Super D; low yield for cowpea_maize, cowpea_soybean_groundnut, groundnut_pigeon pea, rice; five points fall in Mozambique; duplicate coordinates; NA yield, yield_part, latitude.
 
 ## NEW VARIABLES
 # fertilizer_amount_: raw min_fert_amount (unit not in the dictionary)

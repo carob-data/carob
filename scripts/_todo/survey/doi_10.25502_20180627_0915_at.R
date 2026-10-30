@@ -15,7 +15,7 @@
 # Variety names are farmer names (AGRIC, TME 419, vitamin A, local descriptions), not a controlled list.
 # dna.csv is leaf/DNA material, not a yield table.
 # No publication DOI in the deposit.
-# write_files: missing coordinates on many rows, missing carob_contributor.
+# write_files: missing carob_contributor; unknown area_reported_, area_unit_, harvest_reported_, harvest_unit_, state_code_, lga_code_, zone_code_; yield 0 to 4e6 and high cassava yield 4e6; duplicate records; NA yield, latitude, longitude.
 
 ## NEW VARIABLES
 # area_reported_: Area_cass_pltd as recorded

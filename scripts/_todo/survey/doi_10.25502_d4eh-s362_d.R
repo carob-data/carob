@@ -15,7 +15,7 @@
 # field_m.csv has field area and an irrigation flag that was not merged (separate field id; confirm the join to PlotID).
 # Niger is named in the abstract; this file's GPS and PAYS code are the Mali sample.
 # No publication DOI.
-# write_files: missing coordinates where homeGPS is blank, invalid crop "vegetables", missing carob_contributor. Elevation includes negative GPS altitudes.
+# write_files: missing carob_contributor; unknown harvest_dry_, dap_amount_, region_code_, cercle_code_, commune_code_, village_code_, harvest_fresh_, npk_amount_, urea_amount_, manure_amount_; invalid crop vegetables; duplicate records; NA latitude, longitude. GPS outside Mali (including a non-numeric longitude) was set to NA. pests_and_diseases_m.csv is not in the local files; its download URL does not resolve.
 
 ## NEW VARIABLES
 # region_code_, cercle_code_, commune_code_, village_code_: numeric admin codes
@@ -41,7 +41,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 
 	uri <- "doi:10.25502/d4eh-s362/d"
 	group <- "survey"
-	ff <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group, ignore="pests_and_diseases_m.csv")
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA",

@@ -14,7 +14,7 @@
 # Area 0 is kept when a crop name is present (current planted area can be zero).
 # Practice and variety-expansion blocks (PRACTICE_*, VARIETY_1 to VARIETY_5) are a second adoption module and were not stacked on these crop slots.
 # No publication DOI.
-# write_files: missing latitude/longitude, missing carob_contributor.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown farm_area_ha_.
 
 ## NEW VARIABLES
 # farm_area_ha_: FARM_SIZEHA, household farm size, repeated on each crop row

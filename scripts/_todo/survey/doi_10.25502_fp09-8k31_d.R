@@ -15,7 +15,7 @@
 # Confirm area_maize is the same acre figure as section A. They were not cross-checked row by row.
 # GPS altitudes include small negative values.
 # No publication DOI.
-# write_files: missing yield where the unit is a bag, missing coordinates if GPS is blank, missing carob_contributor.
+# write_files: missing carob_contributor; unknown fertilizer_amount_, harvest_reported_, harvest_unit_; NA yield, yield_part, latitude, longitude. NCBA CLUSA is named in the abstract and is not a data_organization term, so the organization is IITA.
 
 ## NEW VARIABLES
 # harvest_reported_: harvest quantity as recorded

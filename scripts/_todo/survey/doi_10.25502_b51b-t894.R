@@ -14,7 +14,7 @@
 # Fertiliser product codes: confirm 1 = yes. soymix and "other" have no nutrient analysis. Basal/top-dress quantities hh_e13* and hh_f3* are a second fertiliser block and were not added, to avoid double counting.
 # hh_e1* area uses a unit code (hh_e1mzunit) that is not documented, so that block was not used.
 # No publication DOI.
-# write_files: missing latitude/longitude, invalid fertilizer term "soymix" if it remains, possible out-of-range yields, missing carob_contributor.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown fertilizer_product_kg_; invalid fertilizer_type other, soymix; high yield maize 31707 and soybean 20000 kg/ha; NA yield.
 
 ## NEW VARIABLES
 # fertilizer_product_kg_: mineral fertiliser amount in kilograms (metadata), not split into N/P/K and not confirmed as kg/ha

@@ -15,7 +15,7 @@
 # Some coordinates fail the letter-degrees-minutes pattern (quotes, swapped N/E, missing space).
 # Fertilizer amount is absent. Harvest quantity is absent (only a unit word).
 # No publication DOI.
-# write_files: missing coordinates on some rows, invalid crop or fertilizer strings, missing carob_contributor.
+# write_files: missing carob_contributor; unknown fertilizer_note_, cassava_area_ha_, spacing_cassava_, spacing_maize_; invalid fertilizer_type Golden Pen, Kno3, Krister K; duplicate coordinates; NA latitude, longitude.
 
 ## NEW VARIABLES
 # cassava_area_ha_: Pcassz where Pcass says ha, including mixed-crop households

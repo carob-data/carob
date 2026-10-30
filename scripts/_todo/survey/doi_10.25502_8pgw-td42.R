@@ -18,7 +18,7 @@
 # min_fert_amount unit is undocumented. Do not treat fertilizer_amount_ as kg/ha without the questionnaire.
 # d_crop_production_use.csv is a second, farm-level production table (not merged, to avoid double counting).
 # No publication DOI in the deposit.
-# write_files: expect invalid crop/fertilizer terms, possible out-of-range yields, and missing carob_contributor.
+# write_files: missing carob_contributor; unknown fertilizer_amount_ and action_site_; invalid fertilizer_type local, RWRK10; low yield for banana_maize, common bean_soybean_cassava_groundnut, sweetpotato_cassava; coordinates in the wrong country (Rwanda/DRC and DRC/Burundi); duplicate coordinates; NA yield, yield_part, longitude.
 
 ## NEW VARIABLES
 # fertilizer_amount_: raw min_fert_amount (unit not in the dictionary)
@@ -90,12 +90,25 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		if (grepl("^k?hat$|^chatt?$", z)) return("khat")
 		if (grepl("amaranth", z)) return("amaranth")
 		if (grepl("^yam$", z)) return("yam")
-		if (grepl("^miaze$|maize", z)) return("maize")
+		if (grepl("^miaze$|^mais$|^maise$|^corn$|maize", z)) return("maize")
+		if (grepl("^manioc:?$|^assava$|^cassa ava$|^cassava$", z)) return("cassava")
+		if (grepl("soja|sobean", z)) return("soybean")
+		if (grepl("peanut|goundnut|groungnut", z)) return("groundnut")
+		if (grepl("sweet|seet potato|s weet", z) && grepl("patat|potat", z)) return("sweetpotato")
+		if (grepl("patato|patoto|^spud$|^potato", z)) return("potato")
+		if (grepl("sugar ?can", z)) return("sugarcane")
+		if (grepl("coloc|colcase", z)) return("taro")
+		if (grepl("aubergine", z)) return("eggplant")
+		if (grepl("cabb|cobbage", z)) return("cabbage")
+		if (grepl("^onion", z)) return("onion")
+		if (grepl("^beans?:?$|^beant$|^bens$", z)) return("common bean")
+		if (grepl("green pea", z)) return("pea")
 		if (grepl("copwea", z)) return("cowpea")
 		if (grepl("grounsnut|groundbeansa", z)) return("groundnut")
 		if (grepl("pegion", z)) return("pigeon pea")
 		if (grepl("sun ?flower", z)) return("sunflower")
-		if (z %in% c("tree", "trees", "eucalyptus", "wood", "fallow")) return(NA_character_)
+		if (grepl("^[0-9.]+$", z)) return(NA_character_)
+		if (z %in% c("tree", "trees", "eucalyptus", "eucalpytus", "wood", "fallow", "cinchona", "quinquina", "forest", "reforestation", "legumes", "garden of vegetables", "cassava bread")) return(NA_character_)
 		z
 	}
 
@@ -160,12 +173,13 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		one <- function(z) {
 			if (z %in% grain) return("grain")
 			if (z %in% seed) return("seed")
-			if (z %in% c("cassava", "sweetpotato")) return("roots")
+			if (z %in% c("cassava", "sweetpotato", "taro")) return("roots")
 			if (z %in% c("potato", "yam")) return("tubers")
 			if (z %in% c("banana", "tomato", "eggplant")) return("fruit")
-			if (z %in% c("tobacco", "khat", "amaranth")) return("leaves")
+			if (z %in% c("tobacco", "khat", "amaranth", "cabbage")) return("leaves")
 			if (z == "cotton") return("lint")
 			if (z == "enset") return("rhizome")
+			if (z == "sugarcane") return("stems")
 			NA_character_
 		}
 		vapply(strsplit(crop, "_", fixed=TRUE), function(parts) {

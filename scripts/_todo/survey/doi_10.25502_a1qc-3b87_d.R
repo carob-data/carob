@@ -18,7 +18,7 @@
 # organic_input_applied is not a clean Y/N for every row.
 # Livestock, labour, nutrition and legume-utilisation modules are not merged.
 # No publication DOI in the deposit.
-# write_files: missing latitude/longitude on some rows (NA detected), invalid fertiliser or crop tokens, possible out-of-range yields, missing carob_contributor.
+# write_files: missing carob_contributor; unknown area_timad_; invalid crop cropping, gumsor, hb, hr-relay, relay, solo; invalid fertilizer_type Local, N; low yield for faba bean_noug, grass pea_faba bean, teff_grass pea; duplicate coordinates; NA yield, yield_part, latitude, longitude.
 
 ## NEW VARIABLES
 # area_timad_: field area in local timad, unconverted

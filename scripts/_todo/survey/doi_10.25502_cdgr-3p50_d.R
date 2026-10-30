@@ -15,7 +15,7 @@
 # No coordinates. Georeference villages in Lilongwe, Mchinji, Dedza, Ntchisi, Kasungu and Mzimba.
 # Fertiliser product is unknown, so a single kg/ha rate cannot be split into N, P and K.
 # The abstract reads like a journal paper, but the deposit has no paper DOI.
-# write_files: missing latitude/longitude, missing carob_contributor. currency is included because a value is stored.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown crop_rotation_used_, minimum_tillage_, fertilizer_rate_kg_ha_, main_crop_code_, improved_seed_, residue_retention_.
 
 ## NEW VARIABLES
 # main_crop_code_: Main_crop numeric code

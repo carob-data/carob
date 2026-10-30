@@ -16,7 +16,7 @@
 # Fertilizer names Sympal, 23:21:0+4S and "Farmers own source" are not in the fertilizer vocabulary.
 # inputs_received.csv is a separate item list (current / last / previous season) and was not joined.
 # No publication DOI.
-# write_files: invalid fertilizer terms, missing latitude/longitude, missing carob_contributor.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown area_reported_, fertilizer_product_kg_, ward_; invalid intercrops "chinese"; invalid fertilizer_type MOP, Nitrogen fertilizer, Super D.
 
 ## NEW VARIABLES
 # area_reported_: raw area from legumes_area_and_management (unit not documented)

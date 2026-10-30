@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Africa RISING rapid farm characterisation, Tanzania. Each workbook is one household (IMPACTLite-style sheets). Crop rows are read from sheet "C Crops": a numeric crop code in column 1, cultivar in column 2, I/T in column 3.
+# Workbook sheet names are "C Crops" / "B Fields" or, on the .xls copies, "CROP", "CCROP" and "FIELD".
 # Codes follow sheet "J Codes" (11 maize, 13 pearl millet, 14 sorghum, 15 finger millet, 21 bean -> common bean, 22 soybean, 23 pigeon pea, 25 cowpea, 27 groundnut, 29 bambara, 33 tanaposi -> amaranth, 34 nkhwani -> pumpkin, 35 okra, 43 sweet potato, 45 cassava, and the other food crops on that sheet). Codes for "other", fallow and pasture are skipped.
 # I is variety_type improved. T (Traditional on the form) is landrace.
 # Field area is taken from sheet "B Fields" only when exactly one cell is a number plus acre, ha or m2. Acres x 0.404686, m2 / 10000. That area is the field, not the crop's share of the field (shares are on the form and were not applied).
@@ -17,7 +17,7 @@
 # Code 28 "ground bean (nzama)" is left as ground bean (code 29 is the bambara line). Code 34 nkhwani is mapped to pumpkin because it is the pumpkin-leaf vegetable; confirm.
 # Fertiliser text and crop-product percentages (home, sold, feed) are not standardised.
 # No year and no publication DOI in the files used.
-# write_files: missing latitude/longitude, invalid crop "ground bean" if it occurs, missing carob_contributor.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown fertilizer_note_. Code 28 "ground bean" did not occur in this run.
 
 ## NEW VARIABLES
 # fertilizer_note_: fertiliser free text from the crop block
@@ -79,9 +79,13 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		NA_character_
 	}
 
-	files <- ff[grepl("\\.xls$", basename(ff), ignore.case=TRUE)]
+	files <- ff[grepl("\\.xls[x]?$", basename(ff), ignore.case=TRUE)]
 	rows <- list()
 	for (f in files) {
+		sheets <- readxl::excel_sheets(f)
+		crop_sheet <- sheets[grepl("crop", sheets, ignore.case=TRUE)]
+		field_sheet <- sheets[grepl("field", sheets, ignore.case=TRUE)]
+		if (!length(crop_sheet) || !length(field_sheet)) next
 		p <- gsub("\\\\", "/", f)
 		adm2 <- NA_character_
 		adm1 <- NA_character_
@@ -99,8 +103,8 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		village <- sub("^Village[[:space:]]+[0-9]+[[:space:]]+", "", folder)
 		village <- sub("^[0-9]+\\.[[:space:]]*[^-]+-[[:space:]]*", "", village)
 
-		crops <- carobiner::read.excel(f, sheet="C Crops", col_names=FALSE)
-		fields <- carobiner::read.excel(f, sheet="B Fields", col_names=FALSE)
+		crops <- carobiner::read.excel(f, sheet=crop_sheet[1], col_names=FALSE)
+		fields <- carobiner::read.excel(f, sheet=field_sheet[1], col_names=FALSE)
 		cells <- trimws(as.character(unlist(fields)))
 		cells <- cells[!is.na(cells)]
 		area_cell <- cells[grepl("^[0-9.]+[[:space:]]*(acre|acres|ha|hectare|hectares|m2)$", cells, ignore.case=TRUE)]

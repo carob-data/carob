@@ -15,7 +15,7 @@
 # Non-crop rows (wood, firewood, forages, leaves, others) were dropped.
 # Country code 2 = Burundi is inferred from the dataset, not from a codebook.
 # No publication DOI.
-# write_files: missing latitude/longitude, possible invalid crop names (pear, tea), out-of-range yields, missing carob_contributor.
+# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown location_code_, dry_harvest_kg_, fertilizer_product_kg_, organic_input_, district_code_, sector_code_; low yield for coffee, groundnut, lettuce, onion, orange, pumpkin, sweetpotato, tobacco; NA yield, yield_part.
 
 ## NEW VARIABLES
 # district_code_: District_Cefferie_Commune (numeric code)
