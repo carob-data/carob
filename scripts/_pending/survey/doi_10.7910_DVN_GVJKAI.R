@@ -14,7 +14,7 @@ carob_script <- function(path) {
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "IFPRI",
 		publication = NA,
-		project = NA,
+		project = "MHWS",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none", 

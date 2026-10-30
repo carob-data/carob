@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## REJECTED
+# doi:10.15482/USDA.ADC/1529411 returned no data files. The script names no file and does not read a table, so there is nothing to draft.
+
 
 carob_script <- function(path) {
 
@@ -74,5 +77,3 @@ This dataset consists of growth and yield data for each season when sorghum [Sor
 	
 	carobiner::write_files(meta, d, path=path)
 }
-
-
