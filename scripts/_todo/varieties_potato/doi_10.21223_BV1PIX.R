@@ -3,7 +3,7 @@
 
 ## NOTES
 # The tab-separated fieldbooks are the data tables. The Excel Minerals sheet is not used.
-# Mineral and vitamin C columns are tuber concentrations, not fertilizer and not soil. Dry-weight minerals are mg/kg. Fresh-weight minerals and ascorbic acid are mg/100 g. Dry matter is percent. The vitamin-file dry matter is kept separately because it does not match the mineral-file dry matter on the same clone.
+# Mineral and vitamin C columns are tuber concentrations, not fertilizer and not soil. Dry-weight minerals are mg/kg. Fresh-weight minerals and ascorbic acid are mg/100 g. Dry matter in the mineral file is percent. yield_moisture is 100 minus that value. The vitamin-file dry matter does not match it, so it stays as tuber_dry_matter_vitamin_.
 # Where accession names differ, variety is that name and variety_code is the CIP number. A single repeated accession name is stored as population_ and the CIP number is the variety.
 # Country, department, province, district, and locality are columns in the fieldbook. The Minimal sheet has La Victoria, San Agustin, Huancayo, Junin, begin date 2004-12-04, and end date 2005-05-04, and blank latitude and longitude. The Dataverse bounding box publishes only south -12.0264 and west -75.2449. Those two values are used as the point. The installation design cell is blank and plot size is "----". The description says a completely randomized design with two replications. The installation repetition count is 2. Crop management lists fertilizing, weed, pest, disease, and irrigation with no product or dose.
 # The mineral file also has Al, Ti, Cr, Se, Pb, Cd, Mo, Co, and Ni. The Ni dry-weight header in the text file has no closing parenthesis. It is still matched. Values written as "< number" are below the detection limit and are set to missing.
@@ -12,11 +12,10 @@
 # No yield in the fieldbooks.
 # The coordinate is the bounding-box corner, not a plot GPS point.
 # Rows with no CIP number are dropped.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_dry_matter_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Mn_dw_, tuber_Mn_fw_, tuber_B_dw_, tuber_B_fw_, tuber_Cu_dw_, tuber_Cu_fw_, tuber_Zn_dw_, tuber_Zn_fw_, tuber_Ca_dw_, tuber_Ca_fw_, tuber_Mg_dw_, tuber_Mg_fw_, tuber_K_dw_, tuber_K_fw_, tuber_P_dw_, tuber_P_fw_, tuber_S_dw_, tuber_S_fw_, tuber_Na_dw_, tuber_Na_fw_, tuber_Al_dw_, tuber_Al_fw_, tuber_Ti_dw_, tuber_Cr_dw_, tuber_Se_dw_, tuber_Pb_dw_, tuber_Cd_dw_, tuber_Cd_fw_, tuber_Mo_dw_, tuber_Mo_fw_, tuber_Co_dw_, tuber_Co_fw_, tuber_Ni_dw_, tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_vitamin_.
+# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_Fe_dw_, tuber_Fe_fw_, tuber_Mn_dw_, tuber_Mn_fw_, tuber_B_dw_, tuber_B_fw_, tuber_Cu_dw_, tuber_Cu_fw_, tuber_Zn_dw_, tuber_Zn_fw_, tuber_Ca_dw_, tuber_Ca_fw_, tuber_Mg_dw_, tuber_Mg_fw_, tuber_K_dw_, tuber_K_fw_, tuber_P_dw_, tuber_P_fw_, tuber_S_dw_, tuber_S_fw_, tuber_Na_dw_, tuber_Na_fw_, tuber_Al_dw_, tuber_Al_fw_, tuber_Ti_dw_, tuber_Cr_dw_, tuber_Se_dw_, tuber_Pb_dw_, tuber_Cd_dw_, tuber_Cd_fw_, tuber_Mo_dw_, tuber_Mo_fw_, tuber_Co_dw_, tuber_Co_fw_, tuber_Ni_dw_, tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_vitamin_.
 
 ## NEW VARIABLES
 # population_: accession or population name when it is not the clone.
-# tuber_dry_matter_: dry matter from the mineral file, percent.
 # tuber_dry_matter_vitamin_: dry matter from the vitamin C file, percent.
 # tuber_<element>_dw_: tuber mineral, mg/kg dry weight.
 # tuber_<element>_fw_: tuber mineral, mg/100 g fresh weight.
@@ -125,7 +124,7 @@ An examination of micronutrient concentrations, including minerals and vitamin C
 		planting_date = meta_val("Begin date"),
 		harvest_date = meta_val("End date"),
 		trial_id = "LaVictoria_2004",
-		tuber_dry_matter_ = col_one(m, "^Percentage Dry matter"),
+		yield_moisture = 100 - col_one(m, "^Percentage Dry matter"),
 		key = paste(instn, as.integer(m$REP))
 	)
 	mins <- add_minerals(m)

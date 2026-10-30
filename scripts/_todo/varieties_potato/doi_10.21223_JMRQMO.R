@@ -5,15 +5,14 @@
 # Phureja collection evaluated at Comas, Concepcion, Junin, Peru, in 2006. Country Peru is the geographic coverage and the mineral sheet (written there as Perú). Department, province, district, and locality are columns.
 # Minimal dates are planting 2006-05-09 and harvest 2006-09-21. The installation sheet also says harvest 2006-09-21, but its planting cell is 2005-04-18, which is not used.
 # Installation: RCBD, 3 blocks, 8 plants per plot, plot 2.16 m2, 0.3 m between plants and 0.9 m between rows (30 cm and 90 cm), density 37037.037 plants/ha.
-# Mineral columns state the unit: mg/kg dry weight or mg/100 g fresh weight. They are tuber composition, not fertilizer. Dry matter is percent. The bounding box publishes only the south and west corner for this one site.
+# Mineral columns state the unit: mg/kg dry weight or mg/100 g fresh weight. They are tuber composition, not fertilizer. Dry matter is percent. yield_moisture is 100 minus that value. The bounding box publishes only the south and west corner for this one site.
 
 ## ISSUES
 # No yield in the mineral sheet.
 # Vitamin C, phenolics, and morphology workbooks are separate evaluations and are not joined.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_dry_matter_ and the tuber mineral columns (mg/kg dry weight and mg/100 g fresh weight).
+# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: the tuber mineral columns (mg/kg dry weight and mg/100 g fresh weight).
 
 ## NEW VARIABLES
-# tuber_dry_matter_: percentage dry matter.
 # tuber_<element>_mg_kg_dw_ and tuber_<element>_mg_100g_fw_: tuber minerals in the units printed in the header.
 
 ## NOT PROCESSED
@@ -97,7 +96,7 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 		plant_spacing = 30,
 		row_spacing = 90,
 		plant_density = 37037.037,
-		tuber_dry_matter_ = col("^Percentage Dry matter"),
+		yield_moisture = 100 - col("^Percentage Dry matter"),
 		trial_id = "Comas_phureja_2006",
 		on_farm = FALSE,
 		is_survey = FALSE

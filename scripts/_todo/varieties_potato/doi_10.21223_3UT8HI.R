@@ -3,7 +3,7 @@
 
 ## NOTES
 # Mineral concentration of four bitter-potato varieties at Puno, measured fresh and as chuño.
-# The dictionary gives dry-matter as a percentage and the minerals as mg/kg dry weight or mg/100 g fresh weight. K and P here are tuber contents, not fertilizer.
+# The dictionary gives dry-matter as a percentage and the minerals as mg/kg dry weight or mg/100 g fresh weight. yield_moisture is 100 minus the dry-matter percentage. K and P here are tuber contents, not fertilizer.
 # Installation: two-way factorial, plot 3 m2, 0.30 m between plants, 1 m between rows. Spacing is stored in cm.
 # Coordinates and elevation 3856 m are on the Identification sheet.
 # Every row is recorded at Puno. Treatment labels that say Huancavelica name the chuño process, not a second trial site.
@@ -14,7 +14,7 @@
 # No fertilizer rate and no irrigation statement.
 # No tuber yield. The measurements are laboratory mineral concentrations.
 # The material list has twelve accession names. The data file has four variety names in INSTN, so the material list was not joined.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: processing_ and the tuber mineral and dry-matter columns named with a trailing underscore.
+# write_files: missing variables: carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: processing_ and the tuber mineral columns named with a trailing underscore.
 
 ## NOT PROCESSED
 # 02_Material_list and the fieldbook Material List: the names do not match the four varieties in the data file.
@@ -41,7 +41,7 @@ Four native varieties of bitter potatoes were used to analyze mineral concentrat
 		design = "Two-way Factorial Design",
 		data_type = "experiment",
 		treatment_vars = "variety;processing_",
-		response_vars = "dry_matter_percent_;tuber_Fe_mg_kg_dw_;tuber_Zn_mg_kg_dw_",
+		response_vars = "yield_moisture;tuber_Fe_mg_kg_dw_;tuber_Zn_mg_kg_dw_",
 		notes = NA,
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
@@ -76,7 +76,7 @@ Four native varieties of bitter potatoes were used to analyze mineral concentrat
 		plant_spacing = 0.30 * 100,
 		row_spacing = 1 * 100,
 		plant_density = 33333,
-		dry_matter_percent_ = as.numeric(r$PDM),
+		yield_moisture = 100 - as.numeric(r$PDM),
 		tuber_Fe_mg_kg_dw_ = as.numeric(r$FeDW),
 		tuber_Fe_mg_100g_fw_ = as.numeric(r$FeFW),
 		tuber_Mn_mg_kg_dw_ = as.numeric(r$MnDW),

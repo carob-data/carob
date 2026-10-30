@@ -3,7 +3,7 @@
 
 ## NOTES
 # Conservation-agriculture potato trial at Licame, Chugay, Sánchez Carrión, La Libertad, Peru. Variety INIA-325 Poderosa.
-# The dictionary states FTY and MTY in t ha-1. Yield and yield_marketable are those columns times 1000. DMCt is tuber dry matter in percent.
+# The dictionary states FTY and MTY in t ha-1. Yield and yield_marketable are those columns times 1000. DMCt is tuber dry matter in percent. yield_moisture is 100 minus that value.
 # The abstract gives plots of 3 x 4 m and spacing of 0.3 m between plants and 1 m between furrows. Spacing is stored in cm.
 # The dataset geographic coverage is one west longitude and one south latitude.
 
@@ -14,7 +14,7 @@
 # Soil moisture, soil temperature, decomposition, and soil analysis are repeated or laboratory tables and are not in the plot table.
 # The data include minimum tillage as well as conventional and zero tillage, and a mulch level of 0. The abstract names conventional and zero tillage and mulch of 10, 20, and 30 cm.
 # mulch in the vocabulary is kg/ha. The factor here is thickness in cm, so it is not stored as mulch.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: tillage_ (age?). unknown variable: mulch_thickness_ (mulch?). unknown variables: plastic_, dry_matter_percent_.
+# write_files: missing variables: carob_contributor, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: tillage_ (age?). unknown variable: mulch_thickness_ (mulch?). unknown variables: plastic_.
 
 ## NOT PROCESSED
 # 1_Harvest: tuber weights in kg per inner plot. FTY is the per-area yield.
@@ -83,7 +83,7 @@ An experimental potato trial based on conservation agriculture in the second sea
 		yield = as.numeric(y$FTY) * 1000,
 		yield_marketable = as.numeric(y$MTY) * 1000,
 		yield_part = "tubers",
-		dry_matter_percent_ = as.numeric(dmc),
+		yield_moisture = 100 - as.numeric(dmc),
 		on_farm = TRUE,
 		is_survey = FALSE
 	)

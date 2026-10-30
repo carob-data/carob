@@ -3,7 +3,7 @@
 
 ## NOTES
 # Split-split plot potato trial at La Soledad, Chugay, Sanchez Carrion, La Libertad, Peru, 25 October 2023 to 16 April 2024. Variety INIA-325 Poderosa. The description spells the design "split-plit". Plots are 3 x 4 m. Plant spacing 0.3 m and row spacing 1 m.
-# FTY, MTY, TEY, and MEY are t/ha. FFBY (faba bean) is already kg/ha. Plot weights in the harvest file are not converted again.
+# FTY, MTY, TEY, and MEY are t/ha. FFBY (faba bean) is already kg/ha. Plot weights in the harvest file are not converted again. DMCt is tuber dry matter in percent. yield_moisture is 100 minus that value.
 # Poultry manure rates are 0, 1, 2, and 4 t/ha. Zero is the control rate. OM_amount is kg/ha. OM_type is poultry manure.
 # Disc / no disc is the fungicide decision tool, not a product or a dose.
 # Soil P is ug/g, stored as mg/kg. EC is dS/m, the same number as mS/cm. CaCO3 is percent, stored as g/kg (times 10). Exchangeable cations and CEC are meq/100 g, the same number as cmol/kg. K+ is that cation. The separate K column is about 100 to 130 with the unit cell meq/100 g, so it is not stored as soil_K or soil_K_exch.
@@ -12,13 +12,12 @@
 ## ISSUES
 # La Soledad needs georeferencing. The files have no coordinates.
 # No mineral fertilizer rate. The control is poultry manure at 0, not an N-P-K rate.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: faba_yield_, equivalent_yield_, marketable_equivalent_yield_, tuber_dry_matter_, soil_K_listed_, soil_C_gkg_, soil_N_mgg_.
+# write_files: missing carob_contributor, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: faba_yield_, equivalent_yield_, marketable_equivalent_yield_, soil_K_listed_, soil_C_gkg_, soil_N_mgg_.
 
 ## NEW VARIABLES
 # faba_yield_: faba bean yield, kg/ha, already in those units.
 # equivalent_yield_: total equivalent yield, t/ha times 1000.
 # marketable_equivalent_yield_: marketable equivalent yield, t/ha times 1000.
-# tuber_dry_matter_: tuber dry matter, percent.
 # soil_K_listed_: the K column, unit cell meq/100 g.
 # soil_C_gkg_: total carbon, g/kg, by depth.
 # soil_N_mgg_: total nitrogen, mg/g, by depth.
@@ -109,7 +108,7 @@ An experimental potato trial based on organic agriculture in the second season (
 	)
 
 	if (!"DMCt" %in% names(dm)) stop("dry matter column DMCt not found")
-	d$tuber_dry_matter_ <- num(dm$DMCt[match(d$record_id, as.integer(dm$ID))])
+	d$yield_moisture <- 100 - num(dm$DMCt[match(d$record_id, as.integer(dm$ID))])
 
 	s <- s[match(d$record_id, as.integer(s$ID)), ]
 	d$soil_pH <- num(s$pH)

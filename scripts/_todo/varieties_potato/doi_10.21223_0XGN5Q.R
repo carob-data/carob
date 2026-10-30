@@ -3,7 +3,7 @@
 
 ## NOTES
 # Vitamin C and dry matter of promising clones at La Victoria, Huancayo. The tidy table is 01_Data_VitaminC_Huancayo_Set5_2007.xlsx.
-# The fieldbook sheet "2008_Sets 5_Hyo" names the units: ascorbic acid mg/100 g dry weight, mg/100 g fresh weight, and percentage dry matter.
+# The fieldbook sheet "2008_Sets 5_Hyo" names the units: ascorbic acid mg/100 g dry weight, mg/100 g fresh weight, and percentage dry matter. yield_moisture is 100 minus that percentage.
 # Installation: planted 2007-12-12, harvested 2008-04-23, plot 2.7 m2, 0.30 m between plants, 0.90 m between rows. Spacing is stored in cm.
 # Coordinates and elevation are on the Identification sheet.
 
@@ -12,7 +12,7 @@
 # Crop management lists fertilizing, weed, pest, disease, and irrigation with no product and no rate.
 # No tuber yield in the files.
 # The laboratory year in the data file is 2008. The trial was planted in 2007.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_, dry_matter_percent_.
+# write_files: missing variables: carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
 
 ## NOT PROCESSED
 # 02_Material_list and the fieldbook Material List: identifier crosswalk. Variety is the accession name when it is filled, otherwise the institutional number.
@@ -40,7 +40,7 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		design = "Randomized Complete Block Design (RCBD)",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "ascorbic_acid_mg_100g_dw_;ascorbic_acid_mg_100g_fw_;dry_matter_percent_",
+		response_vars = "ascorbic_acid_mg_100g_dw_;ascorbic_acid_mg_100g_fw_;yield_moisture",
 		notes = NA,
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
@@ -82,7 +82,7 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		# units from the fieldbook sheet 2008_Sets 5_Hyo
 		ascorbic_acid_mg_100g_dw_ = as.numeric(r$ASC_DW),
 		ascorbic_acid_mg_100g_fw_ = as.numeric(r$ASC_FW),
-		dry_matter_percent_ = as.numeric(r$PDM),
+		yield_moisture = 100 - as.numeric(r$PDM),
 		on_farm = FALSE,
 		is_survey = FALSE
 	)

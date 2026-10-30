@@ -5,7 +5,7 @@
 # Only two of the six sites named in the description are in the raw folder: Mariscal Caceres (Conayca) and Sotopampa. Ccasapata, Ccollpaccasa, La Victoria, and Rangra are not here.
 # Coordinates, elevation, dates, and plot layout are the Minimal and Installation sheets. Design is RCBD, 3 reps, 10 plants on 2.7 m2, 0.30 m between plants and 0.90 m between rows. The description says one hill per plot and gives Sotopampa as 3754 m. The Sotopampa workbook elevation is 3730 m. The workbook values are used.
 # Planting and harvest dates are Begin date and End date. Crop_management also records vine killing (2010-05-13 at Mariscal Caceres) with no product or dose.
-# Dictionary: DM is percent dry matter. CH is chlorogenic acid, CafAc is caffeic acid, and Trip is tryptophan, all mg/100 g. TP_DW and TP_FW are the synonyms for total phenolics on a chlorogenic-acid basis, which is a different row from HPLC total phenolics (Tphe) and from chlorogenic acid (CH). TA is not in the dictionary. AntCap is the fieldbook column. A dictionary row named antheraxanthin (ug/100 g, upper limit 100) uses the synonym Ant and a method that mentions an ascorbic-acid standard curve. AntCap values are about 400 to 1060, so they are kept under their own names and not called antheraxanthin.
+# Dictionary: DM is percent dry matter. yield_moisture is 100 minus that value. CH is chlorogenic acid, CafAc is caffeic acid, and Trip is tryptophan, all mg/100 g. TP_DW and TP_FW are the synonyms for total phenolics on a chlorogenic-acid basis, which is a different row from HPLC total phenolics (Tphe) and from chlorogenic acid (CH). TA is not in the dictionary. AntCap is the fieldbook column. A dictionary row named antheraxanthin (ug/100 g, upper limit 100) uses the synonym Ant and a method that mentions an ascorbic-acid standard curve. AntCap values are about 400 to 1060, so they are kept under their own names and not called antheraxanthin.
 # Soil is one sample per site, repeated on the plot rows. P, K, Fe, Cu, Zn, B, and Mn are ppm and stored as mg/kg. EC is mmho/cm, the same number as mS/cm. Exchangeable cations and CEC are meq/100 g, the same number as cmol/kg. CaCO3 is percent in the file and is stored as g/kg (times 10). The sand, Lime, and clay percentages sum to 100, so Lime is the silt fraction. Franco arenoso is sandy loam and Franco is loam. Total N has a blank unit cell and is not mapped to soil_N.
 
 ## ISSUES
@@ -13,11 +13,10 @@
 # The description's other four sites are absent.
 # Conayca exchangeable potassium is 4.87 meq/100 g and total bases is also 4.87, which does not match the sum of the exchangeable cations. Values are left as recorded.
 # Some chlorogenic-acid and total-phenolic numbers are above the dictionary upper limit of 100 mg/100 g. They are left as recorded.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. Unknown variables are the tuber chemistry names and soil_N_total_.
+# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. Unknown variables are the tuber chemistry names and soil_N_total_.
 
 ## NEW VARIABLES
 # lab_sample_: laboratory sample number (1 or 2) for the same plot.
-# tuber_dry_matter_: tuber dry matter, percent.
 # tuber_chlorogenic_dw_, tuber_chlorogenic_fw_: chlorogenic acid, mg/100 g dry and fresh weight.
 # tuber_caffeic_dw_, tuber_caffeic_fw_: caffeic acid, mg/100 g.
 # tuber_tryptophan_dw_, tuber_tryptophan_fw_: tryptophan, mg/100 g.
@@ -58,7 +57,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "tuber_dry_matter_;tuber_chlorogenic_dw_;tuber_caffeic_dw_;tuber_tryptophan_dw_;tuber_TP_dw_",
+		response_vars = "yield_moisture;tuber_chlorogenic_dw_;tuber_caffeic_dw_;tuber_tryptophan_dw_;tuber_TP_dw_",
 		notes = NA,
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
@@ -125,7 +124,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 			plant_spacing = num(one(inst, "Distance between plants (m)")) * 100,
 			row_spacing = num(one(inst, "Distance between rows (m)")) * 100,
 			seed_density = num(one(inst, "Planting density (plants/Ha)")),
-			tuber_dry_matter_ = num(fb$DM),
+			yield_moisture = 100 - num(fb$DM),
 			tuber_TP_dw_ = num(fb$TP_DW),
 			tuber_TP_fw_ = num(fb$TP_FW),
 			tuber_TA_dw_ = num(fb$TA_DW),

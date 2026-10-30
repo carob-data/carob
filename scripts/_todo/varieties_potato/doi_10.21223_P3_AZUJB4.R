@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Vitamin C of advanced clones. The sheet has a second header row. Highland Tropic is dry matter. Vict. C (mg/100DW) and Vict. C (mg/100FW) are ascorbic acid in mg/100 g.
+# Vitamin C of advanced clones. The sheet has a second header row. Highland Tropic is dry matter percent. yield_moisture is 100 minus that value. Vict. C (mg/100DW) and Vict. C (mg/100FW) are ascorbic acid in mg/100 g.
 # Locality and year are in one column, for example Huancayo-2005.
 
 ## ISSUES
@@ -10,7 +10,7 @@
 # The abstract discusses iron and zinc. This workbook has dry matter and vitamin C, not iron or zinc.
 # No fertilizer, irrigation, planting date, harvest date, or yield.
 # A locality value Huancayo-2005-2006 is more than one year. It is kept as recorded in the trial id.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: dry_matter_percent_, ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
+# write_files: missing variables: carob_contributor, yield, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
 
 ## NOT PROCESSED
 # Standard deviations next to dry matter and vitamin C.
@@ -37,7 +37,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "ascorbic_acid_mg_100g_fw_;dry_matter_percent_",
+		response_vars = "ascorbic_acid_mg_100g_fw_;yield_moisture",
 		notes = NA,
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
@@ -72,7 +72,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		variety = clone,
 		variety_code = clone,
 		treatment = clone,
-		dry_matter_percent_ = num(r[["Highland Tropic"]]),
+		yield_moisture = 100 - num(r[["Highland Tropic"]]),
 		ascorbic_acid_mg_100g_dw_ = num(r[["Vict. C (mg/100DW)"]]),
 		ascorbic_acid_mg_100g_fw_ = num(r[["Vict. C (mg/100FW)"]]),
 		on_farm = FALSE,

@@ -3,7 +3,7 @@
 
 ## NOTES
 # The tab-separated fieldbooks are the data tables. The Excel Minerals sheet is not used.
-# Mineral and vitamin C columns are tuber concentrations, not fertilizer and not soil. Dry-weight minerals are mg/kg. Fresh-weight minerals and ascorbic acid are mg/100 g. Dry matter is percent. The vitamin-file dry matter is kept separately because it does not match the mineral-file dry matter on the same clone.
+# Mineral and vitamin C columns are tuber concentrations, not fertilizer and not soil. Dry-weight minerals are mg/kg. Fresh-weight minerals and ascorbic acid are mg/100 g. Dry matter in the mineral file is percent. yield_moisture is 100 minus that value. The vitamin-file dry matter does not match it, so it stays as tuber_dry_matter_vitamin_.
 # Accession name is B3C1 for every row, so the variety is the CIP number. B3C1 is stored as population_.
 # Country, department, province, district, and locality are columns in the fieldbook. The Minimal sheet has the same place names, begin date 2003-12-04, and end date 2004-05-04, and blank latitude and longitude. The Dataverse bounding box publishes only south -11.8336 and west -75.4343. Those two values are used as the point. The installation design cell is blank. The description says a completely randomized design with three replications. The installation repetition count is 3. Plot size and spacing are blank. Crop management lists fertilizing, weed, pest, disease, and irrigation with no product or dose.
 
@@ -11,11 +11,10 @@
 # No yield in the fieldbooks.
 # The coordinate is the bounding-box corner, not a plot GPS point.
 # Rows with no CIP number are dropped.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: population_, tuber_dry_matter_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Mn_dw_, tuber_Mn_fw_, tuber_B_dw_, tuber_B_fw_, tuber_Cu_dw_, tuber_Cu_fw_, tuber_Zn_dw_, tuber_Zn_fw_, tuber_Ca_dw_, tuber_Ca_fw_, tuber_Mg_dw_, tuber_Mg_fw_, tuber_K_dw_, tuber_K_fw_, tuber_P_dw_, tuber_P_fw_, tuber_S_dw_, tuber_S_fw_, tuber_Na_dw_, tuber_Na_fw_, tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_vitamin_.
+# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: population_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Mn_dw_, tuber_Mn_fw_, tuber_B_dw_, tuber_B_fw_, tuber_Cu_dw_, tuber_Cu_fw_, tuber_Zn_dw_, tuber_Zn_fw_, tuber_Ca_dw_, tuber_Ca_fw_, tuber_Mg_dw_, tuber_Mg_fw_, tuber_K_dw_, tuber_K_fw_, tuber_P_dw_, tuber_P_fw_, tuber_S_dw_, tuber_S_fw_, tuber_Na_dw_, tuber_Na_fw_, tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_vitamin_.
 
 ## NEW VARIABLES
 # population_: accession or population name when it is not the clone.
-# tuber_dry_matter_: dry matter from the mineral file, percent.
 # tuber_dry_matter_vitamin_: dry matter from the vitamin C file, percent.
 # tuber_<element>_dw_: tuber mineral, mg/kg dry weight.
 # tuber_<element>_fw_: tuber mineral, mg/100 g fresh weight.
@@ -124,7 +123,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		planting_date = meta_val("Begin date"),
 		harvest_date = meta_val("End date"),
 		trial_id = "Muqui_B3C1_2003",
-		tuber_dry_matter_ = col_one(m, "^Percentage Dry matter"),
+		yield_moisture = 100 - col_one(m, "^Percentage Dry matter"),
 		key = paste(instn, as.integer(m$REP))
 	)
 	mins <- add_minerals(m)

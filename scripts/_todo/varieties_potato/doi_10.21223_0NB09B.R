@@ -4,17 +4,16 @@
 ## NOTES
 # The raw folder has the Ayacucho workbook only (Quishuarcancha). The description also names Huancayo. That site is not in this folder. The material list has 192 clones, not the 340 accessions named in the description.
 # Place, elevation, coordinates, and dates are the Minimal sheet. Design, plot size 1.8 m2, spacing 0.25 m by 0.90 m, and planting density are the Installation sheet. Begin date and the planting row are both 2007-11-21. The Minimal end date is 2008-05-26. The crop-management harvest row is 2008-06-15, and that date is used as harvest_date. Vine killing has no date and no product.
-# ASC_DW, ASC_FW, and DM have no units in this workbook. They are stored under tuber chemistry names without a unit conversion. In other CIP vitamin C fieldbooks the matching columns are mg/100 g and percent dry matter. This file does not say that.
+# ASC_DW and ASC_FW have no units in this workbook. They are stored under tuber chemistry names without a unit conversion. DM is not labeled either. In other CIP vitamin C fieldbooks the matching column is percent dry matter, so yield_moisture is 100 minus DM.
 
 ## ISSUES
 # No yield.
 # Huancayo is named in the description and is not in the raw folder.
 # Soil_analysis has no measurements. Weather_data is empty.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_ascorbate_dw_, tuber_ascorbate_fw_, tuber_dry_matter_.
+# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_ascorbate_dw_, tuber_ascorbate_fw_.
 
 ## NEW VARIABLES
 # tuber_ascorbate_dw_, tuber_ascorbate_fw_: ASC_DW and ASC_FW. Unit is not labeled in this file.
-# tuber_dry_matter_: DM. Unit is not labeled in this file.
 
 ## NOT PROCESSED
 # Summary by clone, Original-VitaminC, Tabla Ayacucho, and Var List: summaries or source tables already represented by the fieldbook.
@@ -42,7 +41,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "tuber_ascorbate_dw_;tuber_dry_matter_",
+		response_vars = "tuber_ascorbate_dw_;yield_moisture",
 		notes = NA,
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
@@ -111,7 +110,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		seed_density = num(one(inst, "Planting density (plants/Ha)")),
 		tuber_ascorbate_dw_ = num(fb$ASC_DW),
 		tuber_ascorbate_fw_ = num(fb$ASC_FW),
-		tuber_dry_matter_ = num(fb$DM),
+		yield_moisture = 100 - num(fb$DM),
 		crop = "potato",
 		on_farm = NA,
 		is_survey = FALSE
