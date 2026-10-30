@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-#The dataset has some missing values for OM_type and OM_amount
+#The dataset has some missing values for OM_amount
 
 carob_script <- function(path) {
 
@@ -23,7 +23,7 @@ Collecting long-term data from ISFM maize trials and modelling them with the Day
 		project = NA,
 		design = "split plot design",
 		data_type = "on-farm experiment",
-		treatment_vars = "OM_amount;OM_type;N_fertilizer;season",
+		treatment_vars = "OM_amount;OM_type;N_fertilizer",
 		response_vars = "yield", 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-10-16",
@@ -40,6 +40,7 @@ Collecting long-term data from ISFM maize trials and modelling them with the Day
 
 
 	r1$OM_type[r1$OM_type == ""] <- NA
+	r1$OM_type[is.na(r1$OM_type) & r1$OM_amount == 0] <- "CT"
 	
 	d <- data.frame(
 		plot_id = as.character(r1$Plot_NO),
@@ -47,6 +48,7 @@ Collecting long-term data from ISFM maize trials and modelling them with the Day
 		OM_amount = r1$OM_amount,
 		yield = r1$grainYield * 1000,
 		dmy_total = r1$totalYield *1000,
+		dmy_residue = r1$stoverYield * 1000,
 		location = r1$Site,
 		K_fertilizer = r1$K_amount,
 		P_fertilizer = r1$P_amount,
