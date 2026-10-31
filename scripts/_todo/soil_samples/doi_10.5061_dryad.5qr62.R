@@ -9,7 +9,7 @@
 
 ## ISSUES
 # No coordinates. Some profile depths are deeper than 200 cm. One nitrate value is slightly negative.
-# write_files: missing variables: carob_contributor, latitude, longitude. unknown variables: inorganic_N_kg_ha_. out of bounds: depth_top (0, 350), depth_bottom (15, 400), soil_NO3 (-0.004, 86.615), soil_NH4 (0, 72.953).
+# write_files: , latitude, longitude. unknown variables: inorganic_N_kg_ha_. out of bounds: depth_top (0, 350), depth_bottom (15, 400), soil_NO3 (-0.004, 86.615), soil_NH4 (0, 72.953).
 
 ## NEW VARIABLES
 # inorganic_N_kg_ha_: inorganic N stock, kg/ha, from kgNperha.

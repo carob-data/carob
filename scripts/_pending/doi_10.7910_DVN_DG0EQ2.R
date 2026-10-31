@@ -1,7 +1,6 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## REJECTED
 # This dataset is a crossing block / germplasm list (selected landraces and
 # elite lines for heterotic pool determination). It has the names of the
 # landraces and their collection origin (region/zone/woreda) and diversity /
@@ -16,7 +15,7 @@ List of selected Ethiopian sorghum landraces and elite lines assembled as a cros
 "
 
 	uri <- "doi:10.7910/DVN/DG0EQ2"
-	group <- "varieties"
+	group <- "genotypes"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
@@ -48,24 +47,6 @@ List of selected Ethiopian sorghum landraces and elite lines assembled as a cros
 
 	d <- d[!is.na(d$variety) & d$variety != "", ]
 	d <- unique(d)
-
-	d$trial_id <- "1"
-	d$on_farm <- NA
-	d$is_survey <- FALSE
-	d$irrigated <- NA
-	d$planting_date <- as.character(NA)
-	d$harvest_date <- as.character(NA)
-
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- FALSE
-
-	d$yield <- as.numeric(NA)
-	d$yield_part <- "grain"
-	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- NA
-
-	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 
 	carobiner::write_files(path, meta, d)
 }

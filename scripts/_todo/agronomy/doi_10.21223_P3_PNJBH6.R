@@ -14,7 +14,6 @@
 # No fertilizer rate.
 # Fresh weight is grams per plant. It is not converted to kg/ha. The abstract says 60 plants were sown per plot and the harvest file has fewer plants per plot.
 # Soil moisture, biomass, isotopes, and irrigation volumes are not in the plot table.
-# missing variables: carob_contributor
 # missing variables: yield, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variables: irrigation_regime_
 # unknown variable: n_tubers_ (fw_tubers?)

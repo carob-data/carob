@@ -9,7 +9,7 @@
 ## ISSUES
 # No coordinates.
 # No crop yield or fertilizer.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # matooke and potato quality, preparation, and storage sheets in Data V2.xlsx, and Data_V1.xlsx. Preference answers, not a field table.

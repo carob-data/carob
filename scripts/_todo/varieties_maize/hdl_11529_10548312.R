@@ -11,7 +11,7 @@
 ## ISSUES
 # Calibration coordinates are not attached to the location codes. The Sudan savanna sheet has no place column.
 # No fertilizer rates and no grain moisture. The northern Guinea savanna points are one coordinate per local government area.
-# write_files: missing variables: carob_contributor, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: cob_yield_kg_ha_, tops_weight_kg_ha_, days_to_tassel_, kernels_per_cob_, biomass_tasselling_kg_ha_. duplicate coordinates: fewer coordinates than locations. NA detected: yield, latitude, longitude.
+# write_files: , yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: cob_yield_kg_ha_, tops_weight_kg_ha_, days_to_tassel_, kernels_per_cob_, biomass_tasselling_kg_ha_. duplicate coordinates: fewer coordinates than locations. NA detected: yield, latitude, longitude.
 
 ## NEW VARIABLES
 # cob_yield_kg_ha_: cob yield after drying, kg/ha.

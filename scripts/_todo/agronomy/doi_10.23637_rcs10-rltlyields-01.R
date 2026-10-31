@@ -11,7 +11,7 @@
 ## ISSUES
 # The yield column has no unit. It is stored times 1000 because grain values are below 10 and fresh potato values reach about 62.
 # Winter lupins sown 1992-10-07 were harvested 1993-10-10, 368 days later.
-# write_files: missing variables: carob_contributor, latitude, longitude, irrigated. unknown variable: lime_CaCO3_t_ha_ (lime?). datespan: 64 harvest_date more than 366 days after planting_date. NA detected: yield.
+# write_files: , latitude, longitude, irrigated. unknown variable: lime_CaCO3_t_ha_ (lime?). datespan: 64 harvest_date more than 366 days after planting_date. NA detected: yield.
 
 ## NEW VARIABLES
 # lime_CaCO3_t_ha_: annual lime, t CaCO3/ha. lime in the vocabulary is kg/ha and stops at 10000, so a 15 t application does not fit there.

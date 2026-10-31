@@ -12,7 +12,7 @@
 # No fertilizer rate and no irrigation statement.
 # No yield moisture.
 # Fayzabad as adm1 should be checked against the official region.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: , yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # Soil_analysis, Hobo_data, Weather_data.

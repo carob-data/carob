@@ -12,7 +12,7 @@
 # Country is not in the dataset. It is not inferred from the site names.
 # No coordinates, dates, fertilizer, or replicate rows.
 # Missing yield cells in the file are the token "." and are stored as NA.
-# write_files: missing variables: carob_contributor; yield_moisture, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield_moisture, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: NA detected: yield.
 
 ## NOT PROCESSED

@@ -9,7 +9,7 @@
 ## ISSUES
 # No coordinates.
 # The yield unit is not stated.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variable: previous_yield_.
 
 ## NOT PROCESSED

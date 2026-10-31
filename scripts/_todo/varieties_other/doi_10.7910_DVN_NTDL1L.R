@@ -15,7 +15,7 @@
 # Mali (Niono) has no flowering, height, or panicle length. GW1000 is missing for JRC 2.
 # Fanaye AfricaRice has no grain weight or panicle length. Burkina Faso has no grain weight.
 # LOCAL CHECK is labeled only in Burkina Faso and Mali.
-# write_files: missing variables: carob_contributor; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
+# write_files: ; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
 
 ## NOT PROCESSED
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.

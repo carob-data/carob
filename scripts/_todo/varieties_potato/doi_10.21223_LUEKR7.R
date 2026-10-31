@@ -13,7 +13,7 @@
 # A few descriptor abbreviations in the dictionary are blank. Those columns use the variable name.
 # Some rows have no accession id, so the treatment variable variety is missing there.
 # leaf_S, flesh_color, and weed_species were suggested for a few names. Those terms are not the descriptor that was scored, so the dictionary names were kept.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable variety. unknown variables: the morphological descriptor columns, species_, and tuber_weight_g_.
+# write_files: , yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable variety. unknown variables: the morphological descriptor columns, species_, and tuber_weight_g_.
 
 ## NOT PROCESSED
 # 02 and 03 material lists: the same accessions summarized.

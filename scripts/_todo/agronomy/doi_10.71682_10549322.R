@@ -12,7 +12,7 @@
 ## ISSUES
 # Fertilizer product and N, P, and K rates are not in the file.
 # Biomass is not stated as fresh or dry. It is stored as biomass_kg_ha_.
-# write_files: missing variables: carob_contributor, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: biomass_kg_ha_.
+# write_files: , K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: biomass_kg_ha_.
 
 ## NEW VARIABLES
 # biomass_kg_ha_: above-ground biomass in kg/ha, excluding maize cobs and legume pod shells (code book). Grain is reported separately.

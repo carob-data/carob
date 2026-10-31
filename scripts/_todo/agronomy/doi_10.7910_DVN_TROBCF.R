@@ -11,7 +11,7 @@
 ## ISSUES
 # The phosphorus rate for p1 is not in the file.
 # No planting date, harvest date, or coordinates.
-# write_files: missing variables: carob_contributor, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, planting_date, harvest_date.
+# write_files: , latitude, longitude, irrigated, K_fertilizer, N_fertilizer, planting_date, harvest_date.
 
 ## NOT PROCESSED
 # 001_pigeonpeaProductivityParameters_PPBNF.csv (biological nitrogen fixation and soil mineral N).

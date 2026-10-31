@@ -17,7 +17,7 @@
 # Karfiguela PNL is 148-277, which is not a plausible panicle length in cm. Left as recorded in panicle_length_.
 # Mali (Longorola) reports maturity days and panicle length, and does not report flowering. Grain weight is only in Gagnoa and Seredou. Panicle length is absent for Banfora and Edozhigi.
 # Edozhigi genotype strings omit spaces used in the other country files (for example ARC1-20-B-1 versus ARC 1-20-B-1), use NERICA-L19 rather than NERICA-L-19, and one WAB name is missing a hyphen. They were not rewritten.
-# write_files: missing variables: carob_contributor; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
+# write_files: ; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
 
 ## NOT PROCESSED
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.

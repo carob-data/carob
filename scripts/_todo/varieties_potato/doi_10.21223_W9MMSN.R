@@ -10,7 +10,7 @@
 ## ISSUES
 # No tuber yield in kg/ha, no fertilizer, and no planting or harvest date. Year is 2004.
 # The file spells the country Perú. It is stored as Peru.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: dm_pct_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Zn_dw_, tuber_Zn_fw_.
 
 ## NOT PROCESSED

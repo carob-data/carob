@@ -14,7 +14,7 @@
 # papa is potato, pepino_dulce is pepino, and tomate / Lycopersicon text is tomato. pimiento, prinontomate, tomate arbol, and uvilla are kept as recorded and are not vocabulary crop names.
 # Bactericera cockerelli is not in the pest list. The purple-top diagnosis is recorded as punta morada, which is not in the disease list.
 # No yield or fertilizer. These are surveillance records.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variable: incidence_ (pest_incidence?); unknown variables: presence_.
 # write_files: invalid terms: crop: pimiento, prinontomate, tomate arbol, uvilla; pest_species: Bactericera cockerelli; disease: punta morada.
 

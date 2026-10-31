@@ -9,7 +9,6 @@
 # No latitude or longitude.
 # The crop is roots and tubers as a group. No single crop is named for every household.
 # Sections B to G are not in this table.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 
 ## NOT PROCESSED

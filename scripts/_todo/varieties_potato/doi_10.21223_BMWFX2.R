@@ -12,7 +12,7 @@
 # The dictionary does not give a scale for tuber appearance, uniformity, or size.
 # No fertilizer rate, irrigation statement, or planting and harvest dates. The dataset time span is 2021-06-01 to 2022-06-01 and is not labeled as planting or harvest.
 # The design is described as 16 rows by 12 columns with three repetitions. It is not named as a standard design.
-# write_files: missing variables: carob_contributor, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: clone_type_, field_row_, field_col_, n_plants_harvested_.
+# write_files: , irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: clone_type_, field_row_, field_col_, n_plants_harvested_.
 
 ## NOT PROCESSED
 # TubApp, TubUni, TubSiz: scores with no stated scale.

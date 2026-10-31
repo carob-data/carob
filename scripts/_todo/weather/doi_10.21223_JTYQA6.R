@@ -18,7 +18,7 @@
 # Kabale is stored in adm1 as recorded. It is a district, not a Ugandan region.
 # No planting dates. This is a station series, not a crop trial.
 # Humidity above 100 is kept.
-# write_files: missing variables: carob_contributor. NA detected: latitude, longitude. unknown variables: weather_type_, rh90_, par_wm2_, leaf_wetness_. out of bounds: rhum (0, 103.6), rhmx (46.9, 104), rhmn (8.5, 103.6).
+# write_files: NA detected: latitude, longitude. unknown variables: weather_type_, rh90_, par_wm2_, leaf_wetness_. out of bounds: rhum (0, 103.6), rhmx (46.9, 104), rhmn (8.5, 103.6).
 
 ## NEW VARIABLES
 # weather_type_: instrument or station type as recorded (Hobo / Watchdog, Cambell)

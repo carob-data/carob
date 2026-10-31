@@ -11,7 +11,7 @@
 # No coordinates. Huancavelica needs georeferencing.
 # No yield, fertilizer, irrigation, or planting and harvest dates.
 # Dry matter in the genotype file is two replicate columns and is not joined, because it is not one value per sensory row.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: storage_ (dmy_storage?). unknown variables: sample_code_, panelist_, session_, attribute_, sensory_score_.
+# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: storage_ (dmy_storage?). unknown variables: sample_code_, panelist_, session_, attribute_, sensory_score_.
 
 ## NOT PROCESSED
 # Dataset Sensory Analysis - genotypes.xlsx: dry matter replicates, species, flesh color, and processing notes. The genotype name is used.

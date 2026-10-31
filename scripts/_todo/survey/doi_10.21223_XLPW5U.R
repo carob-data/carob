@@ -11,7 +11,6 @@
 # The dataset geographic coverage does not name a country, and the tables do not either.
 # No latitude or longitude.
 # Cassava area questions do not state a unit.
-# missing variables: carob_contributor
 # missing variables: country, latitude, longitude
 # unknown variables: npk_basal_kg_ha_, npk_second_kg_ha_, urea_second_kg_ha_, cassava_harvest_t_
 # out of bounds: P_fertilizer (0, 750)

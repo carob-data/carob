@@ -13,7 +13,7 @@
 # Plant height unit is not printed.
 # No yield moisture.
 # Flowering degree, plant vigor, canopy, and senescence are scores without a stated scale.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: , yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # Soil_analysis, Weather_data: not plot yields.

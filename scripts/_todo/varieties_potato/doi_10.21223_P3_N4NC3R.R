@@ -10,7 +10,7 @@
 ## ISSUES
 # No coordinates.
 # No fertilizer rate that is clearly elemental N, P, or K. Guano and blended fertilizer amounts are kilograms without a nutrient analysis.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: variety_improved_, variety_native_, harvest_kg_improved_, harvest_kg_native_, mashua_harvest_kg_.
 
 ## NOT PROCESSED

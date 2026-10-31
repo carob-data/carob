@@ -11,7 +11,7 @@
 # The dataset is a variety-selection trial filed under the survey group, so a household id is still required and is not in the yield sheets.
 # No fertilizer and no planting or harvest date in the yield sheets.
 # The bounding box has only one corner.
-# write_files: missing variables: carob_contributor; hhid.
+# write_files: ; hhid.
 # write_files: unknown variables: tuber_class_.
 
 ## NOT PROCESSED

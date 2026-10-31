@@ -9,7 +9,6 @@
 ## ISSUES
 # No yield in kg/ha. Fertilizer columns are product names, not a rate in kg/ha of N, P, or K.
 # No planting or harvest date. q003 is the interview date.
-# missing variables: carob_contributor
 # missing variables: yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variables: cell_
 

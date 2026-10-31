@@ -13,7 +13,7 @@
 # No planting date, harvest date, P or K fertilizer, irrigation, or fresh tuber yield.
 # Fungicide level is the workbook code, not a checked spray count or dose.
 # Late blight score scale is not stated. Scores are stored as recorded.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: fungicide_level_.
+# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: fungicide_level_.
 
 ## NEW VARIABLES
 # fungicide_level_: fungicide treatment code from Fungicide_rate (F0, F4, F10), with the letter removed. Unit not stated.

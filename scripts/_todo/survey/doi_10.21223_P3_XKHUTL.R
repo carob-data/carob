@@ -12,7 +12,7 @@
 # No coordinates and no fertilizer.
 # Two records have a harvest date within 45 days of planting. Those dates are kept.
 # Some rows are identical on the columns kept here.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variables: seed_or_product_, volume_, price_min_, price_max_.
 # write_files: datespan: 2 records with harvest_date within 45 days of planting_date.
 # write_files: duplicates: duplicate records detected.

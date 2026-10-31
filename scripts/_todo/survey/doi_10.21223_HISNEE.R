@@ -10,7 +10,7 @@
 ## ISSUES
 # No coordinates.
 # No yield. The production modules were not decoded.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # Modules B through T (rosters, diet, sweetpotato production, sales, assets, and food security). The column names are questionnaire codes.

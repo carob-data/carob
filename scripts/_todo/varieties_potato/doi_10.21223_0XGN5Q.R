@@ -12,7 +12,7 @@
 # Crop management lists fertilizing, weed, pest, disease, and irrigation with no product and no rate.
 # No tuber yield in the files.
 # The laboratory year in the data file is 2008. The trial was planted in 2007.
-# write_files: missing variables: carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
+# write_files: , yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
 
 ## NOT PROCESSED
 # 02_Material_list and the fieldbook Material List: identifier crosswalk. Variety is the accession name when it is filled, otherwise the institutional number.

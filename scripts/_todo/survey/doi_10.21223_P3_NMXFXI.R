@@ -7,7 +7,6 @@
 
 ## ISSUES
 # 1_9Latitud, 1_10Longitud, and 1_11Altitud are empty.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 
 ## NOT PROCESSED

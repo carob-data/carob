@@ -14,7 +14,7 @@
 # No fertilizer rates.
 # The site is not labeled on-farm. La Molina is treated as a station (on_farm FALSE).
 # Long rows use dat_ (days after treatment). That name is not in the date/DAP/depth list, so the time check remains.
-# write_files: missing variables: carob_contributor; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variable irrigation_timing_ (timing?); unknown variables irrigation_regime_, wue_, cwd_, dat_, op_, rwc_.
 # write_files: time/depth: no time/depth variables in long records?
 

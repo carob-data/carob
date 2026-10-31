@@ -8,7 +8,6 @@
 
 ## ISSUES
 # No latitude or longitude in the roster.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: ofsp_ever_
 

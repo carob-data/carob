@@ -9,7 +9,6 @@
 ## ISSUES
 # No latitude or longitude. The abstract describes several sites above 3000 m, not one coordinate.
 # Sex is coded 1 and 2. This dictionary does not print which code is male or female, so sex is not mapped.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: survey_group_
 

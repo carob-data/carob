@@ -12,7 +12,7 @@
 # No fertilizer rate and no irrigation statement in the crop-management sheet.
 # No yield moisture.
 # Weather, soil, and score sheets are not in the plot table.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: , yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # Soil_analysis, Hobo_data, Weather_data: site weather and soil, not plot yields.

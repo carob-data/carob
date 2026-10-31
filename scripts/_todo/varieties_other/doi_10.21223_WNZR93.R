@@ -9,7 +9,7 @@
 ## ISSUES
 # Fresh and dry weights are not a per-hectare yield. Plot area is not in the harvest sheet.
 # No fertilizer. dat is kept as recorded and is not labeled as a calendar date.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: dat_, fw_, dw_.
 
 ## NOT PROCESSED

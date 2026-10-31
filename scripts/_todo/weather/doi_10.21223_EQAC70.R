@@ -9,7 +9,7 @@
 ## ISSUES
 # Radiation values are about 20-30. That is low for a daily mean irradiance in W m^-2. The dictionary unit is still W m^-2, so the numbers are not rescaled.
 # La Molina needs georeferencing. No longitude or latitude in the file or the geographic coverage.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # Year, Month, Day: used only to confirm measure_date.

@@ -10,7 +10,7 @@
 ## ISSUES
 # The abstract names CIP-Lima and does not name a country, coordinates, fertilizer, irrigation, or planting and harvest dates. May to December 2018 is the experiment period.
 # No yield.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: audpc_pct_days_ (AUDPC?). unknown variable: saudpc_ (sAUDPC?). time/depth: no time/depth variables in long records? unknown variables: dai_, severity_percent_.
+# write_files: , yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: audpc_pct_days_ (AUDPC?). unknown variable: saudpc_ (sAUDPC?). time/depth: no time/depth variables in long records? unknown variables: dai_, severity_percent_.
 
 ## NOT PROCESSED
 # Material_list: taxon names for the accessions.

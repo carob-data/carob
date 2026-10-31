@@ -12,7 +12,7 @@
 # Weather_daily includes 2006 as well as 2005. Rows are kept as recorded.
 # No fertilizer or irrigation. The site is not labeled on-farm or station.
 # Longitude is published as 29.3 (one decimal).
-# write_files: missing variables: carob_contributor; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # 01_data_yield_Mugurero_2005.xlsx: flat export of the same Fieldbook.

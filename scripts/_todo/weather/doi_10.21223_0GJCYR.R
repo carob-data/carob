@@ -14,7 +14,7 @@
 # Some Eo cells are the text NAN. Those are missing.
 # Time is an integer hour on some rows and an Excel fraction of a day on others. Both are stored as hh:mm.
 # Eo includes a few small negative values. They are kept.
-# write_files: missing variables: carob_contributor, latitude, longitude. unknown variables: par_umol_. out of bounds: ETo (-0.049, 1.142).
+# write_files: , latitude, longitude. unknown variables: par_umol_. out of bounds: ETo (-0.049, 1.142).
 
 ## NEW VARIABLES
 # par_umol_: photosynthetically active radiation, umol s-1 m-2

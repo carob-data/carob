@@ -14,7 +14,7 @@
 ## ISSUES
 # Treatment codes are not expanded. Zinc sulfate is not stored. Biomass is not stated as fresh or dry.
 # Mohonpur site 27 is in the maize phenology sheets and has no grain-harvest row.
-# write_files: missing variables: carob_contributor. missing variables: latitude, longitude, irrigated. unknown variables: biomass_kg_ha_. NA detected: yield.
+# write_files: missing variables: latitude, longitude, irrigated. unknown variables: biomass_kg_ha_. NA detected: yield.
 
 ## NEW VARIABLES
 # biomass_kg_ha_: biomass column in t/ha, stored as kg/ha. Fresh or dry is not stated.

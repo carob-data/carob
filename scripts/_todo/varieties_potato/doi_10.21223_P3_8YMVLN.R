@@ -13,7 +13,7 @@
 # No fertilizer and no planting or harvest calendar date. The metadata window is May-September 2013.
 # The bounding box gives only the south and west edges, to 0.1 degree.
 # The photosynthesis dictionary prints two different units on the intrinsic water-use row. A/gs is stored as recorded.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: narea_, A_, tio_days_, harvest_number_, agb_g_, tb_g_, leaflet_d13c_, tuber_d13c_, gs_, ags_.
 
 ## NOT PROCESSED

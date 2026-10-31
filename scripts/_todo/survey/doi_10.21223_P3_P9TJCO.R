@@ -10,7 +10,7 @@
 ## ISSUES
 # No coordinates and no yield in this crop-detail table.
 # get_data warns that GROWING Baseline Data - nopii.rar could not be extracted (an archive entry is marked as a directory). The dta tables were already on disk.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variables: plot_size_recorded_, plot_unit_.
 
 ## NOT PROCESSED

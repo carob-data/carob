@@ -10,7 +10,7 @@
 
 ## ISSUES
 # No coordinates and no yield.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # Roster workbooks 02 through 11 (demography, land, inputs, assets, livestock, income).

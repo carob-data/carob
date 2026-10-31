@@ -13,7 +13,6 @@
 # The control block at the bottom of the sheet uses a different column order (cultivar name, then field replicates, then greenhouse trials).
 # Meloidogyne incognita is not in the pathogen vocabulary, so the name is kept in the notes.
 # Rows 210-212 name a reaction class and have no cultivar or CIP number. They are not plot records.
-# missing variables: carob_contributor
 # missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variables: set_, primary_trait_, field_rep1_, field_rep2_, field_rep3_, field_avg_, greenhouse_trial1_, greenhouse_trial2_, reaction_, record_type_
 

@@ -8,7 +8,6 @@
 
 ## ISSUES
 # No latitude or longitude.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: survey_group_
 

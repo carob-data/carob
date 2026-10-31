@@ -10,7 +10,7 @@
 ## ISSUES
 # No coordinates. Markets need georeferencing.
 # Bag weight is not stated, so bags are not converted to kilograms. "1.5bags" is 1.5 and "1/2 bag" is 0.5. One answer, "less than one bag", has no number and is missing.
-# write_files: missing variables: carob_contributor, latitude, longitude. unknown variables: bags_sold_, loan_amount_.
+# write_files: , latitude, longitude. unknown variables: bags_sold_, loan_amount_.
 # Loan amounts have no currency.
 # Northern Region and Eastern Region are the survey regions in the file, not necessarily GADM names.
 # write_files messages follow the test.

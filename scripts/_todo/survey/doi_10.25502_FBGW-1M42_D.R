@@ -9,7 +9,7 @@
 
 ## ISSUES
 # No planting date, harvest date, or fertilizer. The coordinate is one point for the dataset.
-# write_files: missing variables: carob_contributor. unknown variables: chaff_yield_kg_ha_.
+# write_files: unknown variables: chaff_yield_kg_ha_.
 
 ## NEW VARIABLES
 # chaff_yield_kg_ha_: dry chaff yield, kg/ha.

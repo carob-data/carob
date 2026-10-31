@@ -17,7 +17,7 @@
 # season_ is the cropping season in the file (winter, autumn). It is not one of the wet/dry season terms.
 # Some DMS points are flagged as not on land, and some rows have no coordinates.
 # Some rows have no crop name.
-# write_files: missing variables: carob_contributor, trial_id, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable crop. unknown variable: season_ (season?). unknown variables: damage_class_, leafminer_adults_, parasitoid_adults_, pupae_, larvae_per_leaflet_, taxon_, insect_count_. invalid terms: crop: bean, scallion, wild watermelon, yellow peruvian chili. coordinates not on land: Peru. NA detected: latitude, longitude. time/depth: no time/depth variables in long records?
+# write_files: , trial_id, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable crop. unknown variable: season_ (season?). unknown variables: damage_class_, leafminer_adults_, parasitoid_adults_, pupae_, larvae_per_leaflet_, taxon_, insect_count_. invalid terms: crop: bean, scallion, wild watermelon, yellow peruvian chili. coordinates not on land: Peru. NA detected: latitude, longitude. time/depth: no time/depth variables in long records?
 
 ## NEW VARIABLES
 # damage_class_: foliar-damage band from the percent classes in the column header (low 1-25%, middle 26-50%, high >50%).

@@ -9,7 +9,6 @@
 ## ISSUES
 # No household latitude or longitude in the workbook.
 # Age and the adult and child counts are written as "no data" in a few cells. Those cells are missing.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: neighborhood_, n_plots_
 

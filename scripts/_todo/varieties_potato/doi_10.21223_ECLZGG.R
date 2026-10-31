@@ -10,7 +10,7 @@
 # The dictionary describes YIELD only as "yield", with no unit. It is not the same number as the kilogram or tonne columns, and it is not a constant plot area times TWTKG. It is stored as yield_recorded_ and is not mapped to yield.
 # No coordinates. Musanze station still needs georeferencing.
 # No fertilizer rate, irrigation statement, or a planting or harvest date. A map sheet has a column title "PD: 22.3.16", which is not used as a planting date.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: season_ (season?). unknown variable: yield_recorded_ (yield?). unknown variables: tuber_n_lt_30cm_, tuber_wt_g_lt_30cm_, tuber_n_30_60cm_, tuber_wt_g_30_60cm_, tuber_n_gt_60cm_, tuber_wt_g_gt_60cm_, tuber_n_total_, tuber_weight_kg_.
+# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: season_ (season?). unknown variable: yield_recorded_ (yield?). unknown variables: tuber_n_lt_30cm_, tuber_wt_g_lt_30cm_, tuber_n_30_60cm_, tuber_wt_g_30_60cm_, tuber_n_gt_60cm_, tuber_wt_g_gt_60cm_, tuber_n_total_, tuber_weight_kg_.
 
 ## NOT PROCESSED
 # 03_Summary: a summary table.

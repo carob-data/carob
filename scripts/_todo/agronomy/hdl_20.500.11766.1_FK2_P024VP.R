@@ -11,7 +11,7 @@
 ## ISSUES
 # Grain yield is not adjusted for moisture. No moisture value is given.
 # No coordinates in decimal degrees, and on-farm is not stated.
-# write_files: missing variables: carob_contributor, on_farm, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: stover_yield_kg_ha_, head_length_cm_, head_weight_g_, tillers_per_plant_.
+# write_files: , on_farm, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: stover_yield_kg_ha_, head_length_cm_, head_weight_g_, tillers_per_plant_.
 
 ## NEW VARIABLES
 # stover_yield_kg_ha_: stover in kg/ha. The file says ton/ha and does not say fresh or dry.

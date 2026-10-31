@@ -13,7 +13,7 @@
 # Mugerero Weather_daily includes 2005 as well as 2006. Rows are kept as recorded.
 # No fertilizer or irrigation in Crop_management. Sites are not labeled on-farm or station.
 # Mugerero longitude is published as 29.3 (one decimal).
-# write_files: missing variables: carob_contributor; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # 01_data_yield_Mparambo_2006.xlsx and 02_data_yield_Mugerero_2006.xlsx: flat exports of the same Fieldbook rows.

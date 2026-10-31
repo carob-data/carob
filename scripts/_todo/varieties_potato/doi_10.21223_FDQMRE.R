@@ -15,7 +15,7 @@
 # No yield and no fertilizer rate.
 # Insects_Fungi.csv has no header. It has 16 fields and the dictionary names 15 scores, so the columns were not assigned.
 # The nematode sheet was not mapped. It is a subset of soil samples and was not joined to the seed lots.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: sample_id_ (sample_id?). unknown variables: obs_, virus_pvx_, virus_pvs_, virus_pvy_, virus_plrv_, virus_aplv_, virus_apmov_.
+# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: sample_id_ (sample_id?). unknown variables: obs_, virus_pvx_, virus_pvs_, virus_pvy_, virus_plrv_, virus_aplv_, virus_apmov_.
 
 ## NOT PROCESSED
 # Insects_Fungi.csv and Nematodes.csv.

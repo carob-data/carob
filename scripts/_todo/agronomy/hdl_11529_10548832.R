@@ -13,7 +13,7 @@
 # Grain and biomass units are not in the dictionary. They are stored as kg/ha on the reading that the recorded values are t/ha.
 # CP2 (32 rows) and RI-M+C (73 rows) are not defined in the dictionary.
 # No country column and no coordinates.
-# write_files: missing variables: carob_contributor. missing variables: yield_moisture, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: biomass_kg_ha_.
+# write_files: missing variables: yield_moisture, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: biomass_kg_ha_.
 
 ## NEW VARIABLES
 # biomass_kg_ha_: maize aboveground biomass in kg/ha. The dictionary does not say fresh or dry, and it does not state the unit.

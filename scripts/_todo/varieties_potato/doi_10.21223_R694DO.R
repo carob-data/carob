@@ -13,7 +13,7 @@
 # Njabini, Limuru, and the University of Nairobi need georeferencing.
 # No planting or harvest date and no fertilizer.
 # AUDPC follows the dictionary scale (upper limit 6000). Vocabulary maximum is 150.
-# write_files: missing variables: carob_contributor; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: out of bounds: AUDPC (0, 3030).
 
 ## NOT PROCESSED

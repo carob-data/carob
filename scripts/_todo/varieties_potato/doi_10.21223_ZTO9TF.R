@@ -13,7 +13,7 @@
 # No coordinates. Counties need georeferencing.
 # No variety, fertilizer, or a calendar planting or harvest date. Season codes are not expanded into a day.
 # Some yield cells are empty.
-# write_files: missing variables: carob_contributor; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variable: season_code_ (season?); NA detected: yield.
 
 ## NEW VARIABLES

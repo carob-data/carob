@@ -16,7 +16,7 @@
 # No fertilizer rate and no planting or harvest date.
 # The daily weather file does not state units, so it is not in the weather table.
 # AUDPC scale is not stated.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: frequency_, scale_r_, biomass_fresh_g_plot_, biomass_fresh_g_plant_, biomass_dm_g_plot_, biomass_dm_recorded_.
+# write_files: , yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: frequency_, scale_r_, biomass_fresh_g_plot_, biomass_fresh_g_plant_, biomass_dm_g_plot_, biomass_dm_recorded_.
 
 ## NOT PROCESSED
 # 03-DailyWeather-Data-Comas.xlsx: daily weather with no units.

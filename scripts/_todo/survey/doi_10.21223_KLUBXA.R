@@ -9,7 +9,7 @@
 
 ## ISSUES
 # No yield in the columns mapped here.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # Questionnaire items whose dictionary description is not a place, a coordinate, the interview date, or gender.

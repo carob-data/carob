@@ -11,7 +11,7 @@
 # Yield in kg/ha is not computed.
 # No fertilizer. DAP is days, not a calendar planting date.
 # get_data warns that Images_v2.rar could not be extracted (an archive entry is marked as a directory).
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: plant_id_, ftw_, dtw_, dm_recorded_.
 
 ## NOT PROCESSED

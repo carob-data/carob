@@ -10,7 +10,7 @@
 
 ## ISSUES
 # No coordinates, no site name, and no sorghum grain moisture.
-# write_files: missing variables: carob_contributor, on_farm, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: stover_yield_kg_ha_.
+# write_files: , on_farm, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: stover_yield_kg_ha_.
 
 ## NEW VARIABLES
 # stover_yield_kg_ha_: stover in kg/ha. The dictionary says t/ha and does not say fresh or dry.

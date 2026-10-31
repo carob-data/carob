@@ -8,7 +8,7 @@
 ## ISSUES
 # Radiation values follow the dictionary unit W m^-2. Daily numbers near 20-30 are low for a mean irradiance and are not rescaled.
 # San Ramon needs georeferencing.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # Year, Month, Day: used only to confirm measure_date.

@@ -7,7 +7,6 @@
 
 ## ISSUES
 # No farm coordinates. District of residence is the place name.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variable: age_band_ (age?)
 # unknown variables: kilos_purchased_

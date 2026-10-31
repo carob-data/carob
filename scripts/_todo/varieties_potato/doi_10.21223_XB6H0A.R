@@ -12,7 +12,7 @@
 # Installation says 10 plants per plot (37037/ha). Fieldbook NTP is often 30. plant_density uses plants emerged (NPE) and the 2.7 m2 plot.
 # Admin names are as recorded (Tashkent Oblast). Confirm against GADM.
 # No fertilizer rates and no irrigation flag in the fieldbook.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: , yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # 01_Fieldbook and 02_Material_list text files: the same records as the xls Fieldbook and Material List sheets.

@@ -13,7 +13,6 @@
 # The trial ran from 28 March 2019 to 18 October 2019. Those dates are not labeled planting and harvest.
 # No yield in this workbook.
 # Standard deviations of the image pixels are not mapped.
-# missing variables: carob_contributor
 # missing variables: crop, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variable: ndvi_green_ (NDVI?)
 # unknown variables: irrigation_regime_, field_row_, field_col_, canopy_temp_c_, chlorophyll_index_

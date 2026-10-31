@@ -13,7 +13,7 @@
 # Crop_management dates are all 2010-07-01, including harvest. Minimal end date 2010-11-05 is used as harvest_date. Planting_date is the Minimal begin date, which matches the Crop_management planting row.
 # No fertilizer or irrigation recorded.
 # The site is not labeled on-farm or station.
-# write_files: missing variables: carob_contributor; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # 01_data_yield_Tashkent_2010.xlsx and the fieldbook txt: same fieldbook export.

@@ -10,7 +10,6 @@
 # The districts named in the abstract are not a column on the data sheet, so they are not assigned to every row.
 # No latitude or longitude.
 # The dictionary is a questionnaire layout, not a table of units, so the Pxx answers are not mapped.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: survey_group_
 

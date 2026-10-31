@@ -10,7 +10,6 @@
 # Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
 # VPD in the file is kPa. It is stored as vpd in hPa.
 # The published coordinates are to 0.1 degree.
-# write_files: missing variables: carob_contributor.
 
 ## NOT PROCESSED
 # 03_Photo_San Ramon CIP Station.jpg.

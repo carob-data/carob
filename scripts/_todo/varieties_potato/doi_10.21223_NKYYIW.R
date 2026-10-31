@@ -12,7 +12,7 @@
 # Plant height unit is not printed.
 # No yield moisture.
 # Number of stems and plant canopy have no stated unit or scale.
-# write_files: missing variables: carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: , yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # Soil_analysis, Weather_data.

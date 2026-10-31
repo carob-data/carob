@@ -13,7 +13,7 @@
 # No coordinates. The villages need georeferencing.
 # No fertilizer rates.
 # Survival rate is left as recorded. The summary sheet shows values such as 0.70, so it is not converted to a percentage.
-# write_files: missing variables: carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: season_ (season?). unknown variable: dehaulming_date_ (date?). unknown variables: cuttings_planted_, cuttings_harvested_, survival_rate_, and the tuber size-class columns. NA detected: yield.
+# write_files: , yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: season_ (season?). unknown variable: dehaulming_date_ (date?). unknown variables: cuttings_planted_, cuttings_harvested_, survival_rate_, and the tuber size-class columns. NA detected: yield.
 
 ## NOT PROCESSED
 # Sheet1, Sheet2, Sheet3, Sheet4, and Sheet8: pivot summaries of the RAC 2019A sheet.

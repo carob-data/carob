@@ -11,7 +11,7 @@
 ## ISSUES
 # No yield in kg/ha in this laboratory table.
 # Sites need georeferencing.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: fe_dw_mean_, zn_dw_mean_.
 
 ## NOT PROCESSED

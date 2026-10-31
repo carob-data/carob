@@ -10,7 +10,7 @@
 # No yield, fertilizer, or dates. The metadata spans 2000-2016 and is not one planting date.
 # Sites need georeferencing. Two places are named in the metadata and are not linked to rows.
 # Rows with a blank clone were removed.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: cooking_time_, cooking_type_, cooking_darkening_, flesh_color_cooked_, cooking_class_.
 
 ## NEW VARIABLES

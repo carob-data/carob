@@ -10,7 +10,7 @@
 ## ISSUES
 # No yield or fertilizer. This is a screenhouse ELISA assay.
 # Column roles are positions, because the file has no header.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: species_recorded_, elisa_1_, elisa_2_.
 
 ## NEW VARIABLES

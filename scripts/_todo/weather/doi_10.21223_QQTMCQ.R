@@ -13,7 +13,6 @@
 ## ISSUES
 # Confirm the sign correction on the bounding box.
 # VPD in the file is kPa. It is stored as vpd in hPa.
-# write_files: missing variables: carob_contributor.
 # Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
 # Sites need a check that Vista Florida in this file is the Pataz site named in the title, which is what the coordinates support.
 

@@ -10,7 +10,6 @@
 # No latitude or longitude.
 # No yield. c8_papa is area, not kg/ha.
 # The interview sheets have no data table.
-# missing variables: carob_contributor
 # missing variables: yield, yield_moisture, yield_part, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variables: potato_area_ha_
 

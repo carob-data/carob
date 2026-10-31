@@ -13,7 +13,7 @@
 # Crop management has no product and no rate.
 # No tuber yield.
 # Dry matter in the mineral file and the vitamin C file are not the same number for the same clone and replicate. Both are kept.
-# write_files: missing variables: carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: the tuber mineral, dry-matter, and ascorbic-acid columns named with a trailing underscore.
+# write_files: , yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: the tuber mineral, dry-matter, and ascorbic-acid columns named with a trailing underscore.
 
 ## NOT PROCESSED
 # 04_Datadictionary.txt, Lists, Notes, Summary by clone, ICPAES Results: definitions, summaries, or a laboratory layout that is not one row per plot.

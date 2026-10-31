@@ -11,7 +11,6 @@
 ## ISSUES
 # No fertilizer rate and no irrigation statement.
 # Start, end, and length of season in the file are NDVI metrics, not planting and harvest dates.
-# missing variables: carob_contributor
 # missing variables: yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variable: origin_latitude_ (latitude?)
 # unknown variable: origin_longitude_ (longitude?)

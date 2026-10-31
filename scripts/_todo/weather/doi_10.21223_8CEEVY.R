@@ -13,7 +13,6 @@
 # Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo.
 # Precipitation in this file is 0 on every row.
 # VPD in the file is kPa. It is stored as vpd in hPa.
-# write_files: missing variables: carob_contributor.
 
 ## NOT PROCESSED
 # 02_Data_dictionary.xlsx: column definitions, already used.

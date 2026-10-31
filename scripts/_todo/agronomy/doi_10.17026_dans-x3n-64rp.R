@@ -11,7 +11,7 @@
 ## ISSUES
 # No coordinates. Manure rates are not in this table.
 # Fresh vegetables have dry-matter fractions that put yield_moisture above 90.
-# write_files: missing variables: carob_contributor, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. out of bounds: yield_moisture (12.9, 92.4). NA detected: yield.
+# write_files: , latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. out of bounds: yield_moisture (12.9, 92.4). NA detected: yield.
 
 
 ## NOT PROCESSED

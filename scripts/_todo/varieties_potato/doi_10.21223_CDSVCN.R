@@ -11,7 +11,7 @@
 ## ISSUES
 # No country, coordinates, planting date, harvest date, fertilizer, or yield.
 # AUDPC in this field book exceeds the vocabulary maximum of 150. Values are not rescaled. Missing AUDPC is the text NA.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: out of bounds: AUDPC (0, 3680).
 
 ## NOT PROCESSED

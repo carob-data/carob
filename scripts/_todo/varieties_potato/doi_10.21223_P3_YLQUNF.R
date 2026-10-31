@@ -12,7 +12,7 @@
 # Dry matter has no unit in the header.
 # No yield, fertilizer, or a calendar planting date.
 # Rows with a blank clone were removed. Huancayo uses the published box. Other localities have no coordinates.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: eval_label_, dm_recorded_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Zn_dw_, tuber_Zn_fw_.
 # write_files: duplicate coordinates: fewer coordinates than locations. NA detected: latitude, longitude. duplicates: duplicate records detected.
 

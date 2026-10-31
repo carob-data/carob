@@ -12,7 +12,6 @@
 # No yield and no fertilizer. This is a feeding-practices interview.
 # The abstract spells the district Wakaiso. The district names in the file are kept as recorded.
 # Some households did not report a sweetpotato area.
-# write_files: missing variables: carob_contributor.
 
 ## NOT PROCESSED
 # Livestock, milk, silage-perception, price, and residue-use columns. They are not a crop measurement.

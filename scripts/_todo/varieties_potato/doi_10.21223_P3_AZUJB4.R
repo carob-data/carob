@@ -10,7 +10,7 @@
 # The abstract discusses iron and zinc. This workbook has dry matter and vitamin C, not iron or zinc.
 # No fertilizer, irrigation, planting date, harvest date, or yield.
 # A locality value Huancayo-2005-2006 is more than one year. It is kept as recorded in the trial id.
-# write_files: missing variables: carob_contributor, yield, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
+# write_files: , yield, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
 
 ## NOT PROCESSED
 # Standard deviations next to dry matter and vitamin C.

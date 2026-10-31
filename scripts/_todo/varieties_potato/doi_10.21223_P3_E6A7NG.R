@@ -9,7 +9,6 @@
 # The dataset coverage gives degree-and-minute positions for Cañete and Ica, not one trial coordinate. Sites need georeferencing.
 # No fertilizer, irrigation statement, planting date, harvest date, or yield.
 # Country is Peru from the dataset geographic coverage.
-# missing variables: carob_contributor
 # missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # unknown variables: reaction_
 # time/depth: no time/depth variables in long records?

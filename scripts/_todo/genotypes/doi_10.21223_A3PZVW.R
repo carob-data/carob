@@ -9,7 +9,7 @@
 ## ISSUES
 # This is a marker dataset, not a yield trial. Yield and fertilizer are not in the files.
 # The table has a country for each accession and no coordinates.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 
 ## NOT PROCESSED
 # S1.Data_journal.pone.0232173.s001.csv: SNP marker rows (AlleleID, sequence, chromosome position, and one column per accession). Not reshaped.

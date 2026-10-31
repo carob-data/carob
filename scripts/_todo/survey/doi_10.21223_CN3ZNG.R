@@ -9,7 +9,7 @@
 ## ISSUES
 # No coordinates in the columns used here.
 # No crop yield in this household table. Some household ids are missing, and some mapped rows are identical.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variables: farm_size_upland_.
 # write_files: duplicates: duplicate records detected. NA detected: hhid.
 

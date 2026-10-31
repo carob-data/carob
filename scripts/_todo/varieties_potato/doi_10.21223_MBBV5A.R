@@ -10,7 +10,7 @@
 ## ISSUES
 # Sites need georeferencing.
 # No fertilizer or dates. The 2016 workbooks are planting lists without yield.
-# write_files: missing variables: carob_contributor; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 # write_files: unknown variables: fe_recorded_, zn_recorded_, dm_recorded_, ttwpl_kg_.
 
 ## NOT PROCESSED

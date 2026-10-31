@@ -11,7 +11,7 @@
 # No coordinates.
 # No fertilizer and no tuber yield.
 # Some seller ages are blank. Some transactions are identical on the columns kept here.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variables: bundles_sold_, bundle_price_.
 # write_files: duplicates: duplicate records detected.
 

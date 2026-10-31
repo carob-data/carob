@@ -15,7 +15,7 @@
 # Some genotype-station cells are blank. Sierra Leone-Rokupr has no yield BLUP. Flowering is absent for Gambia-Kaiaf, Guinea-Khayta, Guinea-Koba and Sierra Leone-Kychom. Height is absent for Gambia-Geneir. Rows are kept when another trait is present, so yield is NA on those rows.
 # Station names follow the column headers (Geneir, Kaiaf, Khayta, Kychom, Thormoya). Confirm spellings when georeferencing.
 # The files do not say which stations were on-farm hot spots. All rows are coded on_farm FALSE from the station names.
-# write_files: missing variables: carob_contributor; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: yield.
+# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: yield.
 
 ## NOT PROCESSED
 # Statistics-Flowering-2018-Mangrove.xls, Statistics-Height-2018-Mangrove.xls, Statistics-Yield-2018-Mangrove.xls: heritability, mean, LSD, replicates, genotype p-value, genotype variance and residual variance. ANOVA summaries, not variety rows. The same summary rows are repeated at the bottom of each BLUP sheet and are skipped.

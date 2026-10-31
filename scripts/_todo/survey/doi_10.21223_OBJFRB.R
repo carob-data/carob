@@ -8,7 +8,6 @@
 ## ISSUES
 # Baseline ID Number is empty. Household id is Data ID.
 # No latitude or longitude.
-# missing variables: carob_contributor
 # missing variables: latitude, longitude
 # unknown variables: potato_produced_kg_2019_, potato_produced_kg_2021_
 

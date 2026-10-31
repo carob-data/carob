@@ -11,7 +11,7 @@
 ## ISSUES
 # No coordinates.
 # A recorded value "No data" is stored as missing.
-# write_files: missing variables: carob_contributor; geo_from_source, latitude, longitude.
+# write_files: ; geo_from_source, latitude, longitude.
 
 ## NOT PROCESSED
 # RotationRatio_Huancavelica.xlsx and the shapefile.

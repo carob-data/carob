@@ -14,7 +14,7 @@
 # No fertilizer rate and no irrigation statement.
 # No tuber yield. The measurements are laboratory mineral concentrations.
 # The material list has twelve accession names. The data file has four variety names in INSTN, so the material list was not joined.
-# write_files: missing variables: carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: processing_ and the tuber mineral columns named with a trailing underscore.
+# write_files: , yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: processing_ and the tuber mineral columns named with a trailing underscore.
 
 ## NOT PROCESSED
 # 02_Material_list and the fieldbook Material List: the names do not match the four varieties in the data file.
