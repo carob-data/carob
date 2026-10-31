@@ -647,11 +647,8 @@
 "Conservation agriculture maize yields in southern Africa, 2005-2019","Thierfelder and Mhlanga",2022,"CIMMYT","Malawi, Mozambique, Zambia, Zimbabwe","maize","hdl:11529/10548832","agronomy","scripts/_todo/agronomy/hdl_11529_10548832.R",2
 "Long-term maize and wheat trials at Rangpur, Bangladesh","Gathala et al.",2018,"CIMMYT","Bangladesh","maize, wheat","hdl:11529/10548076","agronomy","scripts/_todo/agronomy/hdl_11529_10548076.R",2
 "4.1-Rabi (winter) crops-all nodes-Alternative cropping systems trial-Rajshahi-Bangladesh","Gathala et al.",2018,"CIMMYT","Bangladesh","chickpea, lentil, mustard, potato, wheat","hdl:11529/10547992","agronomy","scripts/_todo/agronomy/hdl_11529_10547992.R",2
-"Fertility Maps of ""Muna, Yucatán"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548751","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548751.R",1
 "Fertility Maps of ""Yecapixtla, Morelos"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548741","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548741.R",1
-"Fertility maps of jojutla, Morelos. 2020","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548658","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548658.R",1
 "Fertility Maps of Purísima del Rincón, Guanajuato 2018.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548664","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548664.R",1
-"Fertility Maps of Yautepec-Morelos. 2020","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548653","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548653.R",1
 "International Intermediate White Hybrid trial - IIWH0514","Global Maize Program",2016,"CIMMYT","Mexico; Ethiopia; Kenya","maize","hdl:11529/10596","varieties_maize","scripts/_todo/varieties_maize/hdl_11529_10596.R",2
 "Maize experiment with increasing rates of nitrogen to develop a calibration for the GreenSeeker in Yucatán.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","maize","hdl:11529/10548720","agronomy","scripts/_todo/agronomy/hdl_11529_10548720.R",1
 "4.3-Rabi (winter)crops-all nodes-Alternative cropping systems trial-Dhanusha-Nepal","Gathala et al.",2018,"CIMMYT","Nepal","maize, wheat, mustard, lentil, potato","hdl:11529/10547996","agronomy","scripts/_todo/agronomy/hdl_11529_10547996.R",3
@@ -660,9 +657,6 @@
 "Evaluation of international Low-ODAP grasspea lines for highlands in El Batán, México (2016)","Singh",2022,"CIMMYT","Mexico","grass pea","hdl:11529/10548671","agronomy","scripts/_todo/agronomy/hdl_11529_10548671.R",2
 "Fertility Maps of ""Temoac, Morelos"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548740","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548740.R",1
 "Fertility Maps of ""Zacualpan, Morelos"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548742","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548742.R",1
-"Fertility Maps of La Piedad, Michoacán 2019.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548667","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548667.R",1
-"Fertility Maps of Salamanca, Guanajuato 2020.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548662","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548662.R",1
-"Fertility Maps of Yuriria, Guanajuato 2020.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548661","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548661.R",1
 "Carbon sequestration potential, challenges, and strategies towards climate action in smallholder agricultural systems of South Asia","Jat et al.",2022,"CIMMYT","India","rice, wheat, maize, cowpea, soybean, pigeon pea, castor bean","hdl:11529/10548733","agronomy","scripts/_todo/agronomy/hdl_11529_10548733.R",3
 "Maize experiment with increasing rates of nitrogen to develop a calibration for the GreenSeeker in Campeche.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","maize","hdl:11529/10548684","agronomy","scripts/_todo/agronomy/hdl_11529_10548684.R",1
 "Maize experiment with increasing rates of nitrogen to develop a calibration for the GreenSeeker in Michoacan.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","maize","hdl:11529/10548719","agronomy","scripts/_todo/agronomy/hdl_11529_10548719.R",2
@@ -675,8 +669,6 @@
 "Fertility Maps of ""Jonacatepec, Morelos"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548739","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548739.R",1
 "Fertility Maps of ""Valle de Santiago, Guanajuato"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548735","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548735.R",1
 "Fertility Maps of Concordia and Villacorzo, Chiapas.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548808","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548808.R",1
-"Fertility Maps of Puente de Ixtla, Morelos 2020.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548657","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548657.R",1
-"Fertility Maps of Tlaltizapan, Morelos 2020.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548655","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548655.R",1
 "Data base of soil sample of Huanimaro and Celaya, Guanajuato.","Ortíz-Monasterio Rosas",2022,"CIMMYT","","","hdl:11529/10548806","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548806.R",1
 "Data for: Evaluating Maize Shelling Technologies for Mexican Smallholders: Performance, Quality, and Decision Framework for Optimal Selection","Van Loon et al.",2024,"CIMMYT","","maize","hdl:11529/10549132","agronomy","scripts/_todo/agronomy/hdl_11529_10549132.R",1
 "Impact of nitrogen split application on wheat grain yield and protein content in Conservation Agriculture","Buenrostro Rodríguez et al.",2025,"CIMMYT","Mexico","wheat","doi:10.71682/10549337","agronomy","scripts/_todo/agronomy/doi_10.71682_10549337.R",1
@@ -690,8 +682,6 @@
 "Fertility Maps of ""Jantetelco, Morelos"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548738","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548738.R",1
 "Fertility Maps of ""Tlachichuca, Puebla"".","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548744","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548744.R",2
 "Fertility Maps of Ayala, Morelos 2020.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548659","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548659.R",1
-"Fertility Maps of Manuel Doblado, Guanajuato 2021.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","","hdl:11529/10548666","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548666.R",1
-"Fertility Maps of Salvatierra, Guanajuato 2019.","Ortíz-Monasterio Rosas",2022,"CIMMYT","Mexico","maize","hdl:11529/10548663","soil_samples","scripts/_todo/soil_samples/hdl_11529_10548663.R",2
 "Grain yield, grain quality and soil nitrogen data of CIMMYT Elite Spring Wheat lines with the BNI short arm translocation (T3BL.3NsbS) from Leymus racemosus in MEXICO","Karwat et al.",2026,"CIMMYT","Mexico","wheat","hdl:11529/10549316","varieties_wheat","scripts/_todo/varieties_wheat/hdl_11529_10549316.R",2
 "International Intermediate Yellow Hybrid Trial - IIYH0516","Global Maize Program",2018,"CIMMYT","Mexico, Vietnam, Ethiopia","maize","hdl:11529/10601","varieties_maize","scripts/_todo/varieties_maize/hdl_11529_10601.R",2
 "International Late White Hybrid Trial - ILWH0507","Global Maize Program",2018,"CIMMYT","Mexico, Venezuela, Guatemala","maize","hdl:11529/10584","varieties_maize","scripts/_todo/varieties_maize/hdl_11529_10584.R",2
