@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+## Chinguluwe and Kamwendo coordinates were not in Salima and Mulanje. The file has no coordinates, so those two points were removed.
 
 
 carob_script <- function(path) {
@@ -94,8 +95,8 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   
   geo <- data.frame(
     location = c("Chinguluwe", "Chipoka", "Kamwendo", "Boma", "Thuchila", "Thuchira"),
-    longitude = c(34.213, 34.5119, 33.0403, 33.7905, 35.358, 35.309),
-    latitude = c(-11.564, -13.993, -13.831, -13.948, -15.914, -15.971),
+    longitude = c(NA, 34.5119, NA, 33.7905, 35.358, 35.309),
+    latitude = c(NA, -13.993, NA, -13.948, -15.914, -15.971),
     geo_source = "Google Maps"
   )
   

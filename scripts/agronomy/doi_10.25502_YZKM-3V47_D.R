@@ -69,7 +69,7 @@ carob_script <- function(path) {
 	d$longitude[!i] <- 3.41
 	d$geo_from_source <- FALSE
 
-	i <- d$treatment == "F1"
+	i <- r$Fertilizer == "F1"
 	d$N_fertilizer[i] <- 75
 	d$P_fertilizer[i] <- 20
 	d$K_fertilizer[i] <- 90

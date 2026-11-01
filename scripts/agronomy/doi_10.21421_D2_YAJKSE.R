@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+## The Minjibir point was central Kano, and the file has no coordinates, so it was removed.
+
 carob_script <- function(path) {
   
 "Title: Response of Groundnut to Plant Density and Phosphorous application in the Sudan Savanna zone of Nigeria, Minjibir.  
@@ -11,7 +14,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	ff <- carobiner::get_data(uri, path, group)
   
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		publication="doi:10.12692_ijb_9.1.291-302",
+		publication="doi:10.12692/ijb/9.1.291-302",
 		carob_contributor="Siyabusa Mkuhlani",
 		carob_effort = NA,
 		carob_date="2022-09-12",
@@ -43,8 +46,6 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	d$trial_id <- d$planting_date
 	d$adm1 <- "Kano"
 	d$site <- "Minjibir"
-	d$longitude <- 8.557
-	d$latitude <- 11.980
 	d$geo_from_source <- FALSE
 	
 	d$on_farm <- FALSE
@@ -57,7 +58,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	d$K_fertilizer <- 0
 	#  names(e)
 
-	d$plant_density <- 2 * c(44444, 66667, 133333)[d$plant_density/10]
+	# 10 cm is the highest density, 30 cm the lowest
+	d$plant_density <- 2 * c(133333, 66667, 44444)[d$plant_density/10]
 	d$fertilizer_type <- "unknown"
 	d$yield_part <- "pod"
 	d$irrigated <- FALSE

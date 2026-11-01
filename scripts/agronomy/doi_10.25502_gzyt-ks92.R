@@ -82,7 +82,7 @@ carob_script <- function(path) {
   d2$yield <- d2$yield1/d2$area_ha
   
   # merge d and d2
-  d <- merge(d,d2,bx="trial_id", all.y = T)
+  d <- merge(d,d2,by="trial_id", all.y = T)
   
   d <- d[, c("country", "trial_id", "location", "longitude", "latitude", "pdate","hdate"
              , "crop", "yield","fertilizer_type")]

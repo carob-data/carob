@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# N and K rates are not in the data.
 
 carob_script <- function(path) {
 
@@ -136,12 +138,8 @@ carob_script <- function(path) {
 	d <- carobiner::bindr(d1, d2, d3, d4, d5, d6)	
 	
 	d$P_fertilizer <- c(60, 90)[d$P_fertilizer]
-# is this correct: ?
-	##CN : I thing set to NA might be a good , as the data do not provide any information on the N and K used. 
-	d$N_fertilizer <- 0
-	d$K_fertilizer <- 0
-	
-	
+	## N and K are not reported in the data files.
+
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA # FALSE ?

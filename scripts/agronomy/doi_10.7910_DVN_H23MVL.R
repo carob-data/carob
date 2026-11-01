@@ -59,6 +59,17 @@ carob_script <- function(path) {
 		yield = r$`SSNM Grain yield (kg/ha)`
 	)
 
+	# Farmer fertilizer practice is in the same file as SSNM
+	dffp <- d
+	dffp$treatment <- "FFP"
+	dffp$N_splits <- r$`FFP No. of N splits`
+	dffp$N_fertilizer <- r$`FFP Average N (kg/ha)`
+	dffp$P_fertilizer <- r$`FFP Average P (kg/ha)`
+	dffp$K_fertilizer <- r$`FFP Average K (kg/ha)`
+	dffp$Zn_fertilizer <- r$`FFP Zn fertilizer rate (kg/ha)`
+	dffp$yield <- r$`FFP Grain yield (kg/ha)`
+	d <- rbind(d, dffp)
+
   
   d[c('planting_date', 'harvest_date')] <- stringr::str_split_fixed(d$observation_date, "-", 2)   
   d[c('latitude1', 'Latitude2')] <- stringr::str_split_fixed(d$latitude, "\u0096", 2)
@@ -109,7 +120,7 @@ carob_script <- function(path) {
   d$latitude = as.numeric(lat[,1]) + as.numeric(lat[,2])/60
   
   # extract relevant columns 
-  d <- d[c("reference","country","location","longitude","latitude","crop","previous_crop","variety","yield","land_prep_method", "N_fertilizer", "P_fertilizer","K_fertilizer","N_splits","planting_date","harvest_date","season","soil_pH",'soil_type',"soil_SOC")]
+  d <- d[c("reference","country","location","longitude","latitude","crop","previous_crop","variety","treatment","yield","land_prep_method", "N_fertilizer", "P_fertilizer","K_fertilizer","N_splits","planting_date","harvest_date","season","soil_pH",'soil_type',"soil_SOC")]
   # Add columns
   
   d$on_farm <- FALSE

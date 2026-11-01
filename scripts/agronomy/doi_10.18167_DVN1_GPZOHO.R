@@ -125,7 +125,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	   ## from meq/100g to ppm using molecular weight en charge number
 	   soil_Ca = r5$CA*(40/2)*10, 
 	   soil_Mg = r5$MG*(24.31/2)*10,
-	   soil_K = r5$K*(39/2)* 10,
+	   soil_K = r5$K * 391, # meq/100g to mg/kg; K is monovalent
 	   soil_Na = r5$`NA`,
 	   soil_Al = r5$AL,
 	   soil_Mn = r5$MN,

@@ -52,6 +52,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	  fertilizer_type= "calcitic-lime", # CaCO3
 	  liming_date=as.character(r$liming_date),
 	  planting_date=as.character(r$planting_date),
+	  trial_id=paste(r$fid, r$planting_date, sep="_"),
 	  on_farm=r$is_on_farm,
 	  irrigated=r$is_irrigated,
 	  is_survey=FALSE,
@@ -59,7 +60,6 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	  yield=r$yield_tha*1000
 	)
 
-	d$trial_id <- paste(d$planting_date,d$adm4, sep = "_")
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- as.numeric(NA)
 	d$yield_part <- ifelse(d$crop=="beans", "seed", "grain")
 	d$yield_moisture <- as.numeric(NA)

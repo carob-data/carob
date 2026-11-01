@@ -30,8 +30,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 		adm1 = "Kano",
 		adm2 = r$Location,
 		location = "Wasai", #from the reference
-		latitude = 8.67,
-		longitude = 12.15,
+		latitude = 12.15,
+		longitude = 8.67,
 		geo_from_source = FALSE,
 		# sown during the growing seasons of 2012 and 2013 no actual dates mentioned
 		planting_date = as.character(r$Year),
@@ -60,7 +60,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	)
 	
 	#soil properties from reference
-	d$s1 <- paste(d$Year, d$adm2, sep = "_")
+	d$s1 <- paste(d$planting_date, d$adm2, sep = "_")
 	ss <- data.frame(
 		s1 = c("2012_Minjibir", "2013_Minjibir"),
 		soil_SOC = c(0.221, 0.198 ),

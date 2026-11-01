@@ -16,7 +16,7 @@
 # Livestock, fodder/pasture, milk, credit, nutrition, gender, extension, and household-member roster (hhmem_1..15) not processed.
 # Land parcels lp_1..4 not linked to crop rows; farmland not summed into crop records.
 # Some yield values look low or high for kg/ha; left as reported.
-# write_files: NA detected: latitude, longitude (regions with no GADM adm1 match); remaining invalid crop spellings; elevation 22287 out of bounds (left as reported); NA yield; duplicate household-crop-season possible.
+# write_files: NA detected: latitude, longitude (regions with no GADM adm1 match); duplicate coordinates (households share a region centroid); remaining invalid crop spellings; elevation 22287 out of bounds (left as reported); NA yield; duplicate household-crop-season possible.
 
 ## NEW VARIABLES
 # none

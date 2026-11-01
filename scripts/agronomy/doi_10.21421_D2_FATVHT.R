@@ -30,13 +30,13 @@ carob_script <- function(path) {
 		adm2 = ifelse(r$Location == "BUK", "Gezawa", "Minjibir"),
 		location = r$Location,
 		trial_id = paste0(r$Location, "_", r$Year),
-		latitude = ifelse(r$Location == "BUK", 8.5922, 8.5978),
-		longitude = ifelse(r$Location == "BUK", 12.0034, 12.1733),
+		latitude = ifelse(r$Location == "BUK", 12.0034, 12.1733),
+		longitude = ifelse(r$Location == "BUK", 8.5922, 8.5978),
 		geo_from_source = FALSE,
 		# As reported in the associated publication:
 		planting_date = ifelse(r$Location == "BUK" & r$Year == 2014, "2014-07-19",
-                  ifelse(r$Location == "BUK" & r$Year == 2015, "2014-07-20",
-                  ifelse(r$Location == "Minjibir" & r$Year == 2014, "2014-07-07", "2014-07-04"))), 
+                  ifelse(r$Location == "BUK" & r$Year == 2015, "2015-07-20",
+                  ifelse(r$Location == "Minjibir" & r$Year == 2014, "2014-07-07", "2015-07-04"))), 
 											  
 		on_farm = FALSE,
 		is_survey = FALSE,

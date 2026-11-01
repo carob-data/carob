@@ -97,6 +97,7 @@ ownership, maintenance, and operating cost of each tool.
   )
 
   d3b$record_id <- 1:nrow(d3b)
+  d3b$trial_id <- r3b$Site
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
   geo <- data.frame(
     location = c("El Armadillo", "Tierra Blanca", "Guelache", "Puerto Arturo", "Tixmehuac", "Tlanichico"),
@@ -156,7 +157,6 @@ ownership, maintenance, and operating cost of each tool.
 
   d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
   
-  d$trial_id <- r3b$Site
   d$on_farm <- TRUE
   d$is_survey <- FALSE
   d$crop <- "maize"

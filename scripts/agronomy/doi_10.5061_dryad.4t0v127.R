@@ -33,7 +33,7 @@ carob_script <- function(path) {
       if(is.null(r$PMFoYd)) r$PMFoYd <- NA 
       if( is.null(r$CPFoYd)) r$CPFoYd <- NA
       if( is.null(r$Site)) r$Site <- NA
-      if( is.null(r$`Manure rate, Mg ha-1`)) r$`Manure rate, Mg ha-1` <- 2.5 
+      if( is.null(r$`Manure rate, Mg ha-1`)) r$`Manure rate, Mg ha-1` <- NA 
       
       ### pearl milllet
       d1 <- data.frame(
@@ -62,7 +62,7 @@ carob_script <- function(path) {
          N_fertilizer= r$Nrate,
          P_fertilizer= r$Prate,
          K_fertilizer= r$Krate,
-         OM_amount= ifelse(grepl("Mali", i), 0, r$`Manure rate, Mg ha-1`),
+         OM_amount= ifelse(grepl("Mali", i), 0, r$`Manure rate, Mg ha-1` * 1000),
          OM_type= "farmyard manure",
          yield= r$CPGrYd*1000, ## kg/ha
          fwy_total= r$CPFoYd*1000,

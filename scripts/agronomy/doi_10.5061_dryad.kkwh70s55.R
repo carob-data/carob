@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Leaf DM% is a percentage, not leaf dry yield in kg/ha, so dmy_leaves is not assigned.
+
 carob_script <- function(path) {
    
 "An experiment was conducted to evaluate the effects of row spacing (RS) and interplant spacing (IPS) on the yield of total biomass, leaf, and edible twigs, and nutritive value of pigeon pea,(Cajanus cajan L. Millsp.) at three locations in the Rift Valley area of Ethiopia, using a randomized completed block design with three replications in 3 × 3 factorial arrangement; three RS ( 25, 50, and 75 cm) and three IPS (15, 30, and 45 cm). Row spacing × IPS of 25 × 30 cm and 50 × 15 cm, gave greater total biomass yield than the other RS and IPS combinations.  A similar result was found for edible plant yield. At Hawassa the greater leaf CP was found for the wider IPS of 45 cm than the narrower IPS of 30 cm (318 Vs. 303 g kg-1 ). At Wondo-Genet, the greater leaf in vitro digestible organic matter  (597 Vs. 582 g kg-1 ) was found for the wider RS of 75 cm than narrower RS. Similar to leaf, a better nutritional value of edible twigs was found for a wider RS and IPS than narrower RS and IPS at Hawassa and Wondo-Genet. In contrast at Aliyu-Amab, a better nutritional value of edible twigs was found for narrower RS and IPS than the wider spacing. Thus, it can be concluded that RS × IPS of 25 × 30 cm or 50 × 15 cm are advisable for pigeon pea forage production."
@@ -13,7 +16,7 @@ carob_script <- function(path) {
 		publication="doi:10.1002/agj2.20803", 
 		project=NA, 
 		data_type= "experiment", 
-		response_vars= "fwy_total; dmy_leaves; fwy_leaves", 
+		response_vars= "fwy_total; fwy_leaves", 
 		treatment_vars = "plant_spacing; row_spacing", 
 		carob_contributor= "Cedric Ngakou", 
 		carob_effort = NA,
@@ -34,18 +37,18 @@ carob_script <- function(path) {
       plant_spacing= r1$`Interplant spacing cm`,
       fwy_total= r1$`Total biomass yield t/ha`*1000,
       plant_height= r1$`height cm`,
-      plot_area= 3*4.8/10000,## ha 
+      plot_area= 3*4.8, # m2 
       weeding_done= TRUE,
       weeding_times= 3L,
       weeding_method= "manual",
       crop= "pigeon pea",
       variety= "Kibret",
       country= "Ethiopia",
-      trial_id= "1", 
+      trial_id= as.character(r1$Location), 
       planting_date="2019-07-07", 
-      on_farm= TRUE, 
+      on_farm= FALSE, 
       is_survey= FALSE, 
-      yield_part="leaves",
+      yield_part="aboveground biomass",
       irrigated= FALSE
    ) 
    
@@ -57,7 +60,6 @@ carob_script <- function(path) {
       rep= as.integer(r2$block),
       row_spacing= r2$`Row spacing`,
       plant_spacing= r2$`interplant spacing`,
-      dmy_leaves= r2$`DM%`,
       leaf_N= r2$Nitrogen*10 # in mg/g
       #leaf_protein= r2$`crud protein`
       #leaf_OM= r2$IV
@@ -87,6 +89,7 @@ carob_script <- function(path) {
    dd$elevation <-  c(1844, 1714, 1783)[dd$location]
    dd$geo_from_source <- TRUE
    dd$location <- c("Aliyu-Amba", "Hawassa", "Wondo-Genet")[dd$location]
+   dd$trial_id <- dd$location
    
    
    ## Adding soil info
@@ -94,8 +97,8 @@ carob_script <- function(path) {
       location= c("Aliyu-Amba", "Hawassa", "Wondo-Genet"),
       soil_type= c("loam", "sandy clay loam", "clay"),
       soil_pH= c(7.4, 6.8, 5.6),
-      soil_N= c(0.77, 0.61, 0.68),
-      soil_P= c(12.75, 35.56, 39.8)/1000,## mg/g
+      soil_N= c(0.77, 0.61, 0.68) * 10000, # % to mg/kg
+      soil_P= c(12.75, 35.56, 39.8),
       soil_K_exch= c(0.53, 3.03, 0.91),
       soil_SOC= c(8.9, 7.1, 8),
       soil_SOM= c(15.5, 12.3, 18.8),

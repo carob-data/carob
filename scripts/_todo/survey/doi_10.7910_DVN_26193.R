@@ -22,7 +22,7 @@
 # Not processed: Farmer Profile (age, education, household size), Household consumption, Land ownership, Other Assets, Others Income, Others.
 # Wetland.xls contains a note in Area1 ("For farmer 52, the land is just bought, so still not produce"); set to NA.
 # Upland fertilizer matched to 146 of 241 upland rice rows (the input module covers one field per farmer).
-# write_files: invalid term season "third" (wetland third season), invalid crop "vegetalbe-hiris", unknown variable land_type_.
+# write_files: invalid term season "third" (wetland third season), invalid crop "vegetalbe-hiris", unknown variable land_type_; NA detected: latitude, longitude (Cidaun, and rows with no district code).
 
 ## NEW VARIABLES
 # land_type_: upland or wetland (sawah) field

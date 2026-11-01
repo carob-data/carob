@@ -65,7 +65,7 @@ carob_script <- function(path) {
 	# in addition: 100 kg urea
 	d$N_fertilizer <- ifelse(d$treatment == "Control", 0, 
 					ifelse(d$treatment == "OCPF1", 11,
-					ifelse(d$treatment == "OCPF2", 14, 15))) * 1.50 + 100 * .46
+					ifelse(d$treatment == "OCPF2", 14, 15)) * 1.50 + 100 * 0.46)
 		
 	d$P_fertilizer <- ifelse(d$treatment == "Control", 0, 
 					ifelse(d$treatment == "OCPF1", 21,

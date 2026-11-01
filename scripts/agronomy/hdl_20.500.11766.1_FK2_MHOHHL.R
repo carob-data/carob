@@ -42,7 +42,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	
 	d1 <- data.frame(
 		rep = r1$Rep,
-		record_id = paste0("1_", r1$PlotCode),
+		plot_id = r1$PlotCode,
 		treatment = paste(r1$CropCombination, r1$VarietyCombination, sep = "_"),
 		rain = 194.4,
 		irrigation_number = 2L, # see r5
@@ -60,15 +60,15 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	d1$intercrops[r1$NumberOfPlantSpecies==2] <- "yes"
 
 	d3 <- data.frame(
-		record_id = paste0("3_", r3$PlotCode),
-		crop = ifelse(r3$PlantPartner == "Cereal", "wheat", "faba bean"),
+		plot_id = r3$PlotCode,
+		crop = ifelse(r3$PlantPartner == "Cereal", "durum wheat", "faba bean"),
 		harvest_date = as.character(as.Date(paste(r3$Year, r3$MonthGrainYield, r3$DayGrainYield, sep="-"))),
 		plant_density = r3$PlantsEmergence_m2 * 10000,
 		yield2 = r3$GrainYield
 	)
 
 	dfaba <- data.frame(
-		record_id = paste0("2_", r1$PlotCode),
+		plot_id = r2$PlotCode,
 		crop = "faba bean",
 		flowering_days = r2$DFLRFB, 
 		maturity_days = r2$DMATFB , 
@@ -89,7 +89,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	dfaba$variety <- variety
 
 	dwheat <- data.frame(
-		record_id = r2$PlotCode,
+		plot_id = r2$PlotCode,
 		crop = "durum wheat",
 		flowering_days = r2$DFLRWT, 
 		maturity_days = r2$DMATWT, 
@@ -98,22 +98,23 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 		yield = r2$WTGY
 	) 
 	
-	dfaba <- merge(d1, dfaba, by="record_id", all.x=TRUE)
-	dwheat <- merge(d1, dwheat,  by="record_id", all.y=TRUE)
+	dfaba <- merge(d1, dfaba, by="plot_id", all.x=TRUE)
+	dwheat <- merge(d1, dwheat, by="plot_id", all.x=TRUE)
+	dfaba <- dfaba[grepl("Faba", dfaba$treatment), ]
+	dwheat <- dwheat[grepl("Durum", dwheat$treatment), ]
 		
 	dwheat$variety <- dwheat$variety_wheat
 	
 	d <- carobiner::bindr(dfaba, dwheat)
-	d <- d[!is.na(d$yield), ]
 	d$variety_wheat <- NULL
 
-	d <- merge(d, d3, c("record_id", "crop"), all.x=TRUE)
+	d <- merge(d, d3, c("plot_id", "crop"), all.x=TRUE)
 # Not good:
 #	plot(d$yield, d$yield2)
 	d$yield2 <- NULL
 	
-	d$record_id <- as.integer(as.factor(d$record_id))
-	i <- d$intercrop == "yes"
+	d$record_id <- as.integer(as.factor(paste(d$plot_id, d$crop)))
+	i <- d$intercrops == "yes"
 	d$intercrops[i & d$crop=="durum wheat"] <- "faba bean"
 	d$intercrops[i & d$crop=="faba bean"] <- "durum wheat"
 	

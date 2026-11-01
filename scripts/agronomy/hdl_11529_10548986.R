@@ -352,14 +352,11 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 
 	d$country <- "Mexico"
 	d$on_farm <- TRUE
-	d$is_survey <- d$pratice == "CONVENTIONAL"
+	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
-# remove some of the crazy numbers
-	d <- d[d$yield > 15000, ]
 
 	carobiner::write_files(path, meta, d)
 }

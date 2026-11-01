@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# The yield file has no coordinates; the hard-coded 6.74 N point is outside Ghana's Upper East Region.
+# Nyangua and Tekuru are not columns in the yield file, so trial_id is the planting year only.
 
 carob_script <- function(path) {
    
@@ -35,9 +38,9 @@ carob_script <- function(path) {
       treatment= r1$IR,
       fertilizer= as.numeric(substr(r1$FR, 2,2)),
       planting_date= ifelse(r1$Year=="Y1", "2017-11-11", "2018-12-07"),
-      yield= as.numeric(substr(r1$Yield.of.pepepr..t.ha....st..error, 0, 4))*1000 ,
+      yield= as.numeric(sub("^([0-9.]+).*", "\\1", r1$Yield.of.pepepr..t.ha....st..error))*1000,
       crop= "pepper",
-      adm1= "East Ghana",
+      adm1= "Upper East",
       country= "Ghana",
       row_spacing= 70,
       plant_spacing= 50
@@ -76,14 +79,14 @@ carob_script <- function(path) {
    d$K_fertilizer <- c(33, 33, 9, 6.75, 13.5, 18)[d$fertilizer]
    d$fertilizer <- NULL
 
-   d$trial_id <- "1"
+   d$trial_id <- d$planting_date
    d$on_farm <- TRUE
    d$is_survey <- FALSE
    d$inoculated <- FALSE
    d$irrigated <- TRUE
    d$yield_part <- "fruit"
-   d$latitude <- 6.73838
-   d$longitude <-  -0.420577
+   d$latitude <- NA_real_
+   d$longitude <- NA_real_
    d$geo_from_source <- FALSE
    
    

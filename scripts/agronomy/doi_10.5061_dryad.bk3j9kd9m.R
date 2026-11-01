@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# P and K rates are not in the data, so they are not set to 0 on fertilized plots.
+
 carob_script <- function(path) {
    
 "
@@ -58,8 +61,6 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
       previous_crop= gsub("winter_|_", "", tolower(r$Previous_crop)),
       variety= r$Cultivar,
       N_fertilizer= r$Field_Nfertilization,
-      P_fertilizer= 0 ,
-      K_fertilizer= 0 ,
       pest_species= "rust",
       pest_number= as.integer(r$Rust_sum),
       crop= "wheat",

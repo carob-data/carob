@@ -192,11 +192,6 @@ carob_script <- function(path) {
 	P1 <- gsub("bush_bean","common bean",P1)
 	d$previous_crop <- P1
 
-	#fix crop yield limit by crop
-	d$yield[d$crop=="common bean" & d$yield>9000] <- NA
-	d$yield[d$crop=="cowpea" & d$yield>6500] <- NA
-	d$yield[d$crop=="groundnut" & d$yield> 8500] <- NA
-	d$yield[d$crop=="soybean" & d$yield>15000] <- NA
 	# data type
 	d$inoculated <- as.logical(d$inoculated)
 	#for (i in 1:12) {

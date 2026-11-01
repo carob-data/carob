@@ -38,7 +38,8 @@ The push-pull system, a stimulo-deterrent cropping strategy consisting of interc
 	d <- data.frame(
 	  country="Ethiopia",
 	  date=as.character(r$Year),
-	  adm2=r$DistrictName,
+	  adm3=r$DistrictName,
+	  trial_id=paste(r$FarmID, r$Year, sep="_"),
 	  crop="maize",
 	  treatment=tolower(r$Napier),
 	  intercrops=r$CroppingSystem,
@@ -62,21 +63,19 @@ The push-pull system, a stimulo-deterrent cropping strategy consisting of interc
 	d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 
 	geo <- data.frame(
-	  adm2 =c("WondoGenet","Tula","HawassaZuria"),
+	  adm3 =c("WondoGenet","Tula","HawassaZuria"),
 	  latitude =c(7.036562,6.929622,7.050936),
 	  longitude = c(38.571389,38.427193,38.338616)
 	)
 
-	d <- merge(d,geo,by="adm2", all.x = TRUE) 
-	
-	d$adm2[d$adm2=="WondoGenet"] <- "Wondo Genet"
-	d$adm2[d$adm2=="HawassaZuria"] <- "Hawassa Zuria"
-	
-	d$trial_id <- paste(d$adm2,seq(nrow(d)), sep = "_")
-	
-	d$intercrops[d$intercrops=="MD"] <- "maize;desmodium"
+	d <- merge(d,geo,by="adm3", all.x = TRUE)
+
+	d$adm3[d$adm3=="WondoGenet"] <- "Wondo Genet"
+	d$adm3[d$adm3=="HawassaZuria"] <- "Hawassa Zuria"
+
+	d$intercrops[d$intercrops=="MD"] <- "desmodium"
 	d$intercrops[d$intercrops=="M"] <- "none"
-	d$intercrops[d$intercrops=="MB"] <- "maize;common bean"
+	d$intercrops[d$intercrops=="MB"] <- "common bean"
 	
 	carobiner::write_files(path, meta, d)
 }

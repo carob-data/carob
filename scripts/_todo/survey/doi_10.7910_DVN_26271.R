@@ -21,7 +21,7 @@
 # Prod entries that are formulas (e.g. "(8+3.25)*(.25/1.25)", apparently allocating production of a parcel over plots) or whose number of components does not match the crops, are set to NA. "GF" (green fodder, fresh weight) values are used as given. Decimal commas ("1,5+2,0") were read as decimal points.
 # Outliers: sugarcane yields of 375-400 t/ha (farmers 110, 118) and pigeon pea 112 t/ha on 0.04 ha (farmer 134); probably area or production errors; kept.
 # Fertilizer is merged by farmer x parcel x season, so it is assigned to all rice plots of the input parcel (320 of 461 rice records).
-# write_files: invalid season "zaid", invalid crop terms (mixed crops, berseem, forage, pointed gourd, vegetables, onion; garlic), fertilizer type "Zn", yield out of bounds (above), 2 duplicate records, NA yield for unsplit mixed crops.
+# write_files: invalid season "zaid", invalid crop terms (mixed crops, berseem, forage, pointed gourd, vegetables, onion; garlic), fertilizer type "Zn", yield out of bounds (above), 2 duplicate records, NA yield for unsplit mixed crops; duplicate coordinates (villages share a district centroid).
 # Records with codes 0 (crop, cropping, MVTV, CEMethod) are not documented; set to NA.
 # Not processed: access, assets, changes, constraints, credit, crop changes, demography, disposal, employment, feeds, income, migration, non-rice inputs (wheat etc.; NonRiceInp.xls), labor, rice features, rice production changes.
 

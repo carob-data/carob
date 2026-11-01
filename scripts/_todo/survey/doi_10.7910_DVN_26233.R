@@ -19,7 +19,7 @@
 # Fertilizer and seed data only for rice parcels covered by the Material sheet.
 # Not processed: Demog (household members), Income, Labor, Nonrice-Inputs and Labor, RiceTech (variety changes), SeedRep (seed replacement), insecticides, machinery.
 # Fertilizer data matched to 950 of 2901 land use records (the selected rice parcels).
-# write_files: unknown variables (the NEW VARIABLES below, and establishment_method_), invalid crop "horse gram", invalid fertilizer_type terms "10-26-26", "28-28-0", "AS", "Rocord"; NA yield for some records.
+# write_files: unknown variables (the NEW VARIABLES below, and establishment_method_), invalid crop "horse gram", invalid fertilizer_type terms "10-26-26", "28-28-0", "AS", "Rocord"; NA yield for some records; duplicate coordinates (villages share a district or taluk centroid).
 # read warnings: Demog Occup1 has multiple codes ("9, 10") read as NA (not used); LandUse Remarks column read as logical (text "Damaged due to flood" lost; not used).
 # 6 plots damaged by flood (Remarks) have yield 0 or low.
 

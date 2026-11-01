@@ -76,8 +76,8 @@ Inter-seeding red clover (Trifolium pratense L.) provides an alternative method 
   d <- d[!duplicated(d$record_id),]
   
   d$N_fertilizer <- c(0, 45, 90, 135,180, 225, 270, 315)[d$N_fertilizer]
-  d$intercrops <- ifelse(grepl("^clover$", d$treatment), "red clover", "none")
-  d$intercrops <- ifelse(grepl("^rye$", d$treatment), "rye", "none")
+  d$intercrops <- ifelse(grepl("^clover$", d$treatment), "red clover",
+                  ifelse(grepl("^rye$", d$treatment), "rye", "none"))
   d$cover_crop <- gsub("clover_yp|^clover$", "red clover", d$treatment)
   d$cover_crop <- gsub("no clover", "none", d$cover_crop)
 	d$location <- "University of Wisconsin Arlington Agricultural Research Station"

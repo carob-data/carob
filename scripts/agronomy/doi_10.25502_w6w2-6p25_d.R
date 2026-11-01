@@ -119,7 +119,8 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       is_survey = grepl("Surveys", r$Data_source), 
       crop = "maize", 
       yield_part = "grain",
-      yield_moisture = as.numeric(NA), 
+      yield_moisture = as.numeric(NA),
+      yield_isfresh = NA, # yield does not say fresh or dry
       geo_from_source = TRUE,
       fertilizer_used = TRUE
    )	

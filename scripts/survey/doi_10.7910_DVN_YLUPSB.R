@@ -64,7 +64,8 @@ Inland valleys are becoming increasingly important agricultural production areas
 	   on_farm = FALSE,
 	   is_survey = TRUE,
 	   yield_part = "none",
-	   yield_moisture = as.numeric(NA)
+	   yield_moisture = as.numeric(NA),
+	   yield_isfresh = NA # no yield column in the file
 	)
 	
 	d$adm1 <- c("Bo", "Bemena")[d$adm1]

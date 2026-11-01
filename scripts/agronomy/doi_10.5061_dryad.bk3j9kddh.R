@@ -125,8 +125,9 @@ carob_script <- function(path) {
                      ifelse(grepl("Low-PM", d$treatment), 527*0.46 ,
                      ifelse(grepl("Pos-Con", d$treatment), 753*0.46, 0))))))/((d$plot_area)*1000) ### Kg/ha 
   
-   d$P_fertilizer <-  75/2.29
-   d$K_fertilizer <- 150/1.205
+   # 75 g P2O5 and 150 g K2O per plot, same gram scale as the urea; Neg-Con receives none
+   d$P_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (75 / 2.29) / (d$plot_area * 1000))
+   d$K_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (150 / 1.2051) / (d$plot_area * 1000))
 
    
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

@@ -50,9 +50,11 @@ carob_script <- function(path) {
     # merge d3 with d
     d <- merge(d, d3, by="treatment", all.x = TRUE)
     d$treatment <- d$Treatment1
+    d$planting_date <- ifelse(d$year == 1, "2013-06-03", "2014-06-08")
+    d$harvest_date <- ifelse(d$year == 1, "2013-10-25", "2014-10-27")
     d$Treatment1 <- d$year <- NULL
     #add columns
-	d$crop <- "wheat"
+	d$crop <- "teff"
 	
 	d$country <- "Ethiopia"
 	d$location <- "Gumara Maksegnit"
@@ -70,9 +72,6 @@ carob_script <- function(path) {
 	d$longitude[d$site == "Mandie"] <- 37.583
 	d$latitude[d$site == "Mandie"] <- 12.421
   d$geo_from_source <- FALSE
-  
-    d$planting_date <- "2013-06-03"
-    d$harvest_date <- "2013-10-25"
 
 	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    

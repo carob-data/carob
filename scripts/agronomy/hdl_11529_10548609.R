@@ -34,14 +34,13 @@ carob_script <- function(path) {
 		yield_part = "grain",
 		yield = r$Yield_moist * 1000,
 		rep = as.integer(r$Num_Rep),
-		irrigated = r$Water_Regime,
+		irrigated = r$Water_Regime == "Irrigated",
 		land_prep_method = paste(tolower(r$Beds), "beds")
 	)
 	
 	
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- TRUE
 	  
 #	  g <-unique(d[,c("country","adm2")])
 #	  g1<-carobiner::geocode(country = g$country,location = g$adm2,service = "nominatim")
@@ -57,9 +56,7 @@ carob_script <- function(path) {
 	)
 	
 	d <- merge(d, gg, by="adm2", all.x=TRUE)
-	d$trial_id <- as.character(as.factor(d$adm2))
-	  
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$trial_id <- paste(d$location, d$planting_date, sep = "_")
 	  
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

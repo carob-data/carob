@@ -144,20 +144,20 @@ carob_script <- function(path) {
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
 
-	i <- d$fertilizer_type == "NPK" # Assumed to be NPK (10:18:24)
+	i <- d$fertilizer_type == "NPK" # NPK 10:18:24 is N, P2O5, K2O
 	d$N_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.1 
-	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.18 
-	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.24
+	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.18 / 2.29
+	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.24 / 1.2051
 
-	i <- d$fertilizer_type == "PKS" # Assumed to be PK (18:24)
+	i <- d$fertilizer_type == "PKS" # PK 18:24 is P2O5, K2O
 	d$N_fertilizer[i] <- 0
-	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.18 
-	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.24
+	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.18 / 2.29
+	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.24 / 1.2051
 
-	i <- d$fertilizer_type == "sympal"
+	i <- d$fertilizer_type == "sympal" # SYMPAL 23 and 15 are P2O5 and K2O
 	d$N_fertilizer[i] = 0 # Sympal has 0 % N
-	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.23
-	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.15
+	d$P_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.23 / 2.29
+	d$K_fertilizer[i] <- (fert_kg_plot[i] / plot_size[i]) * 10000 * 0.15 / 1.2051
 		
 	d$OM_used <- NA
 	d$OM_used[grepl('\\+', d$treatment)] <- TRUE

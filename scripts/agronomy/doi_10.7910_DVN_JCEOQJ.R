@@ -39,12 +39,11 @@ Effect of intercropping forages with maize in conventional tillage and conservat
 	r1 <- carobiner::read.excel(f1, sheet="Yield_Maize_Forage", skip= 4, na= c("Average"))
   #r2 <- carobiner::read.excel(f1, sheet="description")
 
+	# One lablab column and one vetch column. Totals M+L and M+V equal CA maize plus that forage.
 	d1 <- data.frame(
 	  yield_mz_CT = r1$`Maize Yield (kg/ha)`,
 	  yield_mz_CA = r1$`Maize Yield(kg/ha)`,
-	  lab_CT = r1$`Lablab Yield (kg/ha)`,
 	  lab_CA = r1$`Lablab Yield (kg/ha)`,
-	  vect_CT = r1$`Vetch Yield (kg/ha)`,
 	  vect_CA = r1$`Vetch Yield (kg/ha)`,
 	  plot_id = as.character(r1$...1),
 	  adm1 = "Amhara",
@@ -55,13 +54,13 @@ Effect of intercropping forages with maize in conventional tillage and conservat
 	  trial_id = "1"
 	)
 	
-	d <- reshape(d1, varying = c("yield_mz_CT", "lab_CT", "vect_CT", "yield_mz_CA", "lab_CA", "vect_CA"), v.names = "yield",
+	d <- reshape(d1, varying = c("yield_mz_CT", "yield_mz_CA", "lab_CA", "vect_CA"), v.names = "yield",
 	             timevar = "treatment",
 	             direction = "long")
-  d$intercrops <- c("lablab", rep("maize", 2), "lablab", rep("maize", 2))[d$treatment]
-  d$crop <- c("maize", "lablab", "vetch", "maize", "lablab", "vetch")[d$treatment]
-  d$land_prep_method <- c(rep("conventional", 3), rep("minimum tillage", 3))[d$treatment]
-  d$treatment <- c(rep("conventional", 3), rep("minimum tillage", 3))[d$treatment]
+  d$intercrops <- c(NA, NA, "maize", "maize")[d$treatment]
+  d$crop <- c("maize", "maize", "lablab", "vetch")[d$treatment]
+  d$land_prep_method <- c("conventional", "minimum tillage", "minimum tillage", "minimum tillage")[d$treatment]
+  d$treatment <- d$land_prep_method
   d$yield <- as.numeric(gsub(" ", "", d$yield))
   d$id <- NULL
  

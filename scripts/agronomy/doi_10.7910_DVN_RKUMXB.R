@@ -67,10 +67,6 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	
 	d$is_survey <- FALSE
 
-	## NA to zero for some values
-	d$N[is.na(d$N)] <- 0
-	d$P[is.na(d$P)] <- 0	
-	d$K[is.na(d$K)] <- "0"
 	d$K <- suppressWarnings(as.numeric(d$K))
 
 	d$Other_Nutrient[is.na(d$Other_Nutrient)] <- 0
@@ -236,12 +232,6 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	d <- carobiner::change_names(d, c("response", "N", "P", "K", "Zn", "S"), 
 	c("treatment", "N_fertilizer", "P_fertilizer", "K_fertilizer", "Zn_fertilizer", "S_fertilizer"))
 
-## seems reasonable assumption. 
-## 9 missing out of 4316
-	d$S_fertilizer[is.na(d$S_fertilizer)] <- 0
-# 514 missing	
-	d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
-
 	d$OM_used <- d$OM_used == "Yes"
 	d$inoculated <- d$inoculated == "Yes"
 
@@ -355,8 +345,7 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	d$yield_part[d$crop == "gomenzer"] <- "leaves" 
 	d$yield_part[d$crop == "potato"] <- "tubers" 
 
-	d$soil_pH[d$soil_pH < 3.5 | d$soil_pH > 8.5] <- NA
-	d$soil_P[d$soil_P > 500] <- NA
+	# soil_pH outside 3.5-8.5 and soil_P above 500 are left as recorded
 
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

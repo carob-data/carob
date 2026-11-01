@@ -65,7 +65,6 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d$plant_density <- d$no_plants/(d$area_harvest_plot_m2/10000) 
 	d$plant_density[d$plant_density == "NaN"] <- NA
 	d$yield <- as.numeric(d$grain_yield_kgperha)
-	d <- d[d$yield > 0,]
 	d$fwy_residue <- as.numeric(d$total_yield_stover_kg_per_ha)
 	d$dmy_total <- as.numeric(d$calc_weight_a_ground_biomass_kg)
 	d$seed_weight <- d$dry_weight_100_seed_g * 10
@@ -114,14 +113,12 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	
 	# processing rainfall.csv
 	f4 <- ff[basename(ff) == "rainfall.csv"]
-	d4 <- data.frame(read.csv(f4))
-	d4 <- d4[d4$rain_mm > 0,]
-	
-	# averaging rain amount because we cannot specifically 
-	# point individual rain inputs to specific reps under specific trial_ids
-	b1 <- tapply(d4$rain_mm, d4$trial_id, mean)
-	d4 <- data.frame(trial_id = names(b1),rain = b1)
-	rownames(d4) <- NULL
+	r4 <- read.csv(f4)
+	wth <- data.frame(
+		trial_id = r4$trial_id,
+		date = as.character(as.Date(r4$date, "%m/%d/%Y")),
+		prec = as.numeric(r4$rain_mm)
+	)
 
 	# processing soil_data.csv
 	f5 <- ff[basename(ff) == "soil_data.csv"]
@@ -137,8 +134,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	# compiling into a single final dataset
 	
 	d6 <- merge(d3,d5,by = "trial_id",all.x = TRUE)
-	d7 <- merge(d6,d4,by = "trial_id",all.x = TRUE)
-	f <- merge(d,d7,by = "trial_id",all.x = TRUE)
+	f <- merge(d,d6,by = "trial_id",all.x = TRUE)
 	
 	# Fertilizer rates: DAP will be applied using a rate of 25 kg DAP per hectare; DAP has 18:46:0 composition
 	# calculating amount of P in DAP applied assuming that any +P input refers to DAP application; 
@@ -165,7 +161,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	
 	f <- f[,c("trial_id","country","adm3","location","site","planting_date","harvest_date",
 			"rep","treatment","crop","variety","previous_crop","yield","fwy_residue","dmy_total",
-			"seed_weight","plant_density","soil_pH","soil_SOC","soil_N","soil_sand","soil_clay","rain",
+			"seed_weight","plant_density","soil_pH","soil_SOC","soil_N","soil_sand","soil_clay",
 			"fertilizer_type","P_fertilizer","N_fertilizer","K_fertilizer","inoculated","row_spacing",
 			"plant_spacing","on_farm","elevation","latitude","longitude")]
 
@@ -183,6 +179,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	f$yield_isfresh <- as.numeric(NA) #needs to be checked
 	f$yield_moisture <- as.numeric(NA) #needs to be checked
 
-	carobiner::write_files(meta, f, path=path)
+	geo <- f[!duplicated(f$trial_id), c("trial_id", "country", "location", "latitude", "longitude")]
+	wth <- merge(wth, geo, by = "trial_id", all.x = TRUE)
+	carobiner::write_files(meta, f, path=path, wth=wth)
 }
 

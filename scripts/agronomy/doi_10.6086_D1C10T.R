@@ -2,7 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+# Holtville was assigned -119.33, 40.01. Those coordinates were removed; the site coordinates are not in the data.
+# Seasonal CO2, N2O, and NO totals were not joined onto every fertigation row.
 
 carob_script <- function(path) {
 
@@ -44,9 +45,9 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 		planting_date = as.character(r1$Year),
 		harvest_date = r1$HarvestDate,
 		irrigation_method= tolower(r1$Irrigation),
-		fw_yield= r1$TonPerAcre*2.471*1000,
-		fwy_total= (r1$TotalWeightTons/r1$FieldAcres)*2.471*1000 ,
-		plot_area= r1$FieldAcres*2.471 
+		fw_yield= r1$TonPerAcre * 907.185 / 0.404686, # US short ton/acre to kg/ha
+		fwy_total= (r1$TotalWeightTons/r1$FieldAcres) * 907.185 / 0.404686,
+		plot_area= r1$FieldAcres * 0.404686 # acres to ha 
 	)
 
 	d2 <- data.frame(
@@ -54,28 +55,28 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 		planting_date = as.character(r2$Year),
 		season= ifelse(grepl("Early", r2$Season), "early wet", "late wet"),
 		grow= r2$GrowPeriod,
-		plot_area= r2$FieldAcres*2.471,
+		plot_area= r2$FieldAcres * 0.404686, # acres to ha
 		irrigation_method= tolower(r2$Irrigation),
 		irrigation_dates= r2$IrrigationTimeStart,
 		fertilizer_amount= r2$FertilizerApplied,
-		fertilizer_type= ifelse(grepl("NH3", r2$FertilizerType), "AN", 
+		fertilizer_type= ifelse(grepl("NH3", r2$FertilizerType), "NH3", 
 		                 ifelse(grepl("UN32", r2$FertilizerType), "urea;AN", "none")),
-		N_fertilizer= ifelse(grepl("NH3", r2$FertilizerType), r2$FertilizerApplied*0.34 + 100, 
-		              ifelse(grepl("UN32", r2$FertilizerType), r2$FertilizerApplied*0.32+ 100, r2$FertilizerApplied)),
+		N_fertilizer= ifelse(grepl("NH3", r2$FertilizerType), r2$FertilizerApplied*0.82, 
+		              ifelse(grepl("UN32", r2$FertilizerType), r2$FertilizerApplied*0.32, r2$FertilizerApplied)),
 		P_fertilizer= 0, 
 		K_fertilizer= 0,
 		country= "United States",
 		location= "Holtville",
 		adm1 = "California",
 		adm2 = "Imperial",
-		longitude= -119.3333 ,
-		latitude= 40.01183, 
-		geo_from_source= TRUE,
+		longitude= as.numeric(NA),
+		latitude= as.numeric(NA),
+		geo_from_source= FALSE,
 		irrigated= TRUE,
-		on_farm= TRUE,
+		on_farm= FALSE,
 		is_survey= FALSE,
-		trial_id= ifelse(grepl("Sudangrass", r2$Crop), "1", "2") , 
-		yield_part= "grain"		
+		trial_id= paste(tolower(r2$Crop), r2$Year, ifelse(grepl("Early", r2$Season), "early", "late"), sep = "_"),
+		yield_part= "aboveground biomass"		
 	)
 	
 	d <- merge(d2, d1, by=c("crop", "planting_date","plot_area", "irrigation_method", "season", "grow"), all.x = TRUE)
@@ -83,19 +84,6 @@ Agriculture produces large emissions of carbon dioxide (CO2), nitrous oxide (N2O
 	d$crop <- gsub("alfalfa", "lucerne",  d$crop) 
 	d$irrigation_dates <- as.character(format(as.Date(d$irrigation_dates, format = "%m/%d/%Y %H:%M"), "%Y-%m-%d"))
 	d$harvest_date <- as.character(format(as.Date(d$harvest_date, format = "%m/%d/%Y"), "%Y-%m-%d"))
-	
-	### Adding CO2 and N20 emission from paper
-	
-	ems <- data.frame(
-	   crop= c(rep("sudangrass", 4), rep("lucerne", 4)),
-	   season= c(rep("early wet", 2), rep("late wet", 2), rep("early wet", 2), rep("late wet", 2)),
-	   irrigation_method= c(rep(c("flood", "drip"), time= 4)),
-	   soil_CO2= c(9.24, 11.09, 14.63, 13.05, 4.22, 3.63, 10.37, 3.66),
-	   soil_N2O= c(5.07, 3.44, 5.73, 1.48, 3.44, 3.94, 3.21, 0.92),
-	   soil_NO= c(1.31, 1.36, 1.67, 0.41, 0.19, 0.21, 0.5, 0.43)
-	)
-	
-	d <- merge(d, ems, by=c("crop", "season", "irrigation_method"), all.x = TRUE)
 	
 	d$crop <- gsub("sudangrass", "sudan grass", d$crop)
 	

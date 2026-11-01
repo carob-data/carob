@@ -58,7 +58,7 @@ carob_script <- function(path) {
 	qom <- r1b$Quantity.of.applied.manure.t.ha.1.of.DM  * 10
 	d2 <- data.frame(
 		season = r1b$Season,
-		OM_amount = qom / r1b$pct.DM,
+		OM_amount = r1b$Quantity.of.applied.manure.t.ha.1.of.DM * 1000, # t/ha of DM to kg/ha
 		N_organic = r1b$N.pct * qom, 
 		P_organic = r1b$P.pct * qom,
 		K_organic = r1b$K.pct * qom,

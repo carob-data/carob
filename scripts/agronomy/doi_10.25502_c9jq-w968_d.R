@@ -9,6 +9,7 @@
 
 ## ISSUES
 # plant_survival, root_density: no terminag equivalent, suggested as new terms
+# Fertilizer rates are not in the data, so N, P, and K were not set to 0.
 
 
 carob_script <- function(path) {
@@ -79,10 +80,7 @@ survival, root counts, and fresh/dry root yield recorded at final harvest.
     
     root_density = r1$no_useful_roots_m2 * 10000,
     plant_survival = r1$Perc_survival,
-    irrigated = NA,
-    N_fertilizer = 0,
-    P_fertilizer = 0,
-    K_fertilizer = 0
+    irrigated = NA
   )
 
     # metadata has two lon/lat pairs. Coordinates confirmed from Publication; center of trials

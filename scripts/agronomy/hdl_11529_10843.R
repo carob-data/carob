@@ -74,13 +74,13 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
   #Specify information about the cropping systems
   d1$crop_rotation <- NA
   d1$intercrops <- NA
-  d1$intercrops[d1$crop=="maize+mucuna"] <- "mucuna"
-  d1$intercrops[d1$crop=="Maize+pigeonpea"] <- "pigeon pea"
+  d1$intercrops[d1$crop=="maize+mucuna"] <- "velvet bean"
+  d1$intercrops[d1$crop=="maize+pigeonpea" | d1$crop=="maize+piegonpea"] <- "pigeon pea"
   
   d2$crop_rotation <- NA
   d2$crop_rotation <- d2$crop
-  d2$crop_rotation[d2$crop_rotation=="Maize +Pp"] <- "pigeon pea"
-  d2$crop_rotation[d2$crop_rotation=="Maize +Cp"] <- "cowpea"
+  d2$crop_rotation[d2$crop_rotation=="maize +pp"] <- "maize;pigeon pea"
+  d2$crop_rotation[d2$crop_rotation=="maize +cp"] <- "maize;cowpea"
   d2$intercrops <- NA
   
   d3$crop_rotation <- NA
@@ -94,6 +94,9 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
     d$latitude = -17.5721
 
   
+  d$intercrops[d$crop %in% c("maize+pigeonpea", "maize+piegonpea", "maize +pp")] <- "pigeon pea"
+  d$intercrops[d$crop %in% c("maize+cowpea", "maize +cp")] <- "cowpea"
+  d$intercrops[d$crop == "maize+mucuna"] <- "velvet bean"
   d$crop[d$crop== 'sunnhemp'] <-"sunn hemp"
   d$crop[d$crop== 'maize +cp'] <-"maize"
   d$crop[d$crop== 'maize +pp'] <-"maize"
@@ -112,10 +115,8 @@ T5. Magoye ripping (RI-ML): maize with residue retention, intercropped with cowp
   #Basal dressing 7:14:7 NPK for 150Kg/ha, meaning 10.5, 9.177 and 8.715 kg/ha,
   #for all treatments.Top dressing of 30kg N/ha, equally split applied twice. 
   d$fertilizer_type <- 'D-compound; AN'
-  d$N_fertilizer <-NA
-  # d$N_fertilizer[d$treatment=='CPM']<-10.5 + 15
-  # d$N_fertilizer[d$treatment=='CPM']<-10.5 
-  d$N_fertilizer <- ifelse(d$treatment=="CPM", 25.5,10.5)
+  # basal 10.5 kg N/ha plus 30 kg N/ha topdressing on every treatment
+  d$N_fertilizer <- 10.5 + 30
   d$P_fertilizer <- 9.177
   d$K_fertilizer <- 8.715
   d$N_splits <- 2

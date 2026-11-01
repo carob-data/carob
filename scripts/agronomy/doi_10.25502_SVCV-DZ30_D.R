@@ -63,7 +63,8 @@ The data were collected in the frame of the EiA Sasakawa Nigeria  Use Case in th
 		is_survey = FALSE,
 		geo_from_source = TRUE,
 		irrigated = NA,
-		yield_moisture = as.numeric(NA)
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA # Yield does not say fresh or dry
 	)
 
  

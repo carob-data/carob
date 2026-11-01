@@ -147,9 +147,10 @@ Author Thomas Kätterer reported that 'The dataset refers to the long-term trial
 	  soil_N_total = c(0.16,  0.11),
 	  soil_P = c(8.60, 0.54),
 	  soil_P_method = "Olsen",
-	  soil_K = c(0.13,  0.12),
-	  soil_Ca = c(3.04, 4.41),
-	  soil_Mg = c(1.65, 1.50)
+	  # exchangeable cations are cmol/kg (meq/100g); mg/kg = cmol/kg * equivalent weight * 10
+	  soil_K = c(0.13,  0.12) * 391,
+	  soil_Ca = c(3.04, 4.41) * 200.4,
+	  soil_Mg = c(1.65, 1.50) * 121.53
 	)
 	
 	d <- merge(d1, geo, by= "location", all.x = TRUE)

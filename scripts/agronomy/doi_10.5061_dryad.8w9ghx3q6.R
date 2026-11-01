@@ -86,7 +86,7 @@ carob_script <- function(path) {
          soil_Ca= as.numeric(r2$Ca),
          soil_Mg= as.numeric(r2$Mg),
          soil_K= as.numeric(r2$K),
-         soil_Na= as.numeric(r2$N),
+         soil_Na= as.numeric(r2$Na),
          soil_EC= as.numeric(r2$EC),
          soil_sand= as.numeric(r2$Sand),
          soil_silt= as.numeric(r2$Silt),

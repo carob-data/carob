@@ -139,7 +139,7 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 	d <- cov_Numeric(d)
 	
 	d$soil_SOC <- d$soil_SOC/10 # from g/kg to %
-	d$soil_N_total <- d$soil_N_total/1000 #  from g/kg to ppm
+	d$soil_N_total <- d$soil_N_total * 1000 # g/kg to mg/kg
 	
 	### solve conflict countries issue
 	i <- grepl("Guangzhou, China|Guangzhou, Guangdong province, China", d$location)

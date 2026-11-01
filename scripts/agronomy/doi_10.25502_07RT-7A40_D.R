@@ -1,6 +1,9 @@
 # R script for "carob"
 
 
+## ISSUES
+## Iburu and Zaria were both placed at one point that is not Zaria. The file has no coordinates, so the point was removed.
+
 carob_script <- function(path) {
   
 "Maize response to N and P. Tofa, A., Kamara, A. Y., Babaji, B. A., Ademulegun, T. D., & Aliyu, K. T. (2021). Maize response to N and P [Data set]. International Institute of Tropical Agriculture (IITA). doi:10.25502/07RT-7A40/D"
@@ -40,8 +43,6 @@ carob_script <- function(path) {
 		silking_days = r$silk50
 	)
 	
-	d$latitude <- 10.26858
-	d$longitude <- 7.78896
 	d$geo_from_source <- FALSE
 	d$K_fertilizer <- 0
 	d$fertilizer_type <- "urea;DAP;NPK;SSP" # One of these

@@ -3,6 +3,7 @@
 
 ## ISSUES
 # the unit of soil is given /dm3
+# Organic_P_mg_per_dm3 is organic phosphorus, not organic carbon, so soil_SOC is not assigned.
 
 carob_script <- function(path) {
 
@@ -93,7 +94,6 @@ Science-based “research-in-development” project focused on putting nitrogen 
 	  #r4$Rhizobia_MPN,
 	  soil_pH_CaCl2 = r3$pH_CaCl2,
 	  soil_SOM = r3$SOM_g_per_dm3/10,
-	  soil_SOC = r3$Organic_P_mg_per_dm3/10000,
 	  soil_K_exch = r3$K_cmolc_per_dm3,
 	  soil_Ca_exch = r3$Ca_cmolc_per_dm3,
 	  soil_Mg_exch = r3$Mg_cmolc_per_dm3,

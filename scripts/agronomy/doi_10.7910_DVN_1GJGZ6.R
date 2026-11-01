@@ -90,7 +90,8 @@ The cropping system physiological characteristic datasheet contains data on maiz
 	   is_survey= FALSE,
 	   yield_part= "grain",
 	   irrigated= NA,
-	   yield_moisture= as.numeric(NA)
+	   yield_moisture= as.numeric(NA),
+	   yield_isfresh = NA # Grain_Yld does not say fresh or dry
 	)
 	
 	dd <- merge(d1, d2, by= c("trial_id", "location", "rep", "treatment", "trt"), all.x = TRUE)

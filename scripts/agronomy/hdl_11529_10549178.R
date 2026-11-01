@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# Nkhotakota and Balaka each have three publication sites, so those coordinates were not merged on district.
 
 carob_script <- function(path) {
 
@@ -17,7 +19,7 @@ The key objectives of the study included assessing the interactions between geno
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "MMOA;TLC;CIMMYT",
-		publication = "10.1371_journal.pone.0298009",
+		publication = "doi:10.1371/journal.pone.0298009",
 		project = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "variety; land_prep_method",
@@ -60,13 +62,14 @@ The key objectives of the study included assessing the interactions between geno
 	  soil_texture = tolower(c("sandy loam", "sandy loam", "sandy clay loam","sandy clay loam", "sandy clay loam",
 	                   "sandy loam", "sandy loam", "loamy sand","sandy loam", "clay loam")))
 
+	pub_data <- pub_data[!(pub_data$adm2 %in% c("Nkhotakota", "Balaka")), ]
 	d <- merge(d, pub_data, by = c("adm2"), all.x = TRUE)
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$land_prep_method <- ifelse(d$treatment=="Check", "conventional", "none")
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
-	d$geo_from_source <- TRUE
+	d$geo_from_source <- !is.na(d$longitude)
 
 	#according to the publication
 	d$P_fertilizer <- 21/2.29
@@ -75,8 +78,6 @@ The key objectives of the study included assessing the interactions between geno
 	d$S_fertilizer <- 4
 	d$lime <- as.numeric(NA)
 	d$yield_moisture <- 12.5
-	
-	d <- d[d$yield > 0, ]
 	
 	carobiner::write_files(path, meta, d)
 }

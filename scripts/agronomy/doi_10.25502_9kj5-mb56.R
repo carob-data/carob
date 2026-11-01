@@ -34,6 +34,8 @@
 #
 # date_of_final_harvest placeholder "1-Jan-99" converted to NA.
 #
+# No fertilizer rates are in the files, so N, P, and K were not set to 0.
+#
 # No crop-name column exists; crop inferred as "common bean" from the
 # dataset title, "CBBISC" farm_id code, and sole_climbing_beans_in_
 # experiment_this_farm (variety type: local/improved).
@@ -229,9 +231,6 @@ hail, and disease (halo blight) damage."
   
   ## no fertilizer or planting-date data exist anywhere in this dataset
   d$planting_date <- NA
-  
-  d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
-  d$fertilizer_used <- FALSE
     
   carobiner::write_files(path, meta, d)
 }

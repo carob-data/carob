@@ -114,7 +114,7 @@ carob_script <- function(path) {
 	  irrigated = FALSE,
 	  row_spacing = 75,
 	  plant_spacing = 30,
-	  fw_yield = rt$tz_grain*1000,
+	  yield = rt$tz_grain*1000,
 	  yield_part = "grain",
 	  fwy_residue = rt$tz_stover*1000,
 	  grain_N = 10 * rt$tz_grainN / rt$tz_grain, # maybe... seems too low

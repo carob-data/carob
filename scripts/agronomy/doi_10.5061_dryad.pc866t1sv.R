@@ -56,7 +56,7 @@ carob_script <- function(path) {
       geo_from_source= TRUE,
       on_farm= FALSE,
       is_survey= FALSE,
-      trial_id= ifelse(grepl("5x", r1$Soil.trt), "1", "2") , 
+      trial_id= as.character(r1$Year), 
       irrigated= NA,
       yield_part= "grain"
       
@@ -88,13 +88,12 @@ carob_script <- function(path) {
 
    )
    
-   dd <- merge(d2, d1, by= c("rep", "treatment", "variety", "planting_date"), all.x = TRUE)
-   dd$record_id <- as.integer(1: nrow(dd))
-   i <- grep("enzyme|soil|^date", names(dd))
-   nms <- names(dd)[i]
-   d <- dd[, -i] 
-   ds <- dd[, c("record_id", names(dd)[i])]
-   nms <- names(ds)[grep("enzyme", names(ds))]
+   d <- d1
+   d$record_id <- as.integer(seq_len(nrow(d)))
+   keys <- c("rep", "treatment", "variety", "planting_date")
+   d2 <- merge(d2, d[, c("record_id", keys)], by = keys, all.x = TRUE)
+   nms <- names(d2)[grep("enzyme", names(d2))]
+   ds <- d2[, c("record_id", "date", nms, "soil_NO3", "soil_NH4", "soil_GWC")]
    ds <- reshape(ds, direction="long", varying=nms, v.names="soil_microbial_activity_value", timevar="soil_microbial_activity_category")
    ds$soil_microbial_activity_category <- nms[ds$soil_microbial_activity_category]
    

@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+# Treatment strings that are not parsed are left with unknown fertilizer rates.
 
 carob_script <- function(path) {
 
@@ -75,7 +75,8 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		on_farm = grepl("On-farm", r1$DesignExp),
 		is_survey = FALSE, 
 		yield_part = "grain", 
-		yield_moisture= as.numeric(NA), 
+		yield_moisture= as.numeric(NA),
+		yield_isfresh = NA, # ContYield and TrtmtYield do not say fresh or dry
 		irrigated = NA, 
 		geo_from_source = TRUE,
 		trial_id = paste(r1$Authors, r1$Pub_Year, sep = "-")
@@ -187,12 +188,6 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 	d$OM_used <- grepl("manure|Manure|Manure_LR|Manure_SR|FYM|5 tons", d$treatment)
 	
 	d$P_fertilizer <- ifelse(grepl("P2O5", d$treatment), d$P_fertilizer/2.29, d$P_fertilizer)
-	
-	### Regarding the treatment, all NA  equal to no fertilizer apply
-	d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
-	d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
-	d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
-	d$OM_amount[is.na(d$OM_amount)] <- 0
 	
 	### Fixing errors in coordinates
 	i <- grepl("Kenya", d$country) & grepl("Gatuanyaga", d$location)

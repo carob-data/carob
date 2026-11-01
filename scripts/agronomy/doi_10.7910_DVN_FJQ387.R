@@ -64,7 +64,7 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 	soil <- data.frame(
 	  treatment=tolower(r5$Plot.ID),
 	  soil_pH=r5$pHw,
-	  soil_N=r5$Total.N....,
+	  soil_N_total=r5$Total.N....*10000, # % to mg/kg
 	  soil_SOC=r5$OC....,
 	  soil_P=r5$Bry.1_.P..mg.kg.soil..,
 	  soil_S=r5$SO4...S..mg.kg.soil..*0.3338,#extracting sulphur only
@@ -96,15 +96,12 @@ Contour farming with banks stabilization using fodder crops (trees and grass) wa
 	d$trial_id <- "1"
 	
 	d$date <- as.character(d$date)
-	d$contours_used <- !d$treatment=="control"
+	d$contour_banks <- !d$treatment=="control"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- FALSE
 
-	d$planting_date <- NA
-	d$harvest_date  <- NA
-  d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- as.numeric(NA)
 	d$yield_part <- "grain"
 	d$yield_moisture <- NA
 	d$yield_isfresh <- NA

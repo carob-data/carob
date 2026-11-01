@@ -37,7 +37,7 @@ carob_script <- function(path) {
 			fwy_total= r$FBH,
 			intercrops= ifelse(grepl("no intercrop",r$`Pigeopea intercrop variety`),"none","pigeon pea"),
 			crop= "groundnut",
-			seed_weight= (r$SM*r$`plot size`)/1000 # 1000 seed in g 
+			seed_weight= r$SM # 1000-seed weight in g 
 		)
 	
 		r1 <- carobiner::read.excel(f,  sheet = "Intercropping")

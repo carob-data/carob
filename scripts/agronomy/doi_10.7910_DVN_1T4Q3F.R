@@ -92,9 +92,9 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 	d$fertilizer_type<- 'D-compound; urea'
 	d$N_fertilizer <- 0.23*200 + 23
 	d$P_fertilizer <- 0.1*200*0.437
-	d$K_fertilizer <- 0.05*200
-	d$K_fertilizer <- 0.06*200
-	d$K_fertilizer <- 0.01*200
+	d$K_fertilizer <- 0.05*200/1.2051
+	d$S_fertilizer <- 0.06*200
+	d$Zn_fertilizer <- 0.01*200
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

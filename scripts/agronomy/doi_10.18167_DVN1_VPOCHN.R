@@ -15,7 +15,7 @@ carob_script <- function(path) {
  
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		project = NA,
-        publication = "doi:10.1016/j.agee.2022.108207",
+        publication = "doi:10.5194/soil-10-151-2024",
 		data_organization = "CIRAD; UZIM; CIMMYT; ETH",
 		data_type = "experiment", 
 		carob_contributor = "Hope Mazungunye",
@@ -55,16 +55,16 @@ carob_script <- function(path) {
   # Add planting and harvest dates from publication
 	pyr <- gsub("\\/.*","", r$Year...2)
 	d$planting_date <- as.character(paste0(pyr, "-11"))
-	d$planting_date[pyr == "2019" & d$location == "DTC"] <- "2019-11-21"
-	d$planting_date[pyr == "2019" & d$location == "UZF"] <- "2019-11-19"
+	d$planting_date[pyr == "2019" & d$location == "Domboshava Training Centre"] <- "2019-11-21"
+	d$planting_date[pyr == "2019" & d$location == "University of Zimbabwe Farm"] <- "2019-11-19"
 	d$planting_date[pyr == "2020"] <- "2020-11-25"
  
 	hyr <- as.character(as.integer(pyr) + 1)
 	d$harvest_date <- as.character(paste0(hyr, "-04"))
-	d$harvest_date[hyr == "2020" & d$location == "DTC"] <- "2020-04-15"
-	d$harvest_date[hyr == "2020" & d$location == "UZF"] <- "2020-04-14"
-	d$harvest_date[hyr == "2021" & d$location == "DTC"] <- "2021-04-25"
-	d$harvest_date[hyr == "2021" & d$location == "UZF"] <- "2021-04-15"
+	d$harvest_date[hyr == "2020" & d$location == "Domboshava Training Centre"] <- "2020-04-15"
+	d$harvest_date[hyr == "2020" & d$location == "University of Zimbabwe Farm"] <- "2020-04-14"
+	d$harvest_date[hyr == "2021" & d$location == "Domboshava Training Centre"] <- "2021-04-25"
+	d$harvest_date[hyr == "2021" & d$location == "University of Zimbabwe Farm"] <- "2021-04-15"
   
   # Biomass variables
 	d$dmy_roots <- r$Root_biomass_kg_ha1

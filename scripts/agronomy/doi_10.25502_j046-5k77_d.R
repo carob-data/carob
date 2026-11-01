@@ -97,7 +97,8 @@ Results from this project showed that with appropriate weed management couple wi
 		geo_from_source = FALSE,
 		on_farm = TRUE, 
 		is_survey = FALSE,
-		yield_moisture = as.numeric(NA), 
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # AllRootYldtha and MzGrainYld_tha do not say fresh or dry
 		irrigated = NA
 	)
 

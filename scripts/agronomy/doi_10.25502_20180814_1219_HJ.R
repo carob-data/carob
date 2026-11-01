@@ -55,7 +55,7 @@ carob_script <- function(path) {
 		yield = 1000 * r$TGrainYld / 0.85
 	)
 
-	d$fwy_residue <- r$TStoverFW / r$Harea
+	d$fwy_residue <- 10000 * r$TStoverFW / r$Harea # kg/plot over m2 -> kg/ha
 	d$dmy_residue <- r$TStoverYld * 1000
 	
 	# Fertilizers according doi:10.1016/j.agee.2016.05.012
@@ -73,7 +73,7 @@ carob_script <- function(path) {
 	d$lime[r$TrtDesc == "NPK+Lime"] <- 500
 	d$OM_amount <- 0
 	d$OM_amount[r$TrtDesc == "NPK+Manure"] <- 10 * 1000
-	d$OM_used <- d$OM_amount == 500
+	d$OM_used <- d$OM_amount > 0
 	d$OM_type <- NA
 	d$OM_type[r$TrtDesc == "NPK+Manure"] <- "farmyard manure"
 	

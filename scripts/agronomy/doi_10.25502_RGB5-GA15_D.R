@@ -35,13 +35,14 @@ carob_script <- function(path) {
 ##RH add plant density
   
 	d1 <- d1[, c("Section_B.repeat.trt_name", "X_parent_index", "yld.plot.kg.ha")] 
-	colnames(d1) <- c("treatment", "rep", "yield")
+	colnames(d1) <- c("treatment", "field_id", "yield")
 	d1$location <- "katsina-kaduna" # Areas serviced by Team3
 	d2 <- d2[, c("trt_name", "parent_index", "plot.yld..kg.ha.")] 
-	colnames(d2) <- c("treatment", "rep", "yield")
+	colnames(d2) <- c("treatment", "field_id", "yield")
 	d2$location <- "kaduna-kano" # Areas serviced by Team2
+	# metadata: "yld plot" is kg/ha, same unit as the other teams
 	d3 <- d3[, c("trt_name", "parent_index", "yld.plot")] 
-	colnames(d3) <- c("treatment", "rep", "yield")
+	colnames(d3) <- c("treatment", "field_id", "yield")
 	d3$location <- "Bauchi" # Areas serviced by Team3
 	d <- rbind(d1, d2, d3)
 	d$plant_spacing <- 25 # get from VT protocol OCP Project Document 
@@ -60,26 +61,28 @@ carob_script <- function(path) {
 # NPK Apply  15-15-15 means 15% N, 15% P2O5, 15% K2O
 #OCPF1  (N) : 11% (P2O5): 21% (k2O): 22%  S: 5%  Zn: 1% 
 #OCPF2 (N) : 14% (P205): 31% (k2O): 0%   S: 9%  Zn: 0.9%
+# each product at 150 kg/ha, plus 100 kg urea on fertilized plots (VT protocol; same as PAKR-Y904)
 	
 	d$N_fertilizer <- ifelse(d$treatment == "Control", 0, 
                       ifelse(d$treatment == "OCPF1", 11,
-                      ifelse(d$treatment=="OCPF2",14,15)))
+                      ifelse(d$treatment=="OCPF2",14,15))) * 1.50
+	d$N_fertilizer[d$treatment != "Control"] <- d$N_fertilizer[d$treatment != "Control"] + 100 * 0.46
   
   d$K_fertilizer <- ifelse(d$treatment == "Control", 0, 
-                    ifelse(d$treatment == "OCPF1", 22/1.2051,
-                    ifelse(d$treatment=="OCPF2",0,15/1.2051)))
+                    ifelse(d$treatment == "OCPF1", 22,
+                    ifelse(d$treatment=="OCPF2",0,15))) * 1.50 / 1.2051
   
   d$P_fertilizer <- ifelse(d$treatment == "Control", 0, 
-                    ifelse(d$treatment == "OCPF1", 21/2.29,
-                    ifelse(d$treatment=="OCPF2",31/2.29,15/2.29)))
+                    ifelse(d$treatment == "OCPF1", 21,
+                    ifelse(d$treatment=="OCPF2",31,15))) * 1.50 / 2.29
   
   d$Zn_fertilizer <- ifelse(d$treatment == "Control", 0, 
                     ifelse(d$treatment == "OCPF1", 1,
-                    ifelse(d$treatment=="OCPF2",0.9,0)))
+                    ifelse(d$treatment=="OCPF2",0.9,0))) * 1.50
   
   d$S_fertilizer <- ifelse(d$treatment == "Control", 0, 
                     ifelse(d$treatment == "OCPF1", 5,
-                    ifelse(d$treatment=="OCPF2",9,0)))
+                    ifelse(d$treatment=="OCPF2",9,0))) * 1.50
   # add Columns 
   
   d$country <- "Nigeria"
@@ -100,10 +103,10 @@ carob_script <- function(path) {
   d$harvest_date <- "2017-11-01"
   d$season <- "2017"
   
-  d$trial_id <- d$location
+  d$trial_id <- paste(d$location, d$field_id, sep = "_")
+  d$field_id <- NULL
 #data type
   d$yield <- as.numeric(d$yield)
-  d <- d[!is.na(d$yield), ]
 
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

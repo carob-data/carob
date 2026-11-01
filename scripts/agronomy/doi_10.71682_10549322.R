@@ -2,6 +2,10 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Fertilized N, P, and K rates are not in the data, so only the unfertilized treatment is set to 0.
+
+## NOT PROCESSED
+# system_data: cropping-system totals and stability calculations, not plot measurements.
 
 carob_script <- function(path) {
 
@@ -31,7 +35,7 @@ The dataset is divided into three parts:
 		data_organization = "CIMMYT;UZIM",
 		publication = NA,
 		project = NA,
-		data_type = "on-farm experiment",
+		data_type = "experiment",
 		treatment_vars = "crop_rotation;fertilizer_used",
 		response_vars = "yield", 
 		carob_completion = 100,
@@ -45,13 +49,13 @@ The dataset is divided into three parts:
 ## read data 
 
 	f <- ff[basename(ff) == "Masamba et al_contrasting legumes and layouts_data.xlsx"]
-	r1 <- read_excel(f, sheet="yield_data")
-	#r2 <- read_excel(f, sheet="system_data")
+	r1 <- carobiner::read.excel(f, sheet="yield_data")
+	# system_data is not read; see NOT PROCESSED
 
 ## select the variables of interest and assign them to the correct name
 	d <- data.frame(
 	  country="Zimbabwe",
-	  planting_date="2019",
+	  planting_date=as.character(as.numeric(r1$year) - 1),
 	  harvest_date=as.character(r1$year),
 	  location=r1$site,
 	  rep=r1$rep,
@@ -64,24 +68,26 @@ The dataset is divided into three parts:
 	  yield_part="grain"
 )
 
-	d$longitude <- ifelse(d$location == "DTC", 31.13, 31.05)   
-	d$latitude  <- ifelse(d$location == "DTC", -17.60, -17.83) 
+	d$longitude <- ifelse(d$location == "DTC", 31.17, 31.020)
+	d$latitude  <- ifelse(d$location == "DTC", -17.62, -17.73) 
 	d$rep <- as.integer(sub(".*?(\\d+)$", "\\1", d$rep))
 	d$location <- gsub("UZ","University of Zimbabwe",d$location)
 	d$location <- gsub("DTC","Domboshawa Training Centre",d$location)
 	d$crop_rotation <- gsub("MZ-CP","maize;cowpea",d$crop_rotation)
-	d$crop_rotation <- gsub("MZ-PP","maize;legume",d$crop_rotation)
+	d$crop_rotation <- gsub("MZ-PP","maize;pigeon pea",d$crop_rotation)
 	d$crop_rotation <- gsub("MZCP2","maize_cowpea",d$crop_rotation)
-	d$crop_rotation <- gsub("MZPP1|MZPP2","maize_legume",d$crop_rotation)
+	d$crop_rotation <- gsub("MZPP1|MZPP2","maize_pigeon pea",d$crop_rotation)
 	d$crop_rotation <- gsub("MZ","maize",d$crop_rotation)
-	d$crop <- gsub("pigeonpea","legume",d$crop)
+	d$crop <- gsub("pigeonpea","pigeon pea",d$crop)
 	d$trial_id <- as.character(paste0(d$location, "_", d$planting_date))
 	d$fertilizer_used <- ifelse(d$fertilizer_used=="Fert-",FALSE,TRUE)
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
-	d$geo_from_source <- FALSE
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- d$lime <- as.numeric(NA)
+	d$geo_from_source <- TRUE
+	d$N_fertilizer <- ifelse(d$fertilizer_used, NA_real_, 0)
+	d$P_fertilizer <- ifelse(d$fertilizer_used, NA_real_, 0)
+	d$K_fertilizer <- ifelse(d$fertilizer_used, NA_real_, 0)
 	d$yield_moisture <- 12.5
 	
 

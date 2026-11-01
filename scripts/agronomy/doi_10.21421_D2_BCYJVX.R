@@ -117,7 +117,7 @@ carob_script <- function(path) {
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
-	carobiner::write_files(path, meta, d, wt=dw)
+	carobiner::write_files(path, meta, d, wth=dw)
 }
 
 

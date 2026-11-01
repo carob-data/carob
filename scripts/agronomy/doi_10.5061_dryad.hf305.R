@@ -134,7 +134,7 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 				ifelse(grepl("lb/A", d$unit), d$yield*1.12085, -99))))))))))
 
 	
-	d$planting_date <- gsub("1", NA, d$year) 
+	d$planting_date <- d$year 
 	d$OM_used <- as.logical(d$OM_used)
 	d$irrigated <- as.logical(d$irrigated)
 	d$unit <- d$year <- NULL
