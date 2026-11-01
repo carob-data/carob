@@ -28,7 +28,7 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "LLM-review: [low, forbidden] suppressWarnings around coordinate conversion."
+		notes = NA
 	)
 	
 	f1 <- ff[basename(ff) == "Raw data_Fertilizer Response_metadata.csv"]
@@ -103,6 +103,12 @@ Improving fertilizer recommendations for farmers is essential to increase food s
  
 	d$location <- ifelse(grepl("Chuka", d$latitude) & is.na(d$location), "Chuka", d$location)
  
+	part_num <- function(z, missing = NA_real_) {
+		if (length(z) == 0 || is.na(z[1]) || z[1] == "") return(missing)
+		z <- z[1]
+		if (!grepl("^-?\\d+(\\.\\d+)?$", z)) return(NA_real_)
+		as.numeric(z)
+	}
 	convert_to_decimal <- function(x) {
 		if (x == ""|x == "Chuka"| is.na(x)) return(NA_real_)
 		x <- gsub("''|\"|’", "'", x)   # unify symbols
@@ -110,8 +116,8 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		
 		# Extract direction (N/S/E/W)
 		dir <- ""
-		if (grepl("[NSEW]$", x)) {
-		   dir <- substr(x, nchar(x), nchar(x))
+		if (grepl("[NnSsEeWw]$", x)) {
+		   dir <- toupper(substr(x, nchar(x), nchar(x)))
 		   x <- substr(x, 1, nchar(x)-1)
 		}
 		
@@ -119,9 +125,9 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		parts <- unlist(strsplit(x, "'"))
 		parts <- parts[parts != ""]  # remove empties
 		
-		deg <- as.numeric(parts[1])
-		min <- ifelse(length(parts) >= 2, as.numeric(parts[2]), 0)
-		sec <- ifelse(length(parts) >= 3, as.numeric(parts[3]), 0)
+		deg <- part_num(parts[1])
+		min <- part_num(parts[2], 0)
+		sec <- part_num(parts[3], 0)
 		
 		val <- deg + min/60 + sec/3600
 		
@@ -132,7 +138,7 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 	}
  
 	 # get long and lat in decimal
-	 d$latitude <- suppressWarnings(sapply(d$latitude, convert_to_decimal))
+	 d$latitude <- sapply(d$latitude, convert_to_decimal)
 	 d$longitude <- sapply(d$longitude, convert_to_decimal) 
 	 
 	 geo <- data.frame(

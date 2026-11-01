@@ -4,6 +4,9 @@
 # The yield file has no coordinates; the hard-coded 6.74 N point is outside Ghana's Upper East Region.
 # Nyangua and Tekuru are not columns in the yield file, so trial_id is the planting year only.
 
+## NEW VARIABLES
+# irrigation_scheduling_: rule used to decide irrigation timing and amount
+
 carob_script <- function(path) {
    
 "This dataset is generated from the research study that was conducted to understand and compare water use and agricultural productivity following the use of wetting front detectors (WFDs) against farmers' standard practice. The study was conducted in Nyangua and Tekuru communities in the Upper East Region of Ghana for 2 years (2017/2018 and 2018/2019 dry seasons). Pepper (Capsicum annuum L.) was used as a test crop since it is a high-value vegetable with various uses in the study areas. Pepper (Capsicum annuum) variety Scotch Bonnet seeds were sown on 29 September and transplanted on three farmers' fields on 11 November 2017 (year 1) and 7 December 2018 (year 2) at the five to six true leaf stage. In this study, three irrigation regimes and six soil amendment treatments were tested. The irrigation regimes included: (i) farmers' practices(FP)—the quantity and timing of daily irrigation water based on local knowledge and practices; (ii) irrigation quantity was based on farmers' decision about using the WFD whilst the timing was based on local knowledge and practices usually at 3 pm; (iii) irrigation requirement using crop water requirement(IRCWR) which was computed using CROPWAT (Allenet al., 1998). Although the timing and quantity of daily irrigation water depend on the crop water requirement the irrigation interval was set at 24 h (3 pm) for the sake of convenience to farming communities. Irrigation water was recorded daily for each treatment. Pepper yields per subplot were recorded from each treatment containing 30 plants per subplot. Fresh fruits were harvested three times during the first growing season (Year 1) and four times during the second (year2). The first harvest was after 4 months (125 days) of planting. Fresh fruit weight was recorded during harvesting."
@@ -18,13 +21,11 @@ carob_script <- function(path) {
       project= "AfricaRISING", 
       data_type= "experiment", 
       response_vars= "yield", 
-      treatment_vars = "irrigation_amount; N_fertilizer; P_fertilizer; K_fertilizer", 
+      treatment_vars = "irrigation_scheduling_;irrigation_amount;N_fertilizer;P_fertilizer;K_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2024-11-04",
-      notes= "WFD= Use of the Fullstop wetting front detector;
-             CWF=Irrigation requirement based on crop water requirement computation;
-             FP= Farmers' practice scheduling"
+      notes = NA
    )
    
    f1 <- ff[basename(ff)=="yieldData.csv"]
@@ -55,7 +56,8 @@ carob_script <- function(path) {
    ) 
    d2 <- d2[!is.na(d2$irrigation_amount),]
    d2 <- aggregate(irrigation_amount ~ treatment +planting_date, data = d2, FUN = sum)
-   d <- merge(d1, d2, by=c("treatment", "planting_date"), all.x = TRUE) |> na.omit()
+   d <- merge(d1, d2, by=c("treatment", "planting_date"), all.x = TRUE)
+   d <- na.omit(d)
    
    ## processing soil data
    r3 <- read.csv(f3, na=c(""))
@@ -78,6 +80,15 @@ carob_script <- function(path) {
    d$P_fertilizer <- c(71.5, 71.5, 18.9, 13.5, 27, 36)[d$fertilizer]
    d$K_fertilizer <- c(33, 33, 9, 6.75, 13.5, 18)[d$fertilizer]
    d$fertilizer <- NULL
+
+   # Codebook: FP, WFD, and CWR (the note's CWF is this CWR code).
+   sched <- c(
+      FP = "Farmers' practice scheduling",
+      WFD = "Use of the Fullstop wetting front detector",
+      CWR = "Irrigation requirement based on crop water requirement computation"
+   )
+   d$irrigation_scheduling_ <- unname(sched[d$treatment])
+   d$treatment <- d$irrigation_scheduling_
 
    d$trial_id <- d$planting_date
    d$on_farm <- TRUE

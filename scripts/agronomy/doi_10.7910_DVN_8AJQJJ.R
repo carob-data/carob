@@ -22,7 +22,7 @@ carob_script <- function(path) {
 		data_type="compilation",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Zn_fertilizer",
-		notes = "LLM-review: [medium, invented] trial_id varies by treatment. rep is a row index. Missing N, P, and K are set to 0 where the compiled sources say nothing. inoculated is FALSE for a 40-paper compilation. [low, forbidden] suppressWarnings around as.numeric."
+		notes = "LLM-review: [medium, invented] trial_id varies by treatment. rep is a row index. Missing N, P, and K are set to 0 where the compiled sources say nothing. inoculated is FALSE for a 40-paper compilation."
  	)
 
 
@@ -144,8 +144,10 @@ carob_script <- function(path) {
 	d$soil_P <- rr$`Avail P` 
 	
 	#### OTHER ######
-	 # coerced NAs due to character types. Could be suppressed.
-	d$uncertainty <- suppressWarnings(as.numeric(rr$Error))
+	# Some Error cells are study codes rather than a numeric error.
+	err <- trimws(as.character(rr$Error))
+	err[!is.na(err) & !grepl("^-?\\d+(\\.\\d+)?$", err)] <- NA
+	d$uncertainty <- as.numeric(err)
 	d$uncertainty_type <- as.character(rr$`Error Type`)
 	d$rain <- as.integer(rr$Rainfall)
 	

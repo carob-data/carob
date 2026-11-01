@@ -36,7 +36,7 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	   project=NA,
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
 		response_vars = "yield",
-		notes = "LLM-review: [low, forbidden] suppressWarnings around as.numeric of K."
+		notes = NA
  	)
 
 
@@ -68,7 +68,9 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	
 	d$is_survey <- FALSE
 
-	d$K <- suppressWarnings(as.numeric(d$K))
+	# "Unknown" and "Yes" record that K was not given as a rate.
+	d$K[!is.na(d$K) & !grepl("^-?\\d+(\\.\\d+)?$", d$K)] <- NA
+	d$K <- as.numeric(d$K)
 
 	d$Other_Nutrient[is.na(d$Other_Nutrient)] <- 0
 

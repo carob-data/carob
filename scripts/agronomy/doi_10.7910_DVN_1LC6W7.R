@@ -31,7 +31,7 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 		response_vars = "yield;dmy_roots;fwy_roots;dmy_storage;fwy_storage", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 70,	
-		notes = "We process only files with useful information for carob LLM-review: [low, forbidden] suppressWarnings wraps the weather tables and the date conversion."
+		notes = "We process only files with useful information for carob"
 	)
 	
 
@@ -167,7 +167,9 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	#### process weather information
 	
 	names(r10) <- r10[9,]
-	dw1 <- suppressWarnings(data.frame(
+	# Rows 1-10 are the station description and the column-name row.
+	r10 <- r10[-c(1:10), ]
+	dw1 <- data.frame(
 	   date =  r10$DAY,
 	   irad =  as.numeric(r10$IRRAD),
 	   tmin =  as.numeric(r10$TMIN),
@@ -183,10 +185,11 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	   latitude = 52.54,
 	   geo_from_source = TRUE,
 	   country = "Netherlands"
-	))
+	)
 	
 	names(r11) <- r11[9,]
-	dw2 <- suppressWarnings(data.frame(
+	r11 <- r11[-c(1:10), ]
+	dw2 <- data.frame(
 	   date = r11$DAY,
 	   irad = as.numeric(r11$IRRAD),
 	   tmin = as.numeric(r11$TMIN),
@@ -202,12 +205,11 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	   latitude = 51.5431,
 	   geo_from_source = TRUE,
 	   country = "Netherlands"
-	))
+	)
 	
 	dw <- carobiner::bindr(dw1, dw2)
-	dw <- dw[-c(1:10),]
 	dw$irad <- dw$irad*1000/(3600*24)
-	dw$date <- suppressWarnings(as.character(as.Date(as.numeric(dw$date), "1899-12-30")))
+	dw$date <- as.character(as.Date(as.numeric(dw$date), "1899-12-30"))
 	
    
 	carobiner::write_files(path, meta, d, wth = dw)

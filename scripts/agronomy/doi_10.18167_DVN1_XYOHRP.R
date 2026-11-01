@@ -22,9 +22,9 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic",
+		treatment_vars = "crop_rotation;planting_date",
 		carob_completion = 50,
-		notes = "not processed nematodes and macrofauna LLM-review: [medium, treatment] treatment_vars includes planting_date and the organic nutrient columns even though the manure rates do not vary among rotations. [medium, coordinates] Publication coordinates are quoted and then geo_from_source is set FALSE. on_farm is TRUE for the Ivory station. [medium, dates] Harvest dates are planting date plus 16 or 17 weeks, not a recorded harvest date."
+		notes = "not processed nematodes and macrofauna"
 	)
 
 	f1 <- ff[basename(ff) == "DonneesDATAVERSE_F1.xlsx"]
@@ -104,7 +104,7 @@ carob_script <- function(path) {
 	d$geo_from_source <- FALSE
 	d$trial_id <- as.character(d$season)
 	d$yield_part <- "grain"
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$irrigated <- FALSE
 	d$is_survey <- FALSE
 
@@ -140,7 +140,7 @@ carob_script <- function(path) {
 	   longitude = 46.415, # As indicated in publication
 	   latitude = -19.555, # As indicated in publication
 	   elevation =  930, # As indicated in publication
-	   geo_from_source = FALSE
+	   geo_from_source = TRUE
 	)
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)

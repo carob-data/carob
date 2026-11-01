@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# The workbook has no harvest date. 2018-03-20 is the end of the Dataverse time period and collection period.
+
 
 carob_script <- function(path) {
    
@@ -33,7 +36,7 @@ carob_script <- function(path) {
 			variety= r$`Groundnut variety`,
 			plot_area= r$`plot size`,
 			plant_height= r$`Plant height`,
-			disease_incidence= r$DI,
+			disease_incidence= as.character(r$DI), # percent
 			disease_severity= as.character(r$DS),
 			fwy_total= r$FBH,
 			intercrops= ifelse(grepl("no intercrop",r$`Pigeopea intercrop variety`),"none","pigeon pea"),
@@ -64,6 +67,7 @@ carob_script <- function(path) {
 	d$latitude <- -13.9788154
 	d$geo_from_source <- FALSE
 	d$planting_date <- "2018"
+	d$harvest_date <- "2018-03-20"
 	d$trial_id <- "1"
 	d$irrigated <- NA
 	d$on_farm <- FALSE

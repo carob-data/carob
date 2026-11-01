@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;B_fertilizer;variety;irrigated",
 		project="CSISA",
-		notes = "LLM-review: [low, forbidden] suppressWarnings around as.integer. Missing B is set to 0. Missing yields are dropped. Zinc sulfate is multiplied by 0.15 with no basis."
+		notes = "LLM-review: [low, forbidden] Missing B is set to 0. Missing yields are dropped. Zinc sulfate is multiplied by 0.15 with no basis."
  	)
 
 	f1 <- ff[basename(ff) == "CSISA_NOPT_Rice_RawDataFINAL.csv"]
@@ -81,7 +81,9 @@ carob_script <- function(path) {
 	irn <- gsub("20-23", "21", irn)
 	irn <- gsub("20-24", "22", irn)
 	irn <- gsub("20-25", "22", irn)
-	d$irrigation_number = suppressWarnings(as.integer(irn))
+	# Continuous flooding and rainfed are regimes, not a count of irrigations.
+	irn[!is.na(irn) & !grepl("^\\d+$", irn)] <- NA
+	d$irrigation_number <- as.integer(irn)
 	d$land_prep_method[d$crop=="wheat"] <- r$ESTM[d$crop=="wheat"]
 	d$land_prep_method[d$land_prep_method == "ZeroTill"] <- "none"
 	d$land_prep_method <- gsub("reduced till", "reduced tillage", tolower(d$land_prep_method))
