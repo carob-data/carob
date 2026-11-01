@@ -58,7 +58,7 @@ Dataset processed of a household level survey to describe the main farm characte
 	)
 
 	f <- ff[basename(ff) == "bd-nepal-houshold-processed-survey-2023-cimmyt.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 	hh <- trimws(as.character(r$hh_id2))
 	# 390 rows are blank on id, place, coordinates, and crop columns
 	r <- r[!is.na(hh) & hh != "", ]
@@ -75,8 +75,7 @@ Dataset processed of a household level survey to describe the main farm characte
 		area = c("su_banana", "su_lentil", "su_maize", "su_mango", "su_masayang", "su_millet", "su_potato", "su_riceasha", "su_wheat"),
 		yield = c("yield_banana", "yield_lentil", "yield_maize", "yield_mango", "yield_masayng", "yield_millet", "yield_potato", "yield_rice_as", "yield_wheat"),
 		irri = c("irri_banana", "irri_lentil", "irri_maize", "irri_mango", "irri_masayng", "irri_millet", "irri_potato", "irri_rice_as", "irri_wheat"),
-		yield_part = c("fruit", "seed", "grain", "fruit", NA_character_, "grain", "tubers", "grain", "grain"),
-		stringsAsFactors = FALSE
+		yield_part = c("fruit", "seed", "grain", "fruit", NA_character_, "grain", "tubers", "grain", "grain")
 	)
 
 	muni <- place(r$municipality)
@@ -114,8 +113,7 @@ Dataset processed of a household level survey to describe the main farm characte
 			irrigated = irr[keep],
 			irrigation_pct_ = pct[keep],
 			OM_used = om[keep],
-			chemical_fertilizer_k_ = as.numeric(r$chemfert_inp)[keep],
-			stringsAsFactors = FALSE
+			chemical_fertilizer_k_ = as.numeric(r$chemfert_inp)[keep]
 		)
 	}
 

@@ -80,7 +80,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 
 	readf <- function(bn) {
 		f <- ff[basename(ff) == bn]
-		read.csv(f, na.strings = c("", " ", "NA", "na"), stringsAsFactors = FALSE, check.names = FALSE)
+		read.csv(f, na.strings = c("", " ", "NA", "na"), check.names = FALSE)
 	}
 	colv <- function(r, nms) {
 		nm <- nms[nms %in% names(r)]
@@ -142,8 +142,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			system = norm_sys(colv(r, "CropSystem")),
 			plot_id = trimws(as.character(colv(r, c("PlotNo", "Plot")))),
 			rep = as.integer(num(colv(r, "Rep"))),
-			treatment = trimws(as.character(colv(r, c("TRT", "Trt", "TrT")))),
-			stringsAsFactors = FALSE
+			treatment = trimws(as.character(colv(r, c("TRT", "Trt", "TrT"))))
 		)
 	}
 
@@ -184,8 +183,8 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		yld <- data.frame(location = character(), system = character(), plot_id = character(),
 			yield = numeric(), yield_marketable = numeric(), fwy_stems = numeric(),
 			plant_density = numeric(), stem_density = numeric(), marketable_root_density_ = numeric(),
-			damaged_root_density_ = numeric(), plot_area = numeric(), harvest_date = character(),
-			stringsAsFactors = FALSE)
+			damaged_root_density_ = numeric(), plot_area = numeric(), harvest_date = character()
+		)
 	} else {
 		yld <- kcas[!is.na(kcas$plot_id) & kcas$plot_id != "",
 			c("location", "system", "plot_id", "yield", "yield_marketable", "fwy_stems", "plant_density",
@@ -253,8 +252,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			weed_dmy_broadleaf_ = if (!sprout && !maize) num(colv(r, "BLBiogm2"))[ok] * 10 else rep(NA_real_, sum(ok)),
 			weed_dmy_grass_ = if (!sprout && !maize) num(colv(r, "GrBiogm2"))[ok] * 10 else rep(NA_real_, sum(ok)),
 			weed_dmy_sedge_ = if (!sprout && !maize) num(colv(r, "SgBiogm2"))[ok] * 10 else rep(NA_real_, sum(ok)),
-			weed_dmy_ = if (!sprout && !maize) num(colv(r, "TBiogm2"))[ok] * 10 else rep(NA_real_, sum(ok)),
-			stringsAsFactors = FALSE
+			weed_dmy_ = if (!sprout && !maize) num(colv(r, "TBiogm2"))[ok] * 10 else rep(NA_real_, sum(ok))
 		)
 	}
 	blocks <- list(
@@ -290,8 +288,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			DAP = as.integer(num(colv(r, "WAP")) * 7)[ok],
 			date = parse_dates(colv(r, c("Date", "HarvestDate")))[ok],
 			weed_species = as.character(colv(r, "SpeciesCode"))[ok],
-			weed_density = num(colv(r, "Denm2"))[ok] * 10000,
-			stringsAsFactors = FALSE
+			weed_density = num(colv(r, "Denm2"))[ok] * 10000
 		)
 	}
 	sp <- do.call(rbind, sp_pieces)

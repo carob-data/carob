@@ -52,7 +52,7 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "20190109aao_iita_isfm_end-project-evaluation-survey.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "20190109aao_iita_isfm_end-project-evaluation-survey.csv"])
 
 	prod_type <- function(can, dcomp, urea, mix, other) {
 		n <- length(can)
@@ -78,8 +78,7 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 			field_size = area[keep],
 			yield = ifelse(!is.na(area[keep]) & area[keep] > 0, prod[keep] / area[keep], NA_real_),
 			fertilizer_product_kg_ = fert[keep],
-			fertilizer_type = ftype[keep],
-			stringsAsFactors = FALSE
+			fertilizer_type = ftype[keep]
 		)
 	}
 

@@ -60,7 +60,7 @@ Biological control of Mononychellus tanajoa.
 	)
 
 	f <- ff[basename(ff) == "cgm-data.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 
 	d <- data.frame(
 		variety = trimws(r$Genotypes),
@@ -82,8 +82,7 @@ Biological control of Mononychellus tanajoa.
 		typhlodromalus_present_ = r$T_aripo == 1,
 		typhlodromalus_percent_ = as.numeric(r$T_aripo_perc),
 		typhlodromalus_30plants_ = as.numeric(r$Taripo_30plants),
-		leaf_hairiness_ = as.integer(r$Hairiness),
-		stringsAsFactors = FALSE
+		leaf_hairiness_ = as.integer(r$Hairiness)
 	)
 
 	d$country <- "Cameroon"

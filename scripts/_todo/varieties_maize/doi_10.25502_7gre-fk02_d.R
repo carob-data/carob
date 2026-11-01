@@ -64,7 +64,7 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 	)
 
 	f <- ff[basename(ff) == "maize-evaluation-in-sao-tome.csv"]
-	r <- read.csv(f, stringsAsFactors = FALSE, check.names = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 	r <- r[, nzchar(names(r)), drop = FALSE]
 	filled_col <- vapply(r, function(z) {
 		if (is.numeric(z)) return(any(!is.na(z)))
@@ -114,8 +114,7 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 		crop = "maize",
 		yield_part = "grain",
 		country = "Sao Tome and Principe",
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
@@ -142,8 +141,7 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 				pest_severity = chr1(pest_severity),
 				pest_incidence = rep(NA_integer_, n),
 				DAP = rep(NA_integer_, n),
-				order = rep(NA_integer_, n),
-				stringsAsFactors = FALSE
+				order = rep(NA_integer_, n)
 			)
 			if (is.null(long)) long <<- x else long <<- rbind(long, x)
 		}

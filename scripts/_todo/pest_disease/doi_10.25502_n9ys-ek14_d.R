@@ -62,7 +62,7 @@ The project aims to develop environmentally friendly management strategies to en
 	)
 
 	f <- ff[basename(ff) == "field-assessment-2024.csv"]
-	r <- read.csv(f, check.names = FALSE, stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 
 	form <- trimws(r$Formulation)
 	form[form == ""] <- NA_character_
@@ -91,8 +91,7 @@ The project aims to develop environmentally friendly management strategies to en
 		stress = "pests",
 		trial_id = paste(r$Year, season, sep = "_"),
 		on_farm = NA,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$record_id <- seq_len(nrow(d))
 
@@ -104,8 +103,7 @@ The project aims to develop environmentally friendly management strategies to en
 			date = as.character(r$Year),
 			week_ = i - 1L,
 			pest_species = "banana aphid",
-			pest_incidence = as.integer(r[[cols[i]]]),
-			stringsAsFactors = FALSE
+			pest_incidence = as.integer(r[[cols[i]]])
 		)
 	}
 	dd <- do.call(rbind, pieces)

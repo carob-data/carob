@@ -58,7 +58,7 @@ Dataset processed of a household level survey to describe the main farm characte
 	)
 
 	f <- ff[basename(ff) == "bd-west-bangladesh-houshold-processed-survey-2023-cimmyt.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 
 	place <- function(x) {
 		x <- trimws(as.character(x))
@@ -80,8 +80,7 @@ Dataset processed of a household level survey to describe the main farm characte
 	spec <- data.frame(
 		stem = c("rice", "maize", "jute", "wheat", "lentils", "mungbean", "tomato", "potato", "onion", "garlic", "tumeric", "ginger", "cabbage", "coriander", "chili", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin", "gourds"),
 		crop = c("rice", "maize", "jute", "wheat", "lentil", "mung bean", "tomato", "potato", "onion", "garlic", "turmeric", "ginger", "cabbage", "coriander", "chili pepper", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin", "gourd"),
-		yield_part = c("grain", "grain", "fiber", "grain", "seed", "seed", "fruit", "tubers", "bulb", "tubers", "rhizome", "tubers", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed", "fruit"),
-		stringsAsFactors = FALSE
+		yield_part = c("grain", "grain", "fiber", "grain", "seed", "seed", "fruit", "tubers", "bulb", "tubers", "rhizome", "tubers", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed", "fruit")
 	)
 
 	kg_stem <- function(stem) if (stem == "lentils") "lentil" else stem
@@ -137,8 +136,7 @@ Dataset processed of a household level survey to describe the main farm characte
 				yield_mg_ha_ = ymg[keep],
 				crop_sold_kg_ = as.numeric(r[[paste0(s, "_", kg_stem(stem), "_sell")]])[keep],
 				crop_income_thousand_taka_ = as.numeric(r[[inc_col(s, stem)]])[keep],
-				OM_used = om[keep],
-				stringsAsFactors = FALSE
+				OM_used = om[keep]
 			)
 		}
 	}

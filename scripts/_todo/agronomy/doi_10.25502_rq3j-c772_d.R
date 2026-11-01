@@ -61,7 +61,7 @@ Enhanced breeding for increased productivity and improved quality in West Africa
 	fs <- ff[grepl("alata|rotundata", basename(ff), ignore.case=TRUE)]
 	rows <- list()
 	for (f in fs) {
-		r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA"), check.names=FALSE)
+		r <- read.csv(f, na.strings=c("", "NA"), check.names=FALSE)
 		r <- r[!is.na(r$AccessionNo) & trimws(r$AccessionNo) != "", ]
 		anth <- if ("Anthrc_Sev_Sep" %in% names(r)) r$Anthrc_Sev_Sep else r$Anthrc_Sev_Sept
 		sp <- gsub("[^a-z]", "", tolower(r$Specie))
@@ -83,8 +83,7 @@ Enhanced breeding for increased productivity and improved quality in West Africa
 			virus_nov = trimws(as.character(r$Virus_Sev_Nov)),
 			anth_sep = trimws(as.character(anth)),
 			anth_oct = trimws(as.character(r$Anthrc_Sev_Oct)),
-			anth_nov = trimws(as.character(r$Anthrc_Sev_Nov)),
-			stringsAsFactors = FALSE
+			anth_nov = trimws(as.character(r$Anthrc_Sev_Nov))
 		)
 	}
 	x <- do.call(rbind, rows)
@@ -106,8 +105,7 @@ Enhanced breeding for increased productivity and improved quality in West Africa
 			record_id = x$record_id,
 			disease = disease,
 			disease_severity = blank(val),
-			date = date,
-			stringsAsFactors = FALSE
+			date = date
 		)
 	}
 	long <- rbind(

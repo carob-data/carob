@@ -5,7 +5,10 @@
 # English xlsx is the same 6338 records as the Spanish file; only the Spanish file is read.
 # Sand/clay/silt and Bouyoucos columns are complementary (one overlapping row); Bouyoucos used when the other is NA.
 # Bray and Olsen P of 0 are treated as missing.
-# Coordinates truncated to 2 decimals (~1.2 km); geo_uncertainty set accordingly.
+# Coordinates in this file are truncated to 2 decimals (~1.2 km); geo_uncertainty is 1200.
+# Ten municipal fertility-map workbooks that repeat these samples are read below.
+# A map coordinate is copied when it matches this file at 2 decimals and has more than two decimals.
+# Those rows are from Salvatierra (hdl:11529/10548663) and get geo_uncertainty 1.
 # State-level subsets of this dataset are in scripts/_rejected/soil_samples/.
 
 
@@ -159,6 +162,52 @@ The file contains the coordinates for 6338 soil samples taken from 2016 to 2026 
 			"clay", "sand", "loam", "fine", "coarse", "medium"),
 		must_have = FALSE
 	)
+
+	# Same samples, sometimes with a finer coordinate. Match at 2 decimals
+	# on the coordinate and on sand, clay, silt, pH, organic matter, and K.
+	maps <- rbind(
+		c("hdl:11529/10548653", "BD_Suelo_Yautepec.xlsx", "Datos Yautepec"),
+		c("hdl:11529/10548658", "BD_Suelo_Jojutla.xlsx", "Datos "),
+		c("hdl:11529/10548655", "BD_Suelo_Tlaltizapan.xlsx", "Resultados"),
+		c("hdl:11529/10548657", "BD_Suelo_Puente de Ixtla.xlsx", "PUENTE DE IXTLA"),
+		c("hdl:11529/10548751", "BD_Suelo_Muna.xlsx", "Muna"),
+		c("hdl:11529/10548661", "BD_Suelo_Yuriria.xls", "Base de datos"),
+		c("hdl:11529/10548662", "BD_Suelo_Salamanca.xls", "Salamanca"),
+		c("hdl:11529/10548663", "BD_Suelo_Salvatierra.xlsx", "Matriz 2022"),
+		c("hdl:11529/10548666", "BD_Suelo_Manuel Doblado.xlsx", "M. Doblado"),
+		c("hdl:11529/10548667", "BD_Suelo_La Piedad.xls", "Suelos")
+	)
+	as_num <- function(x) {
+		x <- gsub("°", "", as.character(x), fixed=TRUE)
+		x <- trimws(x)
+		x[x %in% c("%", "ppm", "No aplica", "-", ".", "NA", "")] <- NA_character_
+		as.numeric(x)
+	}
+	col1 <- function(x, pat) {
+		j <- grep(pat, names(x), ignore.case=TRUE)
+		if (!length(j)) return(rep(NA_real_, nrow(x)))
+		as_num(x[[j[1]]])
+	}
+	rnd2 <- function(x) round(x, 2)
+	key_of <- function(lat, lon, sand, clay, silt, ph, om, k) {
+		paste(rnd2(lat), rnd2(lon), rnd2(sand), rnd2(clay), rnd2(silt), rnd2(ph), rnd2(om), rnd2(k))
+	}
+	ckey <- key_of(r$Latitud, r$Longitud, r$Arena, r$Arcilla, r$Limo, r$pH_12agua, r$Mat_Org, r$Potasio)
+	for (i in seq_len(nrow(maps))) {
+		ffm <- carobiner::get_data(maps[i, 1], path, group)
+		fm <- ffm[basename(ffm) == maps[i, 2]]
+		m <- carobiner::read.excel(fm, sheet=maps[i, 3])
+		lat <- col1(m, "^Latitud$|^Latitd$")
+		lon <- col1(m, "^Longitud$")
+		finer <- !is.na(lat) & !is.na(lon) & (abs(lat - rnd2(lat)) > 1e-6 | abs(lon - rnd2(lon)) > 1e-6)
+		mk <- key_of(lat, lon, col1(m, "^Arena"), col1(m, "^Arcilla"), col1(m, "^Limo"), col1(m, "pH"), col1(m, "Materia"), col1(m, "^Potasio"))
+		keep <- finer & !duplicated(mk) & !duplicated(mk, fromLast=TRUE)
+		j <- match(ckey, mk)
+		use <- !is.na(j) & keep[j]
+		d$latitude[use] <- lat[j[use]]
+		d$longitude[use] <- lon[j[use]]
+		d$geo_uncertainty[use] <- 1
+	}
 
 	carobiner::write_files(path, meta, d)
 }

@@ -53,7 +53,7 @@ The overall objective of the project was to transfer and promote improved planta
 	)
 
 	f <- ff[basename(ff) == "banana-weevil-dynamic-_psmnr-project.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE)
+	r <- read.csv(f, check.names=FALSE)
 	names(r) <- trimws(names(r))
 
 	season <- tolower(trimws(r$Season))
@@ -77,8 +77,7 @@ The overall objective of the project was to transfer and promote improved planta
 		yield_part = "fruit",
 		pest_species = "banana weevil",
 		pest_incidence = as.integer(r$weevil_month),
-		stress = "pests",
-		stringsAsFactors = FALSE
+		stress = "pests"
 	)
 
 	d$hhid <- paste(d$location, d$rep, sep="_trap")

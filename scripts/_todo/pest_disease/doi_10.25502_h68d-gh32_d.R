@@ -64,7 +64,7 @@ Diagnostic and surveillance network established for characterization, monitoring
 	)
 
 	f <- ff[basename(ff) == "cassava-root-rot-data.csv"]
-	r <- read.csv(f, check.names=FALSE, stringsAsFactors=FALSE, fileEncoding="latin1")
+	r <- read.csv(f, check.names=FALSE, fileEncoding="latin1")
 
 	# October 2022 campaign. 4/10/2022 is 4 October. 10/13/2022 can only be 13 October.
 	parse_date <- function(x) {
@@ -116,8 +116,7 @@ Diagnostic and surveillance network established for characterization, monitoring
 		arts_present_ = r$ARTS_presence == 1,
 		weed_cover = 25,
 		soil_moisture_class_ = "humid",
-		stress = "disease;pests",
-		stringsAsFactors = FALSE
+		stress = "disease;pests"
 	)
 	# weed_cover 25 and soil_moisture_class_ from dictionary codes, and every row is code 2.
 	d$necrosis_color_[!is.na(d$necrosis_color_) & d$necrosis_color_ == ""] <- NA

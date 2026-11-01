@@ -55,7 +55,7 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "batn-baseline-needs-assess-data-all-excel.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "batn-baseline-needs-assess-data-all-excel.csv"])
 	r[] <- lapply(r, function(col) {
 		if (!is.character(col)) return(col)
 		bad <- !is.na(col) & is.na(iconv(col, from="UTF-8", to="UTF-8"))
@@ -144,8 +144,7 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 		spacing_cassava_ = trimws(as.character(r$N21cassava)),
 		spacing_maize_ = trimws(as.character(r$N21Maize)),
 		longitude = lon,
-		latitude = lat,
-		stringsAsFactors = FALSE
+		latitude = lat
 	)
 	d$spacing_cassava_[d$spacing_cassava_ == ""] <- NA
 	d$spacing_maize_[d$spacing_maize_ == ""] <- NA

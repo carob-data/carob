@@ -56,7 +56,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 	)
 
 	f <- ff[basename(ff) == "low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv"]
-	r <- read.csv(f, stringsAsFactors = FALSE, check.names = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 
 	code <- function(x) {
 		z <- trimws(as.character(x))
@@ -113,8 +113,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		yield_part = "grain",
 		country = "Nigeria",
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
@@ -128,8 +127,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		pest_severity = NA_character_,
 		pest_incidence = NA_integer_,
 		DAP = NA_integer_,
-		order = NA_integer_,
-		stringsAsFactors = FALSE
+		order = NA_integer_
 	)
 
 	carobiner::write_files(path, meta, d, long = long)

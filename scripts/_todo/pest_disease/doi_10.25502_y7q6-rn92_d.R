@@ -66,7 +66,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 	)
 
 	f <- ff[basename(ff) == "fruit-fly-incidnce-n-abundanc-on-cucmber-n-squash.csv"]
-	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1", stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1")
 
 	mon <- c(jan = "01", feb = "02", mar = "03", apr = "04", may = "05", jun = "06",
 		jul = "07", aug = "08", sep = "09", oct = "10", nov = "11", dec = "12")
@@ -109,8 +109,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		trial_id = "1",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		yield_part = "fruit",
-		stringsAsFactors = FALSE
+		yield_part = "fruit"
 	)
 	d$record_id <- seq_len(nrow(d))
 
@@ -123,8 +122,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 			sex = if (is.na(sex_value)) rep(NA_character_, n) else rep(sex_value, n),
 			stage_ = rep(stage, n),
 			organism_ = if (is.na(organism)) rep(NA_character_, n) else rep(organism, n),
-			organism_count_ = as.integer(count[keep]),
-			stringsAsFactors = FALSE
+			organism_count_ = as.integer(count[keep])
 		)
 	}
 

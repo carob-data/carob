@@ -28,19 +28,16 @@
 		return null;
 	}
 
-	function formatSource(author, year, provider) {
+	function formatSource(author, year) {
 		author = String(author || "").trim().replace(/,\s*$/, "");
 		year = String(year || "").trim();
-		provider = String(provider || "").trim();
-		let lead = "";
-		if (author && year) lead = `${author} (${year})`;
-		else if (author) lead = author;
-		else if (year) lead = `(${year})`;
-		if (lead && provider) return `${lead}, ${provider}`;
-		return lead || provider;
+		if (author && year) return `${author} (${year})`;
+		if (author) return author;
+		if (year) return `(${year})`;
+		return "";
 	}
 
-	function titleUriCell(title, uri, source) {
+	function titleUriCell(title, uri, source, script) {
 		title = String(title || "").trim();
 		uri = String(uri || "").trim();
 		source = String(source || "").trim();
@@ -56,6 +53,11 @@
 		}
 		let html = parts.join(" ");
 		if (source) html = html ? `${html}. ${escapeHtml(source)}` : escapeHtml(source);
+		const scriptUrl = scriptHref(script);
+		if (scriptUrl) {
+			const link = `<a href="${escapeHtml(scriptUrl)}" target="_blank" rel="noopener">draft script</a>`;
+			html = html ? `${html}. ${link}` : link;
+		}
 		if (!html) return "";
 		return gridjs.html(html);
 	}
@@ -67,17 +69,6 @@
 		return `${repoUrl}/blob/${encodeURIComponent(branch).replace(/%2F/g, "/")}/${p.split("/").map(encodeURIComponent).join("/")}`;
 	}
 
-	function scriptCell(path) {
-		const p = String(path || "").trim().replace(/\\/g, "/");
-		if (!p) return "";
-		const label = p.split("/").pop();
-		const href = scriptHref(p);
-		if (href) {
-			return gridjs.html(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`);
-		}
-		return label;
-	}
-
 	function transformTodoTable(headers, rows) {
 		const colKeys = headers.map(h => String(h).trim().toLowerCase());
 		const idx = name => colKeys.indexOf(name);
@@ -87,9 +78,9 @@
 			uri: idx("uri") >= 0 ? String(row[idx("uri")] ?? "").trim() : "",
 			source: formatSource(
 				idx("author") >= 0 ? row[idx("author")] : "",
-				idx("year_pub") >= 0 ? row[idx("year_pub")] : "",
-				idx("provider") >= 0 ? row[idx("provider")] : ""
+				idx("year_pub") >= 0 ? row[idx("year_pub")] : ""
 			),
+			provider: idx("provider") >= 0 ? String(row[idx("provider")] ?? "").trim() : "",
 			region: idx("region") >= 0 ? String(row[idx("region")] ?? "").trim() : "",
 			crop: idx("crop") >= 0 ? String(row[idx("crop")] ?? "").trim() : "",
 			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : "",
@@ -98,8 +89,8 @@
 		}));
 
 		return {
-			headers: ["title", "script", "difficulty", "region", "crop", "group", "source", "uri"],
-			rows: records.map(r => [r.title, r.script, r.difficulty, r.region, r.crop, r.group, r.source, r.uri])
+			headers: ["title", "script", "difficulty", "provider", "region", "crop", "group", "source", "uri"],
+			rows: records.map(r => [r.title, r.script, r.difficulty, r.provider, r.region, r.crop, r.group, r.source, r.uri])
 		};
 	}
 
@@ -160,7 +151,8 @@
 		const colKeys = headers.map(h => String(h).trim().toLowerCase());
 		const uriColIdx = colKeys.indexOf("uri");
 		const sourceColIdx = colKeys.indexOf("source");
-		const visibleCols = colKeys.filter(k => k !== "uri" && k !== "source").length;
+		const scriptColIdx = colKeys.indexOf("script");
+		const visibleCols = colKeys.filter(k => k !== "uri" && k !== "source" && k !== "script").length;
 
 		if (subtitle) {
 			const rowCount = meta ? meta.rows : rows.length;
@@ -174,22 +166,20 @@
 			columns: headers.map((h, idx) => {
 				const key = colKeys[idx];
 				const col = {
-					name: key === "script" ? "draft script" : h,
+					name: h,
 					sort: true,
-					attributes: () => ({ "data-col": key === "script" ? "draft-script" : key })
+					attributes: () => ({ "data-col": key })
 				};
-				if (key === "uri" || key === "source") {
+				if (key === "uri" || key === "source" || key === "script") {
 					col.hidden = true;
 				}
 				if (key === "title") {
 					col.formatter = (cell, row) => {
 						const uri = row.cells[uriColIdx]?.data ?? "";
 						const source = row.cells[sourceColIdx]?.data ?? "";
-						return titleUriCell(cell, uri, source);
+						const script = row.cells[scriptColIdx]?.data ?? "";
+						return titleUriCell(cell, uri, source, script);
 					};
-				}
-				if (key === "script") {
-					col.formatter = (cell) => scriptCell(cell);
 				}
 				return col;
 			}),
