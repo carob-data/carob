@@ -115,7 +115,6 @@ Assessment of Barley Landraces: multi-location field trial conducted in Morocco,
 	d$yield_moisture <- NA
 	d$yield_isfresh <- NA
 
-	d_check <<- d
 	carobiner::write_files(path, meta, d)
 }
 
