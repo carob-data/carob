@@ -26,7 +26,7 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
 		data_type = "experiment",
 		treatment_vars = "intercrops;intercrop_fraction;intercrop_type",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] data_type is experiment while on_farm is TRUE, and trial_id is the farmer id with no season.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-07",
 		carob_completion = 100,	

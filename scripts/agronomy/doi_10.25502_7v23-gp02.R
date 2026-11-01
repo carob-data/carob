@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		carob_date="2023-08-21",
 		data_type="experiment",
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, metadata] is_survey is TRUE with data_type experiment. Plot is pasted onto trial_id. adm1 holds districts and adm2 holds villages. The geo merge has no all.x, so unmatched sites disappear. Variety is overwritten with Lyamungo 90 for every row."
 	)
 	
  

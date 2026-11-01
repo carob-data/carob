@@ -20,7 +20,8 @@ Description: This dataset contains information of experiments carried out upland
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, admin] Communities are stored in adm3. They are villages and belong in location. The soil K conversion has no comment. Estimated coordinates have no geo_uncertainty."
     )
   
 	

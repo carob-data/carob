@@ -17,7 +17,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project="N2Africa" ,
 	response_vars= "yield",
-	treatment_vars="N_fertilizer;P_fertilizer"
+	treatment_vars="N_fertilizer;P_fertilizer",
+	notes = "LLM-review: [medium, fertilizer] 30 kg P is stored for NPK and TSP, and 30 times 0.46 over 2.29 for DAP. Bean yields above 9000 are set to NA."
   )
   
   f <- ff[basename(ff) == "general.csv"] 

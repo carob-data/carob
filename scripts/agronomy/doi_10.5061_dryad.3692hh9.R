@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
 		carob_contributor = "Robert Hijmans", 
 		carob_effort = NA,
-		carob_date = "2024-06-29"
+		carob_date = "2024-06-29",
+		notes = "LLM-review: [medium, crop] yield_part is seed for wheat. Cereals use grain. Rows are filled and then any remaining missing N, and its yield, is dropped. [medium, coordinates] The comment says coordinates are from the publication, but geo_from_source is FALSE, and many trial ids never get coordinates. One trial is planted 2015-10-13 and harvested 2015-02-24."
 	)
    
 	f <- ff[basename(ff)=="EA wheat database.xlsx"]

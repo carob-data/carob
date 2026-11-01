@@ -24,7 +24,8 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 		carob_date="2023-04-05",
 		response_vars= "yield",
 		treatment_vars="intercrops",
-		data_type="experiment"
+		data_type="experiment",
+		notes = "LLM-review: [medium, invented] N, P, and K are NA for every row, in addition to the broken merge above. [medium, treatment] intercrops is set to yes, and a later correction reads intercrop, so it never runs. on_farm is NA for the Kfardan station. adm3 is Kfar Dan and adm1 includes the word Governorate."
 	)
 	
 	f1 <- ff[basename(ff) == "01_Plot_Information.csv"] 	

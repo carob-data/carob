@@ -28,7 +28,7 @@ Author Thomas Kätterer reported that 'The dataset refers to the long-term trial
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;biochar",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] trial_id is the farm id only, so several seasons share one trial. Soil tables are stacked as yield rows with yield_part none.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-28",
 		carob_completion = 70,	

@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project="N2Africa",
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] 30 kg P is added for TSP and NPK, but DAP is converted with 30 times 0.46 over 2.29, so only DAP is converted from oxide."
 	)
 	
 	

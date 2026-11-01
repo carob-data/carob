@@ -35,7 +35,8 @@ K. Habtegebrial & B. R. Singh (2009) Response of Wheat Cultivars to Nitrogen and
 	   data_organization="CIAT",
 	   project=NA,
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
-		response_vars = "yield"
+		response_vars = "yield",
+		notes = "LLM-review: [low, forbidden] suppressWarnings around as.numeric of K."
  	)
 
 

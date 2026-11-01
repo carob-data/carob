@@ -27,7 +27,7 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, dropped] K is 0 for organic and conventional rows. yield_part is none. Rows in kg/plant, lb/plant, and bales/ha are deleted with no NOT PROCESSED note. No-till is recoded to minimum tillage. [low, forbidden] A suppressWarnings is not the main problem here. See the year substitution."
 	)
 	
 

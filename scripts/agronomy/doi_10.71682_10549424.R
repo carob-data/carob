@@ -29,7 +29,7 @@ The dataset comprises information from 5,689 wheat fields, capturing crop manage
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, fertilizer] DAP phosphorus uses the elemental fraction, but the middle number of the NPK grade is used as elemental P. Grade numbers are P2O5 and K2O. Establishment other than conventional becomes none. Grain yield times 1000 needs confirmation that the column is t/ha."
 	)
 	
 

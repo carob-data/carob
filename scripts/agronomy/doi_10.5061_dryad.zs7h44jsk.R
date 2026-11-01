@@ -24,7 +24,7 @@ Inter-seeding red clover (Trifolium pratense L.) provides an alternative method 
 		data_type = "on-station experiment",
 		treatment_vars = "N_fertilizer;cover_crop;intercrops",
 		response_vars = "yield;soil_NO3;soil_NH4", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] N rates are indexed as if the column were a 1-based code. If it is already kg N/ha, the rates are wrong. Only one soil depth is kept. Yield is averaged with no note. Yield labels are not recoded the way soil labels are, so the merge does not match clover always to clover. trial_id is the field number across 2017-2020.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-23",
 		carob_completion = 100,	

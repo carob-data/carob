@@ -21,7 +21,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project=NA,
 	response_vars = "yield",
-	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;inoculated"
+	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;inoculated",
+	notes = "LLM-review: [medium, fertilizer] NPK is stored as 12.5, 28.5, 28.5 and SSP as 50, while DAP is converted. SYMPAL is stored as P 23 and K 26, which is the grade, not a rate. High yields are set to NA."
   )
   
   f <- ff[basename(ff) == "a_general_1.csv"] 

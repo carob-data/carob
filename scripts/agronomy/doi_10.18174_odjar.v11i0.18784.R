@@ -38,7 +38,7 @@ carob_script <- function(path) {
 	carob_effort = 7,
 	carob_contributor = "Blessing Dzuda",
 	carob_date = "2026-07-14",
-	notes = NA
+	notes = "LLM-review: [low, metadata] stringsAsFactors is passed, and trial_id includes the plot id rather than site and year."
   )
 
   ## read data 

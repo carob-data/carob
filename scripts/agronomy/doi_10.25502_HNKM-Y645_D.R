@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		carob_date="2023-07-12",
 		data_type="on-farm experiment",
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;inoculated"				
+		treatment_vars="N_fertilizer;P_fertilizer;inoculated",				
+		notes = "LLM-review: [medium, fertilizer] P_fertilizer is renamed from a column called pH_value. Worth confirming those values are kilograms of P and not pH."
 	)
 
 	f <- ff[grep("Canon.data.csv", basename(ff), ignore.case=TRUE)]

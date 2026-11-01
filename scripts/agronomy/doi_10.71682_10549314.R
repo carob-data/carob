@@ -27,7 +27,7 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-30",
-		notes = NA, 
+		notes = "LLM-review: [medium, crop] Every non-maize crop is renamed legume, with yield_part grain. Villages are stored in adm3. CA maize becomes land_prep_method none. N 67, P 9.17, and S 4 are a blanket blend with no comment.", 
 		design = "Randomized Complete Block"
   )
   

@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		carob_date="2023-06-01",
 		data_type="experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer;inoculated",		
-		response_vars = "yield"
+		response_vars = "yield",
+		notes = "LLM-review: [medium, dropped] Yield above 6000 is set to NA."
 	)
 	
 	

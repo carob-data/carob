@@ -28,7 +28,7 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, invented] Missing N, P, and K are set to 0 across a compilation. on_farm is FALSE for surveys and NA for everything else, so the experiments never become on_farm TRUE. [low, forbidden] Coordinate parsing is wrapped in suppressWarnings."
 	)
 	
 

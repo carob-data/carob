@@ -46,7 +46,7 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield;dmy_total;LAI;harvest_index;N_fixation",
-		notes = NA,
+		notes = "LLM-review: [medium, coordinates] Missing coordinates are filled with the mean of the other trials, and those rows stay geo_from_source TRUE.",
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-13",
 		carob_completion = 70,	

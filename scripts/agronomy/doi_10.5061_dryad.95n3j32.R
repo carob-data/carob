@@ -29,7 +29,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
        response_vars = "yield", 
        carob_contributor = "Cedric Ngakou",
        carob_completion = 100,	
-        notes = NA
+        notes = "LLM-review: [medium, fertilizer] P rates such as 4.48 times 25 have no unit comment. No-till becomes minimum tillage. N and K are set to 0 on every plot with no source. One trial_id per research center for 2011-2016, and on_farm is TRUE. [low, forbidden] suppressWarnings around  as.numeric."
    )
    
    

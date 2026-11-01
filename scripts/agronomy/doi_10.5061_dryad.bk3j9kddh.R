@@ -17,7 +17,7 @@ carob_script <- function(path) {
       carob_effort = NA,
       carob_date="2025-06-08",
       carob_completion=75, # files f3
-      notes=NA
+      notes="LLM-review: [medium, other] plot_area of 3.9 by 6 over 10000 stores hectares (about 0.002) in an m2 column. The plot is 23.4 m2. soil_SOC divided by 10 has no comment on the source unit."
    )
    
    f <- ff[basename(ff) == "Articel_Supporting_Data.xlsx"]

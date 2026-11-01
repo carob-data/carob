@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "seed_treatment", 
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
-		carob_date = "2024-05-21"
+		carob_date = "2024-05-21",
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are dropped, and N, P, and K are then set to NA."
 	)
 
 	f <- ff[basename(ff) == "DAT-BV234-Database-2021-2022-Micro and yield.xlsx"]

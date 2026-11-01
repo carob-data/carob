@@ -19,7 +19,8 @@ Despite the recent release of several improved varieties of groundnut in Nigeria
 		data_organization="ICRISAT",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "variety;plant_density;P_fertilizer"
+		treatment_vars = "variety;plant_density;P_fertilizer",
+		notes = "LLM-review: [medium, invented] K_fertilizer is 20. The abstract specifies 0 or 20 kg P/ha and does not give a potassium rate."
 	)
   
 	f <- ff[basename(ff) == "Data file of Groundnut fertilizer plant density of combine Wudil..xlsx"]

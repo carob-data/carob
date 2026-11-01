@@ -20,7 +20,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] fertilizer_type lists urea, DAP, NPK, and SSP as one of these, and K_fertilizer is 0 with no potassium column. Two varieties are not treatment variables. [low, metadata] trial_id is 1 for Iburu and Zaria in 2015 and 2016. Yield units themselves look right."
 	)
 
 	f <- ff[grep("^n.and.p.maize.trial_2015_16.csv", basename(ff), ignore.case=TRUE)]

@@ -17,7 +17,8 @@ carob_script <- function(path) {
       carob_effort = NA,
       carob_date="2023-11-10",
 	  response_vars = "yield",
-	  treatment_vars = "N_fertilizer;N_splits"
+	  treatment_vars = "N_fertilizer;N_splits",
+	  notes = "LLM-review: [medium, yield] Only Mandie biomass is divided by 1000. Plant height is multiplied by 10 although the dictionary already calls the unit cm. trial_id splits the two farms by replicate. Worku's coordinates are in southern Ethiopia, not Gumara Maksegnit. [medium, invented] P and K are NA for every row, in addition to the teff and date errors above."
    )
    
   ## process file(s)

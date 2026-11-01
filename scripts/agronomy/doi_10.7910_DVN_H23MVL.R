@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		data_type="compilation",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"				
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",				
+		notes = "LLM-review: [medium, invented] Missing N, P, and K are set to 0. soil organic carbon above 20 is set to NA. Rows with no location are dropped. trial_id is one per row. is_survey is TRUE with data_type compilation. irrigated is FALSE for a multi-country compilation. Every non-conventional tillage value, including NA, becomes none."
 	)
   
   

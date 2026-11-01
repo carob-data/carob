@@ -20,7 +20,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 		carob_date="2023-08-15",
 		data_type="on-farm experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;inoculated",
-		response_vars = "yield"
+		response_vars = "yield",
+		notes = "LLM-review: [medium, metadata] is_survey is TRUE with data_type on-farm experiment. Rows are dropped unless both treatment and yield are present."
 	
 	)
   

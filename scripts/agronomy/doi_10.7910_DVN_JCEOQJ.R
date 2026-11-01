@@ -26,7 +26,7 @@ Effect of intercropping forages with maize in conventional tillage and conservat
 		data_type = "experiment",
 		treatment_vars = "intercrops;land_prep_method",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, crop] All maize rows get intercrops lablab even where the companion was vetch. N, P, K, and the dates are all-NA placeholder columns.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-27",
 		carob_completion = 100,	

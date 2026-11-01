@@ -30,7 +30,8 @@ Bean (Phaseolus vulgaris L.), maize and rice (Oryza sativa L.) grain concentrati
 		treatment_vars = "N_fertilizer;P_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
 		carob_contributor = "Cedric Ngakou", 
 		carob_effort = NA,
-		carob_date = "2024-06-29"
+		carob_date = "2024-06-29",
+		notes = "LLM-review: [medium, fertilizer] N, P, and K are filled only when treatment is NPK. The MgSZnB treatment is left at 0. Pulses and groundnut stay yield_part grain. Total N is not converted to mg/kg."
 	)
    
    f <- ff[basename(ff)=="Grain Nutrient Conc Study for Tropical Africa 2018.xlsx"]

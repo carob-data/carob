@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;lime;OM_amount",
 		carob_contributor = "Cedric Ngakou",
 		carob_effort = NA,
-		carob_date="2023-02-15"
+		carob_date="2023-02-15",
+		notes = "LLM-review: [medium, yield] Grain yield is divided by 0.85 and yield_moisture is left NA. adm1 is the site name Kontela."
 	)
 
 	## read data 

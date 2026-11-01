@@ -27,7 +27,8 @@ AFSIS has data for five countries, each with one or two sites. Sites have subsit
 		project=NA,
 		data_organization="CIAT",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [medium, invented] Missing K is set to 0 with only most likely as justification."
 	)
 
 	## the AFSIS data is not processed because it is also included elsewhere

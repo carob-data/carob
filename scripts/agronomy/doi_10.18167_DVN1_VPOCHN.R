@@ -24,7 +24,8 @@ carob_script <- function(path) {
 		carob_modified_by = "Eduardo Garcia Bendito",
 		carob_last_modified = "2024-03-07",
 		response_vars = "yield",
-		treatment_vars = "land_prep_method;mulch"
+		treatment_vars = "land_prep_method;mulch",
+		notes = "LLM-review: [medium, treatment] The rotation contrast is commented out, so it survives only inside treatment. [medium, yield] Grain in kg/ha is multiplied by 1.125 and 1.13 and yield_moisture is left NA. Carbon-input columns are added into previous_crop_residue_weight."
 	)
   
 	f <- ff[basename(ff) == "Shumba_et_al_Raw_data_SOC_paper_vf.xlsx"]

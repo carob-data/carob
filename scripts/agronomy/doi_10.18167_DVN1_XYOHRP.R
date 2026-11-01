@@ -24,7 +24,7 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic",
 		carob_completion = 50,
-		notes = "not processed nematodes and macrofauna"
+		notes = "not processed nematodes and macrofauna LLM-review: [medium, treatment] treatment_vars includes planting_date and the organic nutrient columns even though the manure rates do not vary among rotations. [medium, coordinates] Publication coordinates are quoted and then geo_from_source is set FALSE. on_farm is TRUE for the Ivory station. [medium, dates] Harvest dates are planting date plus 16 or 17 weeks, not a recorded harvest date."
 	)
 
 	f1 <- ff[basename(ff) == "DonneesDATAVERSE_F1.xlsx"]

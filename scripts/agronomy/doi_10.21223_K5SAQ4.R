@@ -24,7 +24,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 		data_type = "on-farm experiment",
 		treatment_vars = "seed_source",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, yield] Percent damage columns are divided by 10 and stored as a 1-10 severity score. [low, dates] Per-site planting dates are commented out, so planting_date stays NA.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-08-27",
 		carob_completion = 90,	

@@ -26,7 +26,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;N_organic",
 		response_vars = "yield;nodule_weight", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] fertilizer_type is sympal on every field row, including SYMPAL equal to NO. treatment_vars are N_fertilizer and N_organic, while field N is hardcoded 0 and the factors that vary are inoculation, vermicompost, and SYMPAL. [low, coordinates] Both Siaya sites and the greenhouse rows get one adm1 centroid.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-04",
 		carob_completion = 100,	

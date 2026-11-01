@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "land_prep_method;variety", 
 		carob_contributor = "Shumirai Manzvera",
 		carob_effort = NA,
-		carob_date = "2024-05-21"
+		carob_date = "2024-05-21",
+		notes = "LLM-review: [medium, admin] location is set to Manyara, which is the region. The village Kiperesa belongs in location."
 	)
 	
 	f1 <- ff[basename(ff) =="Grain yield 2019 Kiperesa.xlsx"]

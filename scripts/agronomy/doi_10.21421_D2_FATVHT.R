@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_organization="ICRISAT",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="N_fertilizer"
+		treatment_vars="N_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] The abstract says 30 kg/ha of phosphorus and potassium, and the code then divides by 2.29 and 1.2051. Variety is not a treatment variable. adm2 for BUK is Gezawa."
  	)
 
 	f <- ff[basename(ff) == "Data file of Sorghum N trial Kano Nigeria.xlsx"]

@@ -29,7 +29,7 @@ Experiments at five locations (Dedessa, Uke, Bako, Ambo, Holleta)  in Ethiopia o
 		response_vars = "emergence_date;flowering_date;maturity_date;yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is site plus plot number. N, P, and K are NA for the whole table."
 	)
 	
 

@@ -18,7 +18,8 @@ carob_script <- function(path) {
     carob_effort = NA,
     carob_date="2023-09-18",
 	treatment_vars = "planting_date;variety",
-	response_vars="yield"
+	response_vars="yield",
+	notes = "LLM-review: [medium, admin] Village is stored in adm3. trial_id is the row number plus location. data_type is experiment while on_farm is TRUE."
   )
 
   f <- ff[basename(ff) == "CSISA_KVK_Wheat_DoS_Trial_Data.csv"]

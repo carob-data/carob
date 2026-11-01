@@ -28,7 +28,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] Grain N is multiplied by 10 while grain P and the micronutrients are divided by 1000."
 	)
 	
 

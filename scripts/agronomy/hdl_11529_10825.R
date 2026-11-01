@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		carob_date="2023-08-02",
 		data_type="on-station experiment",
 		treatment_vars = "crop_rotation;planting_method;intercrops",
-		response_vars = "yield"		
+		response_vars = "yield",		
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are dropped."
     )
   
   	f <- ff[basename(ff) == "Summary Zambia On-farm Demonstration 2006-2015.xls"]

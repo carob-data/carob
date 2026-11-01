@@ -17,7 +17,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project=NA,
 	response_vars = "yield",
-	treatment_vars = "P_fertilizer;inoculated"
+	treatment_vars = "P_fertilizer;inoculated",
+	notes = "LLM-review: [medium, fertilizer] Large yields are set to NA by crop. NPK and TSP phosphorus is 30 while DAP phosphorus is 30 times 0.46 over 2.29."
   )
   
   f <- ff[basename(ff) == "data_table.csv"] 

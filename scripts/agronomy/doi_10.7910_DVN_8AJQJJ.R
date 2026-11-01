@@ -21,7 +21,8 @@ carob_script <- function(path) {
 		carob_date="2023-04-06",
 		data_type="compilation",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Zn_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Zn_fertilizer",
+		notes = "LLM-review: [medium, invented] trial_id varies by treatment. rep is a row index. Missing N, P, and K are set to 0 where the compiled sources say nothing. inoculated is FALSE for a 40-paper compilation. [low, forbidden] suppressWarnings around as.numeric."
  	)
 
 

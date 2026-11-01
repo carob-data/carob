@@ -27,7 +27,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		data_type = "experiment",
 		treatment_vars = "lime",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] Lime in t/ha is not multiplied by 1000. The other GAIA scripts convert t/ha to kg/ha. fertilizer_type is on the zero-lime plots as well.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-06-23",
 		carob_completion = 100,	

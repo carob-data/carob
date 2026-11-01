@@ -28,7 +28,7 @@ Improving fertilizer recommendations for farmers is essential to increase food s
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [low, forbidden] suppressWarnings around coordinate conversion."
 	)
 	
 	f1 <- ff[basename(ff) == "Raw data_Fertilizer Response_metadata.csv"]

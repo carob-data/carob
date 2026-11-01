@@ -24,7 +24,7 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 	    response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, yield] Total N in percent is stored in extractable soil_N (times 10000). That column is soil_N_total. yield_isfresh is TRUE while yield is fixed at 14 percent moisture. [low, metadata] trial_id is 1 for all 22 fields. Every row gets the same OM_type and fertilizer_type lists.",
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-08-30",
 	    carob_completion = 100,	

@@ -26,7 +26,7 @@ Participatory upland rice seed determination for row method of sowing
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] soil_EC is multiplied by 10 with no comment, and soil total N is multiplied by 10000. N, P, and K are NA placeholder columns."
 	)
 	
 

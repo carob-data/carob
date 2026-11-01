@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2023-01-22",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [low, metadata] data_type is experiment while on_farm is TRUE for trials the description calls on-farm. P and K and the two tuber corrections look right."
 	)
 	 
 	f1 <- ff[basename(ff) == "Scaling_AKILIMO_yield_data.csv"]

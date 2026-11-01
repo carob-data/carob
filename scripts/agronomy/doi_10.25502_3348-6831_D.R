@@ -23,7 +23,8 @@ carob_script <- function(path) {
       carob_date="2024-06-04", 
       data_type="experiment",
       response_vars = "yield",
-      treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer"
+      treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
+      notes = "LLM-review: [low, coordinates] No coordinates are written (the only pair is commented out). One planting date, 2017-06-01, is applied to every field."
    )
    
 	r <- read.csv(ff[grep("^IAR_VT_yield.harvest_summ.csv", basename(ff), ignore.case=TRUE)])

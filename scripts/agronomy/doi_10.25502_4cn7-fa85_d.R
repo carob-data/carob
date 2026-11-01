@@ -31,7 +31,7 @@ Results from this project showed that with appropriate weed management couple wi
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] treatment_vars is herbicide_used, which collapses the herbicide-by-rate treatments to a boolean. data_organization is AfricaRice on an IITA Nigeria cassava trial."
 	)
 	
 

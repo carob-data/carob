@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA ,
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer"
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] B_fertilizer multiplies percent B2O3 by 1.50 and does not convert to elemental B. The 150 kg/ha product rate and the oxide conversion otherwise look right."
 	)
   
 	

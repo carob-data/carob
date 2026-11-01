@@ -24,7 +24,7 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] trial_id is block and plot, one id per plot, shared by both years. on_farm is TRUE at Hancock station. irrigated is NA while the abstract says the study was irrigated. fertilizer_type urea is on the zero-N control. The N-rate index only works if treatment is the integer 1 to 8.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-09",
 		carob_completion = 100,	

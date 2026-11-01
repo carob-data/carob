@@ -30,7 +30,8 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-24",
 		carob_completion = 80,	
-		carob_effort = 5
+		carob_effort = 5,
+		notes = "LLM-review: [low, metadata] The Gagnoa IDESSA station is coded on-farm, with trial_id 1 for 1971-1992."
 	)
 	
 

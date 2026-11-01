@@ -26,7 +26,7 @@ The study was carried out by the International Institute of Tropical Agriculture
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2026-04-09",
-		notes = NA,
+		notes = "LLM-review: [low, metadata] on_farm is TRUE for SAPU, which is a research station.",
 		design = NA
 	)
 	

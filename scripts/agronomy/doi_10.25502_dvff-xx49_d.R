@@ -30,7 +30,8 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-17",
 		carob_completion = 80,	
-		carob_effort = 8
+		carob_effort = 8,
+		notes = "LLM-review: [medium, crop] fertilizer_type is an empty string for the control. Maize rows are then labelled yield_part roots. geo_from_source is NA."
 	)
 	
 

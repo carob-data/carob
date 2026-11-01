@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer"
+		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer",
+		notes = "LLM-review: [low, metadata] trial_id is one id per village."
 	)
 	
 	f1 <- ff[tolower(basename(ff)) == "koloko_dt2009_field.csv"] # get Field dataset 

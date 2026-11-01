@@ -28,7 +28,7 @@ This dataset contains the spreadsheet, the study references, and an R code tutor
 		response_vars = "yield;grain_protein", 
 		carob_contributor = "Blessing Dzuda",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] The publication DOI uses underscores. on_farm is FALSE with a comment that the work was done in a greenhouse, which contradicts a compilation of field studies."
 	)
 	
 	f <- ff[basename(ff) == "Sulfur_datasets_GRoa.xlsx"]

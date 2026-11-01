@@ -28,7 +28,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data."
+		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data. LLM-review: [medium, crop] yield_part is grain for cotton as well as the cereals. [low, metadata] trial_id is built from essai and serie only, so 1965-1990 share ids. on_farm is TRUE for the NTarla station. The DataFumier sheet is read and never used."
 	)
 	
 

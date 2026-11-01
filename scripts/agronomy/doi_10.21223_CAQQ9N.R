@@ -21,7 +21,8 @@ carob_script <- function(path) {
       treatment_vars = "land_prep_method;variety", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-09-06"
+      carob_date = "2024-09-06",
+      notes = "LLM-review: [low, metadata] trial_id is location, variety, and plot number."
    )
    
    f1 <- ff[basename(ff)=="02_Yield data.xlsx"]

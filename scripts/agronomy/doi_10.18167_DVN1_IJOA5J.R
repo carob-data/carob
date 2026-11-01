@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		carob_date="2023-10-23",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="intercrops"
+		treatment_vars="intercrops",
+		notes = "LLM-review: [medium, metadata] trial_id is one id per row. is_survey is TRUE while data_type is experiment. Planting and harvest dates are initialized to an empty string."
 	)
   
 	f <- ff[basename(ff) == "Namatsheve_et_al_Dataset.xlsx"]

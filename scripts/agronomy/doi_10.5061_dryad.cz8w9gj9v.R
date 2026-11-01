@@ -24,7 +24,7 @@ Maintaining or even increasing crop yields while reducing nitrous oxide (N2O) em
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] A 6000-row meta-analysis is data_type experiment, and trial_id is continent plus crop. No-tillage becomes none. Missing water regime becomes irrigated FALSE. Three rows are dropped by hard-coded index. unique can drop real replicates. Replaced coordinates stay geo_from_source TRUE, and province centroids have no geo_uncertainty.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-02",
 		carob_completion = 100,	

@@ -31,7 +31,7 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 		response_vars = "yield;dmy_roots;fwy_roots;dmy_storage;fwy_storage", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 70,	
-		notes = "We process only files with useful information for carob"
+		notes = "We process only files with useful information for carob LLM-review: [low, forbidden] suppressWarnings wraps the weather tables and the date conversion."
 	)
 	
 

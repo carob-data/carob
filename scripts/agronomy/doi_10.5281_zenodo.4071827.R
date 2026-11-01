@@ -25,7 +25,7 @@ This is a data set of the of three years of field trial with sanitised human uri
 		data_type = "experiment",
 		treatment_vars = "N_organic;P_organic;K_organic;Mg_organic;Ca_organic",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, dropped] One trial_id per year for every village. unique can drop replicate rows with the same site, treatment, and yield. Rainfall is read and then fully commented out with no NOT PROCESSED note. The publication is missing the doi: prefix. Most geo_uncertainty values are NA.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-20",
 		carob_completion = 100,	

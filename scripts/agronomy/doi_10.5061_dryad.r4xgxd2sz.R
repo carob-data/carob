@@ -24,7 +24,7 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] trial_id is 1 for 2015-2017. on_farm is TRUE at Hancock station. The abstract says the crop was irrigated and irrigated is NA. yield_part tubers is not in the vocabulary.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-12",
 		carob_completion = 100,	

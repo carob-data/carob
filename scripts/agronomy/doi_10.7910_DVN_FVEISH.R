@@ -22,7 +22,8 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	  response_vars="yield",
 	  carob_contributor="Siyabusa Mkuhlani",
 	  carob_effort = NA,
-	  carob_date="2024-07-23"
+	  carob_date="2024-07-23",
+	  notes = "LLM-review: [medium, metadata] on_farm is TRUE for everything, including files the comments call on-station. geocode_duplicates is called inside the script. Rows with missing yield are dropped."
 	)
 	
 	#Read and process first data set

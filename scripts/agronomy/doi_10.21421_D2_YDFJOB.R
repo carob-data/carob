@@ -21,7 +21,8 @@ Abstract: Low soil fertility and water shortage are major constraints to food pr
 		carob_modified_by = "Eduardo Garcia Bendito",
 		carob_last_modified = "2024-01-18",
 		response_vars= "yield",
-		treatment_vars= "P_fertilizer"
+		treatment_vars= "P_fertilizer",
+		notes = "LLM-review: [medium, dates] Every planting date is year-06-01. The same paper's dates in EYFR2F are 4-20 July. Stalk yield is stored as dry matter with a comment that it may not be. [low, metadata] The P2O5 division matches the abstract. trial_id does not include the year, and variety is a split-plot treatment missing from treatment_vars."
 	)
   
 	f <- ff[basename(ff) == "Data file of Sorghum productivity and water use under phosphorous fertilization.xlsx"]

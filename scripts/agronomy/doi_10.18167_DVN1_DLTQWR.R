@@ -19,7 +19,8 @@ carob_script <- function(path) {
 	   carob_date="2023-04-20",
 	   data_type="compilation",
 	   response_vars= "yield",
-	   treatment_vars="land_prep_method"
+	   treatment_vars="land_prep_method",
+	   notes = "LLM-review: [medium, crop] The hanfets intercrop (barley) is overwritten with the legume yes/no flag. [medium, invented] K_fertilizer is 0 for every record. The file has no potassium column. [low, metadata] Publication DOI uses underscores instead of slashes. [low, metadata] trial_id is the bibliographic reference, so different sites in one paper share an id."
 	)
 
 	f <- ff[basename(ff) == "Donnees_meta-analyse_2020.txt"]

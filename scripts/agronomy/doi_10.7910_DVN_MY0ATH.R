@@ -21,7 +21,8 @@ carob_script <- function(path) {
 		treatment_vars = "P_fertilizer;variety;longitude;latitude", 
 		carob_contributor = "Mitchelle Njukuya", 
 		carob_effort = NA,
-		carob_date = "2024-06-20"
+		carob_date = "2024-06-20",
+		notes = "LLM-review: [medium, fertilizer] P rates of 60 and 90 are typical P2O5 rates and are stored as elemental P, with an unresolved comment. treatment_vars includes longitude and latitude. trial_id is 1 across 6 districts and 2 years."
 	)
 	
 ##### PROCESS data records

@@ -31,7 +31,7 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 		response_vars = "yield;soil_N2O;soil_CH4", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, other] On the 0-20 cm sheet depth_top is 20 and depth_bottom is 0, so the layer bounds are reversed. [medium, dropped] The daily gas sheet is averaged to one value per plot, and the cover-crop sheet is never used and is not listed under NOT PROCESSED. [low, metadata] The whole 2022-2024 Bos Khnor station trial is trial_id 1 and on_farm TRUE."
 	)
 	
 

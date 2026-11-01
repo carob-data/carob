@@ -19,7 +19,8 @@ carob_script <- function(path) {
       treatment_vars = "intercrops;N_fertilizer;P_fertilizer;K_fertilizer", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-08-31"
+      carob_date = "2024-08-31",
+      notes = "LLM-review: [medium, dropped] Cowpea intercrop rows are set to NA and then dropped, so cowpea yield on those sheets is discarded. yield_part is grain for cowpea. Paper coordinates are all marked geo_from_source FALSE. Sand is converted g/kg to percent, but soil organic carbon and soil N are not."
    )
    
    d  <- lapply(c("NigerOST","NigerOFT","Mali","BurkinaFasoDori"),\(i){

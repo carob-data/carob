@@ -25,7 +25,7 @@ Science-based “research-in-development” project focused on putting nitrogen 
 		data_type = "experiment",
 		treatment_vars = "seed_treatment",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] Brazil is trial_id 1 and Mozambique is 2 across sites and seasons. on_farm is TRUE for station trials. Temperature and rainfall are written into the plot row. inoculated is assigned as a local variable, not a column.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-12",
 		carob_completion = 100,	

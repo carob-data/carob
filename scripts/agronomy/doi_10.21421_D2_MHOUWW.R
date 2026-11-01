@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "variety;intercrops", 
 		carob_contributor = "Cedric Ngakou", 
 		carob_effort = NA,
-		carob_date = "2024-08-27"
+		carob_date = "2024-08-27",
+		notes = "LLM-review: [medium, crop] The pigeonpea variety comparison is reduced to pigeon pea versus none. yield_part is grain for groundnut. adm1 is Central Region, which is not the GADM name."
 	)
 
 	f <- ff[grep(".xlsx", basename(ff))]

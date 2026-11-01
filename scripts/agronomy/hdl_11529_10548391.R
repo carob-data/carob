@@ -26,7 +26,7 @@ Tanzania Performance Trials 2016
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] trial_id is the row number after stacking control and nutrient-expert rows, so the two treatments on one field get different trials.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-09-24",
 		carob_completion = 90,	

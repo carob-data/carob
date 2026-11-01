@@ -21,7 +21,8 @@ carob_script <- function(path) {
       treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer; Mn_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date="2024-11-22"
+      carob_date="2024-11-22",
+      notes = "LLM-review: [low, coordinates] Locations are state codes with state-centroid coordinates and no geo_uncertainty."
    )
    
    f <- ff[grep("DMYield_.2016_2017.csv", tolower(basename(ff)), ignore.case=TRUE)]

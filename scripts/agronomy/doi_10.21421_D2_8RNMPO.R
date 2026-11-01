@@ -28,7 +28,7 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, other] plot_area is stored as 12, the square metres, in the hectare field."
 	)
 	
 

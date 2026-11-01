@@ -26,7 +26,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_completion = 100,	
 		carob_effort = NA,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] response_vars is none, yield NA never becomes a column, and yield_part is tubers for cassava. trial_id is 1 for Benue and Edo across two years. fertilizer_type and N_splits 3 are applied to every treatment."
 	)
 	
 

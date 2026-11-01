@@ -30,7 +30,7 @@ The cropping system physiological characteristic datasheet contains data on maiz
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 75,	
-		notes = "Seasonal Soil Conditions  and Soil Water Infiltration Trial have not been processed, as thier contents are not suitable for this Carob version."
+		notes = "Seasonal Soil Conditions  and Soil Water Infiltration Trial have not been processed, as thier contents are not suitable for this Carob version. LLM-review: [medium, invented] Currency is set to TZS with a comment that it is missing from the data. Variety is assigned per crop with no source. N, P, and K are hard-coded. Riroda weather coordinates disagree with the village geo table. Rows with missing yield are dropped after a left merge, which can drop LAI."
 	)
 	
 

@@ -30,7 +30,7 @@ Yield stability assessment -- Rice and Pearl millet data
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] soil_SOC of 2.6 and 4.3 and soil_N of 0.2 and 0.3 look like g/kg stored in percent and ppm columns."
 	)
 	
 	

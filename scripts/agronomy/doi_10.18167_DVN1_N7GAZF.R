@@ -28,7 +28,7 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		response_vars = "yield;soil_NH4;soil_NO3", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is position plus treatment number, so it is per plot and shared across seasons. on_farm is TRUE for the Domboshava and University of Zimbabwe stations. [medium, yield] yield_isfresh is FALSE together with 12.5 percent moisture. The rotation contrast is only inside the treatment string."
 	)
 	
 

@@ -19,7 +19,7 @@ carob_script <- function(path) {
     carob_contributor= "Mitchelle Njukuya",
     carob_effort = NA,
     carob_date="2024-03-19",
-    notes="Need to clarify the intercropping with banana situation" 
+    notes="Need to clarify the intercropping with banana situation LLM-review: [medium, dropped] Yield is replaced using an assumed 2 m plot length, and yield above 25000 is set to NA. treatment_vars includes fertilizer and weeding dates, listed twice." 
   )
   
   f <- ff[basename(ff) == "data_table.csv"]

@@ -31,7 +31,7 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] Every maize row is marked intercropped with soybean and pigeon pea. yield_part is grain for the rotation species, including legumes. on_farm is TRUE at both stations. [medium, dropped] trial_id is the plot id. Rows with missing yield are dropped, which also drops leaf nutrients and LAI."
 	)
 	
 

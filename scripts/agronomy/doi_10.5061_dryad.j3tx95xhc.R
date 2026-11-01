@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		data_type="compilation",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [medium, dropped] trial_id is one id per publication. Rows with missing yield are dropped (1492 rows the comment itself questions). Several hand-fixed coordinates stay geo_from_source TRUE."
 	)
 	
 	f <- ff[basename(ff) == "MAIZE_DATA_HI_CPN_CRN_FIELD_CROPS_RESEARCH_2022.csv"][1]

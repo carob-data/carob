@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type= "experiment",
 		response_vars = "yield",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;B_fertilizer;variety;irrigated",
-		project="CSISA"
+		project="CSISA",
+		notes = "LLM-review: [low, forbidden] suppressWarnings around as.integer. Missing B is set to 0. Missing yields are dropped. Zinc sulfate is multiplied by 0.15 with no basis."
  	)
 
 	f1 <- ff[basename(ff) == "CSISA_NOPT_Rice_RawDataFINAL.csv"]

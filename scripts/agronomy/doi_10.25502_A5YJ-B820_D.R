@@ -22,7 +22,8 @@ The data support a research article which is under review “Increased cassava g
 		data_type="experiment",
 		project=NA, 
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, dropped] dmy_stems above 20000 and plant_height above 250 are set to NA. Height has mean 257 cm, so the cap drops most heights. trial_id is almost one id per row."
 	)
 	
 	

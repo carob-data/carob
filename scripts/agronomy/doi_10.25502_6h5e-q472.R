@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		carob_date="2023-08-06",
 		data_type="experiment",
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;B_fertilizer"
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;B_fertilizer",
+		notes = "LLM-review: [medium, metadata] data_type is experiment with is_survey TRUE and on_farm TRUE. Ward fragments are put in adm4 and adm5. Row spacing 50 and plant spacing 25 are invented."
 	)
   
 	f <- ff[basename(ff) == "data_table.csv"] 

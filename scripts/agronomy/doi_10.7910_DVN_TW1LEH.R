@@ -30,7 +30,7 @@ The Africa RISING program adopts the mother-baby trial approach to test, validat
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, fertilizer] The P2O5 divisor is 2.26. geo_from_source is TRUE although every coordinate comes from a hard-coded village lookup."
 	)
 	
 

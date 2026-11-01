@@ -39,7 +39,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] planting_date is 2022 for a two-year file. trial_id omits the year. Faba bean stays yield_part grain. Rows with missing yield are dropped. data_type is experiment for on-farm trials."
 	)
 	
 
