@@ -9,12 +9,12 @@
 # There is no yield column and no GPS or district column. adm1 Eastern is the study area named in the title (Eastern Zambia), not a household field.
 
 ## ISSUES
-# No coordinates and no camp or district. Georeference within Eastern Province, Zambia.
+# No camp or district column. Coordinates are the Eastern province centroid.
 # Variety columns (NAMF_*, VARNAME_1) are included when present. Confirm they are variety names rather than codes; several slot layouts use different column names (see the script).
 # Area 0 is kept when a crop name is present (current planted area can be zero).
 # Practice and variety-expansion blocks (PRACTICE_*, VARIETY_1 to VARIETY_5) are a second adoption module and were not stacked on these crop slots.
 # No publication DOI.
-# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown farm_area_ha_.
+# write_files: missing carob_contributor; unknown farm_area_ha_.
 
 ## NEW VARIABLES
 # farm_area_ha_: FARM_SIZEHA, household farm size, repeated on each crop row
@@ -90,6 +90,16 @@ This data was collected under a project called “Sustainable Intensification of
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$trial_id <- d$hhid
+	# Coordinates are the GADM point-radius centroid of the province.
+	geo <- data.frame(
+		adm1 = "Eastern",
+		longitude = 31.9029,
+		latitude = -13.5758,
+		geo_uncertainty = 266632,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

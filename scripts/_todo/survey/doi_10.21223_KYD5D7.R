@@ -8,9 +8,8 @@
 ## ISSUES
 # Eleven rows have no ID. They are not household records. A few of those rows have values in P54-P61, P74, and P76.
 # The districts named in the abstract are not a column on the data sheet, so they are not assigned to every row.
-# No latitude or longitude.
+# Coordinates are the La Libertad department centroid. Curgos and Julcan are named in the abstract but are not a column, so they were not georeferenced separately.
 # The dictionary is a questionnaire layout, not a table of units, so the Pxx answers are not mapped.
-# missing variables: latitude, longitude
 # unknown variables: survey_group_
 
 ## NOT PROCESSED
@@ -61,6 +60,15 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	# Coordinates are the GADM point-radius centroid of the department.
+	geo <- data.frame(
+		adm1 = "La Libertad",
+		longitude = -78.3702,
+		latitude = -7.9214,
+		geo_uncertainty = 167311,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

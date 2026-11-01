@@ -10,7 +10,8 @@
 # Village names (from Demog.xlsx, household head row) and block names come from the code description.
 
 ## ISSUES
-# No coordinates; georeference villages (adm4) in the blocks/districts of Odisha listed in the data.
+# GADM 4.1 India has no adm4. Angul matches taluk Anugul (spelling corrected). Other blocks are not GADM taluks, so those coordinates are the district centroid: Salipur, Attabira, Puri Sadar, Ersama, Nuapada Sadar.
+# Villages are not GADM units: Pikala, Godabhanga, Bhuintikira, Gadtiapalli, Kujapalli, Khandighar, Rua, Talajanga, Ersama, Siha, Baluakata, Mahua Bhat. Jagatsinghpur corrected to Jagatsinghapur.
 # Season years are not given (survey year 2005; Kharif probably 2004 or 2005). Planting and harvest month and week are kept as planting_month_, planting_week_, harvest_month_, harvest_week_ instead of dates.
 # "Rocord" (fertilizer code 8, 7 records) has unknown composition; N/P/K set to NA for those records.
 # The second "Crop" column in LandUse ("use this variable") is used; it differs from the first for 6 records.
@@ -148,6 +149,38 @@ Objectives of the study are to identify rice varieties that are recently being a
 
 	d$country <- "India"
 	d$adm1 <- "Odisha"
+	d$adm2[which(d$adm2 == "Angul")] <- "Anugul" # GADM spelling
+	d$adm3[which(d$adm3 == "Angul")] <- "Anugul" # GADM spelling of this taluk
+	d$adm2[which(d$adm2 == "Jagatsinghpur")] <- "Jagatsinghapur" # GADM spelling
+
+	# Coordinates are the GADM point-radius centroid. Anugul is the taluk; the other rows are the district.
+	geo <- data.frame(
+		adm1 = c("Odisha"),
+		adm2 = c("Anugul"),
+		adm3 = c("Anugul"),
+		longitude = c(84.937),
+		latitude = c(20.8313),
+		geo_uncertainty = c(43809),
+		geo_source = c("GADM 4.1, adm3")
+	)
+	d <- merge(d, geo, by=c("adm1", "adm2", "adm3"), all.x=TRUE, sort=FALSE)
+	geo2 <- data.frame(
+		adm1 = c("Odisha", "Odisha", "Odisha", "Odisha", "Odisha"),
+		adm2 = c("Bargarh", "Cuttack", "Jagatsinghapur", "Nuapada", "Puri"),
+		longitude = c(83.3463, 85.6985, 86.33, 82.5709, 85.6984),
+		latitude = c(21.2166, 20.4436, 20.2163, 20.4615, 19.8658),
+		geo_uncertainty = c(87790, 89463, 41469, 69539, 75939),
+		geo_source = "GADM 4.1, adm2"
+	)
+	names(geo2)[3:6] <- c("lon2", "lat2", "unc2", "src2")
+	d <- merge(d, geo2, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	fill <- is.na(d$longitude) & !is.na(d$lon2)
+	d$longitude[fill] <- d$lon2[fill]
+	d$latitude[fill] <- d$lat2[fill]
+	d$geo_uncertainty[fill] <- d$unc2[fill]
+	d$geo_source[fill] <- d$src2[fill]
+	d$lon2 <- d$lat2 <- d$unc2 <- d$src2 <- NULL
+	d$geo_from_source <- FALSE
 	d$currency <- "INR"
 	d$trial_id <- d$hhid
 	d$on_farm <- TRUE

@@ -17,7 +17,7 @@
 # The Seeds sheet title says 1999-2000 but its records are 1965 DS and 1966 WS.
 
 ## ISSUES
-# No coordinates, and no municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan); human must georeference (only adm1 = Laguna set).
+# No coordinates, and no municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan), but they are not on the records. Longitude/latitude are the GADM point-radius centroid of Laguna province.
 # QTYSEED unit is not given in the coding manual; treated as kg (values are often multiples of a cavan). Verify.
 # The meaning of the dry-season YEAR label differs between rounds (planting year in 2007-08, harvest year in 1995), so dry-season text dates without a year are not parsed.
 # Products without known composition (organics, foliars, brand names) contribute nothing to N/P/K, which may underestimate the totals.
@@ -30,7 +30,7 @@
 # Only one transplanting and one harvest date recorded. SEEDSRC and SOIL TYPE are empty.
 # Hninfo covers only 1966 WS; household head sex/age/size are attached to both seasons by HHCODE.
 # Fallow parcels (crop 'none') are kept for their parcel data; yield is NA for them.
-# write_files: missing longitude/latitude/geo_from_source; new variables; invalid previous_crop '410'; invalid fertilizer_type AMMOPHOS, GERMANY, NO NAME; NA in yield/yield_part (fallow).
+# write_files: new variables; invalid previous_crop '410'; invalid fertilizer_type AMMOPHOS, GERMANY, NO NAME; NA in yield/yield_part (fallow).
 
 ## NEW VARIABLES
 # survey_year_: YEAR label of the survey round (for the dry season this is not always the planting year)
@@ -246,6 +246,17 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI 
 	d$is_survey <- TRUE
 	d$yield_part <- ifelse(d$crop == "rice", "grain", NA)
 	d$yield_isfresh <- TRUE
+
+	# Coordinates are the GADM point-radius centroid of adm1 (Laguna). No spelling correction; the name matches GADM.
+	geo <- data.frame(
+		adm1 = "Laguna",
+		longitude = 121.3251,
+		latitude = 14.2833,
+		geo_uncertainty = 37342,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE, sort = FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

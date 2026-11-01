@@ -9,9 +9,8 @@
 # Latitude and longitude columns are in the file and are empty in every row. The file name says the coordinates were blurred.
 
 ## ISSUES
-# No coordinates in the open columns.
-# LGA, ward, and village are codes, not names.
-# write_files: missing variables: latitude, longitude.
+# GPS latitude and longitude are empty in every row. LGA, ward, and village are codes, not names.
+# Longitude/latitude are the GADM point-radius centroid of the state (Kaduna, Kano, Katsina). Those names match GADM.
 
 ## NOT PROCESSED
 # The household workbook (demographics and the full management module).
@@ -71,6 +70,17 @@ Household survey and maize crop-cut data collected in Kaduna, Kano, and Katsina 
 		geo_from_source = FALSE
 	)
 	d <- d[!is.na(d$hhid) & nzchar(d$hhid), ]
+
+	# Coordinates are the GADM point-radius centroid of adm1. State names match GADM; no spelling correction.
+	geo <- data.frame(
+		adm1 = c("Kaduna", "Kano", "Katsina"),
+		longitude = c(7.7062, 8.5133, 7.6308),
+		latitude = c(10.3555, 11.7361, 12.3726),
+		geo_uncertainty = c(179843, 133819, 154933),
+		geo_source = c("GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1")
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE, sort = FALSE)
+	d$geo_from_source[!is.na(d$longitude)] <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

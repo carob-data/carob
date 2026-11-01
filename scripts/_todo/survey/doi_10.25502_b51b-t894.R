@@ -9,12 +9,12 @@
 # Rows with area, production and fertiliser all zero or missing are omitted (the crop was not reported for that season).
 
 ## ISSUES
-# No coordinates and no household district. Georeference to Eastern Province, Zambia (Petauke, Katete, Chipata). adm1 is set to Eastern from the project description, not from a column.
+# No household district. Coordinates are the Eastern province centroid. Petauke, Katete, and Chipata are named in the abstract but are not columns, so they were not georeferenced separately. adm1 is set to Eastern from the project description, not from a column.
 # Confirm that hh_e10*yield_* is total kilograms (the label says "Yield (in Kgs)") rather than kg/ha. Area outliers reach 1000 ha (soy) and 4000 ha (maize).
 # Fertiliser product codes: confirm 1 = yes. soymix and "other" have no nutrient analysis. Basal/top-dress quantities hh_e13* and hh_f3* are a second fertiliser block and were not added, to avoid double counting.
 # hh_e1* area uses a unit code (hh_e1mzunit) that is not documented, so that block was not used.
 # No publication DOI.
-# write_files: missing carob_contributor, geo_from_source, latitude, longitude; unknown fertilizer_product_kg_; invalid fertilizer_type other, soymix; high yield maize 31707 and soybean 20000 kg/ha; NA yield.
+# write_files: missing carob_contributor; unknown fertilizer_product_kg_; invalid fertilizer_type other, soymix; high yield maize 31707 and soybean 20000 kg/ha; NA yield.
 
 ## NEW VARIABLES
 # fertilizer_product_kg_: mineral fertiliser amount in kilograms (metadata), not split into N/P/K and not confirmed as kg/ha
@@ -97,6 +97,16 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$trial_id <- d$hhid
+	# Coordinates are the GADM point-radius centroid of the province.
+	geo <- data.frame(
+		adm1 = "Eastern",
+		longitude = 31.9029,
+		latitude = -13.5758,
+		geo_uncertainty = 266632,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

@@ -12,7 +12,8 @@
 # Nutrient contents from the code description: urea 46% N, TSP 38%, KCl 48%, NPK 15-15-15; TSP and KCl taken as % P2O5 and % K2O; P = P2O5/2.29, K = K2O/1.2051.
 
 ## ISSUES
-# No coordinates. Georeference villages/subdistricts (code description: Jampang Tengah, Cibadak (Sukabumi); Kadipaten, Salawu (Tasikmalaya); Malangbong, Cidaun (Garut); Panengahan (Lampung Selatan)). Village codes are only partly documented; not mapped.
+# Kecamatan coordinates are GADM point-radius centroids. Panengahan corrected to Penengahan. Rows with no subdistrict code use the kabupaten centroid.
+# Cidaun is a kecamatan of Cianjur in GADM, not of Garut, so those rows are left without coordinates. Rows with no district code are also left without coordinates. Village codes are only partly documented; not mapped.
 # TSP 38% and KCl 48% are unusual grades (SP-36 is 36% P2O5; KCl is ~60% K2O); verify the nutrient contents.
 # Wetland input use (variety, urea/TSP/KCl/NPK, manure, pesticide, columns 86-119) refers to one parcel without season; not merged. Wetland columns 120-189 have no names in the header (labor?); not processed.
 # Upland fertilizer is only for the field selected for the input module; other fields have NA N/P/K.
@@ -169,6 +170,39 @@ The objective of the study is to review government policies on upland rice, eval
 	d$yield_part[d$crop %in% c("common bean", "asparagus bean")] <- "seed"
 	d$yield_part[d$crop %in% c("banana", "chili pepper", "cucumber", "pumpkin", "watermelon")] <- "fruit"
 	d$yield_part[d$crop %in% c("tea", "mulberry")] <- "leaves"
+
+	d$adm3[which(d$adm3 == "Panengahan")] <- "Penengahan" # GADM spelling
+
+	# Coordinates are the GADM point-radius centroid of the kecamatan.
+	# Cibadak and Kadipaten also occur in other kabupaten, so the parent names stay in the merge key.
+	geo <- data.frame(
+		adm1 = c("Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Lampung"),
+		adm2 = c("Sukabumi", "Sukabumi", "Tasikmalaya", "Tasikmalaya", "Garut", "Lampung Selatan"),
+		adm3 = c("Jampang Tengah", "Cibadak", "Kadipaten", "Salawu", "Malangbong", "Penengahan"),
+		longitude = c(106.7904, 106.7629, 108.1161, 107.9842, 108.082, 105.6878),
+		latitude = c(-7.0681, -6.8947, -7.1191, -7.3728, -7.0572, -5.7498),
+		geo_uncertainty = c(12597, 8590, 5603, 9387, 8503, 8996),
+		geo_source = "GADM 4.1, adm3"
+	)
+	d <- merge(d, geo, by=c("adm1", "adm2", "adm3"), all.x=TRUE, sort=FALSE)
+	# Rows with no kecamatan name: centroid of the kabupaten. A named kecamatan that did not match is not filled.
+	geo2 <- data.frame(
+		adm1 = c("Jawa Barat", "Jawa Barat", "Jawa Barat", "Lampung"),
+		adm2 = c("Garut", "Sukabumi", "Tasikmalaya", "Lampung Selatan"),
+		longitude = c(107.7889, 106.7076, 108.1413, 105.5005),
+		latitude = c(-7.3596, -7.0762, -7.4969, -5.5328),
+		geo_uncertainty = c(53416, 47555, 50656, 70540),
+		geo_source = "GADM 4.1, adm2"
+	)
+	names(geo2)[3:6] <- c("lon2", "lat2", "unc2", "src2")
+	d <- merge(d, geo2, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	fill <- is.na(d$longitude) & is.na(d$adm3) & !is.na(d$lon2)
+	d$longitude[fill] <- d$lon2[fill]
+	d$latitude[fill] <- d$lat2[fill]
+	d$geo_uncertainty[fill] <- d$unc2[fill]
+	d$geo_source[fill] <- d$src2[fill]
+	d$lon2 <- d$lat2 <- d$unc2 <- d$src2 <- NULL
+	d$geo_from_source <- ifelse(is.na(d$longitude), NA, FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

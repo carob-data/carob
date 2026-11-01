@@ -9,12 +9,13 @@
 # Presence is the text in presencia.
 
 ## ISSUES
-# No coordinates. Parish codes are not longitude or latitude.
+# 63 psyllid records have no province name and were left without coordinates. Unmatched adm1: missing nameprovincia. Parish codes are not longitude or latitude.
 # Landscape cover by plant family is not mapped.
 # papa is potato, pepino_dulce is pepino, and tomate / Lycopersicon text is tomato. pimiento, prinontomate, tomate arbol, and uvilla are kept as recorded and are not vocabulary crop names.
 # Bactericera cockerelli is not in the pest list. The purple-top diagnosis is recorded as punta morada, which is not in the disease list.
 # No yield or fertilizer. These are surveillance records.
-# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: missing yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: NA detected: latitude, longitude (records with no province).
 # write_files: unknown variable: incidence_ (pest_incidence?); unknown variables: presence_.
 # write_files: invalid terms: crop: pimiento, prinontomate, tomate arbol, uvilla; pest_species: Bactericera cockerelli; disease: punta morada.
 
@@ -63,9 +64,16 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 		crop[crop == "tomate" | grepl("lycopersicon", crop, fixed=TRUE)] <- "tomato"
 		diag <- trimws(as.character(r$diagnostico))
 		diag <- ifelse(tolower(diag) == "bactericera cockerelli", "Bactericera cockerelli", diag)
+		prov <- trimws(as.character(r$nameprovincia))
+		# Missing nameprovincia must stay missing. toTitleCase("NA") would be "Na".
+		miss <- is.na(r$nameprovincia) | !nzchar(prov) | (!is.na(prov) & toupper(prov) == "NA")
+		prov[miss] <- NA_character_
+		prov <- tools::toTitleCase(tolower(prov))
+		# canar is the GADM province Cañar
+		prov[which(prov == "Canar")] <- "Cañar"
 		data.frame(
 			country = "Ecuador",
-			adm1 = tools::toTitleCase(tolower(trimws(as.character(r$nameprovincia)))),
+			adm1 = prov,
 			elevation = as.numeric(r$altitude),
 			date = as.character(as.Date(r$fecha)),
 			crop = crop,
@@ -85,6 +93,17 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 	f2 <- ff[basename(ff) == "02_Data_Surveillance_pmp.xlsx"]
 	d <- carobiner::bindr(one(f1, "pests"), one(f2, "disease"))
 	d$plot_id <- as.character(seq_len(nrow(d)))
+
+	# Coordinates are the GADM point-radius centroid of the province.
+	geo <- data.frame(
+		adm1 = c("Azuay", "Bolivar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "Imbabura", "Loja", "Pichincha", "Tungurahua"),
+		longitude = c(-79.1542, -79.1069, -79.0304, -78.0759, -78.7208, -78.8565, -78.3709, -79.6559, -78.5936, -78.5071),
+		latitude = c(-3.0141, -1.5872, -2.5324, 0.7702, -1.975, -0.858, 0.4054, -4.0901, -0.1049, -1.2944),
+		geo_uncertainty = c(92116, 63004, 55137, 67254, 75052, 61695, 100962, 96226, 93783, 48740),
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- ifelse(is.na(d$longitude), NA, FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

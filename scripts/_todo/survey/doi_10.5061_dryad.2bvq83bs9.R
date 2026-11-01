@@ -9,13 +9,14 @@
 # Missing codes in the sheet are "n/a" and "missing".
 
 ## ISSUES
-# Human must georeference from region (and pilot sites). Do not geocode in-script. Questionnaire GPS lat/lon were not digitized.
-# adm1 = region as recorded; spellings may not match GADM (Mbeya, Lindi, …).
+# Questionnaire GPS lat/lon were not digitized (gps_alt only). Coordinates are the GADM point-radius centroid of adm1 where the name matches.
+# Spelling corrected to GADM: Kirinyanga and Kirinyiga to Kirinyaga; Maachakos, Machachkos, Machakosi and Maxchakos to Machakos; Freestate to Free State.
+# No GADM adm1 match, left without coordinates: Ethiopia Kombocha, Kombolcha, Kombolche, Komnolcha, Meta (woredas, not regions); Kenya Kangundo (not a county); Rwanda Eastern, Southern (GADM names are Iburasirazuba and Amajyepfo, not spelling variants).
 # Crop "Other" mapped from crop_other when present (banana, cashew, avocado, …); remaining "other" need review.
 # Livestock, fodder/pasture, milk, credit, nutrition, gender, extension, and household-member roster (hhmem_1..15) not processed.
 # Land parcels lp_1..4 not linked to crop rows; farmland not summed into crop records.
 # Some yield values look low or high for kg/ha; left as reported.
-# write_files: missing latitude/longitude/geo_from_source; remaining invalid crop spellings; elevation 22287 out of bounds (left as reported); NA yield; duplicate household-crop-season possible.
+# write_files: NA detected: latitude, longitude (regions with no GADM adm1 match); remaining invalid crop spellings; elevation 22287 out of bounds (left as reported); NA yield; duplicate household-crop-season possible.
 
 ## NEW VARIABLES
 # none
@@ -154,6 +155,22 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+
+	d$adm1[which(d$country == "Kenya" & d$adm1 %in% c("Kirinyanga", "Kirinyiga"))] <- "Kirinyaga" # GADM spelling
+	d$adm1[which(d$country == "Kenya" & d$adm1 %in% c("Maachakos", "Machachkos", "Machakosi", "Maxchakos"))] <- "Machakos" # GADM spelling
+	d$adm1[which(d$adm1 == "Freestate")] <- "Free State" # GADM spelling
+
+	# Coordinates are the GADM point-radius centroid of adm1.
+	geo <- data.frame(
+		country = c("Kenya", "Kenya", "Malawi", "Malawi", "South Africa", "Tanzania", "Tanzania"),
+		adm1 = c("Kirinyaga", "Machakos", "Dedza", "Mzimba", "Free State", "Lindi", "Mbeya"),
+		longitude = c(37.3329, 37.4121, 34.3664, 33.6347, 26.8673, 38.4069, 33.7575),
+		latitude = c(-0.511, -1.2776, -14.158, -11.7893, -28.6144, -9.4807, -8.16),
+		geo_uncertainty = c(84705, 70575, 87223, 104873, 312568, 189486, 172774),
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by=c("country", "adm1"), all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- ifelse(is.na(d$longitude), NA, FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

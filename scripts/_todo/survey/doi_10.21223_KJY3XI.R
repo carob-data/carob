@@ -6,9 +6,9 @@
 # study_grp is the randomized arm. quantity, units, and price are OFSP sales, not field yield. Names of children, caregivers, and enumerators were not copied.
 
 ## ISSUES
-# No coordinates in the caregiver file. Villages need georeferencing.
+# Coordinates are the Homa Bay county centroid. Village (center_) and subcounty names are not adm units and were not geocoded separately.
 # No kg/ha yield and no fertilizer rate.
-# write_files: missing carob_contributor, geo_from_source, latitude, longitude. unknown variables: center_, subcounty_, study_group_, grew_ofsp_, sale_quantity_, sale_units_, sale_price_.
+# write_files: missing carob_contributor. unknown variables: center_, subcounty_, study_group_, grew_ofsp_, sale_quantity_, sale_units_, sale_price_.
 
 ## NOT PROCESSED
 # Coordonne_es_GPS_Adamaoua csv: columns X and Y are decimal degrees, and the file has no country column. The dataset description does not name that survey, so the points were not given a country.
@@ -78,6 +78,16 @@ Background: Persistent prevalence of high malnutrition in poor households in dev
 	d$trial_id <- paste0("HomaBay_", d$hhid, "_", seq_len(nrow(d)))
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	# Coordinates are the GADM point-radius centroid of the county.
+	geo <- data.frame(
+		adm1 = "Homa Bay",
+		longitude = 34.3633,
+		latitude = -0.536,
+		geo_uncertainty = 74807,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

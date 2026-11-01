@@ -11,7 +11,8 @@
 # Villages and blocks from the code description.
 
 ## ISSUES
-# No coordinates; georeference the 20 villages (adm4) in blocks Nautanwa, Mithaura (Mahrajganj) and Phakharpur, Shivpur (Bahraich), Uttar Pradesh.
+# GADM 4.1 India has no adm4, and the blocks are not GADM taluks (Nautanwa, Mithaura, Phakharpur, Shivpur). Coordinates are the GADM point-radius centroid of the district. Mahrajganj corrected to Maharajganj.
+# Villages are not GADM units: Sukrauli, Deoghatti, Harakhpur, Jugauli, Khairati, Hardee, Bhulna, Rajwal, Morwan Sonadi, Baswar, Agnapara, Nandwal, Dhakherwa, Sisaura, Sarai Jagna, Intaha, Matera Kala, Kotawa, Chandela Kala, Behara.
 # No planting/harvest dates; the survey refers to 2000-2001 (kharif 2000, rabi 2000-01); planting_date not set.
 # Fertilizer code 8 "Zn" (1 record) has no amount of Zn given; not converted to Zn_fertilizer.
 # Riceinp Plot has values like "1-3" or "1,2" (several plots); merged by farmer, season and parcel only.
@@ -177,6 +178,19 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 
 	d$country <- "India"
 	d$adm1 <- "Uttar Pradesh"
+	d$adm2[which(d$adm2 == "Mahrajganj")] <- "Maharajganj" # GADM spelling
+
+	# Coordinates are the GADM point-radius centroid of adm2. Blocks and villages are not GADM units.
+	geo <- data.frame(
+		adm1 = c("Uttar Pradesh", "Uttar Pradesh"),
+		adm2 = c("Bahraich", "Maharajganj"),
+		longitude = c(81.4126, 83.5008),
+		latitude = c(27.7415, 27.1881),
+		geo_uncertainty = c(82306, 44219),
+		geo_source = "GADM 4.1, adm2"
+	)
+	d <- merge(d, geo, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 	d$currency <- "INR"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

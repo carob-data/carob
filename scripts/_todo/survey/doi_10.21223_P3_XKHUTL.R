@@ -5,14 +5,13 @@
 # Rows are relationships_csv in Seed_system_CONPAPA_for_Dataverse_20160120.xlsx.
 # DateOfInterview, DatePlanting, and DateHarvest are Excel serials (origin 1899-12-30). 42325 is 2015-11-17, the November 2015 interview named in the abstract.
 # The token NR, and the typo NRff, are missing. Volume is kept as recorded. The sheet does not say whether volume is kilograms.
-# Country Ecuador and province Tungurahua are in the dataset title. No coordinates.
+# Country Ecuador and province Tungurahua are in the dataset title. The dataset has no coordinates.
 
 ## ISSUES
 # Volume is not converted to yield.
-# No coordinates and no fertilizer.
+# No fertilizer. Coordinates are the Tungurahua province centroid.
 # Two records have a harvest date within 45 days of planting. Those dates are kept.
 # Some rows are identical on the columns kept here.
-# write_files: ; geo_from_source, latitude, longitude.
 # write_files: unknown variables: seed_or_product_, volume_, price_min_, price_max_.
 # write_files: datespan: 2 records with harvest_date within 45 days of planting_date.
 # write_files: duplicates: duplicate records detected.
@@ -94,6 +93,16 @@ This contains potato seed system data collected for a network analysis. It is fr
 		irrigated = NA,
 		trial_id = "CONPAPA_2015"
 	)
+	# Coordinates are the GADM point-radius centroid of the province.
+	geo <- data.frame(
+		adm1 = "Tungurahua",
+		longitude = -78.5071,
+		latitude = -1.2944,
+		geo_uncertainty = 48740,
+		geo_source = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

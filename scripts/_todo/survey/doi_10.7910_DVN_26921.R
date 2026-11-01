@@ -17,7 +17,7 @@
 # planting_date from Farmchar DATE PLNTED ('4th week of May' -> 1975-05). Production header is on row 4 (other sheets row 5).
 
 ## ISSUES
-# No coordinates, and no municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan); human must georeference (only adm1 = Laguna set).
+# No municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan), but those names are not on the records. Coordinates are the GADM point-radius centroid of Laguna (adm1).
 # QTYSEED unit is not given in the coding manual; treated as kg (values are often multiples of a cavan). Verify.
 # The meaning of the dry-season YEAR label differs between rounds (planting year in 2007-08, harvest year in 1995), so dry-season text dates without a year are not parsed.
 # Products without known composition (organics, foliars, brand names) contribute nothing to N/P/K, which may underestimate the totals.
@@ -28,7 +28,7 @@
 # No transplanting dates; HHinfo holds only codes (no household variables); SHARE OUTPUT, SOIL TYPE and SEEDSRC empty.
 # Seeds METHOD is 'dapog' for all parcels. Verify.
 # 16-20-0 (ammonium phosphate) has no matching fertilizer_type term.
-# write_files: missing longitude/latitude/geo_from_source; new variables; invalid fertilizer_type 16-20-0.
+# write_files: new variables; invalid fertilizer_type 16-20-0.
 
 ## NEW VARIABLES
 # survey_year_: YEAR label of the survey round (for the dry season this is not always the planting year)
@@ -231,6 +231,17 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI-
 	d$is_survey <- TRUE
 	d$yield_part <- ifelse(d$crop == "rice", "grain", NA)
 	d$yield_isfresh <- TRUE
+
+	# Coordinates are the GADM point-radius centroid of adm1 Laguna.
+	geo <- data.frame(
+		adm1 = c("Laguna"),
+		longitude = c(121.3251),
+		latitude = c(14.2833),
+		geo_uncertainty = c(37342),
+		geo_source = c("GADM 4.1, adm1")
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

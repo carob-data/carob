@@ -14,7 +14,7 @@
 # Fallow, planted trees, other fruits, other vegetables, and other fodders are not stored.
 
 ## ISSUES
-# write_files: missing variables: latitude, longitude
+# English province names (Northern, Southern, Western) are not spelling variants of the GADM adm1 names (Amajyaruguru, Amajyepfo, Iburengerazuba), so adm1 is left as recorded and is not part of the coordinate lookup. The four district names match GADM adm2 and are unique in Rwanda.
 # write_files: out of bounds: yield (0, 465000), lime (0, 87500), N_fertilizer (0, 4020), P_fertilizer (0, 4489)
 # write_files: low yield (tons not kg?): cabbage
 # write_files: NA detected: yield
@@ -123,6 +123,16 @@ Household survey of lime use and crop harvest on farm subplots in Rwanda.
 	d$copy <- ave(seq_len(nrow(d)), d$trial_id, d$plot_id, d$crop, FUN=seq_along)
 	d$plot_id[d$copy > 1] <- paste(d$plot_id[d$copy > 1], d$copy[d$copy > 1], sep="_")
 	d$copy <- NULL
+
+	## GADM point-radius centroid of the district. English province names are not used as the key.
+	geo <- data.frame(
+		adm2 = c("Burera", "Nyamagabe", "Nyaruguru", "Ngororero"),
+		longitude = c(29.8266, 29.4699, 29.5170, 29.5695),
+		latitude = c(-1.4662, -2.4114, -2.6944, -1.8778),
+		geo_uncertainty = c(22162, 25330, 25561, 23866),
+		geo_source = "GADM 4.1, adm2"
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

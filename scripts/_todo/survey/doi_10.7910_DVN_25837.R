@@ -14,7 +14,7 @@
 
 ## ISSUES
 # Village, county and prefecture are numeric codes without names (14 villages, 5 counties, 2 prefectures); kept as codes in
-#   village_code_ and county_code_. Human should find names and georeference.
+#   village_code_ and county_code_. Coordinates are the GADM point-radius centroid of Yunnan (adm1).
 # "After" records have no planting/harvest date and no area. The "Before" planting dates are in 1998 and 2000; the year of the
 #   "After" season is not given (the dataset metadata says 2000).
 # In the mixture (After), the GR yield is low (median 50 kg/mu) and probably per mu of the whole mixed field; verify.
@@ -116,6 +116,16 @@ To analyze the effects of genetic diversity on rice blast management and to dete
 
 	d$country <- "China"
 	d$adm1 <- "Yunnan"
+	# Coordinates are the GADM point-radius centroid of adm1. The name matches GADM; no spelling correction.
+	geo <- data.frame(
+		adm1 = c("Yunnan"),
+		longitude = c(101.4898),
+		latitude = c(24.9757),
+		geo_uncertainty = c(530636),
+		geo_source = c("GADM 4.1, adm1")
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$planting_method <- "transplanting"
