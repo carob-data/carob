@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# N and K rates are not reported.
+
 carob_script <- function(path) {
   
 "Low soil fertility especially nitrogen (N) is one of the major constraints to increased maize productivity on smallholder farms in Malawi. Integration of grain legumes in maize based systems is one of the strategies to improve soil fertility and yields as legumes fix atmospheric nitrogen through a symbiotic relationship with Rhizobium bacteria. A study was conducted in the 2013/2014 growing season in Linthipe and Golomoti Extension Planning Areas (EPAs) in Dedza District, and Nsipe EPA in Ntcheu District. The objectives of the study were to evaluate the grain yields and biological nitrogen fixation (BNF) of the sole and intercropped pigeonpea and soybean under two levels of inorganic P fertilizer (0 and 14 kg P ha-1) and to determine the Phosphorus use efficiency (PUE). BNF was assessed using the N difference method. The experiment was laid out in a randomized complete block design (RCBD). Soils were sandy clay loams, loamy sand and sandy loams to sandy clay loams for Linthipe, Golomoti and Nsipe respectively. Soil pH was moderately acidic to acidic, pH 4.9 to 5.8 in the three sites. Available soil P (Mehlich-3) averaged 44, 84 and 39mg kg-1; and the mean soil organic matter (OM) were 2.55, 1.63 and 2.39% for Linthipe, Golomoti and Nsipe EPAs, respectively. " 
@@ -44,7 +47,7 @@ carob_script <- function(path) {
       weeding_times= as.integer(3),
       plant_spacing= 60,
       row_spacing= 90,
-      plant_density= 44.444,
+      plant_density= 44.444 * 1000, # thousands per hectare
       intercrops= ifelse(grepl("intercrop", r1$Cropping.system), "soybean", "none"),
       BNF= r1$BNF.pigeonpea..kgha.1. # Biological Nitrogen Fixation 
     )
@@ -64,7 +67,7 @@ carob_script <- function(path) {
       weeding_times= as.integer(3),
       plant_spacing= 5,
       row_spacing= 30,
-      plant_density= 533.333,
+      plant_density= 533.333 * 1000, # thousands per hectare
       inoculant= "rhizobium",
       inoculated= TRUE,
       intercrops= ifelse(grepl("intercrop",r2$Cropping.system), "pigeon pea", "none"),
@@ -114,8 +117,6 @@ carob_script <- function(path) {
     depth_bottom= 40
   )
   d <- merge(d, geo, by="location", all.x = TRUE)
-  
-  d$N_fertilizer <- d$K_fertilizer <- 0
   
   ## Remove duplicate rows ( This is due to NA in the BNF variable )
   d <- unique(d)

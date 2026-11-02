@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# 2025 F0+ and F1+ P-S-Ca rates are described in a comment, but System_Fertilization contains only F0 and F1, so that addition was not applied.
 
 carob_script <- function(path) {
   
@@ -17,8 +18,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
 		data_organization = "AfricaRice; CIRAD",
 		publication = NA,
 		project = "Sustainable and Diversified Rice-based Farming Systems",
-		data_type = "on-farm experiment",
-		treatment_vars = "Ca_fertilizer;seed_treatment;variety;N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;S_fertilizer",
+		data_type = "experiment",
+		treatment_vars = "land_prep_method;crop_rotation;seed_treatment;variety;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_completion = 100,
 		carob_contributor = "Kora Simperegui",
@@ -64,16 +65,34 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     yield_treated = r1$`Treated_Plot_Yield_kg_ ha_1`,
     yield_non_treated = r1$`Untreated_Plot_Yield_kg_ ha_1`,
     grain_fill = 1-r1$`%_Empty_Grains`,
-    # Two fertilization levels were applied for all the systems until 2024:  - F0, without any fertilizer application  - F1, corresponding to N-P-K: 104-21-30 kg ha-1. 
-    # In 2025, two additional fertilization levels were added:  - F0+ :  P-S-Ca:8-12-18 kg ha-1  - F1+ : N-P-K: 104-21-30 kg ha-1  + P-S-Ca:8-12-18 kg ha-1 
+    # F0 is no fertilizer. F1 is N-P-K 104-21-30. F0+ and F1+ are not coded in System_Fertilization.
+    # A recorded Soil_Tillage date is conventional tillage; a blank date is no-till (none).
+    crop_rotation = r1$Cropping_system_Rotation,
+    land_prep_method = ifelse(is.na(r1$Soil_Tillage), "none", "conventional"),
     N_fertilizer= ifelse(r1$System_Fertilization=="F0",0,104),
-    P_fertilizer= ifelse(r1$System_Fertilization=="F0",0,21) + ifelse(r1$Year==2025 ,8,0),
-    K_fertilizer= ifelse(r1$System_Fertilization=="F0",0,30) + ifelse(r1$Year==2025 ,12,0),
-    S_fertilizer = ifelse(r1$Year==2025 ,12,0),
-    Ca_fertilizer = ifelse(r1$Year==2025 ,18,0),
+    P_fertilizer= ifelse(r1$System_Fertilization=="F0",0,21),
+    K_fertilizer= ifelse(r1$System_Fertilization=="F0",0,30),
+    S_fertilizer = 0,
+    Ca_fertilizer = 0,
     irrigated = FALSE
   ) 
   
+  # "+" joins crops grown together; "/" and "//" separate the phases of the rotation.
+  # "sc" is a short-cycle note, and "(March)" is a sowing month.
+  burnt <- grepl("straw burning", d$crop_rotation)
+  retained <- grepl("straw retention", d$crop_rotation)
+  d$previous_crop_burnt <- ifelse(burnt, TRUE, ifelse(retained, FALSE, NA))
+  rot <- tolower(d$crop_rotation)
+  rot <- gsub("\\s*\\([^)]*\\)", "", rot)
+  rot <- gsub(" sc", "", rot)
+  rot <- gsub(" with tillage and straw burning", "", rot)
+  rot <- gsub(" with tillage and straw retention", "", rot)
+  rot <- gsub("\\s*//\\s*", ";", rot)
+  rot <- gsub("\\s*/\\s*", ";", rot)
+  rot <- gsub("\\s*\\+\\s*", "_", rot)
+  rot <- gsub("stylo", "stylosanthes", rot)
+  d$crop_rotation <- trimws(rot)
+
   #The name of the crops is not standardized. We need to do it in first place (both crop and intercropped)
   d$intercrops <- gsub("\\s*\\+\\s*", "_", d$intercrops) # Standardize spacing around the "+" sign
   

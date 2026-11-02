@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# Irrigation is not reported.
 
 carob_script <- function(path) {
   
@@ -20,7 +22,7 @@ carob_script <- function(path) {
 		carob_contributor="Fredy Chimire",
 		carob_effort = NA,
 		carob_date="2024-01-11",
-		treatment_vars = NA,
+		treatment_vars = "treatment",
 		response_vars = "yield"
 	)
   
@@ -50,7 +52,7 @@ carob_script <- function(path) {
 	fert <- data.frame(do.call(rbind, fert))
 	fert <- sapply(fert, as.numeric)
 	d$N_fertilizer <- fert[,1] * .23 + fert[,2] * .46 
-	d$P_fertilizer <- fert[,1] * .21
+	d$P_fertilizer <- fert[,1] * .21 / 2.29
 	d$K_fertilizer <- 0	
 	d$S_fertilizer <- fert[,1] * .04	
 	
@@ -83,7 +85,7 @@ carob_script <- function(path) {
 	d <- merge(d, geo, by="adm2", all.x=TRUE)
                          
 	d$on_farm <- TRUE
-	d$irrigated <- FALSE
+	d$irrigated <- NA
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

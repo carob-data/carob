@@ -44,12 +44,14 @@ carob_script <- function(path) {
 	    plant_density = r$nP * 1567,
 	    plant_height = r$PH,
 	    e_rot = r$pER,
-	    e_asp = r$EarAsp,
-	    p_asp = r$PltAsp,
+	    ear_aspect = r$EarAsp,
+	    aspect = r$PltAsp,
 	    yield_moisture = r$MOI,
-	    gtext = r$TEX,
-	    rlper = r$pRL,
-	    slper = r$pSL,
+	    grain_texture = as.character(r$TEX),
+	    root_lodging = ifelse(is.na(r$pRL), NA_character_, paste0(r$pRL, "%")),
+
+	    stalk_lodging = ifelse(is.na(r$pSL), NA_character_, paste0(r$pSL, "%")),
+
 	    rust  = r$Psorg1,
 	    streak = r$MSV,
 	    blight = r$Eturc1,
@@ -116,6 +118,10 @@ carob_script <- function(path) {
 	d$plot_id <- as.character(d$plot_id)
 	
 	
-	carobiner::write_files(path, meta, d)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 

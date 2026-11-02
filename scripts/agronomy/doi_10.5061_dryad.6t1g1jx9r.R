@@ -2,6 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Grain moisture is not in the data, so 13% is not stored.
+
+## ISSUES
 
 ## Core Ideas
 # ∙ The legacy of alfalfa monoculture and polyculture stands on subsequent corn was evaluated.
@@ -111,8 +114,8 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	  grain_S = r4$S_mg_g,
 	  grain_K = r4$K_mg_g,
 	  grain_Mg = r4$Mg_mg_g,
-	  grain_Fe = r4$Fe_ug_g/1000,
-	  grain_Zn = r4$Zn_ug_g/1000
+	  grain_Fe = r4$Fe_ug_g,
+	  grain_Zn = r4$Zn_ug_g
 	)
 	d4$crop_rotation <- apply(r4[, grep("crop$", tolower(names(r4)), ignore.case=TRUE)], 1, function(x) paste(x, collapse=";	"))
 	
@@ -146,7 +149,6 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	d$is_survey <- FALSE
 	d$on_farm <- FALSE
 	d$trial_id <- "1"
-	d$yield_moisture <- 13 
 	d$yield_part <- "grain" 
 	d$country <- "United States"  
 	d$geo_from_source <- TRUE # from publication
@@ -156,7 +158,6 @@ Interseeding annual crops into existing alfalfa (Medicago sativaL.) stands is ga
 	d$irrigated <- NA 
 	d$planting_date <- "2022"
 	d$harvest_date <- NA
-	d$yield_isfresh <- TRUE
 
 	carobiner::write_files(path, meta, d, long=d3)
 }

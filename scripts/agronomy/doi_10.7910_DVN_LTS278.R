@@ -1,5 +1,9 @@
 # R script for "carob"
 
+## ISSUES
+# Treatment B is calibrated phosphorus plus recommended N, but the phosphorus rate is not in the file.
+# K, Zn, and S rates are not in the file.
+
 carob_script <- function(path) {
 
 "Replication Data for: Response of Maize to blended fertilizer  
@@ -52,7 +56,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	colnames(dg) <- c("Rep","Trt","GY kg/ha","BM kg/ha","country","adm3","year")
 
 	dh <- dd[c(14:22),c(5:11)] #Omo Nada 2016/17
-	dh$year[de$year=='2017/18'] <- '2016/17'
+	dh$year[dh$year=='2017/18'] <- '2016/17'
 	colnames(dh) <- c("Rep","Trt","GY kg/ha","BM kg/ha","country","adm3","year")
 
 	dv <- rbind(dh,dg,df,de)
@@ -61,9 +65,6 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	#####Change Treatment
 	dv$N_fertilizer <- 0
 	dv$P_fertilizer <- 0
-	dv$K_fertilizer <- 0
-	dv$Zn_fertilizer <- 0
-	dv$S_fertilizer <- 0
 
 	i <- dv$treatment=='A'
 	dv$treatment[i] <- 'Ctrl/FP'
@@ -73,7 +74,7 @@ Maize grain and bio-mass yield were increased by application of different rates 
 	i <- dv$treatment=='B'
 	dv$treatment[i] <- 'Cal. P & rec. N'
 	dv$N_fertilizer[i] <- 92
-	dv$P_fertilizer[i] <- 0
+	dv$P_fertilizer[i] <- NA
 
 	i <- dv$treatment=='C'
 	dv$treatment[i] <- '92 kg/ha N & 30 kg/ha P'

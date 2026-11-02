@@ -31,7 +31,8 @@ carob_script <- function(path) {
 		carob_date="2023-07-07",
 		data_type="experiment",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [low, metadata] trial_id is 1 for FUNAAB and Ado-Awaye. is_survey is TRUE with data_type experiment, and on_farm is TRUE for the university station."
 	)
 
 
@@ -69,7 +70,7 @@ carob_script <- function(path) {
 	d$longitude[!i] <- 3.41
 	d$geo_from_source <- FALSE
 
-	i <- d$treatment == "F1"
+	i <- r$Fertilizer == "F1"
 	d$N_fertilizer[i] <- 75
 	d$P_fertilizer[i] <- 20
 	d$K_fertilizer[i] <- 90

@@ -17,7 +17,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project="N2Africa" ,
 	response_vars= "yield",
-	treatment_vars="N_fertilizer;P_fertilizer"
+	treatment_vars="N_fertilizer;P_fertilizer",
+	notes = "LLM-review: [medium, fertilizer] 30 kg P is stored for NPK and TSP, and 30 times 0.46 over 2.29 for DAP. Bean yields above 9000 are set to NA."
   )
   
   f <- ff[basename(ff) == "general.csv"] 
@@ -82,7 +83,7 @@ carob_script <- function(path) {
   d2$yield <- d2$yield1/d2$area_ha
   
   # merge d and d2
-  d <- merge(d,d2,bx="trial_id", all.y = T)
+  d <- merge(d,d2,by="trial_id", all.y = T)
   
   d <- d[, c("country", "trial_id", "location", "longitude", "latitude", "pdate","hdate"
              , "crop", "yield","fertilizer_type")]

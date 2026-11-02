@@ -23,7 +23,8 @@ Soil organic carbon content of topsoil (0-15 cm depths) of two agronomic long-te
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-08-04",
 		carob_completion = 85,	
-		carob_effort = 15
+		carob_effort = 15,
+		notes = "LLM-review: [medium, metadata] yield, yield_part, moisture, and dates are empty placeholders on a dataset with no yield. geo_from_source is TRUE for hard-coded coordinates with no source comment."
   )
   
   #f1 <- ff[basename(ff) == "01.Dictionary.xls"]

@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Yield units Bunches, Bags, and blank cannot be converted to kg/ha, so those yields are left NA.
+
 carob_script <- function(path) {
   
 "N2Africa is to contribute to increasing biological nitrogen fixation and productivity of grain legumes among African smallholder farmers which will contribute to enhancing soil fertility, improving household nutrition and increasing income levels of smallholder farmers. As a vision of success, N2Africa will build sustainable, long-term partnerships to enable African smallholder farmers to benefit from symbiotic N2-fixation by grain legumes through effective production technologies including inoculants and fertilizers adapted to local settings. A strong national expertise in grain legume production and N2-fixation research and development will be the legacy of the project. The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uganda and Ethiopia) and six other countries (DR Congo, Malawi, Rwanda, Mozambique, Kenya & Zimbabwe) as tier one countries."
@@ -18,7 +21,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project=NA,
 	response_vars = "yield",
-	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;inoculated"
+	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;inoculated",
+	notes = "LLM-review: [medium, fertilizer] NPK is stored as 12.5, 28.5, 28.5 and SSP as 50, while DAP is converted. SYMPAL is stored as P 23 and K 26, which is the grade, not a rate. High yields are set to NA."
   )
   
   f <- ff[basename(ff) == "a_general_1.csv"] 
@@ -67,10 +71,13 @@ carob_script <- function(path) {
   # append d3 and d2
   d3 <- rbind(d3,d2)
   
-  d3$yield <- ifelse((d3$yield_unit=="Kg"| d3$yield_unit=="kg" ) & d3$farm_size >0, d3$yield1/d3$farm_size,
-                     ifelse(d3$yield_unit=="tonnes" & d3$farm_size >0, d3$yield1*1000/d3$farm_size,
-                           ifelse(d3$yield_unit=="Kg/acre" & d3$farm_size >0, d3$yield1/0.4046, d3$yield1)))
-  d3 <- d3[d3$yield_unit!="Bunches" & d3$yield_unit!="Bags" & d3$yield_unit!="MT" & d3$yield_unit!="",]
+  d3$yield <- NA
+  i <- which((d3$yield_unit %in% c("Kg", "kg")) & d3$farm_size > 0)
+  d3$yield[i] <- d3$yield1[i] / d3$farm_size[i]
+  i <- which((d3$yield_unit %in% c("tonnes", "MT")) & d3$farm_size > 0)
+  d3$yield[i] <- d3$yield1[i] * 1000 / d3$farm_size[i]
+  i <- which(d3$yield_unit == "Kg/acre" & d3$farm_size > 0)
+  d3$yield[i] <- d3$yield1[i] / 0.404686
   # merge d and d3
   d <- merge(d,d3,bx="trial_id", all.y = T)
   d$inoculated <- FALSE
@@ -194,9 +201,6 @@ carob_script <- function(path) {
   d$yield[d$crop=="common bean" & d$yield > 9000] <- NA
   d$yield[d$crop=="groundnut" & d$yield > 8500] <- NA
   d$yield[d$crop=="soybean" & d$yield > 15000] <- NA
-  # remove crop with very low yield value after divided by the plot area and it's not realistic
-  d <- d[d$crop!="mung bean"&d$crop!="rice"&d$crop!="sesame"&d$crop!="bambara groundnut"&d$crop!="banana",]
-  
   # fix whitespace in variable
   d$fertilizer_type[d$fertilizer_type==""] <- NA
   d$location[d$location==""] <- NA

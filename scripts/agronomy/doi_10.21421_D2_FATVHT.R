@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_organization="ICRISAT",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="N_fertilizer"
+		treatment_vars="N_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] The abstract says 30 kg/ha of phosphorus and potassium, and the code then divides by 2.29 and 1.2051. Variety is not a treatment variable. adm2 for BUK is Gezawa."
  	)
 
 	f <- ff[basename(ff) == "Data file of Sorghum N trial Kano Nigeria.xlsx"]
@@ -30,13 +31,13 @@ carob_script <- function(path) {
 		adm2 = ifelse(r$Location == "BUK", "Gezawa", "Minjibir"),
 		location = r$Location,
 		trial_id = paste0(r$Location, "_", r$Year),
-		latitude = ifelse(r$Location == "BUK", 8.5922, 8.5978),
-		longitude = ifelse(r$Location == "BUK", 12.0034, 12.1733),
+		latitude = ifelse(r$Location == "BUK", 12.0034, 12.1733),
+		longitude = ifelse(r$Location == "BUK", 8.5922, 8.5978),
 		geo_from_source = FALSE,
 		# As reported in the associated publication:
 		planting_date = ifelse(r$Location == "BUK" & r$Year == 2014, "2014-07-19",
-                  ifelse(r$Location == "BUK" & r$Year == 2015, "2014-07-20",
-                  ifelse(r$Location == "Minjibir" & r$Year == 2014, "2014-07-07", "2014-07-04"))), 
+                  ifelse(r$Location == "BUK" & r$Year == 2015, "2015-07-20",
+                  ifelse(r$Location == "Minjibir" & r$Year == 2014, "2014-07-07", "2015-07-04"))), 
 											  
 		on_farm = FALSE,
 		is_survey = FALSE,

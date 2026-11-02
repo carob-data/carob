@@ -20,7 +20,8 @@ carob_script <- function(path) {
 		carob_modified_by="Cedric Ngakou, Robert Hijmans",
 		carob_last_modified="2023-11-03",
 		treatment_vars=NA, 
-		response_vars="yield"
+		response_vars="yield",
+		notes = "LLM-review: [medium, coordinates] Fertilizer is now read from the sheet. Premtoli is still exactly 25 N, 89 E, with no uncertainty and no source. irrigated and inoculated are FALSE with nothing in the file to support either. treatment_vars is NA while a treatment column is carried through. K is divided by 1.2051 under an assumption, and Zn is the sulfate rate."
 	)
 
 

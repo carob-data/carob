@@ -20,7 +20,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date = "2024-08-06",
-		notes = NA
+		notes = "LLM-review: [low, metadata] trial_id is a single value for both stations and both years, and on_farm is TRUE."
 	)
 	
 

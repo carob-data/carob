@@ -36,14 +36,16 @@ carob_script <- function(path) {
 	    asi=as.numeric(r$ASI),
 	    plant_height=as.numeric(r$PlantHeightCm),
 	    ear_height = as.numeric(r$EarHeightCm),
-	    rlper = as.numeric(r$RootLodgingPer),
-	    slper = as.numeric(r$StemLodgingPer),
-	    husk = as.numeric(r$BadHuskCoverPer),
+	    root_lodging = ifelse(is.na(as.numeric(r$RootLodgingPer)), NA_character_, paste0(as.numeric(r$RootLodgingPer), "%")),
+
+	    stalk_lodging = ifelse(is.na(as.numeric(r$StemLodgingPer)), NA_character_, paste0(as.numeric(r$StemLodgingPer), "%")),
+
+	    husk = as.character(as.numeric(r$BadHuskCoverPer)),
 	    e_rot = as.numeric(r$EarRotTotalPer),
-	    moist = as.numeric (r$GrainMoisturePer),
+	    yield_moisture = as.numeric (r$GrainMoisturePer),
 #	    plant_density = as.numeric(r$PlantStand_NumPerPlot),
-	    e_asp = as.numeric(r$EarAspect1_5),
-	    p_asp = as.numeric(r$PlantAspect1_5),
+	    ear_aspect = as.numeric(r$EarAspect1_5),
+	    aspect = as.numeric(r$PlantAspect1_5),
 	    gls = r$GrayLeafSpot1_5,
 	    rust = r$CommonRust1_5,
 	    blight = r$LeafBlightTurcicum1_5,
@@ -52,7 +54,7 @@ carob_script <- function(path) {
 	    latitude=latitude,
 	    elevation = elevation)}
 	
-	d0 <- get_data("07CHTHTZIW2-1.xls",1,"Mexico", -98.8667, 19.5167, 2249)  
+	d0 <- get_data("07CHTHTZIW2-1.xls",1,"Mexico", -98.8529, 19.52889, 2249)  
 	d0$location <- "El Batan"
 	d0$planting_date <- "2007-04-03"
 	d0$harvest_date  <- "2007-10-25"
@@ -67,7 +69,7 @@ carob_script <- function(path) {
 	d2$planting_date <- "2007-05-27"
 	d2$harvest_date  <- "2007-09-04"
 	
-	d3 <- get_data("07CHTHTZIW10-1.xls",4,"Costa Rica", -96.6667, 19.35, 360)  
+	d3 <- get_data("07CHTHTZIW10-1.xls",4,"Costa Rica", -83.5105, 9.0748, 360)  
 	d3$location <- "Guagaral"
 	d3$planting_date <- "2007-05-09"
 	d3$harvest_date  <- "2007-09-12"
@@ -77,7 +79,7 @@ carob_script <- function(path) {
 	d4$planting_date <- "2007-05-15"
 	d4$harvest_date  <- "2007-09-12"
 	
-	d5 <- get_data("07CHTHTZIW13-1.xls",6,"Mexico", 103.85, 20.3667, 1546)  
+	d5 <- get_data("07CHTHTZIW13-1.xls",6,"Mexico", -103.85, 20.3667, 1546)  
 	d5$location <- "Poncitlan, Jalisco"
 	d5$planting_date <- "2007-06-20"
 	d5$harvest_date  <- "2007-12-21"
@@ -87,7 +89,8 @@ carob_script <- function(path) {
 	d6$planting_date <- "2007-05-15"
 	d6$harvest_date  <- "2007-10-20" 
 	
-	d7 <- get_data("07CHTHTZIW19.xls",8,"Mexico", -98.8667, 19.5167, 2249)  
+	
+	d7 <- get_data("07CHTHTZIW19.xls",8,"Mexico", -98.8529, 19.52889, 2249)  
 	d7$location <- "El Batan"
 	d7$planting_date <- "2007-05-03"
 	d7$harvest_date  <- "2007-11-14" 
@@ -107,10 +110,15 @@ carob_script <- function(path) {
 	d$yield_part = "grain"
 	d$is_survey <- FALSE
 	d$irrigated <- NA
+	d$geo_from_source <- FALSE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
 	d <- d[!is.na(d$yield), ]
-	carobiner::write_files(meta, d, path=path)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 
 

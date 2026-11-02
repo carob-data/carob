@@ -41,16 +41,16 @@ carob_script <- function(path) {
 	    asi = r$ASI,
 	    plant_height = r$PLHT,
 	    ear_height = r$E_HT,
-	    rlper = r$RL_PERC,
-	    slper = r$SL_PERC,
-	    husk = r$HC,
-	    p_asp = r$PL_ASP,
-	    e_asp = r$E_ASP,
+	    root_lodging = ifelse(is.na(r$RL_PERC), NA_character_, paste0(r$RL_PERC, "%")),
+
+	    stalk_lodging = ifelse(is.na(r$SL_PERC), NA_character_, paste0(r$SL_PERC, "%")),
+
+	    husk = as.character(r$HC),
+	    aspect = r$PL_ASP,
+	    ear_aspect = r$E_ASP,
 	    e_rot = r$E_rot,
-	    disease_severity = as.character(r$TURC6WAF),
-	    e_harv = r$E_HARV,
-	    p_harv = r$PHARV,
-	    moist = r$MOIST,
+	    blight = r$TURC6WAF,
+	    yield_moisture = r$MOIST,
 	    curv = r$CURV
 	     )
 	  
@@ -64,6 +64,7 @@ carob_script <- function(path) {
 	d5 <- process_data("Zaria_Uninfected.csv", 6)
 	
 	d <- rbind(d0, d1, d2, d3, d4, d5)
+	d$variety <- trimws(d$variety)
 	
 	#adding geo data
 	
@@ -119,7 +120,11 @@ carob_script <- function(path) {
 	d$plant_height[d$plant_height==1] <- NA
 	#d$plant_height[d$plant_height > 350] <- NA
 
-	carobiner::write_files(path, meta, d)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(path, meta, d, long=long)
 }
 
 

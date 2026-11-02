@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# K was not assigned because the cited fertilizer sentence gives N and P only.
+
 carob_script <- function(path) {
   
 "Adoption of agronomic practices based on zero tillage and residue retention is increasing, due to their potential for climate change adaptation and mitigation. Genotype by tillage interactions for yield are not well understood. Fourteen CIMMYT bread (Triticum aestivum) and durum (Triticum turgidum) wheat genotypes, created between 1964 and 2011, were tested for yield and agronomic performance at CIMMYT’s experimental station near Ciudad Obregon, Mexico, over nine years (harvest years 2010 to 2018). Treatments included conventional and permanent raised beds with full and reduced irrigation. The dataset contains data on wheat performance (days to emergence, flowering and maturity, plant height, harvest index, grain yield, thousand grain weight, test weight, NDVI), performance traits calculated from these data (e.g. number of grains per m2, number of grains per spike, grain production rate from flowering to maturity) and daily weather data during the study period (precipitation, maximum and minimum temperature). This is an updated version of a dataset published in Honsdorf et al. (2018), where we have added three more years of data (harvest years 2016, 2017 and 2018) and one additional bread wheat genotype, Borlaug 100 (created in 2011) that was tested only in the six last years of the experiment (harvest years 2013 to 2018). (2021-12-14)"
@@ -19,7 +22,7 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2023-02-06",
 		response_vars = "yield",
-		treatment_vars = "land_prep_method;irrigation"
+		treatment_vars = "land_prep_method;irrigation_fulfullment"
 	)
 	
 	f <- ff[basename(ff) == "PUB-201-DIB_2021-Data_2021-12-12_corrected.xlsx"]
@@ -54,12 +57,12 @@ carob_script <- function(path) {
 	treatname = c("Permanents beds, Full irrigation", "Permanents beds, Reduced irrigation", "Conventional tilled beds, Reduced irrigation", "Conventional tilled beds, Full irrigation")
 
 	d$treatment <- treatname[match(r2$syst, treatcode)]
- 	d$land_prep_method <- ifelse("PB" %in% r2$syst, "permanent beds", "conventional tilled beds")
+ 	d$land_prep_method <- ifelse(grepl("^PB", r2$syst), "permanent beds", "conventional tilled beds")
+	d$irrigation_fulfullment <- ifelse(grepl("FI$", r2$syst), "full irrigation", "reduced irrigation")
  
 	#From the publication :
 	# At the start of the season, 103 kg N ha−1 and 23 kg P ha−1 was applied as a band application in the center of the beds. At first node, the RI treatment received an additional 100 kg N ha−1 and the FI treatment received 175 kg N ha−1 banded in the furrow.
 
-	d$K_fertilizer <- 0
 	d$P_fertilizer <- 23
 	d$N_fertilizer <- 103
 	d$N_fertilizer[r2$syst =="PB-RI"] <- 203 
@@ -80,7 +83,7 @@ carob_script <- function(path) {
 	
 	d$yield_part <- "grain"
 	
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
 	d$irrigation_method <- "furrow"

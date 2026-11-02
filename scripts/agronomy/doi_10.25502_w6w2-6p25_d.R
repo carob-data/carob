@@ -28,7 +28,7 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, invented] Missing N, P, and K are set to 0 across a compilation. on_farm is FALSE for surveys and NA for everything else, so the experiments never become on_farm TRUE."
 	)
 	
 
@@ -119,7 +119,8 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       is_survey = grepl("Surveys", r$Data_source), 
       crop = "maize", 
       yield_part = "grain",
-      yield_moisture = as.numeric(NA), 
+      yield_moisture = as.numeric(NA),
+      yield_isfresh = NA, # yield does not say fresh or dry
       geo_from_source = TRUE,
       fertilizer_used = TRUE
    )	
@@ -170,13 +171,16 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 	   x <- trimws(substr(x, 1, nchar(x)-1))
 	   
 	   # Split into D M S (degrees, minutes, seconds)
+	   part_num <- function(z, missing = NA_real_) {
+		  if (length(z) == 0 || is.na(z[1]) || z[1] == "") return(missing)
+		  z <- z[1]
+		  if (!grepl("^-?\\d+(\\.\\d+)?$", z)) return(NA_real_)
+		  as.numeric(z)
+	   }
 	   parts <- strsplit(x, " ")
 	   result <- sapply(parts, function(p) {
 		  p <- p[p != ""]  # remove empty parts
-		  d <- as.numeric(p[1])
-		  m <- ifelse(length(p) >= 2, as.numeric(p[2]), 0)
-		  s <- ifelse(length(p) >= 3, as.numeric(p[3]), 0)
-		  d + m/60 + s/3600
+		  part_num(p[1]) + part_num(p[2], 0)/60 + part_num(p[3], 0)/3600
 	   })
 	   # Apply sign for South and West
 	   result[dir %in% c("S", "W")] <- -result[dir %in% c("S", "W")]
@@ -187,8 +191,8 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
 
 	# get long and lat in decimal
 
-	d$lon <- suppressWarnings(convert_to_decimal(x))
-	d$lat <- suppressWarnings(convert_to_decimal(y))
+	d$lon <- convert_to_decimal(x)
+	d$lat <- convert_to_decimal(y)
 
 	i <- !is.na(d$lon)
 	d$longitude[i] <- d$lon[i]

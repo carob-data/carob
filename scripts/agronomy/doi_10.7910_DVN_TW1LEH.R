@@ -3,7 +3,7 @@
 
 ## ISSUES
 
-#### The amount of NAFAKA+ and YARA fertilizer  applied is missing 
+#### The amount of NAFAKA+ and YARA fertilizer applied is missing, so product nutrient percentages are not used as rates. 
 
 
 carob_script <- function(path) {
@@ -30,7 +30,7 @@ The Africa RISING program adopts the mother-baby trial approach to test, validat
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, fertilizer] The P2O5 divisor is 2.26. geo_from_source is TRUE although every coordinate comes from a hard-coded village lookup."
 	)
 	
 
@@ -52,23 +52,16 @@ The Africa RISING program adopts the mother-baby trial approach to test, validat
 		on_farm = TRUE, 
 		is_survey = FALSE, 
 		yield_part = "grain", 
-		yield_moisture = as.numeric(NA), 
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # Yield..t.ha. does not say fresh or dry
 		irrigated = NA, 
 		geo_from_source = TRUE,
 		
-		## We consider: NAFAKA+ 9% N 18% P2O5 6%K20 25%Ca  5%S and 2%Mg from https://www.tfra.go.tz/uploads/documents/sw-1703173172-sw-1633535270-Final%20Register_Book%20English.pdf
-		##              YARA  as NPKMgSZn
-		N_fertilizer = ifelse(grepl("YARA",  trimws(r$Treatment_Fertilizer.Type)), 21, 
-		                ifelse(grepl("NAFAKA+", r$Treatment_Fertilizer.Type), 9, 0)),
-		
-		P_fertilizer = ifelse(grepl("YARA",  trimws(r$Treatment_Fertilizer.Type)), 7.48, 
-		                ifelse(grepl("NAFAKA+", r$Treatment_Fertilizer.Type), 18/2.26, 0)),
-		
-		K_fertilizer = ifelse(grepl("YARA",  trimws(r$Treatment_Fertilizer.Type)), 1.8, 
-		                ifelse(grepl("NAFAKA+", r$Treatment_Fertilizer.Type), 6/1.2051, 0)),
-		
-		S_fertilizer = ifelse(grepl("YARA",  trimws(r$Treatment_Fertilizer.Type)), 12, 
-		                ifelse(grepl("NAFAKA+", r$Treatment_Fertilizer.Type), 5, 0))
+		## Application amounts for NAFAKA+ and YARA are not in the file. Control is zero.
+		N_fertilizer = ifelse(grepl("YARA|NAFAKA\\+", r$Treatment_Fertilizer.Type), NA_real_, 0),
+		P_fertilizer = ifelse(grepl("YARA|NAFAKA\\+", r$Treatment_Fertilizer.Type), NA_real_, 0),
+		K_fertilizer = ifelse(grepl("YARA|NAFAKA\\+", r$Treatment_Fertilizer.Type), NA_real_, 0),
+		S_fertilizer = ifelse(grepl("YARA|NAFAKA\\+", r$Treatment_Fertilizer.Type), NA_real_, 0)
 		
 	)
 

@@ -27,7 +27,7 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is plot number plus community, one id per plot. K is 0 although the abstract says microdoses were applied as NPK."
 	)
 	
    ff <- ff[grepl("csv", basename(ff))]

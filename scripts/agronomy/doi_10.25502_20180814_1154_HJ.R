@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer"
+		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;Ca_fertilizer;Mg_fertilizer",
+		notes = "LLM-review: [low, metadata] trial_id is one id per village."
 	)
 	
 	f1 <- ff[tolower(basename(ff)) == "koloko_dt2009_field.csv"] # get Field dataset 
@@ -59,15 +60,15 @@ carob_script <- function(path) {
 	d$S_fertilizer <- ifelse(d$treatment=="NPK+MN", 5, 0)
 	d$Ca_fertilizer <- ifelse(d$treatment=="NPK+MN",10,0)
 	d$Mg_fertilizer <- ifelse(d$treatment=="NPK+MN",5,0)
-	d$N_splits <- ifelse(d$treatment > 0, 3L, 0L)
+	d$N_splits <- ifelse(d$N_fertilizer > 0, 3L, 0L)
 	
 	#Add columns 
 	d$OM_type <- NA
 	d$OM_used <- FALSE
 	
 	d$trial_id <- as.character(as.integer(as.factor(d$location)))
-	d$OM_type[grepl("+MN",d$treatment)] <- "farmyard manure"
-	d$OM_used[grepl("farmyard manure",d$OM_type)] <- TRUE
+	d$OM_type[grepl("Manure", d$treatment)] <- "farmyard manure"
+	d$OM_used[grepl("Manure", d$treatment)] <- TRUE
 	# previous crop name normalization 
 
 	p <- carobiner::fix_name(d$previous_crop,"lower")

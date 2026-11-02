@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Omission-trial N, P, and K rates are not in the files (treatments are Control, PK, NK, NP, NPK, and hNPK). Previous-season fertilizer was not copied onto the plots.
 
 carob_script <- function(path) {
 
@@ -21,9 +22,9 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		project = NA,
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		treatment_vars = "treatment",
 	    response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, yield] Total N in percent is stored in extractable soil_N (times 10000). That column is soil_N_total. yield_isfresh is TRUE while yield is fixed at 14 percent moisture. [low, metadata] trial_id is 1 for all 22 fields. Every row gets the same OM_type and fertilizer_type lists.",
 		carob_contributor = "Mitchelle Njukuya",
 		carob_date = "2026-08-30",
 	    carob_completion = 100,	
@@ -126,9 +127,6 @@ The objective of the EiA SAA Nigeria Use Case is to combine 3 fertilizer recomme
 		farmland = r4$Farm_Size_ha_E1,
 		OM_type = "farmyard manure; poultry manure; cattle dung; sewage sludge; compost",
 		fertilizer_type = "NPK; DAP; KCl; SSP; urea",
-		N_fertilizer = r4$N_kg_per_ha_E1,
-		P_fertilizer = r4$P2O5_kg_per_ha_E1/2.29,
-		K_fertilizer = r4$K2O_kg_per_ha_E1/1.2051,
 		previous_crop_residue_management = r4$Crop_Residue_MGT_E1
 	)
 	

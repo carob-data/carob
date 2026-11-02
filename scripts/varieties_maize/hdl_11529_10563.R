@@ -29,7 +29,7 @@ carob_script <- function(path) {
     r <-r[22:38,2:42]
     
     d <- data.frame( 
-      trial_id = id,
+      trial_id = as.character(id),
       crop = "maize",
       
       on_farm = TRUE,
@@ -42,14 +42,16 @@ carob_script <- function(path) {
       asi=as.numeric(r$ASI),
       plant_height=as.numeric(r$PlantHeightCm),
       ear_height = as.numeric(r$EarHeightCm),
-      rlper = as.numeric(r$RootLodgingPer),
-      slper = as.numeric(r$StemLodgingPer),
-      husk = as.numeric(r$BadHuskCoverPer),
-      e_rot = as.numeric(r$EarRotTotalPer),
-      moist = as.numeric (r$GrainMoisturePer),
+      root_lodging = ifelse(is.na(as.numeric(r$RootLodgingPer)), NA_character_, paste0(as.numeric(r$RootLodgingPer), "%")),
+
+      stalk_lodging = ifelse(is.na(as.numeric(r$StemLodgingPer)), NA_character_, paste0(as.numeric(r$StemLodgingPer), "%")),
+
+      husk = as.character(as.numeric(r$BadHuskCoverPer)),
+      e_rot = r$EarRotTotalPer,
+      yield_moisture = as.numeric (r$GrainMoisturePer),
 #      plant_density = as.numeric(r$PlantStand_NumPerPlot),
-      e_asp = as.numeric(r$EarAspect1_5),
-      p_asp = as.numeric(r$PlantAspect1_5),
+      ear_aspect = as.numeric(r$EarAspect1_5),
+      aspect = as.numeric(r$PlantAspect1_5),
       gls = r$GrayLeafSpot1_5,
       rust = r$CommonRust1_5,
       blight = r$LeafBlightTurcicum1_5,
@@ -58,7 +60,7 @@ carob_script <- function(path) {
       latitude=latitude,
       elevation = elevation)}
   
-  d0 <- get_data("06CHTTEY10-1.xls",1,"Bolivia", -63.15, 17.7667, 398)  
+  d0 <- get_data("06CHTTEY10-1.xls",1,"Bolivia", -63.15, -17.7667, 398)  
   d0$location <- "El Vallecito"
   d0$planting_date <- "2006-12-06"
   d0$harvest_date  <- "2007-03-18"
@@ -78,9 +80,14 @@ carob_script <- function(path) {
 	d$irrigated <- FALSE
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$geo_from_source <- FALSE
+	d <- d[!is.na(d$yield) & !is.na(d$variety) & trimws(d$variety) != "", ]
 
-  
-  carobiner::write_files(meta, d, path=path)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 
 

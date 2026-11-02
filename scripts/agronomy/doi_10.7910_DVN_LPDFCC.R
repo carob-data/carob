@@ -23,7 +23,8 @@ carob_script <- function(path) {
       treatment_vars = "intercrops;variety", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-07-02"
+      carob_date = "2024-07-02",
+      notes = "LLM-review: [low, forbidden] na.omit drops any row with an NA. Rows are then deduplicated after dropping missing yield, which can delete real replicates. Cob weight is stored as grain. trial_id is 1 across 3 districts and 7 villages. planting_date 2019 has no source. Fertilizer columns are NA placeholders."
    )
    
    ff <- ff[grep("\\.csv$", basename(ff))]

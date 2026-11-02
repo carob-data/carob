@@ -20,7 +20,8 @@ carob_script <- function(path) {
 		treatment_vars = "season;land_prep_method;crop_rotation;OM_used", 
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
-		carob_date = "2024-06-24"
+		carob_date = "2024-06-24",
+		notes = "LLM-review: [medium, metadata] trial_id is the plot number, so sites and years collide or split on plot id."
 	)
 	
 

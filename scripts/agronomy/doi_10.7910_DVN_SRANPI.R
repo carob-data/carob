@@ -2,7 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+# Paddy yield fresh or dry basis is not stated.
+# Wet-season irrigation is not stated; dry-season rice is irrigated.
 
 carob_script <- function(path) {
 
@@ -53,7 +54,7 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	  Zn_fertilizer= r$zinc_applied_kg_ha,
 	  gypsum = r$gypsum_applied_kg_ha,
 	  yield= r$paddy_yield_t_ha*1000,
-	  trial_id = paste(r$site,r$treatment_name,sep = "-")
+	  trial_id = paste(r$site, r$farmer, r$year, r$season, sep = "-")
 	)
 	
 	fert_type <- c(
@@ -73,17 +74,17 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	d$fertilizer_type <- fert_type[d$treatment]
 	d$fertilizer_used <- !(d$K_fertilizer == 0 & d$N_fertilizer == 0 & d$P_fertilizer == 0) #No application of fertilizer for experiments with K_fertilizer = N_fertilizer = P_fertilizer == 0
 	d$season <- ifelse(d$season=="DS","dry","wet")
+	est <- is.na(d$latitude) | is.na(d$longitude)
 	d$latitude[is.na(d$latitude) & d$location == "Thilène"] <- 16.2712
 	d$longitude[is.na(d$longitude) & d$location == "Thilène"] <- -16.1629
-	 
 	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- FALSE
-	d$geo_from_source <- TRUE
+	d$irrigated <- ifelse(d$season == "dry", TRUE, NA)
+	d$geo_from_source <- !est
 	d$yield_part <- "grain"
 	d$yield_moisture <- NA_real_
-	d$yield_isfresh <- TRUE
+	d$yield_isfresh <- NA
 	
 	carobiner::write_files(path, meta, d)
 }

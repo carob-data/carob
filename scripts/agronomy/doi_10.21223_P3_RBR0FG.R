@@ -1,6 +1,10 @@
 # R script for "carob"
 
 
+## ISSUES
+## The plot file only codes Control and Rotation, so the rice and sweetpotato sequences are not assigned.
+## The description is the Agoro scheme. NaCRRI coordinates near Kampala were removed because the file has no coordinates.
+
 carob_script <- function(path) {
    
 "In the Agoro improved irrigation scheme, the existing practice is that paddy rice fields are alternated with fallow period of about 5 months before planting is resumed. During the fallow periods, there is prolific re-growth of mixed weeds, grasses and shrubs which become part of local grazing pastures during the dry season. However, this re-grown vegetation also significantly increases the work required to prepare the land again for rice the next season. A rotation of rice-sweetpotato-rice might ease field management for both crops, reduce the costs of rice production as well as provide early planting material for sweetpotato upland growing. A study was initiated in Agoro rice scheme during the 1st season of 2016 to determine the effect of sweetpotato-rice seed crop rotation on rice seed purity, sweetpotato pest and disease prevalence, sweetpotato root and vine yield, and the cost-benefit ratio of different rotation options for providing basic seed in a timely manner to sweetpotato vine multipliers. Treatments included crop rotations of sweetpotato-rice–sweetpotato; rice-sweetpotato-rice; rice-rice-rice and sweetpotato-sweetpotato-sweetpotato. The study was set up using Randomised Complete Block Design (RCBD) with four replicates with sweetpotato varieties NASPOT 11 (Cream fleshed), NASPOT 10 and Ejumula (both orange fleshed) and rice varieties New WITA 9, Okile and Komboka. Data were collected on incidence and severity of SPVD and Alternaria blight, weevil infestation, plant vigour, root and vine weight (for sweetpotato), plant height, number of productive tillers, flowering, grain yield and rice biomass dry weight at harvest (for rice). (2016)"
@@ -40,8 +44,8 @@ carob_script <- function(path) {
          disease_severity= as.character(r$`ALT1, AS1`),
          virus_severity=  as.character(r$SPVD),
          severity_scale= "1-9",
-         crop_rotation= ifelse(grepl("Control", r$Treatment), "none", "rice"),
-         location= "NaCRRI",
+         crop_rotation= ifelse(grepl("Control", r$Treatment), "none", NA),
+         location= "Agoro",
          planting_date= gsub("A|B", "", r$Season),
          trial_id= r$Season
       )
@@ -49,8 +53,6 @@ carob_script <- function(path) {
    
    d$country <- "Uganda"
    d$crop <- "sweetpotato"
-   d$longitude <- 32.61234
-   d$latitude <- 0.528956
    d$geo_from_source <- FALSE
    d$on_farm <- TRUE
    d$irrigated <- NA

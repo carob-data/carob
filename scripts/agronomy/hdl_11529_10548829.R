@@ -21,7 +21,8 @@ carob_script <- function(path) {
 		carob_date="2023-09-17",
 		carob_modified_by = "Effie Ochieng'",
 		treatment_vars = NA,
-		response_vars = "yield"
+		response_vars = "yield",
+		notes = "LLM-review: [medium, metadata] trial_id is the row number plus treatment. on_farm is TRUE at the stations. adm1 is Mashonaland_east."
 	)
 
  # path <- ("C:/carob/wd/data/raw/maize_trials")

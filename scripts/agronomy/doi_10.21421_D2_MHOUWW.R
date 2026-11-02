@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# The workbook has no harvest date. 2018-03-20 is the end of the Dataverse time period and collection period.
+
 
 carob_script <- function(path) {
    
@@ -18,7 +21,8 @@ carob_script <- function(path) {
 		treatment_vars = "variety;intercrops", 
 		carob_contributor = "Cedric Ngakou", 
 		carob_effort = NA,
-		carob_date = "2024-08-27"
+		carob_date = "2024-08-27",
+		notes = "LLM-review: [medium, crop] The pigeonpea variety comparison is reduced to pigeon pea versus none. yield_part is grain for groundnut. adm1 is Central Region, which is not the GADM name."
 	)
 
 	f <- ff[grep(".xlsx", basename(ff))]
@@ -32,12 +36,12 @@ carob_script <- function(path) {
 			variety= r$`Groundnut variety`,
 			plot_area= r$`plot size`,
 			plant_height= r$`Plant height`,
-			disease_incidence= r$DI,
+			disease_incidence= as.character(r$DI), # percent
 			disease_severity= as.character(r$DS),
 			fwy_total= r$FBH,
 			intercrops= ifelse(grepl("no intercrop",r$`Pigeopea intercrop variety`),"none","pigeon pea"),
 			crop= "groundnut",
-			seed_weight= (r$SM*r$`plot size`)/1000 # 1000 seed in g 
+			seed_weight= r$SM # 1000-seed weight in g 
 		)
 	
 		r1 <- carobiner::read.excel(f,  sheet = "Intercropping")
@@ -63,6 +67,7 @@ carob_script <- function(path) {
 	d$latitude <- -13.9788154
 	d$geo_from_source <- FALSE
 	d$planting_date <- "2018"
+	d$harvest_date <- "2018-03-20"
 	d$trial_id <- "1"
 	d$irrigated <- NA
 	d$on_farm <- FALSE

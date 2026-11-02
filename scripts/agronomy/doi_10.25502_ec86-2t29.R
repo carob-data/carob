@@ -19,7 +19,7 @@ carob_script <- function(path) {
     carob_contributor= "Mitchelle Njukuya",
     carob_effort = NA,
     carob_date="2024-03-19",
-    notes="Need to clarify the intercropping with banana situation" 
+    notes="Need to clarify the intercropping with banana situation LLM-review: [medium, dropped] Yield is replaced using an assumed 2 m plot length, and yield above 25000 is set to NA. treatment_vars includes fertilizer and weeding dates, listed twice." 
   )
   
   f <- ff[basename(ff) == "data_table.csv"]
@@ -84,9 +84,12 @@ carob_script <- function(path) {
   
   # EGB:
   # # According to N2A protocols and dataset specifications
+  # Same treatment map as doi_10.25502_6h5e-q472: 1-2 are zero P; 3-6 receive P; 4-6 also receive K
   d$N_fertilizer <- 0
-  d$P_fertilizer <- 10 * 0.1923 
+  d$P_fertilizer <- 0
+  d$P_fertilizer[d$treatment %in% c("treatment3", "treatment4", "treatment5", "treatment6")] <- 10 * 0.1923
   d$K_fertilizer <- 0
+  d$K_fertilizer[d$treatment %in% c("treatment4", "treatment5", "treatment6")] <- 30 * 0.498
   
   d$OM_type <- carobiner::replace_values(d$OM_type, "farmyard_manure", "farmyard manure")
   ## for all? ... Yes

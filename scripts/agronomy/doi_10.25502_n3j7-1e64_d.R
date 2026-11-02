@@ -34,7 +34,7 @@ Results from this project showed that with appropriate weed management couple wi
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] Same pattern: treatment_vars is herbicide_used, trial_id is the plot id, and N/P/K are left NA."
 	)
 	
 

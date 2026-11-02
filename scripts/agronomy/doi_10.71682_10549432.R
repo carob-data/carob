@@ -47,7 +47,7 @@ ownership, maintenance, and operating cost of each tool.
 		data_type = "on-farm experiment",
 		treatment_vars = "weeding_method",
 		response_vars = "weed_density; weeding_cost",
-		notes = NA,
+		notes = "LLM-review: [medium, invented] yield, yield_part, and N/P/K are filled with NA as placeholders, and the yield sheet is commented out with no note. Weeding cost uses assumed diesel and wage figures that are not measurements.",
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-24",
 		carob_completion = 60,
@@ -97,6 +97,7 @@ ownership, maintenance, and operating cost of each tool.
   )
 
   d3b$record_id <- 1:nrow(d3b)
+  d3b$trial_id <- r3b$Site
   #Manually searched for El Armadillo and Tierra Blanca as geo-code was off.
   geo <- data.frame(
     location = c("El Armadillo", "Tierra Blanca", "Guelache", "Puerto Arturo", "Tixmehuac", "Tlanichico"),
@@ -156,7 +157,6 @@ ownership, maintenance, and operating cost of each tool.
 
   d <- merge(d3b, d4b, by = c("adm1","location","weeding_method","weeding_pass"), all.x = TRUE)
   
-  d$trial_id <- r3b$Site
   d$on_farm <- TRUE
   d$is_survey <- FALSE
   d$crop <- "maize"

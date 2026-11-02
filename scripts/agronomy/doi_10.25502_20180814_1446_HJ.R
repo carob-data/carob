@@ -56,11 +56,8 @@ carob_script <- function(path) {
 		trial_id = gsub("Sidi2010a", "", r$FieldID),
 		yield_part = "grain",
 		plant_height = r$Plant.height..cm.,
-		dmy_storage = r$Grn_yld_adj * 1000
+		yield = r$Grn_yld_adj * 1000 # Grn_yld_adj is already t/ha
 	)
-
-	# fresh weight
-	d$yield <- d$dmy_storage / 0.85
 
 	##### Fertilizers #####
 	# according to https://www.sciencedirect.com/science/article/pii/S0167880916302584
@@ -78,7 +75,7 @@ carob_script <- function(path) {
 	d$lime[r$TrtDesc == "NPK+Lime"] <- 500
 	d$OM_amount <- 0
 	d$OM_amount[r$TrtDesc == "NPK+Manure"] <- 10 * 1000
-	d$OM_used <- d$OM_amount == 500
+	d$OM_used <- d$OM_amount > 0
 	d$OM_type <- NA
 	d$OM_type[r$TrtDesc == "NPK+Manure"] <- "farmyard manure"
 
@@ -92,7 +89,7 @@ carob_script <- function(path) {
 	
 
 	r$CobFW[r$CobFW == "."] <- NA
-	d$fwy_residue <- 10000 * r$TStoverYld / r$Harea
+	d$fwy_residue <- r$TStoverYld * 1000 # TStoverYld is already t/ha
 	
 	d$seed_weight <- r$X100GrainDW * 10 # Adjusting to 1000 grains
 	d$seed_weight[d$seed_weight == 0] <- NA

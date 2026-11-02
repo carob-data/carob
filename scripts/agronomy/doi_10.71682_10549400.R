@@ -40,7 +40,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, crop] trial_id has no year, so both seasons share an id. yield_part is grain after beans have been renamed to common bean. data_type is experiment for on-farm lime trials."
 	)
 	
 

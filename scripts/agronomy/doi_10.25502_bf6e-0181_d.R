@@ -78,6 +78,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		is_survey = FALSE,
 		irrigated = NA,
 		yield_moisture = as.numeric(NA),
+		yield_isfresh = TRUE, # FW_StorageRoot is fresh weight
 		trial_id = paste(r1$Village, r1$ID, sep = "-")
 	)
 	

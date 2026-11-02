@@ -21,7 +21,7 @@ carob_script <- function(path) {
          carob_effort = NA,
          carob_date="2025-06-02",
          carob_completion=75,
-         notes="The Encyclo.csv file has not been processed as it does not contain useful information."
+         notes="The Encyclo.csv file has not been processed as it does not contain useful information. LLM-review: [medium, treatment] The contrast is cover crop versus fallow, but treatment_vars are N, P, and tillage. plot_area stores hectares in an m2 column. No-till becomes minimum tillage. Soil organic carbon and total N stay in g/kg. yield_part is none. on_farm is TRUE for every study. Locations that miss the country list are stored as the country name. Rows with no coordinates and rows with no crop are deleted."
    )
    
    f1 <- ff[basename(ff) == "study.csv"]

@@ -17,7 +17,8 @@ carob_script <- function(path) {
 		carob_date="2023-04-04",
 		data_type="experiment",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;lime"
+		treatment_vars = "N_fertilizer;K_fertilizer;P_fertilizer;Zn_fertilizer;S_fertilizer;lime",
+		notes = "LLM-review: [medium, dates] Planting 2015-12-29 and harvest 2016-06-01 are hard-coded for the Kasungu trial."
     )
 
 	f1 <- ff[tolower(basename(ff)) == "kasungu_dt2011_field.csv"]
@@ -54,7 +55,8 @@ carob_script <- function(path) {
 	d$OM_type[!is.na(d$OM_type)] <- "farmyard manure"
 	d$OM_used <- !is.na(d$OM_type)
 
-	d$yield <- d$yield*1000 # kg/ha
+	d$yield <- d$yield*1000 # t/ha to kg/ha
+	d$fwy_residue <- d$fwy_residue*1000 # t/ha, same scale as grain
 
 	# fix name 
 	p <- carobiner::fix_name(d$previous_crop)
@@ -78,20 +80,21 @@ carob_script <- function(path) {
 	##### Fertilizers #####
 	# fertilizer application partly extracted from 10.1016/j.agee.2016.05.012 
 
+	# A leading 0, as in 0N or 0P, is a real zero rate. Unnumbered N/P/K codes stay at the trial rates.
 	d$N_fertilizer <- 0
-	d$N_fertilizer[grepl("N", d$treatment)] <- 100 
-	d$N_fertilizer[grepl("45N", d$treatment)] <- 45 
-	d$N_fertilizer[grepl("90N", d$treatment)] <- 90 
-	d$N_fertilizer[grepl("120N", d$treatment)] <- 120 
-	d$N_fertilizer[grepl("150N", d$treatment)] <- 150
+	i <- grepl("\\d+N", d$treatment)
+	d$N_fertilizer[i] <- as.numeric(sub(".*?(\\d+)N.*", "\\1", d$treatment[i]))
+	d$N_fertilizer[!i & grepl("N", d$treatment)] <- 100
 
 	d$K_fertilizer <- 0
-	d$K_fertilizer[grepl("K", d$treatment)] <- 60 
-	
+	i <- grepl("\\d+K", d$treatment)
+	d$K_fertilizer[i] <- as.numeric(sub(".*?(\\d+)K.*", "\\1", d$treatment[i]))
+	d$K_fertilizer[!i & grepl("K", d$treatment)] <- 60
+
 	d$P_fertilizer <- 0
-	d$P_fertilizer[grepl("P", d$treatment)] <- 30
-	d$P_fertilizer[grepl("15P", d$treatment)] <- 15
-	d$P_fertilizer[grepl("40P", d$treatment)] <- 40
+	i <- grepl("\\d+P", d$treatment)
+	d$P_fertilizer[i] <- as.numeric(sub(".*?(\\d+)P.*", "\\1", d$treatment[i]))
+	d$P_fertilizer[!i & grepl("P", d$treatment)] <- 30
 							
 	d$Zn_fertilizer <- ifelse(d$treatment=="NPK+Mn", 3, 0)						
 	d$S_fertilizer <- ifelse(d$treatment=="NPK+Mn", 5, 0)

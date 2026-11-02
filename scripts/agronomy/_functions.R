@@ -1,15 +1,17 @@
 
 get_elements_from_product <- function(fertab, products) {
-	used <- unique(products) |> strsplit("; ") |> unlist() |> na.omit() |> unique() 	
-	stopifnot(!all(fertab$name %in% used))
+	parts <- strsplit(products, "; ", fixed = TRUE)
+	used <- unique(unlist(parts))
+	used <- used[!is.na(used)]
+	stopifnot(all(fertab$name %in% used))
 	fertab <- fertab[fertab$name %in% used, c("name", "N", "P", "K", "S")]
 	fmat <- as.matrix(fertab[,-1]) / 100
 	out <- matrix(0, ncol=4, nrow=length(products))
 	colnames(out) <- paste0(c("N", "P", "K", "S"), "_fertilizer")
 	for (fertilizer in used) {
-		f <- fmat[fertab$name==fertilizer, ]		
+		f <- fmat[fertab$name==fertilizer, ]
 		stopifnot(!any(is.na(f)))
-		i <- grep(fertilizer, products)
+		i <- which(vapply(parts, function(p) isTRUE(any(p == fertilizer)), logical(1)))
 		out[i, ] <- out[i, ] + rep(f, each=length(i))
 	}
 	out[is.na(products)] <- NA
@@ -87,7 +89,7 @@ IRRI_LTE <- function(f, path) {
 	x$Zn_fertilizer <- 5
 #	x$fertilizer_type <- "ZnSO4"
 	
-	x$plant_density <- 250000 # 20x20 cm hills, each with three plants
+	x$plant_density <- 750000 # 20x20 cm hills, three plants per hill
 	x$transplanting_days <- 14
 	x$herbicide_used <- TRUE
 	
@@ -100,7 +102,6 @@ IRRI_LTE <- function(f, path) {
 
 	x$season <- c("dry", "early wet", "late wet")[i]
 
-	x <- x[!is.na(x$yield), ]
 	x$yield_isfresh <- NA
 	x$yield_moisture <- as.numeric(NA) 
 	

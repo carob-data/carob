@@ -78,7 +78,6 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d$inoculated <- ifelse(d$main_treatment == "inoculated",TRUE,FALSE)
 	d$plant_density <- round((10000*d$no_plants_harvest_plot)/d$plot_area_harvest)
 	d$seed_weight <- d$dry_weight_100_seeds*10 # converting to g per 1000 seeds
-	d <- d[d$yield > 0,]
 
 	d <- d[,c("experiment_id","rep","variety","planting_date","harvest_date","treatment","fertilizer_type","inoculated","plant_density","seed_weight","dmy_roots","dmy_total","fwy_residue","yield")]
 
@@ -118,15 +117,12 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d4 <- Reduce(function(...) merge(..., all=T), list(d,d1,d2))
 	names(d4)[1] <- "trial_id"
 	d4$on_farm <- TRUE
-	d4 <- d4[complete.cases(d4$yield), ]
-
 	# Fertilizer rates: TSP and DAP will be applied using a uniform rate of 30 kg P per hectare; KCl at 30 kg K/ha 
 	# and Urea split (50-50) applied at a rate of 60 kg N/ha in Kenya and Rwanda trials
 
 	d4$N_fertilizer <- ifelse(grepl("urea", d4$fertilizer_type), 60, 0)
-	# Since DAP was applied at a rate of 30 kg P per hectare, we only know the amount of phosphorus applied, 
-	# hence we calculate total amount of DAP whose composition in 18:46:0
-	tot_DAP <- 30/0.46
+	# 30 kg elemental P/ha. DAP is 18% N and 46% P2O5, so product = P * 2.29 / 0.46
+	tot_DAP <- 30 * 2.29 / 0.46
 	d4$N_fertilizer <- ifelse(d4$fertilizer_type == "DAP",tot_DAP*0.18,d4$N_fertilizer)
 	d4$P_fertilizer <- ifelse(grepl("TSP", d4$fertilizer_type), 30, 0)
 	d4$P_fertilizer[d4$fertilizer_type=="DAP"] <- 30

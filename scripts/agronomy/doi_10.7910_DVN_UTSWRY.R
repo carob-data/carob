@@ -62,13 +62,16 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
 	fert <- data.frame(do.call(rbind, fert))
 	fert <- sapply(fert, as.numeric)
 	d$N_fertilizer <- fert[,1] * .10 + fert[,2] * .46 
-	d$P_fertilizer <- fert[,1] * .20
-	d$K_fertilizer <- fert[,1] * .10	
+	d$P_fertilizer <- fert[,1] * .20 / 2.29
+	d$K_fertilizer <- fert[,1] * .10 / 1.2051
   
 	d$fertilizer_type <- "none"
 	d$fertilizer_type[fert[,1] > 0] <- "D-compound"
 	d$fertilizer_type[fert[,2] > 0] <- paste0(d$fertilizer_type[fert[,2] > 0], ";urea")
-  
+
+	d$land_prep_method <- "direct seeding"
+	d$land_prep_method[grepl("^CP", d$treatment)] <- "conventional"
+	d$land_prep_method[grepl("^RI", d$treatment)] <- "ripping"
   
   d$is_survey <- FALSE
   d$on_farm <- TRUE
@@ -90,8 +93,7 @@ Animal traction (AT) ripline seeding with maize rotated with legumes"
  
 	d <- merge(d, geo, by="adm2", all.x=TRUE)
   
-  	d$irrigated <- FALSE
-	d <- d[!is.na(d$yield), ]
+  	d$irrigated <- NA
 
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

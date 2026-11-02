@@ -2,6 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# The 0-5 and 5-15 cm bulk densities were not combined, because their sum is not a bulk density.
+# N, P, and K rates are not in the data, so they were not assigned.
 
 carob_script <- function(path) {
 
@@ -55,7 +57,6 @@ An experiment initiated in 1996 in the highlands of the state of San Luis PotosÃ
 	soil_phys <- data.frame(
 	  treatment=s_phys$Treatment,
 	  rep=s_phys$Repetition,
-	  soil_bd=(s_phys$`Bulk Density 0-5 cm (g/cm3)`+s_phys$`Bulk Density 5-15 cm (g/cm3)`),
 	  previous_crop_residue_perc=s_phys$`Residue cover (%)`)
 
 	d <- merge(d, soil_phys, by = c("treatment", "rep"), all.x = TRUE)
@@ -79,7 +80,8 @@ An experiment initiated in 1996 in the highlands of the state of San Luis PotosÃ
 	  soil_Cu=s_chem$`Copper (ppm)`,
 	  soil_B=s_chem$`Boron (ppm)`,
 	  soil_S=s_chem$`Sulphur (ppm)`,
-	  soil_EC=s_chem$`Electric conductivity (ds/m)`)
+	  soil_EC=s_chem$`Electric conductivity (ds/m)`,
+	  soil_P=ifelse(!is.na(s_chem$`Phosphorous Bray (ppm)`), s_chem$`Phosphorous Bray (ppm)`, s_chem$`Phosphorous Olsen (ppm)`))
 	
 	d <- merge(d, soil_chem, by = c("treatment", "rep"), all.x = TRUE)
 	d$land_prep_method <- d$treatment
@@ -87,7 +89,6 @@ An experiment initiated in 1996 in the highlands of the state of San Luis PotosÃ
 	d$land_prep_method <- gsub("^P\\+D$", "conventional",   d$land_prep_method)	
 	d$land_prep_method<- gsub("PB0%|PB100%|PB33%|PB66%","wide permanent beds",d$land_prep_method)
 	d$land_prep_method<- gsub("^D$","minimum tillage",d$land_prep_method)
-	d$soil_P <- ifelse(!is.na(s_chem$`Phosphorous Bray (ppm)`), s_chem$`Phosphorous Bray (ppm)`, s_chem$`Phosphorous Olsen (ppm)`)
 	d$location <- "San Luis Experiment Station"
 	d$country<- "Mexico"
 	d$longitude <- -100.849075
@@ -101,12 +102,8 @@ An experiment initiated in 1996 in the highlands of the state of San Luis PotosÃ
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
 	d$geo_from_source <- TRUE
-  d$P_fertilizer <- 140
-  d$K_fertilizer <- 0
-  d$N_fertilizer <- 280
-  d$S_fertilizer <- d$lime <- as.numeric(NA)
-	d$yield_part <- "grain"
-	d$yield_moisture <- ifelse(d$crop =="maize",14,70)
+	d$yield_part <- ifelse(d$crop == "oats", "aboveground biomass", "grain")
+	d$yield_moisture <- ifelse(d$crop == "maize", 14, NA)
 
 	carobiner::write_files(path, meta, d)
 }

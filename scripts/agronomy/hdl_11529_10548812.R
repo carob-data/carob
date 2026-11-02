@@ -26,7 +26,7 @@ This experiments were established with different rates of nitrogen in order to g
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-17",
-		notes = NA, 
+		notes = "LLM-review: [medium, invented] N, P, and K are NA for every row.", 
 		design = NA
 	)
 	

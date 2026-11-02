@@ -1,6 +1,9 @@
 # R script for "carob"
 
 
+## ISSUES
+# DMRoots is root dry matter (g/m2) and is stored as dmy_roots. Fresh root yield is not in the file.
+
 carob_script <- function(path) {
    
 "The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yield and quality, and cassava supply to the processing sector. The project has 6 use cases of which best planting practices (BPP) is one. BPP is focusing on guiding farmers in choosing best-suited planting practices for cassava, with a focus on tillage operations and in close relation with improved weed control recommendations."
@@ -18,7 +21,8 @@ carob_script <- function(path) {
       treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer; Mn_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date="2024-11-22"
+      carob_date="2024-11-22",
+      notes = "LLM-review: [low, coordinates] Locations are state codes with state-centroid coordinates and no geo_uncertainty."
    )
    
    f <- ff[grep("DMYield_.2016_2017.csv", tolower(basename(ff)), ignore.case=TRUE)]
@@ -38,7 +42,7 @@ carob_script <- function(path) {
       Mn_fertilizer= r$Mn_application_kg_ha,
       dmy_leaves= r$DMLeaves_g_m2*10,
       dmy_stems= r$Dmstems_g_m2*10,
-      yield= r$DMRoots_g_m2*10,
+      dmy_roots= r$DMRoots_g_m2*10, # g/m2 dry roots -> kg/ha
       crop= "cassava"
    )
    yield_part = "roots"
@@ -64,9 +68,6 @@ carob_script <- function(path) {
    
    d <- merge(d, geo, by="location", all.x = TRUE)
    
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
  carobiner::write_files(path, meta, d)
  
 }

@@ -265,6 +265,8 @@ process_cowpea <- function(ff) {
 
 	if (!"yield" %in% names(d)) d$yield <- NA_real_
 	d$yield[d$yield < 0] <- NA
+	d$yield_moisture <- NA
+	d$yield_isfresh <- NA
 	d
 }
 

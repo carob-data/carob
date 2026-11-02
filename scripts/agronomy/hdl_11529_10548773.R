@@ -40,11 +40,12 @@ carob_script <- function(path) {
 	d <- data.frame(
 		treatment = x$Treatment,
 		rep = x$rep,
-		yield = as.numeric(x$`Biological yield (t/ha)`) * 1000,
+		dmy_total = as.numeric(x$`Biological yield (t/ha)`) * 1000,
 		harvest_index = as.numeric(x$`Harvest index (%)`),
 		grain_N = as.numeric(x$`N grain content (%) at harvest`) * 10,
 		residue_N = as.numeric(x$`N straw content (%) at harvest`) * 10
 	)
+	d$yield <- d$dmy_total * d$harvest_index / 100
  
 	d$variety <- "PR 126" 
 	d$plot_length <- 25

@@ -28,7 +28,7 @@ This database comprises grain and nutritional yield data from on-farm trials imp
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] No-till becomes none. data_type is experiment while is_survey is TRUE for every non-demo plot. After the cereal and legume reshape, rows with missing yield are dropped, including a real zero stored as missing. Several village coordinates fall outside Dedza and Mzimba. yield_part stays grain for the legumes. trial_id has no year."
 	)
 	
 

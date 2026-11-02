@@ -21,7 +21,7 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2025-06-12",
 		carob_completion=75,
-		notes=NA
+		notes="LLM-review: [medium, yield] Grain yield in Mg is multiplied by 1000, but grain, vegetative, and total dry matter are not. If those are also Mg/ha they are 1000 times low. Tillage other than ridge or conventional becomes minimum tillage, which is where no-till goes. on_farm is TRUE."
    )
    
    f <- ff[basename(ff) == "Nebr_HiYieldCornNPKS_Feb_2021.xls"]

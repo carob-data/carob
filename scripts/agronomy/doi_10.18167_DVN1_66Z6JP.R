@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+## Crop Pro. & Cum GHG emissions has no yield column. Yield_scaled_CH4_kg_ha times cumulative methane was removed.
 
 
 carob_script <- function(path) {
@@ -30,7 +31,7 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 		response_vars = "yield;soil_N2O;soil_CH4", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, other] On the 0-20 cm sheet depth_top is 20 and depth_bottom is 0, so the layer bounds are reversed. [medium, dropped] The daily gas sheet is averaged to one value per plot, and the cover-crop sheet is never used and is not listed under NOT PROCESSED. [low, metadata] The whole 2022-2024 Bos Khnor station trial is trial_id 1 and on_farm TRUE."
 	)
 	
 
@@ -93,7 +94,6 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 	   treatment = r5$`Treatment ID`,
 	   rep = as.integer(r5$Replicate),
 	   N_fertilizer = r5$Cum_N_input_kg_ha_yr,
-	   yield = r5$Yield_scaled_CH4_kg_ha*r5$Cum_CH4_g_ha,
 	   land_prep_method = ifelse(grepl("CTM", r5$`Treatment ID`), "conventional", "none") ,
 	   
 	   crop_rotation = ifelse(grepl("NTR-Cs", r5$`Treatment ID`), "cassava;maize", 
@@ -110,6 +110,7 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 	   is_survey = FALSE, 
 	   yield_part = ifelse(grepl("Maize", r5$Main_crop), "grain", "tubers"), 
 	   yield_moisture = as.numeric(NA),
+	   yield_isfresh = NA, # Yield_scaled_CH4_kg_ha does not say fresh or dry
 	   irrigated = NA, 
 	   geo_from_source = FALSE
 	)
@@ -117,8 +118,6 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 	 	### merge d and d4
 	d <- merge(d, d4[!is.na(d4$crop),], by = intersect(names(d), names(d4)), all = TRUE)
 	
-	### remove negative values
-	d <- d[which(d$yield > 0), ]
 	#d <- d[which(d$soil_NH4 > 0), ]
 	#d <- d[which(d$soil_N > 0), ]
 	#d <- d[which(d$soil_NO3 > 0), ]

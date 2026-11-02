@@ -30,7 +30,7 @@ Innovations in Technology, Institutional and Extension Approaches towards Sustai
 		data_type = "experiment",
 		treatment_vars = "intercrops",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, dropped] Rows with missing crop or yield are dropped, which removes legume rows the header says are absent from grain yield. The CA versus conventional technology column is commented out and is not a treatment variable.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-11",
 		carob_completion = 100,	

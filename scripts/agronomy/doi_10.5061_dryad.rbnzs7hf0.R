@@ -35,15 +35,15 @@ carob_script <- function(path) {
    d <- data.frame(
       country= "China",
       adm1="Ningxia",
-      adm2= "Yesheng Town", 
+      location= "Yesheng Town", 
       latitude=38.123 , # 38°07′26″N) # from paper
       longitude=106.193 , #106°11′35″E,
       treatment= r$Treatment,
       N_fertilizer= ifelse(grepl("B0N0|BN0", r$Treatment), 0, 300),
-      P_fertilizer= ifelse(grepl("BN|BN0", r$Treatment), 39.3*0.2/2.29, 0), #DSP 20% P205
-      K_fertilizer= ifelse(grepl("BN|BN0", r$Treatment), 74.5*0.5/1.2051, 0),#KCl 50% K20
+      P_fertilizer= ifelse(grepl("B0N0|BN0", r$Treatment), 0, 39.3*0.2/2.29), #DSP 20% P205
+      K_fertilizer= ifelse(grepl("B0N0|BN0", r$Treatment), 0, 74.5*0.5/1.2051),#KCl 50% K20
       biochar= ifelse(grepl("B0N0|B0N", r$Treatment), 0, 13.5*1000),
-      fertilizer_type= "urea;DSP;KCl", #DSP: Double Superphosphate
+      fertilizer_type= ifelse(grepl("B0N0|BN0", r$Treatment), "none", "urea;DSP;KCl"), #DSP: Double Superphosphate
       OM_type= "biochar",
       plot_area= 13*5/10000, # ha
       crop= "rice",
@@ -52,18 +52,17 @@ carob_script <- function(path) {
       harvest_date= "2012-09",
       soil_SOC= r$SOC,
       soil_N= r$TN,
-      soil_P_total= r$AP,
+      soil_P= r$AP, # available P, not total P
       soil_K= r$AK,
       soil_pH= r$pH,
       soil_sample_top= 0,
       soil_sample_bottom= 20,
       yield= r$Yield*1000,
-      on_farm = TRUE,
+      on_farm = FALSE,
       is_survey= FALSE,
       irrigated = NA,
       geo_from_source= TRUE, 
-      trial_id= ifelse(grepl("B0N0", r$Treatment), "1", 
-                ifelse(grepl("BN0", r$Treatment), "2", "3")), 
+      trial_id= "1", 
       yield_part= "grain",
       land_prep_method= "ploughing",
       planting_method= "broadcasting"

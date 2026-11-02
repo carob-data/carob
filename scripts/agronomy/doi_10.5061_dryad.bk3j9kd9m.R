@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# P and K rates are not in the data, so they are not set to 0 on fertilized plots.
+
 carob_script <- function(path) {
    
 "
@@ -32,7 +35,7 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
          carob_date="2025-07-03",
          carob_completion=100,
          design = "Field data was collected in 2014 during repeated sampling campaigns. Additional data was acquired from soil maps, GIS data bases and farm management surveys. Please refer to main paper for details.",
-         notes=NA
+         notes="LLM-review: [medium, yield] Biomass per plant is multiplied by 1000 and stored as kg/ha. treatment_vars list variety and tillage, while the crossed treatments are insecticide and N. Insecticide product is set when insecticide is No. Excel dates use origin 1899-12-31. One Wurzburg coordinate is used for all 28 fields with geo_from_source TRUE."
    )
    
    f <- ff[basename(ff) == "Data_Redlich_et_al.xlsx"]
@@ -58,8 +61,6 @@ Sustainable landscape, soil and crop management practices enhance biodiversity a
       previous_crop= gsub("winter_|_", "", tolower(r$Previous_crop)),
       variety= r$Cultivar,
       N_fertilizer= r$Field_Nfertilization,
-      P_fertilizer= 0 ,
-      K_fertilizer= 0 ,
       pest_species= "rust",
       pest_number= as.integer(r$Rust_sum),
       crop= "wheat",

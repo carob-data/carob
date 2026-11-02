@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Two harvest dates that may be day-month swapped were left as read.
 # "Todanga" and "Neulia" villages each occur in two different Bhadrak blocks -
 # disambiguated coordinate lookup by location+block/GP (carob-data/carob#749).
 # GP "Ramchandra Pur" mapped to block "Bhandari Pokhari" per official GP->
@@ -55,7 +56,8 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 		seed_rate=r1$Seed_rate,
 		harvest_date=as.character(r1$Harv_date_ymd),
 		yield=r1$GrYld_Tha*1000,
-		crop_rotation=NA
+		crop_rotation=NA,
+		crop="rice"
 	)
 		
 	dry <- data.frame(
@@ -71,15 +73,18 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	  seed_rate=NA,
 	  harvest_date=NA,
 	  yield=r2$GrYld_Tha*1000,
-	  crop_rotation=tolower(r2$Crop_Sys)
+	  crop_rotation=tolower(r2$Crop_Sys),
+	  crop=tolower(sub(".*-", "", r2$Crop_Sys))
 	)
 
 	d <- rbind(wet, dry)
-	d$crop <- "rice"
+	d$crop <- gsub("greengram", "mung bean", d$crop)
+	d$crop <- gsub("blackgram", "black gram", d$crop)
+	d$crop <- gsub("toria", "mustard", d$crop)
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- TRUE
+	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 	
 	fixes <- c("Khirosahi"= "Khorasahi",
@@ -156,12 +161,12 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
 	d$longitude2 <- d$latitude2 <- d$geo_uncertainty2 <- d$geo_source2 <- NULL
 
 	#Publication data
-	d$P_fertilizer <- 40
-  d$K_fertilizer <- 40
+	d$P_fertilizer <- 40 / 2.29
+  d$K_fertilizer <- 40 / 1.2051
   d$N_fertilizer <- 80
   d$fertilizer_type <- "DAP;KCl;ZnSO4;urea"
   d$S_fertilizer <-  d$lime <- as.numeric(NA)
-	d$yield_part <- "grain"
+	d$yield_part <- ifelse(d$crop == "rice", "grain", "seed")
 	d$yield_moisture <- 14
   d$crop_rotation <- gsub("-",";",d$crop_rotation)
   d$crop_rotation <- gsub("greengram","mung bean", d$crop_rotation)
@@ -192,9 +197,6 @@ Two types of experiments conducted in multi-location on-farm trials to evaluate 
   d$land_prep_method <- NA
   d$planting_method[!is.na(it)] <- plant_mthd[it[!is.na(it)]]  
   d$land_prep_method[!is.na(it)] <- land_mthd[it[!is.na(it)]]  
-
-  d$harvest_date[d$harvest_date == "2018-01-12"] <- "2018-12-01"
-  d$harvest_date[d$harvest_date == "2018-07-12"] <- "2018-12-07"
 
    d <- unique(d)  
 	carobiner::write_files(path, meta, d)

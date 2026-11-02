@@ -11,13 +11,13 @@ carob_script <- function(path) {
       publication="doi:10.21203/rs.3.rs-461485/v1", 
       project=NA, 
       data_type= "on-station experiment", 
-      treatment_vars= "fertilizer_type; N_fertilizer", 
+      treatment_vars= "OM_amount; N_fertilizer", 
       response_vars = "yield", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-06-08",
       carob_completion=75, # files f3
-      notes=NA
+      notes="LLM-review: [medium, other] plot_area of 3.9 by 6 over 10000 stores hectares (about 0.002) in an m2 column. The plot is 23.4 m2. soil_SOC divided by 10 has no comment on the source unit."
    )
    
    f <- ff[basename(ff) == "Articel_Supporting_Data.xlsx"]
@@ -50,12 +50,12 @@ carob_script <- function(path) {
       soil_pH_2020= r1$XX_20X_20.3,
       soil_P_available_2019= r1$XX_2019.5,
       soil_P_available_2020= r1$XX_20X_20.6,
-      soil_SOC_2019= r1$X_2019,
-      soil_SOC_2020= r1$X_20X_20,
+      soil_SOC_2019= r1$X_2019/10,
+      soil_SOC_2020= r1$X_20X_20/10, # %
       soil_K_2019= r1$X_2019.1,
       soil_K_2020= r1$X_20X_20.1,
-      soil_N_2019= r1$X_2019.2,
-      soil_N_2020= r1$X_20X_20.2,
+      soil_N_2019= r1$X_2019.2*1000,
+      soil_N_2020= r1$X_20X_20.2*1000,
       depth_top= 0,
       depth_bottom= 20
    ) 
@@ -65,7 +65,7 @@ carob_script <- function(path) {
   
     d1 <- reshape(d1, varying = list(c("soil_pH_2019", "soil_pH_2020"), c("soil_P_available_2019", "soil_P_available_2020"),
                                     c("soil_SOC_2019","soil_SOC_2020"), c("soil_K_2019", "soil_K_2020"), c("soil_N_2019", "soil_N_2020")),
-                 v.names = c("soil_pH", "soil_P", "soil_SOC", "soil_K", "soil_N"),
+                 v.names = c("soil_pH", "soil_P", "soil_SOC", "soil_K", "soil_N_total"),
                  timevar ="planting_date",
                  times =  c(2019,2020) ,
                  direction = "long")
@@ -119,18 +119,20 @@ carob_script <- function(path) {
                   ifelse(grepl("Low-PM", d$treatment), 7.7, 0)))))/d$plot_area
    
    d$fertilizer_type <- ifelse(grepl("Neg-Con", d$treatment), "none","urea;SSP;KCl")
-   d$N_fertilizer <- (ifelse(grepl("High-CM", d$treatment), 301*0.46+351,
-                     ifelse(grepl("High-PM", d$treatment), 301*0.46 +351,
-                     ifelse(grepl("Low-CM", d$treatment),527*0.46 +351,
-                     ifelse(grepl("Low-PM", d$treatment), 527*0.46 +351,
-                     ifelse(grepl("Pos-Con", d$treatment), 753*0.46+351, 0))))))/((d$plot_area)*1000) ### Kg/ha 
+   d$N_fertilizer <- (ifelse(grepl("High-CM", d$treatment), 301*0.46,
+                     ifelse(grepl("High-PM", d$treatment), 301*0.46,
+                     ifelse(grepl("Low-CM", d$treatment), 527*0.46 ,
+                     ifelse(grepl("Low-PM", d$treatment), 527*0.46 ,
+                     ifelse(grepl("Pos-Con", d$treatment), 753*0.46, 0))))))/((d$plot_area)*1000) ### Kg/ha 
   
-   d$P_fertilizer <-  75
-   d$K_fertilizer <- 150
-   
+   # 75 g P2O5 and 150 g K2O per plot, same gram scale as the urea; Neg-Con receives none
+   d$P_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (75 / 2.29) / (d$plot_area * 1000))
+   d$K_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (150 / 1.2051) / (d$plot_area * 1000))
+
    
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$harvest_date <- NA
 
    carobiner::write_files(meta, d, path=path)
 }

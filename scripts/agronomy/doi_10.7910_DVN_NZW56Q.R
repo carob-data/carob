@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Basal 23:21:0 rate is not given, so N and P were not computed from the urea topdress alone.
+# Irrigation is not reported.
 
 carob_script <- function(path) {
   
@@ -18,7 +21,7 @@ carob_script <- function(path) {
     publication= NA,
     data_organization = "CIMMYT",
     data_type="on-farm experiment", 
-    treatment_vars= "variety",
+    treatment_vars= "treatment",
     response_vars= "yield;fwy_residue",
     carob_contributor="Mitchelle Njukuya",
     carob_effort = NA,
@@ -80,8 +83,8 @@ carob_script <- function(path) {
   # Author provided information that application rate for urea was 100kg/ha
   
 
-  d$fertilizer_type <- "urea"
-  d$N_fertilizer <- 46
+  # Urea topdress was 100 kg/ha, but the basal 23:21:0 rate is unknown.
+  d$K_fertilizer <- 0
   d$yield_part <- "seed"
   d$yield_part[d$crop=="maize"] <- "grain"
 
@@ -94,8 +97,7 @@ carob_script <- function(path) {
   d$geo_from_source <- FALSE
   d <- merge(d, geo, by=c("country", "adm2"), all.x=TRUE)  
 
-	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-	d$irrigated <- FALSE
+	d$irrigated <- NA
       
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
