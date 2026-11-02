@@ -49,13 +49,16 @@ These datasets correspond to the field experiments in Comas.
     variety = r1$Variety,
     treatment = paste(r1$Variety, r1$Frequency, sep = "-"),
     rAUDPC = r1$RAUDPC,
+    # location from the dataset title and file names 
     location = "Comas",
     adm1 = "Junin",
     adm2 = "Concepcion",
     country = "Peru",
+    # coordinates from carobiner::geocode, not in the metadata
     latitude = -11.71,
     longitude = -75.13,
     geo_from_source = FALSE,
+    # emergence date from the evaluation date file 
     emergence_date = "1999-01-28",
     planting_date = NA,
     harvest_date = NA,
@@ -71,6 +74,8 @@ These datasets correspond to the field experiments in Comas.
     P_fertilizer = NA,
     K_fertilizer = NA,
     ## NEW VARIABLES
+     # fungicide_frequency_: "Frequency" in the source (0, 4, 7, 14), not explained; not fungicide_times (number of sprays)  # <-
+    # probably days between sprays (0 = no fungicide), like the 7 and 14 day sprays in the Huancayo trial (AURP2P)   
     fungicide_frequency_ = r1$Frequency
     
   )
