@@ -1,4 +1,11 @@
+## ISSUES
+# 3 varieties in the data (description says 2); Tomasa only with N160
+# No tuber yield, only total biomass dry matter (already kg/ha)
+# Location from the title; coordinates from carobiner::geocode
+# Weather file has 2 header rows and a "Total" row; only rows with a date are used
 
+## NEW VARIABLES
+# fungicide_level_: "Fungicide_rate" in the source (F0, F4, F10), not explained; the spray file has sprays every 7 and 14 days but does not link them to the levels
 carob_script <- function(path) {
   
   "
