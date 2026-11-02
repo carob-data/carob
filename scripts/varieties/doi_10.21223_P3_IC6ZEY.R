@@ -61,7 +61,8 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
     P_fertilizer = NA,
     K_fertilizer = NA,
     ## NEW VARIABLES
-    storage_root_bulking_ = r$CSRFAB,
+    # storage_root_bulking_: CSRFAB, visual score 1-9, no unit; ability to keep forming new storage roots (1 = none, 4-9 = 2 to 7 root size classes)
+    storage_root_bulking_ = r$CSRFAB
   )
   
   carobiner::write_files(path, meta, d)
