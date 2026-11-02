@@ -1,0 +1,62 @@
+# R script for "carob"
+
+
+carob_script <- function(path) {
+   
+"This database contains phenotypic evaluation data of short duration Pigeon pea varietal trials for year 2016-17. The research work carried out at ICRISAT Center, Patancheru. Pigeonpea is a very important grain legume crop for food other uses in Asia and Africa. It is often cross-pollinated species with a diploid number of 2n= 2x22 and genome size of 858Mbp. Every year 50 to 100 and above new crosses (and also CMS hybrids) will be made evaluated in nurseries to develop new high yielding cultivars with adaptability to different climatic/agronomic zones. Based on their agronomic performance in nurseries for maturity time, branching pattern and number of branches, pod color, pod yield and other pest and diseases tolerance characters etc, the superior progenies will be selected and advanced to further generations. The progenies selected based on preliminary/nursery data will be evaluated along with controls in replicated (twice or thrice) trials every year for further agronomic evaluation and selection. The agronomic data (days to 50% flowering and/or maturity, plant height, grain yield, grain size and color etc) of the progenies evaluated in years 2015 were presented herewith. The trial details and plot sizes were given. This data helps us to select and advance further. Finally the few best progenies among them will be evaluated in on-farm trials (OFTs) and in multi-location trials. The best performed progenies will be considered to promote/release in respective agronomic zones."
+   
+   uri <- "doi:10.21421/D2/DOYRML"
+   group <- "varieties_other"
+   ff  <- carobiner::get_data(uri, path, group)
+   
+   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=4, 
+      data_organization ="ICRISAT", 
+      publication= NA, 
+      project= NA, 
+      data_type= "on-station experiment", 
+      response_vars= "yield", 
+      treatment_vars = "variety_code", 
+      carob_contributor= "Cedric Ngakou", 
+      carob_effort = NA,
+      carob_date="2025-01-30"
+   )
+   
+   f <- ff[basename(ff)=="Short Duration Pigeonpea Advanced Varietal Trial-2 (SD AVT-1), 2016.xlsx"]
+   
+   r <- carobiner::read.excel(f)
+   
+   d <- data.frame(
+      variety_code= r$`ICPL No`,
+      rep= as.integer(r$`Replication number`),
+      flowering_days= r$`Days to flowering`,
+      maturity_days= r$`Days to maturity`,
+      plant_height= r$`Plant height`,
+      seed_weight= r$`Weight of 100 seeds` *10,
+      yield= r$`Grain weight`*10000/10.2,
+      plant_density= r$`Total plants`*10000/10.2,
+      crop= "pigeon pea",
+      planting_date= "2016",
+      adm1="Telangana",
+      adm2= "Hyderabad",
+      location="ICRISAT Patancheru",
+      country= "India",
+      latitude= 17.51803, 
+      longitude= 78.27904,
+      trial_id="1"
+   )
+   
+   d$on_farm <- FALSE
+   d$is_survey <- FALSE
+   d$inoculated <- FALSE
+   d$irrigated <- NA 
+   d$yield_part <- "grain"
+   d$geo_from_source <- FALSE
+   
+   d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+   
+	d$yield_isfresh <- as.numeric(NA) #needs to be checked
+	d$yield_moisture <- as.numeric(NA) #needs to be checked
+
+   carobiner::write_files(path, meta, d)
+}
+

@@ -28,7 +28,7 @@ These are the raw data of the paper 'Intra-seasonal rainfall patterns and extrem
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are deleted, which removes in-season biomass dates. [medium, yield] Leaf and grain N are multiplied by 10 and residue_N is left unscaled. [medium, yield] Dry-matter yield is converted to kg/ha and yield_moisture is still set to 12.5."
 	)
 	
 

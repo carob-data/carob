@@ -29,7 +29,7 @@ carob_script <- function(path) {
 	r <- read.csv(ff[bn==tolower("20181029aao_S1_Yellow_lines_BBA_DS.csv")])  
 	
 	d1 <- r[, c("ID", "Country", "Location", "Study", "Year", "Rep", "Entry", "Pedigree", "Yield", "ASI", "PLTH", "EHT", "PASP", "EASP", "DS", "HC")]#
-	colnames(d1) <- c("ID", "country", "location", "treatment", "planting_date", "rep", "variety_code", "variety", "yield", "asi", "plant_height", "ear_height", "p_asp", "e_asp", "silking_days", "husk")#, 
+	colnames(d1) <- c("ID", "country", "location", "treatment", "planting_date", "rep", "variety_code", "variety", "yield", "asi", "plant_height", "ear_height", "aspect", "ear_aspect", "silking_days", "husk")#, 
 	
 	
 	# read Yellow_lines_BBA_ww dataset
@@ -37,7 +37,7 @@ carob_script <- function(path) {
 	
 	d2 <- r1[, c("ID", "country", "Location", "Study", "YEAR", "Rep", "Entry", "Pedigree", "YIELD", "ASI", "PLTH", "EHT", "PASP", "EASP", "DS", "HC")]#
 
-	colnames(d2) <- c("ID", "country", "location", "treatment", "planting_date", "rep", "variety_code", "variety", "yield", "asi", "plant_height", "ear_height", "p_asp", "e_asp", "silking_days", "husk")#, 
+	colnames(d2) <- c("ID", "country", "location", "treatment", "planting_date", "rep", "variety_code", "variety", "yield", "asi", "plant_height", "ear_height", "aspect", "ear_aspect", "silking_days", "husk")#, 
 	
 	# append d1 and d2
 	d <- rbind(d1, d2)
@@ -66,11 +66,17 @@ carob_script <- function(path) {
 	
 	#data type
 	d$variety_code <- as.character(d$variety_code)
+	d$variety <- trimws(d$variety)
+	d$husk <- as.character(d$husk)
 	d$planting_date <- as.character(d$planting_date)
 	d$is_survey <- FALSE
+	d$geo_from_source <- FALSE
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	
+	d$yield_moisture <- NA
+	d$yield_isfresh <- NA
 	
 	carobiner::write_files(meta, d, path=path)
-	
 }
 
 

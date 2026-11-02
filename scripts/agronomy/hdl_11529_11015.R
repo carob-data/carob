@@ -26,7 +26,7 @@ Nutrient Ommission Trials (NOT's) conducted  in two zones (West Showa and Jimma)
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date = "2025-07-31",
-		notes = NA,
+		notes = "LLM-review: [medium, invented] P and K are 40 with no oxide conversion, and Ca, Mg, Zn, and B are 10, 10, 5, and 5 with no source. Total N percent is stored in soil_N, and soil_N above 10000 is set to NA.",
 		design = NA
 	)
 	

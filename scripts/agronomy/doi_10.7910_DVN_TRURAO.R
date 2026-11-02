@@ -2,8 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
-### 
+# Blanket P and K are applied in the IRRI trial but the rates are not in the yield files.
 
 carob_script <- function(path) {
 
@@ -272,7 +271,7 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	    yield_3 = as.numeric(r7$Grain.Yield.at.3pct),
 	    dmy_total = as.numeric(r7$Total.DM.t.ha)*1000,
 	    plant_height = r7$Plant.Ht.cm_PLTHTx,
-	    dmy_residue = r7$Straw.N.kg.ha,
+	    dmy_residue = r7$Straw.yield.kg.ha._SYKHA,
 	    harvest_index = r7$Harvest.index.2_HI2,
 	    harvest_days = r7$Growth.duration,
 	    DAP = as.integer(r7$Growth.duration),
@@ -318,8 +317,9 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	  d <- merge(dy, g, by = intersect(names(dy), names(g)), all = TRUE)
 	  
 	  i <- grepl("EWS", d$trial_id)
-	  d$season <- "dry"
-	  d$season[i] <- "wet"
+	  d$season <- ifelse(i, "wet", "dry")
+	  yr <- sub(".*?([0-9]{4}).*", "\\1", d$trial_id)
+	  d$trial_id <- paste("LTCCE", yr, ifelse(i, "EWS", "DS"), sep = "-")
 	  d$rep <- as.integer(d$rep)
 	  cols <- c("dmy_residue","N_fertilizer", "dmy_total", "LAI", "dmy_stems", "dmy_leaves", "plant_height", "harvest_index", "grain_N", "residue_N")
 	  d[cols] <- sapply(d[cols], as.numeric)
@@ -332,12 +332,10 @@ The experiment was conducted in the Long-term experiment at IRRI. Experiment was
 	  
 	  d$crop <- "rice"
 	  d$is_survey <- FALSE
-	  d$on_farm <- TRUE
+	  d$on_farm <- FALSE
 	  d$yield_part <- "grain"
 	  d$geo_from_source <- FALSE
 	  d$irrigated <- NA  
-	  
-	  d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	  
 	  ### keep DAP depending variables in the long format
 	  d$record_id <- as.integer(1:nrow(d))

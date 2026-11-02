@@ -60,6 +60,7 @@ carob_script <- function(path) {
 	d$irrigated <- NA
 	
 	d$yield_moisture <- NA #needs to be checked
+	d$yield_isfresh <- NA # rootYield_t_ha does not say fresh or dry
 
 	carobiner::write_files(meta, d, path=path)
 }

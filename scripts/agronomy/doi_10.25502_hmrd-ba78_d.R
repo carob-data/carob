@@ -17,9 +17,10 @@
 #    plot_area) so each stays recoverable as density / plant_density
 # 4. tuber_mean_weight (raw MeanWt) dropped: recoverable as yield /
 #    tuber_density (corr 0.9999)
-# 5. pests (nematode/mealybug/scale insect/crazy root-gall) pivoted wide to
-#    long into pest_species/pest_severity, 54 -> 216 rows; tuber rot is a
-#    disease, not a pest, so it's kept separate as disease/disease_severity
+# 5. pests (nematode/mealybug/scale insect/crazy root-gall) are in the long
+#    table (record_id, pest_species, pest_severity) so plot yield is not
+#    repeated; tuber rot is a disease, not a pest, so it's kept on the wide
+#    table as disease/disease_severity
 #    ("tuber rot" not a listed disease value -> expected "invalid terms" warning)
 
 carob_script <- function(path) {
@@ -143,19 +144,19 @@ The data is from an investigation of the influence of planting different miniset
 	d$disease_severity <- as.character(d$rot_severity)
 	d$rot_severity <- NULL
 
-	d <- reshape(d, direction = "long",
-		varying = c("nematode_severity", "mealybug_severity",
-			"scaleinsect_severity", "crazyroot_severity"),
+	d$record_id <- seq_len(nrow(d))
+	pest_cols <- c("nematode_severity", "mealybug_severity", "scaleinsect_severity", "crazyroot_severity")
+	long <- reshape(d[, c("record_id", pest_cols)], direction = "long",
+		varying = pest_cols,
 		timevar = "pest_species",
 		times = c("nematode", "mealybug", "scale insect", "crazy root/gall"),
 		v.names = "pest_severity",
-		idvar = c("trial_id", "plot_id"))
-	rownames(d) <- NULL
+		idvar = "record_id")
+	rownames(long) <- NULL
+	long$pest_severity <- as.character(long$pest_severity)
+	long$severity_scale <- "1-5, 1=least severe" # constant, see metadata CSV
+	long$id <- NULL
+	d <- d[, !(names(d) %in% pest_cols)]
 
-	# terminag defines pest_severity as character (matches precedent in
-	# doi_10.21223_P3_RBR0FG.R, doi_10.21421_D2_MHOUWW.R, ...)
-	d$pest_severity <- as.character(d$pest_severity)
-	d$severity_scale <- "1-5, 1=least severe" # constant, see metadata CSV
-
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = long)
 }

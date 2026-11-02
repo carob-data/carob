@@ -18,7 +18,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2024-08-18",
-      notes = "treatment farmer_category (mother/baby/control) not considered"
+      notes = "treatment farmer_category (mother/baby/control) not considered LLM-review: [medium, dropped] Rows with yield not above 0 are dropped. planting_date is 2012 for seasons through 2016/17. inoculated is FALSE with no source. Mother and baby on-farm demos are data_type experiment."
    )
    
    ### process legume yield file

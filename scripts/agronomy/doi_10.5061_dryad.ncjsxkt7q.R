@@ -26,7 +26,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		response_vars ="yield;plant_density", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed."
+		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed. LLM-review: [medium, dropped] The first five data rows are dropped with no comment, and rows with missing yield are dropped, which removes establishment records. [medium, invented] N is 45 and P and K are 0 with no source. The abstract does not give fertilizer rates. Unrecognized tillage becomes none. trial_id is the location across years. on_farm is TRUE for university sites. GPS is parsed with fixed substring widths."
 	)
 	
 	f <- ff[basename(ff) == "Pellet_field.csv"]

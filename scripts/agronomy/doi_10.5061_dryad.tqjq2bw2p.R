@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# NPS 23-21-0+4S is a grade, not a kg/ha rate, so those nutrient rates were not assigned.
+# Initial soil was not joined: the village crosswalk is marked as unknown in the script.
 
 carob_script <- function(path) {
    
@@ -169,13 +172,6 @@ Soil samples were collected before the trials and after the trials. Data collect
       soil_ex_K= r5$Exch..K.
    )
    
-	## who knows, but this follows the "Nachunyu-Napande Mkombozi" logic
-   	d5$rep[r5$FIELD.REFERENCE == "Mmumbu - Chundu (Down)    s1"] <- 2L
-
-  # please explain how you know that Nachunyu-Napande is Hamasa and not Hiari
-	d5$location <- ifelse(grepl("Block", d5$location),"hamasa" ,
-                  ifelse(grepl("Mkombozi", d5$location), "mkombozi", "hiari"))
-   
 	##dd <- merge(dy, d5, by=c("rep","location"), all.x=TRUE)
    
    ### combining all data 
@@ -183,9 +179,9 @@ Soil samples were collected before the trials and after the trials. Data collect
    ## RH that made no sense. They would have to be merged. 
    ## RH but the soil data is now a time-variable (before and after)
    ## RH we need a better way to capture that 
-   ## RH for now I am merging the response with the initial soil data 
+   ## Initial soil (d5) is not joined: the village names are not a known crosswalk.
 
-   d <- merge(m, d5, all.x=TRUE) 
+   d <- m 
 
  
    d$country <- "Tanzania"
@@ -196,16 +192,18 @@ Soil samples were collected before the trials and after the trials. Data collect
 	    
 	d$planting_method <- ifelse(grepl("CA", d$treatment), "direct seeding", 
 	                            ifelse(grepl("CvT", d$treatment), "dibbling", "manual"))
-	d$land_prep_method <- ifelse(grepl("farmers practice", d$treatment), "conventional", 
-	                       ifelse(grepl("CvT", d$treatment), "minimum tillage", "reduced tillage"))
-	                        
+	d$land_prep_method <- ifelse(grepl("farmers practice", d$treatment), "conventional",
+	                       ifelse(grepl("CvT", d$treatment), "conservation tillage", "conservation agriculture"))
 
-   d$fertilizer_type= "NPS"
-   d$N_fertilizer <- 23
-   d$P_fertilizer <- 21
-   d$K_fertilizer <- 0
-   d$S_fertilizer <- 4
+   fp <- grepl("farmers practice", d$treatment)
+   d$fertilizer_type <- ifelse(fp, "none", "NPS")
+   d$N_fertilizer <- ifelse(fp, 0, NA_real_)
+   d$P_fertilizer <- ifelse(fp, 0, NA_real_)
+   d$K_fertilizer <- ifelse(fp, 0, NA_real_)
+   d$S_fertilizer <- ifelse(fp, 0, NA_real_)
 
+   d$trial_id <- d$location
+   d$yield_part <- ifelse(d$crop == "groundnut", "pod", "grain")
    d$on_farm= TRUE
    d$is_survey= FALSE
    d$irrigated= NA

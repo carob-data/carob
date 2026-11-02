@@ -22,11 +22,12 @@ carob_script <- function(path) {
 		data_organization="IITA"
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 	f <- grep("\\.csv$", basename(ff), value=TRUE)
-	d <- mzfun(ff, sf=f)	
+	x <- mz_fun(ff, sf=f)
+	d <- x$d	
 
 	d$country <- "Benin"
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }

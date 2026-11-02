@@ -38,7 +38,7 @@ carob_script <- function(path) {
 	carob_effort = 7,
 	carob_contributor = "Blessing Dzuda",
 	carob_date = "2026-07-14",
-	notes = NA
+	notes = "LLM-review: [low, metadata] stringsAsFactors is passed, and trial_id includes the plot id rather than site and year."
   )
 
   ## read data 
@@ -77,7 +77,8 @@ carob_script <- function(path) {
     DAP=r8$dps,
     LAI=r8$LAI,
     yield=r8$root_yield*1000,
-    yield_moisture=r8$root_dry_matter,
+    yield_moisture=100 - r8$root_dry_matter, # root_dry_matter is dry-matter %
+    fwy_storage=r8$root_yield*1000,
     yield_part="roots",
     yield_isfresh=TRUE,
     root_K=r8$K,
@@ -91,7 +92,9 @@ carob_script <- function(path) {
     location=r2$site,
     soil_type=r2$soil_type,
     soil_texture=r2$soil_texture,
-    soil_FC=r2$field_capacity)
+    soil_FC=r2$field_capacity,
+    latitude=r2$latitude,
+    longitude=r2$longitude)
   
   d <- merge(field, site, by=c("site","location"), all.x=TRUE)
   d <- unique(d)
@@ -190,33 +193,15 @@ carob_script <- function(path) {
     ETP=r9$ET_grass)
   
 
-  ##added administrative levels basing on the locations where the experiment was done
- ##adding coordinates using the point radius method
-  ##using GADM adm names because GADM strips the German administrative-type prefixes, leaving only the place names
-  loc <- data.frame(
-    location=c("Kannemoor","Reutershof","Suderburg","Hamersleben","Wörbzig","Harste","Friemar","Kelz","Heuchelheim","Euerhausen","Plattling"),
-    adm1 = c("Bayern", "Bayern", "Hessen", "Mecklenburg-Vorpommern", "Niedersachsen", "Niedersachsen", "Nordrhein-Westfalen", "Sachsen-Anhalt", "Sachsen-Anhalt", "Schleswig-Holstein", "Thüringen"),
-    adm2 = c("Deggendorf", "Würzburg", "Gießen", "Mecklenburgische Seenplatte", "Göttingen", "Uelzen", "Düren", "Anhalt-Bitterfeld", "Börde", "Dithmarschen", "Gotha"),
-    adm3 = c("Plattling", "Giebelstadt", "Heuchelheim", "Stavenhagen", "Bovenden", "Suderburg", "Vettweiß", "Südliches Anhalt", "Westliche Börde", "Marne-Nordsee", "Nesseaue"),
-    adm4 = c("Plattling", "Giebelstadt", "Heuchelheim", "Stavenhagen", "Bovenden", "Suderburg", "Vettweiß", "Südliches Anhalt", "Am Großen Bruch", "Volsemenhusen", "Friemar"),
-    longitude = c(12.901, 9.936, 8.6181, 12.9084, 9.9374, 10.4245, 6.6052, 12.0383, 11.0949, 9.071, 10.7762),
-    latitude = c(48.7833, 49.6486, 50.5879, 53.7055, 51.593, 52.8767, 50.7424, 51.7048, 52.0404, 53.9721, 50.9762),
-    geo_uncertainty = c(5066, 5965, 3171, 5581, 9350, 8392, 6836, 14035, 6343, 3381, 2555),
-    geo_source = c("GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4", "GADM 4.1, adm4")
-  )
-  
-  d <- merge(d,loc,by="location",all.x = T)
   d$trial_id <- paste(d$location,d$plot_id,sep = "_")
   
   d$on_farm <- TRUE #from the report
   d$is_survey <- FALSE
   d$irrigated <- tolower(trimws(d$irrigated)) == "yes"    
-  d$geo_from_source <- FALSE
+  d$geo_from_source <- TRUE # latitude and longitude from 2_site_information.csv
   d$K_fertilizer <- as.numeric(NA)
   d$P_fertilizer <- as.numeric(NA)
   d$yield_part <- "roots"
-  d$yield_moisture <- (100-r8$root_dry_matter)
-  d$fwy_storage <- r8$root_yield*1000
 
   ##quality fixes
   

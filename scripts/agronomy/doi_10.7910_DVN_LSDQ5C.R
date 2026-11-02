@@ -4,7 +4,6 @@
 # lon/lat is missing for the fields. Needs to be requested. Without that of much less use.
 
 
-
 carob_script <- function(path) {
 
 "The data represent 804 cropping events of maize planting in Córdoba - Colombia from 2013 to 2016. Each cropping event has information on climate, soil, and agronomic management. The data was collected with the aim of determining the factors that 
@@ -25,7 +24,8 @@ affect the variation in the yield of maize. The dataset was created through a co
 		carob_effort = NA,
 		carob_date="2024-04-02",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [medium, invented] Missing planting dates are filled with 2015. data_type is experiment and N, P, and K are treatment variables for 804 monitored farmer events. One department coordinate is used for all fields with no geo_uncertainty."
 	)
 	
 	f <- ff[basename(ff) == "Dataset_Maize_Cordoba.csv"]
@@ -58,6 +58,11 @@ affect the variation in the yield of maize. The dataset was created through a co
 			c("Algodon", "Frijol",      "Maiz",  "Pastos", "Yuca"),
 			c("cotton",  "common bean", "maize", "pasture", "cassava"))
 
+	# Spanish USDA texture abbreviations (A=arcilla, Ar=arena, F=franco, L=limo)
+	d$soil_texture <- carobiner::replace_values(d$soil_texture,
+		c("A", "AF", "Ar", "ArA", "ArL", "F", "FA", "FAr", "FrL", "L"),
+		c("clay", "clay loam", "sand", "sandy clay", "loamy sand", "loam", "clay loam", "sandy loam", "silty loam", "silt"))
+
 	d$on_farm <- TRUE
 
 	d$country <- "Colombia"
@@ -73,6 +78,8 @@ affect the variation in the yield of maize. The dataset was created through a co
 	d$planting_date <-	as.character(as.Date(r$Planting_Date, format = '%m/%d/%Y'))
 	d$harvest_date  <-	as.character(as.Date(r$Harvest_Date, format = '%m/%d/%Y'))
 	d$planting_date[is.na(d$planting_date)] <- "2015"
+	# maize harvested 29 days after planting
+	d$harvest_date[d$planting_date == "2014-05-10" & d$harvest_date == "2014-06-08"] <- NA
 	d$yield_part <- "grain"
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

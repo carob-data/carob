@@ -3,6 +3,7 @@
 
 ## ISSUES
 #1. Missing data(NA) from raw dataset in fertilizers,yield,longitude,latitude.
+# On-farm status is not in the file and the studies are heterogeneous, so on_farm is not set.
 carob_script <- function(path) {
 
 
@@ -16,7 +17,7 @@ carob_script <- function(path) {
 		data_organization = "CIAT;IITA",
 		publication = NA,
 		project = NA,
-		data_type = "experiment",
+		data_type = "compilation",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
 		carob_completion = 100,
@@ -204,9 +205,8 @@ carob_script <- function(path) {
   d$K_fertilizer <- as.numeric(d$K_fertilizer)
 	d$P_fertilizer <- as.numeric(d$P_fertilizer)
   
-  d$on_farm <- FALSE 
+  d$on_farm <- NA
 	d$is_survey <- FALSE
-	d$irrigated <- TRUE
 	d$geo_from_source <- FALSE
 	d$yield_moisture <- as.numeric(NA)
 	d$season <- ifelse(d$season=="SR", "short rains", "long rains")
@@ -233,11 +233,11 @@ carob_script <- function(path) {
 	  "tobacco"       = "leaves",
 	  "kale"          = "leaves",
 	  "potato"        = "tubers",
-	  "vegetables"    = "leaves"
+	  "vegetables"    = "leaves",
+	  "vegetable"     = "leaves"
 	)
 	
 	d$yield_part <- crop_yield_part[d$crop]
-	d$yield_part[is.na(d$yield_part)] <- "none"
 	
 	# yield_isfresh: TRUE only for fresh-weight crops (tubers, roots, leaves)
 	fresh_parts <- c("tubers", "roots", "leaves")

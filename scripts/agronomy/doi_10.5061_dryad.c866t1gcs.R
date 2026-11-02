@@ -25,7 +25,7 @@ This is digital research data corresponding to a published manuscript, Using per
 		data_type = "experiment",
 		treatment_vars = "cover_crop",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, crop] Seedcotton in lb/ac is reshaped to yield_part seed. Seedcotton is not seed. Weed counts from June to October are averaged. Thrips and clover figures are commented out with no NOT PROCESSED note. season is kharif for South Carolina. trial_id is 1 for two years. on_farm is TRUE at a USDA station. Cover-crop dry weight is stored as the cotton row's total biomass.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-11",
 		carob_completion = 80,	

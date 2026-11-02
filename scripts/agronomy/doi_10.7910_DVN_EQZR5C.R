@@ -21,7 +21,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-02-29",
 		carob_modified_by = "Siyabusa Mkuhlani",
-		carob_last_modified = "2024-07-07"
+		carob_last_modified = "2024-07-07",
+		notes = "LLM-review: [medium, metadata] The file name says on-station ratooning, but data_type is on-farm experiment and on_farm is TRUE. Fertilizer math assumes 100 kg/ha of D-compound and 100 kg/ha of urea with no source."
 	)
 	
 	f <- ff[basename(ff) == "AR_ZAM_CIMMYT_ratooning_onstation_2020.csv"]

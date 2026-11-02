@@ -22,7 +22,7 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "crop_rotation;planting_date;N_organic;P_organic;K_organic;Ca_organic;Mg_organic",
+		treatment_vars = "crop_rotation;planting_date",
 		carob_completion = 50,
 		notes = "not processed nematodes and macrofauna"
 	)
@@ -58,7 +58,7 @@ carob_script <- function(path) {
 	qom <- r1b$Quantity.of.applied.manure.t.ha.1.of.DM  * 10
 	d2 <- data.frame(
 		season = r1b$Season,
-		OM_amount = qom / r1b$pct.DM,
+		OM_amount = r1b$Quantity.of.applied.manure.t.ha.1.of.DM * 1000, # t/ha of DM to kg/ha
 		N_organic = r1b$N.pct * qom, 
 		P_organic = r1b$P.pct * qom,
 		K_organic = r1b$K.pct * qom,
@@ -104,7 +104,7 @@ carob_script <- function(path) {
 	d$geo_from_source <- FALSE
 	d$trial_id <- as.character(d$season)
 	d$yield_part <- "grain"
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$irrigated <- FALSE
 	d$is_survey <- FALSE
 
@@ -140,7 +140,7 @@ carob_script <- function(path) {
 	   longitude = 46.415, # As indicated in publication
 	   latitude = -19.555, # As indicated in publication
 	   elevation =  930, # As indicated in publication
-	   geo_from_source = FALSE
+	   geo_from_source = TRUE
 	)
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)

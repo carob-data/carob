@@ -31,7 +31,7 @@ Results from this project showed that with appropriate weed management couple wi
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] treatment_vars is herbicide_used, which collapses the herbicide-by-rate treatments to a boolean. data_organization is AfricaRice on an IITA Nigeria cassava trial."
 	)
 	
 
@@ -93,16 +93,18 @@ Results from this project showed that with appropriate weed management couple wi
 		on_farm = TRUE, 
 		is_survey = FALSE,
 		yield_part = "roots", 
-		yield_moisture = as.numeric(NA), 
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # WtTRootthaNt does not say fresh or dry
 		irrigated = NA,
 		plot_no = r2$PlotNo,
 		plot_area = 16 # m2
 	)
 	
-	d <- merge(d1, d2, intersect(names(d1), names(d2)), all.x = TRUE)
- 
- ## remove rows with NA in yield
-	d <- d[!is.na(d$yield),] 	
+	d <- d2
+	d$record_id <- seq_len(nrow(d))
+	keys <- c("trial_id", "year", "season", "adm1", "location", "plot_no", "rep", "treatment")
+	w <- merge(d1[, c(keys, "weed_species")], d[, c(keys, "record_id")], by = keys)
+	long <- data.frame(record_id = w$record_id, weed_species = w$weed_species)
  
  ### Adding herbicide product and amount
 
@@ -140,7 +142,7 @@ Results from this project showed that with appropriate weed management couple wi
 	d$season <- d$plot_no <- d$year <- NULL	
 	d$herbicide_used <- !grepl("none", d$herbicide_product)	
 
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = long)
 
 }
 

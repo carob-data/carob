@@ -27,10 +27,10 @@ carob_script <- function(path) {
 	r2 <- read.csv(f2)
 	
 	d1 <- r1[, c("Country", "LOC", "Rep", "YEAR", "YIELD", "POLLEN", "DYSK", "PLHT", "EHT", "PASP", "EROT", "ASI", "EASP", "Pedigree", "Study")]	
-	colnames(d1) <- c("country", "location", "rep", "planting_date", "yield", "tassling_days", "silking_days", "plant_height", "ear_height", "p_asp", "e_rot", "asi", "e_asp", "variety", "study")
+	colnames(d1) <- c("country", "location", "rep", "planting_date", "yield", "tassling_days", "silking_days", "plant_height", "ear_height", "aspect", "e_rot", "asi", "ear_aspect", "variety", "study")
 	
 	d2 <- r2[, c("Country", "Location", "Rep", "YR", "YIELD", "POLLEN", "DYSK", "PLHT", "EHT", "PASP", "EROT", "ASI", "EASP", "Pedigree", "Study")]
-	colnames(d2) <- c("country", "location", "rep", "planting_date", "yield", "tassling_days", "silking_days", "plant_height", "ear_height", "p_asp", "e_rot", "asi", "e_asp", "variety", "study")
+	colnames(d2) <- c("country", "location", "rep", "planting_date", "yield", "tassling_days", "silking_days", "plant_height", "ear_height", "aspect", "e_rot", "asi", "ear_aspect", "variety", "study")
 
 
 	d <- rbind(d1, d2)
@@ -64,6 +64,7 @@ carob_script <- function(path) {
 	d$planting_date <- as.character(d$planting_date)
 	d$is_survey <- FALSE
 
+	d$variety <- trimws(d$variety)
 	d$location <- carobiner::fix_name(d$location, "title")
 	d$trial_id <- as.character(as.integer(as.factor(paste(d$location, d$study))))
 	d$study <- NULL
@@ -71,7 +72,14 @@ carob_script <- function(path) {
 	d$on_farm <- NA
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d$irrigated <- FALSE
+	d$geo_from_source <- FALSE
+	d$yield_moisture <- NA
+	d$yield_isfresh <- NA	
 
-	carobiner::write_files(meta, d, path=path)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 

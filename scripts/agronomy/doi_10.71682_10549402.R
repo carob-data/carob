@@ -39,7 +39,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, crop] yield_part is grain for all crops, and the Rwanda year-1 file includes beans. data_type is experiment."
 	)
 	
 

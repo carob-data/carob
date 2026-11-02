@@ -27,7 +27,6 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   # reading the data.csv data
   f <- ff[basename(ff) == "data.csv"]
   d <- read.csv(f)
-  d <- d[d$grain_yield_ha_calc > 0,] # dropping entries without complete data under trial_id AT_KE010_LR_2011_MAIZE_ROT_BUTERE as they all have zero yield input.
   d$trial_id <- d$experiment_id
   d$rep <- d$replication_no
   d$planting_date <- as.character(as.Date(paste(d$planting_date_yyyy,d$planting_date_mm,d$planting_date_dd, sep = "-")))
@@ -91,10 +90,9 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   d$N_splits <- ifelse(grepl("urea",d$fertilizer_type), 2L, 0L)
   d$N_fertilizer <- ifelse(grepl("urea", d$fertilizer_type), 60, 0)
   
-  # Since DAP was applied at a rate of 30 kg P per hectare, we only know the amount of phosphorus applied, 
-  # hence we calculate total amount of DAP whose composition in 18:46:0 in order to derive N amount
-  tot_DAP <- 30/0.46
-  d$N_fertilizer <- ifelse(d$fertilizer_type == "DAP",tot_DAP*0.18,d$N_fertilizer)
+  # DAP is 18% N and 46% P2O5. 30 kg elemental P/ha implies product = 30 / (0.46/2.29)
+  tot_DAP <- 30 / (0.46 / 2.29)
+  d$N_fertilizer <- ifelse(d$fertilizer_type == "DAP", tot_DAP * 0.18, d$N_fertilizer)
   d$P_fertilizer <- ifelse(grepl("TSP", d$fertilizer_type), 30, 0)
   d$P_fertilizer[d$fertilizer_type=="DAP"] <- 30
   d$K_fertilizer <- ifelse(grepl("KCl", d$fertilizer_type), 30, 0)

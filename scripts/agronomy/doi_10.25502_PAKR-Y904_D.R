@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA ,
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer"
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] B_fertilizer multiplies percent B2O3 by 1.50 and does not convert to elemental B. The 150 kg/ha product rate and the oxide conversion otherwise look right."
 	)
   
 	
@@ -65,7 +66,7 @@ carob_script <- function(path) {
 	# in addition: 100 kg urea
 	d$N_fertilizer <- ifelse(d$treatment == "Control", 0, 
 					ifelse(d$treatment == "OCPF1", 11,
-					ifelse(d$treatment == "OCPF2", 14, 15))) * 1.50 + 100 * .46
+					ifelse(d$treatment == "OCPF2", 14, 15)) * 1.50 + 100 * 0.46)
 		
 	d$P_fertilizer <- ifelse(d$treatment == "Control", 0, 
 					ifelse(d$treatment == "OCPF1", 21,

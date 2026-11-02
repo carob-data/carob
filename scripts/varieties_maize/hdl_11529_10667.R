@@ -41,20 +41,27 @@ carob_script <- function(path) {
 			yield = r$Yield.t.ha * 1000,
 			plant_height = r$Plt.Hght.cm,
 			variety = r$Pedigree,
-			e_asp = r$Ear.Asp.1.5,
-			p_asp = r$Plt.Asp.1.5,
+			ear_aspect = r$Ear.Asp.1.5,
+			aspect = r$Plt.Asp.1.5,
 			ear_height  = r$Ear.Hght.cm
 		)
-		d$moist = r$pct.Moi.sture
+		d$yield_moisture = r$pct.Moi.sture
 		d$e_rot = r$Ear.Rot.pct
-		d$rlper = r$Rt.Ldg.pct
-		d$slper = r$Stlk.Ldg.pct
-		d$gtext = r$Text.1.5
+		if (!is.null(r$Rt.Ldg.pct)) {
+			d$root_lodging = ifelse(is.na(r$Rt.Ldg.pct), NA_character_, paste0(r$Rt.Ldg.pct, "%"))
+		}
+		if (!is.null(r$Stlk.Ldg.pct)) {
+			d$stalk_lodging = ifelse(is.na(r$Stlk.Ldg.pct), NA_character_, paste0(r$Stlk.Ldg.pct, "%"))
+		}
+		if (!is.null(r$Text.1.5)) d$grain_texture = as.character(r$Text.1.5)
 		d$rust  = r$Rust.P.sor.1.5
 		d$streak = r$MSV.1.5
 		d$gls = r$GLS.1.5
 		d$asi = r$ASI
 		d$borer = r$Stem.Bor.1.5
+		d$blight = r$E.turc.1.5
+		d$helm = r$B.may.1.5
+		d$curv = r$Curv.LS.1.5
 		d$plant_height = r$Plt.Hght.cm
 		d
 	}
@@ -133,12 +140,17 @@ carob_script <- function(path) {
 	d7$harvest_date  <- "2013-02-05"
  
 	d <- carobiner::bindr(d0, d1, d2, d3, d4, d5, d6, d7)
+	if (!is.null(d$grain_texture)) d$grain_texture <- as.character(d$grain_texture)
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$geo_from_source <- TRUE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 		   
 		   
-	carobiner::write_files(meta, d, path=path)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+	long <- carobiner::get_function("mz_pd_long", path, group)(d)
+	d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer", "helm",
+		"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	carobiner::write_files(meta, d, path=path, long=long)
 }
 

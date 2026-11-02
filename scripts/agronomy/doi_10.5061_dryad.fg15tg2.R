@@ -163,13 +163,19 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 		yield = r3$GrainYld*1000
 	)
 
-	d3$N_fertilizer[d3$N_fertilizer %in% c("Diagnostic package", "Diagnostic", NA)] <- 0 
-	d3$N_fertilizer <- as.numeric(d3$N_fertilizer)
-	d3$P_fertilizer[d3$P_fertilizer %in% c("Diagnostic", NA)] <- 0 
 	d3$P_fertilizer[d3$P_fertilizer == "22.5     0"] <- "22.5"
-	d3$P_fertilizer = as.numeric(d3$P_fertilizer)
-		
-	d3 <- d3[d3$K_fertilizer %in% c(0, 10, 20, 30), ] 
+	# diagnostic package rates from the companion script doi_10.5061_dryad.3692hh9
+	i <- d3$N_fertilizer %in% c("Diagnostic package", "Diagnostic") | d3$P_fertilizer %in% c("Diagnostic", "Diagnostic package")
+	d3$N_fertilizer[i] <- 90
+	d3$P_fertilizer[i] <- 15
+	d3$K_fertilizer[i] <- 20
+	d3$Mg_fertilizer[i] <- 10
+	d3$S_fertilizer[i] <- 15
+	d3$Zn_fertilizer[i] <- 2.5
+	d3$B_fertilizer[i] <- 0.5
+	d3$N_fertilizer <- as.numeric(d3$N_fertilizer)
+	d3$P_fertilizer <- as.numeric(d3$P_fertilizer)
+	d3$K_fertilizer <- as.numeric(d3$K_fertilizer) 
 	
 	#extracted lat and long info from the reference
 	geo <- data.frame(

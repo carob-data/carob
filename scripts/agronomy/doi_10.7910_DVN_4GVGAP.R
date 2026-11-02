@@ -2,8 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
-
+# Residue and lime amounts of 2000 kg/ha were not in the data, so only presence or absence is recorded.
+# Madeya was placed at 36.824, -1.289 (Nairobi). Those coordinates were removed; the site coordinates are not in the data.
 
 carob_script <- function(path) {
 
@@ -88,15 +88,15 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 	d1 <- data.frame(
 	  location = carobiner::fix_name(rr$Site, "title"),
 	  country = "Kenya",
-	  trial_id = rr$Plot,
+	  trial_id = carobiner::fix_name(rr$Site, "title"),
+	  plot_id = as.character(rr$Plot),
 	  treatment = rr$Treat,
 	  land_prep_method = ifelse(grepl("CT|FarmerP", rr$Treat), "conventional", "none"),
 	  intercrops = ifelse(grepl("ZTMSi", rr$Treat), "soybean",
 	                    ifelse(grepl("CTMBi|ZTMBi|CTMBi", rr$Treat), "common bean", "none")),
 	  crop_rotation = ifelse(grepl("ZTMSr|CTMSr", rr$Treat), "maize;soybean", "none"),
 	  residue_prevcrop_used = grepl("\\+CR", rr$Treat),
-	  residue_prevcrop = ifelse(grepl("\\+CR", rr$Treat), 2000, 
-	                   ifelse(grepl("-CR", rr$Treat), 0, NA)) ,
+	  residue_prevcrop = ifelse(grepl("-CR", rr$Treat), 0, NA),
 	  crop = ifelse(grepl("SB", rr$Treat), "common bean", "maize"),
 	  rep = rr$Rep,
 	  record_id = rr$record_id
@@ -109,18 +109,19 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 		location = r4$Site,
 		country = "Kenya",
 		rep = r4$Rep,
-		trial_id = r4$Plot,
+		trial_id = r4$Site,
+		plot_id = as.character(r4$Plot),
 		treatment = r4$Treatment.description,
 		#r4$Fert,
 		N_fertilizer = as.numeric(gsub("N", "", r4$N)),
 		P_fertilizer = as.numeric(gsub("P", "", r4$P)),
 		residue_prevcrop_used = grepl("\\+R", trimws(r4$Residue)),
-		residue_prevcrop = ifelse(grepl("\\+R", trimws(r4$Residue)),2000, 0) ,
-		lime = ifelse(grepl("-L", trimws(r4$Lime)), 0, 2000),
+		residue_prevcrop = ifelse(grepl("\\+R", trimws(r4$Residue)), NA_real_, 0),
+		lime = ifelse(grepl("-L", trimws(r4$Lime)), 0, NA_real_),
 		land_prep_method = ifelse(grepl("CT", r4$Tillage), "conventional", "reduced tillage"),
 		crop_rotation = tolower(gsub("-", ";", ifelse( grepl("rotation", r4$CS), gsub(" rotation| \\(T-M\\)|\\(T-M-M\\)", "", r4$CS), "none"))),
-		intercrops = ifelse(grepl("intercrop", r4$CS), "common bean", 
-		             ifelse(grepl("intercropping", r4$CS), "soybean", "none")),
+		intercrops = ifelse(grepl("intercropping", r4$CS), "soybean",
+		             ifelse(grepl("intercrop", r4$CS), "common bean", "none")),
 		crop = "maize",
 		soil_ACP = r4$ACP, #Acid phosphatase enzyme activity
 		soil_ALP = r4$ALP, #Alkaline phosphatase enzyme activity
@@ -131,14 +132,15 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
 	
 	ste <- c("CT1" = "Nyabeda", "INM" = "Madeya", "KAL" = "Kalro")
 	d2$location <- ste[d2$location]
+	d2$trial_id <- d2$location
 	d <- carobiner::bindr(d1, d2)
 	
 	### Adding geo coordinate
 	
 	geo <- data.frame(
-	  location = c("Embu-Lt", "Kalro", "Nyabeda", "Madeya" ),
-	  longitude = c(37.450, 34.7507, 34.411, 36.824),
-	  latitude = c(-0.532, 0.2828, 0.133, -1.289),
+	  location = c("Embu-Lt", "Kalro", "Nyabeda"),
+	  longitude = c(37.450, 34.7507, 34.411),
+	  latitude = c(-0.532, 0.2828, 0.133),
 	  geo_from_source = FALSE,
 	  geo_source = "Google Maps"
 	  
@@ -148,14 +150,7 @@ Improving soil health by utilizing the appropriate tillage, cropping systems and
  
 	d$is_survey <- FALSE
 	d$on_farm <- TRUE
-	d$yield <- NA
-	d$yield_moisture <- NA
-	d$yield_part <- "none"
 	d$irrigated <- NA
-	d$K_fertilizer <- as.numeric(NA)
-	d$planting_date <- NA_character_
-	d$harvest_date <- NA_character_
-  d$yield_isfresh <- TRUE
   
   d <- unique(d)
   

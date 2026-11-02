@@ -18,12 +18,13 @@ carob_script <- function(path) {
 		carob_date="2023-10-23",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="intercrops"
+		treatment_vars="intercrops",
+		notes = "LLM-review: [medium, metadata] trial_id is one id per row. is_survey is TRUE while data_type is experiment. Planting and harvest dates are initialized to an empty string."
 	)
   
 	f <- ff[basename(ff) == "Namatsheve_et_al_Dataset.xlsx"]
-	r <- readxl::read_excel(f, sheet = 2) 
-	r1 <- readxl::read_excel(f)
+	r <- carobiner::read.excel(f, sheet = 2) 
+	r1 <- carobiner::read.excel(f)
                            
   # subset for intercrop, subset again, one to have cowpea info another maize info then bindr() 
 	d <- r[r$System == "Intercrop",]
@@ -107,8 +108,9 @@ carob_script <- function(path) {
 	# as ammonium nitrate at sowing and at four and six weeks after planting.
 	d$K_fertilizer <- 30
 	d$P_fertilizer <- 15
-	d$N_fertilizer <- ifelse(d$Fertilizer == "+N", 30, 0)
-	d$N_splits <- 2
+	# 15 kg N at sowing, at four weeks, and at six weeks
+	d$N_fertilizer <- ifelse(d$Fertilizer == "+N", 45, 0)
+	d$N_splits <- 3
 	d$fertilizer_type <- ifelse(d$Fertilizer == "+N","AN; KCl; SSP", "KCl; SSP")
 
   # efyrouwa : spatial info provided is only for Goromonzi
@@ -119,8 +121,9 @@ carob_script <- function(path) {
   #processing the second data set
 	d1 <- r1[, c("Site","Field","Treatment","Treatment_desc","System","Cowpea_variety","Fertilizer","Year","Previous_crop","Clay_perc","Silt_perc","Total_sand_perc","pH_CaCl2","Available_P","Total_Nitrogen","SOC_perc","Zn_ICP_mg_kg","Ca_ICP_mg_kg" ,"Mg_ICP_mg_kg", "K_ICP_mg_kg","P_ICP_mg_kg","Cu_ICP_mg_kg","Fe_ICP_mg_kg","Mn_ICP_mg_kg","Al_ICP_mg_kg")]
 
+	# Soil_characteristics sheet: Available_P is extractable P; ICP columns are soil, not grain
 	d1 <- carobiner::change_names(d1, c("Previous_crop","Clay_perc","Silt_perc","Total_sand_perc","pH_CaCl2","Available_P","Total_Nitrogen","SOC_perc","Zn_ICP_mg_kg","Ca_ICP_mg_kg" ,"Mg_ICP_mg_kg", "K_ICP_mg_kg","P_ICP_mg_kg","Cu_ICP_mg_kg","Fe_ICP_mg_kg","Mn_ICP_mg_kg","Al_ICP_mg_kg"),
-     c("previous_crop","soil_clay","soil_silt","soil_sand","soil_pH_CaCl2","soil_P_total","soil_N","soil_SOC","grain_Zn","grain_Ca","grain_Mg","grain_K","grain_P", "grain_Cu", "grain_Fe", "grain_Mn", "grain_Al"))
+     c("previous_crop","soil_clay","soil_silt","soil_sand","soil_pH_CaCl2","soil_P","soil_N","soil_SOC","soil_Zn","soil_Ca","soil_Mg","soil_K","soil_P_total", "soil_Cu", "soil_Fe", "soil_Mn", "soil_Al"))
   
 	f <- merge(d,d1, by = c("Site","Field","Treatment","Treatment_desc","System","Cowpea_variety","Fertilizer","Year"), all.x = T)
 	f$variety <- f$Cowpea_variety
@@ -130,7 +133,6 @@ carob_script <- function(path) {
 	f$N_splits <- as.integer(f$N_splits)
 	f$variety <- f$Cowpea_variety
 	f$previous_crop <- carobiner::replace_values(f$previous_crop,c("sweet_potatoes", "groundnuts","velvet_beans","fallow"), c("sweetpotato","groundnut","velvet bean",NA))
-	f <- f[-1:-9]
   
 	f$yield_isfresh <- as.numeric(NA) #needs to be checked
 	f$yield_moisture <- as.numeric(NA) #needs to be checked

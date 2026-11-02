@@ -17,7 +17,8 @@ carob_script <- function(path) {
     data_type="experiment",
     project=NA,
 	response_vars = "yield",
-	treatment_vars = "P_fertilizer;inoculated"
+	treatment_vars = "P_fertilizer;inoculated",
+	notes = "LLM-review: [medium, fertilizer] Large yields are set to NA by crop. NPK and TSP phosphorus is 30 while DAP phosphorus is 30 times 0.46 over 2.29."
   )
   
   f <- ff[basename(ff) == "data_table.csv"] 
@@ -79,9 +80,9 @@ carob_script <- function(path) {
   P <- gsub("climbing_bean","common bean",P)
   d$crop <- P
   
-  d$yield <- ifelse((d$crop!="common bean"|d$crop!="cowpea") & d$farm_size_unit=="hectare", d$yield1 / d$farm_size,
-                    ifelse((d$crop!="common bean"|d$crop!="cowpea") & d$farm_size_unit=="acre",d$yield1 / d$farm_size*0.4046,
-                           ifelse((d$crop!="common bean"|d$crop!="cowpea") & d$farm_size_unit=="meter_squared",d$yield1 / (d$farm_size/10000),d$yield1))) #kg/ha
+  d$yield <- ifelse((d$crop!="common bean" & d$crop!="cowpea") & d$farm_size_unit=="hectare", d$yield1 / d$farm_size,
+                    ifelse((d$crop!="common bean" & d$crop!="cowpea") & d$farm_size_unit=="acre",d$yield1 / d$farm_size*0.4046,
+                           ifelse((d$crop!="common bean" & d$crop!="cowpea") & d$farm_size_unit=="meter_squared",d$yield1 / (d$farm_size/10000),d$yield1))) #kg/ha
   # fix crop yield unit in Tanzania base on information from protocol 
   i <- grepl("cowpea",d$crop)
   d$yield[i] <- d$yield1[i]/0.01

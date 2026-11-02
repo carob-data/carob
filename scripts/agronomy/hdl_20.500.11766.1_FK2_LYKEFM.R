@@ -17,7 +17,8 @@ carob_script <- function(path) {
       carob_effort = NA,
       carob_date="2023-11-10",
 	  response_vars = "yield",
-	  treatment_vars = "N_fertilizer;N_splits"
+	  treatment_vars = "N_fertilizer;N_splits",
+	  notes = "LLM-review: [medium, yield] Only Mandie biomass is divided by 1000. Plant height is multiplied by 10 although the dictionary already calls the unit cm. trial_id splits the two farms by replicate. Worku's coordinates are in southern Ethiopia, not Gumara Maksegnit. [medium, invented] P and K are NA for every row, in addition to the teff and date errors above."
    )
    
   ## process file(s)
@@ -50,9 +51,11 @@ carob_script <- function(path) {
     # merge d3 with d
     d <- merge(d, d3, by="treatment", all.x = TRUE)
     d$treatment <- d$Treatment1
+    d$planting_date <- ifelse(d$year == 1, "2013-06-03", "2014-06-08")
+    d$harvest_date <- ifelse(d$year == 1, "2013-10-25", "2014-10-27")
     d$Treatment1 <- d$year <- NULL
     #add columns
-	d$crop <- "wheat"
+	d$crop <- "teff"
 	
 	d$country <- "Ethiopia"
 	d$location <- "Gumara Maksegnit"
@@ -70,9 +73,6 @@ carob_script <- function(path) {
 	d$longitude[d$site == "Mandie"] <- 37.583
 	d$latitude[d$site == "Mandie"] <- 12.421
   d$geo_from_source <- FALSE
-  
-    d$planting_date <- "2013-06-03"
-    d$harvest_date <- "2013-10-25"
 
 	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    

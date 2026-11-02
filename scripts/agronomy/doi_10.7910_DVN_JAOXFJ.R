@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Lemo latitude was a hard-coded 5.43 N and was removed; the woreda is in Hadiya and the file has no coordinates.
+# DAP at 100 kg/ha is not in the data file, so fertilizer rates were not written.
 
 carob_script <- function(path) {
    
@@ -40,7 +43,7 @@ carob_script <- function(path) {
       crop="faba bean",
       currency= "ETB",
       intercrops= ifelse(r1$`Management practice` == "Intercropped", "oats", "none"),
-      weeding_times= 3L,
+      weeding_times= 2L,
       weeding_done= TRUE 
    )
    d1$weed_biomass[d1$intercrops == "oats"] <- NA
@@ -55,7 +58,7 @@ carob_script <- function(path) {
       fwy_total = r2$`Forage Yield (t/ha)` * 1000,
       crop="oats",
       intercrops= "faba bean",
-      weeding_times= 3L,
+      weeding_times= 2L,
       weeding_done= TRUE 
    )
    
@@ -87,17 +90,10 @@ carob_script <- function(path) {
    d$inoculated <- FALSE
    d$irrigated <- NA
    d$yield_part <- "grain"
-   d$latitude <- 5.432054 
+   d$latitude <- NA_real_
    d$longitude <- 37.8433
    d$geo_from_source <- FALSE
-   
-   ### Adding fertilizer
-   d$fertilizer_type <- "DAP"  ## DAP: 18% N, 20.1% P (DAP= 100kg/ha)
-   d$fertilizer_amount <- 100
-   d$N_fertilizer <- 18
-   d$P_fertilizer <- 20.1
-   d$K_fertilizer <- 0
-   
+
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 

@@ -23,9 +23,10 @@ This is an international study that contains data on yield and other agronomic t
 
 	)
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mz_fun(ff)
+	d <- x$d
 	
 	d$planting_date[d$planting_date == 215] <- 2015
 	
@@ -33,5 +34,5 @@ This is an international study that contains data on yield and other agronomic t
 #	suppressWarnings(x$rl <- as.numeric(x$rl))
 
 #	x$description <- as.character(x$description)
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }

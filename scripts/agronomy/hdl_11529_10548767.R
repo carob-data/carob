@@ -13,9 +13,9 @@ carob_script <- function(path) {
     data_organization="ICAR;CIMMYT;IRRI",
     publication='doi:10.56093/ijas.v91i3.112544',
     project=NA,
-    data_type = "on-farm experiment",
+    data_type = "experiment",
     response_vars = "yield",
-    treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;irrigated;land_prep_method;residue_prevcrop_used;N_splits",
+    treatment_vars = "N_fertilizer;irrigated;land_prep_method;residue_prevcrop_used;N_splits",
     carob_contributor="Hope Mazungunye",
     carob_effort = NA,
     carob_date="2023-09-15",
@@ -55,22 +55,26 @@ carob_script <- function(path) {
   d1$irrigation_method <- ifelse(grepl("SSD", d1$treatment), "subsurface drip", "furrow")
   
   # fertilizer information (from the data and the paper)
-  d1$fertilizer_used <- grepl("N0", d1$treatment)
+  d1$fertilizer_used <- !grepl("N0", d1$treatment)
   d1$fertilization_method <- ifelse(grepl("N0", d1$treatment), NA, "fertigation")
   
   #Type and formulae of the basal dressing applied was not stated but in the publication
   #authors state '....A common dose of 60 kg/ha P2O5 + 30 kg/ha K2O was applied
   #to all plots as basal.'
   #Basal applied. 60kg/ha p205 & 30kg/ha k2O
-  d1$P_fertilizer <- 60 * 0.346  
-  d1$K_fertilizer <- 30 * 0.831
+  d1$P_fertilizer <- 60 / 2.29
+  d1$K_fertilizer <- 30 / 1.2051
   
   #The type and formula of the fertilizer applied was not stated in the publication.
   #The authors simply mentioned '...96.5 kg and   126.5 kg N was allotted for 
   #SSD-N120 Eq (both PBWOR and PBWR) and SSD-N150 Eq (both PBWOR and PBWR) plots, respectively
   d1$N_fertilizer <- 0
-  d1$N_fertilizer <- ifelse(grepl("N120", d1$treatment), 96.5, d1$N_fertilizer)
-  d1$N_fertilizer <- ifelse(grepl("N150", d1$treatment), 126, d1$N_fertilizer)
+  d1$N_fertilizer[grepl("N120", d1$treatment)] <- 120
+  d1$N_fertilizer[grepl("N150", d1$treatment)] <- 150
+  ## equal-split SSD plots received less than the named N120 and N150 rates
+  eq <- grepl("Eq", d1$treatment) & grepl("SSD", d1$treatment)
+  d1$N_fertilizer[eq & grepl("N120", d1$treatment)] <- 96.5
+  d1$N_fertilizer[eq & grepl("N150", d1$treatment)] <- 126.5
   d1$N_splits <- ifelse(grepl("-SSD", d1$treatment), 4L, 2L)
   d1$N_splits[d1$N_fertilizer == 0] <- 0L
 
@@ -95,7 +99,7 @@ carob_script <- function(path) {
     d$id <- NULL 
     d$rep <- as.integer(d$rep)
     d$trial_id <- "1"
-    d$geo_from_source <- TRUE
+    d$geo_from_source <- FALSE
     d$crop <- "maize"
     d$on_farm <- FALSE
     d$is_survey <- FALSE

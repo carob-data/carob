@@ -185,7 +185,7 @@ carob_script <- function(path) {
   d$geo_from_source[i] <- FALSE
   i <- d$adm1=="Mudzi "
   d$latitude[i] <- -17.7927
-  d$longitude[] <- 31.76780
+  d$longitude[i] <- 31.76780
   d$geo_from_source[i] <- FALSE
   i <- d$adm2=="Gumbodete "
   d$latitude[i] <- -17.8183

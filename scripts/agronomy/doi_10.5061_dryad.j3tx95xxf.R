@@ -25,7 +25,7 @@ Stem rot, caused by Sclerotium oryzae, is a common and important disease of rice
 		data_type = "experiment",
 		treatment_vars = "variety_code;fungicide_used",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, yield] Yield is taken from a column named kg, not per hectare. treatment_vars are variety and a yes/no fungicide flag, while the actual treatment is timing. All 19 Sacramento Valley trials share one estimated point with no geo_uncertainty.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-15",
 		carob_completion = 100,	

@@ -20,7 +20,8 @@ Randomized complete block design for four environments (ENV) that combined tilla
 		data_type="experiment",
 		response_vars = "yield",
 		treatment_vars = "land_prep_method;N_fertilizer",
-		project=NA
+		project=NA,
+		notes = "LLM-review: [low, metadata] trial_id is 1 for 2016-2018. Missing yields are dropped."
 	)
 	
 	

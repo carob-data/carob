@@ -2,7 +2,10 @@
 # license: GPL (>=3)
 
 ## ISSUES
-## DataCPWI20162018_Climate.csv file is not open 
+## DataCPWI20162018_Climate.csv file is not open
+## NEW VARIABLES
+## weeding_regime_: critical-period weeding regime from the readme (T1-T8)
+## The readme gives no-till sowing and harvest only for 2018, so 2017 no-till dates are left empty. 
 
 carob_script <- function(path) {
 
@@ -24,7 +27,7 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 		carob_date = "2025-12-04",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "land_prep_method",
+		treatment_vars = "land_prep_method;weeding_regime_",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 75,	
@@ -56,10 +59,12 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 	   land_prep_method = ifelse(grepl("CT", r1$SoilMgt), "conventional", "none"),
 	   year = r1$Year,
 	   planting_date = ifelse(grepl("CT", r1$SoilMgt) & grepl("2017", r1$Year), "2016-11-22",
-	                   ifelse(grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2017-11-28", "2017-11-27")),
+	                   ifelse(grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2017-11-28",
+	                   ifelse(!grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2017-11-27", NA))),
 	   
 	   harvest_date = ifelse(grepl("CT", r1$SoilMgt) & grepl("2017", r1$Year), "2017-03-21",
-	                  ifelse(grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2018-04-04", "2018-03-29")),
+	                  ifelse(grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2018-04-04",
+	                  ifelse(!grepl("CT", r1$SoilMgt) & grepl("2018", r1$Year), "2018-03-29", NA))),
 	   
 	   DAP = r1$DAS,
 	   rep = r1$Block,
@@ -71,8 +76,7 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 	   location = "Ivory-vakinankaratra",
 	   longitude = 46.4164, 
 	   latitude = -19.548, 
-	   trial_id = paste(r1$Weeding_regimes,r1$SoilMgt, sep = "-"), 
-	   on_farm = TRUE, 
+	   on_farm = FALSE, 
 	   is_survey = FALSE, 
 	   yield_part = "grain", 
 	   yield_moisture = 14, 
@@ -88,10 +92,12 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 	   land_prep_method = ifelse(grepl("CT", r2$SoilMgt), "conventional", "none"),
 	   year = r2$Year,
 	   planting_date = ifelse(grepl("CT", r2$SoilMgt) & grepl("2017", r2$Year), "2016-11-22",
-	                   ifelse(grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2017-11-28", "2017-11-27")),
+	                   ifelse(grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2017-11-28",
+	                   ifelse(!grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2017-11-27", NA))),
 	   
 	   harvest_date = ifelse(grepl("CT", r2$SoilMgt) & grepl("2017", r2$Year), "2017-03-21",
-	                  ifelse(grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2018-04-04", "2018-03-29")),
+	                  ifelse(grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2018-04-04",
+	                  ifelse(!grepl("CT", r2$SoilMgt) & grepl("2018", r2$Year), "2018-03-29", NA))),
 	   
 	   rep = r2$Block,
 	   weeding_reg = r2$Weeding_regimes,
@@ -110,10 +116,12 @@ d3 <- data.frame(
    land_prep_method = ifelse(grepl("CT", r3$SoilMgt), "conventional", "none"),
    year = r3$Year,
    planting_date = ifelse(grepl("CT", r3$SoilMgt) & grepl("2017", r3$Year), "2016-11-22",
-                   ifelse(grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2017-11-28", "2017-11-27")),
+                   ifelse(grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2017-11-28",
+                   ifelse(!grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2017-11-27", NA))),
    
    harvest_date = ifelse(grepl("CT", r3$SoilMgt) & grepl("2017", r3$Year), "2017-03-21",
-                         ifelse(grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2018-04-04", "2018-03-29")),
+                  ifelse(grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2018-04-04",
+                  ifelse(!grepl("CT", r3$SoilMgt) & grepl("2018", r3$Year), "2018-03-29", NA))),
    
    rep = r3$Block,
    weeding_reg = r3$Weeding_regimes,
@@ -123,10 +131,21 @@ d3 <- data.frame(
 
 d <- merge(d, d3, by= intersect(names(d), names(d3)),all = TRUE)
 
-### drop duplicate record_id 
-d <- d[!duplicated(d$record_id),]
-
 d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+
+# readme DataCPWI20162018_readme.csv
+wr <- c(
+	"T1" = "weed free",
+	"T2" = "weed free 0-60 DAS",
+	"T3" = "weed free 0-40 DAS",
+	"T4" = "weed free 0-20 DAS",
+	"T5" = "weedy",
+	"T6" = "weedy 0-60 DAS",
+	"T7" = "weedy 0-40 DAS",
+	"T8" = "weedy 0-20 DAS"
+)
+d$weeding_regime_ <- wr[as.character(d$weeding_reg)]
+d$trial_id <- paste("Ivory-vakinankaratra", d$year, sep = "-")
 d$year <- d$weeding_reg <- NULL
 
 

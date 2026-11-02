@@ -27,7 +27,8 @@ A study was conducted in four different environments of Ghana. The aim was to op
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-09-17",
 		carob_completion = 90,	
-		carob_effort = 5
+		carob_effort = 5,
+		notes = "LLM-review: [medium, yield] Yield is multiplied by 1000 with no unit on the column and no comment. Confirm it is t/ha rather than kg/ha."
 	)
 	
 

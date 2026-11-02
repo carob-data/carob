@@ -31,7 +31,7 @@ Context Diversifying crops and reducing tillage can enhance the environmental he
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;crop_rotation",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, treatment] No-till is replaced with none. This experiment's main treatment is no-till versus chisel versus moldboard. Continuous corn becomes crop_rotation none. [low, metadata] trial_id is the filename, so about 60 years at a site share one id. on_farm is TRUE for the Wooster and Hoytville stations. The methods say 15.5 and 13 percent moisture, but yield_moisture is NA.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-06-30",
 		carob_completion = 100,	

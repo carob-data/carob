@@ -26,9 +26,10 @@ The study was carried out by the International Institute of Tropical Agriculture
 	)
 
 
-	mzfun <- carobiner::get_function("intmztrial_striga", path, group)
+	mz_fun <- carobiner::get_function("intmztrial_striga", path, group)
 
-	d <- mzfun(ff)
+	x <- mz_fun(ff)
+	d <- x$d
 	
 	
 	i <- which(d$location == "Bani Suef")
@@ -39,6 +40,6 @@ The study was carried out by the International Institute of Tropical Agriculture
 	d$longitude[i] <- 30.03
 	d$latitude[i] <- 31.03
 	
-	carobiner::write_files(meta, d, path=path)
+	carobiner::write_files(meta, d, path=path, long=x$long)
 }
 

@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+# Fertilizer grades are percentages, not kg/ha. The commented row sums were left commented because they add those grades to the kg/ha columns. The P2O5 and K2O kg/ha columns are converted to elements.
 
 carob_script <- function(path) {
 
@@ -36,6 +36,12 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	
   ### process
  
+	na0 <- function(x) {
+		x <- trimws(as.character(x))
+		x[x == "0"] <- NA_character_
+		x
+	}
+
 	proc <- function(f){
 	  r3 <- carobiner::read.excel(f, sheet="2 - Site information")
 	  if(grepl("2016-LT-All| 2017-LT-All", f)){hdr <- rbind(r3[4, ], r3[3, ], r3[2, ])} else { hdr <- rbind(r3[5, ], r3[3, ], r3[4, ])}
@@ -74,7 +80,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d2 <- data.frame(
 	    year = as.character(r4$Year),
 	    season = r4$Season,
-	    trial_id = gsub("0", NA, as.character(r4$Trial.Code)),
+	    trial_id = na0(r4$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r4$Cropping.System),
 	    location = carobiner::fix_name(r4$Node, "title"),
 	    #site = as.character(r4$Site.No..Unique.farmer.ID.),
@@ -114,7 +120,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d3 <- data.frame(
 	    year = as.character(r5$Year),
 	    season = r5$Season,
-	    trial_id = gsub("0", NA, as.character(r5$Trial.Code)),
+	    trial_id = na0(r5$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r5$Cropping.System),
 	    location = carobiner::fix_name(r5$Node, "title"),
 	    country= "India",
@@ -177,7 +183,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d4 <- data.frame(
 	    year = as.character(r6$Year),
 	    season = r6$Season,
-	    trial_id = gsub("0", NA, as.character(r6$Trial.Code)),
+	    trial_id = na0(r6$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r6$Cropping.System), 
 	    location = carobiner::fix_name(r6$Node, "title"),
 	    #site = as.character(r6$Site.No.),
@@ -212,7 +218,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	  d5 <- data.frame(
 	    year = as.character(r7$Year),
 	    season = r7$Season,
-	    trial_id = gsub("0", NA, as.character(r7$Trial.Code)),
+	    trial_id = na0(r7$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r7$Cropping.System),
 	    location = carobiner::fix_name(r7$Node, "title"),
 	    #site = as.character(r7$Site.No.),
@@ -277,8 +283,8 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    fertilizer_cost = as.numeric(r7$Fertilizer.cost..INR.ha.),
 	    fertilizer_price9 = NA,
 	    fertilizer_amount9 = NA,
-	    P_fertilizer9 = as.numeric(r7$P2O5..kg.ha.),
-	    K_fertilizer9 = as.numeric(r7$K2O..kg.ha.),
+	    P_fertilizer9 = as.numeric(r7$P2O5..kg.ha.) / 2.29,
+	    K_fertilizer9 = as.numeric(r7$K2O..kg.ha.) / 1.2051,
 	    fertilizer_date9 = as.character(as.Date(as.numeric(r7$Date.of.application...dd.mm.yy..6), origin = "1899-12-30")),
 	    fertilizer_type = "SSP;urea;KCl",
 	    farm_nm = r7$Farmer.s.name	    
@@ -318,7 +324,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	 d6 <- data.frame(
 	   year = as.character(r10$Year),
 	   season = r10$Season,
-	   trial_id = gsub("0", NA, as.character(r10$Trial.Code)),
+	   trial_id = na0(r10$Trial.Code),
 	   cropping_system = gsub("Note:", NA, r10$Cropping.System),
 	   location = carobiner::fix_name(r10$Node, "title"),
 	   #site = as.character(r10$Site.No.),
@@ -368,7 +374,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	 d7 <- data.frame(
 	   year = as.character(r11$Year),
 	   season = r11$Season,
-	   trial_id = gsub("0", NA, as.character(r11$Trial.code)),
+	   trial_id = na0(r11$Trial.code),
 	   cropping_system = r11$Cropping.System,
 	   location = carobiner::fix_name(r11$Node, "title"),
 	   farm_nm= r11$Farmer.s.name,
@@ -400,7 +406,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	 d8 <- data.frame(
 	   year = as.character(r14$Year),
 	   season = r14$Season,
-	   trial_id = gsub("0", NA, as.character(r14$Trial.code)),
+	   trial_id = na0(r14$Trial.code),
 	   cropping_system = gsub("Note:", NA, r14$Cropping.System),
 	   location = carobiner::fix_name(r14$Node, "title"),
 	   #site = as.character(r14$Site.No.),

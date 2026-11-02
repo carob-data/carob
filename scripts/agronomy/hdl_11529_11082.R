@@ -49,10 +49,11 @@ carob_script <- function(path) {
 		N_fertilizer=r$N_BASAL+(r$N_SPLIT_1+r$N_SPLIT_2),
 		P_fertilizer=r$P_BASAL,
 		K_fertilizer=r$K_BASAL+r$K_SPLIT_1,
-		harvest_date=(r$DHARV),
+		harvest_date=as.character(r$DHARV),
 		irrigation_amount=r$IRRIG_VOL*0.1,#converting KL/ha to mm
 		seed_treatment=r$SEED_CHEM,
 		yield_moisture=as.numeric(NA),
+		yield_isfresh=NA, # YIELD does not say fresh or dry
 		yield=r$YIELD*1000)
   
   
@@ -63,16 +64,17 @@ carob_script <- function(path) {
 	d$yield_part<- ifelse(d$crop=="potato","tubers","grain")
 	d$land_prep_method <- ifelse(d$land_prep_method=="CT","conventional",
 	                             ifelse(d$land_prep_method=="ZT","none",NA))
-	d$harvest_date <-as.Date(r$DSOW, format = "%d-%b-%y")
-	
-	#fixing dates so they become uniform
-	d$planting_date <-as.Date(r$DSOW, format = "%d-%b-%y") 
-	fix <- is.na(d$planting_date) & !is.na(r$DSOW)
-	d$planting_date[fix] <- as.Date(r$DSOW[fix], format = "%d/%m/%y")
-	fix1 <-is.na(d$planting_date) & !is.na(r$DSOW)
-	d$planting_date[fix1] <- as.Date(r$DSOW[fix1], format = "%d/%m/%Y")
-	d$planting_date <- as.numeric(substr(d$planting_date, 1, 4))
-	d$planting_date <- as.character(d$planting_date)
+	parse_dmy <- function(x) {
+		x <- as.character(x)
+		out <- as.Date(x, format = "%d-%b-%y")
+		i <- is.na(out) & !is.na(x)
+		out[i] <- as.Date(x[i], format = "%d/%m/%y")
+		i <- is.na(out) & !is.na(x)
+		out[i] <- as.Date(x[i], format = "%d/%m/%Y")
+		as.character(out)
+	}
+	d$harvest_date <- parse_dmy(r$DHARV)
+	d$planting_date <- parse_dmy(r$DSOW)
 	
 	#cleaning herbicide column
 	d$herbicide_product <- apply(cbind(
@@ -99,6 +101,7 @@ carob_script <- function(path) {
 	    if (length(x) == 0) NA_character_ else paste(x, collapse = ";")})
 	
 	d <- subset(d, crop != "fallow") #dropping these values since there is no relevant info except NA's
+	sow_year <- as.numeric(substr(d$planting_date, 1, 4))
 	
 	##standardizing herbicide values
 	map <- c(
@@ -156,29 +159,29 @@ carob_script <- function(path) {
 	)
 	
 	#mapping values to actual treatments
-	idx1 <- d$planting_date >= 2009 & d$planting_date <= 2012
+	idx1 <- !is.na(sow_year) & sow_year >= 2009 & sow_year <= 2012
 	d$treatment[idx1] <- p1[d$treatment[idx1]]
 	
-	idx2 <- d$planting_date >= 2013 & d$planting_date <= 2016 &
+	idx2 <- !is.na(sow_year) & sow_year >= 2013 & sow_year <= 2016 &
 	  d$planting_method == "random tpr" & d$treatment == "S1"
 	d$treatment[idx2] <- p2_random["S1"]
 	
-	idx3 <- d$planting_date >= 2013 & d$planting_date <= 2016 &
+	idx3 <- !is.na(sow_year) & sow_year >= 2013 & sow_year <= 2016 &
 	  d$planting_method == "line tpr" & d$treatment == "S1"
 	d$treatment[idx3] <- p2_line["S1"]
 	
-	idx4 <- d$planting_date >= 2013 & d$planting_date <= 2016 &
+	idx4 <- !is.na(sow_year) & sow_year >= 2013 & sow_year <= 2016 &
 	  d$treatment %in% c("S2","S3","S4")
 	d$treatment[idx4] <- p2_rest[d$treatment[idx4]]
 	
 	d$treatment[d$treatment == "S1" &
 	              d$planting_method == "broadcast" &
-	              d$planting_date >= 2013 & d$planting_date <= 2016] <- 
+	              !is.na(sow_year) & sow_year >= 2013 & sow_year <= 2016] <- 
 	  "1 (Random)- Farmer practice: Conventional broadcast wheat (Rabi) - Fallow (Summer)- Puddled random manual transplanted rice (Kharif)"
 	
 	d$treatment[d$treatment == "S1" &
 	              d$planting_method == "drill" &
-	              d$planting_date >= 2013 & d$planting_date <= 2016] <- 
+	              !is.na(sow_year) & sow_year >= 2013 & sow_year <= 2016] <- 
 	  "1 (Line)- Conventional till seed-cum-fertiliser drill wheat- Fallow- Farmer best practice (Puddled line transplanted rice"
 	
 	#fixing planting methods

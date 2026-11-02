@@ -18,7 +18,8 @@ carob_script <- function(path) {
       treatment_vars = "irrigated", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date="2024-11-06"
+      carob_date="2024-11-06",
+      notes = "LLM-review: [medium, invented] N, P, and K are NA for every row, in addition to the onion and date errors above. [medium, crop] Onion bulb yield is stored with yield_part stems. treatment_vars is irrigated, but irrigated is TRUE for every row and the schedule is truncated to 35 characters. Dictionary dates are shifted by a year. The 2016 site name is the string 2016, so those rows miss the coordinate merge."
    )
    
    FF <- ff[grepl("Onion", basename(ff))]

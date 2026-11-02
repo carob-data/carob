@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# Farmer-practice N, P, and S rates are not in the script, so the CA rates were not copied onto those rows.
+
 
 carob_script <- function(path) {
   
@@ -61,13 +64,16 @@ This database contains grain, biomasss and nutritional yield data from on-farm t
 
   d$harvest_date <- as.character(as.numeric(d$planting_date) + 1)
   
+  d$location <- ifelse(d$adm2 == "Mitundu", "Mitundu", d$adm2)
+  d$adm2[d$adm2 == "Mitundu"] <- "Lilongwe"
   coords <- data.frame(
-    adm2 = c("Kasungu", "Mchinji", "Mitundu"),
+    adm2 = c("Kasungu", "Mchinji", "Lilongwe"),
+    location = c("Kasungu", "Mchinji", "Mitundu"),
     longitude = c(33.48333, 32.88019, 33.77885),
     latitude = c(-13.03333, -13.79841, -14.24695),
     elevation= c(1048, 1182, 1207)
   )
-  d <- merge(d, coords, by = "adm2", all.x=TRUE)
+  d <- merge(d, coords, by = c("adm2", "location"), all.x=TRUE)
   
   d$crop_rotation <- carobiner::replace_values(d$crop_rotation,
            c("CA_Maize_Cowpea_Rotation", "CA_Maize_Groundnut_Rotation", "CA_Maize_Soybean_Rotation", "CA_Sole_Maize_Herbicide", "CA_Sole_Maize_No_Herbicide", "True_Farmer_practice"), 
@@ -81,9 +87,11 @@ This database contains grain, biomasss and nutritional yield data from on-farm t
   )
   
   d$variety <- varieties[d$crop]
-  d$land_prep_method[d$land_prep_method == "CA"] <- "none"
+  d$land_prep_method[d$land_prep_method == "CA"] <- "minimum tillage"
   d$land_prep_method[d$land_prep_method == "CP"] <- "conventional"
   d$crop <- gsub("soyabean", "soybean", d$crop)
+  d$yield_part <- ifelse(d$crop == "groundnut", "pod",
+                  ifelse(d$crop %in% c("soybean", "cowpea"), "seed", "grain"))
   d$trial_id <- paste0(d$adm2, "_", d$planting_date)
   
   d$on_farm <- TRUE
@@ -94,13 +102,14 @@ This database contains grain, biomasss and nutritional yield data from on-farm t
 
 # values as reported in the associated publication
   d$yield_moisture <- 12.5
-  d$P_fertilizer <- 21/2.29
+  fp <- d$treatment == "True_Farmer_practice"
+  d$P_fertilizer <- ifelse(fp, NA_real_, 21/2.29)
   d$K_fertilizer <- as.numeric(NA)
-  d$N_fertilizer <- 92
-  d$S_fertilizer <-  4
-  d$herbicide_used <- TRUE
-  d$herbicide_product <- "glyphosate"
-  d$herbicide_amount <- 3
+  d$N_fertilizer <- ifelse(fp, NA_real_, 92)
+  d$S_fertilizer <- ifelse(fp, NA_real_, 4)
+  d$herbicide_used <- !(d$treatment %in% c("True_Farmer_practice", "CA_Sole_Maize_No_Herbicide"))
+  d$herbicide_product <- ifelse(d$herbicide_used, "glyphosate", "none")
+  d$herbicide_amount <- ifelse(d$herbicide_used, 3, 0)
   d$weeding_implement <- "hoe"
   d$weeding_times <- as.integer(3)
   d$row_spacing <- 75

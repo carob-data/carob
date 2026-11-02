@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# NPK+(Ca,Mg,S,Zn) supplies Ca, Mg, S, and Zn, but those rates are not in the data and were not filled in.
+
 carob_script <- function(path) {
    
 "The use of mineral fertilizer and organic inputs with an improved and local variety of cassava allow firstly to identify nutrient limitations to cassava production, and secondly to investigate the effects of variety and combined application of mineral and organic inputs on cassava growth and yields in the highland conditions of the Democratic Republic of Congo (DR Congo). Data on growth parameters, yields and yield components of the improved and local varieties of cassava, economic analysis and soil parameters, collected during two growing cycles of cassava are presented. 
@@ -19,7 +22,8 @@ The data support a research article which is under review “Increased cassava g
 		data_type="experiment",
 		project=NA, 
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, dropped] dmy_stems above 20000 and plant_height above 250 are set to NA. Height has mean 257 cm, so the cap drops most heights. trial_id is almost one id per row."
 	)
 	
 	
@@ -29,13 +33,13 @@ The data support a research article which is under review “Increased cassava g
 	
 	### process Variety&Fertilizer file()
 	
-	vrs <- c("ID", "Site", "Village", "Season", "Replicate", "Fertilizer", "Variety","Total_yield_Root_stem", "H12MAP", "FW_Stem")
+	vrs <- c("ID", "Site", "Village", "Season", "Replicate", "Fertilizer", "Variety","FW_StorageRoot", "H12MAP", "FW_Stem")
 	d <- rbind(r1[,vrs], r2[,vrs])
  
-	colnames(d) <- c("ID", "adm2", "location", "season", "rep", "treatment", "variety", "yield","plant_height", "dmy_stems")
+	colnames(d) <- c("ID", "adm2", "location", "season", "rep", "treatment", "variety", "yield","plant_height", "fwy_stems")
 	
-	d$yield <- d$yield*1000  ## kg/ha
-	d$dmy_stems <- d$dmy_stems*1000 # kg/ha 
+	d$yield <- d$yield*1000  # FW_StorageRoot is fresh storage-root yield, t/ha -> kg/ha
+	d$fwy_stems <- d$fwy_stems*1000 # FW_Stem is fresh stem weight, t/ha -> kg/ha 
 	# add columns
 	d$country <- "Democratic Republic of the Congo"
 	d$crop <- "cassava" 
@@ -53,15 +57,15 @@ The data support a research article which is under review “Increased cassava g
 	d$N_fertilizer <- NA
 	d$P_fertilizer <- NA
 	d$K_fertilizer <- NA
-	j <- d$treatment == "None"
+	j <- d$treatment %in% c("None", "FYM")
 	d$N_fertilizer[j] <- 0
 	d$P_fertilizer[j] <- 0
 	d$K_fertilizer[j] <- 0
-	j <- grepl("NP",d$treatment) |grepl("NK",d$treatment)
+	j <- grepl("NP",d$treatment) | grepl("NK",d$treatment)
 	d$N_fertilizer[j] <- 100
-	j <- grepl("NP",d$treatment) |grepl("PK",d$treatment)
+	j <- grepl("NP",d$treatment) | grepl("PK",d$treatment)
 	d$P_fertilizer[j] <- 22/2.29
-	j <- grepl("NK",d$treatment) |grepl("PK",d$treatment)
+	j <- grepl("K", d$treatment)
 	d$K_fertilizer[j] <- 83/1.2051
 ### add long and lat coordinate
 	geoc <- data.frame(location=c("Kasheke","Cibanda","Cibandja","Muhongoza","Munanira"),
@@ -71,13 +75,13 @@ The data support a research article which is under review “Increased cassava g
 	
 	d <- merge(d,geoc,by="location")
 
-	d$dmy_stems[d$dmy_stems>20000] <- NA
+	d$fwy_stems[d$fwy_stems>20000] <- NA
 	d$plant_height[d$plant_height>250] <- NA
 	d$yield_part <- "roots" 
 	d$planting_date <- ifelse(d$season == "LR2014", "2014", "2015")
 	
 	d$season <- "long rains"
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE # dictionary: FW_StorageRoot is fresh weight
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)
