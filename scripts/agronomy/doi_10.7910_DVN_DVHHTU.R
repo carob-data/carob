@@ -1,10 +1,10 @@
-# REJECTED 
 # Reason: no source columns matched draft() terminag heuristics (only empty data.frame() stubs or no tabular sheets)
 # R script for "carob"
 # license: GPL (>=3)
 
 ## ISSUES
 # list processing issues here so that an editor can look at them
+## The location is mixed up in d2 and confusing. Some places were referred as adm2 yet were supposed to be in adm3
 
 
 carob_script <- function(path) {
@@ -32,25 +32,16 @@ These datasets contained technology and plant performance assessment for mother 
 		carob_effort = 3
 	)
 	
-
+	
 	f1 <- ff[basename(ff) == "Mother_Demos_ Bean_Assessment in 2017.xlsx"]
 	f2 <- ff[basename(ff) == "Technology evaluation for the VBAAs in 2017.xlsx"]
 
 	r1 <- carobiner::read.excel(f1)
 	r2 <- carobiner::read.excel(f2)
 	
-	names(r1) <- as.character(unlist(r1[5, ]))
-	r1 <- r1[-(1:5), ]
-	rownames(r1) <- NULL
+	r1 <- carobiner::read.excel(f1, skip = 5, na = c("IT", "SG"))
+	r2 <- carobiner::read.excel(f2, skip = 3)[-1, ]
 
-	r1$PH.[r1$PH. %in% c("SG", "IT")] <- NA
-	r1$Gc.[r1$Gc. == "IT"] <- NA
-	
-	
-	names(r2) <- as.character(unlist(r2[3, ]))
-	r2 <- r2[-c(1:4), ]
-	rownames(r2) <- NULL
-	
 	d1 <- data.frame(
 	  adm2 = r1$District,
 	  plot_id = as.character(r1$`Plot number`),
@@ -58,35 +49,50 @@ These datasets contained technology and plant performance assessment for mother 
 	  plant_height = as.numeric(r1$PH.),
 	  treatment = r1$Treatment,
 	  variety = r1$Variety,
+	  VB = r1$`VBAA Name`,
 	  germination_rate = as.numeric(r1$Gc.),
 	  yield = NA, ## crop assessment was done before harvest as described in the data discription
 	  crop = "common bean" ## not specified whether its common bean or what type of bean is that
 	)
 	
-	
 	d1$plant_height[d1$plant_height == 0] <- NA
-	d1$variety[d1$variety %in% c("V1= Njano Uyole", "V1= Had not planted")] <- "V1"
-	d1$variety[d1$variety %in% c("V2= Uyole 96")] <- "V2"
-	d1$variety[d1$variety %in% c("V3= Wanja", "V3= Calima Uyole", "V3= Uyole 03")] <- "V3"
-	d1$variety[grepl("^Farmer Variety", d1$variety)] <- "farmer Variety"
+	d1$variety[d1$variety %in% c("V1= Njano Uyole")] <- "Njano Uyole"
+	d1$variety[d1$variety %in% c("V1= Had not planted")] <- NA
+	d1$variety[d1$variety %in% c("V2= Uyole 96")] <- "Uyole 96"
+	d1$variety[d1$variety %in% c("V3= Wanja")] <- "Wanja"
+	d1$variety[d1$variety %in% c("V3= Calima Uyole")] <- "Calima Uyole"
+	d1$variety[d1$variety %in% c("V3= Uyole 03")] <- "Uyole 03"
+	
+	fv <- grepl("^Farmer Variety", d1$variety)
+	
+	farmer_names <- d1$variety[fv]
+	start <- regexpr("(", farmer_names, fixed = TRUE) + 1
+	end <- regexpr(")", farmer_names, fixed = TRUE) - 1
+	d1$variety[fv] <- substring(farmer_names, start, end)
+	
 	d1$fertilizer_used <- d1$treatment %in% c("Fertilizer", "Apron Star +Fert")
+	
+
 	
 	d2 <- data.frame(
 	   adm2 = r2$Distrct,
 	   adm3 = r2$Ward,
 	   location = r2$Village,
+	   VB = r2$`VBAA Name`,
 	   #fertilizer_used = r2$`Fertilizer Source`, this variable only once source apron star
 	   #cropping_system = r2$`Technology Selected`, this is similar to fertilizer used
 	   farmer_gender = r2$Gender,
 	   field_size = as.numeric(r2$`Farm Size (m2)`)
 	 )
+	
 	 
 	d2$adm3[d2$adm3 == "Matambula"] <- "Mtambula"
 	d2$adm3[d2$adm3 == "Nyororo"] <- "Nyololo"
 	d2$adm3[d2$adm3 == "litisha"] <- "Litisha"
 	
-	d <- merge(d1, d2, by = "adm2", all.x = TRUE)
+	d <- merge(d1, d2, by = c("VB", "adm2"), all.x = TRUE)
 	d <- unique(d)
+	#d$VB <- NULL
 	
 #### geo-coordinates for location were obtained from geonames	
 	geo4 <- data.frame(
