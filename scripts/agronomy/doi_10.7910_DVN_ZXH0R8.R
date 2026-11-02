@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Lemo latitude was 5.44 N and was removed; the file does not give coordinates for Lemo.
+
 carob_script <- function(path) {
 
 "The dataset is meant for developing fertilizer management decision support tool for an effective crop-nutrient management. The dataset is developed on the basis of landscape targeting on-farm trials on crop-nutrient response and crop yield gap assessment across the Africa Rising target districts and other scaling up locations in the Ethiopian highlands."
@@ -52,8 +55,8 @@ carob_script <- function(path) {
 			soil_type = d$Soil.type,
 			#There were two N_splits: Basal (50%) and top dressing (50%)
 			N_splits = 2L,
-			# Yield data is reported as dry weight 
-			yield = d$Yield..kg.ha. / 0.87, 
+			# Yield data is reported as dry weight
+			yield = d$Yield..kg.ha., 
 			 # Residue data is measured as dry weight
 			fwy_residue = d$Stover.yield..kg.ha,
 			
@@ -71,13 +74,13 @@ carob_script <- function(path) {
 		x$emergence_days <- d$Days.to.emergency
 		x$heading_days <- d$Days.to.heading
 		x$flowering_days <- d$Days.to.flowering
-		x$maturity_days <- d$Days.to.maturity		
-		x$trial_id <- paste0(trialname, x$location)
+		x$maturity_days <- d$Days.to.maturity
 		if (is.null(d$village.Kebele)) {
 			x$location <- d$village
 		} else {
 			x$location <- d$village.Kebele
 		}
+		x$trial_id <- paste0(trialname, x$location)
 
 	# x$biomass <- d$Biomass..kg.ha.  # Biomass is collected as fresh biomass
 	###x$observation_date <- d$N.topdressing.date # Date of the application of the 2nd split
@@ -101,18 +104,13 @@ carob_script <- function(path) {
 	# different names than in the other files
 	d2$N_fertilizer <- d$N.fertilizer.amount...19
 	d2$P_fertilizer <- ifelse(is.na(d$P.fertilizer.amount), 0, d$P.fertilizer.amount) 
-	d2$K_fertilizer <- ifelse(is.na(d$K.fertilizer.amount..K2O.kg.ha..), 0, d$K.fertilizer.amount..K2O.kg.ha..)
+	d2$K_fertilizer <- ifelse(is.na(d$K.fertilizer.amount..K2O.kg.ha..), 0, d$K.fertilizer.amount..K2O.kg.ha.. / 1.2051)
 	d2$Zn_fertilizer <- ifelse(is.na(d$Zn.fertilizer.amount..Zn.kg.ha..), 0, d$Zn.fertilizer.amount..Zn.kg.ha..)
 	d2$S_fertilizer <- ifelse(is.na(d$S.fertilizer.amount..S.kg.ha..), 0, d$S.fertilizer.amount..S.kg.ha..)
-	## remove bizarre high values
-	d2$fwy_residue[d2$fwy_residue > 25000] <- NA
-	
 ## process 002_2016_Wheat_ ICRISAT-AR_ETH.xlsx
 	f <- ff[basename(ff) == "002_2016_Wheat_ ICRISAT-AR_ETH.xlsx"]
 	d <- read.file(f)
 	d3 <- get_df(d, "2016_Wheat_")
-	## weird (including many negative) values
-	d3$fwy_residue <- NA
 	
 ## process 003_2017_Sorghum+Tef_ ICRISAT-AR_ETH.xlsx
 	f <- ff[basename(ff) == "003_2017_Sorghum+Tef_ ICRISAT-AR_ETH.xlsx"]
@@ -125,8 +123,6 @@ carob_script <- function(path) {
 	d <- read.file(f)
 	d5 <- get_df(d, "2019_Wheat_")	
 	d5$planting_date[is.na(d5$planting_date)] <- "2019"
-	## many values that are much lower than yield
-	d5$fwy_residue <- NA
 	
 ## Append the data.frames
 	d <- carobiner::bindr(d2, d3, d4, d5)
@@ -149,18 +145,14 @@ carob_script <- function(path) {
 	geo <- data.frame(
 		location  = c("Goshe Bado", "Gudo Beret", "Hayk", "Kabe", "Lemo", "Selka", "Sinana", "Sirinka", "Tsibet"), 
 		longitude = c(39.446, 39.682, 39.684, 39.46, 37.851, 40.289, 40.215, 39.607, 39.482), 
-		latitude  = c(9.74, 9.799, 11.316, 10.826, 5.436, 6.857, 7.068, 11.748, 12.86),
+		latitude  = c(9.74, 9.799, 11.316, 10.826, NA, 6.857, 7.068, 11.748, 12.86),
 		geo_from_source = FALSE
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE)
 
-## RH becaus of all the error in residue yield it may not be reliable at all
-## so I remove it from all records
-	d$fwy_residue <- NULL
-
 	d$irrigated <- NA
 	
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- FALSE # yield is reported as dry weight
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, d, path=path)

@@ -46,10 +46,10 @@ The dataset reported here was created to analyze the value of physiological trai
 	fwth <- ff[basename(ff) == "CIM_AgMIP_Weather_daily.txt"]
 	fwst <- ff[basename(ff) == "CIM_AgMIP_Weather_stations.txt"]
 
-	obs <- read.table(fobs, header=TRUE, sep="\t", skip=2, stringsAsFactors=FALSE, check.names=FALSE)
-	fld <- read.table(ffld, header=TRUE, sep="\t", skip=2, stringsAsFactors=FALSE, check.names=FALSE)
-	plt <- read.table(fplt, header=TRUE, sep="\t", skip=2, stringsAsFactors=FALSE, check.names=FALSE)
-	frt <- read.table(ffrt, header=TRUE, sep="\t", skip=2, stringsAsFactors=FALSE, check.names=FALSE)
+	obs <- read.table(fobs, header=TRUE, sep="\t", skip=2, check.names=FALSE)
+	fld <- read.table(ffld, header=TRUE, sep="\t", skip=2, check.names=FALSE)
+	plt <- read.table(fplt, header=TRUE, sep="\t", skip=2, check.names=FALSE)
+	frt <- read.table(ffrt, header=TRUE, sep="\t", skip=2, check.names=FALSE)
 
 	# Seasonal N (kg/ha) from fertilizer events; same N for Bacanora and DH within a site-year
 	nsum <- aggregate(list(N_fertilizer=as.numeric(frt$FEAMN)), list(EID=frt$EID), sum, na.rm=TRUE)
@@ -92,7 +92,7 @@ The dataset reported here was created to analyze the value of physiological trai
 
 	d$treatment <- d$variety
 
-	wd <- read.table(fwth, header=TRUE, sep="\t", skip=2, stringsAsFactors=FALSE, check.names=FALSE)
+	wd <- read.table(fwth, header=TRUE, sep="\t", skip=2, check.names=FALSE)
 	# Weather file prefixes map to Fields coordinates
 	loc <- ifelse(grepl("BUA", wd$WST_DATASET), "Buenos Aires",
 		ifelse(grepl("CIO", wd$WST_DATASET), "Ciudad Obregon", "Valdivia"))
@@ -101,8 +101,7 @@ The dataset reported here was created to analyze the value of physiological trai
 		country = c("Argentina", "Mexico", "Chile"),
 		latitude = c(-34.60, 27.43, -39.80),
 		longitude = c(-58.50, -109.92, -73.25),
-		elevation = c(26, 38, 19),
-		stringsAsFactors = FALSE
+		elevation = c(26, 38, 19)
 	)
 	wm <- wmeta[match(loc, wmeta$location), ]
 	wth <- data.frame(

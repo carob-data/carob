@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Ca_fertilizer;Mg_fertilizer;S_fertilizer;Zn_fertilizer;lime;OM_amount",
 		carob_contributor = "Cedric Ngakou",
 		carob_effort = NA,
-		carob_date="2023-02-15"
+		carob_date="2023-02-15",
+		notes = "LLM-review: [medium, yield] Grain yield is divided by 0.85 and yield_moisture is left NA. adm1 is the site name Kontela."
 	)
 
 	## read data 
@@ -55,7 +56,7 @@ carob_script <- function(path) {
 		yield = 1000 * r$TGrainYld / 0.85
 	)
 
-	d$fwy_residue <- r$TStoverFW / r$Harea
+	d$fwy_residue <- 10000 * r$TStoverFW / r$Harea # kg/plot over m2 -> kg/ha
 	d$dmy_residue <- r$TStoverYld * 1000
 	
 	# Fertilizers according doi:10.1016/j.agee.2016.05.012
@@ -73,7 +74,7 @@ carob_script <- function(path) {
 	d$lime[r$TrtDesc == "NPK+Lime"] <- 500
 	d$OM_amount <- 0
 	d$OM_amount[r$TrtDesc == "NPK+Manure"] <- 10 * 1000
-	d$OM_used <- d$OM_amount == 500
+	d$OM_used <- d$OM_amount > 0
 	d$OM_type <- NA
 	d$OM_type[r$TrtDesc == "NPK+Manure"] <- "farmyard manure"
 	

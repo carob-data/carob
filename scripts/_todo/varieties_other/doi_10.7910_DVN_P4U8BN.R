@@ -16,7 +16,6 @@
 # Sapu panicle length reaches 46 cm, longer than the other sites (about 14-34 cm).
 # Checks are not identified. Genotype strings mix released names and line codes.
 # No linked publication in the Dataverse record.
-# write_files: missing variables: carob_contributor
 # write_files: missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # write_files: unknown variables: panicle_length_, tiller_number_, spikelet_fertility_
 # write_files: NA detected: yield

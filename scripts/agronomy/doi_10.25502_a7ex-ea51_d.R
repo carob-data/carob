@@ -18,7 +18,8 @@ carob_script <- function(path){
 		data_type = "on-farm experiment",
 		data_organization="IITA;ICRAF;WUR",
 		response_vars = "yield",
-		treatment_vars = "P_fertilizer"			
+		treatment_vars = "P_fertilizer",			
+		notes = "LLM-review: [medium, fertilizer] P_fertilizer is 30 for both DAP and TSP. The sister scripts treat DAP's 30 kg as P2O5. Crop is initialized to an empty string."
 	)
 
 	f <- ff[basename(ff) == "data.csv"]

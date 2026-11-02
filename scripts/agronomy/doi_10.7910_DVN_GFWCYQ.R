@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+# Sadore T1 and T2 nutrient rates were removed: the file does not say which code is DAP and which is 15-15-15, and the previous rates were scrambled.
 
 carob_script <- function(path) {
 
@@ -30,7 +30,7 @@ Yield stability assessment -- Rice and Pearl millet data
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] soil_SOC of 2.6 and 4.3 and soil_N of 0.2 and 0.3 look like g/kg stored in percent and ppm columns."
 	)
 	
 	
@@ -70,6 +70,7 @@ Yield stability assessment -- Rice and Pearl millet data
 		yield_part= "grain",
 		on_farm= FALSE,
 		trial_id= "1",
+		yield_isfresh = NA, # Avg.Observed.Yield does not say fresh or dry
 		yield_moisture = as.numeric(NA), 
 		geo_from_source= TRUE
 	)
@@ -83,20 +84,10 @@ Yield stability assessment -- Rice and Pearl millet data
 		variety= "Haïni Kirey Précoce",
 		planting_date = as.character(r2$Year),
 		treatment = r2$Fertilizer.treatment,
-		N_fertilizer= ifelse(grepl("T1", r2$Fertilizer.treatment) & grepl("PDENS_1", r2$Plant.density), 8.2,
-		              ifelse(grepl("T1", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 9, 
-		              ifelse(grepl("T2", r2$Fertilizer.treatment) & grepl("PDENS_1", r2$Plant.density), 12.3, 
-		              ifelse(grepl("T2", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 13.5, 0)))),
-		
-		P_fertilizer= ifelse(grepl("T1", r2$Fertilizer.treatment) & grepl("PDENS_1", r2$Plant.density), 4.02,
-		              ifelse(grepl("T1", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 3.93, 
-		              ifelse(grepl("T2", r2$Fertilizer.treatment) & grepl("PDENS_1", r2$Plant.density), 6.03, 
-		              ifelse(grepl("T2", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 5.9, 0)))),
-		
-		K_fertilizer= ifelse(grepl("T1", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 7.47,
-		              ifelse(grepl("T2", r2$Fertilizer.treatment) & grepl("PDENS_2", r2$Plant.density), 11.21, 0)),
-	
-			fertilizer_type= ifelse(grepl("T2|T1", r2$Fertilizer.treatment), "DAP;NPK", "none"),
+		N_fertilizer= ifelse(grepl("T0", r2$Fertilizer.treatment), 0, NA_real_),
+		P_fertilizer= ifelse(grepl("T0", r2$Fertilizer.treatment), 0, NA_real_),
+		K_fertilizer= ifelse(grepl("T0", r2$Fertilizer.treatment), 0, NA_real_),
+		fertilizer_type= ifelse(grepl("T0", r2$Fertilizer.treatment), "none", NA),
 		residue_prevcrop_used= ifelse(grepl("Yes", r2$Crop.residue.retention), TRUE, FALSE) ,
 		plant_density= ifelse(grepl("PDENS_1", r2$Plant.density), 10000, 15000) ,
 		fwy_total= r2$Avg.Observed.Aboveground.Biomass.t.ha * 1000,
@@ -112,11 +103,12 @@ Yield stability assessment -- Rice and Pearl millet data
 		yield_part= "grain",
 		on_farm= FALSE,
 		trial_id= "2",
+		yield_isfresh = NA, # Avg.Observed.Yield does not say fresh or dry
 		yield_moisture = as.numeric(NA), 
 		geo_from_source= TRUE
 	)
 
-	d2$treatment <- ifelse(grepl("T2|T1", r2$Fertilizer.treatment), paste( "N", d2$N_fertilizer, "P", d2$P_fertilizer, "K", d2$K_fertilizer, sep = ""), "control")
+	d2$treatment <- ifelse(grepl("T0", r2$Fertilizer.treatment), "control", r2$Fertilizer.treatment)
 	
 	d2$planting_date <- ifelse(grepl("2011", d2$planting_date), paste0(d2$planting_date,"-", "06-20"),
 	                    ifelse(grepl("2012", d2$planting_date), paste0(d2$planting_date,"-", "06-12"), 

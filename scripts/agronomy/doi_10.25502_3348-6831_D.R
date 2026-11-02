@@ -2,7 +2,8 @@
 
 ##ISSUES
 ### Soil information is missing in the data ( not clear in the protocol)
-### Need lon/lat data for sites 
+### Need lon/lat data for sites
+# B grade is percent B2O3, not elemental B, so B_fertilizer was not recorded. 
 
 
 carob_script <- function(path) {
@@ -22,7 +23,8 @@ carob_script <- function(path) {
       carob_date="2024-06-04", 
       data_type="experiment",
       response_vars = "yield",
-      treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer;B_fertilizer"
+      treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;S_fertilizer",
+      notes = "LLM-review: [low, coordinates] No coordinates are written (the only pair is commented out). One planting date, 2017-06-01, is applied to every field."
    )
    
 	r <- read.csv(ff[grep("^IAR_VT_yield.harvest_summ.csv", basename(ff), ignore.case=TRUE)])
@@ -57,14 +59,15 @@ carob_script <- function(path) {
 #             14   31    0    9    1    1
 # More information can be found in the VT protocol ( see raw data)  
    
+	# Grades below are percent. Each product is applied at 150 kg/ha, plus 100 kg urea
+	# on fertilized plots (VT protocol; same rates as doi:10.25502/PAKR-Y904).
 	fert <- data.frame(
 		treatment=c("Control", "NPK", "OCPF1", "OCPF2" ),
-		N_fertilizer=c(0, 15, 11, 14),
-        P_fertilizer=c(0,15, 22, 31) / 2.29,
-		K_fertilizer=c(0, 15, 21, 0) /1.2051,
-		Zn_fertilizer=c(0, 0, 1, 1),
-        S_fertilizer=c(0, 0, 5, 9),
-		B_fertilizer=c(0, 0, 1, 1)
+		N_fertilizer=c(0, 15, 11, 14) * 1.50 + c(0, 100, 100, 100) * 0.46,
+		P_fertilizer=c(0, 15, 22, 31) * 1.50 / 2.29,
+		K_fertilizer=c(0, 15, 21, 0) * 1.50 / 1.2051,
+		Zn_fertilizer=c(0, 0, 1, 1) * 1.50,
+		S_fertilizer=c(0, 0, 5, 9) * 1.50
 	)  
 
 	d <- merge(d, fert, by="treatment", all.x = TRUE) 

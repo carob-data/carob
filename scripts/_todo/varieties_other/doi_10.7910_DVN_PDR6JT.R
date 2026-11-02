@@ -16,7 +16,6 @@
 # Edozhigi 1000-grain weight goes down to about 7.3 g (26 values under 10 g). Left as recorded.
 # Checks are not identified.
 # No linked publication in the Dataverse record.
-# write_files: missing variables: carob_contributor
 # write_files: missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # write_files: unknown variables: panicle_length_
 

@@ -18,7 +18,8 @@ carob_script <- function(path) {
       treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;intercrops", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date="2024-06-21"
+      carob_date="2024-06-21",
+      notes = "LLM-review: [medium, crop] yield_part is grain for groundnut. Niger on-station groundnut is on_farm TRUE. Sand is converted to percent while soil organic carbon stays in g/kg and soil K of about 0.2 (cmol/kg) stays in an mg/kg column. Cam is an assumed site."
    )
 
    d1 <- lapply(c("NigerOFT", "NigerOST", "Mali", "BurkinaFasoDori"), \(i){

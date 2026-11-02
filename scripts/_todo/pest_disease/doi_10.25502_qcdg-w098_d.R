@@ -63,9 +63,9 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 	f1 <- ff[basename(ff) == "aphid-around-field.csv"]
 	f2 <- ff[basename(ff) == "aphid-within-field.csv"]
 	f3 <- ff[basename(ff) == "host-plant-inventory.csv"]
-	r1 <- read.csv(f1, check.names=FALSE, stringsAsFactors=FALSE)
-	r2 <- read.csv(f2, check.names=FALSE, stringsAsFactors=FALSE)
-	r3 <- read.csv(f3, check.names=FALSE, stringsAsFactors=FALSE)
+	r1 <- read.csv(f1, check.names=FALSE)
+	r2 <- read.csv(f2, check.names=FALSE)
+	r3 <- read.csv(f3, check.names=FALSE)
 	names(r1) <- trimws(names(r1))
 	names(r2) <- trimws(names(r2))
 
@@ -90,8 +90,7 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		distance_m_ = as.numeric(r1$Distance_m),
 		aphids_apterous_ = as.integer(r1$Apterous_aphids),
 		aphids_alate_ = as.integer(r1$Alate_aphids),
-		pest_incidence = as.integer(r1$Total_aphids),
-		stringsAsFactors = FALSE
+		pest_incidence = as.integer(r1$Total_aphids)
 	)
 	d2 <- data.frame(
 		date = as.character(r2$Year),
@@ -104,8 +103,7 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		distance_m_ = NA_real_,
 		aphids_apterous_ = as.integer(r2$apterous_aphids),
 		aphids_alate_ = as.integer(r2$alate_aphids),
-		pest_incidence = as.integer(r2$total_aphids),
-		stringsAsFactors = FALSE
+		pest_incidence = as.integer(r2$total_aphids)
 	)
 	d3 <- data.frame(
 		date = as.character(r3$Year),
@@ -120,8 +118,7 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		aphids_alate_ = NA_integer_,
 		pest_incidence = NA_integer_,
 		quadrat_ = as.integer(r3$Num_quadrat),
-		plants_in_quadrat_ = as.integer(r3$Number_of_plant_in_the_quadrat),
-		stringsAsFactors = FALSE
+		plants_in_quadrat_ = as.integer(r3$Number_of_plant_in_the_quadrat)
 	)
 	d <- carobiner::bindr(d1, d2, d3)
 	both_na <- is.na(d$aphids_apterous_) & is.na(d$aphids_alate_)

@@ -50,8 +50,7 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	ffise <- ff[grepl("FISE\\+Cotton\\+Growth", bn)]
 
 	read_ods <- function(f, sheet, skip) {
-		as.data.frame(readODS::read_ods(f, sheet=sheet, skip=skip, col_names=TRUE),
-			stringsAsFactors=FALSE)
+		as.data.frame(readODS::read_ods(f, sheet=sheet, skip=skip, col_names=TRUE))
 	}
 
 	# FACE yield (skip description rows; header is TRNO, R#, ...)

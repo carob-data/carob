@@ -28,7 +28,7 @@ Recent studies highlight conservation management practices as an effective strat
 		response_vars = "soil_pH;soil_N_total;soil_SOC;soil_C_total;soil_P;soil_K;soil_protein", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] Total N is multiplied by 10000 under the comment ppm. That factor is percent to ppm. If the source is a fraction the factor is one million. yield and yield_part none are placeholders. on_farm is TRUE while geo_from_source is FALSE."
 	)
 	
 

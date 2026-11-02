@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Greenhouse pot weights were not converted with the field plot area, because that area does not apply to pots.
 
 
 carob_script <- function(path) {
@@ -25,7 +26,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;N_organic",
 		response_vars = "yield;nodule_weight", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] fertilizer_type is sympal on every field row, including SYMPAL equal to NO. treatment_vars are N_fertilizer and N_organic, while field N is hardcoded 0 and the factors that vary are inoculation, vermicompost, and SYMPAL. [low, coordinates] Both Siaya sites and the greenhouse rows get one adm1 centroid.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-04",
 		carob_completion = 100,	
@@ -111,9 +112,6 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	  plot_id = as.character(r3$POT_NO),
 	  soil_C_total = r3$CARBON,
 	  soil_N = r3$NITROGEN,
-	  plot_area = 9,
-	  nodule_weight = (r3$NFW_G_P/9)*10,
-	  dmy_total = (r3$BDW_G_P/9)*10,
 	  treatment = r3$TREATMENT,
 	  #sample_id = as.character(r3$SOIL_NUMBER),
 	  inoculated = grepl("^Inoculation$", r3$TREATMENT),
@@ -136,11 +134,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	  fertilizer_type = ifelse(grepl("U", r4$Nsource), "urea", "none"),
 	  OM_type = ifelse(grepl("P", r4$Nsource), "vermicompost", "none"),
 	  rep = r4$Reps,
-	  plot_area = 9 ,
-	  fwy_residue = (r4$SFW/9)*10,
-	  dmy_residue = (r4$SDW_G_P/9)*10, #g/plot
 	  #grain_N = r4$N_PARC,
-	  nodule_weight = (r4$NFW/9)*10,
 	  inoculated	 = r4$Legumefix=="YES",
 	  inoculant = "Rhizobia",
 	  trial_id = "greenhouse-exp-2"
@@ -191,7 +185,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	#####
 	d$crop <- "soybean"
 	d$is_survey <- FALSE
-	d$on_farm <- TRUE
+	d$on_farm <- !grepl("greenhouse", d$trial_id)
 	d$yield_moisture <- NA
 	d$yield_part <- "grain"
 	d$country <- "Kenya" 

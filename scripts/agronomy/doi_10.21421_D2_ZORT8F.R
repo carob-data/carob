@@ -28,7 +28,7 @@ Experiment location on Google Maps-Federal University of Technology Akure(FUTA)
 		data_type = NA,
 		treatment_vars = "seed_treatment;variety",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] data_type is NA, and trial_id is the processing zone, so every community in a zone shares one id.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-30",
 		carob_completion = 100,	

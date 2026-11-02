@@ -20,7 +20,8 @@ carob_script <- function(path) {
 		response_vars = "yield; dmy_total",
 		carob_effort = NA,
 		carob_date = "2024-05-03",
-		carob_last_modified = "2024-07-31"
+		carob_last_modified = "2024-07-31",
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are dropped. trial_id is crop plus planting date, so crops that are treatments become different trials. One seed density is applied to every treatment."
 	)
 
 

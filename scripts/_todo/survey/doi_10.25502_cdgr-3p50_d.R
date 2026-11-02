@@ -59,7 +59,7 @@ It is widely recognized that female farmers have considerably less access to pro
 		carob_effort = 0.4
 	)
 
-	r <- read.csv(ff[basename(ff) == "gender_data_final.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "gender_data_final.csv"])
 
 	adm2 <- rep(NA_character_, nrow(r))
 	adm2[r$Lilongwe == 1] <- "Lilongwe"
@@ -87,8 +87,7 @@ It is widely recognized that female farmers have considerably less access to pro
 		residue_retention_ = r$Residue,
 		minimum_tillage_ = r$Zero_min,
 		hh_size = r$HH_size,
-		planting_date = "2016",
-		stringsAsFactors = FALSE
+		planting_date = "2016"
 	)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

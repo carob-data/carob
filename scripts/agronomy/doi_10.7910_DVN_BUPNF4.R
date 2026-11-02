@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date = "2024-11-29",
-		notes = NA,
+		notes = "LLM-review: [medium, other] Plant density multiplies by 2222 and 3333 with no explanation, although plot area is in the same rows. Densities below 1000 are set to NA. Rows with missing yield are dropped twice. planting_date is an empty placeholder. Total biomass is fresh weight here and dry weight in the sister script 1A6WMD.",
 		design = "RCBD"
 	)
 	

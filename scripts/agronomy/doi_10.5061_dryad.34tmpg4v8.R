@@ -25,7 +25,7 @@ Establishing connections between soil health indicators and crop performance wil
 		data_type = "experiment",
 		treatment_vars = "planting_date;soil_SOM",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] Producer fields with no applied treatments are data_type experiment. treatment_vars are planting_date and soil organic matter, which are covariates. Soybean yield is stored as kg/ha with no conversion and no unit in the column name. [medium, coordinates] trial_id is county and year, and the last two counties in the GADM lookup (Boone, Jo Daviess) are attached to Wisconsin. Counties stripped of their state suffix can inherit the wrong centroid.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-22",
 		carob_completion = 100,	

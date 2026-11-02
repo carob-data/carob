@@ -58,8 +58,8 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "plot.csv"], stringsAsFactors=FALSE)
-	g <- read.csv(ff[basename(ff) == "general_details_m.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "plot.csv"])
+	g <- read.csv(ff[basename(ff) == "general_details_m.csv"])
 
 	crop <- tolower(trimws(r$plot1_cropCultvtd))
 	crop[crop == "millet"] <- "pearl millet"
@@ -93,8 +93,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		HOUSEHOLD = g$HOUSEHOLD,
 		longitude = lon,
 		latitude = lat,
-		elevation = elev,
-		stringsAsFactors = FALSE
+		elevation = elev
 	)
 	loc <- loc[!duplicated(loc$HOUSEHOLD), ]
 
@@ -113,8 +112,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		npk_amount_ = r$plot1_qtyNPK,
 		urea_amount_ = r$plot1_qtyUrea,
 		dap_amount_ = r$plot1_qtyDAP,
-		manure_amount_ = r$plot1_qtyManure,
-		stringsAsFactors = FALSE
+		manure_amount_ = r$plot1_qtyManure
 	)
 	d$HOUSEHOLD <- r$HOUSEHOLD
 	d <- merge(d, loc, by="HOUSEHOLD", all.x=TRUE)

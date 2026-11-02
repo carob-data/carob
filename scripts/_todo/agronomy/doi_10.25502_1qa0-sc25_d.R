@@ -54,15 +54,14 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 	files <- data.frame(
 		file = c("githiga-group-kales.csv", "jijenge-group-amaranth.csv", "njothi-group-spinach.csv"),
 		location = c("Githiga", "Jijenge", "Njothi"),
-		crop = c("kale", "amaranth", "spinach"),
-		stringsAsFactors = FALSE
+		crop = c("kale", "amaranth", "spinach")
 	)
 	month_date <- c(Jul="2023-07", July="2023-07", Aug="2023-08", Sep="2023-09")
 
 	pieces <- list()
 	longs <- list()
 	for (i in seq_len(nrow(files))) {
-		r <- read.csv(ff[basename(ff) == files$file[i]], stringsAsFactors=FALSE, check.names=FALSE)
+		r <- read.csv(ff[basename(ff) == files$file[i]], check.names=FALSE)
 		r <- r[, names(r) != ""]
 		for (j in seq_len(nrow(r))) {
 			for (seed in c("HS", "FP")) {
@@ -73,8 +72,7 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 					crop = files$crop[i],
 					rep = as.integer(r$ID[j]),
 					seedling_type_ = c(HS="tray seedling", FP="ground seedling")[seed],
-					treatment = c(HS="tray seedling", FP="ground seedling")[seed],
-					stringsAsFactors = FALSE
+					treatment = c(HS="tray seedling", FP="ground seedling")[seed]
 				)
 				cn <- grep(paste0("^", seed, "_Week"), names(r), value=TRUE)
 				for (nm in cn) {
@@ -87,8 +85,7 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 						date = unname(month_date[mon]),
 						harvest_week_ = week,
 						harvest_kg_ = if (grepl("_Kg_", nm)) val else NA_real_,
-						harvest_bunches_ = if (grepl("Bunches", nm)) val else NA_real_,
-						stringsAsFactors = FALSE
+						harvest_bunches_ = if (grepl("Bunches", nm)) val else NA_real_
 					)
 				}
 			}

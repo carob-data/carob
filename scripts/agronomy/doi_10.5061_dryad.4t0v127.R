@@ -19,7 +19,8 @@ carob_script <- function(path) {
       treatment_vars = "intercrops;N_fertilizer;P_fertilizer;K_fertilizer", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-08-31"
+      carob_date = "2024-08-31",
+      notes = "LLM-review: [medium, dropped] Cowpea intercrop rows are set to NA and then dropped, so cowpea yield on those sheets is discarded. yield_part is grain for cowpea. Paper coordinates are all marked geo_from_source FALSE. Sand is converted g/kg to percent, but soil organic carbon and soil N are not."
    )
    
    d  <- lapply(c("NigerOST","NigerOFT","Mali","BurkinaFasoDori"),\(i){
@@ -33,7 +34,7 @@ carob_script <- function(path) {
       if(is.null(r$PMFoYd)) r$PMFoYd <- NA 
       if( is.null(r$CPFoYd)) r$CPFoYd <- NA
       if( is.null(r$Site)) r$Site <- NA
-      if( is.null(r$`Manure rate, Mg ha-1`)) r$`Manure rate, Mg ha-1` <- 2.5 
+      if( is.null(r$`Manure rate, Mg ha-1`)) r$`Manure rate, Mg ha-1` <- NA 
       
       ### pearl milllet
       d1 <- data.frame(
@@ -62,7 +63,7 @@ carob_script <- function(path) {
          N_fertilizer= r$Nrate,
          P_fertilizer= r$Prate,
          K_fertilizer= r$Krate,
-         OM_amount= ifelse(grepl("Mali", i), 0, r$`Manure rate, Mg ha-1`),
+         OM_amount= ifelse(grepl("Mali", i), 0, r$`Manure rate, Mg ha-1` * 1000),
          OM_type= "farmyard manure",
          yield= r$CPGrYd*1000, ## kg/ha
          fwy_total= r$CPFoYd*1000,

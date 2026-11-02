@@ -78,7 +78,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	)
 
 	f <- ff[basename(ff) == "onstation2019_lagon_all_locations_datafile_rft.csv"]
-	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), stringsAsFactors = FALSE, check.names = FALSE)
+	r <- read.csv(f, na.strings = c("", " ", "NA", "na"), check.names = FALSE)
 
 	num <- function(x) {
 		if (is.null(x)) return(rep(NA_real_, nrow(r)))
@@ -159,8 +159,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		post_herbicide_l_ha_ = l_ha(r$Posttreat),
 		weeding_times = weed_n,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	mz <- d[inter, ]
@@ -205,8 +204,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			weed_dmy_sedge_ = col(paste0("Sedge_gm2_", tag, "WAP")) * 10,
 			weed_density = col(paste0("Wddenm2_", tag, "WAP")) * 10000,
 			sprout_density_ = col(paste0("CasSprt_ha_", tag, "WAP")),
-			maize_density_ = col(paste0("MzGerm_ha_", tag, "WAP")),
-			stringsAsFactors = FALSE
+			maize_density_ = col(paste0("MzGerm_ha_", tag, "WAP"))
 		)
 	}
 	dlong <- do.call(rbind, lapply(c(2, 4, 6, 8, 10, 12, 15), one_wap))

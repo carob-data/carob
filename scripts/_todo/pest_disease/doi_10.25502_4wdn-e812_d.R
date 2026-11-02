@@ -72,7 +72,7 @@ Biological invasion is a global concern with species deployed out of native rang
 
 	f <- ff[grepl("\\.csv$", ff, ignore.case = TRUE)]
 	f <- f[!grepl("metadata", basename(f), ignore.case = TRUE)]
-	r <- read.csv(f, check.names = FALSE, stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 
 	part <- function(x) {
 		x <- tolower(trimws(x))
@@ -110,8 +110,7 @@ Biological invasion is a global concern with species deployed out of native rang
 		coinfestation_ = co,
 		trial_id = season,
 		on_farm = NA,
-		is_survey = TRUE,
-		stringsAsFactors = FALSE
+		is_survey = TRUE
 	)
 	# identical scores on different plants would otherwise look like duplicate rows
 	d$record_id <- seq_len(nrow(d))

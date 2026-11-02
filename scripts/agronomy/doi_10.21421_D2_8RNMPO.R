@@ -28,7 +28,7 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, other] plot_area is stored as 12, the square metres, in the hectare field."
 	)
 	
 
@@ -46,7 +46,7 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		#harvest_days = gsub(" days", "",  r1$Days),
 		planting_date = substr(r1$Year, 1, 4),
 		soil_SOC = r1$OC,
-		soil_N = r1$Nitrogen/10000, ## from ppm to %
+		soil_N = r1$Nitrogen, # already mg/kg (ppm)
 		soil_P = r1$Phosphorus,
 		soil_MBC = r1$`Microbial boimassC`
 	)
@@ -75,11 +75,11 @@ The field trials were carried out in two consecutive post rainy seasons (2012−
 		location = "Patancheru, ICRISAT",
 		country = "India",
 		crop = "chickpea",
-		harvest_days = 60,
+		harvest_days = 90, # grain yield is recorded at 90 DAS
 		longitude = 78.2666 , ### from publication
 		latitude =  17.50,
 		geo_from_source = TRUE,
-		trial_id ="1", 
+		trial_id = as.character(r2$Year), 
 		on_farm = FALSE, 
 		is_survey = FALSE, 
 		yield_part = "grain", 

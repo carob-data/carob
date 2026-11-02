@@ -443,8 +443,7 @@ Sequential observations of agronomical important traits during cropping season f
 			location = loc,
 			site = field,
 			latitude = lat,
-			longitude = lon,
-			stringsAsFactors = FALSE
+			longitude = lon
 		)
 		d$irrigation_dates <- vapply(ir_dates, paste_ok, "")
 		# irrigation_method does not allow multiple values. Leave mixed plots blank.
@@ -605,8 +604,7 @@ Sequential observations of agronomical important traits during cropping season f
 			grain_number_ = gno,
 			sla_ = sla,
 			tiller_number_ = till,
-			density_m2 = dens,
-			stringsAsFactors = FALSE
+			density_m2 = dens
 		)
 		out <- out[!is.na(out$plot_id) & !grepl("[A-Za-z]", out$plot_id), ]
 		# HI is stored as a fraction. terminag harvest_index is a percent.
@@ -641,8 +639,7 @@ Sequential observations of agronomical important traits during cropping season f
 		dat <- dat[grepl("^[0-9]+(\\.[0-9]+)?$", pv), , drop = FALSE]
 		out <- data.frame(
 			plot_id = id_chr(dat[[jp]]),
-			rep = as.integer(round(num_clean(dat[[jr]]))),
-			stringsAsFactors = FALSE
+			rep = as.integer(round(num_clean(dat[[jr]])))
 		)
 		if (!is.na(jb)) out$block_id <- trimws(as.character(dat[[jb]]))
 		if (!is.na(jw)) out$water_regime <- trimws(as.character(dat[[jw]]))
@@ -673,8 +670,7 @@ Sequential observations of agronomical important traits during cropping season f
 			tmin = num_clean(col("^mint$|min temp|min t")),
 			rhmx = num_clean(col("maxrh|max rh|humidity1|rel humidity1")),
 			rhmn = num_clean(col("minrh|min rh|humidity2|rel humidity2")),
-			srad = srad,
-			stringsAsFactors = FALSE
+			srad = srad
 		)
 	}
 	

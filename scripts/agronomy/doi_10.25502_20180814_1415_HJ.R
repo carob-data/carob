@@ -43,7 +43,7 @@ to NPK (no lime treatment at Pampaida)."
       notes = "Fertilizer N/P/K/Ca/Mg/S/Zn rates and manure amount per treatment code 
       were not in the raw data; they were taken from the associated publication (Kihara et al. 2016, Table 2) for maize. 
       Grain yield is on a 12.5% moisture basis per the publication. 
-      Planting date was back-calculated from measurement dates minus days-after-planting.",
+      Planting date was back-calculated from measurement dates minus days-after-planting. LLM-review: [medium, other] The Kihara rates and moisture basis look documented. plot_area is stored as 25 square metres in the hectare field, fertilizer_type NPK is on the control, and variety Oba Super 2 is hard-coded.",
       carob_contributor = "Stella Muthoni",
       carob_date = "2026-06-30",
       carob_completion = 90,

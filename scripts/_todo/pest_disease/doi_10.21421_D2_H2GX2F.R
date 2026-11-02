@@ -73,8 +73,7 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 		dmy_residue = as.numeric(r$DFWkgha),
 		seed_weight = as.numeric(r$HSW) * 10,
 		shelling_percentage = as.numeric(r[["Shelling ratio"]]),
-		sound_mature_kernel_ = as.numeric(r$SMK),
-		stringsAsFactors = FALSE
+		sound_mature_kernel_ = as.numeric(r$SMK)
 	)
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"

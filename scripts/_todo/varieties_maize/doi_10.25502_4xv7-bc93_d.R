@@ -98,8 +98,7 @@ Breeding for stress resilient maize varieties and hybrids
 			rep("Mali", 4),
 			"Egypt", "Burkina Faso", "Gambia", "Democratic Republic of the Congo", "Guinea", "Liberia",
 			"Nigeria", "Nigeria", "Nigeria"
-		),
-		stringsAsFactors = FALSE
+		)
 	)
 
 	place <- function(loc_code) {
@@ -113,7 +112,7 @@ Breeding for stress resilient maize varieties and hybrids
 		# unmatched codes were all capitals; keep them readable
 		up <- !is.na(location) & location == toupper(location) & grepl("[A-Z]", location)
 		location[up] <- carobiner::fix_name(location[up], "title")
-		data.frame(location = location, country = country, stringsAsFactors = FALSE)
+		data.frame(location = location, country = country)
 	}
 
 	chr_num <- function(x) {
@@ -143,8 +142,7 @@ Breeding for stress resilient maize varieties and hybrids
 		husk = chr_num(r1$Husk.cover),
 		ear_aspect = as.numeric(r1$Ear.aspect),
 		aspect = as.numeric(r1$Plant.aspect),
-		irrigated = TRUE,
-		stringsAsFactors = FALSE
+		irrigated = TRUE
 	)
 	d1$trial_id <- paste("irrigation", d1$planting_date, sep = "_")
 
@@ -173,8 +171,7 @@ Breeding for stress resilient maize varieties and hybrids
 		ear_aspect = as.numeric(r2$Ear.aspect),
 		aspect = as.numeric(r2$Plant.aspect),
 		streak = as.numeric(r2$MSV),
-		curv = as.numeric(r2$Curvularia.leaf.spot),
-		stringsAsFactors = FALSE
+		curv = as.numeric(r2$Curvularia.leaf.spot)
 	)
 	d2$trial_id <- paste(d2$location, d2$planting_date, r2$ENV, sep = "_")
 
@@ -205,8 +202,7 @@ Breeding for stress resilient maize varieties and hybrids
 		aspect = as.numeric(r3$PA),
 		yield_moisture = as.numeric(r3$MOI),
 		senescence_1_ = as.numeric(r3$SENES1),
-		senescence_2_ = as.numeric(r3$SENES2),
-		stringsAsFactors = FALSE
+		senescence_2_ = as.numeric(r3$SENES2)
 	)
 	d3$trial_id <- paste(d3$location, d3$planting_date, r3$ENV, sep = "_")
 
@@ -236,8 +232,7 @@ Breeding for stress resilient maize varieties and hybrids
 		str_co2 = as.numeric(r4$Striga.counet.10.WAP),
 		stress = "striga",
 		striga_trial = TRUE,
-		striga_infected = TRUE,
-		stringsAsFactors = FALSE
+		striga_infected = TRUE
 	)
 	d4i$trial_id <- paste(d4i$location, d4i$planting_date, "infested", r4$ENV, sep = "_")
 	d4u <- data.frame(
@@ -259,8 +254,7 @@ Breeding for stress resilient maize varieties and hybrids
 		ear_aspect = as.numeric(r4$Eear.aspect.non.infested),
 		stress = "none",
 		striga_trial = TRUE,
-		striga_infected = FALSE,
-		stringsAsFactors = FALSE
+		striga_infected = FALSE
 	)
 	d4u$trial_id <- paste(d4u$location, d4u$planting_date, "noninfested", r4$ENV, sep = "_")
 

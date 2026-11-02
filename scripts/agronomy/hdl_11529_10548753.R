@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# Grain and straw N uptake were not stored as grain_N or residue_N because those fields are concentrations and the uptake unit is not given.
 
 carob_script <- function(path) {
 
@@ -13,7 +15,9 @@ Lower GWP under CSAPs resulted in 36–44% lower emission intensity (383 kg CO2 
 		project=NA,
 		publication= NA,
 		data_organization = "HAU;ICAR;CIMMYT",
-		data_type="is_experiment", 
+		data_type="on-farm experiment",
+		treatment_vars = "treatment",
+		response_vars = "yield",
 		carob_contributor="Shumirai Manzvera",
 		carob_effort = NA,
 		carob_date="2023-12-12"
@@ -26,8 +30,6 @@ Lower GWP under CSAPs resulted in 36–44% lower emission intensity (383 kg CO2 
 				fwy_residue = r$`straw yield (t/ha)` * 1000,
 				treatment = as.character(r$Scenario),
 				rep = as.integer(r$Replication),
-				grain_N = r$`N uptake grain`,
-				residue_N = r$`N uptake straw`,
 				N_fertilizer = r$Nitrogen,
 				control_yield = r$`grain yield in control plot`,
 				irrigation = r$`irrigation (mm)`,
@@ -60,6 +62,8 @@ Lower GWP under CSAPs resulted in 36–44% lower emission intensity (383 kg CO2 
 	d$location <- "Karnal"
 	d$longitude <- 76.990547
 	d$latitude <- 29.685629
+	d$geo_from_source <- FALSE
+	d$trial_id <- paste(d$location, d$crop, sep = "_")
 	
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE

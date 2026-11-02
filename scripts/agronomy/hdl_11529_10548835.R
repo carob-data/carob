@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "land_prep_method", 
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
-		carob_date = "2024-07-02"
+		carob_date = "2024-07-02",
+		notes = "LLM-review: [medium, invented] N, P, and K are NA for every row."
 	)
 	
 	f <- ff[basename(ff) == "DATA 2006 - 2017.xlsx"]

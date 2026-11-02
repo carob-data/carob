@@ -51,7 +51,7 @@ Drought Tolerant Maize for Africa for Improved Livelihoods
 	)
 
 	f <- ff[basename(ff) == "optimal-hybrid-_dataset-mk-bg-2014.csv"]
-	r <- read.csv(f, stringsAsFactors = FALSE)
+	r <- read.csv(f)
 
 	pct <- function(x) {
 		out <- rep(NA_character_, length(x))
@@ -98,8 +98,7 @@ Drought Tolerant Maize for Africa for Improved Livelihoods
 		yield_part = "grain",
 		country = "Nigeria",
 		on_farm = FALSE,
-		is_survey = FALSE,
-		stringsAsFactors = FALSE
+		is_survey = FALSE
 	)
 
 	carobiner::write_files(path, meta, d)

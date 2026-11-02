@@ -20,7 +20,8 @@ carob_script <- function(path) {
     carob_effort = NA,
     carob_date="2024-01-16",
 	treatment_vars = NA,
-	response_vars = "yield"
+	response_vars = "yield",
+	notes = "LLM-review: [medium, treatment] treatment_vars is NA although three cropping systems are in the treatment column and never become explicit columns. The half-rate fertilizer treatment is stored as NA N, P, and K. irrigated is FALSE."
   )
    
  

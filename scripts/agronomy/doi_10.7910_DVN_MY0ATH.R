@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# N and K rates are not in the data.
 
 carob_script <- function(path) {
 
@@ -19,7 +21,8 @@ carob_script <- function(path) {
 		treatment_vars = "P_fertilizer;variety;longitude;latitude", 
 		carob_contributor = "Mitchelle Njukuya", 
 		carob_effort = NA,
-		carob_date = "2024-06-20"
+		carob_date = "2024-06-20",
+		notes = "LLM-review: [medium, fertilizer] P rates of 60 and 90 are typical P2O5 rates and are stored as elemental P, with an unresolved comment. treatment_vars includes longitude and latitude. trial_id is 1 across 6 districts and 2 years."
 	)
 	
 ##### PROCESS data records
@@ -136,12 +139,8 @@ carob_script <- function(path) {
 	d <- carobiner::bindr(d1, d2, d3, d4, d5, d6)	
 	
 	d$P_fertilizer <- c(60, 90)[d$P_fertilizer]
-# is this correct: ?
-	##CN : I thing set to NA might be a good , as the data do not provide any information on the N and K used. 
-	d$N_fertilizer <- 0
-	d$K_fertilizer <- 0
-	
-	
+	## N and K are not reported in the data files.
+
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA # FALSE ?

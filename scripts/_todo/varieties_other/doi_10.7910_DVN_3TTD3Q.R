@@ -15,7 +15,7 @@
 # No fertilizer rates. Year is 2015, but planting and harvest dates are not reported.
 # No genotype is labeled as a check.
 # Grain weight is absent for Farako Ba, Longorola, and Sabon Daga. Panicle length is absent for Sowe, Farako Ba, and Longorola.
-# write_files: missing variables: carob_contributor; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
+# write_files: ; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
 
 ## NOT PROCESSED
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.
@@ -87,8 +87,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 			seed_weight = num("GW1000"),
 			panicle_length_ = num("PNL"),
 			# Dictionnary.txt: paddy yield at 14% moisture, t/ha
-			yield = as.numeric(r$YIELD) * 1000,
-			stringsAsFactors = FALSE
+			yield = as.numeric(r$YIELD) * 1000
 		)
 	})
 	d <- do.call(rbind, d)

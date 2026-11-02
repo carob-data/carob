@@ -65,7 +65,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 	)
 
 	f <- ff[basename(ff) == "yield-data_effects-of-neem-seed-oil-against-pests-and-d.csv"]
-	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1", stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1")
 	repcol <- grep("tition$", names(r), value = TRUE)
 
 	tr <- tolower(trimws(r$traitement))
@@ -93,8 +93,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		trial_id = "1",
 		on_farm = NA,
 		is_survey = FALSE,
-		yield_part = "fruit",
-		stringsAsFactors = FALSE
+		yield_part = "fruit"
 	)
 	d$record_id <- seq_len(nrow(d))
 
@@ -109,8 +108,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 			fruit_index_ = i,
 			fruit_length_ = L[keep],
 			fruit_diameter_ = D[keep],
-			fruit_punctures_ = P[keep],
-			stringsAsFactors = FALSE
+			fruit_punctures_ = P[keep]
 		)
 	}
 	dd <- do.call(rbind, pieces)

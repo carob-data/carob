@@ -90,11 +90,12 @@ carob_script <- function(path) {
 	i <- grep("urea", d$fertilizer_type) 
 	d$N_fertilizer[i] <- 60 
 	
-	# Since DAP was applied at a rate of 30 kg P per hectare, we only know the amount of phosphorus applied, 
-	# hence we calculate total amount of DAP whose composition in 18:46:0
-	tot_DAP <- 30/0.46
+	# 30 kg elemental P/ha. DAP is 18% N and 46% P2O5, so product = P * 2.29 / 0.46.
+	# Urea is the split application; zero-N rows are not given 2 splits.
+	tot_DAP <- 30 * 2.29 / 0.46
 	d$N_fertilizer <- ifelse(d$fertilizer_type == "DAP",tot_DAP*0.18,d$N_fertilizer)
-	d$N_splits <- 2L
+	d$N_splits <- 0L
+	d$N_splits[grep("urea", d$fertilizer_type)] <- 2L
 	
 	x <- d[,c("trial_id","rep","treatment","variety","planting_date","harvest_date","seed_weight","yield","fwy_residue", "dmy_total", "fertilizer_type","N_fertilizer","N_splits","K_fertilizer","P_fertilizer","inoculated")]
 	x <- unique(x) #removing duplicates
@@ -179,12 +180,10 @@ carob_script <- function(path) {
 	d <- w[,c("trial_id","country","adm2","location","latitude", "longitude","rep", "treatment","crop", "variety", "planting_date","harvest_date","inoculated","seed_weight","dmy_total","fwy_residue","yield","fertilizer_type", "N_fertilizer","N_splits","P_fertilizer","K_fertilizer","soil_pH","soil_sand","soil_clay","soil_silt","soil_N", "soil_K","soil_SOC", "on_farm")]
 
 	d$yield_part <- "seed"
-	d$N_fertilizer[is.na(w$N_fertilizer)] <- 0
+	w$N_fertilizer[is.na(w$N_fertilizer)] <- 0
 	w$geo_from_source <- FALSE
   
 	w$soil_pH[w$soil_pH < 3] <- NA
-	w$soil_N[w$soil_N < 1] <- NA
-	w$soil_K[w$soil_K < 1] <- NA
 
 	w$is_survey <- FALSE
 	w$irrigated <- NA

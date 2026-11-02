@@ -43,7 +43,7 @@ depths each.
 		data_type = "on-station experiment",
 		treatment_vars = "irrigated;N_fertilizer;variety",
 		response_vars = "dmy_storage;dmy_total",
-		notes = NA,
+		notes = "LLM-review: [medium, alignment] The six sampled plots are averaged and those means are pasted onto the other plots' soil rows. [low, fertilizer] fertilizer_type and a five-date fertilizer_date stay on the unfertilized F0 plots. Planting-stake dry matter is assigned to seed_rate.",
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-17",
 		carob_completion = 85,

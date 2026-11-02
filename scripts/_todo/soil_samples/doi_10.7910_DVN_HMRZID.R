@@ -9,13 +9,13 @@
 # Field observations (land use, phenology, straw management, moisture, plough pan, bund height, soil colour) are kept on the composite record.
 
 ## ISSUES
-# No coordinates in the file although the methodology note says the dataset has field latitude/longitude: ask IRRI or georeference by municipality (21 municipalities in Bulacan, La Union, Nueva Ecija, Pangasinan, Tarlac). Check GADM spelling (e.g. "Pozzorubio" = Pozorrubio, "Tarlac City").
+# No field coordinates in the file, although the methodology note says latitude/longitude exist: ask IRRI. Municipality centroids are used. GADM 4.1 spells Pozzorubio with two z's, so that name was not changed. Cabanatuan, Gapan, San Jose, and Urdaneta were aligned to the GADM City names.
 # The methodology note says composite samples were 0-20 cm; the data say "0 - 15". Data value used.
 # Plough pan depth has a range value "15 - 20"; kept as text in plough_pan_depth_.
 # 10 fields have no core (no bulk density); their core records have no soil data and are dropped (only the composite record remains).
 # Paper's management/yield data for these fields are in the Loop survey, not here.
 # Two composite samples have no pH, two no dry colour.
-# write_files: missing longitude/latitude/geo_from_source; unknown (new) variables plough_pan_depth_, bund_height_, soil_color_dry_, straw_management_, soil_moisture_status_, n_cores_, n_auger_samples_.
+# write_files: unknown (new) variables plough_pan_depth_, bund_height_, soil_color_dry_, straw_management_, soil_moisture_status_, n_cores_, n_auger_samples_.
 # data_organization set to "IRRI"; starter had "WUR" (first author at Wageningen) - consider "IRRI; WUR".
 
 ## NEW VARIABLES
@@ -112,6 +112,25 @@ The objective of the study was to decompose the rice yield gap into an efficienc
 	d$trial_id <- paste(d$hhid, d$field_id, sep="_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	# Cabanatuan is the GADM name Cabanatuan City
+	d$adm2[which(d$adm1 == "Nueva Ecija" & d$adm2 == "Cabanatuan")] <- "Cabanatuan City"
+	# Gapan is the GADM name Gapan City
+	d$adm2[which(d$adm1 == "Nueva Ecija" & d$adm2 == "Gapan")] <- "Gapan City"
+	# San Jose is the GADM name San Jose City
+	d$adm2[which(d$adm1 == "Nueva Ecija" & d$adm2 == "San Jose")] <- "San Jose City"
+	# Urdaneta is the GADM name Urdaneta City
+	d$adm2[which(d$adm1 == "Pangasinan" & d$adm2 == "Urdaneta")] <- "Urdaneta City"
+	# Coordinates are the GADM point-radius centroid of the municipality.
+	geo <- data.frame(
+		adm1 = c("Bulacan", "Bulacan", "La Union", "Nueva Ecija", "Nueva Ecija", "Nueva Ecija", "Nueva Ecija", "Nueva Ecija", "Nueva Ecija", "Nueva Ecija", "Pangasinan", "Pangasinan", "Pangasinan", "Pangasinan", "Pangasinan", "Pangasinan", "Pangasinan", "Pangasinan", "Tarlac", "Tarlac", "Tarlac"),
+		adm2 = c("San Miguel", "San Rafael", "Rosario", "Bongabon", "Cabanatuan City", "Gapan City", "San Jose City", "San Leonardo", "Santo Domingo", "Talavera", "Pozzorubio", "Rosales", "Santa Maria", "Sison", "Tayug", "Umingan", "Urdaneta City", "Villasis", "Moncada", "San Manuel", "Tarlac City"),
+		longitude = c(121.0401, 120.9915, 120.459, 121.2313, 120.9899, 121.0054, 120.9976, 120.9474, 120.8804, 120.9345, 120.5195, 120.6338, 120.694, 120.5495, 120.7435, 120.8199, 120.5586, 120.5717, 120.5534, 120.5974, 120.6018),
+		latitude = c(15.1731, 14.9835, 16.2454, 15.6514, 15.4924, 15.2828, 15.7846, 15.3596, 15.62, 15.614, 16.1201, 15.8747, 15.9694, 16.177, 16.0188, 15.8987, 15.978, 15.9188, 15.7446, 15.8288, 15.4844),
+		geo_uncertainty = c(12069, 9885, 6208, 12904, 12945, 14921, 9739, 6941, 7372, 11385, 6540, 6546, 7708, 11615, 5565, 14670, 9265, 7573, 10113, 6747, 12471),
+		geo_source = "GADM 4.1, adm2"
+	)
+	d <- merge(d, geo, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

@@ -14,7 +14,6 @@
 # Guinea Koba has 11 genotypes with no yield. One of them, ARS1188-NFL-73-15D-B, has flowering_days about 4.4, below the terminag minimum of 15. Left as recorded. The message also prints 141.553, which is the column maximum and is inside 15-250 days.
 # Checks are not identified.
 # No linked publication in the Dataverse record.
-# write_files: missing variables: carob_contributor
 # write_files: missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
 # write_files: unknown variables: panicle_length_
 # write_files: out of bounds: flowering_days (4.377, 141.553)

@@ -32,7 +32,7 @@ The data were collected in the frame of the EiA Sasakawa Nigeria  Use Case in th
 	   response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
    	carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [low, metadata] data_organization is AfricaRice and IITA and data_type is experiment for an on-farm cassava validation. The oxide split and yield times 1000 match the abstract."
 	)
 	
 	
@@ -63,7 +63,8 @@ The data were collected in the frame of the EiA Sasakawa Nigeria  Use Case in th
 		is_survey = FALSE,
 		geo_from_source = TRUE,
 		irrigated = NA,
-		yield_moisture = as.numeric(NA)
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA # Yield does not say fresh or dry
 	)
 
  

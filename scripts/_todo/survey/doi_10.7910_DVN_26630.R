@@ -17,7 +17,7 @@
 # Farmchar codes both years as season 1; 1988 records are recoded to the dry season to match the other sheets.
 
 ## ISSUES
-# No coordinates, and no municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan); human must georeference (only adm1 = Laguna set).
+# No municipality/barangay per household. The sample covers six Laguna municipalities (Calauan, Bay, Calamba, Cabuyao, Sta. Rosa, Binan), but those names are not on the records. Coordinates are the GADM point-radius centroid of Laguna (adm1).
 # QTYSEED unit is not given in the coding manual; treated as kg (values are often multiples of a cavan). Verify.
 # The meaning of the dry-season YEAR label differs between rounds (planting year in 2007-08, harvest year in 1995), so dry-season text dates without a year are not parsed.
 # Products without known composition (organics, foliars, brand names) contribute nothing to N/P/K, which may underestimate the totals.
@@ -26,7 +26,7 @@
 # 'Malagkit' (glutinous rice) is a rice type rather than a variety; variety names and spellings are not standardized; some records list several varieties.
 # No dates in the activity sheets; Farmchar SOIL TYPE, PLANT SPACING, LAST CROP, DATE PLNTED, SHARE OUTPUT and HH AGE are empty.
 # HOUSEHOLD SIZE values are 1-3, small for farm households. Check.
-# write_files: missing longitude/latitude/geo_from_source; new variables; invalid fertilizer_type 16-20-0.
+# write_files: new variables; invalid fertilizer_type 16-20-0.
 
 ## NEW VARIABLES
 # survey_year_: YEAR label of the survey round (for the dry season this is not always the planting year)
@@ -232,6 +232,17 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI 
 	d$is_survey <- TRUE
 	d$yield_part <- ifelse(d$crop == "rice", "grain", NA)
 	d$yield_isfresh <- TRUE
+
+	# Coordinates are the GADM point-radius centroid of adm1 Laguna.
+	geo <- data.frame(
+		adm1 = c("Laguna"),
+		longitude = c(121.3251),
+		latitude = c(14.2833),
+		geo_uncertainty = c(37342),
+		geo_source = c("GADM 4.1, adm1")
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

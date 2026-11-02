@@ -28,7 +28,7 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 		data_type = "experiment",
 		treatment_vars = "N_organic;OM_type",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] Sodium nitrate is stored only as organic N. P and K are NA for every treatment, including the zero control, even though the grades determine them. Weekly rows are merged onto yield and then not collapsed, so each yield is repeated once per week. trial_id is 1 for all New York years and 2 for all Wisconsin years. State names are in location, and on_farm is TRUE for the research stations.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-20",
 		carob_completion = 100,	
@@ -59,8 +59,8 @@ No-till planting organic soybean (Glycine max [L.] Merr.) into rolled-crimped ce
 	
 	d2 <- data.frame(
 	  year = r2$siteyr,
-	  soil_P = r2$Soil_P/1.1, #ppm 
-	  soil_K = r2$Soil_K/1.1, #ppm 
+	  soil_P = r2$Soil_P, # reported soil-test value
+	  soil_K = r2$Soil_K, # reported soil-test value 
 	  soil_SOM = r2$SOM, 
 	  soil_pH = r2$Soil_pH,
 	  previous_crop = "rye",# rolled-crimped  crop

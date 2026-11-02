@@ -74,7 +74,7 @@ carob_script <- function(path) {
 	## soil data 
 		soil_pH= r1$pH.Water.1.1,
 		soil_SOC= r1$OC.pct,
-		soil_N= r1$N.pct,
+		soil_N= r1$N.pct * 10000, # % to mg/kg
 		soil_P_Mehlich= r1$MehP.ppm,
 		soil_sand= r1$Sand.pct,
 		soil_clay= r1$Clay.pct,
@@ -93,37 +93,37 @@ carob_script <- function(path) {
 		 soil_S= r1$S.pmm, 
 
 	### nutrient content 
-		leaf_N= r1$pct.N.73,
-		leaf_P= r1$pct.P.74,
-		leaf_K= r1$pct.K.75,
-		leaf_Ca= r1$pct.Ca.76,
-		leaf_Mg= r1$pct.Mg.77,
-		leaf_Cu= r1$ppm.Cu.79,
-		leaf_Fe= r1$ppm.Fe.80,
-		leaf_Mn= r1$ppm.Mn.81,
-		leaf_Zn= r1$ppm.Zn.82,
-		leaf_B= r1$ppm.B,
-		residue_N= r1$pct.N.84,
-		residue_P= r1$pct.P.85,
-		residue_K= r1$pct.K.86,
-		residue_Ca= r1$pct.Ca.87,
-		residue_Mg= r1$pct.Mg.88,
-		residue_Na= r1$ppm.Na.99,
-		residue_Mn= r1$ppm.Mn.90,
-		residue_Cu= r1$ppm.Cu.91,
-		residue_Fe= r1$ppm.Fe.92,
-		residue_Zn= r1$ppm.Zn.93,
-		grain_N= r1$pct.N.94,
-		grain_P= r1$pct.P.95,
-		grain_K= r1$pct.K.96,
-		grain_Ca= r1$pct.Ca.97,
-		grain_Mg= r1$pct.Mg.98,
-		grain_Na= r1$ppm.Na.99,
-		grain_Mn= r1$ppm.Mn.100,
-		grain_Cu= r1$ppm.Cu.101,
-		grain_Fe= r1$ppm.Fe.102,
-		grain_Zn= r1$ppm.Zn.103,
-		trial_id = "1"
+		leaf_N= r1$pct.N.73 * 10, # % to mg/g
+		leaf_P= r1$pct.P.74 * 10,
+		leaf_K= r1$pct.K.75 * 10,
+		leaf_Ca= r1$pct.Ca.76 * 10,
+		leaf_Mg= r1$pct.Mg.77 * 10,
+		leaf_Cu= r1$ppm.Cu.79 / 1000, # ppm to mg/g
+		leaf_Fe= r1$ppm.Fe.80 / 1000,
+		leaf_Mn= r1$ppm.Mn.81 / 1000,
+		leaf_Zn= r1$ppm.Zn.82 / 1000,
+		leaf_B= r1$ppm.B / 1000,
+		residue_N= r1$pct.N.84 * 10,
+		residue_P= r1$pct.P.85 * 10,
+		residue_K= r1$pct.K.86 * 10,
+		residue_Ca= r1$pct.Ca.87 * 10,
+		residue_Mg= r1$pct.Mg.88 * 10,
+		residue_Na= r1$ppm.Na.99 / 1000,
+		residue_Mn= r1$ppm.Mn.90 / 1000,
+		residue_Cu= r1$ppm.Cu.91 / 1000,
+		residue_Fe= r1$ppm.Fe.92 / 1000,
+		residue_Zn= r1$ppm.Zn.93 / 1000,
+		grain_N= r1$pct.N.94 * 10,
+		grain_P= r1$pct.P.95 * 10,
+		grain_K= r1$pct.K.96 * 10,
+		grain_Ca= r1$pct.Ca.97 * 10,
+		grain_Mg= r1$pct.Mg.98 * 10,
+		grain_Na= r1$ppm.Na.99 / 1000,
+		grain_Mn= r1$ppm.Mn.100 / 1000,
+		grain_Cu= r1$ppm.Cu.101 / 1000,
+		grain_Fe= r1$ppm.Fe.102 / 1000,
+		grain_Zn= r1$ppm.Zn.103 / 1000,
+		trial_id = paste(r1$Experiment.site.code.EXPsit, "2015", sep = "_")
 	)
 
 	pd <- r1$Harvest.date.HDATE
@@ -131,7 +131,15 @@ carob_script <- function(path) {
 	i <- grepl("^42", pd)
 	pd[i] <- as.character(as.Date("1900-01-01") + as.integer(pd[i]) - 2)
 	pd[!i] <- as.character(as.Date(pd[!i], "%d/%m/%Y"))
-	d1$planting_date <- pd
+	d1$harvest_date <- pd
+	pl <- as.character(r1$Planting.date.PLNdat)
+	ok <- !is.na(pl) & grepl("^\\d{4}-\\d{2}-\\d{2}", pl)
+	num <- !ok & !is.na(pl) & grepl("^[0-9]+$", pl)
+	dmy <- !ok & !num & !is.na(pl)
+	pl[ok] <- substr(pl[ok], 1, 10)
+	pl[num] <- as.character(as.Date(as.numeric(pl[num]), origin = "1899-12-30"))
+	pl[dmy] <- as.character(as.Date(pl[dmy], "%d/%m/%Y"))
+	d1$planting_date <- pl
 	d1 <- unique(d1)
 
 		
@@ -151,23 +159,23 @@ carob_script <- function(path) {
 		yield= r2$Grain.Yield.kg.ha,
 		fwy_residue= r2$Stalk.Yield.kg.ha,
 		dmy_total= r2$Above.ground.biomass.t.ha*1000,## in kg/ha
-		leaf_N= r2$pct.N.46,
-		leaf_P= r2$pct.P.47,
-		leaf_K= r2$pct.K.48,
-		leaf_Ca= r2$pct.Ca,
-		leaf_Mg= r2$pct.Mg,
-		leaf_Cu= r2$ppm.Cu,
-		leaf_Fe= r2$ppm.Fe,
-		leaf_Mn= r2$ppm.Mn,
-		leaf_Zn= r2$ppm.Zn,
-		leaf_B= r2$ppm.B,
-		residue_N= r2$pct.N.57,
-		residue_P= r2$pct.P.58,
-		residue_K= r2$pct.K.59,
-		grain_N= r2$pct.N.60,
-		grain_P= r2$pct.P.61,
-		grain_K= r2$pct.K.62,
-		trial_id = "2"
+		leaf_N= r2$pct.N.46 * 10,
+		leaf_P= r2$pct.P.47 * 10,
+		leaf_K= r2$pct.K.48 * 10,
+		leaf_Ca= r2$pct.Ca * 10,
+		leaf_Mg= r2$pct.Mg * 10,
+		leaf_Cu= r2$ppm.Cu / 1000,
+		leaf_Fe= r2$ppm.Fe / 1000,
+		leaf_Mn= r2$ppm.Mn / 1000,
+		leaf_Zn= r2$ppm.Zn / 1000,
+		leaf_B= r2$ppm.B / 1000,
+		residue_N= r2$pct.N.57 * 10,
+		residue_P= r2$pct.P.58 * 10,
+		residue_K= r2$pct.K.59 * 10,
+		grain_N= r2$pct.N.60 * 10,
+		grain_P= r2$pct.P.61 * 10,
+		grain_K= r2$pct.K.62 * 10,
+		trial_id = paste(r2$Experimental.site.code.EXPsit, "2016", sep = "_")
 	)
 	
 	d <- carobiner::bindr(d1, d2)
@@ -183,6 +191,8 @@ carob_script <- function(path) {
 		name <- paste0(nut, "_fertilizer")
 		d[name] <- d[name] * grepl(nut, d$treatment)
 	}
+	## Mg is applied with the NPK+S+Ca+Zn+B package; the treatment name does not contain Mg
+	d$Mg_fertilizer <- d$Mg_fertilizer * grepl("S", d$treatment)
 	
 	#see data.frame "fd"
 	ft <- rep("", nrow(d))

@@ -71,8 +71,7 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 		dmy_residue = as.numeric(r$DFWkgha),
 		seed_weight = as.numeric(r$HSW) * 10,
 		shelling_percentage = as.numeric(r[["Shelling ratio"]]),
-		sound_mature_kernel_ = as.numeric(r$SMK),
-		stringsAsFactors = FALSE
+		sound_mature_kernel_ = as.numeric(r$SMK)
 	)
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"
@@ -97,8 +96,7 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 	long <- data.frame(
 		record_id = rep(d$record_id, 3),
 		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = as.character(c(r[["Early Leaf Severity"]], r[["Late Leaf Severity"]], r[["Rust severity"]])),
-		stringsAsFactors = FALSE
+		disease_severity = as.character(c(r[["Early Leaf Severity"]], r[["Late Leaf Severity"]], r[["Rust severity"]]))
 	)
 	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))
 

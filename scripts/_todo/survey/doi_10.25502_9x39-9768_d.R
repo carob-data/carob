@@ -66,7 +66,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		carob_effort = 0.6
 	)
 
-	r <- read.csv(ff[basename(ff) == "input_use.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "input_use.csv"])
 
 	z <- tolower(trimws(r$crops_grown))
 	crop <- z
@@ -178,8 +178,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		country = "Burundi",
 		district_code_ = as.character(r$District_Cefferie_Commune),
 		sector_code_ = as.character(r$Sector_Groupment_Zone),
-		location_code_ = as.character(r$Village_Sun_colline),
-		stringsAsFactors = FALSE
+		location_code_ = as.character(r$Village_Sun_colline)
 	)
 	d$variety_type[d$variety_type %in% c("", "na")] <- NA
 	d$variety_type[d$variety_type == "local"] <- "landrace"

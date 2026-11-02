@@ -27,7 +27,9 @@ This dataset contains raw and extrapolated yield data from on farm mother demos 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-09-17",
 		carob_completion = 90,	
-		carob_effort = 5)
+		carob_effort = 5,
+		notes = "LLM-review: [medium, metadata] trial_id is 1 for 57 on-farm demos. N, P, and K are NA placeholders although fertilizer is a treatment. Two subsample columns are not terminag names and have no new-variable note."
+)
 	
 
 	f1 <- ff[basename(ff) == "Mother Bean Demos with Yield assessment in 2017.xlsx"]

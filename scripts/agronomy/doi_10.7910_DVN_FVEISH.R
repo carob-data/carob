@@ -22,7 +22,8 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	  response_vars="yield",
 	  carob_contributor="Siyabusa Mkuhlani",
 	  carob_effort = NA,
-	  carob_date="2024-07-23"
+	  carob_date="2024-07-23",
+	  notes = "LLM-review: [medium, metadata] on_farm is TRUE for everything, including files the comments call on-station. geocode_duplicates is called inside the script. Rows with missing yield are dropped."
 	)
 	
 	#Read and process first data set
@@ -49,7 +50,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	d1$fertilizer_type <- 'D-compound; urea'
 	d1[c("basalfert", "topdressing")] <- do.call(rbind, strsplit(as.character(r1$Fertilizerrate), ":"))
 	#Most common basal fertilizer is 10:20:10 and top dressing as urea.
-	d1$N_fertilizer <- 0.1*as.numeric(d1$basalfert) + as.numeric(d1$topdressing)
+	d1$N_fertilizer <- 0.1*as.numeric(d1$basalfert) + 0.46*as.numeric(d1$topdressing)
 	d1$P_fertilizer <- 0.2*as.numeric(d1$basalfert)*0.436
 	d1$K_fertilizer <- 0.1*as.numeric(d1$basalfert)*0.83
 	
@@ -127,7 +128,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	d3$fertilizer_type <- 'D-compound; urea'
 	d3[c("basalfert", "topdressing")] <- do.call(rbind, strsplit(as.character(r3$Fertilizerrate), ":"))
 	#Most common basal fertilizer is 10:20:10 and top dressing as urea.
-	d3$N_fertilizer <- 0.1*as.numeric(d3$basalfert) + as.numeric(d3$topdressing)
+	d3$N_fertilizer <- 0.1*as.numeric(d3$basalfert) + 0.46*as.numeric(d3$topdressing)
 	d3$P_fertilizer <- 0.2*as.numeric(d3$basalfert)*0.436
 	d3$K_fertilizer <- 0.1*as.numeric(d3$basalfert)*0.83
 	
@@ -206,7 +207,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	d5[c("basalfert", "topdressing")] <- do.call(rbind, strsplit(as.character(r5$fertrate), ":"))
 	
 	#Most common basal fertilizer in Zambia is 10:20:10 and top dressing as urea.
-	d5$N_fertilizer <- 0.1*as.numeric(d5$basalfert) + as.numeric(d5$topdressing)
+	d5$N_fertilizer <- 0.1*as.numeric(d5$basalfert) + 0.46*as.numeric(d5$topdressing)
 	d5$P_fertilizer <- 0.2*as.numeric(d5$basalfert)*0.436
 	d5$K_fertilizer <- 0.1*as.numeric(d5$basalfert)*0.83
 	
@@ -240,7 +241,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	d6$fertilizer_type <- 'D-compound; urea'
 	d6[c("basalfert", "topdressing")] <- do.call(rbind, strsplit(as.character(r6$Fertilizationrate), ":"))
 	#Most common basal fertilizer is 10:20:10 and top dressing as urea.
-	d6$N_fertilizer <- 0.1*as.numeric(d6$basalfert) + as.numeric(d6$topdressing)
+	d6$N_fertilizer <- 0.1*as.numeric(d6$basalfert) + 0.46*as.numeric(d6$topdressing)
 	d6$P_fertilizer <- 0.2*as.numeric(d6$basalfert)*0.436
 	d6$K_fertilizer <- 0.1*as.numeric(d6$basalfert)*0.83
 	
@@ -277,7 +278,7 @@ Sustainable intensification of mixed crop-livestock systems is a key pathway tow
 	d7$fertilizer_type <- 'D-compound; urea'
 	d7[c("basalfert", "topdressing")] <- do.call(rbind, strsplit(as.character(r7$Fertilizerrate), ":"))
 	#Most common basal fertilizer is 10:20:10 and top dressing as urea.
-	d7$N_fertilizer <- 0.1*as.numeric(d7$basalfert) + as.numeric(d7$topdressing)
+	d7$N_fertilizer <- 0.1*as.numeric(d7$basalfert) + 0.46*as.numeric(d7$topdressing)
 	d7$P_fertilizer <- 0.2*as.numeric(d7$basalfert)*0.436
 	d7$K_fertilizer <- 0.1*as.numeric(d7$basalfert)*0.83
 	

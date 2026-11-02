@@ -60,8 +60,8 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 
 	f1 <- ff[basename(ff) == "ff-counts-on-resting-plants.csv"]
 	f2 <- ff[basename(ff) == "fruits-incubation-data.csv"]
-	r1 <- read.csv(f1, check.names=FALSE, stringsAsFactors=FALSE)
-	r2 <- read.csv(f2, check.names=FALSE, stringsAsFactors=FALSE)
+	r1 <- read.csv(f1, check.names=FALSE)
+	r2 <- read.csv(f2, check.names=FALSE)
 
 	trt <- function(x) {
 		x <- trimws(x)
@@ -103,8 +103,7 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 		petiole_exudate_ = as.integer(r1$Nbpetiolew_Ex),
 		pest_incidence = row_sum(fly_m),
 		insecticide_used = trt(r1$Treatment) != "control",
-		yield_part = "none",
-		stringsAsFactors = FALSE
+		yield_part = "none"
 	)
 
 	fruit_m <- cbind(
@@ -126,8 +125,7 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 		pupae_ = as.integer(r2$TP),
 		pest_incidence = row_sum(fruit_m),
 		insecticide_used = trt(r2$Treatment) != "control",
-		yield_part = "fruit",
-		stringsAsFactors = FALSE
+		yield_part = "fruit"
 	)
 
 	d <- carobiner::bindr(d1, d2)

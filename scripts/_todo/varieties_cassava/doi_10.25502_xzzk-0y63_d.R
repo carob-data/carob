@@ -65,7 +65,7 @@ RTB is a partnership collaboration of five research centers, led by the Internat
 
 	f <- ff[basename(ff) == "data-on-babessi-clones-aug11_apollin-fotso.csv"]
 	txt <- readLines(f, encoding="latin1", warn=FALSE)
-	r <- read.csv(text=txt, stringsAsFactors=FALSE, na.strings=c("", "NA"))
+	r <- read.csv(text=txt, na.strings=c("", "NA"))
 
 	decmin <- function(x) {
 		x <- trimws(x)

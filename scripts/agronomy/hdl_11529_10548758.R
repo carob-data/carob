@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# Per-crop N, P2O5, and K2O were not copied onto the soil rows, because summing rice, wheat, and mungbean onto every layer is not the rate for that layer.
 
 ## treatment: 
  ## 1- Transplanted puddled rice * conventional tillage broadcasted wheat (TPR-CTW)
@@ -11,7 +12,7 @@
 ## 5- Zero tillage direct seeded rice * zero tillage wheat * zero tillage mung bean +Sub-surface drip irrigation (ZTDSR-ZTWMb +SDI)
 ## 6 - Zero tillage maize * zero tillage wheat * zero tillage mung bean (ZTM-ZTWMb +SDI)
 
-## convert kg/ha to ppm = kg/ha *100/ soil_bd* depth
+## convert kg/ha to mg/kg = kg/ha * 10 / (bulk density * layer thickness)
 
 carob_script <- function(path) {
 
@@ -32,7 +33,7 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 		carob_date = "2026-10-12",
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "land_prep_method;planting_method;N_fertilizer;P_fertilizer;K_fertilizer",
+		treatment_vars = "land_prep_method;planting_method",
 		response_vars = "soil_MBC;soil_SOC", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
@@ -42,6 +43,9 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 	
 	f1 <- ff[basename(ff) == "Dibakar et al 2021_Geoderma.xlsx"]
 	r1 <- carobiner::read.excel(f1, sheet="Sheet1")
+	depth_bottom <- as.numeric(gsub("-", "", substr(r1$Depth, 3, 5)))
+	depth_top <- as.numeric(gsub("-", "", substr(r1$Depth, 1, 2)))
+	thick <- depth_bottom - depth_top
 	
 	mgmnt <- data.frame(
 		treatment_id = 1:6,
@@ -55,21 +59,21 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
   d1 <- data.frame(
     rep = as.integer(r1$Rep),
     treatment_id = r1$Sc,
-    depth_bottom = as.numeric(gsub("-", "", substr(r1$Depth,3, 5))) ,
-    depth_top = as.numeric(gsub("-", "", substr(r1$Depth,1, 2))),
+    depth_bottom = depth_bottom,
+    depth_top = depth_top,
     #soil_moisture = r1$VWC, ## in %
     soil_pH = r1$pH,
     soil_EC = r1$Ec,
     soil_bd = r1$BD,
     infiltration_rate = r1$Infiltration,# cm/hr
     soil_SOC = r1$`SOC (g kg)`/10, ## in %
-    soil_N = r1$`Av N`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD), # from kg/ha to ppm
-    soil_P = r1$`Av P`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
-    soil_K = r1$`Av K`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
-    soil_Fe = r1$`Av Fe`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
-    soil_Zn = r1$`AV Zn`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
-    soil_Cu = r1$`Av Cu`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
-    soil_Mn = r1$`Av Mn`*100/(as.numeric(gsub("-", "", substr(r1$Depth,3, 5)))*r1$BD),
+    soil_N = r1$`Av N` * 10 / (thick * r1$BD), # kg/ha to mg/kg
+    soil_P = r1$`Av P` * 10 / (thick * r1$BD),
+    soil_K = r1$`Av K` * 10 / (thick * r1$BD),
+    soil_Fe = r1$`Av Fe` * 10 / (thick * r1$BD),
+    soil_Zn = r1$`AV Zn` * 10 / (thick * r1$BD),
+    soil_Cu = r1$`Av Cu` * 10 / (thick * r1$BD),
+    soil_Mn = r1$`Av Mn` * 10 / (thick * r1$BD),
     soil_MBC = r1$MBC,
     soil_ALP = r1$ALKP,
     soil_ACP = r1$ACDP,
@@ -88,26 +92,10 @@ Indo Gangetic plains of India. Hence, we evaluated long-term (10 years) effect o
 #  row.names(d) <- d$id <- NULL
 
 	d <- merge(d1, mgmnt, by="treatment_id")	
-  
-  ## from publication
-  fert <- data.frame(
-    treatment_id = c(rep(1, 2), rep(2, 3), rep(3, 3), rep(4, 3), rep(5, 3), rep(6, 3)),
-    crop = c("rice", "wheat", "rice", "wheat", "mung bean", "rice", "wheat", "mung bean", "maize", "wheat", "mung bean", "rice", "wheat", "mung bean", "maize", "wheat","mung bean"),
-    N_fertilizer = c(175, 150, 150, 150, 0, 160, 150, 0, 175, 150, 0, 160, 150,0, 175, 150, 0),
-    P_fertilizer = c(58, 58, 50, 64, 0, 64, 64, 0, 64, 64, 0, 64, 64, 0, 64, 64, 0),
-    K_fertilizer = c(0, 0, 60, 32, 0, 62, 32, 0, 62, 32, 0, 62, 32, 0, 62, 32, 0)
-  )
-	fert <- aggregate(fert[, c("N_fertilizer", "P_fertilizer", "K_fertilizer")], fert["treatment_id"], sum)
-		   
-  d <- merge(d, fert, by = "treatment_id", all.x = TRUE)
   d$treatment_id <- NULL
 	
   d$is_survey <- FALSE
-  d$on_farm <- TRUE
-  d$yield  <- NA
-  d$yield_moisture <- NA
-  d$yield_isfresh <- NA
-  d$yield_part <- "none"
+  d$on_farm <- FALSE
   d$irrigated <- NA
   d$planting_date <- NA
   d$harvest_date <- NA

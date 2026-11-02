@@ -20,7 +20,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date = "2024-08-21",
-		notes = NA
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are dropped, which removes the sequential leaf and stem biomass. [low, forbidden] suppressWarnings is used, and the state is spelled Telanyana. on_farm is TRUE for the ICRISAT fields."
 	)
 	
 	f1 <- ff[basename(ff) == "2.Experiment.xlsx"]
@@ -117,7 +117,7 @@ carob_script <- function(path) {
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
-	carobiner::write_files(path, meta, d, wt=dw)
+	carobiner::write_files(path, meta, d, wth=dw)
 }
 
 

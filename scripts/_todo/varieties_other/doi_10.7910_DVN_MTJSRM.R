@@ -14,7 +14,7 @@
 # Some genotype-station cells are blank. Uganda-Namulongue has no yield BLUP. Senegal-ISRA-Fanaye and Mali-Selingue have no flowering BLUP. Mali-Selingue has no height BLUP. Rows are kept when another trait is present, so yield is NA on those rows.
 # Station names follow the column headers (Namulongue, Selingue, Vallee du Kou). Confirm spellings when georeferencing.
 # The files do not say which stations were on-farm hot spots. All rows are coded on_farm FALSE from the station names.
-# write_files: missing variables: carob_contributor; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: yield.
+# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: yield.
 
 ## NOT PROCESSED
 # Statistics-Flowering-2018-Irrigated-Lowland.xls, Statistics-Height-2018-Irrigated-Lowland.xls, Statistics-Yield-2018-Irrigated-Lowland.xls: heritability, mean, LSD, replicates, genotype p-value, genotype variance, residual variance, and a CV label. These are ANOVA summaries, not variety rows. The same three summary rows are repeated at the bottom of each BLUP sheet and are skipped.
@@ -76,8 +76,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 			vals <- as.numeric(vals)
 			piece <- data.frame(
 				variety = variety[keep],
-				loc_key = lab,
-				stringsAsFactors = FALSE
+				loc_key = lab
 			)
 			piece[[varname]] <- vals
 			out[[length(out) + 1]] <- piece
@@ -115,8 +114,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 			"AfricaRice Fanaye", "AfricaRice Mbe", "AfricaRice Ndiaye",
 			"ISRA Fanaye", "Karfiguela", "Vallee du Kou",
 			"Kogoni", "Niono", "Selingue", "Namulongue"
-		),
-		stringsAsFactors = FALSE
+		)
 	)
 
 	bad <- setdiff(unique(d$loc_key), sites$loc_key)
@@ -143,8 +141,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		trial_id = paste(d$location, "2018"),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		irrigated = TRUE,
-		stringsAsFactors = FALSE
+		irrigated = TRUE
 	)
 
 	carobiner::write_files(path, meta, d)

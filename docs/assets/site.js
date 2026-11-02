@@ -28,16 +28,13 @@
 		return null;
 	}
 
-	function formatSource(author, year, provider) {
+	function formatSource(author, year) {
 		author = String(author || "").trim().replace(/,\s*$/, "");
 		year = String(year || "").trim();
-		provider = String(provider || "").trim();
-		let lead = "";
-		if (author && year) lead = `${author} (${year})`;
-		else if (author) lead = author;
-		else if (year) lead = `(${year})`;
-		if (lead && provider) return `${lead}, ${provider}`;
-		return lead || provider;
+		if (author && year) return `${author} (${year})`;
+		if (author) return author;
+		if (year) return `(${year})`;
+		return "";
 	}
 
 	function titleUriCell(title, uri, source, script) {
@@ -81,9 +78,9 @@
 			uri: idx("uri") >= 0 ? String(row[idx("uri")] ?? "").trim() : "",
 			source: formatSource(
 				idx("author") >= 0 ? row[idx("author")] : "",
-				idx("year_pub") >= 0 ? row[idx("year_pub")] : "",
-				idx("provider") >= 0 ? row[idx("provider")] : ""
+				idx("year_pub") >= 0 ? row[idx("year_pub")] : ""
 			),
+			provider: idx("provider") >= 0 ? String(row[idx("provider")] ?? "").trim() : "",
 			region: idx("region") >= 0 ? String(row[idx("region")] ?? "").trim() : "",
 			crop: idx("crop") >= 0 ? String(row[idx("crop")] ?? "").trim() : "",
 			group: idx("group") >= 0 ? String(row[idx("group")] ?? "").trim() : "",
@@ -92,8 +89,8 @@
 		}));
 
 		return {
-			headers: ["title", "script", "difficulty", "region", "crop", "group", "source", "uri"],
-			rows: records.map(r => [r.title, r.script, r.difficulty, r.region, r.crop, r.group, r.source, r.uri])
+			headers: ["title", "script", "difficulty", "provider", "region", "crop", "group", "source", "uri"],
+			rows: records.map(r => [r.title, r.script, r.difficulty, r.provider, r.region, r.crop, r.group, r.source, r.uri])
 		};
 	}
 

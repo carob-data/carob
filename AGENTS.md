@@ -410,7 +410,12 @@ Do **not** force data into a one-row-per-unit shape when that loses information.
 - when you move a dataset to `_pending` or `_rejected`, say so — and why — in the PR message.
 
 
-## 13. Pre-submission checklist
+## 13 Extract values from publication 
+
+- if a publication URI is provided, locate and read the publication for (a) consistency with the values and (b) to extract values that are in the publication (often in the Methods section) but not in the data. These are often constants for the dataset (e.g. amount of N applied in a trial about something else), but become variables when the data is combined with other datasets.
+
+
+## 14. Pre-submission checklist
 
 - [ ] File named `<dataset_id>.R` and placed in `scripts/<group>/`.
 - [ ] Title + abstract copied into the script; 

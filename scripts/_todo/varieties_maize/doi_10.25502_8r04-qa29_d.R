@@ -81,7 +81,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 
 	read_piece <- function(fname, optimal) {
 		f <- ff[basename(ff) == fname]
-		r <- read.csv(f, stringsAsFactors = FALSE)
+		r <- read.csv(f)
 		loc <- trimws(r$LOC)
 		if (optimal) {
 			stress <- rep("none", nrow(r))
@@ -126,8 +126,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 			str_rat1 = as_num(r$RAT1),
 			str_rat2 = as_num(r$RAT2),
 			str_co1 = as_num(r$CO1),
-			str_co2 = as_num(r$CO2),
-			stringsAsFactors = FALSE
+			str_co2 = as_num(r$CO2)
 		)
 	}
 
@@ -165,8 +164,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 			pest_severity = chr1(pest_severity),
 			pest_incidence = int1(pest_incidence),
 			DAP = int1(DAP),
-			order = int1(ord),
-			stringsAsFactors = FALSE
+			order = int1(ord)
 		)
 		if (is.null(long)) long <<- x else long <<- rbind(long, x)
 	}

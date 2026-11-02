@@ -79,7 +79,7 @@ Determine the gene action conditioning grain yield and other traits of the early
 
 	read_piece <- function(fname, stress, stress_id, from_env) {
 		f <- ff[basename(ff) == fname]
-		r <- read.csv(f, stringsAsFactors = FALSE)
+		r <- read.csv(f)
 		if (from_env) {
 			env <- trimws(r$ENV)
 			loc <- ifelse(env == "KDWOP", "KDW", ifelse(substr(env, 1, 2) == "MK", "MK", env))
@@ -127,8 +127,7 @@ Determine the gene action conditioning grain yield and other traits of the early
 			country = "Nigeria",
 			on_farm = FALSE,
 			is_survey = FALSE,
-			e_rot = r$E_ROT,
-			stringsAsFactors = FALSE
+			e_rot = r$E_ROT
 		)
 		d
 	}
@@ -149,8 +148,7 @@ Determine the gene action conditioning grain yield and other traits of the early
 		pest_severity = NA_character_,
 		pest_incidence = NA_integer_,
 		DAP = NA_integer_,
-		order = NA_integer_,
-		stringsAsFactors = FALSE
+		order = NA_integer_
 	)
 	d$e_rot <- NULL
 

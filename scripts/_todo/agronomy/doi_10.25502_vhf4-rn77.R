@@ -44,7 +44,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	)
 
 	f <- ff[basename(ff) == "data_table.csv"]
-	r <- read.csv(f, fill=TRUE, stringsAsFactors=FALSE)
+	r <- read.csv(f, fill=TRUE)
 
 	lat1 <- r$gps_field_device_latitude_decimal_degrees
 	lat2 <- r$gps_latitude_field_decimal_degrees
@@ -64,8 +64,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		harvest_date = r$date_of_final_harvest_whole_n2a_field_date,
 		crop = r$legume_planted_in_the_n2africa_trial,
 		previous_crop = r$crop_1_previous_season,
-		inoculated = r$inoculation_n2africa_field,
-		stringsAsFactors = FALSE
+		inoculated = r$inoculation_n2africa_field
 	)
 
 	oldnms <- c("id", "treatmentX", "row_spacing_crop_1_plot_X_cm",

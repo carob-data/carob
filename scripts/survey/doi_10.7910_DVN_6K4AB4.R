@@ -56,7 +56,8 @@ In this paper, we quantified five sustainability performance indicators (grain y
 		is_survey = TRUE, 
 		crop = "rice", 
 		yield_part = "grain", 
-		yield_moisture = as.numeric(NA), 
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # r$yield does not say fresh or dry
 		geo_from_source = FALSE,
 		fertilizer_used= TRUE
 	)

@@ -3,6 +3,8 @@
 
 ## ISSUES
 
+## NEW VARIABLES
+# irrigation_regime_: W1 optimal irrigation or W2 drought stress, from the irrigation file
 
 carob_script <- function(path) {
 
@@ -25,8 +27,8 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 		carob_date = "2025-12-17",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer;variety",
-		response_vars = "yield;dmy_roots;fwy_roots;dmy_total;fwy_total", 
+		treatment_vars = "N_fertilizer;variety;irrigation_regime_",
+		response_vars = "yield;dmy_roots;fwy_roots;dmy_storage;fwy_storage", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 70,	
 		notes = "We process only files with useful information for carob"
@@ -95,7 +97,7 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 		                ifelse(grepl("N2", r3b$Nitrogen) & !grepl("Premiere", r3b$Cultivar), 265, 0)))) ,
 		irrigated = r3b$Irrigation,
 		treatment = r3b$Treatment,
-		leaf_N = r3b$leaves_ppm_N/1000,# mg/g
+		leaf_N = r3b$leaves_ppm_N, # values are already on the mg/g scale; do not divide by 1000
 		leaf_P = r3b$leaves_ppm_P/1000,
 		leaf_K = r3b$leaves_ppm_K/1000,
 		tuber_N = r3b$tubers_ppm_N/1000,
@@ -129,8 +131,8 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	   fwy_leaves = r12$LeavesFW,
 	   dmy_leaves = r12$LeavesDW,
 	   LAI = r12$LAI,
-	   fwy_total = r12$tubersFW,
-	   dmy_total = r12$tubersDW,
+	   fwy_storage = r12$tubersFW,
+	   dmy_storage = r12$tubersDW,
 	   tuber_density = r12$nrtubers_m2,
 	   yield_moisture = r12$tuberDMpercentage,
 	   fwy_roots = r12$rootsFW,
@@ -151,20 +153,23 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	d$K_fertilizer <- 275/1.2051
 	d$Mg_fertilizer <- ifelse(grepl("Lelystad", d$location), 60, NA ) 
 	
-	d$irrigated <- TRUE
+	d$irrigation_regime_ <- c("W1" = "optimal", "W2" = "drought stress")[as.character(d$irrigated)]
+	d$irrigated <- ifelse(is.na(d$irrigation_regime_), NA, TRUE)
 	d$longitude <- ifelse(grepl("Vredepeel", d$location),  5.8584, 5.55)
 	d$latitude <- ifelse(grepl("Vredepeel", d$location),  51.5431, 52.54)
 	d$country <- "Netherlands"
 	d$crop <- "potato" 
-	d$on_farm <- TRUE 
+	d$on_farm <- FALSE 
 	d$is_survey <- FALSE
-	d$yield_part <-  "roots"
-	d$geo_from_source <- TRUE
+	d$yield_part <- "tubers"
+	d$geo_from_source <- FALSE
 	
 	#### process weather information
 	
 	names(r10) <- r10[9,]
-	dw1 <- suppressWarnings(data.frame(
+	# Rows 1-10 are the station description and the column-name row.
+	r10 <- r10[-c(1:10), ]
+	dw1 <- data.frame(
 	   date =  r10$DAY,
 	   irad =  as.numeric(r10$IRRAD),
 	   tmin =  as.numeric(r10$TMIN),
@@ -180,10 +185,11 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	   latitude = 52.54,
 	   geo_from_source = TRUE,
 	   country = "Netherlands"
-	))
+	)
 	
 	names(r11) <- r11[9,]
-	dw2 <- suppressWarnings(data.frame(
+	r11 <- r11[-c(1:10), ]
+	dw2 <- data.frame(
 	   date = r11$DAY,
 	   irad = as.numeric(r11$IRRAD),
 	   tmin = as.numeric(r11$TMIN),
@@ -199,12 +205,11 @@ Data was collected at two field locations in the Netherlands: on the clayey soil
 	   latitude = 51.5431,
 	   geo_from_source = TRUE,
 	   country = "Netherlands"
-	))
+	)
 	
 	dw <- carobiner::bindr(dw1, dw2)
-	dw <- dw[-c(1:10),]
 	dw$irad <- dw$irad*1000/(3600*24)
-	dw$date <- suppressWarnings(as.character(as.Date(as.numeric(dw$date), "1899-01-31")))
+	dw$date <- as.character(as.Date(as.numeric(dw$date), "1899-12-30"))
 	
    
 	carobiner::write_files(path, meta, d, wth = dw)

@@ -61,8 +61,8 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "cassava_variety_all-regions.csv"], stringsAsFactors=FALSE)
-	g <- read.csv(ff[basename(ff) == "gps_data_offset.csv"], stringsAsFactors=FALSE)
+	r <- read.csv(ff[basename(ff) == "cassava_variety_all-regions.csv"])
+	g <- read.csv(ff[basename(ff) == "gps_data_offset.csv"])
 
 	unit <- trimws(r$Unit_Area_cass_pltd)
 	area <- r$Area_cass_pltd
@@ -90,8 +90,7 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 	gps <- data.frame(
 		HouseID = g$HouseID,
 		longitude = lon,
-		latitude = lat,
-		stringsAsFactors = FALSE
+		latitude = lat
 	)
 
 	d <- data.frame(
@@ -108,8 +107,7 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 		state_code_ = as.character(r$StateID),
 		lga_code_ = as.character(r$LgaID),
 		zone_code_ = as.character(r$ZoneID),
-		country = "Nigeria",
-		stringsAsFactors = FALSE
+		country = "Nigeria"
 	)
 	d$area_unit_[d$area_unit_ == ""] <- NA
 	d$harvest_unit_[d$harvest_unit_ == ""] <- NA

@@ -22,7 +22,8 @@ Data was taken in 40 fields (replications), for the two years of research we too
 		response_vars = "none", 
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
-		carob_date = "2024-07-23"
+		carob_date = "2024-07-23",
+		notes = "LLM-review: [medium, admin] adm1 is Nafanga, which is not a Mali region, and every row is given location Kani although the study also covered Noumpinesso. response_vars is none although yield and biomass were measured. One planting and harvest date covers two years. Fertilizer columns are NA placeholders."
 	)
 	
 	process_data <-function(fname, crop, yield_part) {

@@ -66,7 +66,6 @@ The smallholder farmers’ agri-food system in Malawi faces persistent and new b
               timevar = "crop",
               direction = "long")	
 
-	d <- d[d$yield > 0,]
 
  
 	d$intercrops <- ifelse(grepl("Cowpea", d$treatment) & grepl("maize", d$crop), "cowpea",
@@ -79,9 +78,12 @@ The smallholder farmers’ agri-food system in Malawi faces persistent and new b
                   ifelse(grepl("maize", d$crop) & grepl("Maize \\+ 200 N", d$treatment), 200,
                   ifelse(grepl("cowpea", d$crop) & grepl("Cowpea \\+ 30 N", d$treatment), 30, 0)))
 
-## from publication
-	d$P_fertilizer <- 30
-	d$K_fertilizer <- 60
+## from publication; P and K apply to the fertilized maize treatments only
+	d$P_fertilizer <- 0
+	d$K_fertilizer <- 0
+	i <- grepl("maize", d$crop) & grepl("Maize \\+ (100|200) N", d$treatment)
+	d$P_fertilizer[i] <- 30
+	d$K_fertilizer[i] <- 60
 
 	d$planting_date <- substr(d$season, 1, 4) 
 	d$id <- d$season <- NULL

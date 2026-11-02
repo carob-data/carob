@@ -62,8 +62,7 @@ This database includes the research work carried out on evaluation of 160 Pearl 
 		variety_pedigree = rep(trimws(r$Pedigree), length(cols)),
 		variety_type = rep(vtype, length(cols)),
 		pathotype_ = rep(codes, each=n),
-		disease_severity = as.character(unlist(r[cols])),
-		stringsAsFactors = FALSE
+		disease_severity = as.character(unlist(r[cols]))
 	)
 	d$treatment <- paste(d$variety, d$pathotype_, sep="_")
 	d$crop <- "pearl millet"

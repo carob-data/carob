@@ -28,7 +28,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data."
+		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data. LLM-review: [medium, crop] yield_part is grain for cotton as well as the cereals. [low, metadata] trial_id is built from essai and serie only, so 1965-1990 share ids. on_farm is TRUE for the NTarla station. The DataFumier sheet is read and never used."
 	)
 	
 
@@ -125,7 +125,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	   ## from meq/100g to ppm using molecular weight en charge number
 	   soil_Ca = r5$CA*(40/2)*10, 
 	   soil_Mg = r5$MG*(24.31/2)*10,
-	   soil_K = r5$K*(39/2)* 10,
+	   soil_K = r5$K * 391, # meq/100g to mg/kg; K is monovalent
 	   soil_Na = r5$`NA`,
 	   soil_Al = r5$AL,
 	   soil_Mn = r5$MN,

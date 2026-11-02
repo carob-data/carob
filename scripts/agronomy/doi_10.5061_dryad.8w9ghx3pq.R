@@ -29,7 +29,7 @@ Cover crops are rarely adopted in the northern Corn Belt because of short growin
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fertilizer",
 		response_vars = "grain_N;grain_C;NDVI", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] N rate is multiplied by 173.5, which is right only if the column is a multiplier and not already kg/ha. trial_id is 1 for three years, on_farm is TRUE, and the location is the region west central Minnesota. yield and yield_part none are placeholders. design RCB is not stated in the abstract.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-27",
 		carob_completion = 100,	

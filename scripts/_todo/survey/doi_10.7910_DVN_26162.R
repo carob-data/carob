@@ -15,7 +15,7 @@
 
 ## ISSUES
 # Village codes (1 in Faizabad, 2 in Sultanpur) have no names in the files; the codebook lists other villages (Zivpur, Pipari, ...) and
-#   district 2 as Siddharthnagar, not Sultanpur. Block is empty. Human must find village names and georeference.
+#   district 2 as Siddharthnagar, not Sultanpur. Block is empty. Coordinates are the GADM point-radius centroid of adm2 Faizabad and Sultanpur.
 # Bigha conversion: this file uses 1 bigha = 0.1 ha, but the Lucknow file's "Conversions" sheet says 1.5 bigha = 1 acre (1 bigha = 0.27 ha). Verify.
 # Some yields are very high (kharif to 60 t/ha, rabi to 44 t/ha), e.g. sugarcane (code 3) and possible area/output entry errors.
 # Codebook RBVAR code 2 "Sambha Mahsuri" is a rice variety but is used for rabi (wheat) crops; set to NA.
@@ -26,7 +26,7 @@
 # Not processed: COSTRTN (costs and returns, urea/phosphate kg for the best parcel; phosphate product type unknown), labor, marketing,
 #   assets, basic needs, economic change sheets. "C_Guide.xls" describes an IRRI-CRRI Jagatsinghpur (Odisha) survey whose data are not in this dataset.
 # Iran data mentioned in the metadata are not in the files.
-# write_files: missing longitude/latitude/geo_from_source; unknown variables (see NEW VARIABLES).
+# write_files: unknown variables (see NEW VARIABLES).
 
 ## NEW VARIABLES
 # land_type_: upland, midland, shallow lowland, lowland
@@ -110,6 +110,17 @@ The benchmark survey was used to develop a systematic understanding of target en
 
 	d$country <- "India"
 	d$adm1 <- "Uttar Pradesh"
+	# Coordinates are the GADM point-radius centroid of adm2. Faizabad and Sultanpur match GADM; no spelling correction.
+	geo <- data.frame(
+		adm1 = c("Uttar Pradesh", "Uttar Pradesh"),
+		adm2 = c("Faizabad", "Sultanpur"),
+		longitude = c(82.0705, 82.2174),
+		latitude = c(26.6347, 26.2471),
+		geo_uncertainty = c(41713, 47748),
+		geo_source = "GADM 4.1, adm2"
+	)
+	d <- merge(d, geo, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	d$geo_from_source <- FALSE
 	d$planting_date <- "2004"
 	d$yield_part <- NA
 	d$yield_part[d$crop %in% c("rice", "wheat", "maize", "wheat_mustard", "maize_pigeon pea")] <- "grain"

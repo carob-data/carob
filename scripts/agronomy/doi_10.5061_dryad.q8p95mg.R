@@ -19,7 +19,8 @@ Description: Bean (Phaseolus vulgaris L.) is important in sub-Saharan Africa for
 		carob_date="2023-07-06",
 		data_type="experiment",
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, yield] Every country's grain yield is multiplied by 1000. Confirm none of the sheets are already kg/ha. Kenya, Mozambique, and Zambia trial ids omit the year."
 	)
 
 	f <- ff[basename(ff) == "ESA Bean Nutrient Response Dataset.xlsx"]

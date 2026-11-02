@@ -22,7 +22,7 @@ Winter cover crops (CC) may facilitate weed management by inhibiting weed seed g
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "cover_crop;irrigation_amount",
+		treatment_vars = "cover_crop;irrigation_number;weeding_done",
 		response_vars = "yield", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
@@ -38,6 +38,8 @@ Winter cover crops (CC) may facilitate weed management by inhibiting weed seed g
 	r1 <- read.csv(f1)
 	
 	#####
+	# Water_mm includes rainfall, so it is not irrigation_amount.
+	# README: analysis cob weights were already converted to Mg/ha.
 	d1 <- data.frame(
 		year = r1$Year,
 		location = c("LL" = "Los Lunas", "LD"= "Leyendecker")[r1$Site],
@@ -45,14 +47,18 @@ Winter cover crops (CC) may facilitate weed management by inhibiting weed seed g
 		plot_id = as.character(r1$Plot),
 		treatment = r1$Treat,
 		cover_crop = c("F" = "none",  "M" = "mustard", "P" = "pea" ,  "B" = "barley",   "Mx" = "mustard;pea;barley")[r1$Treat],
-		irrigation_number = r1$Irrigations,
-		irrigation_amount = r1$Water_mm,
+		irrigation_number = as.integer(r1$Irrigations),
 		residue_prevcrop = r1$CC_Bio_plot*10/2,
-		yield = r1$Cob_Wt_NW*10000, ##  from kg/m2 to kg/ha
+		yield = r1$Cob_Wt_NW*1000, # Mg/ha to kg/ha
+		weeding_done = TRUE,
 		weed_biomass = r1$Weed_Bio_Corn_Harvest*10,
 		country = "United States",
 		crop = "maize"
 	)
+	d_w <- d1
+	d_w$yield <- r1$Cob_Wt_W*1000
+	d_w$weeding_done <- FALSE
+	d1 <- rbind(d1, d_w)
 	
 	### Adding information's from publication
 	
@@ -70,10 +76,10 @@ Winter cover crops (CC) may facilitate weed management by inhibiting weed seed g
 	d$year <- NULL
 	
 	d$is_survey <- FALSE
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$trial_id <- ifelse(grepl("Leyendecker", d$location), "1", "2")
 	d$yield_moisture <- NA
-	d$yield_part <- "grain"
+	d$yield_part <- "cob"
 	d$irrigated <- TRUE
 	d$yield_isfresh <- NA
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)

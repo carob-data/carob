@@ -130,8 +130,7 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		sale_month_ = trimws(mk[[7]]),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = FALSE,
-		stringsAsFactors = FALSE
+		geo_from_source = FALSE
 	)
 	d$kernel_appearance_[is.na(d$kernel_appearance_) | !nzchar(d$kernel_appearance_)] <- NA_character_
 	d$aflatoxin_aware_[!(heard %in% c("no", "yes"))] <- NA
@@ -166,14 +165,13 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		if (is.null(crops)) crops <- character()
 		keep <- !is.na(crops) & nzchar(crops) & !is.na(h)
 		if (!any(keep)) {
-			return(data.frame(hhid=character(), crop=character(), season=character(), planting_date=character(), stringsAsFactors=FALSE))
+			return(data.frame(hhid=character(), crop=character(), season=character(), planting_date=character()))
 		}
 		data.frame(
 			hhid = h[keep],
 			crop = map_crop(crops[keep]),
 			season = rep(season, sum(keep)),
-			planting_date = rep(year, sum(keep)),
-			stringsAsFactors = FALSE
+			planting_date = rep(year, sum(keep))
 		)
 	}
 	crops <- rbind(
@@ -210,8 +208,7 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		data.frame(
 			hhid = rep(id, lengths(parts)),
 			pest_species = unlist(parts),
-			pest_where_ = where,
-			stringsAsFactors = FALSE
+			pest_where_ = where
 		)
 	}
 	pests <- rbind(
@@ -226,14 +223,14 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		x <- trimws(gsub("\\s+", " ", as.character(x)))
 		x[!nzchar(x)] <- NA_character_
 		keep <- !is.na(x)
-		data.frame(hhid = hhid[keep], disease = x[keep], stringsAsFactors = FALSE)
+		data.frame(hhid = hhid[keep], disease = x[keep])
 	}
 	diseases <- rbind(dis_rows(bi[[7]]), dis_rows(bi[[8]]), dis_rows(bi[[9]]))
 
 	animal_rows <- function(x, animal) {
 		nhead <- as.numeric(x)
 		keep <- !is.na(nhead)
-		data.frame(hhid = hhid[keep], animal = animal, heads = nhead[keep], stringsAsFactors = FALSE)
+		data.frame(hhid = hhid[keep], animal = animal, heads = nhead[keep])
 	}
 	livestock <- rbind(
 		animal_rows(ag[[11]], "cattle"),
@@ -244,13 +241,13 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 
 	long <- rbind(
 		data.frame(hhid=crops$hhid, crop=crops$crop, season=crops$season, planting_date=crops$planting_date,
-			pest_species=NA_character_, pest_where_=NA_character_, disease=NA_character_, animal=NA_character_, heads=NA_real_, stringsAsFactors=FALSE),
+			pest_species=NA_character_, pest_where_=NA_character_, disease=NA_character_, animal=NA_character_, heads=NA_real_),
 		data.frame(hhid=pests$hhid, crop=NA_character_, season=NA_character_, planting_date=NA_character_,
-			pest_species=pests$pest_species, pest_where_=pests$pest_where_, disease=NA_character_, animal=NA_character_, heads=NA_real_, stringsAsFactors=FALSE),
+			pest_species=pests$pest_species, pest_where_=pests$pest_where_, disease=NA_character_, animal=NA_character_, heads=NA_real_),
 		data.frame(hhid=diseases$hhid, crop=NA_character_, season=NA_character_, planting_date=NA_character_,
-			pest_species=NA_character_, pest_where_=NA_character_, disease=diseases$disease, animal=NA_character_, heads=NA_real_, stringsAsFactors=FALSE),
+			pest_species=NA_character_, pest_where_=NA_character_, disease=diseases$disease, animal=NA_character_, heads=NA_real_),
 		data.frame(hhid=livestock$hhid, crop=NA_character_, season=NA_character_, planting_date=NA_character_,
-			pest_species=NA_character_, pest_where_=NA_character_, disease=NA_character_, animal=livestock$animal, heads=livestock$heads, stringsAsFactors=FALSE)
+			pest_species=NA_character_, pest_where_=NA_character_, disease=NA_character_, animal=livestock$animal, heads=livestock$heads)
 	)
 	long$order <- as.integer(ave(seq_len(nrow(long)), long$hhid, FUN=seq_along))
 

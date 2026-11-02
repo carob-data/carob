@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-01-09",
 		response_vars = "yield",
-		treatment_vars = NA
+		treatment_vars = NA,
+		notes = "LLM-review: [medium, treatment] treatment_vars is NA although a residue treatment column exists and varies. A trial_id assignment uses a column that does not exist. Plant density and N are hard-coded with no source. K is NA where the protocol implies K was not applied."
 	)
   
 	f <- ff[basename(ff) == "NewDesign_gnut yields.csv"]

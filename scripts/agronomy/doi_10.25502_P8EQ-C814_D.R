@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# Makurdi has no coordinates in the data. The assigned point (longitude 7.67, latitude 12.91) is not Makurdi and was removed.
+
 
    
 carob_script <- function(path) {
@@ -101,8 +104,6 @@ carob_script <- function(path) {
     d$longitude[d$site=="Moniya"] <- 3.911944
     d$latitude[d$site=="Moniya"] <- 7.528333
       
-    d$longitude[d$site=="Makurdi"] <- 7.6736
-    d$latitude[d$site=="Makurdi"] <- 12.906337
 	d$longitude[d$site=="Otobi"] <- 8.0701088
 	d$latitude[d$site=="Otobi"] <- 7.103026
 	d$geo_from_source[d$site %in% c("Anyigba", "Ido", "Moniya", "Makurdi", "Otobi")] <- FALSE

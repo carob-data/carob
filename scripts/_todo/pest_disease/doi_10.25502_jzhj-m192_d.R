@@ -75,7 +75,7 @@ Assessing how maize plants damage at different injury levels can recover and rep
 	)
 
 	f <- ff[basename(ff) == "plant-recovery-from-faw-damage_complete-data-set-kf.csv"]
-	r <- read.csv(f, check.names = FALSE, stringsAsFactors = FALSE)
+	r <- read.csv(f, check.names = FALSE)
 	r <- r[trimws(r$Experiment) != "" & !is.na(r$Experiment), ]
 
 	h1 <- r[[19]]
@@ -125,8 +125,7 @@ Assessing how maize plants damage at different injury levels can recover and rep
 		trial_id = paste(trimws(r$Experiment), r$Year, seas, sep = "_"),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		yield_part = "grain",
-		stringsAsFactors = FALSE
+		yield_part = "grain"
 	)
 
 	carobiner::write_files(path, meta, d)

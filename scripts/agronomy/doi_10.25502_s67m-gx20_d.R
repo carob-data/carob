@@ -26,7 +26,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_completion = 100,	
 		carob_effort = NA,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] response_vars is none, yield NA never becomes a column, and yield_part is tubers for cassava. trial_id is 1 for Benue and Edo across two years. fertilizer_type and N_splits 3 are applied to every treatment."
 	)
 	
 
@@ -73,10 +73,10 @@ carob_script <- function(path) {
 	d$plot_length <- 10                              
 	d$plot_width <- 8
 	d$plot_area <- 80
-	d$planting_date[d$year=="2016" & d$location=="Edo"] <- as.character(2016-05-24)
-	d$planting_date[d$year=="2016" & d$location=="Benue"] <- as.character(2016-08-16)
-	d$harvest_date[d$year=="2017" & d$location=="Edo"] <- as.character(2018-05-04)
-	d$harvest_date[d$year=="2017" & d$location=="Benue"] <- as.character(2018-06-15)
+	d$planting_date[d$year=="2016" & d$location=="Edo"] <- "2016-05-24"
+	d$planting_date[d$year=="2016" & d$location=="Benue"] <- "2016-08-16"
+	d$harvest_date[d$year=="2017" & d$location=="Edo"] <- "2018-05-04"
+	d$harvest_date[d$year=="2017" & d$location=="Benue"] <- "2018-06-15"
 	
 	d$longitude[d$year=="2016" & d$location=="Edo"] <- 6.13
 	d$latitude[d$year=="2016" & d$location=="Edo"] <- 7.05

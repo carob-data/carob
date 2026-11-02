@@ -48,7 +48,7 @@ The aim of this investment is to verify best planting practices for cassava and 
 		data_type = "on-station experiment",
 		treatment_vars = "variety;stake_diameter;stake_orientation;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield",
-		notes = NA,
+		notes = "LLM-review: [low, fertilizer] fertilizer_type is NPK, urea, and KCl on the unfertilized Nil plots as well. The rates themselves are 0.",
 		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-07-23",
 		carob_completion = 80,

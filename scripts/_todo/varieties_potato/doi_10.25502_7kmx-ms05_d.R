@@ -62,7 +62,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 	)
 
 	f <- ff[basename(ff) == "report_data_pot21b.csv"]
-	r <- read.csv(f, stringsAsFactors=FALSE, na.strings=c("", "NA", "None"), check.names=FALSE)
+	r <- read.csv(f, na.strings=c("", "NA", "None"), check.names=FALSE)
 
 	num <- function(x) as.numeric(trimws(as.character(x)))
 	adm2 <- trimws(r$Whais)
@@ -91,8 +91,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 			plants_harvested_ = nplant[[i]],
 			plant_density = 1e8 / (row_cm[[i]] * plt_cm[[i]]),
 			yield = kg[[i]] / area * 10000,
-			yield_marketable = mkt[[i]] / area * 10000,
-			stringsAsFactors = FALSE
+			yield_marketable = mkt[[i]] / area * 10000
 		)
 	}
 	d <- do.call(rbind, parts)
