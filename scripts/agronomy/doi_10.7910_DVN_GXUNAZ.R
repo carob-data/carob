@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# The compilation mixes farmer fields and research stations, so on_farm is not set.
 
 carob_script <- function(path){
 
@@ -123,8 +125,8 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$longitude[d$location == "Yandev"] <- 9.04235
 	d$latitude[d$SiteID == "Rhodes and Kpaka,  1982"] <- 8.64003498
 	d$longitude[d$SiteID == "Rhodes and Kpaka,  1982"] <- -11.8400269
-	d$latitude[d$Dataset == "Kihara_Wkenya"] <- 0.4994716
-	d$longitude[d$Dataset == "Kihara_Wkenya"] <- 34.5698326 # western Kenya
+	d$latitude[d$reference == "Kihara_Wkenya"] <- 0.4994716
+	d$longitude[d$reference == "Kihara_Wkenya"] <- 34.5698326 # western Kenya
 	d$latitude[d$location == "Guessihio"] <- 6.1090571
 	d$longitude[d$location == "Guessihio"] <- -6.0018931
 	d$latitude <- ifelse(d$location == "Sidi" & is.na(d$latitude), -0.17265, 
@@ -160,9 +162,6 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$P_fertilizer[!grepl("P", d$treatment)] <- 0
 	d$K_fertilizer[!grepl("K", d$treatment)] <- 0
 		
-	# drop yield with NAs
-	d <- d[!is.na(d$yield), ]
-		
 	d$lime <- 0	
 	# this number (500) needs to be checked!
 	d$lime[d$treatment == "NPK+Lime"] <- NA
@@ -182,11 +181,8 @@ Low productivity of agriculture observed in different parts of sub-Saharan Afric
 	d$Zn_fertilizer[i] <- NA
 	d$B_fertilizer[i] <- NA
 	
-	d <- d[!is.na(d$N_fertilizer),  ]
-	
-	
 	d$planting_date <- as.character(NA)
-	d$on_farm <- TRUE
+	d$on_farm <- NA
 	d$yield_part <- "grain"
 	d$yield_part[d$crop %in% c("cowpea",  "faba bean",  "soybean")] <- "seed"
 	d$SiteID <- NULL

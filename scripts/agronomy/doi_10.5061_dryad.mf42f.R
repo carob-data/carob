@@ -22,7 +22,7 @@ Grain legume crops are a significant component of the human diet and animal feed
       carob_effort = NA,
       carob_date="2025-06-28",
       carob_completion=100,
-      notes=NA
+      notes="LLM-review: [medium, fertilizer] DAP, SSP, and TSP are converted toward elemental P, but MAP is multiplied by 0.52, the P2O5 fraction. Every K dose is divided by 1.2051. Grain yield has no unit conversion in a multi-country compilation. on_farm is TRUE for the whole compilation. [low, forbidden] suppressWarnings around read.csv."
    )
    
    

@@ -19,7 +19,7 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
 		data_organization="ICRISAT",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "P_fertilizer"
+		treatment_vars = "P_fertilizer;variety"
 	)
   
   
@@ -41,17 +41,17 @@ Abstract: Assess the effects of P-fertilization on sorghum growth and productivi
 		seed_weight = r$GW_1000grnM_g,
 		fwy_residue = r$`Stalk yield`,
 		yield = r$GHvYld_C_kgha,
-		P_fertilizer = r$Phosphorus,
+		P_fertilizer = r$Phosphorus / 2.29, # P2O5 to P
 		trial_id = paste(r$Year, r$Location, sep = "_")
 	)
 	
   # additional info from the reference then merge
   
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$yield_part <- "grain"
 	d$is_survey <- FALSE
 	d$N_fertilizer <- 60 #extracted from the reference
-	d$K_fertilizer <- 30 #extracted from the reference
+	d$K_fertilizer <- 30 / 1.2051 # K2O to K
 			#KCl was in form of muriate of potash
 	  
 	  # filling in the fertilizer types as in the reference

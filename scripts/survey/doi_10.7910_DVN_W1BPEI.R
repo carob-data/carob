@@ -57,6 +57,7 @@ BSF finger millet crowdsourcing data for Nyando Kenya
 		on_farm = FALSE,
 		geo_from_source = FALSE,
 		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # weight_of_all_yield does not say fresh or dry
 		irrigated = NA,
 		longitude = 34.9425 ,
 		latitude = -0.22431,

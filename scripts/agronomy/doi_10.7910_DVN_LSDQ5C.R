@@ -24,7 +24,8 @@ affect the variation in the yield of maize. The dataset was created through a co
 		carob_effort = NA,
 		carob_date="2024-04-02",
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		notes = "LLM-review: [medium, invented] Missing planting dates are filled with 2015. data_type is experiment and N, P, and K are treatment variables for 804 monitored farmer events. One department coordinate is used for all fields with no geo_uncertainty."
 	)
 	
 	f <- ff[basename(ff) == "Dataset_Maize_Cordoba.csv"]

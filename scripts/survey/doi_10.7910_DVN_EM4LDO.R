@@ -57,6 +57,7 @@ BSF Sorghum crowd sourcing data for Dodoma and Singida Tanzania
 	   on_farm = FALSE,
 	   geo_from_source = FALSE,
 	   yield_moisture = as.numeric(NA),
+	   yield_isfresh = NA, # weight_of_all_yield does not say fresh or dry
 	   irrigated = NA,
 	   yield_part = "grain"
 	   

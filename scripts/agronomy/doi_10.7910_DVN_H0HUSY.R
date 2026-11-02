@@ -20,7 +20,8 @@ Description: This dataset contains information of experiments carried out upland
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"		
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",		
+		notes = "LLM-review: [medium, admin] Communities are stored in adm3. They are villages and belong in location. The soil K conversion has no comment. Estimated coordinates have no geo_uncertainty."
     )
   
 	
@@ -55,7 +56,7 @@ Description: This dataset contains information of experiments carried out upland
 	
 	# processing 02. Soils Data.xlsx
 	f3 <- ff[basename(ff) == "02. Soils Data.xlsx"]
-	r3 <- data.frame(readxl::read_xlsx(f3))
+	r3 <- carobiner::read.excel(f3)
 	d3 <- data.frame(
 		adm1 = r3$Departamento,
 		adm2 = r3$Municipio,
@@ -68,7 +69,7 @@ Description: This dataset contains information of experiments carried out upland
 		soil_P = as.numeric(r3$P),
 		soil_K = as.numeric(r3$K) * 39 * 10
 	)
-	d3$adm2[grep("Kuka hill",d1$Municipio)] <- 'Kukrahill'
+	d3$adm2[grep("Kuka hill", d3$adm2)] <- "Kukrahill"
 
 	d <- carobiner::bindr(d1, d2)
 	d <- merge(x=d, y=d3, by = c("adm1", "adm2", "adm3"), all.x = TRUE)

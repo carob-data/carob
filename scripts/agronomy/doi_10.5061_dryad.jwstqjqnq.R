@@ -28,7 +28,7 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id includes the block, so it is one id per replicate. S_fertilizer is 2 while the notes say amounts are not specified: the 2 is the grade of 24-0-0-2, not kg S/ha. yield_isfresh is TRUE on dry-matter yield. Early versus late planting is also a treatment and is not in treatment_vars."
 	)
 	
 

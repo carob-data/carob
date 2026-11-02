@@ -28,7 +28,7 @@ Using appropriate fertilizer recommendations and effective fertilizer materials 
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes =NA
+		notes ="LLM-review: [medium, coordinates] publication is the string NA. The geo table has both Moleti and Mollet with very different coordinates. Yara Mila is mapped to N 0, P 30, K 0, and K is 0 across the board."
 	)
 	
 

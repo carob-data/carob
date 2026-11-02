@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# K, S, and lime rates are not given, so they were not assigned.
+
 carob_script <- function(path) {
 
 "Six years of data on genotype by tillage interaction and performance progress for 13 bread and 13 durum wheat genotypes on irrigated raised beds in Mexico.
@@ -16,7 +19,7 @@ Agronomic systems based on zero tillage and residue retention are becoming more 
 		publication = "doi: 10.1016/j.fcr.2017.11.011",
 		project = NA,
 		data_type = "experiment",
-		treatment_vars = "land_prep_method",
+		treatment_vars = "land_prep_method;irrigation_fulfullment",
 		response_vars = "yield", 
 		carob_completion = 100,
 		carob_contributor = "Blessing Dzuda",
@@ -59,13 +62,12 @@ Agronomic systems based on zero tillage and residue retention are becoming more 
 	  d$irrigated <- TRUE
 	  d$geo_from_source <- TRUE
     d$P_fertilizer <- 23
-    d$N_fertilizer <- 278
-    d$S_fertilizer <- d$K_fertilizer <-d$lime <- as.numeric(NA)
     d$variety <- gen_data$Name[ match(r$gen_code, gen_data$Genotype) ]
     d$trial_id <- paste0(d$location,"_",d$planting_date)
     d$land_prep_method <- gsub("CB","conventional tilled beds", d$land_prep_method)
     d$land_prep_method <- gsub("PB","permanent beds", d$land_prep_method)
     d$irrigation_fulfullment <- ifelse(d$irrigation_fulfullment=="FI","full irrigation","reduced irrigation")
+    d$N_fertilizer <- ifelse(d$irrigation_fulfullment == "full irrigation", 278, 203)
     
 	carobiner::write_files(path, meta, d)
 }

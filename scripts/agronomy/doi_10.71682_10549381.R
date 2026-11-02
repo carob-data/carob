@@ -27,7 +27,7 @@ This database contains weed density, weed biomass, crop biomass, richness, evenn
 		response_vars = "fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is the plot. Fertilizer with and without is in the data and is not a treatment variable, and the unfertilized level is NA rather than 0. yield and yield_part none are placeholders. Weed species is never used. Some systems get crop_rotation none."
 	)
 	
 

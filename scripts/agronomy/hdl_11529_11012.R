@@ -40,8 +40,8 @@ carob_script <- function(path) {
 	colnames(dtr) <- c("location", "soil_P_available", "treatment", "N_fertilizer", "P_fertilizer", "K_fertilizer")
 	dtr$location <- carobiner::fix_name(dtr$location, case = "title")
 	dtr$N_fertilizer <- as.numeric(dtr$N_fertilizer)
-	dtr$P_fertilizer <- as.numeric(dtr$P_fertilizer)
-	dtr$K_fertilizer <- as.numeric(dtr$K_fertilizer)
+	dtr$P_fertilizer <- as.numeric(dtr$P_fertilizer) / 2.29 # P2O5 to P
+	dtr$K_fertilizer <- as.numeric(dtr$K_fertilizer) / 1.2051 # K2O to K
 
   
 	d <- data.frame( 
@@ -62,12 +62,12 @@ carob_script <- function(path) {
 	# d$fwy_residue <- as.numeric(r$Field.Weight.of.subsample.3.stalk.kg)/(18/10000)
 
 	r$TN.pct[r$TN.pct == "."] <- NA
-	d$soil_N <- (as.numeric(r$TN.pct) * 10000)
+	d$soil_N_total <- (as.numeric(r$TN.pct) * 10000) # % to mg/kg
 	d$soil_P_available <- (as.numeric(r$Av.P.ppm))
 		
 	d$location <- carobiner::fix_name(d$location, case = "title")
 
-	svars <- c("elevation", "soil_pH", "soil_N", "soil_P_available")
+	svars <- c("elevation", "soil_pH", "soil_N_total", "soil_P_available")
 	x <- d[, c("trial_id", svars)]
 	x <- x[!is.na(x$elevation), ]
 	i <- match(d$trial_id, x$trial_id)

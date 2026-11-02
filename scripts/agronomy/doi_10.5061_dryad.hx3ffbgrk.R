@@ -31,7 +31,7 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
             carob_effort = NA,
             carob_date="2025-06-23",
             carob_completion=100,
-            notes=NA
+            notes="LLM-review: [medium, metadata] Seventeen existing research trials are one experiment, and treatment_vars are historical management rather than treatments applied in this study. N is 0 for every soybean trial. Soil-test P is stored as soil_P_total. trial_id is 1 for all 17 sites. on_farm is TRUE. No-till becomes minimum tillage."
    )
    
    

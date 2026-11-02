@@ -28,7 +28,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] Grain N is multiplied by 10 while grain P and the micronutrients are divided by 1000."
 	)
 	
 
@@ -38,6 +38,10 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 	r1 <- read.csv(f1)
 	r2 <- read.csv(f2, fileEncoding = "latin1", na= c(""))
 	r2$Soil_Ca <- gsub(",", "", r2$Soil_Ca)
+	soil_depth <- trimws(gsub("cm", "", r2$Soil_depth, ignore.case = TRUE))
+	soil_depth[!nzchar(soil_depth)] <- NA
+	depth_top <- as.numeric(sub("-.*", "", soil_depth))
+	depth_bottom <- as.numeric(ifelse(grepl("-", soil_depth), sub(".*-", "", soil_depth), NA))
 
 	d1 <- data.frame(
 		trial_id = paste(r2$Trial_type, r2$Code, sep = "-"),
@@ -72,8 +76,8 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		rain = r2$MAP,
 		elevation = r2$Altitude,
 		soil_texture = gsub("clayey", "clay", tolower(r2$Texture_recoded)),
-		depth_bottom = suppressWarnings(as.numeric(substr(r2$Soil_depth, 3, 4))),
-		depth_top = suppressWarnings(as.numeric(substr(r2$Soil_depth, 1, 1))),
+		depth_bottom = depth_bottom,
+		depth_top = depth_top,
 		
 		#soil_sand = r2$Sand,
 		#soil_clay = r2$Clay,
@@ -178,7 +182,8 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		is_survey = FALSE, 
 		crop = "common bean", 
 		yield_part = "grain", 
-		yield_moisture = as.numeric(NA), 
+		yield_moisture = as.numeric(NA),
+		yield_isfresh = NA, # GrainYld does not say fresh or dry
 		geo_from_source = TRUE
 	)
 	
@@ -215,7 +220,7 @@ P <- gsub("fennel + dragonhead", "fennel", P)
 P <- gsub("potato \\(b53 variety\\)|potato \\(annette variety\\)", "potato", P)	
 P <- gsub("maize and cassava", "maize;cassava", P)	
 P <- gsub("monocrop|ntercrop", "none", P)	
-P <- gsub("", NA, P)	
+P[!is.na(P) & !nzchar(P)] <- NA	
 d$intercrops <- P 
 
 ### Fixing country names 

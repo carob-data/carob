@@ -61,17 +61,17 @@ carob_script <- function(path) {
 		soil_Ca = r1$Ca.ppm, 
 		soil_Mg = r1$Mg.ppm,
 		
-		leaf_N = r1$Ear_leaf_analysis_pct.N,
-		leaf_P = r1$pct.P,
-		leaf_K = r1$pct.K,
-		leaf_Ca = r1$pct.Ca,
-		leaf_Mg = r1$pct.Mg,
-		leaf_Zn = r1$ppm.Zn,
-		residue_N = r1$Stover.yield.kg.ha * r1$Stover_analysis_pct.N / 100,
-		residue_P = r1$Stover.yield.kg.ha * r1$pct.P.1 / 100,
-		grain_N = r1$Grain_analysis_pct.N,
-		grain_P = r1$pct.P.2,
-		grain_K = r1$pct.K.1
+		leaf_N = r1$Ear_leaf_analysis_pct.N * 10, # % to mg/g
+		leaf_P = r1$pct.P * 10,
+		leaf_K = r1$pct.K * 10,
+		leaf_Ca = r1$pct.Ca * 10,
+		leaf_Mg = r1$pct.Mg * 10,
+		leaf_Zn = r1$ppm.Zn / 1000, # ppm to mg/g
+		residue_N = r1$Stover_analysis_pct.N * 10,
+		residue_P = r1$pct.P.1 * 10,
+		grain_N = r1$Grain_analysis_pct.N * 10,
+		grain_P = r1$pct.P.2 * 10,
+		grain_K = r1$pct.K.1 * 10
 	)
 	
 	for (i in 2:nrow(d)) {
@@ -85,7 +85,6 @@ carob_script <- function(path) {
 	lat <- d$longitude[i]
 	d$longitude[i] <- d$latitude[i]
 	d$latitude[i] <- lat
-	d$geo_from_source[i] <- FALSE
 
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
 	d$Ca_fertilizer <- d$Mg_fertilizer <- d$Zn_fertilizer <- d$B_fertilizer <- 0

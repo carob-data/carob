@@ -31,7 +31,8 @@ carob_script <- function(path) {
       response_vars= "yield;fwy_residue",
       carob_effort = NA,
       carob_date="2024-05-14", 
-      data_type="experiment"
+      data_type="experiment",
+      notes = "LLM-review: [medium, fertilizer] N 50 and P 20 are hard-coded with no source. Intercrops are assigned to all rows by crop. treatment_vars are variety and intercrops, which are not the treatments. trial_id is 1 across two ecozones. irrigated and inoculated are FALSE."
    )
    
    ### yield data 

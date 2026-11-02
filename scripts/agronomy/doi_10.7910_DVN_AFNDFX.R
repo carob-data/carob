@@ -19,7 +19,8 @@ carob_script <- function(path) {
       treatment_vars = "variety;irrigated", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-10-13"
+      carob_date = "2024-10-13",
+      notes = "LLM-review: [low, metadata] on_farm is TRUE for a CIAT Palmira station trial. inoculated FALSE and the planting dates have no source. N, P, and K are NA placeholder columns."
    )
    
    f <- ff[basename(ff)=="02. Datos _Chaves.csv"]

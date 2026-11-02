@@ -1,6 +1,9 @@
 # R script for "carob"
 
 
+## ISSUES
+## Iburu and Zaria were both placed at one point that is not Zaria. The file has no coordinates, so the point was removed.
+
 carob_script <- function(path) {
   
 "Maize response to N and P. Tofa, A., Kamara, A. Y., Babaji, B. A., Ademulegun, T. D., & Aliyu, K. T. (2021). Maize response to N and P [Data set]. International Institute of Tropical Agriculture (IITA). doi:10.25502/07RT-7A40/D"
@@ -17,7 +20,8 @@ carob_script <- function(path) {
 		data_type="experiment",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer"
+		treatment_vars = "N_fertilizer;P_fertilizer",
+		notes = "LLM-review: [medium, fertilizer] fertilizer_type lists urea, DAP, NPK, and SSP as one of these, and K_fertilizer is 0 with no potassium column. Two varieties are not treatment variables. [low, metadata] trial_id is 1 for Iburu and Zaria in 2015 and 2016. Yield units themselves look right."
 	)
 
 	f <- ff[grep("^n.and.p.maize.trial_2015_16.csv", basename(ff), ignore.case=TRUE)]
@@ -40,8 +44,6 @@ carob_script <- function(path) {
 		silking_days = r$silk50
 	)
 	
-	d$latitude <- 10.26858
-	d$longitude <- 7.78896
 	d$geo_from_source <- FALSE
 	d$K_fertilizer <- 0
 	d$fertilizer_type <- "urea;DAP;NPK;SSP" # One of these

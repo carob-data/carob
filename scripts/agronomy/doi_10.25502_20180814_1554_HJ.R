@@ -2,6 +2,9 @@
 
 # this is already included in doi_10.7910_DVN_UNLRGC
 
+## ISSUES
+# Tambala has no coordinates in the field file. The previous point (35.577, -14.45) is Dedza, not the Thuchila cluster, and was removed.
+
 carob_script <- function(path) {
 
 "The AFSIS project aimed to establish an  Africa Soil Information system. Data was collected in sentinel sites across sub-Saharan Africa using the Land Degradation Surveillance framework and included also multi-location diagnostic trials in selected sentinel sites to determine nutrient limitations and response to improved soil management practices (soil amendments)"
@@ -70,7 +73,7 @@ carob_script <- function(path) {
 	)
 
 	d2$N_fertilizer <- d2$P_fertilizer <- d2$K_fertilizer <- d2$Zn_fertilizer <- d2$S_fertilizer <- 0
-	d2$N_fertilizer[grep("NPK", d2$treatment)] <- 100
+	d2$N_fertilizer[grep("N", d2$treatment)] <- 100
 	d2$N_splits <- NA
 	d2$N_splits[d2$N_fertilizer > 0] <- 3L
 
@@ -97,10 +100,6 @@ carob_script <- function(path) {
 	d$geo_from_source <- ifelse(!is.na(d$latitude) & !is.na(d$longitude), TRUE, FALSE)
 	d$longitude[d$location == "Liphutu"] <- 35.314
 	d$latitude[d$location == "Liphutu"] <- -15.898
-	d$longitude[d$location == "Tambala"] <- 35.577
-	d$latitude[d$location == "Tambala"] <- -14.450
-
-
 	d <- d[!is.na(d$yield), ]
 
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

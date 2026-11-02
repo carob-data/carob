@@ -11,6 +11,7 @@ proc_wheat <- function(ff) {
 #	fgrn <- ff[basename(ff) == "29 HRWYT_GrnYld.xls"]
 #	geno <- read.csv(fgeno, sep = "\t")
 #	grn <- read.csv(fgrn, sep = "\t")
+# MeanVal, empty field books, germplasm DOI tables, and nursery archives are not read.
 
 	fenv <- ff[grep("EnvData.xls", basename(ff))]
 	floc <- ff[grep("Loc_data.xls", basename(ff))]

@@ -22,7 +22,8 @@ carob_script <- function(path){
 		data_organization="AfricaRice;IITA;ICRAF;WUR",
 		carob_contributor = "Effie Ochieng'",
 		carob_effort = NA,
-		carob_date="2022-09-09"
+		carob_date="2022-09-09",
+		notes = "LLM-review: [medium, fertilizer] mineral_fert_amount is treated as already-elemental P or N, including SSP, then scaled by 10000 over area. SSP product kilograms are not a P rate."
 	)
 	
 	#read the data

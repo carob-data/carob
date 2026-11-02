@@ -17,7 +17,7 @@ carob_script <- function(path) {
       carob_effort = NA,
       carob_date="2025-06-08",
       carob_completion=75, # files f3
-      notes=NA
+      notes="LLM-review: [medium, other] plot_area of 3.9 by 6 over 10000 stores hectares (about 0.002) in an m2 column. The plot is 23.4 m2. soil_SOC divided by 10 has no comment on the source unit."
    )
    
    f <- ff[basename(ff) == "Articel_Supporting_Data.xlsx"]
@@ -125,8 +125,9 @@ carob_script <- function(path) {
                      ifelse(grepl("Low-PM", d$treatment), 527*0.46 ,
                      ifelse(grepl("Pos-Con", d$treatment), 753*0.46, 0))))))/((d$plot_area)*1000) ### Kg/ha 
   
-   d$P_fertilizer <-  75/2.29
-   d$K_fertilizer <- 150/1.205
+   # 75 g P2O5 and 150 g K2O per plot, same gram scale as the urea; Neg-Con receives none
+   d$P_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (75 / 2.29) / (d$plot_area * 1000))
+   d$K_fertilizer <- ifelse(grepl("Neg-Con", d$treatment), 0, (150 / 1.2051) / (d$plot_area * 1000))
 
    
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

@@ -29,7 +29,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is the plot. Missing P is replaced with 0. on_farm TRUE needs a check against what looks like a station trial."
 	)
 	
 

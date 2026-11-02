@@ -41,7 +41,8 @@ Result of a multi-location study across Africa and Asia where different varietie
 		treatment_vars = "P_fertilizer; variety",
 		response_vars = "yield", 
 		carob_contributor = "Robert Hijmans",
-		carob_completion = 0
+		carob_completion = 0,
+		notes = "LLM-review: [medium, other] Two download.file calls fetch supplementary files at run time. Row spacing is the geometric mean of two spacings. Negative yields are set to NA. The geo merge has no all.x, so sites missing from the lookup disappear."
 	)
 	
 	f1 <- ff[basename(ff) == "216077_supplementary-materials_datasheets_1.xlsx"]

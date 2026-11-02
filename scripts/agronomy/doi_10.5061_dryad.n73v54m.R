@@ -1,6 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# Wenkou was set to 33.761 N, 111.087 E. The source lists two coordinate pairs, so that point was removed.
+# On-farm status is not known for this literature compilation.
+
 carob_script <- function(path) {
    
 "Maize (Zea mays L.) productivity has increased globally as a result of improved genetics and agronomic practices. Plant population and row spacing are two key agronomic factors known to have a strong influence on maize grain yield. A systematic review was conducted to investigate the effects of plant population on maize grain yield, differentiating between rainfall regions, N input, and soil tillage system (conventional tillage [CT] and no-tillage [NT]). Data were extracted from 64 peer-reviewed articles reporting on rainfed field trials, representing 13 countries and 127 trial locations. In arid environments, maize grain yield was low (mean maize grain yield = 2448 kg ha−1) across all plant populations with no clear response to plant population. Variation in maize grain yield was high in semiarid environments where the polynomial regression (p < 0.001, n = 951) had a maximum point at ∼140,000 plants ha−1, which reflected a maize grain yield of 9000 kg ha−1. In subhumid environments, maize grain yield had a positive response to plant population (p < 0.001). Maize grain yield increased for both CT and NT systems as plant population increased. In high-N-input (r2 = 0.19, p < 0.001, n = 2 018) production systems, the response of plant population to applied N was weaker than in medium-N-input (r2 = 0.49, p < 0.001, n = 680) systems. There exists a need for more metadata to be analyzed to provide improved recommendations for optimizing plant populations across different climatic conditions and rainfed maize production systems. Overall, the importance of optimizing plant population to local environmental conditions and farming systems is illustrated."
@@ -44,14 +48,14 @@ carob_script <- function(path) {
       lonLat= ifelse(grepl(";", r$Coordinates), NA , r$Coordinates), ### Keep rows with unique entries
       rain= as.numeric(ifelse(grepl(";", r$`Mean annual precipitation (mm)`), NA , gsub("  ", "", r$`Mean annual precipitation (mm)`))),
       planting_date=as.character(substr(r$`Year of trial`, 1, 4)), ## Not sure
-      land_prep_method= tolower(ifelse(grepl("No tillage", gsub("-", " ", r$`Tillage system`)), "minimum tillage", 
+      land_prep_method= tolower(ifelse(grepl("No tillage", gsub("-", " ", r$`Tillage system`)), "none", 
                         ifelse(grepl("Rotary",gsub("-", " ", r$`Tillage system`)), "rotovating", 
                         ifelse(grepl("Conventional", gsub("-", " ", r$`Tillage system`)), "conventional", gsub("-", " ", r$`Tillage system`))))),
       plant_density= ifelse(is.na(r$`Harvest / final plant density (plants/ha)`) & !is.na(r$`Plant density (plants/ha)`) , r$`Plant density (plants/ha)`, r$`Harvest / final plant density (plants/ha)`),
       row_spacing= as.numeric(ifelse(grepl("row|;|Twin", r$`Row width (m)`), NA , r$`Row width (m)`))*100,#cm
       yield= as.numeric(r$`Grain yield (kg/ha)`),
       crop= "maize",
-      on_farm= TRUE,
+      on_farm= NA,
       is_survey= FALSE,
       yield_part= "grain",
       geo_from_source= TRUE,
@@ -60,16 +64,31 @@ carob_script <- function(path) {
    )
    
   d$plant_density <- as.numeric(ifelse(grepl(";|Various", d$plant_density), NA, d$plant_density))
-  ## Remove missing values in row_spacing, as it's part of the treatment variable..
-  d <- d[!is.na(d$row_spacing),] 
-  
+
+  ## strsplit pieces are not all the same length, so rbind recycles them.
+  split_pair <- function(x, split, single = NA_character_) {
+    s <- strsplit(x, split)
+    out <- matrix(NA_character_, length(s), 2)
+    for (i in seq_along(s)) {
+      v <- s[[i]]
+      n <- length(v)
+      if (n == 1 && !is.na(v)) {
+        out[i, 1] <- v
+        out[i, 2] <- single
+      } else if (n == 2) {
+        out[i, ] <- v
+      }
+    }
+    out
+  }
+
    ### Fixing longitude and latitude 
   P <- carobiner::fix_name(d$lonLat)
   P <- gsub(" S| W| E longitude| N latitude| N Lat.| E Long.|N latitude| N|N|E|  N|W|", "" , P)
   P <- gsub(" latitudeouth and | longitudeest", "", P)
   P <- gsub("Long. |Lat. ", "", P)
   d$lonLat <- P
-  lonlat <- do.call(rbind, strsplit(d$lonLat, ","))
+  lonlat <- split_pair(d$lonLat, ",")
   d$lat <- lonlat[,1] 
   d$lon <- lonlat[,2] 
   
@@ -83,7 +102,7 @@ carob_script <- function(path) {
   P <- gsub("28°48'S and 52°77'", "-28°48", P)
   d$lat <- P
   
-  lat <- do.call(rbind, strsplit(d$lat, "°"))
+  lat <- split_pair(d$lat, "°", "0")
   d$latitude <- as.numeric(lat[,1])+ (as.numeric(gsub(" |'|′", "",  substr(lat[,2], 1, 2))))/60
   
   ### longitude
@@ -96,7 +115,7 @@ carob_script <- function(path) {
   P <- gsub("28°48'S and 52°77'", "-52°77", P)
   d$lon <- P
   
-  lon <- do.call(rbind, strsplit(d$lon, "°"))
+  lon <- split_pair(d$lon, "°", "0")
   d$longitude <- as.numeric(lon[,1])+ (as.numeric(gsub(" |'|′", "",  substr(lon[,2], 1, 2))))/60
   d$lon <- d$longitude
   d$lat <- d$latitude
@@ -121,11 +140,6 @@ carob_script <- function(path) {
   i <- grepl("China", d$country) &  grepl("Harbin",d$location)
   d$latitude[i] <- d$lon[i]
   d$longitude[i] <- d$lat[i]
-  
-  i <- grepl("China", d$country) &  grepl("Wenkou",d$location)
-  d$latitude[i] <- 33.761
-  d$longitude[i] <-  111.0873
-  d$geo_from_source[i] <- FALSE
   
   i <- grepl("United States", d$country) &  grepl("Mt Holly",d$location)
   d$latitude[i] <- 35.2967
@@ -181,17 +195,19 @@ carob_script <- function(path) {
 
   geo <- data.frame(
       adm1= c("Montana", "North Dakota", "Colorado", "Illinois", "Iowa",  "Michigan" ,"Alabama" , 
-              "Minnesota", "Missouri", "Virginia", "Wisconsin", "New York", "Wisconcin", "Maryland", "Iowa; California; Illinois"), 
-      long= c(-109.3433, -100.4523, -105.5495, -89.4515, -93.1514, -84.5068, -86.7238, -94.5025, -92.4924, -78.9136, -89.723, -76.2152, -78.2254, -77.0332,  -93.1514),
-      lat= c(46.6796, 47.4678, 39, 39.7386, 41.9395, 45.0034, 32.5762, 46.4419, 38.304, 37.2752, 44.8975, 42.7466, 38.0036,  39.28712,  41.9395),
-      country= c(rep("United States", 15))
+              "Minnesota", "Missouri", "Virginia", "Wisconsin", "New York", "Maryland", "Iowa; California; Illinois"), 
+      long= c(-109.3433, -100.4523, -105.5495, -89.4515, -93.1514, -84.5068, -86.7238, -94.5025, -92.4924, -78.9136, -89.723, -76.2152, -77.0332,  -93.1514),
+      lat= c(46.6796, 47.4678, 39, 39.7386, 41.9395, 45.0034, 32.5762, 46.4419, 38.304, 37.2752, 44.8975, 42.7466,  39.28712,  41.9395),
+      country= c(rep("United States", 14))
    )
                     
    
    d <- merge(d, geo, by= c("country", "adm1"), all.x = TRUE)
-   
-   d$longitude[!is.na(d$long)] <- d$long[!is.na(d$long)]
-   d$latitude[!is.na(d$lat)] <-  d$lat[!is.na(d$lat)]
+   # State centroids fill missing coordinates only; they are not the source georeference.
+   i <- is.na(d$longitude) & !is.na(d$long)
+   d$longitude[i] <- d$long[i]
+   d$latitude[i] <- d$lat[i]
+   d$geo_from_source[i] <- FALSE
    d$long <- d$lat <- NULL
    
    

@@ -36,7 +36,7 @@ Results from this project showed that with appropriate weed management couple wi
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, coordinates] Source latitude and longitude are overwritten with a hard-coded lookup, with no comment on why. [medium, metadata] trial_id is the plot UniqueID. treatment_vars is only land_prep_method, while fertilizer, variety, and crop system also vary, and N/P/K are NA for every row including the no-fertilizer level."
 	)
 	
 

@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		treatment_vars="N_fertilizer;P_fertilizer",
 		carob_contributor="Eduardo Garcia Bendito",
 		carob_effort = NA,
-		carob_date="2025-01-31"
+		carob_date="2025-01-31",
+		notes = "LLM-review: [low, fertilizer] fertilizer_used and fertilizer_type DAP and urea are set on the zero-N control. adm1 is Siaya county and adm2 is Yala division. One trial_id per country across years. The coordinate 34.52, 0.107 has no source comment."
 	)
 
 	f1 <- ff[basename(ff) == "KETZ_harvest.xlsx"]
@@ -114,7 +115,7 @@ carob_script <- function(path) {
 	  irrigated = FALSE,
 	  row_spacing = 75,
 	  plant_spacing = 30,
-	  fw_yield = rt$tz_grain*1000,
+	  yield = rt$tz_grain*1000,
 	  yield_part = "grain",
 	  fwy_residue = rt$tz_stover*1000,
 	  grain_N = 10 * rt$tz_grainN / rt$tz_grain, # maybe... seems too low

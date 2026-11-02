@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+# P_HARV is plants at harvest, not total dry matter, so it was not assigned to dmy_total.
 
 carob_script <- function(path) {
 
@@ -25,7 +26,7 @@ The study was carried out by the International Institute of Tropical Agriculture
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2026-04-09",
-		notes = NA,
+		notes = "LLM-review: [low, metadata] on_farm is TRUE for SAPU, which is a research station.",
 		design = NA
 	)
 	
@@ -45,8 +46,7 @@ The study was carried out by the International Institute of Tropical Agriculture
 	anthesis_days=r$ANTHESIS,
 	plant_height=r$PL_HT,
 	ear_height=r$E_HT,
-	asi=r$ASI,
-	dmy_total=r$P_HARV)
+	asi=r$ASI)
 	
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")	
 	d$on_farm <- TRUE
@@ -57,6 +57,7 @@ The study was carried out by the International Institute of Tropical Agriculture
   d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$yield_moisture <-as.numeric(NA)
+	d$yield_isfresh <- NA # YIELD does not say fresh or dry
 
 
 	carobiner::write_files(path, meta, d)

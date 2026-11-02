@@ -29,7 +29,8 @@ A 5-year development project titled; Kano State Agro-Pastoral Development Projec
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-09-25",
 		carob_completion = 90,	
-		carob_effort = 5
+		carob_effort = 5,
+		notes = "LLM-review: [low, metadata] trial_id is 1 for both Bayero University and Zaria. Grain moisture of about 10-19 percent is read and then yield_moisture is overwritten with NA. Flowering days is days to 50 percent silking. on_farm is TRUE for the university site."
 	)
 	
 	f1 <- ff[basename(ff) == "data_dictionary.csv"]

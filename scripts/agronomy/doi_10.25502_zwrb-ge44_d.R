@@ -6,6 +6,7 @@
 # no location data
 # no planting date 
 # herbicide treatments not clear (what is protocol?)
+# Marketable root fresh weight is plot weight with no plot area, so it is not stored as kg/ha.
 
 
 carob_script <- function(path) {
@@ -27,7 +28,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "fertilizer_used;land_prep_method", #herbicide_timing
-		response_vars = "yield;yield_marketable;root_infection;plant_density", 
+		response_vars = "root_infection;plant_density", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-17",
 		carob_completion = 100,	
@@ -50,8 +51,6 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	  treatment = as.character(r1$Trt_Code),
 	  plot_area = NA,
 	  plant_density = r1$plant_density_per_.ha,
-	  yield = r1$tuberizedMarketableRootsFW,
-	  yield_marketable = r1$tuberizedMarketableRootsFW,
 	  land_prep_method = paste(r1$ploughing,r1$flat_ridge),
 	  root_infection = (r1$tuberizedDiseasedRootsFW / (r1$tuberizedDiseasedRootsFW + r1$tuberizedMarketableRootsFW)) * 100,
 	  fertilizer_used = ifelse(r1$Fertilizer == "Fertilizers applied", TRUE, FALSE),

@@ -1,5 +1,6 @@
 _site/
 passwords.R
+misc/todo/last_pr.txt
 .html
 temp.*
 _old/

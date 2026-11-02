@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-04-25",
 		response_vars = "yield",
-		treatment_vars = "land_prep_method"
+		treatment_vars = "land_prep_method",
+		notes = "LLM-review: [medium, dropped] Missing yield is dropped and then yield not above 0 is dropped. Katheli and Udaynagar are placed far west of the other sites in the lookup."
 	)
   
  

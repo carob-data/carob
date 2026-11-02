@@ -55,14 +55,18 @@ T10: Direct seeding maize (Maize-soybean rotation) (DS-SM), residue retention on
 	fert <- data.frame(do.call(rbind, fert))
 	fert <- sapply(fert, as.numeric)
 	d$N_fertilizer <- fert[,1] * .10 + fert[,2] * .46 
-	d$P_fertilizer <- fert[,1] * .20
-	d$K_fertilizer <- fert[,1] * .10	
+	d$P_fertilizer <- fert[,1] * .20 / 2.29
+	d$K_fertilizer <- fert[,1] * .10 / 1.2051
   
 	d$fertilizer_type <- "none"
 	d$fertilizer_type[fert[,1] > 0] <- "NPK"
 	d$fertilizer_type[fert[,2] > 0] <- paste0(d$fertilizer_type[fert[,2] > 0], ";urea")
 
-  
+	d$land_prep_method <- ifelse(d$treatment == "CPM1", "ploughing",
+		ifelse(d$treatment == "CPM2", "ridge tillage",
+		ifelse(d$treatment == "BAM", "basins",
+		ifelse(d$treatment == "DISM", "dibbling", "direct seeding"))))
+
   d$is_survey <- FALSE
   d$on_farm <- FALSE
      
@@ -79,8 +83,8 @@ T10: Direct seeding maize (Maize-soybean rotation) (DS-SM), residue retention on
   d$longitude <- 32.6447
   d$geo_from_source <- FALSE
 
-	d$trial_id <- "1"
-	d$irrigated <- FALSE
+	d$trial_id <- d$planting_date
+	d$irrigated <- NA
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

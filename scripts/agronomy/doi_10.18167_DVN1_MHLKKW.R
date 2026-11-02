@@ -2,7 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# d3 does not have plot ID. Not clear how to link to d1 and d2	
+# d3 does not have plot ID. Not clear how to link to d1 and d2
+## Monthly max/min air temperature is one row per year, not a daily series, so it is not merged onto the plot table.	
 
 carob_script <- function(path) {
 
@@ -29,7 +30,8 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-24",
 		carob_completion = 80,	
-		carob_effort = 5
+		carob_effort = 5,
+		notes = "LLM-review: [low, metadata] The Gagnoa IDESSA station is coded on-farm, with trial_id 1 for 1971-1992."
 	)
 	
 
@@ -51,13 +53,13 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  treatment = as.character(r1b$Treatment),
 	  variety = r1b$Variety,
 	  rep = as.integer(r1b$Replicate),
-	  OM_amount = r1b$Compost_tDM, # actual, Treat_Compost_tDM is theoretical, 
+	  OM_amount = r1b$Compost_tDM * 1000, # tDM/ha to kg/ha; Treat_Compost_tDM is theoretical 
 	  N_fertilizer = r1b$Treat_Fertilizer_kgN,
 	  yield = r1b$Grain_yield * 1000,
 	  #crop_cycle = r1b$Cycle, # ??
 	  soil_C_litter = r1b$ABG_tC * 1000,
-	  dmy_roots = r1b$Root_DM,
-	  dmy_residue = r1b$Straw_DM,
+	  dmy_roots = r1b$Root_DM * 1000, # tDM/ha to kg/ha
+	  dmy_residue = r1b$Straw_DM * 1000, # tDM/ha to kg/ha
 	  residue_C = r1b$Straw_tC*1000,#r1b$Compost_tC
 	  crop =  tolower(r1b$Crop) 
 	)
@@ -95,7 +97,7 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  rep          = as.integer(r1d$Field_replicate),
 	  method       = r1d$Method,
 	  age  = r1d$Age, #11 or 22 (years?)
-	  soil_SOC = as.numeric(r1d$Contenu_C_g_kg_sol) * 100,
+	  soil_SOC = as.numeric(r1d$Contenu_C_g_kg_sol) / 10, # g/kg to %
 	  soil_N   = as.numeric(r1d$Contenu_N_g_kg_sol), 
 	  Teneur_C =  r1d$Teneur_C_g_kg_fraction, #concentration of carbon within that specific soil fraction
 	  Teneur_N = r1d$Teneur_N_g_kg_fraction #concentration of N within that specific soil fraction
@@ -112,23 +114,9 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 		prec = r1e$Rain
 	)
 	
-	d5 <- data.frame(
-	  date = r1f$...1,
-	  tmax   = rowMeans(sapply(r1f[,-1], function(x) as.numeric(as.character(x))), na.rm = TRUE)
-	)
-		
-	d6 <- data.frame(
-	  date = r1g$...1,
-	  tmin   = rowMeans(sapply(r1g[,-1], function(x) as.numeric(as.character(x))), na.rm = TRUE)
-	)
-	
-	d7 <- merge(d5, d6, by = "date")
-	
 	d <- merge(d1, d2, by = c("plot_id", "date"), all.x = TRUE)
 
 #	d <- merge(d, d3, by = c("treatment", "rep"), all = TRUE)
-
-	d <- merge(d, d7, by = "date", all = TRUE)
 	
 	d$trial_id <- "1"
 	d$on_farm <- TRUE

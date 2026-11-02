@@ -27,13 +27,15 @@ carob_script <- function(path) {
 
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
-	d <- proc_wheat(ff)
+	df <- proc_wheat(ff)
+	d <- df$wide
+	long <- df$long
 	i <- which(d$location == "Aicrp On Wheat")
-	d$location[i] == "AICRP on wheat"
+	d$location[i] <- "AICRP on wheat"
 	tmp <- d$longitude[i]
 	d$longitude[i] <- d$latitude[i] 
 	d$latitude[i] <- tmp
 
-	carobiner::write_files(path, meta, d$wide, d$long)
+	carobiner::write_files(path, meta, d, long = long)
 
 }

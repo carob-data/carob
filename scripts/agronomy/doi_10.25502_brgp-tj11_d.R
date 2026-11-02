@@ -29,7 +29,7 @@ An experiment was conducted to investigate the effects of using whole tubers ver
 		data_type = "experiment",
 		treatment_vars = "seed_treatment",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] trial_id is 1 or 2 according to whole-tuber versus minisett, so the id is the treatment. The abstract says RCBD, but design is NA. on_farm is TRUE for an Abuja station trial. A metadata file is read and unused.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-24",
 		carob_completion = 100,	
