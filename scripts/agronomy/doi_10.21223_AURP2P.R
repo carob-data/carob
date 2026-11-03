@@ -31,7 +31,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
     carob_date = "2026-11-02",
     carob_completion = 85,
     carob_effort = 2
-  )
+)
   
   f1 <- ff[basename(ff) == "01_data_LateBlightSeverity_Huancayo.xls"]
   f2 <- ff[basename(ff) == "02_LateBlight_Evaluation_date.xls"]
@@ -60,14 +60,12 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
     K_fertilizer = NA,
     country = "Peru",
     adm1 = "Junin",
-    adm2 = "Huancayo",
     location = "Huancayo",
-    latitude = -12.0067,
-    longitude = -75.2242,
+    latitude = -12.1722,
+    longitude = -75.1608,
     geo_from_source = FALSE,
     emergence_date = "2000-01-02",
     planting_date = NA,
-    harvest_date = NA,
     crop = "potato",
     on_farm = FALSE,
     is_survey = FALSE,
@@ -76,13 +74,22 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
     yield = NA,
     yield_moisture = NA,
     yield_isfresh = NA,
-    #New variable
+    ## NEW VARIABLES
     fungicide_level_ = r1$Fungicide_rate
     
   )
   
+  bm <- grep("^TBDMC", names(r5), value = TRUE)
+  z <- data.frame(plot_id = as.character(r5$id), r5[, bm])
+  dl3 <- reshape(z, varying = bm, v.names = "dmy_total", timevar = "harvest_date",
+                 times = as.character(as.Date(r6$Evaluation_date_TBDMC)), direction = "long")
+  dl3 <- dl3[!is.na(dl3$dmy_total), c("plot_id", "harvest_date", "dmy_total")]
+  
+  d <- merge(dl3, d, by = "plot_id", all.x = TRUE)
+  d$record_id <- seq_len(nrow(d))
+  
   lb <- grep("^LB", names(r1), value = TRUE)
-  x <- data.frame(plot_id = d$plot_id, r1[, lb])
+  x <- data.frame(plot_id = as.character(r1$id), r1[, lb])
   dl1 <- reshape(x, varying = lb, v.names = "disease_severity", timevar = "v", times = lb, direction = "long")
   dl1$date <- as.character(as.Date(r2$Evaluation_date[match(dl1$v, r2$Abbreviation)]))
   dl1 <- dl1[!is.na(dl1$disease_severity), c("plot_id", "date", "disease_severity")]
@@ -96,13 +103,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
   dl2$date <- as.character(as.Date(r4$Evaluation_date_CCG[match(dl2$v, r4$Abbreviation)]))
   dl2 <- dl2[!is.na(dl2$ground_cover), c("plot_id", "date", "ground_cover")]
   
-  bm <- grep("^TBDMC", names(r5), value = TRUE)
-  z <- data.frame(plot_id = as.character(r5$id), r5[, bm])
-  dl3 <- reshape(z, varying = bm, v.names = "dmy_total", timevar = "date",
-                 times = as.character(as.Date(r6$Evaluation_date_TBDMC)), direction = "long")
-  dl3 <- dl3[!is.na(dl3$dmy_total), c("plot_id", "date", "dmy_total")]
-  
-  dlong <- carobiner::bindr(dl1, dl2, dl3)
+  dlong <- carobiner::bindr(dl1, dl2)
   
   w <- r8[grepl("^2000", r8[[2]]), ]
   w <- data.frame(
@@ -115,8 +116,8 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
   )
   w$location <- "Huancayo"
   w$country <- "Peru"
-  w$latitude <- -12.0067
-  w$longitude <- -75.2242
+  w$latitude <- -12.1722
+  w$longitude <- -75.1608
   
   carobiner::write_files(path, meta, d, long = dlong, wth = w)
 }
