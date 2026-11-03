@@ -17,7 +17,7 @@ These datasets correspond to the field experiments in Comas.
     project = NA,
     design = NA,
     data_type = "experiment",
-    treatment_vars = "variety;fungicide_frequency_",
+    treatment_vars = "variety;fungicide_interval;fungicide_used",
     response_vars = "rAUDPC;disease_severity;ground_cover;dmy_total",
     notes = NA,
     carob_contributor = "Maryam Yahya",
@@ -73,11 +73,8 @@ These datasets correspond to the field experiments in Comas.
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-    ## NEW VARIABLES
-     # fungicide_frequency_: "Frequency" in the source (0, 4, 7, 14), not explained; not fungicide_times (number of sprays)  # <-
-    # probably days between sprays (0 = no fungicide), like the 7 and 14 day sprays in the Huancayo trial (AURP2P)   
-    fungicide_frequency_ = r1$Frequency
-    
+   fungicide_used = r1$Frequency > 0,
+   fungicide_interval = ifelse(r1$Frequency == 0, NA, r1$Frequency)
   )
   
   lb <- paste0("LB", 1:19)
