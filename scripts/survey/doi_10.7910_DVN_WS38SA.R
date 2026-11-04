@@ -193,11 +193,13 @@ carob_script <- function(path) {
 	d$geo_source[i] <- d$geo_s[i]
 	d$lon <- d$lat <-d$geo_from <- d$geo_s <- NULL
 	
-	### Drop rows with incorrect coordinates that cannot be corrected because both location and adm1 are missing.
-	d <- d[!(is.na(d$location) & (d$latitude %in% c(9.7, 9.5, 14.3, 13.5, 13.2, 13.6, 13.3, 13.8, 11.0, 14.5, 14.7, -3.2) | d$longitude %in% c(-82.8,-82.6, -82.7, 4.0, -16.5, -16.2, -15.2, -15.9, -15.5, -15.6, -14.9, -16.1, -14.0, -16.3, -14.3, -14.4, -16.4, -16.0, -14.6, -15.8, -1.2, -1.0, -89.1, 37.7))), ]
-	
-	### Drop rows with missing longitude and latitude that cannot be filled in because both location and adm1 are missing.
-	d <- d[!is.na(d$longitude),]
+	### set rows with incorrect coordinates that cannot be corrected because both location and adm1 are missing into NA.
+ idx <- which(is.na(d$location) & (d$latitude %in% c(9.7, 9.5, 14.3, 13.5, 13.2, 13.6, 13.3, 13.8, 11.0, 14.5, 14.7, -3.2) | d$longitude %in% c(-82.8, -82.6, -82.7, 4.0, -16.5, -16.2, -15.2, -15.9, -15.5, -15.6, -14.9, -16.1, -14.0, -16.3, -14.3, -14.4, -16.4, -16.0, -14.6, -15.8, -1.2, -1.0, -89.1, 37.7)))
+ d$longitude[idx] <- NA
+ d$latitude[idx] <- NA
+ 
+ ### Drop rows with missing longitude and latitude that cannot be filled in because both location and adm1 are missing.
+	#d <- d[!is.na(d$longitude),]
 	
 	
 	carobiner::write_files(meta, d, path=path)
