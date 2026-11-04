@@ -8,7 +8,7 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 "
   
   uri <- "doi:10.21223/P3/IC6ZEY"
-  group <- "varieties"
+  group <- "varieties_other"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
@@ -28,7 +28,7 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
   f1 <- ff[basename(ff) == "Continuous_Storage_Root_Bulking_Data and Analysis.xlsx"]
   f3 <- ff[basename(ff) == "Continuous_Storage_Root_Bulking_Material_list.xlsx"]
   
-  r <- carobiner::read.excel(f1, sheet = "8_Combined harvests", na = "*")
+  r <- suppressWarnings(carobiner::read.excel(f1, sheet = "8_Combined harvests", na = "*"))
   r3 <- carobiner::read.excel(f3)
   
   d <- data.frame(
