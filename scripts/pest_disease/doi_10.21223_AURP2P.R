@@ -15,7 +15,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 "
   
   uri <- "doi:10.21223/AURP2P"
-  group <- "agronomy"
+  group <- "pest_disease"
   ff  <- carobiner::get_data(uri, path, group)
   
   meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
