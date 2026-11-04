@@ -61,7 +61,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
     treatment_vars = "variety;N_fertilizer;fungicide_times",
     response_vars = "disease_severity;ground_cover;dmy_total",
     notes = "Fungicide codes F4 and F10 in the data correspond to spray intervals of 7 and 14 days (see script). Tomasa is not in the publication.",
-    carob_contributor = "Maryam Yahya",
+    carob_contributor = "Maryam Yahya;Bester Mudereri",
     carob_date = "2026-11-02",
     carob_LLM = "Claude Fable 5",
     carob_completion = 90,
