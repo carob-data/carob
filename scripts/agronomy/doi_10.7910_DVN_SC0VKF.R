@@ -29,7 +29,7 @@ Four seasons of N2O and CO2 emission from four selected treatments of CIAT's lon
 		carob_contributor = "Blessing Dzuda",
 		carob_completion = 100,	
 		carob_effort = 6,
-		notes = NA
+		notes = "LLM-review: [medium, metadata] data_type is NA. yield, moisture, and dates are all-NA columns. trial_id is admin area plus plot. Organic matter 4000 and previous residue 2000 have no source."
 	)
 	
 

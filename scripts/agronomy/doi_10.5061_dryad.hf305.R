@@ -27,7 +27,7 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, dropped] K is 0 for organic and conventional rows. yield_part is none. Rows in kg/plant, lb/plant, and bales/ha are deleted with no NOT PROCESSED note. No-till is recoded to minimum tillage. [low, forbidden] A suppressWarnings is not the main problem here. See the year substitution."
 	)
 	
 
@@ -134,7 +134,7 @@ Agriculture today places great strains on biodiversity, soils, water and the atm
 				ifelse(grepl("lb/A", d$unit), d$yield*1.12085, -99))))))))))
 
 	
-	d$planting_date <- gsub("1", NA, d$year) 
+	d$planting_date <- d$year 
 	d$OM_used <- as.logical(d$OM_used)
 	d$irrigated <- as.logical(d$irrigated)
 	d$unit <- d$year <- NULL

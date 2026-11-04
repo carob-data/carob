@@ -19,7 +19,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 		data_organization="ICRISAT",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="plant_density;P_fertilizer"		
+		treatment_vars="plant_density;P_fertilizer",		
+		notes = "LLM-review: [medium, other] plant_density stores hills per hectare. The abstract says two plants per hill. fertilizer_type SSP is also applied to the zero-P treatment. on_farm is TRUE for the station, and trial_id has no year."
 	)
 	  
 	f <- ff[basename(ff) == "Data file of Groundnut to plant density and phosphorous application in Minjibir 2012-13.xlsx"]
@@ -30,8 +31,8 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 		adm1 = "Kano",
 		adm2 = r$Location,
 		location = "Wasai", #from the reference
-		latitude = 8.67,
-		longitude = 12.15,
+		latitude = 12.15,
+		longitude = 8.67,
 		geo_from_source = FALSE,
 		# sown during the growing seasons of 2012 and 2013 no actual dates mentioned
 		planting_date = as.character(r$Year),
@@ -60,7 +61,7 @@ Abstract: Despite the recent release of several improved varieties of groundnut 
 	)
 	
 	#soil properties from reference
-	d$s1 <- paste(d$Year, d$adm2, sep = "_")
+	d$s1 <- paste(d$planting_date, d$adm2, sep = "_")
 	ss <- data.frame(
 		s1 = c("2012_Minjibir", "2013_Minjibir"),
 		soil_SOC = c(0.221, 0.198 ),

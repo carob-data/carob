@@ -24,7 +24,7 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [low, metadata] trial_id is 1 for 2015-2017. on_farm is TRUE at Hancock station. The abstract says the crop was irrigated and irrigated is NA. yield_part tubers is not in the vocabulary.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-12",
 		carob_completion = 100,	
@@ -44,8 +44,10 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 	  year = r1$year,
 	  yield = r1$TuberYield*1000,
 	  yield_marketable = r1$MarketYield*1000,
+	  dmy_total_45 = r1$TotalDM45,
 	  dmy_total_75 = r1$TotalDM75,
-	  dmy_total_45 = r1$TuberDM45,
+	  dmy_storage_45 = r1$TuberDM45,
+	  dmy_storage_75 = r1$TuberDM75,
 	  tuber_N_45 = r1$TuberNC45,
 	  tuber_N_75 = r1$TuberNC75,
 	  crop = "potato", 
@@ -94,10 +96,10 @@ Optimizing nitrogen (N) application rate is essential for effective N management
 	i <-  grepl("tuber_|dmy|record_id", names(d))
 	Nm <- names(d)[i]   
 	dlon <- d[, Nm]
-	dlon <-  reshape(dlon, varying=c("dmy_total_45", "dmy_total_75", "tuber_N_45", "tuber_N_75"),
+	dlon <-  reshape(dlon, varying=c("dmy_total_45", "dmy_total_75", "dmy_storage_45", "dmy_storage_75", "tuber_N_45", "tuber_N_75"),
                    v.names = "value", direction = "long")
-	dlon$variable <- c(rep("dmy_total", 2), rep("tuber_N", 2))[dlon$time]
-	dlon$DAE <-  c(rep(45L, 2), rep(75L, 2))[dlon$time]
+	dlon$variable <- c("dmy_total", "dmy_total", "dmy_storage", "dmy_storage", "tuber_N", "tuber_N")[dlon$time]
+	dlon$DAE <- c(45L, 75L, 45L, 75L, 45L, 75L)[dlon$time]
 	dlon$time <- dlon$id <- d$year <- NULL
 	dlon <- na.omit(dlon)
   

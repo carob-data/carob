@@ -19,7 +19,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2024-08-10",
-      notes="30-60cm soil data not yet processed"	  
+      notes="30-60cm soil data not yet processed LLM-review: [medium, fertilizer] 84, 56/2.29, and 28/1.2051 are applied to every farm and crop from a single 200 kg/ha note. yield_part is grain after beans have been renamed to common bean."	  
    )
    
   
@@ -86,7 +86,7 @@ carob_script <- function(path) {
          soil_Ca= as.numeric(r2$Ca),
          soil_Mg= as.numeric(r2$Mg),
          soil_K= as.numeric(r2$K),
-         soil_Na= as.numeric(r2$N),
+         soil_Na= as.numeric(r2$Na),
          soil_EC= as.numeric(r2$EC),
          soil_sand= as.numeric(r2$Sand),
          soil_silt= as.numeric(r2$Silt),

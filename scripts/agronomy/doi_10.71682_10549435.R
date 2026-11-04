@@ -50,7 +50,7 @@ This dataset was generated as part of the Guiding Acid Soil Management Investmen
 		data_type = "on-station experiment",
 		treatment_vars = "lime",
 		response_vars = "yield",
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] data_type is on-station experiment while the file is the on-farm trials and on_farm is taken from the file. trial_id includes crop, so two crops on the same farm-season become two trials.",
 		carob_contributor = "Robert Hijmans",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_date = "2026-10-15",

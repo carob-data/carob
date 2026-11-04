@@ -28,7 +28,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	   response_vars = "yield;yield_marketable", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] Root dry matter (Mg/ha times 1000) is summed into yield. Rows with yield not above 0 are then dropped."
 	)
 	
 	f <- ff[basename(ff) == "bbp4_harvestdata.csv"]

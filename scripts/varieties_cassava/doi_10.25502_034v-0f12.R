@@ -1,0 +1,41 @@
+# R script for "carob"
+# license: GPLv3
+
+## NOTES
+# IITA cassava breeding trial (Cassavabase export); processed with the shared process_cassava() function.
+
+## ISSUES
+# URL 'https://data.iita.org/dataset/cef43970-94f9-4bce-a620-51489ca11aaf/resource/d9c6351a-efb2-461c-83d7-d5f269b27f28/download/metadata.csv': status was 'SSL connect error'
+# metadata: response is not a variable in the data: yield
+# missing variables: yield
+
+carob_script <- function(path) {
+
+"
+Drought trial (70 clones) in Ngabu, Malawi in 2012-13 breeding season
+"
+
+	uri <- "doi:10.25502/034v-0f12"
+	group <- "varieties_cassava"
+	ff  <- carobiner::get_data(uri, path, group)
+
+	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
+		data_organization = "IITA",
+		publication = NA,
+		project = NA,
+		data_type = "experiment",
+		treatment_vars = "variety",
+		response_vars = "yield",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-10-29",
+		carob_LLM = "Cursor Claude Opus 5.5",
+		carob_completion = 90,
+		carob_effort = NA,
+		notes = NA
+	)
+
+	process_cassava <- carobiner::get_function("process_cassava", path, group)
+	d <- process_cassava(ff)
+	carobiner::write_files(path, meta, d$records, d$timerecs)
+}
+

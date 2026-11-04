@@ -23,7 +23,8 @@ cropping system (sole maize, sole pigeonpea, maize-pigeonpea, maize-gliricidia, 
 		carob_effort = NA,
 		carob_date="2024-04-09",
 		response_vars= "yield",
-		treatment_vars="intercrops"
+		treatment_vars="intercrops",
+		notes = "LLM-review: [medium, admin] adm2 is Kogwa, a typo for Kongwa. K is NA where DAP plus urea means K is a known 0. N, P, densities, and organic-matter amounts are hard-coded with no source. Wood yield not above 0 is dropped."
 	)
 
 	#use grep because the filename has a space on linux	

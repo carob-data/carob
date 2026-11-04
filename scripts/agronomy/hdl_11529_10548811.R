@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars = "N_fertilizer", 
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
-		carob_date = "2024-06-25"
+		carob_date = "2024-06-25",
+		notes = "LLM-review: [medium, dropped] The one missing yield is dropped. P and K are NA for every row."
 	)
 	
 	f <- ff[basename(ff) == "GreenSeeker Sonora 2000-2014.xlsx"]

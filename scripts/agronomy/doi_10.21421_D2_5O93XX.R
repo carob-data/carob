@@ -20,7 +20,8 @@ Phosphorus was applied at rate of 0 or 20 kg P ha-1. P fertilizer application in
 		data_organization = "ICRISAT",
 		project = NA,
 		response_vars= "yield",
-		treatment_vars="plant_density;P_fertilizer"		
+		treatment_vars="plant_density;P_fertilizer",		
+		notes = "LLM-review: [medium, coordinates] geo_from_source is TRUE because a bounding box was found in the JSON metadata. readxl::read_excel is used. trial_id collapses both years, and fertilizer_type SSP is applied where P is 0."
 	)
 
 	f <- ff[basename(ff) == "Data file of Groundnut to plant density and phosphorous application in Wudil 2012-13.xlsx"]

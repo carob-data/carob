@@ -56,7 +56,7 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	d$latitude <- 7.30
 	d$location <- "Ibadan"
 	d$country <- "Nigeria"
-	d$adm2 <- "Oyo"
+	d$adm1 <- "Oyo"
 	d$variety <- "MM604"
 	d$variety_type <- "hybrid"
 	d$harvest_date <- paste0(d$planting_date, "-10")
@@ -73,14 +73,13 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	d$yield <- as.numeric(d$yield) * 1000
 	
 	f <- ff[basename(ff) == "Msekera data.xls"]
-	z <- as.data.frame(readxl::read_excel(f))
-	z <- z[, c("Year", "Treat", "Grain", "Total", "Rainfall")]
-	colnames(z) <- c("year", "treatment", "yield", "dmy_total", "rain")
+	z <- carobiner::read.excel(f)
+	z <- z[, c("Year", "Replication", "Treat", "Grain", "Total", "Rainfall")]
+	colnames(z) <- c("year", "rep", "treatment", "yield", "dmy_total", "rain")
+	z$rep <- as.integer(z$rep)
 	z$yield <- as.numeric(z$yield) * 1000
 	z$dmy_total[z$dmy_total == "."] <- NA
 	z$dmy_total <- as.numeric(z$dmy_total) * 1000
-	i <- which(colnames(z) %in% c("yield", "dmy_total"))
-	z <- aggregate(z[,i], z[,-i], mean)
 
 	z$year <- z$year + 1994
 	z$planting_date <- paste0(z$year, "-11")
@@ -96,7 +95,7 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	z$soil_clay <- 28
 	z$soil_SOC <- 10.2
 	z$soil_P_total <- 2.02 # mg/kg
-	z$soil_N <- 100 * 0.70 # g/kg to mg/kg
+	z$soil_N <- 1000 * 0.70 # g/kg to mg/kg
 	z$soil_K <- 390 * 1.47 # cmolc kg−1 to mg/kg
 	z$soil_pH <- 5.3
 	z$K_fertilizer <- z$P_fertilizer <- z$N_fertilizer <- 0
@@ -108,13 +107,15 @@ Water availability is a major constraint to crop production in sub-Saharan Afric
 	z$variety <- NA
 	z$variety_type <- NA
 
-	d <- rbind(d, z)
-
+	d$trees <- ifelse(d$treatment == "Leucaena", "Leucaena", "none")
+	d$rep <- NA_integer_
+	d$adm2 <- NA_character_
+	z$adm1 <- NA_character_
 	i <- z$treatment == "Leucaena"
-	d$treatment <- "no Leuceaena"
-	d$treatment[i] <- "Leuceaena"
-	d$trees <- "none"
-	d$trees[i] <- "Leuceaena"
+	z$treatment <- "no Leucaena"
+	z$treatment[i] <- "Leucaena"
+	z$trees <- ifelse(i, "Leucaena", "none")
+	d <- rbind(d, z)
 
 	
 	d$rain <- as.numeric(d$rain)

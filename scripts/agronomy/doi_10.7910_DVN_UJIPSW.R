@@ -37,7 +37,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-05-07",
 		treatment_vars=NA, 
-		response_vars = "yield"
+		response_vars = "yield",
+		notes = "LLM-review: [medium, treatment] treatment_vars is NA although six cropping systems and fertilizer rates are clear treatments. irrigated is FALSE."
 	)
 	
 	f1 <- ff[basename(ff) == "Old design_maize yields.csv"]

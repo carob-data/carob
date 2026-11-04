@@ -19,7 +19,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
     carob_date="2023-08-22",
     data_type="on-farm experiment",
 	response_vars = "yield",
-	treatment_vars = "inoculant;P_fertilizer"
+	treatment_vars = "inoculant;P_fertilizer",
+	notes = "LLM-review: [medium, metadata] data_type is on-farm experiment but is_survey is TRUE. Rows are kept only where treatment, residue, and yield are all present."
   )
   
   f <- ff[basename(ff) == "general.csv"]

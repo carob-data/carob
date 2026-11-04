@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUES
+# ZnSO4 product rate was not stored as Zn_fertilizer because the hydrate, and therefore the Zn fraction, is not given.
+
 carob_script <- function(path) {
    
 "Farmers participatory researchers managed long-term trails aimed to improve the productivity, profitability, and sustainability of smallholder agriculture in the EGP by activities carried out to address the objectives: 1. Understand farmer circumstances with respect to cropping systems, natural and economic resources base, livelihood strategies, and capacity to bear risk and undertake technological innovation. 2. Develop with farmers more productive and sustainable technologies that are resilient to climate risks and profitable for small holders. 3. Facilitate widespread adoption of sustainable, resilient, and more profitable farming systems. (2018-02-16) "
@@ -143,9 +146,8 @@ carob_script <- function(path) {
          fertilizer_price = r4$Total.fertiliser.cost.Tk.ha / rowSums(r4[, c("Total.TSP.kg.ha", "Total.MOP.kg.ha", "Gypsum.kg.ha")]), ## BDT/kg
          currency= "BDT",
          N_fertilizer= r4$N,
-         P_fertilizer= r4$P,
-         K_fertilizer= r4$K,
-         Zn_fertilizer= r4$ZnSO4.kg.ha.1,
+         P_fertilizer= r4$P / 2.29, # P2O5 to P
+         K_fertilizer= r4$K / 1.2051, # K2O to K
          gypsum= r4$Gypsum.kg.ha.1
       )
       
@@ -198,7 +200,7 @@ carob_script <- function(path) {
    d <- lapply(ff, process)
    d <- do.call(rbind, d) 
  
-   d$trial_id <- paste0(d$farmer_name, "_", d$location)
+   d$trial_id <- paste(d$farmer_name, d$location, d$season, d$year, sep = "_")
    d$planting_date <- as.character(as.Date(d$harvest_date)- d$harvest_days)
    
    d$crop_rotation <- ifelse(grepl("R-M", d$crop_sys), "rice",

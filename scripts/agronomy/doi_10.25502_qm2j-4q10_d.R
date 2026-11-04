@@ -28,7 +28,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] Root dry matter (g/m2 times 10) is stored in yield. trial_id is location plus id, which is finer than location-season if id is a plot."
 	)
 	
 

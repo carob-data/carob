@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# N, P, and K rates are not in the data files, so the unsourced rate table was removed.
 
 carob_script <- function(path) {
    
@@ -130,12 +132,12 @@ carob_script <- function(path) {
    
    d <- carobiner::bindr(dm, db)
    d$trial_id <- paste0(d$location, "_", d$block)
-   d$crop_price <- d$crop_price/d$yield ## UDB/kg
+   d$crop_price <- d$crop_price / 1000 ## USD/t to USD/kg
    d$currency <- "USD"
    d$on_farm <- TRUE
    d$is_survey <- FALSE
    d$inoculated <- FALSE
-   d$yield_part <- "grain"
+   d$yield_part <- ifelse(d$crop == "common bean", "seed", "grain")
    
    
    ### Adding longitude and latitude
@@ -148,16 +150,6 @@ carob_script <- function(path) {
    d$geo_from_source <- FALSE
    d <- merge(d, geo, by="location", all.x = TRUE)
 
-   ### Adding fertilizer application
-   fertl <- data.frame(
-      location= c(rep("Lempira",2), rep("El Paraiso", 2), rep("Suchitepequez", 2), rep("La Libertad", 2), rep("Quetzaltenango", 2), rep("Chimaltenango", 2)),
-      fert= c(rep(c("O","L"),times=6)),
-      N_fertilizer= c(207,125, 238, 113, 188, 129, 174, 116, 180, 129, 180, 128),
-      P_fertilizer= c(74, 30, 65,20, 56, 17, 65, 32, 13, 17, 13, 39),
-      K_fertilizer= c(97, 0, 97, 19, 24, 0, 65, 16, 24, 32, 24, 0)
-   )
-   d <- merge(d, fertl, by=c("location", "fert"), all.x = TRUE)
-   
    d$fert <- d$plt_arr <- d$block <- d$pest <- NULL
    
    ## Adding weather data 

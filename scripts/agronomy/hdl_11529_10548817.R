@@ -18,7 +18,8 @@ carob_script <- function(path) {
     carob_effort = NA,
     carob_date="2023-09-18",
 	treatment_vars = "planting_date;variety",
-	response_vars="yield"
+	response_vars="yield",
+	notes = "LLM-review: [medium, admin] Village is stored in adm3. trial_id is the row number plus location. data_type is experiment while on_farm is TRUE."
   )
 
   f <- ff[basename(ff) == "CSISA_KVK_Wheat_DoS_Trial_Data.csv"]
@@ -59,7 +60,7 @@ carob_script <- function(path) {
   g <- gsub("10.26.26", "10:26:26", g)
 
   # convert kg/acre to kg/ha
-  d$BasalNPK_kg_ha <- r$BasalNPK * 0.404686 
+  d$BasalNPK_kg_ha <- r$BasalNPK / 0.404686 
   
   #  h <- r[c(1406,1523,1425,1540,184,185,299,388,390,393,397,399,453,454,490,497,498,502,601,954,957),] 
   #  These rows have peculiar NPK variations, should be looked into
@@ -86,20 +87,23 @@ carob_script <- function(path) {
 
   d$N_splits <- 3
   # convert kg/acre to kg/ha 
-  d$BasalDAP_kg_ha <- r$BasalDAP * 0.404686 
+  d$BasalDAP_kg_ha <- r$BasalDAP / 0.404686 
   
   # DAP in carob has 18% N and 20% P
   d$N_fertilizer2 <- ifelse(!is.na(d$BasalDAP_kg_ha),d$BasalDAP_kg_ha * 0.18,0)
   d$P_fertilizer2 <- ifelse(!is.na(d$BasalDAP_kg_ha),d$BasalDAP_kg_ha * 0.20,0)
   
   #MOP in  carob has 49.8% K
-  d$MOP_kg_ha <- r$BasalMOP * 0.404686 #kg/acre to kg/ha 
-  d$P_fertilizer3 <- ifelse(!is.na(d$BasalDAP_kg_ha),d$BasalDAP_kg_ha * 0.20,0)
+  d$MOP_kg_ha <- r$BasalMOP / 0.404686 #kg/acre to kg/ha 
   
-  d$Zn_fertilizer <- ifelse(!is.na(r$BasalZn),r$BasalZn * 0.404686, 0) #to convert from kg/acre to kg/ha
-  d$N_fertilizer <- d$N_fertilizer1 + d$N_fertilizer2 
-  d$P_fertilizer <- d$P_fertilizer1 + d$P_fertilizer2 + d$P_fertilizer3
-  d$yield <- r$GrainYield * 1000 #ton/acre to kg/ha
+  d$Zn_fertilizer <- ifelse(!is.na(r$BasalZn),r$BasalZn / 0.404686, 0) #to convert from kg/acre to kg/ha
+  d$P_fertilizer1 <- d$P_fertilizer1 / 2.29 # P2O5 to P
+  d$K_fertilizer <- d$K_fertilizer / 1.2051 # K2O to K
+  d$K_fertilizer <- d$K_fertilizer + ifelse(is.na(d$MOP_kg_ha), 0, d$MOP_kg_ha * 0.498)
+  urea_ha <- rowSums(cbind(r$Split1Urea, r$Split2Urea, r$Split3Urea), na.rm = TRUE) / 0.404686
+  d$N_fertilizer <- d$N_fertilizer1 + d$N_fertilizer2 + urea_ha * 0.46
+  d$P_fertilizer <- d$P_fertilizer1 + d$P_fertilizer2
+  d$yield <- r$GrainYield * 1000 # t/ha to kg/ha
   d$yield_part <- "grain"
   d$seed_weight <- r$TestWeight
 	d$location <- trimws(d$location)

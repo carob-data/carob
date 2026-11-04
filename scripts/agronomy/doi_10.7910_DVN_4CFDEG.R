@@ -24,7 +24,7 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] Treatment T5 is labelled N26-P26-K50 while the fertilizer table gives T5 N of 180. The fertilizer table and 14 percent moisture have no source. on_farm is TRUE for the AfricaRice station trials. harvest_date NA is an empty placeholder.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-29",
 		carob_completion = 100,	

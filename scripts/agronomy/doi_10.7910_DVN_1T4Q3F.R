@@ -23,7 +23,8 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 		carob_effort = NA,
 		carob_date="2024-02-22",
 		carob_modified_by="Siyabusa Mkuhlani",
-		carob_last_modified = "2024-07-31"
+		carob_last_modified = "2024-07-31",
+		notes = "LLM-review: [medium, fertilizer] The urea-after-groundnut rate is applied to all rows, including the maize-maize rate the comment says was 100 kg."
 	)
 	f0 <- ff[basename(ff) == "Linthipe_Dedza_MaizeResopnsetoGroundnut_2019_2020.csv"]
 	f1 <- ff[basename(ff) == "Mtubwi_Machinga_MaizeResopnsetoGroundnut_2019_2020.csv"]
@@ -92,9 +93,9 @@ This dataset is generated from maize response trials (legume/maize rotation syst
 	d$fertilizer_type<- 'D-compound; urea'
 	d$N_fertilizer <- 0.23*200 + 23
 	d$P_fertilizer <- 0.1*200*0.437
-	d$K_fertilizer <- 0.05*200
-	d$K_fertilizer <- 0.06*200
-	d$K_fertilizer <- 0.01*200
+	d$K_fertilizer <- 0.05*200/1.2051
+	d$S_fertilizer <- 0.06*200
+	d$Zn_fertilizer <- 0.01*200
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

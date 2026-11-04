@@ -3,6 +3,9 @@
 # NOTE 
 # should contact authors for yield data and coordinates
 
+## ISSUES
+# Plot yields are not in the data file, so country-crop-treatment means from the paper were not written as plot yields.
+
 carob_script <- function(path) {
    
 "Fertilizer application can affect nutrient concentrations of edible plant products. Data from 70 crop-nutrient response trials conducted in Mali, Niger, Nigeria, and Tanzania were used to evaluate nutrient application effects on nutrient concentrations for grain of five pulse and five cereal crops and for storage roots of cassava (Manihot esculenta L.).
@@ -23,11 +26,12 @@ Bean (Phaseolus vulgaris L.), maize and rice (Oryza sativa L.) grain concentrati
 		publication ="doi:10.2134/agronj2018.04.0274", 
 		project = NA, 
 		data_type = "experiment", 
-		response_vars = "yield",
+		response_vars = "grain_N",
 		treatment_vars = "N_fertilizer;P_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
 		carob_contributor = "Cedric Ngakou", 
 		carob_effort = NA,
-		carob_date = "2024-06-29"
+		carob_date = "2024-06-29",
+		notes = "LLM-review: [medium, fertilizer] N, P, and K are filled only when treatment is NPK. The MgSZnB treatment is left at 0. Pulses and groundnut stay yield_part grain. Total N is not converted to mg/kg."
 	)
    
    f <- ff[basename(ff)=="Grain Nutrient Conc Study for Tropical Africa 2018.xlsx"]
@@ -76,50 +80,7 @@ Bean (Phaseolus vulgaris L.), maize and rice (Oryza sativa L.) grain concentrati
    )
 
    d$treatment <- c("control", "NPK", "MgSZnB")[d$treatment]
-   ## adding yield data ( from doi:10.2134/agronj2018.04.0274)
-   ## It is a mean value of yield per country and per crop 
-   ## Tanzania 
-	yd1 <- data.frame(
-		country= "Tanzania",
-        crop=rep(c("Bean", "Cassava", "Cowpea", "Maize", "Pigeonpea", "Soybean", "Sorghum", "Wheat"), 3),
-		treatment = rep(c("control", "NPK", "MgSZnB"), each=8),
-        yield = c(1.83, 16.40, 2.35, 3.76, 2.08, 1.09, 4.33, 1.85, # control
-                   2.06, 25.9, 2.61, 4.41, 2.29, 1.36, 4.935, 2.32, # NPK
-                   1.83, 19.21, 2.35, 3.76, 2.08, 1.09, 4.33, 2.18)   # MgSZnB
-   )
-   ## Niger 
-   yd2 <- data.frame(
-      country= "Niger",
-      crop=rep(c("Cowpea", "Groundnut", "Maize", "Pearl millet", "Rice", "Sorghum"),3),
-	  treatment = rep(c("control", "NPK", "MgSZnB"), each=6),
-      yield=c(0.56, 0.64, 1.47, 0.66, 2.30, 1, # control
-				0.74, 0.87, 1.93, 0.87, 2.84, 1.43, # NPK
-				0.71, 0.79, 1.47, 0.66, 2.30, 1) # MgSZnB
-   )
-   ## Nigeria 
-   yd3 <- data.frame(
-      country="Nigeria",
-      crop=rep(c("Groundnut", "Maize", "Soybean", "Sorghum"), 3),
-	  treatment = rep(c("control", "NPK", "MgSZnB"), each=4),
-      yield=c(1.07, 4.87, 1.83, 1.21, # control
-				1.74, 5.75, 2.42, 1.85, # NPK
-				1.07, 4.87, 2.06, 1.47) #MgSZnB
-   )
-   ## Mali 
-   yd4 <- data.frame(
-      country= "Mali",
-      crop=rep(c("Maize", "Pearl millet", "Rice"), 3),
-	  treatment = rep(c("control", "NPK", "MgSZnB"), each=3),
-      yield=c(2.82, 1.05, 2.21, # control treatment
-				4.03,1.24, 2.66,  # NPK trial treatment
-				2.82, 1.05, 2.21) ## MgSZnB treatment
-   )
 
-   yd <- rbind(yd1, yd2, yd3, yd4)
-   yd$yield <- yd$yield * 1000 ## in kg/ha
-   
-   d <- merge(d, yd, by=c("country", "crop", "treatment"), all.x = TRUE)
-   
    p <- carobiner::fix_name(d$crop, "lower")
    p <- gsub("bean", "common bean", p)
    p <- gsub("soycommon bean", "soybean", p)

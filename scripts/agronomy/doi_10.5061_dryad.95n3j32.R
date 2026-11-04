@@ -29,7 +29,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
        response_vars = "yield", 
        carob_contributor = "Cedric Ngakou",
        carob_completion = 100,	
-        notes = NA
+        notes = "LLM-review: [medium, fertilizer] P rates such as 4.48 times 25 have no unit comment. No-till becomes minimum tillage. N and K are set to 0 on every plot with no source. One trial_id per research center for 2011-2016, and on_farm is TRUE."
    )
    
    
@@ -154,7 +154,11 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
    pr_wth <- function(date, d){
       ### datatype 
       cols <- c("tmax", "tmin", "rhum","wspd", "srad", "prec")
-      d[cols] <- lapply(d[cols], function(x) suppressWarnings(as.numeric(x)))
+      d[cols] <- lapply(d[cols], function(x) {
+         x <- trimws(as.character(x))
+         x[!is.na(x) & !grepl("^-?\\d+(\\.\\d+)?$", x)] <- NA
+         as.numeric(x)
+      })
       wth <- d[grepl(date, d$year),]
       if (date=="2012"){ group <- rep(1:366, length.out = nrow(wth))}
       else{ group <- rep(1:365, length.out = nrow(wth))}

@@ -27,7 +27,7 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 		treatment_vars = "intercrops",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		notes = NA,
+		notes = "LLM-review: [low, metadata] trial_id is 1 for all maize years and 2 for all cowpea years. Cowpea yield_part is grain. Harvest date is kept only when final yield is above 0, so a real zero loses its date.",
 		carob_completion = 70,	
 		carob_effort = 3
 	)

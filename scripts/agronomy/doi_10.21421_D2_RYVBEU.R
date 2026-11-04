@@ -26,7 +26,7 @@ Experiment location on Google Maps-Federal University of Technology Akure(FUTA)
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, metadata] trial_id is the processing zone. data_type is experiment for on-farm demonstrations, and the estimated points leave geo_uncertainty NA.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-09-30",
 		carob_completion = 100,	

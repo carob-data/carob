@@ -1,6 +1,9 @@
 # R script for "carob"
 
 
+## ISSUES
+## Fultola, Hogalbunia, and Moshamari are in Khulna, but the hardcoded coordinates are not. The file has no coordinates, so they were removed.
+
 carob_script <- function(path) {
    
 "As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-plot design in the locations of Fultola, Moshamari and Hogalbunia of Khulna district in Bangladesh. Two varieties of potato (BARI Alu 72 and BARI Alu 78) under zero tillage with  (ZTSM) and conventional treatments were tested. This dataset corresponds to the results of yield (marketable tuber yield and fresh tuber yield) and soil analysis (characterization, fertility, salinity and carbon organic) of the samples collected at the end season 2021-2022."
@@ -18,7 +21,8 @@ carob_script <- function(path) {
       treatment_vars = "land_prep_method;variety", 
       carob_contributor = "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date = "2024-09-06"
+      carob_date = "2024-09-06",
+      notes = "LLM-review: [low, metadata] trial_id is location, variety, and plot number."
    )
    
    f1 <- ff[basename(ff)=="02_Yield data.xlsx"]
@@ -57,7 +61,7 @@ carob_script <- function(path) {
       soil_SOM= r2$OM,
       soil_N= r2$N...18,
       soil_P= r2$P,
-      soil_K= r2$K...21*200, ## 1meq/100g = 200mg/kg
+      soil_K= r2$K...21 * 391, # meq/100g to mg/kg
       soil_Zn= r2$Zn,
       soil_Cu= r2$Cu,
       soil_Fe= r2$Fe,
@@ -81,15 +85,6 @@ carob_script <- function(path) {
    d$on_farm <- TRUE
    d$yield_part <- "tubers"
    d$geo_from_source <- FALSE
-   
-   ## Add longitude and latitude 
-   geo <- data.frame(
-      location= c("Fultola", "Hogalbunia", "Moshamari"),
-      latitude= c(23.8690465, 22.21285, 24.5038),
-      longitude= c(90.1476495, 90.43229, 89.164334)
-   )
-   
-   d <- merge(d, geo, by="location", all.x = TRUE)
    
    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
    

@@ -19,7 +19,8 @@ carob_script <- function(path) {
 		carob_date="2023-06-21",
 		carob_modified_by="Effie Ochieng';Robert Hijmans",
 		treatment_vars=NA,
-		response_vars="yield"
+		response_vars="yield",
+		notes = "LLM-review: [medium, dropped] Rows with missing yield are dropped."
 	)
 
 

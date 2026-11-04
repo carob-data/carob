@@ -150,7 +150,7 @@ This database compiles a globally representative, meta-analysis–ready collecti
 		grain_Se_crt = NA,
 		grain_B_trt = as.numeric(gsub("mg/kg", NA, r1$value_grain_boron))/1000,
 		grain_B_crt = NA,
-		grain_Cu_trt = r1$value_grain_copper,
+		grain_Cu_trt = r1$value_grain_copper/1000,
 		grain_Cu_crt = NA, 
 		grain_K_trt = r1$value_grain_k/1000,
 		grain_K_crt = NA,
@@ -216,7 +216,7 @@ This database compiles a globally representative, meta-analysis–ready collecti
 	### Fixing lon and lat error 
 	
 	geo <- data.frame(
-	  country= c("Bangladesh","Bangladesh", "Pakistan", "Pakistan", "Cameroon", "Cameroon", "Iran", rep("india",2), rep("Malawi", 10)),
+	  country= c("Bangladesh","Bangladesh", "Pakistan", "Pakistan", "Cameroon", "Cameroon", "Iran", rep("India",2), rep("Malawi", 10)),
 	  location = c("Chandbill", "Hatikata", "Sheikhupura", "University of Agriculture, Faisalabad", "Wakwa","Yagoua", "Mazandaran province", "Eastern Himalaya","University of Calcutta", "Bandawe Tembo village", "Bereu", "Bridge to Kasuwa", "Chembelwa village", "Chizongwe", "Kasongo", "Mapelela", "Nkhapa village", "Puertete village", "Sani village"),
 	  lon = c(88.6678, 88.831, 73.998, 73.075, 13.626, 15.236, 51.919, 91.732, 88.362, 34.149, 34.849, 33.985, 34.843, 34.324, 34.2636, 34.916, 34.294, NA, 34.302),
 	  lat = c(23.748, 23.662, 31.7141, 31.429, 7.170, 10.347, 36.332,26.123, 22.575, -11.874, -16.148, -11.422, -14.023, -13.160, -12.872, -16.1015, -11.608, NA, -13.020),
@@ -265,13 +265,7 @@ This database compiles a globally representative, meta-analysis–ready collecti
 	d$latitude[i] <- 18.808
 	d$geo_from_source[i] <- FALSE
 	
-	### drop rows with unknown location
-	d <- d[!is.na(d$latitude),]
-	### missing country
-	d <- d[!is.na(d$country),]
 	d$planting_date[which(d$planting_date>2026)] <- NA
-	
-	d <- d[!is.na(d$yield),]
 	
 	d <- unique(d)
 	

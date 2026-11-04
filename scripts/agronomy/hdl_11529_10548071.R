@@ -38,6 +38,11 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	### process
 	
 	proc <- function(f){
+	  blank0 <- function(x) {
+	    x <- as.character(x)
+	    x[x == "0"] <- NA_character_
+	    x
+	  }
 	  r3 <- carobiner::read.excel(f, sheet="2 - Site information")
 	  if(grepl("2016-LT-All| 2017-LT-All", f)){hdr <- rbind(r3[4, ], r3[3, ], r3[2, ])} else { hdr <- rbind(r3[5, ], r3[3, ], r3[4, ])}
 	  
@@ -76,7 +81,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d2 <- data.frame(
 	    year = as.character(r4$Year),
 	    season = r4$Season,
-	    trial_id = gsub("0", NA, as.character(r4$Trial.Code)),
+	    trial_id = blank0(r4$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r4$Cropping.System),
 	    location = carobiner::fix_name(r4$Node, "title"),
 	    #site = as.character(r4$Site.No..Unique.farmer.ID.),
@@ -118,7 +123,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d3 <- data.frame(
 	    year = as.character(r5$Year),
 	    season = r5$Season,
-	    trial_id = gsub("0", NA, as.character(r5$Trial.Code)),
+	    trial_id = blank0(r5$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r5$Cropping.System),
 	    location = carobiner::fix_name(r5$Node, "title"),
 	    #site = as.character(r5$Site.No.),
@@ -184,7 +189,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	   d4 <- data.frame(
 	    year = as.character(r6$Year),
 	    season = r6$Season,
-	    trial_id = gsub("0", NA, as.character(r6$Trial.Code)),
+	    trial_id = blank0(r6$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r6$Cropping.System), 
 	    location = carobiner::fix_name(r6$Node, "title"),
 	    #site = as.character(r6$Site.No.),
@@ -200,9 +205,14 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  )
 	  
 	  d4 <- d4[!is.na(d4$year),]
-	  d4$weeding_dates = gsub("21-072015", "2015-07-21", d4$weeding_dates)
-	  d4$weeding_dates <- ifelse(grepl("^\\d{4}-\\d{2}-\\d{2}$", d4$weeding_dates), d4$weeding_dates,
-	                      ifelse( nchar(d4$weeding_dates) > 5, as.character(as.Date(d4$weeding_dates, format = "%m-%d-%y")), as.character(as.Date(suppressWarnings(as.numeric(d4$weeding_dates)), origin = "1899-12-30"))))
+	  d4$weeding_dates <- gsub("21-072015", "2015-07-21", d4$weeding_dates)
+	  x <- d4$weeding_dates
+	  iso <- !is.na(x) & grepl("^\\d{4}-\\d{2}-\\d{2}$", x)
+	  mdy <- !is.na(x) & !iso & nchar(x) > 5
+	  num <- !is.na(x) & !iso & !mdy & grepl("^[0-9]+$", x)
+	  x[mdy] <- as.character(as.Date(x[mdy], format = "%m-%d-%y"))
+	  x[num] <- as.character(as.Date(as.numeric(x[num]), origin = "1899-12-30"))
+	  d4$weeding_dates <- x
 	  ### merge d and d4
 	  d <- merge(d, d4, by = intersect(names(d), names(d4)), all = TRUE)
 	  
@@ -248,7 +258,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d5 <- data.frame(
 	    year = as.character(r7$Year),
 	    season = r7$Season,
-	    trial_id = gsub("0", NA, as.character(r7$Trial.Code)),
+	    trial_id = blank0(r7$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r7$Cropping.System),
 	    location = carobiner::fix_name(r7$Node, "title"),
 	    #site = as.character(r7$Site.No.),
@@ -258,8 +268,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type1 = r7$Product.used,
 	    rep1 = "1",
 	    N_fertilizer1 = as.numeric(r7$Fert.Grade.N) *((as.numeric(r7$Fertilizer.applied.g.plot)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer1 = as.numeric(r7$Fert.Grade.P2O5) *as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer1 = as.numeric(r7$Fert.Grade.K2O) *as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer1 = as.numeric(r7$Fert.Grade.P2O5)*((as.numeric(r7$Fertilizer.applied.g.plot)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer1 = as.numeric(r7$Fert.Grade.K2O)*((as.numeric(r7$Fertilizer.applied.g.plot)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum1 = 0,
 	    B_fertilizer1 = 0,
 	    Zn_fertilizer1 = 0,
@@ -269,8 +279,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type2 = r7$Product.used.1,
 	    rep2 = "2",
 	    N_fertilizer2 = as.numeric(r7$Fert.Grade.N.1)*((as.numeric(r7$Fertilizer.applied.g.plot.1)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer2 = as.numeric(r7$Fert.Grade.P2O5.1)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer2 = as.numeric(r7$Fert.Grade.K2O.1)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer2 = as.numeric(r7$Fert.Grade.P2O5.1)*((as.numeric(r7$Fertilizer.applied.g.plot.1)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer2 = as.numeric(r7$Fert.Grade.K2O.1)*((as.numeric(r7$Fertilizer.applied.g.plot.1)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum2 = 0,
 	    B_fertilizer2 = 0,
 	    Zn_fertilizer2 = 0,
@@ -280,8 +290,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type3 = r7$Product.used.2,
 	    rep3 = "3",
 	    N_fertilizer3 = as.numeric(r7$Fert.Grade.N.2)*((as.numeric(r7$Fertilizer.applied.g.plot.2)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer3 = as.numeric(r7$Fert.Grade.P2O5.2)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer3 = as.numeric(r7$Fert.Grade.K2O.2)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer3 = as.numeric(r7$Fert.Grade.P2O5.2)*((as.numeric(r7$Fertilizer.applied.g.plot.2)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer3 = as.numeric(r7$Fert.Grade.K2O.2)*((as.numeric(r7$Fertilizer.applied.g.plot.2)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum3 = 0,
 	    B_fertilizer3 = 0,
 	    Zn_fertilizer3 = 0,
@@ -291,8 +301,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type4 = tolower(r7$Product.used.3),
 	    rep4 = "4",
 	    N_fertilizer4 = as.numeric(r7$Fert.Grade.N.3)*((as.numeric(r7$Fertilizer.applied.g.plot.3)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer4 = as.numeric(r7$Fert.Grade.P2O5.3)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer4 = as.numeric(r7$Fert.Grade.K2O.3)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer4 = as.numeric(r7$Fert.Grade.P2O5.3)*((as.numeric(r7$Fertilizer.applied.g.plot.3)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer4 = as.numeric(r7$Fert.Grade.K2O.3)*((as.numeric(r7$Fertilizer.applied.g.plot.3)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum4 = 0,
 	    B_fertilizer4 = 0,
 	    Zn_fertilizer4 = 0,
@@ -302,8 +312,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type5 = tolower(r7$Product.used.4),
 	    rep5 = "5",
 	    N_fertilizer5 = as.numeric(r7$Fert.Grade.N.4)*((as.numeric(r7$Fertilizer.applied.g.plot.4)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer5 = as.numeric(r7$Fert.Grade.P2O5.4)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer5 = as.numeric(r7$Fert.Grade.K2O.4)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer5 = as.numeric(r7$Fert.Grade.P2O5.4)*((as.numeric(r7$Fertilizer.applied.g.plot.4)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer5 = as.numeric(r7$Fert.Grade.K2O.4)*((as.numeric(r7$Fertilizer.applied.g.plot.4)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum5 = 0,
 	    B_fertilizer5 = 0,
 	    Zn_fertilizer5 = 0,
@@ -314,8 +324,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type6 = "gypsum",
 	    rep6 = "6",
 	    N_fertilizer6 = as.numeric(r7$Fert.Grade.N.5)*((as.numeric(r7$Fertilizer.applied.g.plot.5)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer6 = as.numeric(r7$Fert.Grade.P2O5.5)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer6 = as.numeric(r7$Fert.Grade.K2O.5)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer6 = as.numeric(r7$Fert.Grade.P2O5.5)*((as.numeric(r7$Fertilizer.applied.g.plot.5)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer6 = as.numeric(r7$Fert.Grade.K2O.5)*((as.numeric(r7$Fertilizer.applied.g.plot.5)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    gypsum6 = as.numeric(r7$Gypsum..kg.ha.),
 	    B_fertilizer6 = 0,
 	    Zn_fertilizer6 = 0,
@@ -326,8 +336,8 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	    fertilizer_type7 = "ZnSO4",
 	    rep7 = "7",
 	    N_fertilizer7 = as.numeric(r7$Fert.Grade.N.6)*((as.numeric(r7$Fertilizer.applied.g.plot.6)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
-	    P_fertilizer7 = as.numeric(r7$Fert.Grade.P2O5.6)*as.numeric(r7$Total.TSP..kg.ha.)/100,
-	    K_fertilizer7 = as.numeric(r7$Fert.Grade.K2O.6)*as.numeric(r7$Total.MOP..kg.ha.)/100,
+	    P_fertilizer7 = as.numeric(r7$Fert.Grade.P2O5.6)*((as.numeric(r7$Fertilizer.applied.g.plot.6)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
+	    K_fertilizer7 = as.numeric(r7$Fert.Grade.K2O.6)*((as.numeric(r7$Fertilizer.applied.g.plot.6)/as.numeric(r7$Plot.size..m2.))*10)*0.01,
 	    Zn_fertilizer7 =  as.numeric(r7$ZnSO4..kg.ha.),
 	    gypsum7 = 0,
 	    B_fertilizer7 = 0,
@@ -382,7 +392,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d6 <- data.frame(
 	    year = as.character(r10$Year),
 	    season = r10$Season,
-	    trial_id = gsub("0", NA, as.character(r10$Trial.Code)),
+	    trial_id = blank0(r10$Trial.Code),
 	    cropping_system = gsub("Note:", NA, r10$Cropping.System),
 	    location = carobiner::fix_name(r10$Node, "title"),
 	    #site = as.character(r10$Site.No.),
@@ -440,7 +450,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d7 <- data.frame(
 	    year = as.character(r11$Year),
 	    season = r11$Season,
-	    trial_id = gsub("0", NA, as.character(r11$Trial.code)),
+	    trial_id = blank0(r11$Trial.code),
 	    cropping_system = r11$Cropping.System,
 	    location = carobiner::fix_name(r11$Node, "title"),
 	    farm_nm= r11$Farmer.s.name,
@@ -472,7 +482,7 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	  d8 <- data.frame(
 	    year = as.character(r14$Year),
 	    season = r14$Season,
-	    trial_id = gsub("0", NA, as.character(r14$Trial.code)),
+	    trial_id = blank0(r14$Trial.code),
 	    cropping_system = gsub("Note:", NA, r14$Cropping.System),
 	    location = carobiner::fix_name(r14$Node, "title"),
 	    #site = as.character(r14$Site.No.),
@@ -624,7 +634,6 @@ Farmers' participatory researchers managed long-term trials aimed to improve the
 	fw$P_fertilizer <- fw$P_fertilizer/2.29 
 	fw$K_fertilizer <- fw$K_fertilizer/1.2051
 
-	fw[is.na(fw)] <- 0
 	fw$date[fw$date == 0] <- NA # one date
 	fw$order <- NULL
 	

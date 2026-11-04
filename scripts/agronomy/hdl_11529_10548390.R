@@ -56,6 +56,8 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 	#r15 <- carobiner::read.excel(f2, sheet="Data(source)-Bako_2016")
 	#r16 <- carobiner::read.excel(f2, sheet="Data(source)-Jimma_2016")
 
+	tn <- as.character(r3$`TN               (%)`)
+	tn[tn == "."] <- NA
 	d11 <- data.frame(
 		adm1 = carobiner::fix_name(r3$Region, "title"),
 		adm2 = carobiner::fix_name(r3$Zone, "title"),
@@ -69,7 +71,7 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 		fwy_total = r3$`Total Biomass Weight (kg)`*100, # kg/ha
 		plot_area = 100, # m2
 		soil_pH = r3$pH,
-		soil_N_total = as.numeric(gsub(".", NA, r3$`TN               (%)`))*10000, # from % to ppm
+		soil_N_total = as.numeric(tn) * 10000, # % to mg/kg
 		soil_P = r3$`Av. P (ppm)`,
 		country = "Ethiopia",
 		crop = "maize",
@@ -99,7 +101,7 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 	d12 <- data.frame(
 	  location = carobiner::fix_name(rr$Peasant.Association, "title"),
 	  soil_pH = rr$pH.1.2.5.water,
-	  soil_N_total = rr$TN..pct,
+	  soil_N_total = as.numeric(rr$TN..pct) * 10000, # % to mg/kg
 	  soil_P = rr$Av.P.ppm,
 	  NPK = rr$NPK,
 	  treatment = rr$Treatments
@@ -109,8 +111,8 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 	d1 <- merge(d11, d12, by= intersect(names(d11), names(d12)), all.x = TRUE)
 	tmp <- do.call(rbind, strsplit(d1$NPK, split = "-"))
 	d1$N_fertilizer  <- as.numeric(tmp[, 1])
-	d1$P_fertilizer  <- as.numeric(tmp[, 2])
-	d1$K_fertilizer  <- as.numeric(tmp[, 3])
+	d1$P_fertilizer  <- as.numeric(tmp[, 2]) / 2.29 # P2O5 to P
+	d1$K_fertilizer  <- as.numeric(tmp[, 3]) / 1.2051 # K2O to K
 	d1$NPK <- NULL
 	### 
 
@@ -167,6 +169,8 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 	
 	rownames(dd) <- NULL
 	dd$id <- NULL
+	dd$P_fertilizer <- dd$P_fertilizer / 2.29
+	dd$K_fertilizer <- dd$K_fertilizer / 1.2051
 	
 	
 	d <- carobiner::bindr(d1, dd)
@@ -190,9 +194,6 @@ Performance trials (N=52) in two zones (West Shewa and Jimma) in Ethiopia. Trial
 	d$geo_from_source[is.na(d$geo_from_source)] <- d$geo_from[is.na(d$geo_from_source)]
   
 	d$lon <- d$lat <- d$geo_from <- NULL
-	
-	### drop rows with missing fertilizer
-	d <- d[!is.na(d$N_fertilizer),]
 	
 		carobiner::write_files(path, meta, d)
 }

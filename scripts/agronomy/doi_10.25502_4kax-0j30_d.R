@@ -24,7 +24,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		data_type ="experiment",
 		treatment_vars = "variety;N_fertilizer,P_fertilizer,K_fertilizer",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, treatment] treatment_vars lists N, P, and K with commas, so P and K are not separate treatment variables. There is no location or coordinates. The 75:20:90 strings are parsed as elemental with no comment.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-07-18",
 		carob_completion = 90,	

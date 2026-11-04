@@ -24,7 +24,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
    carob_contributor = "Blessing Dzuda; Kora Simperegui",
    carob_effort = NA,
    carob_date = "2025-05-30",
-   notes = NA, 
+   notes = "LLM-review: [low, metadata] The abstract says rates are N, P2O5, and K2O, while the dictionary defines elemental P and K. The script follows the dictionary and does not mention the conflict. land_prep_method uses the filler unknown.", 
    design = NA
   )
   

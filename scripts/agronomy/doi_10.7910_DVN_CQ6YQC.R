@@ -26,7 +26,7 @@ Participatory upland rice seed determination for row method of sowing
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, yield] soil_EC is multiplied by 10 with no comment, and soil total N is multiplied by 10000. N, P, and K are NA placeholder columns."
 	)
 	
 
@@ -56,6 +56,7 @@ Participatory upland rice seed determination for row method of sowing
 	   is_survey = FALSE,
 	   trial_id = "1",
 	   yield_part = "grain",
+	   yield_isfresh = NA, # GY does not say fresh or dry
 	   yield_moisture = as.numeric(NA),
 	   irrigated = NA
 	)
@@ -82,6 +83,7 @@ Participatory upland rice seed determination for row method of sowing
 	   is_survey = FALSE,
 	   trial_id = "2",
 	   yield_part = "grain",
+	   yield_isfresh = NA, # GY does not say fresh or dry
 	   yield_moisture = as.numeric(NA),
 	   irrigated = NA
 	)
@@ -100,7 +102,7 @@ Participatory upland rice seed determination for row method of sowing
    soil <- data.frame(
       seed_rate = rep(c(50, 60, 70, 80, 60), time = 2),
       planting_method = c(rep("mechanized", 4),"broadcasting", rep("mechanized", 4), "broadcasting"),
-      location = c(rep("Beduloale", 5), rep("werer", 5)),
+      location = c(rep("Beduloale", 5), rep("Werer", 5)),
       soil_pH = c(8.3, 8.3,8.4, 8.4, 8.4, 8.3, 8.4, 8.4, 8.5, 8.4),
       soil_EC = c(0.402, 0.505, 0.394, 0.408, 0.457, 0.463, 0.409, 0.439, 0.512, 0.502)*10,
       soil_SOC = c(0.397, 0.494, 0.462, 0.631, 0.585, 0.254, 0.306, 0.273, 0.137, 0.338),

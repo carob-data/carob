@@ -31,7 +31,7 @@ carob_script <- function(path) {
    r1 <- read.csv(f1)
    
     d1 <- data.frame(
-       trial_id= as.character(r1$Plot.Idnum),
+       plot_id= as.character(r1$Plot.Idnum),
        date= r1$Year,
        rep= r1$Rep,
        treatment= r1$Treatment_st,
@@ -43,13 +43,13 @@ carob_script <- function(path) {
        leaf_Ca= r1$Leaf_Ca_per*10,
        leaf_Mg= r1$Leaf_Mg_per*10,
        leaf_S= r1$Leaf_S_per*10,
-       leaf_B= r1$Leaf_B_ppm*1000,
-       leaf_Fe= r1$Leaf_Fe_ppm*1000,
-       leaf_Cu= r1$Leaf_Cu_ppm*1000,
-       leaf_Mn= r1$Leaf_Mn_ppm*1000,
-       leaf_Zn= r1$Leaf_Zn_ppm*1000,
-       leaf_Al= r1$Leaf_Al_ppm*1000, # mg/g
-       leaf_Na= r1$Leaf_Na_ppm*1000,
+       leaf_B= r1$Leaf_B_ppm,
+       leaf_Fe= r1$Leaf_Fe_ppm,
+       leaf_Cu= r1$Leaf_Cu_ppm,
+       leaf_Mn= r1$Leaf_Mn_ppm,
+       leaf_Zn= r1$Leaf_Zn_ppm,
+       leaf_Al= r1$Leaf_Al_ppm,
+       leaf_Na= r1$Leaf_Na_ppm,
        crop= "maize"
     )
    
@@ -58,7 +58,7 @@ carob_script <- function(path) {
     r2 <- read.csv(f2)
     
     d2 <- data.frame(
-       trial_id= as.character(r2$Plot_Idnum),
+       plot_id= as.character(r2$Plot_Idnum),
        date= r2$Year,
        rep= r2$Rep,
        treatment= gsub("-", "_", r2$Treatment_st),
@@ -67,20 +67,20 @@ carob_script <- function(path) {
        soil_EC= r2$TEC..meq.100g.,
        soil_pH= r2$pH_water,
        soil_SOM= r2$OM_percent*10,
-       soil_P_Bray = r2$Bray.I.P_ppm*1000, ##mg/g
-       soil_P = r2$M3.P_ppm*1000,
-       soil_K= r2$M3.K_ppm*1000,
-       soil_S= r2$M3.S_ppm*1000,
-       soil_Ca= r2$M3.Ca_ppm*1000,
-       soil_Mg= r2$M3.Mg_ppm*1000,
+       soil_P_Bray = r2$Bray.I.P_ppm,
+       soil_P = r2$M3.P_ppm,
+       soil_K= r2$M3.K_ppm,
+       soil_S= r2$M3.S_ppm,
+       soil_Ca= r2$M3.Ca_ppm,
+       soil_Mg= r2$M3.Mg_ppm,
        
-       soil_Na= r2$Na_ppm*1000,
-       soil_B= r2$M3.B_ppm*1000,
-       soil_Fe= r2$M3.Fe_ppm*1000,
-       soil_Mn= r2$M3.Mn_ppm*1000,
-       soil_Cu= r2$M3.Cu_ppm*1000,
-       soil_Zn= r2$M3.Zn_ppm*1000,
-       soil_Al= r2$M3.Al_ppm*1000
+       soil_Na= r2$Na_ppm,
+       soil_B= r2$M3.B_ppm,
+       soil_Fe= r2$M3.Fe_ppm,
+       soil_Mn= r2$M3.Mn_ppm,
+       soil_Cu= r2$M3.Cu_ppm,
+       soil_Zn= r2$M3.Zn_ppm,
+       soil_Al= r2$M3.Al_ppm
     )
 	
 	soilmeta <- data.frame(variable=c("P", "K", "S", "Ca", "Mg", "Na", "B", "Fe", "Mn", "Cu", "Zn", "Al"), method="Mehlich")
@@ -89,7 +89,7 @@ carob_script <- function(path) {
     r3 <- read.csv(f3)
     
     d3 <- data.frame(
-       trial_id= as.character(r3$Plot_Idnum),
+       plot_id= as.character(r3$Plot_Idnum),
        date= r3$Year,
        rep= r3$Rep,
        country= "United States",
@@ -105,21 +105,21 @@ carob_script <- function(path) {
        crop= ifelse(grepl("Corn", r3$Crop), "maize", "soybean"),
        crop_rotation= ifelse(grepl("CC", r3$Rotation) & grepl("Corn", r3$Crop), "maize;maize",
                              ifelse(grepl("CC", r3$Rotation) & grepl("Soy", r3$Crop), "soybean;soybean", "maize;soybean")),
-       plant_height= r3$Height_in,
-       plant_density= r3$Pop2_EOS_no_ac/2.471, # plant/ha
-       plot_area= 6*8/10000, # ha 
+       plant_height= r3$Height_in * 2.54, # inches to cm
+       plant_density= r3$Pop2_EOS_no_ac * 2.471, # plants/acre to plants/ha
+       plot_area= 6 * 0.3048 * 8 * 0.3048, # feet to m2 
        #r3$Lodging_pct,
        yield_moisture= r3$Moisture_pct,
        on_farm= TRUE,
        is_survey= FALSE, 
-       yield_part= "grain",
+       yield_part= ifelse(grepl("Corn", r3$Crop), "grain", "seed"),
        irrigated= NA
     )
    
     ### merge soil data crop nutrient content and yield data
     
-    d <- merge(d3, d1, by= c("date","treatment","fertilizer_type", "land_prep_method", "trial_id", "rep", "crop"), all.x = TRUE)
-    dd <- merge(d, d2, by= c("date","treatment","fertilizer_type", "land_prep_method", "trial_id", "rep"), all.x = TRUE)
+    d <- merge(d3, d1, by= c("date","treatment","fertilizer_type", "land_prep_method", "plot_id", "rep", "crop"), all.x = TRUE)
+    dd <- merge(d, d2, by= c("date","treatment","fertilizer_type", "land_prep_method", "plot_id", "rep"), all.x = TRUE)
     
     c1 <- (dd$date >= 1970 & dd$date <=1973)
     c2 <- (dd$date >= 1974 & dd$date <=1999)
@@ -167,6 +167,7 @@ carob_script <- function(path) {
                           ifelse(dd$date > 2006 & grepl("^AT_N$|^CT_N$|^NT_N$|^RT_N$", dd$treatment), "urea", "none"))))
     
     dd$planting_date <- as.character(dd$date)
+    dd$trial_id <- dd$planting_date
     dd$date <- NULL
     
 	carobiner::write_files(meta, dd, path=path, var_meta=soilmeta)

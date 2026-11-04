@@ -3,6 +3,8 @@
 
 ## ISSUES
 ## The link between maize (intercropped with soybean) in rotation with rice and site information is absent.
+## Soil profiles have several depths per location and year, so they are not merged onto yield rows.
+## FertiSiteAnnee has nitrogen only. The blanket 150 kg TSP, 80 kg KCl, and 5 t manure were removed.
 
 carob_script <- function(path) {
 
@@ -29,7 +31,7 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		response_vars = "yield;fwy_total", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, treatment] Every maize row is marked intercropped with soybean and pigeon pea. yield_part is grain for the rotation species, including legumes. on_farm is TRUE at both stations. [medium, dropped] trial_id is the plot id. Rows with missing yield are dropped, which also drops leaf nutrients and LAI."
 	)
 	
 
@@ -211,14 +213,6 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	dd <- merge(dd, d8, by= c("trial_id"), all = TRUE)
 
 
-	#### Adding K and P  fertilizer and organic fertilizer 
-	dd$P_fertilizer <- 150*0.1923
-	dd$K_fertilizer <- 80*0.498
-	dd$fertilizer_type <- ifelse(dd$N_fertilizer==0, "TSP;KCl", "urea;TSP;KCl")
-	dd$OM_used <- TRUE
-	dd$OM_amount <- 5000 # 5t
-	dd$OM_type <- "farmyard manure"
-
 	####	biomass and LAI
 	d9 <- data.frame(
 		trial_id = r9$IDParc,
@@ -301,7 +295,7 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	### some if the above are in cmolc kg−1. Keep that, but here change the values to mg/g by accounting for the molecular weights.
 
 	
-	d <- merge(d, soil, by=c("location", "year"), all.x = TRUE)
+	# soil is not merged: each location-year has several depth layers
 	d$year <- NULL
 
 	### join maize rotation crop data  and rice data

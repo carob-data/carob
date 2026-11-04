@@ -20,7 +20,8 @@ carob_script <- function(path) {
 		carob_effort = NA,
 		carob_date="2024-03-24",
 		treatment_vars="land_preparation;irrigation_fulfilment",
-		response_vars="yield"
+		response_vars="yield",
+		notes = "LLM-review: [low, forbidden] readxl::read_excel is used. trial_id is 1 across three seasons. N, P, and K are all NA. Two column names are not terminag names."
 	)
   
 	f <- ff[basename(ff) == "Database_902-Selection-Honsdorf_et_al.xlsx"]

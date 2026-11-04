@@ -26,7 +26,7 @@ Climate-smart agricultural practices, such as no-tillage (NT) and cover cropping
 		response_vars = "N2O_emission;CO2_emission", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA,
+		notes = "LLM-review: [medium, treatment] response_vars names N2O_emission and CO2_emission, but the columns are emission_N2O and emission_CO2. Anything that is not CT becomes land_prep_method none, so no-till is coded as no land preparation. [low, metadata] trial_id is 1 for both seasons and on_farm is TRUE for the West Tennessee research center. yield and yield_part none are empty placeholders on a flux file.",
 		carob_effort = 1
 	)
 	

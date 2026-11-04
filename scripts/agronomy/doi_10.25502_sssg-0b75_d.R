@@ -27,7 +27,7 @@ maize farmers in Ethiopia, Nigeria and Tanzania.
                                   data_type = "on-farm experiment",
                                   treatment_vars = "planting_date; variety",
                                   response_vars = "yield; dmy_residue; harvest_index; maturity_days",
-                                  notes = NA,
+                                  notes = "LLM-review: [medium, yield] Top weight matches total dry matter of cobs, stems, and leaves, and is mapped to dmy_residue, so residue equals total biomass. Grain yield is already kg/ha.",
                                   carob_contributor = "Stella Muthoni",
                                   carob_date = "2026-09-16",
                                   carob_completion = 80,

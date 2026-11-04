@@ -4,6 +4,7 @@
 ## ISSUES
 # No location below country level exists in the source.
 # No planting_date in the source - only HarvestDate is available.
+# Root fresh weights are kilograms per plot and plot area is not in the file, so yield was not computed.
 #
 
 carob_script <- function(path) {
@@ -29,7 +30,8 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-17",
 		carob_completion = 80,	
-		carob_effort = 8
+		carob_effort = 8,
+		notes = "LLM-review: [medium, crop] fertilizer_type is an empty string for the control. Maize rows are then labelled yield_part roots. geo_from_source is NA."
 	)
 	
 
@@ -52,10 +54,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		harvest_date = as.character(as.Date(r$HarvestDate, format = "%d/%m/%Y")),
 		variety = ifelse(trimws(r$Variety) == "", NA, r$Variety),
 		land_prep_method = ifelse(trimws(r$flat_ridge) == "", NA, r$flat_ridge),
-	  # assumed the weights provided are in ton/ha as plant density is reported as per ha
-		yield = rowSums(r[, c("tuberizedMarketableRootsFW","tuberizedDiseasedRootsFW","tuberizedSmallRootsFW")], na.rm = FALSE),
-		yield_marketable = r$tuberizedMarketableRootsFW,
-		root_infection = r$tuberizedDiseasedRootsFW
+		root_infection = r$tuberizedDiseasedRootsFW / rowSums(r[, c("tuberizedMarketableRootsFW","tuberizedDiseasedRootsFW","tuberizedSmallRootsFW")], na.rm = FALSE)
 	)
 
     d2 <- data.frame(
@@ -73,7 +72,6 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	d2 <- d2[!is.na(d2$plant_density), ]
 	
 	d <- carobiner::bindr(d1, d2)
-	d$root_infection <- d$root_infection / d$yield
 
 	d$fertilizer[d$fertilizer == ""] <- "0:0:0 none"
 

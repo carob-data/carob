@@ -18,7 +18,8 @@ carob_script <- function(path){
 		data_type = "on-farm experiment",
 		data_organization="IITA;ICRAF;WUR",
 		response_vars= "yield",
-		treatment_vars="inoculated;P_fertilizer"
+		treatment_vars="inoculated;P_fertilizer",
+		notes = "LLM-review: [medium, metadata] data_type is on-farm experiment, but is_survey is TRUE and on_farm is FALSE. Pod weight is used when seed weight is missing, then yield_part is seed for all rows."
 	)
 
 	

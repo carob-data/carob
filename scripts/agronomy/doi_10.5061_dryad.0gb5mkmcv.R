@@ -60,7 +60,7 @@ This dataset includes raw data values used to determine the effects of cover cro
 	  rep = as.integer(r2$`Replicate plot`),
 	  DAP = as.integer(r2$`Weeks Post Transplant`*7),
 	  plot_area = 15*15 , #m2
-	  yield = (r2$`Cumulative fruit mass (kg)`/15*15)*10000
+	  yield = r2$`Cumulative fruit mass (kg)` / (15 * 15) * 10000
 	)
 	
 	d <- merge(d1, d2, by = c("treatment", "rep"), all = TRUE)
@@ -90,7 +90,7 @@ This dataset includes raw data values used to determine the effects of cover cro
 	  treatment = r5$Treatment,
 	  rep = as.integer(r5$`Replicate plot`),
 	  plot_area = 15*15 , #m2
-	  fwy_total = (r5$`Plant mass (kg)`/15*15)*10000
+	  fwy_total = r5$`Plant mass (kg)` / (15 * 15) * 10000
 	)
 	
 	####
@@ -137,8 +137,8 @@ This dataset includes raw data values used to determine the effects of cover cro
 	d$latitude <- 38.5194239
 	d$longitude <- -121.7684936
 	d$is_survey <- FALSE
-	d$on_farm <- TRUE
-	d$trial_id <-
+	d$on_farm <- FALSE
+	d$trial_id <- "1"
 	d$yield_moisture <- NA
 	d$irrigated <- NA
 	d$planting_date <- "2023"

@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
+## Treatment-mean yields from the paper are not in the GHG sheet. They are not copied onto the daily gas and mineral-N rows.
 
 carob_script <- function(path) {
 
@@ -27,7 +28,7 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		response_vars = "yield;soil_NH4;soil_NO3", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = NA
+		notes = "LLM-review: [medium, metadata] trial_id is position plus treatment number, so it is per plot and shared across seasons. on_farm is TRUE for the Domboshava and University of Zimbabwe stations. [medium, yield] yield_isfresh is FALSE together with 12.5 percent moisture. The rotation contrast is only inside the treatment string."
 	)
 	
 
@@ -40,11 +41,12 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 	d1 <- data.frame(
 		location = r1$Site,
 		treatment_code = r1$Treatment_ID,
-		treatment = ifelse(grepl("CT", r1$Treatment_ID), "conventional",
-		            ifelse(grepl("^CTR$", r1$Treatment_ID), "conventional-rotation",
+		treatment = ifelse(grepl("^CTR$", r1$Treatment_ID), "conventional-rotation",
+		            ifelse(grepl("^CT$", r1$Treatment_ID), "conventional",
 		            ifelse(grepl("^NT$", r1$Treatment_ID), "No tillage",
-		            ifelse(grepl("^NTM$", r1$Treatment_ID), "No tillage-mulch", 
-		            ifelse(grepl("^NTR$", r1$Treatment_ID), "No tillage-rotation", "No tillage-mulch-rotation"))))),
+		            ifelse(grepl("^NTM$", r1$Treatment_ID), "No tillage-mulch",
+		            ifelse(grepl("^NTR$", r1$Treatment_ID), "No tillage-rotation",
+		            ifelse(grepl("^NTMR$", r1$Treatment_ID), "No tillage-mulch-rotation", NA)))))),
 		land_prep_method = ifelse(grepl("^CT$|^CTR$", r1$Treatment_ID), "conventional", "none"),
 		rep = as.integer(r1$Replicate),
 		season = r1$Season,
@@ -68,31 +70,16 @@ These are the raw data of the paper 'Long-term tillage, residue management and c
 		trial_id = paste(r1$Position, r1$Treatment_no, sep = "-"), 
 		on_farm = TRUE, 
 		is_survey= FALSE, 
-		crop = "maize", 
+		crop = ifelse(r1$Position == "interow", "cowpea", "maize"), 
 		yield_part = "grain", 
-		yield_moisture = as.numeric(12.5), # from publication
-		yield_isfresh = as.logical(FALSE), # from publication: "adjust the fresh weight to 12.5% standard maize grain moisture"
+		yield_moisture = ifelse(r1$Position == "interow", NA, 12.5), # publication: 12.5% maize grain moisture
+		yield_isfresh = ifelse(r1$Position == "interow", NA, FALSE),
 		irrigated = FALSE, # No supplemental water as per publication
 		country = "Zimbabwe"
 	)
 
-	### Adding yield from publication
-	
-	yd <- data.frame(
-	  yield = c(1848.2, 2291.5,1815.6,  2868.3, 2391.1, 2572.6,
-	            2241.7, 2229.8, 2152.1, 1726.4, 2279.6, 1409.5,
-	            1800.2, 4116.6, 2355.3, 3122.8, 3880.6, 5014.1,
-	            4829.8, 5616.5, 4004.6, 4578.9, 5465.7, 5544.1),
-	  season = c(rep("2019/20", 6), rep("2020/21", 6), rep("2019/20", 6), rep("2020/21", 6)),
-	  location = c(rep("DTC",12), rep("UZF", 12)),
-	  treatment_code = rep(c("CT", "CTR", "NT", "NTM", "NTR", "NTMR"), time=4)
-	)
-
-	d	<- merge(d1, yd, by= c("season", "treatment_code", "location"), all.x = TRUE)
-  d$location <- ifelse(grepl("DTC", d$location), "Domboshava Training Centre", "University of Zimbabwe Farm")
-  
-  # The data only reports maize yields (rows). Interrow treatments are reffered to cowpea, without reported yield, so could be dropped
-  d <- d[!grepl("interow", d$trial_id), ]
+	d <- d1
+	d$location <- ifelse(grepl("DTC", d$location), "Domboshava Training Centre", "University of Zimbabwe Farm")
   
 	### Adding longitude and latitude
 	

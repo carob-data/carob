@@ -27,7 +27,7 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-30",
-		notes = NA, 
+		notes = "LLM-review: [medium, crop] Every non-maize crop is renamed legume, with yield_part grain. Villages are stored in adm3. CA maize becomes land_prep_method none. N 67, P 9.17, and S 4 are a blanket blend with no comment.", 
 		design = "Randomized Complete Block"
   )
   
@@ -45,7 +45,8 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
     variety=r$Variety,
     dmy_stems=r$`Stalk yield (kg/ha)`,
     yield=r$`Grain yield (kg/ha)`,
-    CA_years=r$`Years of CA`
+    CA_years=r$`Years of CA`,
+    sole_intercrop=r$`sole/intercrop`
   )
   #Fixing mispelt adm2 locations
   d$adm2 <- gsub("Nkhotkota|Nkotakhota","Nkhotakota",d$adm2)
@@ -64,9 +65,8 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$crop_rotation <- ifelse(d$treatment %in% c("Check", "CA+Mz"), "maize", "maize;legume")
   d$crop <- ifelse(d$crop_rotation=="maize", "maize", "legume")
   d$geo_from_source <- FALSE
-  d$planting_date <- r$`Harvest Year`-1
-  d$harvest_date  <- as.character(d$harvest_date)
-  d$planting_date <- as.character(d$planting_date)#planting_date based on logic, its not stated for individual crop, 
+  d$planting_date <- as.character(as.numeric(d$harvest_date) - 1)
+  d$harvest_date  <- as.character(d$harvest_date) 
   d$P_fertilizer <-9.17
   d$N_fertilizer <-67
   d$S_fertilizer <-4
@@ -75,10 +75,11 @@ Results indicated that conservation agriculture significantly enhanced crop yiel
   d$yield_part <- "grain"
   d$yield_moisture <- ifelse(d$crop=="maize",12.5,9)
   d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
-  d$land_prep_method <- ifelse(r$Treatment=="Check", "conventional",
-                               ifelse(r$Treatment=="CA+Mz", "none", "minimum tillage"))
-  d$intercrops <- ifelse(r$`sole/intercrop`==0, "none", 
+  d$land_prep_method <- ifelse(d$treatment=="Check", "conventional",
+                               ifelse(d$treatment=="CA+Mz", "none", "minimum tillage"))
+  d$intercrops <- ifelse(d$sole_intercrop==0, "none",
 					ifelse(d$crop == "maize", "legume", "maize"))
+  d$sole_intercrop <- NULL
 
   carobiner::write_files(path, meta, d)
 }

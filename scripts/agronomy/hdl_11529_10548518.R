@@ -26,7 +26,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-27",
-		notes = NA, 
+		notes = "LLM-review: [medium, admin] Village is stored in adm3 and location is never set.", 
 		design = NA
 	)
 	

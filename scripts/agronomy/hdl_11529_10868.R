@@ -21,7 +21,7 @@ carob_script <- function(path) {
 		carob_contributor = "Mitchelle Njukuya",
 		carob_effort = NA,
 		carob_date = "2025-08-29",
-		notes = NA,
+		notes = "LLM-review: [medium, fertilizer] Fertilizer type is taken from the main-plot treatment rather than the subtreatment, so fertilized residue plots get NA and zero-N tillage plots get a fertilizer type. treatment_vars does not separate 30 N from 90 N. trial_id is the country. on_farm is TRUE at the research stations.",
 		design = NA
   )
   

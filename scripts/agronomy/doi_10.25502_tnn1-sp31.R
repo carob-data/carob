@@ -29,7 +29,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		data_type = "on-farm experiment",
 		treatment_vars = "variety;P_fertilizer;S_fertilizer",
 		response_vars = "yield;fwy_total", 
-		notes = NA,
+		notes = "LLM-review: [medium, invented] NA phosphorus is filled with 0. The TSP conversion above it is fine. The NAs are unknown amounts, not documented zeros.",
 		carob_contributor = "Kudzaishe M. Muzata",
 		carob_date = "2026-07-13",
 		carob_completion = 40,	

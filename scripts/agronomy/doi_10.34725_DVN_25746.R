@@ -26,7 +26,8 @@ Growing maize (Zea mays) in association with legume tree in agroforestry arrange
 		data_organization = "ICRAF",
 		project=NA,
 		response_vars= "yield",
-		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;intercrops"
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;intercrops",
+		notes = "LLM-review: [low, fertilizer] fertilizer_type TSP and CAN is written onto the zero-fertilizer rows. adm1 Machinga is a district, and Makoka is in Zomba."
 	)
 
 	f <- ff[basename(ff) == "Sileshi Stab analysis data.xlsx"]
@@ -108,7 +109,7 @@ Growing maize (Zea mays) in association with legume tree in agroforestry arrange
 	d$treatment[gli] <- "Gliricidia"
 	d$intercrops[gli] <- "Gliricidia"
 	
-	d$trial_id <- "1"
+	d$trial_id <- as.character(as.integer(as.factor(paste(d$location, d$exp, d$planting_date))))
 	d$exp <- NULL
 	d$on_farm <- FALSE
 

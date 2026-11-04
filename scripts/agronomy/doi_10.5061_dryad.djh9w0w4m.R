@@ -20,7 +20,7 @@ carob_script <- function(path) {
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-05-31",
-      notes=NA
+      notes="LLM-review: [medium, crop] yield_part is none while yield is fresh crop-product yield. The same times 1000 used for protein is applied to Fe, Mn, Cu, and Zn, storing about 0.05 mg/g against a grain_Fe range of 1-100."
    )
    
    

@@ -64,7 +64,7 @@ carob_script <- function(path) {
 	)
 
 	d2$N_fertilizer <- d2$P_fertilizer <- d2$K_fertilizer <- d2$Zn_fertilizer <- d2$S_fertilizer <- 0
-	d2$N_fertilizer[grep("NPK", d2$treatment)] <- 100
+	d2$N_fertilizer[grep("N", d2$treatment)] <- 100
 	d2$N_splits <- NA
 	d2$N_splits[d2$N_fertilizer > 0] <- 3L
 
@@ -72,9 +72,9 @@ carob_script <- function(path) {
 	d2$K_fertilizer[grep("K", d2$treatment)] <- 60
 	d2$Zn_fertilizer[grep("MN", d2$treatment)] <- 3
 	d2$S_fertilizer[grep("MN", d2$treatment)] <- 5
-	d2$OM_used <- TRUE
-	d2$OM_type <- "farmyard manure"
-	d2$OM_amount <- 1000
+	d2$OM_used <- grepl("Manure", d2$treatment)
+	d2$OM_type <- ifelse(d2$OM_used, "farmyard manure", "none")
+	d2$OM_amount <- ifelse(d2$OM_used, 1000, 0)
 	d2$lime_used <- grepl("Lime", d2$treatment)
 	
 	d <- merge(d1, d2, by="trial_id", all.x = TRUE)

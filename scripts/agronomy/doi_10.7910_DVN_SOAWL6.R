@@ -18,7 +18,8 @@ carob_script <- function(path) {
 		treatment_vars="none",
 		carob_contributor="Fredy Chimire",
 		carob_effort = NA,
-		carob_date="2024-02-24"
+		carob_date="2024-02-24",
+		notes = "LLM-review: [medium, coordinates] Location fixes set latitude only for Ismailia, Nyankpala, and Palampur, and geo_from_source stays TRUE. Rows are dropped for missing country or yield. treatment_vars is none on a treatment-versus-control dataset. Grain P is the mean of two inorganic-P columns."
 	)
 
 	f <- ff[basename(ff) == "02a. Maize data for meta_analysis_updated.txt"]

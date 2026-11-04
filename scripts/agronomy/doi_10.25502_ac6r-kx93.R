@@ -23,7 +23,8 @@ carob_script <- function(path){
 		carob_modified_by = "Eduardo Garcia Bendito",
 		carob_last_modified = "2024-03-07",
 		response_vars = "yield",
-		treatment_vars = "inoculated;P_fertilizer"	
+		treatment_vars = "inoculated;P_fertilizer",	
+		notes = "LLM-review: [medium, fertilizer] P_fertilizer is the character 19.23 with no derivation. is_survey is left NA on an on-farm experiment."
 	)
 
 	p_year <- 2014 #planting year

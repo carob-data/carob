@@ -3,6 +3,7 @@
 
 ## ISSUES
 #1 whats left is to add the season
+## Keringet-Sabtet and Keringet-Pompo had the same point and the data file has no coordinates, so those two points were removed. The remaining points are not from the file.
 
 carob_script <- function(path) {
 
@@ -23,7 +24,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 		data_type = "on-farm experiment",
 		treatment_vars = "seed_source",
 		response_vars = "yield", 
-		notes = NA,
+		notes = "LLM-review: [medium, yield] Percent damage columns are divided by 10 and stored as a 1-10 severity score. [low, dates] Per-site planting dates are commented out, so planting_date stays NA.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-08-27",
 		carob_completion = 90,	
@@ -118,9 +119,9 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
   
   geo <- data.frame(
     location=c("Keringet-Sabtet", "Keringet - Pompo", "Kuresoi", "Lari", "Ngecha","Passengga", "Rurii", "Tharuni"), 
-    longitude=c(35.691, 35.691, 35.533, 36.647, 36.671, 36.329, 36.389, 36.625),
-    latitude=c(-0.420, -0.420, -0.303, -0.983, -1.168, -0.219, -0.208, -1.133),
-	geo_from_source = TRUE
+    longitude=c(NA, NA, 35.533, 36.647, 36.671, 36.329, 36.389, 36.625),
+    latitude=c(NA, NA, -0.303, -0.983, -1.168, -0.219, -0.208, -1.133),
+	geo_from_source = FALSE
   )
   d <- merge(d, geo, by="location", all.x = TRUE)  
 
