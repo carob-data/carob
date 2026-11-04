@@ -2,22 +2,19 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# 1. Some plots have no harvest data (2 plots in Mparambo, 5 in Ryansoro). They are removed
-#    because yield cannot be missing.
-# 2. Plant stand was low in some plots (as few as 1-2 of 30 plants harvested). Yield is
+# 1. Plant stand was low in some plots (as few as 1-2 plants harvested of 30 planted). Yield is
 #    reported per plot area (not adjusted for missing plants), as in the source (TTYNA).
-# 3. AVDM (average dry matter, %) has a single value per clone and site, so it is probably
+# 2. AVDM (average dry matter, %) has a single value per clone and site, so it is probably
 #    not a plot-level measurement. It is not included.
-# 4. It is not stated whether the trials were on-station or on-farm, or whether they were
+
+## NOTES
+# 1. It is not stated whether the trials were on-station or on-farm, or whether they were
 #    irrigated (Mparambo is in the lowland Imbo plain), so on_farm and irrigated are NA.
-# 5. No information on fertilizer use.
-# 6. process_cip_lbvars() does not find "Plot size (m2) " (trailing space in the
-#    Installation sheet); yields are recomputed in this script. The function could use
-#    trimws() on the factor names to avoid this.
-# 7. Gisozi fieldbook: "CIP395611.22" changed to "CIP388611.22" (Reiche). The former is not
+# 2. No information on fertilizer use.
+# 3. Gisozi fieldbook: "CIP395611.22" changed to "CIP388611.22" (Reiche). The former is not
 #    in the material list of the same file; the latter is listed there and used at the other
 #    two sites. To be confirmed with the data provider.
-# 8. Weather (temperature only, no rainfall):
+# 4. Weather (temperature only, no rainfall):
 #    - Ryansoro: hourly records 2007-08-18 to 2007-11-10 (during the trial) are included
 #      in the weather table, with dates reconstructed (see code).
 #    - Mparambo: hourly records are mostly from 2006-10 to 2007-08, before planting, and the
@@ -58,31 +55,18 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 	## the three CIP fieldbooks (one per site) have the standard sheets
 	## "Minimal", "Installation" and "Fieldbook", so we use the shared function
 	process <- carobiner::get_function("process_cip_lbvars", path, group)
-
+	
 	f <- ff[grep("^PTYL", basename(ff))]
-	d <- lapply(f, function(x) {
-		out <- process(x)
-		fb <- carobiner::read.excel(x, sheet="Fieldbook")
-		# the function looks for a "plot" column, but these fieldbooks use "PLOT"
-		out$plot_id <- as.character(fb$PLOT)
-		# In these fieldbooks the label is "Plot size (m2) " (with a trailing space),
-		# so the function does not find the plot size and returns NA yields.
-		# Yields are recomputed here from plot weights (kg/plot) and plot size (m2).
-		ins <- carobiner::read.excel(x, sheet="Installation")
-		plot_size <- as.numeric(ins$Value[trimws(ins$Factor) == "Plot size (m2)"])
-		out$yield <- as.numeric(fb$TTWP) * 10000 / plot_size
-		out$yield_marketable <- as.numeric(fb$MTWP) * 10000 / plot_size
-		out
-	})
+	d <- lapply(f, process)
 	d <- do.call(rbind, d)
 
 	## In the Gisozi fieldbook, clone "CIP395611.22" is not in the material list of that
 	## same file, which instead lists CIP388611.22 (Reiche), used at the other two sites.
-	## We assume a typing error (see ISSUES 7).
+	## We assume a typing error
 	d$variety[d$variety == "CIP395611.22"] <- "CIP388611.22"
 
 	## plots without harvest data (see ISSUES 1)
-	d <- d[!is.na(d$yield), ]
+	#d <- d[!is.na(d$yield), ]
 
 	## not stated in the data (see ISSUES 4)
 	d$on_farm <- NA
@@ -99,7 +83,7 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 	d$variety[i] <- d$name[i]
 	d$name <- NULL
 
-	## Weather (see ISSUES 8): hourly air temperature recorded at Ryansoro during the trial.
+	## Weather: hourly air temperature recorded at Ryansoro during the trial.
 	## In this sheet the dates are inconsistent (day and month are swapped in some rows),
 	## but the records are continuous, 24 per day, starting 2007-08-18 00:00,
 	## so the date is reconstructed from the row order.
@@ -115,6 +99,5 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 		time = substr(as.character(w$Time), 1, 5),  # "HH:MM"
 		temp = as.numeric(w$Temperature)
 	)
-
 	carobiner::write_files(path, meta, d, wth=wth)
 }
