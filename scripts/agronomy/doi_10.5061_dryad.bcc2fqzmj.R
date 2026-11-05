@@ -11,8 +11,8 @@
 ## New variable: 
 
 # soil_temp: soil temperature in degrees Celsius (°C)
-# soil_moisture: soil moisture content (%)
-# soil_PLFA: phospholipid fatty acids (pmol/g of soil)
+# soil_moisture_: soil moisture content (%)
+# soil_PLFA_: phospholipid fatty acids (pmol/g of soil)
 
 
 carob_script <- function(path) {
@@ -34,7 +34,7 @@ Although Texas is not widely known for organic production, it is responsible for
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;cover_crop",
-		response_vars = "yield;emission_CO2;flux_CO2;soil_PLFA", 
+		response_vars = "yield;emission_CO2;flux_CO2;soil_PLFA_", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-13",
@@ -69,7 +69,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  flux_CO2 = r1$CO2,
 	  soil_temp = r1$soiltemp, # soil temperature (Celsius)
 	  soil_C_inorg = r1$MinC/10000, ## ppm to %
-	  soil_moisture = r1$soilmoist, # %
+	  soil_moisture_ = r1$soilmoist, # %
 	  residue_prevcrop = r1$cc_biomass,
 	  trial_id  = paste0("onlyorg", "-", r1$event)
 	  
@@ -82,7 +82,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  depth = r2$depth,
 	  land_prep_method = r2$orgcon,
 	  cover_crop = r2$cover,
-	  soil_PLFA = r2$TotalPLFA, #  phospholipid fatty acids (pmol/g)
+	  soil_PLFA_ = r2$TotalPLFA, #  phospholipid fatty acids (pmol/g)
 	  yield = r2$yield
 	  
 	)
@@ -116,7 +116,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  treatment = r5$trt,
 	  land_prep_method = r5$orgcon,
 	  cover_crop = r5$cover,
-	  soil_moisture = r5$soilmoist, # %
+	  soil_moisture_ = r5$soilmoist, # %
 	  soil_temp = r5$soiltemp, # soil temperature (Celsius)
 	  soil_C_inorg = r5$MinC/10000, ## from ppm to %
 	  flux_CO2 = r5$CO2,
@@ -132,7 +132,7 @@ Although Texas is not widely known for organic production, it is responsible for
 	  depth = r6$depth,
 	  land_prep_method = r6$orgcon,
 	  cover_crop = r6$cover,
-	  soil_PLFA = r6$TotalPLFA,#  phospholipid fatty acids (pmol/g)
+	  soil_PLFA_ = r6$TotalPLFA,#  phospholipid fatty acids (pmol/g)
 	  yield = r6$yield
 	)
 	

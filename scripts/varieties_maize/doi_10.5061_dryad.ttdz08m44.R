@@ -2,9 +2,11 @@
 # license: GPL (>=3)
 
 ## ISSUES
- 
- ### We added a new variable: 
- # grain_aflatoxin: grain aflatoxin concentration measured in ng/g.
+# The 2014 and 2015 aflatoxin trials (experiment 1) have no harvest date in the data or README;
+# harvest_date is only set for the yield trials where it is known.
+
+## NEW VARIABLES
+# grain_aflatoxin_: grain aflatoxin concentration in ng/g.
 
 carob_script <- function(path) {
 
@@ -25,7 +27,7 @@ Aflatoxin contamination of maize (Zea mays L.) grain presents risks to animal an
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety_pedigree",
-		response_vars = "yield;grain_aflatoxin", 
+		response_vars = "yield;grain_aflatoxin_", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-19",
@@ -73,10 +75,9 @@ Aflatoxin contamination of maize (Zea mays L.) grain presents risks to animal an
 		variety_pedigree = r2$Pedigree,
 		female_parent = r2$p_female,
 		male_parent = r2$p_male,
-		grain_aflatoxin = r2$Afla_ppb, ## in ng/g 
+		grain_aflatoxin_ = r2$Afla_ppb, ## in ng/g 
 		crop = "maize",
 		planting_date = "2014-04-23",
-		harvest_date = as.character(as.Date("2014-04-23") +60),
 		trial_id = "2"
 	)
 
@@ -108,9 +109,8 @@ Aflatoxin contamination of maize (Zea mays L.) grain presents risks to animal an
 	  variety_pedigree = r4$Pedigree,
 	  female_parent = r4$P_female,
 	  male_parent = r4$P_male,
-	  grain_aflatoxin = r4$Afla_ppb, ## in ng/g 
+	  grain_aflatoxin_ = r4$Afla_ppb, ## in ng/g 
 	  planting_date = "2015-04-22",
-	  harvest_date = as.character(as.Date("2015-04-22") +60),
 	  trial_id = "4"
 	)
 	
@@ -128,7 +128,7 @@ Aflatoxin contamination of maize (Zea mays L.) grain presents risks to animal an
 	  asi = r5$ASI,
 	  yield = r5$kg_ha_15,
 	  crop = "maize",
-	  grain_aflatoxin = r5$Afla_ppb, ## in ng/g 
+	  grain_aflatoxin_ = r5$Afla_ppb, ## in ng/g 
 	  root_lodging = as.character(r5$Root_lodge),
 	  stalk_lodging = as.character(r5$stalk_lodge),
 	  planting_date = "2018-05-08",
@@ -149,7 +149,7 @@ Aflatoxin contamination of maize (Zea mays L.) grain presents risks to animal an
 	  asi = r6$ASI,
 	  yield = r6$kg_ha_15,
 	  crop = "maize",
-	  grain_aflatoxin = r6$Afla_ppb, ## in ng/g 
+	  grain_aflatoxin_ = r6$Afla_ppb, ## in ng/g 
 	  root_lodging = as.character(r6$Root_lodge),
 	  stalk_lodging = as.character(r6$stalk_lodge),
 	  planting_date = "2019-04-25",

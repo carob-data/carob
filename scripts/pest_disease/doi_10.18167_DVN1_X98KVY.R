@@ -17,10 +17,14 @@
 # 4. Topography ("parcelles chem p100" sheet) is mapped to landscape_position:
 #    exondé -> "upland", inondé -> "lowland". The three fallow plots are
 #    "chemin" (path / track side), left as NA.
-# 5. No terminag variable for the cover of an individual weed species
+# 5. There is no yield or management data (weed survey); yield, fertilizer and
+#    date variables are not included.
+
+## NEW VARIABLES
+# weed_species_cover_: cover (%) of an individual weed species on the plot
 #    (ground_cover = crop canopy cover; weed_cover is used here for total plot
-#    weed cover, as in doi:10.18167/DVN1/VCLIB5). Provisional variables:
-#    weed_species_cover (%) and weed_family. Reviewer to decide.
+#    weed cover, as in doi:10.18167/DVN1/VCLIB5)
+# weed_family_: botanical family of the weed species
 
 carob_script <- function(path) {
   
@@ -41,7 +45,7 @@ Characterization of weed communities of food crops (groundnut, maize, sweet pota
                                   design = NA,
                                   data_type = "survey",
                                   treatment_vars = "none",
-                                  response_vars = "weed_cover;weed_species;weed_species_cover",
+                                  response_vars = "weed_cover;weed_species;weed_species_cover_",
                                   notes = NA,
                                   carob_contributor = "Mitchelle Njukuya",
                                   carob_date = "2026-11-02",
@@ -101,14 +105,13 @@ Characterization of weed communities of food crops (groundnut, maize, sweet pota
   d$geo_from_source <- FALSE
   d$on_farm <- TRUE
   d$is_survey <- TRUE
-  d$yield <- d$yield_moisture <- d$yield_isfresh <- d$yield_part <- d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- d$planting_date <- d$harvest_date <- NA
   
   ## species lookup: rows below the "global" row with a code in column 4
   i <- which(!is.na(r3[[4]]) & r3[[4]] != "x")
   spp <- data.frame(
     code = r3[[4]][i],
     weed_species = trimws(r3[[3]][i]),
-    weed_family = trimws(r3[[2]][i])
+    weed_family_ = trimws(r3[[2]][i])
   )
   spp <- spp[spp$code != "PYLNI", ] # merged into PYLAM in Floristique
   
@@ -119,7 +122,7 @@ Characterization of weed communities of food crops (groundnut, maize, sweet pota
   long <- data.frame(
     trial_id = colnames(score)[j[, "col"]],
     code = r2[[1]][j[, "row"]],
-    weed_species_cover = cover[score[j]]
+    weed_species_cover_ = cover[score[j]]
   )
   long <- merge(long, spp, by = "code", all.x = TRUE)
   long$code <- NULL

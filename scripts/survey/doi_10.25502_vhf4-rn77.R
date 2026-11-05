@@ -19,7 +19,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
-		data_organization = "IITA; World Agroforestry Centre (ICRAF); WUR; International Institute of Tropical Agriculture (IITA), Wageningen University",
+		data_organization = "IITA; ICRAF; WUR",
 		publication = NA,
 		project = NA,
 		design = NA,
@@ -108,13 +108,14 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		adm2 = r1$sector_ward,
 		farmer_gender = r1$gender_of_farmer,
 		field_id = r1$farm_id,
-		hhid = NA,
+		hhid = as.character(r1$farm_id),  # one farm per household
+
 		treatment = r1$treatment,
 		crop = r1$legume_planted_in_the_n2africa_trial,
 		longitude = r1$gps_field_device_longitude_decimal_degrees,
 		latitude = r1$gps_field_device_latitude_decimal_degrees,
 		elevation = r1$gps_field_device_altitude_m,
-		precision = r1$gps_field_device_accuracy_m,
+		geo_uncertainty = r1$gps_field_device_accuracy_m,  # GPS device accuracy (m)
 		sample_id = r1$soil_sample_collected,
 		land_ownedby = r1$ownership_field,
 		soil_drainage = r1$drainage_field,
@@ -182,20 +183,20 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	                           trimws(paste(ifelse(is.na(a), "", a),
 	                                        ifelse(is.na(b), "", b))))
 
-	#fix dates
-	d$planting_date <- carobiner::eng_months_to_nr(d$planting_date)
-	d$planting_date <- as.Date(carobiner::eng_months_to_nr(d$planting_date), "%d-%m-%y")
+	#fix dates. Entry errors give impossible years (e.g. 1-Jan-94, 1-Apr-99);
+	#N2Africa ran 2009-2019, so dates outside that window are set to NA.
+	fix_date <- function(x) {
+		x <- as.Date(carobiner::eng_months_to_nr(x), "%d-%m-%y")
+		x[!is.na(x) & (x < as.Date("2009-01-01") | x > as.Date("2019-12-31"))] <- NA
+		as.character(x)
+	}
+	d$planting_date <- fix_date(d$planting_date)
+	d$harvest_date <- fix_date(d$harvest_date)
 	
-	d$harvest_date <- carobiner::eng_months_to_nr(d$harvest_date)
-	d$harvest_date <- as.Date(carobiner::eng_months_to_nr(d$harvest_date), "%d-%m-%y")
 	
-	
-  r1$date_of_1st_weeding_whole_n2africa_field__date <- carobiner::eng_months_to_nr(r1$date_of_1st_weeding_whole_n2africa_field__date)
-	r1$date_of_1st_weeding_whole_n2africa_field__date <- as.Date(carobiner::eng_months_to_nr(r1$date_of_1st_weeding_whole_n2africa_field__date), "%d-%m-%y")
-	r1$date_of_2nd_weeding_whole_n2africa_field_date <- carobiner::eng_months_to_nr(r1$date_of_2nd_weeding_whole_n2africa_field_date)
-	r1$date_of_2nd_weeding_whole_n2africa_field_date <- as.Date(carobiner::eng_months_to_nr(r1$date_of_2nd_weeding_whole_n2africa_field_date), "%d-%m-%y")
-	r1$date_of_3d_weeding_whole_n2africa_field_date <- carobiner::eng_months_to_nr(r1$date_of_3d_weeding_whole_n2africa_field_date)
-	r1$date_of_3d_weeding_whole_n2africa_field_date <- as.Date(carobiner::eng_months_to_nr(r1$date_of_3d_weeding_whole_n2africa_field_date), "%d-%m-%y")
+	r1$date_of_1st_weeding_whole_n2africa_field__date <- fix_date(r1$date_of_1st_weeding_whole_n2africa_field__date)
+	r1$date_of_2nd_weeding_whole_n2africa_field_date <- fix_date(r1$date_of_2nd_weeding_whole_n2africa_field_date)
+	r1$date_of_3d_weeding_whole_n2africa_field_date <- fix_date(r1$date_of_3d_weeding_whole_n2africa_field_date)
 	
 	#weeding dates
 	d$weeding_dates <- apply(
@@ -205,6 +206,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	  1,
 	  function(x) paste(x[!is.na(x)], collapse = ";")
 	)
+	d$weeding_dates[d$weeding_dates == ""] <- NA
 	
 	#spacing
 	pick_by_plot <- function(r1, prefix, suffix, n_max = 12) {
@@ -216,7 +218,18 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	
 	d$row_spacing   <- pick_by_plot(r1, "row_spacing_crop_1_plot_",   "_cm")
 	d$plant_spacing <- pick_by_plot(r1, "plant_spacing_crop_1_plot_", "_cm")
-	d$yield  <- pick_by_plot(r1, "grain_weight_crop_1_plot_",  "_kg")
+	# grain weight is kg per harvested plot; normalize to kg/ha with the harvested
+	# area = number of rows x row spacing (m) x width of the harvested plot (m)
+	grain_kg <- pick_by_plot(r1, "grain_weight_crop_1_plot_",  "_kg")
+	# the plot-3 column is misnamed in the source ("plot__nr")
+	names(r1)[names(r1) == "number_of_rows_crop_1_plot__nr"] <- "number_of_rows_crop_1_plot_3_nr"
+	nrows <- pick_by_plot(r1, "number_of_rows_crop_1_plot_", "_nr")
+	pwidth <- pick_by_plot(r1, "width_of_harvested_plot_crop_1_plot_", "_m")
+	area_m2 <- nrows * (d$row_spacing / 100) * pwidth
+	area_m2[!is.na(area_m2) & area_m2 <= 0] <- NA  # zero dimensions are entry errors
+	d$yield <- 10000 * grain_kg / area_m2
+	# extreme yields remain where the recorded plot dimensions are implausible
+	# (e.g. width 0.25 m); left as recorded
   
 	#fertilizer_type
 	fert_names <- c(
@@ -1149,7 +1162,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	  )
 	)
 	
-	d$intercrops <- "sole"
+	d$intercrops <- NA_character_  # sole crop unless listed below
 	for (combo in names(intercrops_map)) {
 	  d$intercrops[d$treatment %in% intercrops_map[[combo]]] <- combo
 	}

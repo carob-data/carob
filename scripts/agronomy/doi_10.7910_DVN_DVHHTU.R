@@ -3,8 +3,12 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# list processing issues here so that an editor can look at them
 ## The location is mixed up in d2 and confusing. Some places were referred as adm2 yet were supposed to be in adm3
+# Some plot records (VBAA names) have no match in the technology evaluation file; those have only the
+#   district and are georeferenced at the district level with a large geo_uncertainty.
+# plant_height ranges to 160 cm; high but possible for climbing beans. Left as recorded.
+# The village Kikombwe and its ward (Lyamugugwe) and the ward Hasanga (Ichenjezya) and the ward
+#   Bonde la Usangu (Lusungo) were not found in GeoNames or GADM; coarser fallbacks are used.
 
 
 carob_script <- function(path) {
@@ -36,9 +40,6 @@ These datasets contained technology and plant performance assessment for mother 
 	f1 <- ff[basename(ff) == "Mother_Demos_ Bean_Assessment in 2017.xlsx"]
 	f2 <- ff[basename(ff) == "Technology evaluation for the VBAAs in 2017.xlsx"]
 
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
-	
 	r1 <- carobiner::read.excel(f1, skip = 5, na = c("IT", "SG"))
 	r2 <- carobiner::read.excel(f2, skip = 3)[-1, ]
 
@@ -94,44 +95,104 @@ These datasets contained technology and plant performance assessment for mother 
 	d <- unique(d)
 	#d$VB <- NULL
 	
-#### geo-coordinates for location were obtained from geonames	
-	geo4 <- data.frame(
-	  adm1 = c("Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Njombe", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Songwe", "Songwe", "Songwe", "Songwe", "Songwe", "Songwe", "Songwe", "Songwe", "Songwe", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Songwe", "Songwe", "Mbeya"),
-	  adm2 = c("Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Mufindi", "Mufindi", "Mufindi", "Mufindi", "Mufindi", "Mufindi", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Songea", "Songea", "Songea", "Songea", "Madaba", "Madaba", "Madaba", "Madaba", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbozi", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Mbozi", "Mbozi", "Mbeya"),
-	  adm3 = c("Magulilwa", "Magulilwa", "Mgama", "Mgama", "Mseke", "Mseke", "Mseke", "Ulanda", "Kihorogota", "Nduli", "Kalenga", "Ulanda", "Mtambula", "Nyololo", "Idunda", "Isalavanu", "Nyololo", "Sadani", "Saja", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Igima", "Itulahumba", "Imalinyi", "Wanging'ombe", "Peramiho", "Litisha", "Maposeni", "Litisha", "Mtyangimbole", "Mkongotema", "Mkongotema", "Mkongotema", "Ruanda", "Iyula", "Ruanda", "Ruanda", "Isandula", "Vwawa", "Vwawa", "Nyimbili", "Vwawa", "Tembela", "Tembela", "Tembela", "Mshewe", "Mshewe", "Mshewe", "Ruanda", "Iyula", "Tembela"),
-	  location = c("Magulilwa", "Ng'enza", "Kikombwe", "Ihemi", "Mseke", "Tanangozi", "Wenda", "Mangalali", "Uhominyi", "Mkungugu", "Kalenga", "Itamba", "Nyakipambo", "Lwing'ulo", "Ikangamwane", "Isalavanu", "Njojo", "Igomba", "Saja", "Litundu", "Uhambule", "Ikingula", "Utiga", "Mawende", "Mawindi", "Itulahumba", "Masaulwa", "Wanging'ombe", "Nguvu Moja", "Morogoro A", "Peramiho (A)", "Litisha", "Likalangilo", "Mkongotema", "Lutukira", "Ndelenyuma", "Lumbila", "Ipyana", "Lungwa", "Idibira", "Ukwire", "Ichenjezya", "Ilembo", "Masangula", "Mantengu (B)", "Mwasoma", "Tembela", "Iwala", "Mshewe", "Njelenje", "Nsambia", "Lusungo", "Idiwili", "Galijembe"),
-	  longitude = c(35.7381, 35.6785, NA, 35.4868, 35.5635, 35.5654, 35.5951, 35.5678, 35.8091, 35.7765, 35.6031, 35.68, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 34.748, 34.599, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 33.017, NA, 33.488, 33.488, 33.488, NA, NA, NA, NA, NA, 33.6),
-	  latitude = c(-7.9701, -7.9618, NA, -8.0163, -7.9453, -8.9487, -7.9094, -7.7735, -7.5175, -7.5377, -7.8013, -7.7581, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, -9.086, -9.130, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, -9.133, NA, -8.941, -8.941, -8.941, NA, NA, NA, NA, NA, -8.967)
-	)
-	
-	##### geo_cordinates for adm3 were obtained from is from GADM # if we cannot find "adm4" we fall back to "adm3"
-	geo3 <- data.frame(
-	  adm3 = c("Kalenga", "Kihorogota", "Mgama", "Mseke", "Nduli", "Ulanda", "Idunda", "Isalavanu", "Mtambula", "Nyololo", "Sadani", "Mshewe", "Tembela", "Ruanda", "Igima", "Imalinyi", "Saja", "Wanging'ombe", "Litisha", "Maposeni", "Mkongotema", "Mtyangimbole", "Peramiho", "Isandula", "Iyula", "Vwawa"),
-	  #adm2 = c("Iringa Rural", "Iringa Rural", "Iringa Rural", "Iringa Rural", "Iringa Rural", "Iringa Rural", "Iringa Urban", "Mufindi", "Mufindi", "Mufindi", "Mufindi", "Mufindi", "Mbeya Rural", "Mbeya Rural", "Mbeya Urban", "Mbeya Urban", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Wanging'ombe", "Mbinga", "Songea Rural", "Songea Rural", "Songea Rural", "Songea Rural", "Songea Rural", "Mbozi", "Mbozi", "Mbozi", "Mbozi"),
-	  #adm1 = c("Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Iringa", "Mbeya", "Mbeya", "Mbeya", "Mbeya", "Njombe", "Njombe", "Njombe", "Njombe", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Ruvuma", "Songwe", "Songwe", "Songwe", "Songwe"),
-	  long3 = c(35.6019, 35.8542, 35.5693, 35.5479, 35.7962, 35.5286, 34.8079, 35.2579, 35.0091, 34.9463, 34.9661, 33.1586, 33.6252, 33.4679, 34.7413, 34.6062, 34.7653, 34.6665, 35.2952, 35.4496, 35.5385, 35.6689, 35.4693, 32.8969, 33.1756, 32.9463),
-	  lat3 = c(-7.8314, -7.4797, -8.0514, -7.9185, -7.5868, -7.8190, -8.6484, -8.2021, -8.7068, -8.4550, -8.2075, -8.7592, -8.9745, -8.9102, -9.1900, -9.1917, -8.7312, -8.8360, -10.6271, -10.4874, -10.0666, -10.3974, -10.6101, -9.2150, -9.0961, -9.1187),
-	  unc3 = c(8986, 11274, 13908, 16540, 11795, 13891, 12047, 12695, 10633, 18495, 16455, 19131, 4820, 1085, 15206, 10522, 14377, 17014, 16705, 18046, 45073, 11982, 8122, 11564, 15261, 10976),
-	  src3 = "GADM 4.1, adm3"
-	)
-	
-	# replace the missing lon/lat in geo4 with geo3
-	geo <- merge(geo4, geo3, all.x=TRUE)
-	i <- is.na(geo$latitude) 
-	geo$latitude[i] <- geo$lat3[i]
-	geo$longitude[i] <- geo$long3[i]
-	geo$geo_uncertainty[i] <- geo$unc3[i]
-	geo$geo_source[i] <- geo$src3[i]
-	geo$lat3 <- geo$long3 <- geo$unc3 <- geo$src3 <- NULL
-	
+	#### georeferencing, by village (location) within district (adm2).
+	# Village coordinates are from GeoNames (geo_uncertainty 3000 m); where the village could not be
+	# found, the centroid of the ward (adm3) given in the source is used (GADM 4.1 or the GeoNames
+	# ADM3 record; geo_uncertainty from GADM or 10000 m); as a last resort the district centroid.
+	# Derived offline from the GeoNames TZ dump (download.geonames.org/export/dump/TZ.zip) and GADM,
+	# matching on the district/ward given in the source files.
+	geo <- data.frame(rbind(
+		# adm2, location, lon, lat, uncertainty, source
+		c("Iringa", "Magulilwa", 35.7381, -7.9701, 3000, "GeoNames, village"),
+		c("Iringa", "Ng'enza", 35.6785, -7.9618, 3000, "GeoNames, village"),
+		c("Iringa", "Kikombwe", 35.5693, -8.0514, 13908, "GADM 4.1, adm3 Mgama"),  # village and its ward (Lyamugugwe) not found; placed in neighbouring Mgama as in the source v1
+		c("Iringa", "Ihemi", 35.4868, -8.0163, 3000, "GeoNames, village"),
+		c("Iringa", "Mseke", 35.5635, -7.9453, 3000, "GeoNames, village"),
+		c("Iringa", "Tanangozi", 35.5833, -7.9167, 3000, "GeoNames, village"),  # GeoNames PPL; the earlier -8.9487 was a typo
+		c("Iringa", "Wenda", 35.5951, -7.9094, 3000, "GeoNames, village"),
+		c("Iringa", "Mangalali", 35.5678, -7.7735, 3000, "GeoNames, village"),
+		c("Iringa", "Uhominyi", 35.8091, -7.5175, 3000, "GeoNames, village"),
+		c("Iringa", "Mkungugu", 35.7765, -7.5377, 3000, "GeoNames, village"),
+		c("Iringa", "Kalenga", 35.6031, -7.8013, 3000, "GeoNames, village"),
+		c("Iringa", "Itamba", 35.6800, -7.7581, 3000, "GeoNames, village"),
+		c("Mufindi", "Nyakipambo", 35.0091, -8.7068, 10633, "GADM 4.1, adm3 Mtambula"),
+		c("Mufindi", "Lwing'ulo", 34.9463, -8.4550, 18495, "GADM 4.1, adm3 Nyololo"),
+		c("Mufindi", "Ikangamwane", 34.8079, -8.6484, 12047, "GADM 4.1, adm3 Idunda"),
+		c("Mufindi", "Isalavanu", 35.2579, -8.2021, 12695, "GADM 4.1, adm3 Isalavanu"),
+		c("Mufindi", "Njojo", 34.9463, -8.4550, 18495, "GADM 4.1, adm3 Nyololo"),
+		c("Makambako", "Igomba", 34.7645, -8.7293, 10000, "GeoNames, adm3 Saja"),
+		c("Makambako", "Litundu", 34.6665, -8.8360, 17014, "GADM 4.1, adm3 Wanging'ombe"),
+		c("Makambako", "Uhambule", 34.7007, -8.8794, 10000, "GeoNames, adm3 Uhambule"),
+		c("Makambako", "Ikingula", 34.6665, -8.8360, 17014, "GADM 4.1, adm3 Wanging'ombe"),
+		c("Njombe", "Saja", 34.7667, -8.6833, 3000, "GeoNames, village"),
+		c("Njombe", "Utiga", 34.6665, -8.8360, 17014, "GADM 4.1, adm3 Wanging'ombe"),
+		c("Njombe", "Mawende", 34.7848, -8.9666, 10000, "GeoNames, adm3 Utengule"),
+		c("Njombe", "Mawindi", 34.7413, -9.1900, 15206, "GADM 4.1, adm3 Igima"),
+		c("Njombe", "Itulahumba", 34.7480, -9.0860, 3000, "GeoNames, village"),
+		c("Njombe", "Masaulwa", 34.5990, -9.1300, 3000, "GeoNames, village"),
+		c("Njombe", "Wanging'ombe", 34.6665, -8.8360, 17014, "GADM 4.1, adm3 Wanging'ombe"),
+		c("Songea", "Nguvu Moja", 35.4693, -10.6101, 8122, "GADM 4.1, adm3 Peramiho"),
+		c("Songea", "Morogoro A", 35.2952, -10.6271, 16705, "GADM 4.1, adm3 Litisha"),
+		c("Songea", "Peramiho (A)", 35.4500, -10.6500, 3000, "GeoNames, village"),
+		c("Songea", "Litisha", 35.3833, -10.6500, 3000, "GeoNames, village"),
+		c("Songea", "Likalangilo", 35.6689, -10.3974, 11982, "GADM 4.1, adm3 Mtyangimbole"),
+		c("Songea", "Mkongotema", 35.5385, -10.0666, 45073, "GADM 4.1, adm3 Mkongotema"),
+		c("Songea", "Lutukira", 35.5385, -10.0666, 45073, "GADM 4.1, adm3 Mkongotema"),
+		c("Songea", "Ndelenyuma", 35.5000, -10.0667, 3000, "GeoNames, village"),
+		c("Mbozi", "Lumbila", 33.1128, -8.9829, 10000, "GeoNames, adm3 Ruanda (Mbozi)"),
+		c("Mbozi", "Ipyana", 33.1756, -9.0961, 15261, "GADM 4.1, adm3 Iyula"),
+		c("Mbozi", "Lungwa", 32.9779, -8.8192, 10000, "GeoNames, adm3 Isansa"),
+		c("Mbozi", "Idibira", 33.1128, -8.9829, 10000, "GeoNames, adm3 Ruanda (Mbozi)"),
+		c("Mbozi", "Ukwire", 32.8969, -9.2150, 11564, "GADM 4.1, adm3 Isandula"),
+		c("Mbozi", "Ichenjezya", 32.9261, -8.9457, 40000, "GeoNames, adm2 Mbozi"),  # village and its ward (Hasanga) not found
+		c("Mbozi", "Ilembo", 32.9463, -9.1187, 10976, "GADM 4.1, adm3 Vwawa"),
+		c("Mbozi", "Masangula", 33.0170, -9.1330, 3000, "GeoNames, village"),
+		c("Mbozi", "Mantengu (B)", 32.9463, -9.1187, 10976, "GADM 4.1, adm3 Vwawa"),
+		c("Mbeya", "Mwasoma", 33.5913, -8.9233, 10000, "GeoNames, adm3 Ijombe"),
+		c("Mbeya", "Tembela", 33.6252, -8.9745, 4820, "GADM 4.1, adm3 Tembela"),
+		c("Mbeya", "Iwala", 33.3317, -8.8843, 10000, "GeoNames, adm3 Utengule Usongwe"),
+		c("Mbeya", "Mshewe", 33.1586, -8.7592, 19131, "GADM 4.1, adm3 Mshewe"),
+		c("Mbeya", "Njelenje", 33.1586, -8.7592, 19131, "GADM 4.1, adm3 Mshewe"),
+		c("Mbeya", "Nsambia", 33.1586, -8.7592, 19131, "GADM 4.1, adm3 Mshewe"),
+		c("Mbeya", "Lusungo", 33.3566, -8.9617, 40000, "GeoNames, adm2 Mbeya"),  # village and its ward (Bonde la Usangu) not found
+		c("Mbeya", "Idiwili", 33.2560, -9.0734, 10000, "GeoNames, adm3 Isuto"),
+		c("Mbeya", "Galijembe", 33.6000, -8.9670, 3000, "GeoNames, village")
+	), stringsAsFactors = FALSE)
+	names(geo) <- c("adm2", "location", "longitude", "latitude", "geo_uncertainty", "geo_source")
+	geo$longitude <- as.numeric(geo$longitude)
+	geo$latitude <- as.numeric(geo$latitude)
+	geo$geo_uncertainty <- as.numeric(geo$geo_uncertainty)
 
-	# merge by adm4 is unique within the other adm levels
-	d <- merge(d, geo[c("location", "longitude", "latitude", "geo_uncertainty", "geo_source")], by="location", all.x=TRUE)
+	d <- merge(d, geo, by=c("adm2", "location"), all.x=TRUE)
+
+	# records whose VBAA has no match in the technology file have only the district;
+	# georeference those at the district level (GeoNames ADM2 centroids)
+	geod <- data.frame(
+		adm2 = c("Iringa", "Makambako", "Mbeya", "Mbozi", "Mufindi", "Njombe", "Songea"),
+		lond = c(34.8816, 34.9065, 33.3566, 32.9261, 35.2082, 35.1325, 35.4000),
+		latd = c(-7.5640, -8.8708, -8.9617, -8.9457, -8.5953, -9.2091, -10.3906),
+		uncd = c(60000, 15000, 40000, 40000, 40000, 40000, 50000)
+	)
+	d <- merge(d, geod, by="adm2", all.x=TRUE)
+	i <- is.na(d$latitude)
+	d$latitude[i] <- d$latd[i]
+	d$longitude[i] <- d$lond[i]
+	d$geo_uncertainty[i] <- d$uncd[i]
+	d$geo_source[i] <- "GeoNames, adm2"
+	d$latd <- d$lond <- d$uncd <- NULL
+
+	# region (adm1) for each district
+	adm1 <- c(Iringa="Iringa", Mufindi="Iringa", Makambako="Njombe", Njombe="Njombe",
+		Mbeya="Mbeya", Mbozi="Songwe", Songea="Ruvuma")
+	d$adm1 <- unname(adm1[d$adm2])
+
 	d$geo_from_source <- FALSE
 
 	
 	d$country = "Tanzania" ### experiment was conducted the in Southern highlands of Tanzania.
-	d$trial_id <- "1"
+	# one trial = one site (village demo); unmatched records are grouped by district
+	d$trial_id <- as.character(as.integer(as.factor(paste(d$adm2, ifelse(is.na(d$location), "unknown", d$location)))))
+	d$VB <- NULL  # VBAA (farmer adviser) personal name; only needed as the merge key
 	d$on_farm <- TRUE      #based on data description
 	d$is_survey <- FALSE
 	d$irrigated <- NA
