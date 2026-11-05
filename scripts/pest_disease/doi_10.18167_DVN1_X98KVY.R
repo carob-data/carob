@@ -20,10 +20,11 @@
 # 5. There is no yield or management data (weed survey); yield, fertilizer and
 #    date variables are not included.
 
+# weed_species_cover (added to terminag): cover (%) of an individual weed species on the
+#    plot, in the long table with weed_species (ground_cover = crop canopy cover;
+#    weed_cover is total plot weed cover, as in doi:10.18167/DVN1/VCLIB5)
+
 ## NEW VARIABLES
-# weed_species_cover_: cover (%) of an individual weed species on the plot
-#    (ground_cover = crop canopy cover; weed_cover is used here for total plot
-#    weed cover, as in doi:10.18167/DVN1/VCLIB5)
 # weed_family_: botanical family of the weed species
 
 carob_script <- function(path) {
@@ -45,7 +46,7 @@ Characterization of weed communities of food crops (groundnut, maize, sweet pota
                                   design = NA,
                                   data_type = "survey",
                                   treatment_vars = "none",
-                                  response_vars = "weed_cover;weed_species;weed_species_cover_",
+                                  response_vars = "weed_cover;weed_species;weed_species_cover",
                                   notes = NA,
                                   carob_contributor = "Mitchelle Njukuya",
                                   carob_date = "2026-11-02",
@@ -122,7 +123,7 @@ Characterization of weed communities of food crops (groundnut, maize, sweet pota
   long <- data.frame(
     trial_id = colnames(score)[j[, "col"]],
     code = r2[[1]][j[, "row"]],
-    weed_species_cover_ = cover[score[j]]
+    weed_species_cover = cover[score[j]]
   )
   long <- merge(long, spp, by = "code", all.x = TRUE)
   long$code <- NULL
