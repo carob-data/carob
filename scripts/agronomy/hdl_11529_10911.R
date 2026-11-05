@@ -33,13 +33,222 @@ carob_script <- function(path) {
 	id2 <- c('BH110','UP013','OD072','OD108','OD248','OD175','OD110','OD187','BH092','OD176','OD173','OD078','OD251','OD179','OD186','OD161','OD079','OD174','OD077','OD184','OD076','OD178','OD160','OD185')
 
 	geo <- data.frame(
-		SiteID = c(id1, id2),
-		adm2 = c('Kushi Nagar', 'Kushi Nagar', 'Bhojpur', 'Mayurbhanj', 'Bhojpur', 'Maharaj Gang', 'Kushi Nagar', 'Kushi Nagar', 'Bhojpur', 'Bhojpur', 'Kushinagar', 'Sant Kabir Nagar', 'Mayurbhanj', 'Kushi Nagar', 'Bhojpur', 'Mayurbhanj', 'Kushi Nagar', 'Mayurbhanj', 'Vaishali', 'Mayurbhanj', 'Puri', 'Sant Kabir Nagar', 'Sant Kabir Nagar', 'Mayurbhanj', 'Kushi Nagar', 'Mayurbhanj', 'Maharaj Gang', 'Puri', 'Samastipur', 'Maharaj Gang', 'Mayurbhanj', 'Bhojpur', 'Vaishali', 'Mayurbhanj', 'Puri', 'Puri', 'Puri', 'Puri', 'Mayurbhanj', 'Maharajganj', 'Mayurbhanj', 'Puri', 'Mayurbhanj', 'Maharajganj', 'Maharaj Gang', 'Puri', 'Puri', 'Maharajganj', 'Sant Kabir Nagar', 'Mujaffarpur', 'Vaishali', 'Mayurbhanj', 'Puri', 'Puri', 'Puri', 'Puri', 'Vaishali', 'Kushinagar', 'Vaishali', 'Kushinagar', 'Maharajganj', 'Puri', 'Maharajganj', 'Maharajganj', 'Maharaj Gang', 'Maharaj Gang', 'Bhadrak', 'Maharaj Gang', 'Mayurbhanj', 'Samastipur', 'Maharajganj', 'Sant Kabir Nagar', 'Mayurbhanj', 'Maharajganj', 'Mayurbhanj', 'Maharajganj', 'Samastipur', 'Maharajganj', 'Mayurbhanj', 'Keonjhar', 'Vaishali', 'Mayurbhanj', 'Bhadrak', 'Puri', 'Gorakhpur', 'Maharaj Gang', 'Bhadrak', 'Mayurbhanj', 'Maharaj Gang', 'Gorakhpur', 'Maharajganj', 'Puri', 'Kushinagar', 'Samastipur', 'Puri', 'Gorakhpur', 'Gorakhpur', 'Santkabirnagar', 'Santkabirnagar', 'Maharaj Gang', 'Bhagalpur', 'Bhadrak', 'Mayurbhanj', 'Maharajganj', 'Maharaj Gang', 'Bhadrak', 'Puri', 'Bhadrak', 'Mayurbhanj', 'Bhagalpur', 'Gorakhpur', 'Maharaj Gang', 'Santkabirnagar', 'Bhadrak', 'Vaishali', 'Vaishali', 'Samastipur', 'Kushinagar', 'Mayurbhanj', 'Mujaffarpur', 'Maharajganj', 'Bhadrak', 'Gorakhpur', 'Bhadrak', 'Puri', 'Bhojpur', 'Ara', 'Mujaffarpur', 'Kushinagar', 'Puri', 'Kushinagar', 'Mayurbhanj', 'Mayurbhanj', 'Begusarai', 'Puri', 'Puri', 'Bhadrak', 'Bhadrak', 'Mayurbhanj', 'Bhadrak', 'Mayurbhanj', 'Maharaj Gang', 'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Mayurbhanj', 'Mayurbhanj', 'Puri', 'Patna', 'Gorakhpur', 'Gorakhpur', 'Puri', 'Samastipur', 'Puri', 'Santkabirnagar', 'Santkabirnagar', 'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Bhagalpur', 'Puri', 'Puri', 'Puri', 'Mayurbhanj', 'Bhadrak', 'Mayurbhanj', 'Bhadrak', 'Bhadrak', 'Puri', 'Kushinagar', 'Puri', 'Puri', 'Puri', 'Mujaffarpur', 'Puri', 'Bhadrak', 'Puri', 'Mayurbhanj', 'Puri', 'Puri', 'Puri', 'Puri', 'Bhagalpur', 'Patna', 'Gorakhpur', 'Puri', 'Bhadrak', 'Mayurbhanj', 'Puri', 'Bhadrak', 'Mayurbhanj', 'Puri', 'Bhadrak', 'Mayurbhanj', 'Samastipur', 'Bhadrak', 'Bhadrak', 'Puri', 'Patna', 'Mayurbhanj', 'Ara', 'Kushinagar', 'Gorakhpur', 'Bhadrak', 'Cuttack', 'Puri', 'Bhadrak', 'Bhadrak', 'Mayurbhanj', 'Rohtas', 'Bhadrak', 'Puri', 'Bhadrak', 'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Bhadrak', 'Sambalpur', 'Bhadrak', 'Bhagalpur', 'Bhagalpur', 'Kendrapara', 'Puri', 'Puri', 'Puri', 'Puri', 'Mayurbhanj', 'Sant Kabir Nagar', 'Bhadrak', 'Sambalpur', 'Ballia', 'Begusarai', 'Mayurbhanj', 'Puri', 'Bhadrak', 'Kendrapara', 'Rohtas', 'Sambalpur', 'Mayurbhanj', 'Mayurbhanj', 'Kendrapara', 'Bhadrak', 'Bhadrak', 'Balasore', 'Bhadrak', 'Kendrapara', 'Mayurbhanj', 'Kendrapara', 'Bhadrak', 'Rohtas', 'Ballia', 'Kendrapara', 'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Rohtas', 'Sambalpur', 'Mayurbhanj', 'Kendrapara', 'Rohtas', 'Sambalpur', 'Bhagalpur', 'Rohtas', 'Bhadrak', 'Bhadrak', 'Cuttack', 'Bhadrak', 'Sundergarh', 'Kendrapara', 'Ara', 'Bhadrak', 'Kendrapara', 'Bhadrak', 'Puri', 'Sambalpur', 'Begusarai', 'Cuttack', 'Cuttack', 'Patna', 'Keonjhar', 'Puri', 'Bhadrak', 'Puri', 'Bhadrak', 'Sambalpur', 'Bhadrak', 'Rohtas', 'Sant Kabir Nagar', 'Rohtas', 'Bhagalpur', 'Cuttack', 'Puri', 'Muzaffarpur', 'Ara', 'Cuttack', 'Ara', 'Rohtas', 'Rohtas', 'Muzaffarpur', 'Kendrapara', 'Cuttack', 'Bhadrak', 'Kendrapara', 'Bhadrak', 'Cuttack', 'Bhadrak', 'Ballia', 'Puri', 'Dhenkanal', 'Muzaffarpur', 'Muzaffarpur', 'Muzaffarpur', 'Bhagalpur', 'Patna', 'Puri', 'Bhadrak', 'Ara', 'Puri', 'Puri', 'Puri', 'Puri', 'Kendrapara', 'Rohtas', 'Ballia', 'Balasore', 'Rohtas', 'Muzaffarpur', 'Muzaffarpur', 'Puri', 'Patna', 'Sambalpur', 'Bhadrak', 'Balasore', 'Rohtas', 'Cuttack', 'Puri', 'Rohtas', 'Sambalpur', 'Puri', 'Samastipur', 'Muzaffarpur', 'Puri', 'Ballia', 'Cuttack', 'Balasore', 'Kendrapara', 'Bhadrak', 'Kendrapara', 'Sundergarh', 'Bhadrak', 'Kendrapara', 'Bhadrak', 'Keonjhar', 'Ara', 'Ballia', 'Ballia', 'Puri', 'Bhadrak', 'Puri', 'Bhadrak', 'Dhenkanal', 'Balasore', 'Dhenkanal', 'Sundergarh', 'Ghazipur', 'Puri', 'Balasore', 'Patna', 'Chandauli', 'Ghazipur', 'Bhadrak', 'Ara', 'Ballia', 'Puri', 'Keonjhar', 'Sambalpur', 'Rohtas', 'Ghazipur', 'Dhenkanal', 'Bhadrak', 'Puri', 'Chandauli', 'Chandauli', 'Ghazipur', 'Bhadrak', 'Keonjhar', 'Puri', 'Puri', 'Puri', 'Ghazipur', 'Balasore', 'Keonjhar', 'Balasore', 'Keonjhar', 'Keonjhar', 'Balasore', 'Ghazipur', 'Chandauli', 'Balasore', 'Ghazipur', 'Puri', 'Chandauli', 'Bhadrak', 'Dhenkanal', 'Chandauli', 'Keonjhar', 'Dhenkanal', 'Puri', 'Sundergarh', 'Sundergarh', 'Ghazipur', 'Puri', 'Chandauli', 'Bhadrak', 'Rohtas', 'Puri', 'Rohtas', 'Puri', 'Puri', 'Keonjhar', 'Puri', 'Muzaffarpur', 'Dhenkanal', 'Bhadrak', 'Puri', 'Puri', 'Puri', 'Puri', 'Puri', 'Rohtas', 'Sundergarh', 'Samastipur', 'Chandauli', 'Dhenkanal', 'Keonjhar', 'Sundergarh', 'Puri', 'Keonjhar', 'Puri', 'Rohtas', 'Puri', 'Puri', 'Dhenkanal', 'Sundergarh', 'Puri', 'Puri', 'Puri', 'Dhenkanal', 'Puri', 'Dhenkanal', 'Puri', 'Dhenkanal', 'Puri', 'Puri', 'Puri'),
-		longitude = c(84.6786, 84.6786, 84.4464, 85.9542, 84.5931, 83.3581, 84.4056, 84.6866, 84.5898, 84.4445, 84.6851, 82.9426, 85.9602, 84.4517, 84.594, 86.7017, 84.6866, 85.9997, 85.1336, 86.485, 85.9571, 82.9426, 82.9396, 86.6943, 84.4517, 86.4488, 83.3514, 85.8102, 86.5843, 83.3517, 86.163, 84.5639, 85.4693, 86.2663, 85.4748, 86.71, 85.4748, 86.71, 86.4488, 83.3365, NA, 85.5344, 85.9844, 83.3598, 83.3517, 85.4915, 86.1804, 83.3698, 82.9454, 85.6168, 85.4693, 86.4207, 95.4803, 85.4356, 95.4803, 85.4356, 85.1834, 84.7387, 85.4358, 84.7387, 83.3622, 86.4749, 83.3338, 83.333, 83.236, 83.2134, NA, 83.3501, 86.18, 86.5852, 83.3365, 82.9435, 85.9989, 83.3579, 86.1644, 83.3463, 86.585, 83.3706, NA, 85.45, 85.1016, 86.152, 86.5885, 86.4, 83.3959, 83.2191, 86.5978, 86.1527, 83.3401, 83.3859, 83.3586, 85.9187, 83.9441, 86.5843, 86.5728, 82.9538, 83.3862, 82.9514, 82.9451, 83.2146, 87.1704, 86.5984, 86.1129, 83.3317, 83.236, 86.5912, 85.9275, 86.568, 86.7397, NA, 83.4928, 83.3401, 82.9538, NA, 85.1016, 85.1018, 85.6521, 83.4016, 86.5839, 85.6188, 83.3365, NA, 82.9357, 86.5917, 85.9096, NA, 84.65, 85.2001, 83.9514, 85.6484, 83.4024, NA, NA, 85.9194, 85.9247, 85.8876, 86.5906, NA, NA, NA, NA, 83.3514, 85.9289, 86.601, NA, 86.601, NA, 85.9127, 84.9721, 83.3859, 83.4024, 85.9669, 86.5852, 85.9096, 82.9357, 82.9514, 85.933, 86.1013, 86.9315, 87.1649, 85.9677, 85.9309, 85.8892, NA, NA, NA, NA, 86.5912, 86.2612, 84.5592, 85.8868, 85.9262, 85.9379, 85.6015, 85.9329, NA, 85.9242, NA, 85.5057, 85.9743, 85.5057, 85.9743, 86.9128, 84.8578, 83.3862, 85.9683, NA, NA, 85.9683, NA, NA, 85.9683, NA, NA, 86.5854, 86.5897, NA, 85.959, 84.8527, NA, 84.595, 84.5589, 83.4928, NA, 86.163, 85.7777, NA, 86.5775, NA, 84.1155, NA, 85.55, NA, 85.55, NA, NA, NA, NA, NA, 87.9837, NA, NA, 85.6684, 86.2034, 85.6684, 86.2034, 86.2372, 82.9423, NA, NA, 84.1836, 86.2188, 86.9303, 85.8102, NA, NA, 84.1297, NA, NA, NA, NA, NA, NA, 86.66, NA, NA, NA, NA, NA, 84.1884, 84.376, NA, 85.7717, NA, NA, 84.1289, NA, NA, NA, 84.1292, NA, NA, 84.1044, NA, NA, 86.163, NA, 84.4, NA, 84.5843, NA, NA, NA, 85.8039, NA, 86.2017, 86.163, 86.163, 84.8577, 85.44, 85.9005, NA, 85.9005, NA, NA, NA, 84.1855, 82.9435, 84.1075, 87.8852, 86.163, 85.85, 85.9523, 84.594, 86.117, 84.5851, 84.1855, 84.1075, 85.6009, NA, 86.117, NA, NA, NA, 86.117, NA, 84.1833, 85.922, 85.35, 85.9668, 85.6019, 85.6027, 87.8852, 84.8542, 85.7726, NA, 84.6502, 85.9749, 85.831, 85.9749, 85.831, NA, 84.1147, 84.528, 86.603, 84.1292, 85.9523, 85.6009, 85.8157, 84.9723, NA, NA, 86.611, 84.2481, 86.163, 86, 84.113, NA, 86.3676, 85.6521, 85.6016, 85.7004, 84.5343, 86.117, 86.517, NA, NA, NA, 84.11, NA, NA, NA, 85.44, 84.5919, 83.964, 83.9634, 85.9099, NA, 85.9099, NA, 85.35, 86.89, 85.35, 84.4318, 83.4795, 85.85, 86.63, 84.8541, 83.3391, 83.4622, NA, 84.5919, 84.362, 85.9616, 85.78, NA, 84.113, 83.4021, NA, NA, 85.9747, 83.3346, 83.4212, 83.6253, NA, 85.76, 85.9096, 85.9525, 85.5, 83.2716, 86.653, 85.44, 86.58, 85.45, 85.76, 86.51, 83.4561, 83.3351, 86.564, 83.5743, 85.9016, 83.4618, NA, NA, 83.3304, 85.761, 85.35, 86.733, 84.1, 83.9718, 83.5806, 85.48, 83.4189, NA, NA, 85.9693, NA, 85.909, 85.9771, 85.76, 85.9699, 85.9521, 85.35, NA, 85.49, 86.1, 85.5, 86.1, 85.5, NA, 84.8451, 85.6521, 83.4636, 85.35, 85.73, 84.2467, 86.3, 85.78, 86.1, NA, 85.54, 85.51, NA, 84.5799, 85.48, 85.51, 85.8833, 85.35, 85.51, NA, 85.51, NA, 85.49, 85.7795, 85.54),
-		latitude = c(26.6895, 26.6895, 25.4788, 21.7673, 25.4622, 27.1389, 26.4135, 26.6901, 25.4544, 25.4807, 26.7288, 26.8409, 21.7778, 26.7299, 25.4626, 21.8284, 26.6901, 21.7656, 25.9341, 21.8159, 19.9764, 26.8409, 26.8188, NA, 26.7299, 21.9101, 27.1425, 20.2632, 26.5336, 27.1424, 21.9874, 25.4174, 25.6836, 22.1517, 19.58, 20.769, 19.58, 20.769, 21.9101, 27.1476, NA, 19.563, NA, 27.161, 27.1424, 20.408, 20.87, 27.1524, 26.8166, 26.5134, 25.6836, 21.9777, 19.5948, 20.613, 19.5948, 20.613, 25.7841, 26.6893, 25.8013, 26.6893, 27.1544, 20.794, 27.1462, 27.1451, 27.8961, 27.6769, NA, 27.1404, 21.8185, 26.3184, 27.1476, 26.8304, 21.7657, 27.1422, 21.9846, 27.1566, 26.5338, 27.1514, NA, 21.39, 25.9686, 21.9842, 21.7559, 19.9669, 26.5159, 27.8131, 21.7575, 21.9862, 27.1392, 26.5096, 27.1587, 20.46, 26.8853, 26.5336, 20.1064, 26.8591, 26.5092, 26.8001, 26.8295, 27.8211, 25.1354, 21.762, 21.9285, 27.146, 27.8961, 21.7964, 20.3219, 21.1016, 22.3833, NA, 26.7471, 27.1392, 26.8591, NA, 25.9685, 25.9685, 25.9842, 26.5066, 21.9694, 26.5038, 27.1476, NA, 26.8365, 21.7944, 20.7981, NA, 25.4849, 26.2515, 26.8836, 20.154, 26.507, NA, NA, 25.6008, 19.9994, 20.368, 21.7966, NA, NA, NA, NA, 27.1425, 20.2876, 21.9695, NA, 21.9695, NA, 20.8338, 25.5845, 26.5096, 26.507, 20.4892, 26.3184, 20.1244, 26.8365, 26.8001, 20.4439, 21.957, 21.9271, 25.1326, 20.7431, 20.227, 20.3698, NA, NA, NA, NA, 21.7906, 21.85, 26.7268, 20.244, 19.9059, 19.9104, 25.9357, 20.9908, NA, 20.4039, NA, 20.654, 19.9069, 20.654, 19.9069, 25.1046, 25.5162, 26.5092, 19.9116, NA, NA, 19.9116, NA, NA, 19.9116, NA, NA, 26.3178, 21.8188, NA, 20.474, 25.516, NA, 25.4623, 26.7254, 26.7471, NA, 20.479, 20.759, NA, 21.8574, NA, 25.2409, NA, 20.2, NA, 20.2, NA, NA, NA, NA, NA, 25.1564, NA, NA, 19.9931, 19.9711, 19.9931, 19.9711, 21.9866, 26.837, NA, NA, 25.8747, 25.4016, 21.9194, 20.2631, NA, NA, 25.2375, NA, NA, NA, NA, NA, NA, 21.12, NA, NA, NA, NA, NA, 25.1867, 25.9584, NA, 20.3612, NA, NA, 25.2367, NA, NA, NA, 25.2363, NA, NA, 25.2036, NA, NA, 20.479, NA, 22.12, NA, 25.4508, NA, NA, NA, 20.863, NA, 25.4516, 20.479, 20.479, 25.5185, 21.37, 19.9101, NA, 19.9101, NA, NA, NA, 25.1989, 26.8304, 25.2038, 25.1519, 20.479, 20.2416, 26.1689, 25.4626, 20.481, 25.4525, 25.1989, 25.2038, 25.9344, NA, 20.481, NA, NA, NA, 20.481, NA, 25.8747, 19.9996, 20.36, 26.1689, 25.9358, 25.936, 25.1519, 25.5165, 20.3449, NA, 25.4688, 20.535, 20.454, 20.535, 20.454, NA, 25.2461, 25.9062, 21.149, 25.2363, 26.1692, 25.9344, 20.683, 25.5845, NA, NA, 21.15, 25.1928, 20.479, 19.3, 25.2404, NA, 20.9475, 25.9842, 25.9361, 19.9351, 25.9068, 20.481, 21.15, NA, NA, NA, 22.3, NA, NA, NA, 21.36, 25.4624, 25.9342, 25.9352, 19.9079, NA, 19.9079, NA, 20.36, 21.36, 20.36, 22.124, 25.5887, 20.2408, 21.29, 25.5187, 25.1301, 25.6302, NA, 25.463, 25.9575, 20.395, 21.61, NA, 25.2404, 25.5866, 20.36, NA, 20.4915, 25.1124, 25.2914, 25.6238, NA, 21.65, 20.1245, 19.9005, 20.2, 25.6073, 21.258, 21.36, 21.14, 21.39, 21.65, 21.15, 25.5456, 25.1032, 21.144, 25.3895, 20.1075, 25.3208, NA, NA, 25.1306, 21.651, 20.36, 19.9992, 22.34, 22.1065, 25.5272, 20.5, 25.2922, NA, NA, 20.4572, NA, 20.7427, 20.824, 21.65, 20.221, 26.1689, 20.36, NA, 20.2, 19.59, 20.2, 19.59, 20.2, NA, 21.6861, 25.9842, 25.3231, 20.36, 21.6, 21.9897, 19.59, 21.61, 19.59, NA, 20.3, 20.4, NA, 22.1902, 20.5, 20.4, 20.1064, 20.36, 20.4, NA, 20.4, NA, 20.4, 20.4095, 20.3)
+	  SiteID = c(id1, id2),
+	  adm2 = c('Kushi Nagar', 'Kushi Nagar', 'Bhojpur', 'Mayurbhanj', 'Bhojpur', 'Maharaj Gang',
+	           'Kushi Nagar', 'Kushi Nagar', 'Bhojpur', 'Bhojpur', 'Kushinagar', 'Sant Kabir Nagar',
+	           'Mayurbhanj', 'Kushi Nagar', 'Bhojpur', 'Mayurbhanj', 'Kushi Nagar', 'Mayurbhanj',
+	           'Vaishali', 'Mayurbhanj', 'Puri', 'Sant Kabir Nagar', 'Sant Kabir Nagar', 'Mayurbhanj',
+	           'Kushi Nagar', 'Mayurbhanj', 'Maharaj Gang', 'Puri', 'Samastipur', 'Maharaj Gang',
+	           'Mayurbhanj', 'Bhojpur', 'Vaishali', 'Mayurbhanj', 'Puri', 'Puri',
+	           'Puri', 'Puri', 'Mayurbhanj', 'Maharajganj', 'Mayurbhanj', 'Puri',
+	           'Mayurbhanj', 'Maharajganj', 'Maharaj Gang', 'Puri', 'Puri', 'Maharajganj',
+	           'Sant Kabir Nagar', 'Mujaffarpur', 'Vaishali', 'Mayurbhanj', 'Puri', 'Puri',
+	           'Puri', 'Puri', 'Vaishali', 'Kushinagar', 'Vaishali', 'Kushinagar',
+	           'Maharajganj', 'Puri', 'Maharajganj', 'Maharajganj', 'Maharaj Gang', 'Maharaj Gang',
+	           'Bhadrak', 'Maharaj Gang', 'Mayurbhanj', 'Samastipur', 'Maharajganj', 'Sant Kabir Nagar',
+	           'Mayurbhanj', 'Maharajganj', 'Mayurbhanj', 'Maharajganj', 'Samastipur', 'Maharajganj',
+	           'Mayurbhanj', 'Keonjhar', 'Vaishali', 'Mayurbhanj', 'Bhadrak', 'Puri',
+	           'Gorakhpur', 'Maharaj Gang', 'Bhadrak', 'Mayurbhanj', 'Maharaj Gang', 'Gorakhpur',
+	           'Maharajganj', 'Puri', 'Kushinagar', 'Samastipur', 'Puri', 'Gorakhpur',
+	           'Gorakhpur', 'Santkabirnagar', 'Santkabirnagar', 'Maharaj Gang', 'Bhagalpur', 'Bhadrak',
+	           'Mayurbhanj', 'Maharajganj', 'Maharaj Gang', 'Bhadrak', 'Puri', 'Bhadrak',
+	           'Mayurbhanj', 'Bhagalpur', 'Gorakhpur', 'Maharaj Gang', 'Santkabirnagar', 'Bhadrak',
+	           'Vaishali', 'Vaishali', 'Samastipur', 'Kushinagar', 'Mayurbhanj', 'Mujaffarpur',
+	           'Maharajganj', 'Bhadrak', 'Gorakhpur', 'Bhadrak', 'Puri', 'Bhojpur',
+	           'Ara', 'Mujaffarpur', 'Kushinagar', 'Puri', 'Kushinagar', 'Mayurbhanj',
+	           'Mayurbhanj', 'Begusarai', 'Puri', 'Puri', 'Bhadrak', 'Bhadrak',
+	           'Mayurbhanj', 'Bhadrak', 'Mayurbhanj', 'Maharaj Gang', 'Puri', 'Mayurbhanj',
+	           'Mayurbhanj', 'Mayurbhanj', 'Mayurbhanj', 'Puri', 'Patna', 'Gorakhpur',
+	           'Gorakhpur', 'Puri', 'Samastipur', 'Puri', 'Santkabirnagar', 'Santkabirnagar',
+	           'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Bhagalpur', 'Puri', 'Puri',
+	           'Puri', 'Mayurbhanj', 'Bhadrak', 'Mayurbhanj', 'Bhadrak', 'Bhadrak',
+	           'Puri', 'Kushinagar', 'Puri', 'Puri', 'Puri', 'Mujaffarpur',
+	           'Puri', 'Bhadrak', 'Puri', 'Mayurbhanj', 'Puri', 'Puri',
+	           'Puri', 'Puri', 'Bhagalpur', 'Patna', 'Gorakhpur', 'Puri',
+	           'Bhadrak', 'Mayurbhanj', 'Puri', 'Bhadrak', 'Mayurbhanj', 'Puri',
+	           'Bhadrak', 'Mayurbhanj', 'Samastipur', 'Bhadrak', 'Bhadrak', 'Puri',
+	           'Patna', 'Mayurbhanj', 'Ara', 'Kushinagar', 'Gorakhpur', 'Bhadrak',
+	           'Cuttack', 'Puri', 'Bhadrak', 'Bhadrak', 'Mayurbhanj', 'Rohtas',
+	           'Bhadrak', 'Puri', 'Bhadrak', 'Puri', 'Mayurbhanj', 'Mayurbhanj',
+	           'Bhadrak', 'Sambalpur', 'Bhadrak', 'Bhagalpur', 'Bhagalpur', 'Kendrapara',
+	           'Puri', 'Puri', 'Puri', 'Puri', 'Mayurbhanj', 'Sant Kabir Nagar',
+	           'Bhadrak', 'Sambalpur', 'Ballia', 'Begusarai', 'Mayurbhanj', 'Puri',
+	           'Bhadrak', 'Kendrapara', 'Rohtas', 'Sambalpur', 'Mayurbhanj', 'Mayurbhanj',
+	           'Kendrapara', 'Bhadrak', 'Bhadrak', 'Balasore', 'Bhadrak', 'Kendrapara',
+	           'Mayurbhanj', 'Kendrapara', 'Bhadrak', 'Rohtas', 'Ballia', 'Kendrapara',
+	           'Puri', 'Mayurbhanj', 'Mayurbhanj', 'Rohtas', 'Sambalpur', 'Mayurbhanj',
+	           'Kendrapara', 'Rohtas', 'Sambalpur', 'Bhagalpur', 'Rohtas', 'Bhadrak',
+	           'Bhadrak', 'Cuttack', 'Bhadrak', 'Sundergarh', 'Kendrapara', 'Ara',
+	           'Bhadrak', 'Kendrapara', 'Bhadrak', 'Puri', 'Sambalpur', 'Begusarai',
+	           'Cuttack', 'Cuttack', 'Patna', 'Keonjhar', 'Puri', 'Bhadrak',
+	           'Puri', 'Bhadrak', 'Sambalpur', 'Bhadrak', 'Rohtas', 'Sant Kabir Nagar',
+	           'Rohtas', 'Bhagalpur', 'Cuttack', 'Puri', 'Muzaffarpur', 'Ara',
+	           'Cuttack', 'Ara', 'Rohtas', 'Rohtas', 'Muzaffarpur', 'Kendrapara',
+	           'Cuttack', 'Bhadrak', 'Kendrapara', 'Bhadrak', 'Cuttack', 'Bhadrak',
+	           'Ballia', 'Puri', 'Dhenkanal', 'Muzaffarpur', 'Muzaffarpur', 'Muzaffarpur',
+	           'Bhagalpur', 'Patna', 'Puri', 'Bhadrak', 'Ara', 'Puri',
+	           'Puri', 'Puri', 'Puri', 'Kendrapara', 'Rohtas', 'Ballia',
+	           'Balasore', 'Rohtas', 'Muzaffarpur', 'Muzaffarpur', 'Puri', 'Patna',
+	           'Sambalpur', 'Bhadrak', 'Balasore', 'Rohtas', 'Cuttack', 'Puri',
+	           'Rohtas', 'Sambalpur', 'Puri', 'Samastipur', 'Muzaffarpur', 'Puri',
+	           'Ballia', 'Cuttack', 'Balasore', 'Kendrapara', 'Bhadrak', 'Kendrapara',
+	           'Sundergarh', 'Bhadrak', 'Kendrapara', 'Bhadrak', 'Keonjhar', 'Ara',
+	           'Ballia', 'Ballia', 'Puri', 'Bhadrak', 'Puri', 'Bhadrak',
+	           'Dhenkanal', 'Balasore', 'Dhenkanal', 'Sundergarh', 'Ghazipur', 'Puri',
+	           'Balasore', 'Patna', 'Chandauli', 'Ghazipur', 'Bhadrak', 'Ara',
+	           'Ballia', 'Puri', 'Keonjhar', 'Sambalpur', 'Rohtas', 'Ghazipur',
+	           'Dhenkanal', 'Bhadrak', 'Puri', 'Chandauli', 'Chandauli', 'Ghazipur',
+	           'Bhadrak', 'Keonjhar', 'Puri', 'Puri', 'Puri', 'Ghazipur',
+	           'Balasore', 'Keonjhar', 'Balasore', 'Keonjhar', 'Keonjhar', 'Balasore',
+	           'Ghazipur', 'Chandauli', 'Balasore', 'Ghazipur', 'Puri', 'Chandauli',
+	           'Bhadrak', 'Dhenkanal', 'Chandauli', 'Keonjhar', 'Dhenkanal', 'Puri',
+	           'Sundergarh', 'Sundergarh', 'Ghazipur', 'Puri', 'Chandauli', 'Bhadrak',
+	           'Rohtas', 'Puri', 'Rohtas', 'Puri', 'Puri', 'Keonjhar',
+	           'Puri', 'Muzaffarpur', 'Dhenkanal', 'Bhadrak', 'Puri', 'Puri',
+	           'Puri', 'Puri', 'Puri', 'Rohtas', 'Sundergarh', 'Samastipur',
+	           'Chandauli', 'Dhenkanal', 'Keonjhar', 'Sundergarh', 'Puri', 'Keonjhar',
+	           'Puri', 'Rohtas', 'Puri', 'Puri', 'Dhenkanal', 'Sundergarh',
+	           'Puri', 'Puri', 'Puri', 'Dhenkanal', 'Puri', 'Dhenkanal',
+	           'Puri', 'Dhenkanal', 'Puri', 'Puri', 'Puri'),
+	  longitude = c(84.6786, 84.6786, 84.4464, 85.9542, 84.5931, 83.3581, 84.4056, 84.6866, 84.5898, 84.4445,
+	                84.6851, 82.9426, 85.9602, 84.4517, 84.594, 86.7017, 84.6866, 85.9997, 85.1336, 86.485,
+	                85.9571, 82.9426, 82.9396, 86.6943, 84.4517, 86.4488, 83.3514, 85.8102, 86.5843, 83.3517,
+	                86.163, 84.5639, 85.4693, 86.2663, 85.4748, 86.71, 85.4748, 86.71, 86.4488, 83.3365,
+	                NA, 85.5344, 85.9844, 83.3598, 83.3517, 85.4915, 86.1804, 83.3698, 82.9454, 85.6168,
+	                85.4693, 86.4207, 95.4803, 85.4356, 95.4803, 85.4356, 85.1834, 84.7387, 85.4358, 84.7387,
+	                83.3622, 86.4749, 83.3338, 83.333, 83.236, 83.2134, NA, 83.3501, 86.18, 86.5852,
+	                83.3365, 82.9435, 85.9989, 83.3579, 86.1644, 83.3463, 86.585, 83.3706, NA, 85.45,
+	                85.1016, 86.152, 86.5885, 86.4, 83.3959, 83.2191, 86.5978, 86.1527, 83.3401, 83.3859,
+	                83.3586, 85.9187, 83.9441, 86.5843, 86.5728, 82.9538, 83.3862, 82.9514, 82.9451, 83.2146,
+	                87.1704, 86.5984, 86.1129, 83.3317, 83.236, 86.5912, 85.9275, 86.568, 86.7397, NA,
+	                83.4928, 83.3401, 82.9538, NA, 85.1016, 85.1018, 85.6521, 83.4016, 86.5839, 85.6188,
+	                83.3365, NA, 82.9357, 86.5917, 85.9096, NA, 84.65, 85.2001, 83.9514, 85.6484,
+	                83.4024, NA, NA, 85.9194, 85.9247, 85.8876, 86.5906, NA, NA, NA,
+	                NA, 83.3514, 85.9289, 86.601, NA, 86.601, NA, 85.9127, 84.9721, 83.3859,
+	                83.4024, 85.9669, 86.5852, 85.9096, 82.9357, 82.9514, 85.933, 86.1013, 86.9315, 87.1649,
+	                85.9677, 85.9309, 85.8892, NA, NA, NA, NA, 86.5912, 86.2612, 84.5592,
+	                85.8868, 85.9262, 85.9379, 85.6015, 85.9329, NA, 85.9242, NA, 85.5057, 85.9743,
+	                85.5057, 85.9743, 86.9128, 84.8578, 83.3862, 85.9683, NA, NA, 85.9683, NA,
+	                NA, 85.9683, NA, NA, 86.5854, 86.5897, NA, 85.959, 84.8527, NA,
+	                84.595, 84.5589, 83.4928, NA, 86.163, 85.7777, NA, 86.5775, NA, 84.1155,
+	                NA, 85.55, NA, 85.55, NA, NA, NA, NA, NA, 87.9837,
+	                NA, NA, 85.6684, 86.2034, 85.6684, 86.2034, 86.2372, 82.9423, NA, NA,
+	                84.1836, 86.2188, 86.9303, 85.8102, NA, NA, 84.1297, NA, NA, NA,
+	                NA, NA, NA, 86.66, NA, NA, NA, NA, NA, 84.1884,
+	                84.376, NA, 85.7717, NA, NA, 84.1289, NA, NA, NA, 84.1292,
+	                NA, NA, 84.1044, NA, NA, 86.163, NA, 84.4, NA, 84.5843,
+	                NA, NA, NA, 85.8039, NA, 86.2017, 86.163, 86.163, 84.8577, 85.44,
+	                85.9005, NA, 85.9005, NA, NA, NA, 84.1855, 82.9435, 84.1075, 87.8852,
+	                86.163, 85.85, 85.9523, 84.594, 86.117, 84.5851, 84.1855, 84.1075, 85.6009, NA,
+	                86.117, NA, NA, NA, 86.117, NA, 84.1833, 85.922, 85.35, 85.9668,
+	                85.6019, 85.6027, 87.8852, 84.8542, 85.7726, NA, 84.6502, 85.9749, 85.831, 85.9749,
+	                85.831, NA, 84.1147, 84.528, 86.603, 84.1292, 85.9523, 85.6009, 85.8157, 84.9723,
+	                NA, NA, 86.611, 84.2481, 86.163, 86, 84.113, NA, 86.3676, 85.6521,
+	                85.6016, 85.7004, 84.5343, 86.117, 86.517, NA, NA, NA, 84.11, NA,
+	                NA, NA, 85.44, 84.5919, 83.964, 83.9634, 85.9099, NA, 85.9099, NA,
+	                85.35, 86.89, 85.35, 84.4318, 83.4795, 85.85, 86.63, 84.8541, 83.3391, 83.4622,
+	                NA, 84.5919, 84.362, 85.9616, 85.78, NA, 84.113, 83.4021, NA, NA,
+	                85.9747, 83.3346, 83.4212, 83.6253, NA, 85.76, 85.9096, 85.9525, 85.5, 83.2716,
+	                86.653, 85.44, 86.58, 85.45, 85.76, 86.51, 83.4561, 83.3351, 86.564, 83.5743,
+	                85.9016, 83.4618, NA, NA, 83.3304, 85.761, 85.35, 86.733, 84.1, 83.9718,
+	                83.5806, 85.48, 83.4189, NA, NA, 85.9693, NA, 85.909, 85.9771, 85.76,
+	                85.9699, 85.9521, 85.35, NA, 85.49, 86.1, 85.5, 86.1, 85.5, NA,
+	                84.8451, 85.6521, 83.4636, 85.35, 85.73, 84.2467, 86.3, 85.78, 86.1, NA,
+	                85.54, 85.51, NA, 84.5799, 85.48, 85.51, 85.8833, 85.35, 85.51, NA,
+	                85.51, NA, 85.49, 85.7795, 85.54),
+	  latitude = c(26.6895, 26.6895, 25.4788, 21.7673, 25.4622, 27.1389, 26.4135, 26.6901, 25.4544, 25.4807,
+	               26.7288, 26.8409, 21.7778, 26.7299, 25.4626, 21.8284, 26.6901, 21.7656, 25.9341, 21.8159,
+	               19.9764, 26.8409, 26.8188, NA, 26.7299, 21.9101, 27.1425, 20.2632, 26.5336, 27.1424,
+	               21.9874, 25.4174, 25.6836, 22.1517, 19.58, 20.769, 19.58, 20.769, 21.9101, 27.1476,
+	               NA, 19.563, NA, 27.161, 27.1424, 20.408, 20.87, 27.1524, 26.8166, 26.5134,
+	               25.6836, 21.9777, 19.5948, 20.613, 19.5948, 20.613, 25.7841, 26.6893, 25.8013, 26.6893,
+	               27.1544, 20.794, 27.1462, 27.1451, 27.8961, 27.6769, NA, 27.1404, 21.8185, 26.3184,
+	               27.1476, 26.8304, 21.7657, 27.1422, 21.9846, 27.1566, 26.5338, 27.1514, NA, 21.39,
+	               25.9686, 21.9842, 21.7559, 19.9669, 26.5159, 27.8131, 21.7575, 21.9862, 27.1392, 26.5096,
+	               27.1587, 20.46, 26.8853, 26.5336, 20.1064, 26.8591, 26.5092, 26.8001, 26.8295, 27.8211,
+	               25.1354, 21.762, 21.9285, 27.146, 27.8961, 21.7964, 20.3219, 21.1016, 22.3833, NA,
+	               26.7471, 27.1392, 26.8591, NA, 25.9685, 25.9685, 25.9842, 26.5066, 21.9694, 26.5038,
+	               27.1476, NA, 26.8365, 21.7944, 20.7981, NA, 25.4849, 26.2515, 26.8836, 20.154,
+	               26.507, NA, NA, 25.6008, 19.9994, 20.368, 21.7966, NA, NA, NA,
+	               NA, 27.1425, 20.2876, 21.9695, NA, 21.9695, NA, 20.8338, 25.5845, 26.5096,
+	               26.507, 20.4892, 26.3184, 20.1244, 26.8365, 26.8001, 20.4439, 21.957, 21.9271, 25.1326,
+	               20.7431, 20.227, 20.3698, NA, NA, NA, NA, 21.7906, 21.85, 26.7268,
+	               20.244, 19.9059, 19.9104, 25.9357, 20.9908, NA, 20.4039, NA, 20.654, 19.9069,
+	               20.654, 19.9069, 25.1046, 25.5162, 26.5092, 19.9116, NA, NA, 19.9116, NA,
+	               NA, 19.9116, NA, NA, 26.3178, 21.8188, NA, 20.474, 25.516, NA,
+	               25.4623, 26.7254, 26.7471, NA, 20.479, 20.759, NA, 21.8574, NA, 25.2409,
+	               NA, 20.2, NA, 20.2, NA, NA, NA, NA, NA, 25.1564,
+	               NA, NA, 19.9931, 19.9711, 19.9931, 19.9711, 21.9866, 26.837, NA, NA,
+	               25.8747, 25.4016, 21.9194, 20.2631, NA, NA, 25.2375, NA, NA, NA,
+	               NA, NA, NA, 21.12, NA, NA, NA, NA, NA, 25.1867,
+	               25.9584, NA, 20.3612, NA, NA, 25.2367, NA, NA, NA, 25.2363,
+	               NA, NA, 25.2036, NA, NA, 20.479, NA, 22.12, NA, 25.4508,
+	               NA, NA, NA, 20.863, NA, 25.4516, 20.479, 20.479, 25.5185, 21.37,
+	               19.9101, NA, 19.9101, NA, NA, NA, 25.1989, 26.8304, 25.2038, 25.1519,
+	               20.479, 20.2416, 26.1689, 25.4626, 20.481, 25.4525, 25.1989, 25.2038, 25.9344, NA,
+	               20.481, NA, NA, NA, 20.481, NA, 25.8747, 19.9996, 20.36, 26.1689,
+	               25.9358, 25.936, 25.1519, 25.5165, 20.3449, NA, 25.4688, 20.535, 20.454, 20.535,
+	               20.454, NA, 25.2461, 25.9062, 21.149, 25.2363, 26.1692, 25.9344, 20.683, 25.5845,
+	               NA, NA, 21.15, 25.1928, 20.479, 19.3, 25.2404, NA, 20.9475, 25.9842,
+	               25.9361, 19.9351, 25.9068, 20.481, 21.15, NA, NA, NA, 22.3, NA,
+	               NA, NA, 21.36, 25.4624, 25.9342, 25.9352, 19.9079, NA, 19.9079, NA,
+	               20.36, 21.36, 20.36, 22.124, 25.5887, 20.2408, 21.29, 25.5187, 25.1301, 25.6302,
+	               NA, 25.463, 25.9575, 20.395, 21.61, NA, 25.2404, 25.5866, 20.36, NA,
+	               20.4915, 25.1124, 25.2914, 25.6238, NA, 21.65, 20.1245, 19.9005, 20.2, 25.6073,
+	               21.258, 21.36, 21.14, 21.39, 21.65, 21.15, 25.5456, 25.1032, 21.144, 25.3895,
+	               20.1075, 25.3208, NA, NA, 25.1306, 21.651, 20.36, 19.9992, 22.34, 22.1065,
+	               25.5272, 20.5, 25.2922, NA, NA, 20.4572, NA, 20.7427, 20.824, 21.65,
+	               20.221, 26.1689, 20.36, NA, 20.2, 19.59, 20.2, 19.59, 20.2, NA,
+	               21.6861, 25.9842, 25.3231, 20.36, 21.6, 21.9897, 19.59, 21.61, 19.59, NA,
+	               20.3, 20.4, NA, 22.1902, 20.5, 20.4, 20.1064, 20.36, 20.4, NA,
+	               20.4, NA, 20.4, 20.4095, 20.3)
 	)
+	
 	 
-	r <- merge(r, geo, by="SiteID", all.x=TRUE)
+	#r <- merge(r, geo, by="SiteID", all.x=TRUE)
+	# geo has 37 duplicated SiteIDs, so merging by SiteID alone inflated r from 644 to 694 rows.
+	# BH: rice and wheat reuse SiteIDs for different farms. FarmerID district codes
+	# (rice BH02/BH04, wheat BH04/BH07/BH08) show which geo row belongs to which crop
+	geo$Crop <- NA
+	i <- geo$SiteID %in% c("BH051","BH052","BH053","BH054","BH055","BH056","BH057","BH058","BH059")
+	geo$Crop[i] <- ifelse(geo$adm2[i] == "Muzaffarpur", "Rice", "Wheat")
+	i <- geo$SiteID == "BH028"
+	geo$Crop[i] <- ifelse(geo$adm2[i] == "Bhagalpur", "Rice", "Wheat")
+	# OD (rice only): keep the row whose adm2 matches the FarmerID district code
+	odd <- c(OD02 = "Bhadrak", OD07 = "Mayurbhanj", OD08 = "Puri")
+	fcode <- substr(r$FarmerID[match(geo$SiteID, r$SiteID)], 1, 4)
+	dup <- geo$SiteID %in% geo$SiteID[duplicated(geo$SiteID)] & substr(geo$SiteID, 1, 2) == "OD"
+	geo <- geo[!(dup & fcode %in% names(odd) & geo$adm2 != odd[fcode]), ]
+	# drop the invalid option of a pair (29 km in the sea; Myanmar typo)
+	geo <- geo[!(geo$SiteID %in% c("OD181","OD183","OD201","OD205") & geo$longitude %in% c(86.1, 95.4803)), ]
+	# for the remaining duplicates, prefer the row with coordinates
+	geo <- geo[order(is.na(geo$longitude)), ]
+	geo <- geo[!duplicated(geo[, c("SiteID", "Crop")]), ]
+	# rows without a crop apply to both crops
+	g <- geo[is.na(geo$Crop), ]
+	geo <- rbind(geo[!is.na(geo$Crop), ], transform(g, Crop = "Rice"), transform(g, Crop = "Wheat"))
+	
+	# Maharajganj UP059-UP063: lat 27.68-27.90 falls in Nepal; the other Maharajganj sites are at ~27.14
+	i <- geo$adm2 == "Maharaj Gang" & geo$latitude > 27.5
+	geo$longitude[i] <- 83.5621; geo$latitude[i] <- 27.1446       # https://www.geonames.org/1264433/maharaganj.html
+	# Samastipur BH049-BH054: lon ~86.585 is east of the district (BH052-054 in Nepal, BH049-051 in Supaul/Madhubani)
+	i <- geo$adm2 == "Samastipur" & geo$longitude > 86.3
+	geo$longitude[i] <- 85.7795; geo$latitude[i] <- 25.8622       # https://www.geonames.org/1257551/samastipur.html
+	# Puri: points in the Bay of Bengal (7-58 km offshore)
+	i <- geo$SiteID %in% c("OD171","OD172","OD175","OD187","OD189","OD192","OD195","OD210")
+	geo$longitude[i] <- 85.8249; geo$latitude[i] <- 19.7982       # https://www.geonames.org/1259184/puri.html
+	
+	# Standardise district spellings; Ara is the HQ town of Bhojpur district
+	geo$adm2[geo$adm2 == "Kushi Nagar"] <- "Kushinagar"
+	geo$adm2[geo$adm2 == "Maharaj Gang"] <- "Maharajganj"
+	geo$adm2[geo$adm2 == "Mujaffarpur"] <- "Muzaffarpur"
+	geo$adm2[geo$adm2 == "Santkabirnagar"] <- "Sant Kabir Nagar"
+	geo$adm2[geo$adm2 == "Ara"] <- "Bhojpur"
+	geo$adm2[geo$adm2 == "Sundergarh"] <- "Sundargarh"
+	
+	n <- nrow(r)
+	r <- merge(r, geo, by = c("SiteID", "Crop"), all.x = TRUE)
+	stopifnot(nrow(r) == n)
 	
 	d <- data.frame(
 		country = "India",
@@ -136,7 +345,30 @@ carob_script <- function(path) {
 
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
+  
+	# District HQ town coordinates (GeoNames) for sites without coordinates
+	d$latitude[d$adm2 == "Bhojpur" & is.na(d$longitude)] <- 25.5563         # https://www.geonames.org/1278483/arrah.html
+	d$longitude[d$adm2 == "Bhojpur" & is.na(d$longitude)] <- 84.6633
+	d$latitude[d$adm2 == "Bhagalpur" & is.na(d$longitude)] <- 25.2445       # https://www.geonames.org/1276300/bhagalpur.html
+	d$longitude[d$adm2 == "Bhagalpur" & is.na(d$longitude)] <- 86.9718
+	d$latitude[d$adm2 == "Rohtas" & is.na(d$longitude)] <- 24.9494          # https://www.geonames.org/1257086/sasaram.html
+	d$longitude[d$adm2 == "Rohtas" & is.na(d$longitude)] <- 84.0164
+	d$latitude[d$adm2 == "Bhadrak" & is.na(d$longitude)] <- 21.0545         # https://www.geonames.org/1276325/bhadrak.html
+	d$longitude[d$adm2 == "Bhadrak" & is.na(d$longitude)] <- 86.5156
+	d$latitude[d$adm2 == "Dhenkanal" & is.na(d$longitude)] <- 20.6574       # https://www.geonames.org/1272780/dhenkanal.html
+	d$longitude[d$adm2 == "Dhenkanal" & is.na(d$longitude)] <- 85.5969
+	d$latitude[d$adm2 == "Kendrapara" & is.na(d$longitude)] <- 20.5017      # https://www.geonames.org/1267283/kendraparha.html
+	d$longitude[d$adm2 == "Kendrapara" & is.na(d$longitude)] <- 86.4223
+	d$latitude[d$adm2 == "Mayurbhanj" & is.na(d$longitude)] <- 21.9346      # https://www.geonames.org/1276942/baripada.html
+	d$longitude[d$adm2 == "Mayurbhanj" & is.na(d$longitude)] <- 86.7285
+	d$latitude[d$adm2 == "Sambalpur" & is.na(d$longitude)] <- 21.4653       # https://www.geonames.org/1257542/sambalpur.html
+	d$longitude[d$adm2 == "Sambalpur" & is.na(d$longitude)] <- 83.9757
+	# Sites with only adm1: state centroid (GeoNames ADM1), very approximate
+	i <- d$adm1 == "Bihar" & is.na(d$adm2) & is.na(d$longitude)
+	d$longitude[i] <- 85.75; d$latitude[i] <- 25.75                         # https://www.geonames.org/1275715/state-of-bihar.html
+	i <- d$adm1 == "Uttar Pradesh" & is.na(d$adm2) & is.na(d$longitude)
+	d$longitude[i] <- 80.75; d$latitude[i] <- 27.25                         # https://www.geonames.org/1253626/uttar-pradesh.html
+	
 	carobiner::write_files(meta, d, path=path)
 }
 
