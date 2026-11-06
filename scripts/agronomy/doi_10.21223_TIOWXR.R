@@ -16,10 +16,15 @@
 # 6. The data dictionary gives FTY = (MTW + NoMTW) / 4.8 m2, but the FTY values equal
 #    (MTW + NoMTW + WDT) / 4.8 m2, i.e. they include damaged tubers. FTY is used as reported.
 
+## NEW VARIABLES
+# fungicide_DSS_: decision support system used to schedule fungicide applications against late blight
+#   ("Juego de Ruedas", https://doi.org/10.1016/j.cropro.2020.105186), or "none".
+
 ## NOTES
 # 1. One variety (INIA 325 Poderosa). Factors: intercropping with faba bean (cv. Senorita) or not;
-#    the "Juego de Ruedas" decision support tool for fungicide application (disc / no disc), included
-#    in "treatment" (e.g. IN_DI_PM1); and poultry manure (1, 2, 4 t/ha). Split-split plot, 4 blocks.
+#    the "Juego de Ruedas" decision support tool for fungicide application (disc / no disc), stored
+#    as the new variable fungicide_DSS_ ("Juego de Ruedas" or "none"); and poultry manure (1, 2, 4 t/ha).
+#    "treatment" has the treatment code (e.g. IN_DI_PM1). Split-split plot, 4 blocks.
 # 2. Intercropped plots are split into a potato and a faba bean record (same plot_id).
 #    Faba bean yield (FFBY, kg/ha, fresh weight) is used as reported; the plant part is not described.
 # 3. Potato yield is total fresh tuber yield (FTY, t/ha), including damaged tubers, from the 16 inner
@@ -54,7 +59,7 @@ An experimental potato trial based on organic agriculture in the second season (
 		project = NA,
 		design = "split-split plot",
 		data_type = "on-farm experiment",
-		treatment_vars = "intercrops;OM_amount;treatment",
+		treatment_vars = "intercrops;OM_amount;fungicide_DSS_",
 		response_vars = "yield;yield_marketable",
 		notes = NA,
 		carob_contributor = "Vilma Hualla",
@@ -93,6 +98,8 @@ An experimental potato trial based on organic agriculture in the second season (
 		crop = "potato",
 		variety = "INIA 325 Poderosa",
 		intercrops = ifelse(inter, "faba bean", "none"),
+		## NEW VARIABLE: fungicide application guided by the "Juego de Ruedas" decision support tool
+		fungicide_DSS_ = ifelse(r2$DSSF_f2 == "Disc", "Juego de Ruedas", "none"),
 		country = "Peru",
 		adm1 = "La Libertad",
 		adm2 = "Sánchez Carrión",
