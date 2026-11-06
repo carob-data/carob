@@ -238,6 +238,21 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   z$latitude <- ifelse(isna,z$lat,z$latitude)
   z$longitude <- ifelse(isna,z$lon, z$longitude)
 	z$lon <- z$lat <- NULL
+
+  # fixing inconsistant spelling
+  # NOTE: according to google, both spellings are technically correct. Dangawo is the correct local designation, and Dawgawo is the phoenetic variation
+  z$adm3[z$adm3 == "Dawgawo"] <- "Dangawo"
+
+  # coords were outside/on the border of Nigeria (in chad and cameroon). 
+  ref <- aggregate(z[, c("latitude", "longitude")], z[, "adm2", drop=FALSE], median, na.rm=TRUE)
+  names(ref) <- c("adm2", "lati", "long")
+  z <- merge(z, ref, by="adm2", all.x = TRUE)
+
+  bad_coords <- !is.na(z$lati) & (is.na(z$latitude) | is.na(z$longitude) | abs(z$latitude - z$lati) > 1.3 | abs(z$longitude - z$long) > 1.3)
+  z$latitude[bad_coords] <- z$lati[bad_coords]
+  z$longitude[bad_coords] <- z$long[bad_coords]
+  z$lati <- z$long <- NULL
+
   z$irrigated <- NA
   
 	z$yield_isfresh <- as.numeric(NA) #needs to be checked
