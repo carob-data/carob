@@ -12,7 +12,6 @@
 ##   only from a note in the "Croquis" sheet. It is assumed to be kg/ha of N-P2O5-K2O.
 ## - "Vine cutting / killing" date (2004-09-01) is before planting (2004-09-24); not used.
 ## - Irrigation is not reported (Nazca is an arid coastal site, so the crop was most likely irrigated);
-##   "irrigated" is not included.
 ## - Two plots have no harvest data in the source (plot 69, CIP302448 rep 3; plot 92, CIP302331 rep 4),
 ##   so yield is NA there ("NA detected: yield"). The records are kept.
 ## - Entries are progenies (CIP3xxxxx family numbers) from crosses listed in the Material List;
@@ -101,6 +100,6 @@ An evaluation of 23 clones was conducted in the Poroma area of Nazca during the 
 	d$P_fertilizer <- 180 / 2.29
 	d$K_fertilizer <- 160 / 1.2051
 	d$fertilizer_type <- "DAP;AN;KCl"
-
+    d$irrigated <- NA # not reported, but certainly irrigated on the Peruvian desert coast.
 	carobiner::write_files(path, meta, d)
 }
