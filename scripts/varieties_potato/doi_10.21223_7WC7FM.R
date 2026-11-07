@@ -31,7 +31,7 @@ carob_script <- function(path) {
   f <- f[grep("0._", basename(f), invert=TRUE)]
   
   d <- lapply(f, process, addvars=c("AUDPC","rAUDPC"))
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
 
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }

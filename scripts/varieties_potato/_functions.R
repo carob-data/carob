@@ -72,10 +72,13 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		plant_spacing = as.numeric(n$`distance_between_plants_(m)`) * 100,
 		trial_id = gsub(".xls|.xlsx", "", basename(filename))
 	)
-	if (!is.null(r$pph)) {
-		d$plant_density <- as.numeric(n$`planting_density_(plants/ha)`) * r$pph	
-	} else if (!is.null(r$npe)) {
+	if (!is.null(r$npe)) {
+		# number of plants emerged
 		d$plant_density <- as.numeric(r$npe) * plot_adj
+	} else if (!is.null(r$pph)) {
+		# PPH (CO_330:0000290) is the proportion of plants harvested,
+		# in percent (NPH * 100 / NTP)
+		d$plant_density <- as.numeric(n$`planting_density_(plants/ha)`) * as.numeric(r$pph) / 100
 	}
 	if (!is.null(r$tntp)) {
 		d$tuber_density <- as.numeric(r$tntp) * plot_adj	
@@ -88,7 +91,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	}
 	
 	if (!is.null(r$audpc)) {
-		d$AUDPC <- as.numeric(r$AUDPC) / 100
+		d$AUDPC <- as.numeric(r$audpc) / 100
 	    d$pathogen <- "Phytophthora infestans"
 	}
 	if (!is.null(r$raudpc)) {
@@ -119,7 +122,14 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	if (length(fm) > 1) {
 		stop("multiple material files")
 	} else if (length(fm) == 1) {
-		m <- utils::read.delim(fm, colClasses="character", na.strings="", strip.white=TRUE)
+		if (grepl("\\.xlsx?$", fm, ignore.case=TRUE)) {
+			m <- carobiner::read.excel(fm, na="")
+			m[] <- lapply(m, function(x) trimws(as.character(x)))
+			# "Female code" -> "Female.code" as with read.delim
+			names(m) <- make.names(names(m))
+		} else {
+			m <- utils::read.delim(fm, colClasses="character", na.strings="", strip.white=TRUE)
+		}
 		names(m) <- tolower(names(m))
 		fem <- ifelse(is.na(m$female.code), m$female.institutional.number, m$female.code)
 		mal <- ifelse(is.na(m$male.code), m$male.institutional.number, m$male.code)

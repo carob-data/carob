@@ -26,7 +26,7 @@ carob_script <- function(path) {
   f <- ff[grep("_OXAPMP", basename(ff))]
   f <- f[grep("^0._|_Data_dictionary|_processed", basename(f), invert=TRUE)]
   d <- lapply(f, process)
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
 
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }

@@ -27,7 +27,7 @@ carob_script <- function(path) {
   f <- ff[grep("_CIPSRM", basename(ff))]
   f <- f[grep("^0._|_Data_dictionary", basename(f), invert=TRUE)]
   d <- lapply(f, process)
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
   
   carobiner::write_files(path = path, metadata = meta, wide=d)
  

@@ -8,6 +8,8 @@
 #    the number of plants harvested, which suggests a biological cause (e.g. disease) rather
 #    than theft. Yield is therefore not adjusted for missing plants (TTWP / plot size).
 # 2. In Gisozi, 4 plots have more plants harvested (NPH) than emerged (NPE).
+# 3. 7 plots (5 in Ryansoro, 2 in Mparambo) have no harvest data (NA yield); plants
+#    emerged, but no reason for the missing harvest records is given.
 
 ## NOTES
 # 1. AVDM (average dry matter, %) has a single value per clone and site (not per plot).
@@ -50,7 +52,7 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 		response_vars = "yield;yield_marketable",
 		notes = NA,
 		carob_contributor = "Vilma Hualla",
-		carob_LLM = "Claude Opus 5.5",
+		carob_LLM = "Claude Opus 5.5; Claude Fable 5",
 		carob_date = "2026-10-28",
 		carob_completion = 85,
 		carob_effort = 1
@@ -70,25 +72,23 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 	})
 	d <- do.call(rbind, d)
 
-	## In the Gisozi fieldbook, clone "CIP395611.22" is not in the material list of that
-	## same file, which instead lists CIP388611.22 (Reiche), used at the other two sites.
-	## We assume a typing error (NOTES 4)
-	d$variety[d$variety == "CIP395611.22"] <- "CIP388611.22"
+	## Variety names, codes and parents are set from 04_Material_list.xlsx by
+	## process_cip_lbvars. In the Gisozi fieldbook, clone "CIP395611.22" is not in
+	## the material list, which instead lists CIP388611.22 (Reiche), used at the
+	## other two sites. We assume a typing error (NOTES 4)
+	i <- d$variety == "CIP395611.22"
+	d$variety[i] <- "Reiche"
+	d$variety_code[i] <- "CIP388611.22"
+	d$variety[d$variety == "REICHE"] <- "Reiche"
+	## the mistyped rows also missed the pedigree from the material list
+	j <- which(d$variety == "Reiche" & !is.na(d$variety_pedigree))[1]
+	d$female_parent[i] <- d$female_parent[j]
+	d$male_parent[i] <- d$male_parent[j]
+	d$variety_pedigree[i] <- d$variety_pedigree[j]
 
 	## not stated in the data (NOTES 2)
 	d$on_farm <- NA
 	d$irrigated <- NA
-
-	## variety names from the material list; keep the CIP number as variety_code
-	vars <- data.frame(
-		variety_code = c("CIP381381.20", "CIP382171.4", "CIP388611.22", "CIP720118"),
-		name = c("Victoria", "Ruhanyura", "Reiche", "Ndinamagara")
-	)
-	d$variety_code <- d$variety
-	d <- merge(d, vars, by="variety_code", all.x=TRUE)
-	i <- !is.na(d$name)
-	d$variety[i] <- d$name[i]
-	d$name <- NULL
 
 	## Weather (NOTES 5): hourly air temperature recorded at Ryansoro during the trial.
 	## In this sheet the dates are inconsistent (day and month are swapped in some rows),
@@ -108,3 +108,4 @@ An evaluation of 8 potato clones was carried out in the cities of Ryansoro, Giso
 	)
 	carobiner::write_files(path, meta, d, wth=wth)
 }
+
