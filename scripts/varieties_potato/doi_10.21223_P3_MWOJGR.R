@@ -30,6 +30,8 @@ B3C2 is the second cycle of recombination of advanced B3C1 potato clones. These 
   d <- lapply(f, process, addvars="TTWP")
   d <- do.call(carobiner::bindr, d)
   
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

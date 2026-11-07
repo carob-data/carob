@@ -28,6 +28,10 @@ carob_script <- function(path) {
   d <- lapply(f, process, addvars=c("AUDPC", "rAUDPC"))
   d <- do.call(rbind, d)
   
+  ## CIP headquarters station at La Molina; irrigated (coastal desert site)
+  d$on_farm <- FALSE
+  d$irrigated <- TRUE
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

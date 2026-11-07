@@ -30,6 +30,8 @@ B3C0 is the initial cycle of recombination of group B3- Population B. This popul
   d <- lapply(f, process, addvars="TTWP")
   d <- do.call(rbind, d)
   
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

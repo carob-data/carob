@@ -29,6 +29,9 @@ carob_script <- function(path) {
   d <- lapply(f, process, addvars=c("AUDPC","rAUDPC","TTWP","MTWP"))
   d <- do.call(carobiner::bindr, d)
   
+  ## CIP experimental station at Huancayo (Santa Ana, El Tambo)
+  d$on_farm <- FALSE
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

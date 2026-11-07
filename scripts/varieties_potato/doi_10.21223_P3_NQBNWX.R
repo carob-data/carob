@@ -30,6 +30,8 @@ Group B1, cycle B1C5 of Population B (fifth cycle of recombination of the pure n
   d <- lapply(f, process, addvars="TTWP")
   d <- do.call(carobiner::bindr, d)
   
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

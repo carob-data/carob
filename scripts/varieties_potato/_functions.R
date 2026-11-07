@@ -45,7 +45,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 			m$end_date <- strsplit(m$end_date, "-")[[1]][2]
 		}
 		i <- is.na(m$end_date)
-		m$End_date <- as.character(as.Date(m$end_date,format = "%d/%m/%Y"))
+		m$end_date <- as.character(as.Date(m$end_date,format = "%d/%m/%Y"))
 		j <- is.na(m$end_date)
 		if (sum(j) > sum(i)) warning("NAs introduced in End_date")
 	}
@@ -70,7 +70,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		seed_density = as.numeric(n$`planting_density_(plants/ha)`),
 		row_spacing = as.numeric(n$`distance_between_rows_(m)`) * 100,
 		plant_spacing = as.numeric(n$`distance_between_plants_(m)`) * 100,
-		trial_id = gsub(".xls|.xlsx", "", basename(filename))
+		trial_id = trimws(gsub(".xls|.xlsx", "", basename(filename)))
 	)
 	if (!is.null(r$npe)) {
 		# number of plants emerged
@@ -85,7 +85,10 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	}
 
 	if (!is.null(r$avdm)) {
-		d$yield_moisture <- 100 - as.numeric(r$avdm)
+		avdm <- r$avdm
+		# "-" is used for missing values in some fieldbooks
+		avdm[avdm %in% c("-", "")] <- NA
+		d$yield_moisture <- 100 - as.numeric(avdm)
 	} else {
 		d$yield_moisture <- NA
 	}
@@ -145,7 +148,6 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 			d$variety[!is.na(nm)] <- nm[!is.na(nm)]
 		}
 	}
-#    d$on_farm <- TRUE
     d$is_survey <- FALSE
     d$irrigated <- FALSE
     d$crop <- "potato"

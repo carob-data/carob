@@ -30,6 +30,8 @@ carob_script <- function(path) {
   f <- f[grep("^0._|_Data_dictionary", basename(f), invert=TRUE)]
   d <- process(f)
 
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
   
 }
