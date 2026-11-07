@@ -56,17 +56,20 @@ Dataset for: Evaluation of Potato clones in Huancayo, Junin,  2006
 	f <- ff[basename(ff) == "PTYL200610_LAVICT.xls"]
 	# this fieldbook has no MTWP (marketable tuber weight)
 	d <- process(f, addvars="mtwp")
-	d$yield_marketable <- NULL
-	d$yield_adjusted <- NULL
+#	d$yield_marketable <- NULL
+#	d$yield_adjusted <- NULL
 
+	# was up to 100 times higher than seed_density
+    d$plant_density <- d$plant_density / 100
+	
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
 	d$block_id <- as.character(d$rep)  # ISSUES 1
 	d$rep <- NULL
-	plot_size <- 1.35  # m2, "Installation" sheet
-	d$seed_density <- as.numeric(r$NTP) * 10000 / plot_size
-	d$plant_density <- as.numeric(r$NPH) * 10000 / plot_size
-	d$tuber_density <- as.numeric(r$TNTP) * 10000 / plot_size
-	d$yield_moisture <- 100 - as.numeric(r$AVDM)
+#	plot_size <- 1.35  # m2, "Installation" sheet
+#	d$seed_density <- as.numeric(r$NTP) * 10000 / plot_size
+#	d$plant_density <- as.numeric(r$NPH) * 10000 / plot_size
+#	d$tuber_density <- as.numeric(r$TNTP) * 10000 / plot_size
+#	d$yield_moisture <- 100 - as.numeric(r$AVDM)
 	d$on_farm <- FALSE
 	# trials at the CIP station La Victoria are irrigated (confirmed by the contributor)
 	d$irrigated <- TRUE
