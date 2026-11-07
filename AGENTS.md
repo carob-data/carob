@@ -8,13 +8,16 @@ This document tells an AI coding agent how to turn a published dataset into a Ca
 
 This document supplements those pages with practical, agent-specific detail. If they ever disagree, follow the official guidelines.
 
-**Before writing, also read a few existing scripts in `scripts/<group>/`** — especially the same group you are targeting — to see the conventions applied to real datasets (e.g. recent files in `scripts/varieties/` such as `doi_10.7910_DVN_SMGA6L.R`, or any script in `scripts/agronomy/` or `scripts/survey/`). They are the best templates for structure, naming, units, and how metadata and geo/housekeeping variables are set.
+**Before writing, also read a few existing scripts in `scripts/<group>/`** — especially the same group you are targeting — to see the conventions applied to real datasets (e.g. files in `scripts/varieties_other/` such as `doi_10.7910_DVN_SMGA6L.R`, or any script in `scripts/agronomy/` or `scripts/survey/`). They are the best templates for structure, naming, units, and how metadata and geo/housekeeping variables are set.
 
 Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear`# comment` in the code, and add a line to the `## NOTE:` or `## ISSUES` block at the top of the scripts. It is better not to process a variable (and leave a comment about it) than to introduce errors.
 
 It is of fundamental importance that no critical information is lost to analyze the data as intended. Resist simplifying the data to the point where relevant information is lost
 
-**You stay in charge.** Using AI to help is fine, but you are responsible for the result — do not blindly trust generated code, mappings, or `## NOTES`/`## ISSUES`. Verify every claim against the actual data and the publication before you leave it in the script. A wrong note or a plausible-but-incorrect mapping is worse than an honest "I could not determine this" (in `## ISSUES`).
+**Do not make things look good** do not leave things out, or fudge. Scripts must try to cover the data fully, and if new variables are needed, or if values do not look good, so be it. 
+
+**Do not delete files in _todo** These should be renamed (`git mv`) to be able to track the changes made.
+
 
 ### Human review is mandatory (agent must say this)
 
@@ -25,6 +28,8 @@ The **human author** of the script must review **every line of code** and **ever
 > Before you submit: you must personally read every line of code and every comment in this script. Do not trust AI output. Only after that review, fill in `carob_contributor` and put the attestation sentence in the PR.
 
 Do not soft-pedal this. Do not skip it because the script "looks done."
+
+
 
 
 ---
@@ -352,6 +357,8 @@ Never coerce first and let it warn (and never wrap it in `suppressWarnings()`). 
 The goal is that every remaining warning is either intentional and explained, or gone because the underlying problem was actually fixed — never merely hidden.
 
 Do **not** force data into a one-row-per-unit shape when that loses information. If a dataset has several record types (e.g. a household survey with per-variety records *and* a separate "largest plot" block), capture each in its own `data.frame` with interpretable, standardized names rather than deduplicating away real observations. Decide how to write extra tables (e.g. as "long" records) separately.
+
+Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgement calls that were or still need to be made. In the code, do *not* refer to the ISSUES by number like `# see ISSUES 4` as the issues list may change. Just make the comment again, perhapts in abridged form. Unless very short (2-3 words) put comments on their own line above the code it refers to.
 
 ---
 
