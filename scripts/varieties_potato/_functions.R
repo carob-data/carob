@@ -64,11 +64,24 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		planting_date = m$begin_date,
 		harvest_date = m$end_date,
 		seed_density = as.numeric(n$`planting_density_(plants/ha)`),
-		plant_density = as.numeric(n$`planting_density_(plants/ha)`) * r$pph,
 		row_spacing = as.numeric(n$`distance_between_rows_(m)`) * 100,
 		plant_spacing = as.numeric(n$`distance_between_plants_(m)`) * 100,
 		trial_id = gsub(".xls|.xlsx", "", basename(filename))
 	)
+	if (!is.null(r$pph)) {
+		d$plant_density <- as.numeric(n$`planting_density_(plants/ha)`) * r$pph	
+	} else if (!is.null(r$npe)) {
+		d$plant_density <- as.numeric(r$npe) * plot_adj
+	}
+	if (!is.null(r$tntp)) {
+		d$tuber_density <- as.numeric(n$tntp) * plot_adj	
+	}
+
+	if (!is.null(r$avdm)) {
+		d$yield_moisture <- 100 - as.numeric(r$avdm)
+	} else {
+		d$yield_moisture <- NA
+	}
 	
 	if (!is.null(r$audpc)) {
 		d$AUDPC <- as.numeric(r$AUDPC) / 100
@@ -97,12 +110,29 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		d$soil_SOM <- soil$organic_matter
 	}
 	
+	
+
+	fm <- list.files(dirname(filename), pattern="material_list", ignore.case=TRUE, full.names=TRUE)
+	if (length(fm) > 1) {
+		stop("multiple material files")
+	} else if (length(fm) == 1) {
+		m <- utils::read.delim(f2, colClasses="character", na.strings="", strip.white=TRUE)
+		fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
+		mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
+		i <- match(d$variety, m$Institutional.number)
+		d$variety_code <- d$variety
+		d$female_parent <- fem
+		d$male_parent <- mal
+		d$variety_pedigree <- paste(fem, mal, sep=" x ")[i]
+		nm <- m$Clone.or.variety.name[i]
+		d$variety[!is.na(nm)] <- nm[!is.na(nm)]
+	}
+	
 #    d$on_farm <- TRUE
     d$is_survey <- FALSE
     d$irrigated <- FALSE
     d$crop <- "potato"
     d$yield_part <- "tubers"
-    d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
 	
     d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
