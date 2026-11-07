@@ -15,10 +15,7 @@
 #    Irrigated (CIP La Molina, confirmed by the contributor).
 # 2. Plots of 10 plants in one row, 0.3 m between plants and 0.9 m between rows (2.7 m2).
 #    Yield is the non-adjusted total tuber yield (TTWP / plot size); marketable yield is not reported.
-# 3. yield_moisture is 100 - average tuber dry matter (AVDM, %), measured per plot (one plot has no
-#    dry matter).
 # 4. Not processed: plant vigor, flowering, senescence (1-9 scales) and chipping color.
-#    Pedigree (female x male) from the material list.
 
 carob_script <- function(path) {
 
@@ -53,26 +50,10 @@ A screening of 180 potato clones was conducted to determine yield and dry matter
 	process <- carobiner::get_function("process_cip_lbvars", path, group)
 	f <- ff[basename(ff) == "PTYL200512_CIPHQ_new_clones_LMspr.xls"]
 	# this fieldbook has no MTWP, TTYA or PPH
-	d <- process(f, addvars=c("mtwp", "ttya", "pph"))
-	d$yield_marketable <- NULL
-	d$yield_adjusted <- NULL
-	d$rep <- NULL  # ISSUES 2
+	d <- process(f, addvars=c("mtwp", "ttya"))
 
-	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	plot_size <- 2.7  # m2, "Installation" sheet
-	d$seed_density <- as.numeric(r$NTP) * 10000 / plot_size
-	d$plant_density <- as.numeric(r$NPE) * 10000 / plot_size
-	d$yield_moisture <- 100 - as.numeric(r$AVDM)
 	d$on_farm <- FALSE
 	d$irrigated <- TRUE
-
-	## material list: pedigree (NOTES 4)
-	f2 <- ff[basename(ff) == "02_Material_list.txt"]
-	m <- utils::read.delim(f2, colClasses="character", na.strings="", strip.white=TRUE, fileEncoding="UTF-8-BOM")
-	fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
-	mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
-	ped <- ifelse(is.na(fem) & is.na(mal), NA, paste(fem, mal, sep=" x "))
-	d$variety_pedigree <- ped[match(d$variety, m$Institutional.number)]
 
 	## only the harvested plots (ISSUES 1)
 	d <- d[!is.na(d$yield), ]
