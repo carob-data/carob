@@ -51,7 +51,8 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		variety = r$instn,
 		yield = as.numeric(r$ttwp) * plot_adj,
 		yield_marketable = as.numeric(r$mtwp) * plot_adj,
-		yield_adjusted = as.numeric(r$ttya) * plot_adj,
+		#we record the number of plants planted and harvested instead
+		#yield_adjusted = as.numeric(r$ttya) * plot_adj,
 		country = m$country,
 		adm1 = m$admin1,
 		adm2 = m$admin2,
@@ -120,13 +121,26 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
 		mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
 		i <- match(d$variety, m$Institutional.number)
-		d$variety_code <- d$variety
-		d$female_parent <- fem
-		d$male_parent <- mal
-		d$variety_pedigree <- paste(fem, mal, sep=" x ")[i]
+		j <- !is.na(i)
+		k <- i[j]
+		d$female_parent[j] <- fem[k]
+		d$male_parent[j] <- mal[k]
+		d$variety_pedigree[j] <- paste(fem[k], mal[k], sep=" x ")
 		nm <- m$Clone.or.variety.name[i]
+		d$variety_code <- d$variety
 		d$variety[!is.na(nm)] <- nm[!is.na(nm)]
 	}
+	
+	
+	## material list: pedigree (NOTES 4)
+	f2 <- ff[basename(ff) == "02_Material_list.txt"]
+	m <- utils::read.delim(f2, colClasses="character", na.strings="", strip.white=TRUE, fileEncoding="UTF-8-BOM")
+	fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
+	mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
+	ped <- ifelse(is.na(fem) & is.na(mal), NA, paste(fem, mal, sep=" x "))
+	d$variety_pedigree <- ped[match(d$variety, m$Institutional.number)]
+
+	
 	
 #    d$on_farm <- TRUE
     d$is_survey <- FALSE
