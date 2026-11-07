@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+#REJECTED because these records are also included (with 2 decimal coordinates) in the more recent dataset doi_10.71682_10549439.R
+
 ## ISSUES
 #1. Added other variables not in terminag vocabulary
 
