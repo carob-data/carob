@@ -15,6 +15,13 @@
 # Land area and its unit, prices in taka, labour, credit, and the rest of the farmer questionnaire.
 # Cold storage, processor, seed, and trader workbooks. They are other actors, not this farmer table.
 # Codebook, data dictionary, and questionnaire.
+# 02_Cold_Storege_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx: not read. sheet Cold_Storage: Data ID, Entry date (DD-MM-YYYY), Start time (HH:MM:SS), Country, Baseline ID Number, Respondent Category, Names in Baseline, A3. In the past, have you been involved in seed production, growing, trading, co, A4b. Good day. My name is [name]. I'm calling from the International Potato Cent, A6. What district do you live in?, A6. OTHER district you live in?, A7. What upazilla do you live in?, .... Observation records are missing from d until this file is standardized.
+# 03_Processors_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx: not read. sheet Processors: Data ID, Entry date (DD-MM-YYYY), Start time (HH:MM:SS), Country, Baseline ID Number, Respondent Category, Names in Baseline, A3. In the past, have you been involved in seed production, growing, trading, co, A4b. Good day. My name is [name]. I'm calling from the International Potato Cent, A6. What district do you live in?, A6. OTHER district you live in?, A7. What upazilla do you live in?, .... Observation records are missing from d until this file is standardized.
+# 04_Seed_Producer_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx: not read. sheet Seed_Producer: Data ID, Entry date (DD-MM-YYYY), Start time (HH:MM:SS), Country, Baseline ID Number, Respondent Category, Names in Baseline, A3. In the past, have you been involved in seed production, growing, trading, co, A4b. Good day. My name is [name]. I'm calling from the International Potato Cent, A6. What district do you live in?, A6. OTHER district you live in?, A7. What upazilla do you live in?, .... Observation records are missing from d until this file is standardized.
+# 05_Trader_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx: not read. sheet Trader: Data ID, Entry date (DD-MM-YYYY), Start time (HH:MM:SS), Country, Baseline ID Number, Respondent Category, Names in Baseline, A3. In the past, have you been involved in seed production, growing, trading, co, A4b. Good day. My name is [name]. I'm calling from the International Potato Cent, A6. What district do you live in?, A6. OTHER district you live in?, A7. What upazilla do you live in?, .... Observation records are missing from d until this file is standardized.
+# 06_Datadictionary_Bangladesh_Potato_COVID_ValueChain_2021.xlsx: documentation or a codebook, not an observation table.
+# 07_QUESTIONNAIRE- Bangladesh COVID Potato.xlsx: design, layout, or protocol sheet, not plot or survey records.
+# 09_CODEBOOK- Bangladesh Potato COVID.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -42,7 +49,7 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("^01_Farmer", basename(ff))]
+	f <- ff[basename(ff) == "01_Farmer_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 	nm <- names(r)
 	kg19 <- nm[grepl("^C5\\. How much potato \\(Kg\\)", nm)][1]

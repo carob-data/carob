@@ -22,6 +22,7 @@
 ## NOT PROCESSED
 # Price, sales, input-cost, and gross-margin columns (ware and seed, KES and USD). They are not a single crop price.
 # Seed quantity columns and percent_production_that_is_seed. ward is mapped to location.
+# 16940_data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

@@ -20,6 +20,7 @@
 ## NOT PROCESSED
 # Tuber skin and flesh color and shape codes.
 # Crop-management product names (Pentacloro, Rugby, Farmathe / Dithane, coadyuvante) because no dose is recorded.
+# 04_Data_dictionary_HERLB_ECU_2023_Lateblight_StaCatalina.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -55,11 +56,14 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		as.numeric(z)
 	}
 
-	fb <- carobiner::read.excel(ff[grepl("^01_Fieldbook", basename(ff))], na=c("", "NA", "-"))
-	ml <- carobiner::read.excel(ff[grepl("^02_Material", basename(ff))], na=c("", "NA", "-"))
-	cm <- carobiner::read.excel(ff[grepl("^03_Crop", basename(ff))])
+	f1 <- ff[basename(ff) == "01_Fieldbook_HERLB_ECU_2023_Lateblight_StaCatalina.xlsx"]
+	r1 <- carobiner::read.excel(f1, na=c("", "NA", "-"))
+	f2 <- ff[basename(ff) == "02_Material list_HERLB_ECU_2023_Lateblight_StaCatalina.xlsx"]
+	r2 <- carobiner::read.excel(f2, na=c("", "NA", "-"))
+	f3 <- ff[basename(ff) == "03_Crop managment_HERLB_ECU_2023_Lateblight_StaCatalina.xlsx"]
+	r3 <- carobiner::read.excel(f3)
 
-	lb <- cm[trimws(as.character(cm[["Tipo de Intervención"]])) == "LB1", ]
+	lb <- r3[trimws(as.character(r3[["Tipo de Intervención"]])) == "LB1", ]
 	fecha <- lb[["Fecha (MM/DD/YYYY)"]][1]
 	if (inherits(fecha, "POSIXt") || inherits(fecha, "Date")) {
 		fecha <- as.Date(format(fecha, "%Y-%m-%d"))
@@ -68,10 +72,10 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 	}
 	planting <- format(fecha - as.integer(lb$DAP[1]), "%Y-%m-%d")
 
-	variety <- trimws(as.character(fb[["CIP Number"]]))
+	variety <- trimws(as.character(r1[["CIP Number"]]))
 	d <- data.frame(
-		record_id = seq_len(nrow(fb)),
-		plot_id = as.character(fb$Row),
+		record_id = seq_len(nrow(r1)),
+		plot_id = as.character(r1$Row),
 		variety = variety,
 		variety_code = variety,
 		treatment = variety,
@@ -86,11 +90,11 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		geo_source = "CIP Dataverse bounding box (south and west only)",
 		planting_date = planting,
 		trial_id = "SantaCatalina_2023",
-		AUDPC = num(fb$AUDPC),
-		rAUDPC = num(fb$rAUDPC),
-		ttwp_kg_ = num(fb$TTWP_Kg),
-		ttwp_g_ = num(fb$TTWP_gr),
-		tuber_number_ = num(fb$TNTP),
+		AUDPC = num(r1$AUDPC),
+		rAUDPC = num(r1$rAUDPC),
+		ttwp_kg_ = num(r1$TTWP_Kg),
+		ttwp_g_ = num(r1$TTWP_gr),
+		tuber_number_ = num(r1$TNTP),
 		pathogen = "Phytophthora infestans",
 		stress = "disease",
 		on_farm = NA,
@@ -99,7 +103,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 
 	daps <- c(LB1=NA_integer_, LB2=NA_integer_, LB3=NA_integer_, LB4=NA_integer_)
 	for (nm in names(daps)) {
-		hit <- cm$DAP[trimws(as.character(cm[["Tipo de Intervención"]])) == nm]
+		hit <- r3$DAP[trimws(as.character(r3[["Tipo de Intervención"]])) == nm]
 		daps[nm] <- as.integer(hit[1])
 	}
 	pieces <- lapply(names(daps), function(nm) {
@@ -107,7 +111,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 			record_id = d$record_id,
 			DAP = as.integer(daps[[nm]]),
 			disease_severity = {
-				z <- trimws(as.character(fb[[nm]]))
+				z <- trimws(as.character(r1[[nm]]))
 				z[z %in% c("-", "", "NA")] <- NA_character_
 				z
 			},
@@ -120,15 +124,15 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 	rownames(dlong) <- NULL
 
 	# Female and male columns, if the material list has them.
-	fem <- grep("emale|Female|Madre", names(ml), value=TRUE)[1]
-	mal <- grep("ale|Male|Padre", names(ml), value=TRUE)
+	fem <- grep("emale|Female|Madre", names(r2), value=TRUE)[1]
+	mal <- grep("ale|Male|Padre", names(r2), value=TRUE)
 	mal <- mal[!grepl("Female|emale", mal)][1]
-	code <- grep("CIP|cip", names(ml), value=TRUE)[1]
+	code <- grep("CIP|cip", names(r2), value=TRUE)[1]
 	if (!is.na(fem) && !is.na(mal) && !is.na(code)) {
-		ped <- paste(trimws(as.character(ml[[fem]])), "x", trimws(as.character(ml[[mal]])))
+		ped <- paste(trimws(as.character(r2[[fem]])), "x", trimws(as.character(r2[[mal]])))
 		ped[grepl("^NA x NA$|^x$", ped)] <- NA_character_
 		alias <- data.frame(
-			variety = trimws(as.character(ml[[code]])),
+			variety = trimws(as.character(r2[[code]])),
 			variety_pedigree = ped
 		)
 		alias <- alias[!duplicated(alias$variety) & nzchar(alias$variety), ]

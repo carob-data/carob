@@ -17,6 +17,23 @@
 ## NOT PROCESSED
 # Sheets A & gs_max, PRI, D13, CC, and NDVI: repeated physiology, not joined here.
 # MINICORE 2017 DATA SET.xls, NOTES pdf, Image_description, and the image files.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
+# Data_dictionary_v2.xlsx: documentation or a codebook, not an observation table.
+# Image_description_v2.xlsx: not read. sheet Image Description: Image, DAP, IF, FA, SR, FW, FH, Lon, Lat, TTC, Band1, Band2, .... Observation records are missing from d until this file is standardized.
+# Minicore_NIRRG_170720.tif: image, not a data table.
+# Minicore_NIRRG_170726.tif: image, not a data table.
+# Minicore_NIRRG_170802.tif: image, not a data table.
+# Minicore_NIRRG_170809.tif: image, not a data table.
+# Minicore_NIRRG_170816.tif: image, not a data table.
+# Minicore_NIRRG_170823.tif: image, not a data table.
+# Minicore_NIRRG_170831.tif: image, not a data table.
+# Minicore_NIRRG_170906.tif: image, not a data table.
+# Minicore_NIRRG_170914.tif: image, not a data table.
+# Minicore_NIRRG_170922.tif: image, not a data table.
+# Minicore_NIRRG_170927.tif: image, not a data table.
+# Minicore_NIRRG_171006.tif: image, not a data table.
+# Minicore_NIRRG_171010.tif: image, not a data table.
+# Minicore_NIRRG_171017.tif: image, not a data table.
 
 ## NEW VARIABLES
 # ftw_: FTW as recorded

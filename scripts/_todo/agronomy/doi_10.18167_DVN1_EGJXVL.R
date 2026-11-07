@@ -16,6 +16,29 @@
 # Virtual_experiments_models_input_outputs.
 # Soil-layer files, residue_initial, soil_preparation, and the DSSAT weather files.
 # time_from_start on the yield file.
+# obs_phenology.csv: not read. columns: id_season;id_tratnt;pdate;pdate_doy;emergence_date;emergence_date_doy;anthesis_date;anthesis_date_doy;physio_maturity_date;physio_maturity_date_DOY;harvest_date;harvest_date_doy. Observation records are missing from d until this file is standardized.
+# phenology_info.csv: not read. columns: id_site;crop;cultivar;cul_note;gdd_emerg_anthesis;gdd_anthesis_maturity. Observation records are missing from d until this file is standardized.
+# soil_general_info.csv: not read. columns: id_site;id_soil;texture;slope;soil_type;max_root_depth;cropping history. Observation records are missing from d until this file is standardized.
+# soil_layers_characterisctics_corrected.xlsx: not read. sheet Feuil1 (of 2): id_soil, layer_base_depth, layer_thickness, lower_limit, drained_upper_limit, saturation, Or, alpha, n, bulk_density, clay, silt, .... Observation records are missing from d until this file is standardized.
+# soil_layers_initial.csv: not read. columns: soil_id;id_treatment;layer_base_depth;ini_Nmin_conc;ini_Nmin_amount;ini_soc_conc;ini_soc_conc_sd;ini_soc_amount;ini_soc_amount_sd;ini_son_conc;ini_son conc_sd;ini_son_amount;ini_son_amount_sd. Observation records are missing from d until this file is standardized.
+# ICGA - Copie.txt: not read. columns: Station #: ICGA, , , , , , . Observation records are missing from d until this file is standardized.
+# ICGA.txt: not read. columns: Station #: ICGA, , , , , , . Observation records are missing from d until this file is standardized.
+# KEEM.txt: not read. columns: Station #: KEEM. Observation records are missing from d until this file is standardized.
+# KEMA.txt: not read. columns: Station #: KEMA, , , , , , . Observation records are missing from d until this file is standardized.
+# ZIMU.txt: not read. columns: Station #: ZIMU, , , , , , . Observation records are missing from d until this file is standardized.
+# Trials_SOC_observations.csv: not read. columns: "id_site", "Date", "id_treatment", "SOC", "time_from_start". Observation records are missing from d until this file is standardized.
+# READ.ME.txt: documentation or a codebook, not an observation table.
+# summary_data_definition.xlsx: documentation or a codebook, not an observation table.
+# crop_sequence_SA.csv: not read. columns: id_site, id_season, planting_year, season, crop. Observation records are missing from d until this file is standardized.
+# mineral_fertilisation_SA.csv: not read. columns: id_site;season;Ninput;fedate_doy1;fe_type1;fe_applic_note1;fe_depth1;fe_n1;fe_p1;fe_k1;fedate_doy2;fe_type2;fe_applic_note2;fe_depth2;fe_n2;fe_p2;fe_k2;fedate_doy3;fe_type3;fe_applic_note3;fe_depth3;fe_n3;fe_p3;fe_k3. Observation records are missing from d until this file is standardized.
+# organic_amendment_SA.csv: not read. columns: id_site, season, Cinput, omdate_doy, om_type, om_note, om_amount_DW, om_ms_content, om_carbon_conc_DW, om_n_conc, om_p_conc, om_k_conc. Observation records are missing from d until this file is standardized.
+# planting_SA.csv: not read. columns: id_site;season;crop;cultivar;cul_note;pdate_doy;plant_population;row_spacing;planting_depth. Observation records are missing from d until this file is standardized.
+# soil_layers_initial_SA.csv: not read. columns: soil_id;layer_base_depth;ini_Nmin_amount;ini_soc_conc;ini_soc_amount;ini_son_conc;ini_son_amount. Observation records are missing from d until this file is standardized.
+# soil_preparation_SA.csv: not read. columns: id_site, season, sprep_doy, sprep_type, sprep_implement, sprep_depth, sprep_doy2, sprep_implement2, sprep_type2, sprep_depth2. Observation records are missing from d until this file is standardized.
+# ICGA_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
+# KEEM_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
+# KEMA_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
+# ZIMU_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -67,8 +90,8 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 		a + b + c
 	}
 
-	fy <- ff[basename(ff) == "Trials_yield_observation.csv"]
-	y <- read_yield(fy)
+	f1 <- ff[basename(ff) == "Trials_yield_observation.csv"]
+	y <- read_yield(f1)
 	y$site_code <- substr(y$id_season, 1, 4)
 	y$fert_code <- y$id_treatment
 	y$fert_code <- gsub("+C", "C1", y$fert_code, fixed=TRUE)
@@ -76,16 +99,16 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 	y$fert_code <- gsub("+N", "N1", y$fert_code, fixed=TRUE)
 	y$fert_code <- gsub("-N", "N0", y$fert_code, fixed=TRUE)
 
-	fp <- ff[basename(ff) == "planting.csv"]
-	plant <- read_semi(fp)
-	fc <- ff[basename(ff) == "crop_sequence.csv"]
-	seq <- read.csv(fc, check.names=FALSE)
-	fs <- ff[basename(ff) == "site_general_info.csv"]
-	site <- read.csv(fs, check.names=FALSE)
-	ffert <- ff[basename(ff) == "mineral_fertilisation.csv"]
-	fert <- read_semi(ffert)
-	fo <- ff[basename(ff) == "organic_amendment.csv"]
-	om <- read_semi(fo)
+	f2 <- ff[basename(ff) == "planting.csv"]
+	plant <- read_semi(f2)
+	f3 <- ff[basename(ff) == "crop_sequence.csv"]
+	r1 <- read.csv(f3, check.names=FALSE)
+	f4 <- ff[basename(ff) == "site_general_info.csv"]
+	r2 <- read.csv(f4, check.names=FALSE)
+	f5 <- ff[basename(ff) == "mineral_fertilisation.csv"]
+	fert <- read_semi(f5)
+	f6 <- ff[basename(ff) == "organic_amendment.csv"]
+	om <- read_semi(f6)
 
 	fert$N_fertilizer <- sum3(fert$fe_n1, fert$fe_n2, fert$fe_n3)
 	fert$P_fertilizer <- sum3(fert$fe_p1, fert$fe_p2, fert$fe_p3)
@@ -106,7 +129,7 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 	om <- om[, c("id_season", "id_treatment", "OM_amount")]
 	names(om)[names(om) == "id_treatment"] <- "fert_code"
 
-	crop <- seq[, c("id_season", "crop")]
+	crop <- r1[, c("id_season", "crop")]
 	crop$crop[crop$crop == "fallow"] <- "none"
 	plant <- plant[, c("id_season", "pdate", "plant_population", "row_spacing")]
 
@@ -114,7 +137,7 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 	d <- merge(d, plant, by="id_season", all.x=TRUE)
 	d <- merge(d, fert, by=c("id_season", "fert_code"), all.x=TRUE)
 	d <- merge(d, om, by=c("id_season", "fert_code"), all.x=TRUE)
-	d <- merge(d, site[, c("id_site", "site_name", "latitude", "longitude", "elevation")], by.x="site_code", by.y="id_site", all.x=TRUE)
+	d <- merge(d, r2[, c("id_site", "site_name", "latitude", "longitude", "elevation")], by.x="site_code", by.y="id_site", all.x=TRUE)
 
 	country <- c(ICGA="Côte d'Ivoire", KEEM="Kenya", KEMA="Kenya", ZIMU="Zimbabwe")
 	part <- c(maize="grain", soybean="seed", none="none")

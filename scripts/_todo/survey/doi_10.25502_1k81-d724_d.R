@@ -20,6 +20,7 @@
 # Annual *_prod / *_surf / *_yi totals (seasonal kg and ha are used).
 # Fodder, livestock, labor, gender income-control, food security.
 # Season irrigation shares and fertilizers_u (a type count, not a rate).
+# data_dictionary1.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # yield_mg_ha_: the file's yield column where present (Mg/ha); not used as yield

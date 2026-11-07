@@ -31,6 +31,36 @@
 # molluscicide_amount_, rodenticide_amount_: active ingredient applied (kg/ha), summed over applications
 
 
+
+## NOT PROCESSED
+# CAPITAL LOAN.xlsx: not read. sheet CAPITAL LOAN: ID, CAPITAL1, CAPSOURCE1, CAPMOBR1, CAPAMT1, CAPPRD1, CAPINT1, CAPMOPD1, CAPITAL2, CAPSOURCE2, CAPMOBR2, CAPAMT2, .... Observation records are missing from d until this file is standardized.
+# CAPITAL LOAN_1.xlsx: not read. sheet CAPITAL LOAN: ID, 20source, 20source1, 20source2, 20borrow, 20borrow1, 20borrow2, 20monthbor, 20monthbor1, 20monthbor2, 20amtbor, 20amtbor1, .... Observation records are missing from d until this file is standardized.
+# CROP ESTABLISHMENT.xlsx: not read. sheet CROP ESTABLISHMENT: ID, CROPESACT, C1DATE, C1FM, C1FF, C1FDAY, C1FHR, C1EM, C1EF, C1EDAY, C1EHR, C1EFD, .... Observation records are missing from d until this file is standardized.
+# CROP ESTABLISHMENT_1.xlsx: not read. sheet CROP ESTABLISHMENT: ID, Activity, DateDAS, Fperm, Fperf, Fperday, Fpeerave, Eperm, Eperf, Eperday, Eperave, Eperfood, .... Observation records are missing from d until this file is standardized.
+# FARM INVESTMENT.xlsx: not read. sheet FARM INVESTMENT: ID, TOTFARMQ, TOTFARMP, FARM1, FARM1Q, FARM1P, FARM2, FARM2Q, FARM2P, CARQ, CARP, CATTQ, .... Observation records are missing from d until this file is standardized.
+# FARM PARCELS.xlsx: not read. sheet FARM PARCELS: ID, PARNO1, PAREA1, PCROPa1, PCROPb1, PCROPc1, PTENURE1, PRENTW1, PRENTWa1, PRENTD1, PRENTDa1, PARNO2, .... Observation records are missing from d until this file is standardized.
+# FARM PARCELS_1.xlsx: not read. sheet FARM PARCELS: ID, Parcelno, Parcelarea, Cropsplanted, tenure, rentwet, rentdry. Observation records are missing from d until this file is standardized.
+# HANDPICKING.xlsx: not read. sheet HANDPICKING: ID, hpapplication, hpDateDAT, Area, IFAM, IEXC, IHIR, ITOTLAB, ITOTLABHA, HDFsperm, HDFsperf, HDFsperday, .... Observation records are missing from d until this file is standardized.
+# HANDPICKING_1.xlsx: not read. sheet HANDPICKING: ID, hpapplication, hpDateDAT, Area, IFAM, IEXC, IHIR, ITOTLAB, ITOTLABHA, hpFsperm, hpFsperf, hpFsperday, .... Observation records are missing from d until this file is standardized.
+# HARVESTING.xlsx: not read. sheet HARVESTING: ID, HARVACT, HR1DATE, HR1POWER, HR1OWN, HR1RENT, HR1RMODE, HR1LI, HR1LIP, HR1FM, HR1FF, HR1FDAY, .... Observation records are missing from d until this file is standardized.
+# HARVESTING_1.xlsx: not read. sheet HARVESTING: ID, htActivity, htDate, htpower, htmachine, htrental, htmode, htfuel, htfperm, htfperf, htfperday, htfperave, .... Observation records are missing from d until this file is standardized.
+# IRRIGATION.xlsx: not read. sheet IRRIGATION: ID, irrigation, IRRIG, IRRRD1, IRRRD2, IRRRD3, IRRKM, IRRFEEW, PUMP, PUMPNO, PUMPOWN, PUMPRENT, .... Observation records are missing from d until this file is standardized.
+# IRRIGATION_1.xlsx: not read. sheet IRRIGATION: ID, Source, Irrigfeedry, Irrigfeewet, Pumpused, Notimes, Pumpown, Rental, Mode, Totalfuel, Fpersonm, Fpersonf, .... Observation records are missing from d until this file is standardized.
+# LAND PREP.xlsx: not read. sheet LAND PREP: ID, LandPrep, AREA, L1DATE, L1POWER, L1OWN, L1RENT, L1RMODE, L1LI, L1LIP, L1FM, L1FF, .... Observation records are missing from d until this file is standardized.
+# LAND PREP_1.xlsx: not read. sheet LAND PREP: ID, LActivity, LDateDBT, Lpower, Lmachine, Lrental, Lmode, Lfuel, Flperm, Flperf, Flperday, Flperave, .... Observation records are missing from d until this file is standardized.
+# PEST KNOWLEDGE 1.xlsx: not read. sheet PEST KNOWLEDGE 1: ID, 21benefit, 21risk. Observation records are missing from d until this file is standardized.
+# PEST KNOWLEDGE 2.xlsx: not read. sheet PEST KNOWLEDGE 2: ID, 21probname, 21probrelation. Observation records are missing from d until this file is standardized.
+# PEST KNOWLEDGE 3.xlsx: not read. sheet PEST KNOWLEDGE 3: ID, 21pest, 21method. Observation records are missing from d until this file is standardized.
+# PEST MGT A.xlsx: not read. sheet PEST MGT A: ID, APEST1, APESTWHY1, APESTDO1, APEST2, APESTWHY2, APESTDO2, APEST3, APESTWHY3, APESTDO3, APEST4, APESTWHY4, .... Observation records are missing from d until this file is standardized.
+# PEST MGT B.xlsx: not read. sheet PEST MGT B: ID, WATER, HARVFD1, SELLFD1, EATFD1, UNUSUAL, UNUSUALa, HPSNPEST1, HPSNVIC1, HPSNDATE1, HPSNNAT1, HPSNDET1, .... Observation records are missing from d until this file is standardized.
+# PEST QUESTIONS.xlsx: not read. sheet PEST QUESTIONS: ID, q5, q6, q7, q8, q8a, q9, q10, q11b1, q11b2, q11b3, q11a1, .... Observation records are missing from d until this file is standardized.
+# PEST WOMEN.xlsx: not read. sheet PEST WOMEN: ID, 26resp1, 26resp2, 26respdesc, 26resp1a, 26resp2a. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Policy Oriented Research Impact Assessment (PORIA):  Economic Assessment of a Change in Chemical Registration Policy Due to IRRI Research on Pesticide Use and Philippine Farmers’ Health. Observation records are missing from d until this file is standardized.
+# SEEDBED_1.xlsx: not read. sheet SEEDBED: ID, application, DateDBT, typechem, brandchem, Qtylocal, Qtywt, Qtyunit, Priceqty, Qtypunit, Area, IFAM, .... Observation records are missing from d until this file is standardized.
+# TRAINING ORG.xlsx: not read. sheet TRAINING ORG: ID, TTITLE1, TDUR1, TSPON1, TTOPICa1, TTOPICb1, TTITLE2, TDUR2, TSPON2, TTOPICa2, TTOPICb2, TTITLE3, .... Observation records are missing from d until this file is standardized.
+# WEEDING.xlsx: not read. sheet WEEDING: ID, Area, W1APLCN, W1DATE, W1WEED1, W1WEED2, IFAM, IEXC, IHIR, IGAMA, ITOTLAB, ITOTLABHA, .... Observation records are missing from d until this file is standardized.
+# WEEDING_1.xlsx: not read. sheet WEEDING: ID, weedingno, wDateDAT, Area, IFAM, IEXC, IHIR, ITOTLAB, ITOTLABHA, wtarget, wFperm, wFperf, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

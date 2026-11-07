@@ -15,6 +15,7 @@
 # Experiment, Taxon code, Family, Genus, Taxon full name, SAUDPC_mean: taxonomy or a mean of SAUDPC.
 # Material list parents and biological status, except the accession name used as variety_alt.
 # SAUDPC is kept.
+# 03_Datadictionary_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -44,9 +45,10 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("^01_Data_Screening", basename(ff))]
+	f <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
 	r <- carobiner::read.excel(f)
-	ml <- carobiner::read.excel(ff[grepl("^02_Material_list", basename(ff))])
+	f1 <- ff[basename(ff) == "02_Material_list_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
+	r1 <- carobiner::read.excel(f1)
 
 	id <- seq_len(nrow(r))
 	d <- data.frame(
@@ -60,8 +62,8 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		saudpc_ = as.numeric(r$SAUDPC)
 	)
 	alias <- data.frame(
-		variety = trimws(as.character(ml[["Accession number"]])),
-		variety_alt = trimws(as.character(ml[["Accession name"]]))
+		variety = trimws(as.character(r1[["Accession number"]])),
+		variety_alt = trimws(as.character(r1[["Accession name"]]))
 	)
 	alias <- alias[!duplicated(alias$variety), ]
 	d <- merge(d, alias, by="variety", all.x=TRUE)

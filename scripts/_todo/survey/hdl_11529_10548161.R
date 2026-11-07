@@ -19,6 +19,34 @@
 # Green-cob sales and consumption.
 # Wheat plots, food consumption, income, credit, and assets.
 # Market transactions and zero-tillage service opinions.
+# Ag_Income_Source.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Cereal_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Comments.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Credit.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Durable_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# First_NonFarm_Income.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Fruit_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# HH_Member - Blurred.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# HH_Plots - Blurred.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# ImprovedWheat.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# InfoSources.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# LandInfo.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Machinery.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MaizeAdopt, shared - Blurred.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MaizeMkt.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MiscOne_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MiscTwo_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Non_HH_Family - Blurred.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Protein_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Pulse_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Second_NonFarm_Income.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# ServiceAvailable.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# SocialCap.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Things.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Veg_FoodFuel_Cons.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# WheatPlot.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# ZT_SP_Details.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# ZTW_Use.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -46,10 +74,10 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 		carob_effort = 0.6
 	)
 
-	fa <- ff[basename(ff) == "MaizeAgronomy.dta"]
-	fs <- ff[basename(ff) == "Sampling_Frame.dta"]
-	a <- haven::read_dta(fa)
-	s <- haven::read_dta(fs)
+	f1 <- ff[basename(ff) == "MaizeAgronomy.dta"]
+	f2 <- ff[basename(ff) == "Sampling_Frame.dta"]
+	r1 <- haven::read_dta(f1)
+	r2 <- haven::read_dta(f2)
 	num <- function(x) as.numeric(haven::zap_labels(x))
 	chr <- function(x) {
 		x <- trimws(as.character(haven::as_factor(x)))
@@ -74,14 +102,14 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 		z %in% c("yes", "y", "1")
 	}
 	block <- function(yn, area, unit, sold, cons, variety, method) {
-		keep <- yes(a[[yn]]) | (!is.na(num(a[[area]])) & num(a[[area]]) > 0)
-		ha <- to_ha(a[[area]], a[[unit]])
-		soldq <- num(a[[sold]])
-		consq <- num(a[[cons]])
+		keep <- yes(r1[[yn]]) | (!is.na(num(r1[[area]])) & num(r1[[area]]) > 0)
+		ha <- to_ha(r1[[area]], r1[[unit]])
+		soldq <- num(r1[[sold]])
+		consq <- num(r1[[cons]])
 		qty <- ifelse(is.na(soldq) & is.na(consq), NA_real_, ifelse(is.na(soldq), 0, soldq) + ifelse(is.na(consq), 0, consq))
 		yld <- ifelse(!is.na(qty) & !is.na(ha) & ha > 0, qty * 100 / ha, NA_real_)
 		data.frame(
-			hhid = chr(a$Respondent_ID),
+			hhid = chr(r1$Respondent_ID),
 			variety = variety,
 			planting_method_ = method,
 			treatment = paste(method, variety),
@@ -98,11 +126,11 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 	d <- d[d$keep, ]
 	d$keep <- NULL
 	geo <- data.frame(
-		hhid = chr(s$Respondent_ID),
-		latitude = num(s$SF__GPS_location_latitude),
-		longitude = num(s$SF__GPS_location_longitude),
-		adm2 = chr(s$SF_district_surveybe),
-		location = chr(s$SF_Name_of_Village)
+		hhid = chr(r2$Respondent_ID),
+		latitude = num(r2$SF__GPS_location_latitude),
+		longitude = num(r2$SF__GPS_location_longitude),
+		adm2 = chr(r2$SF_district_surveybe),
+		location = chr(r2$SF_Name_of_Village)
 	)
 	geo <- geo[!duplicated(geo$hhid), ]
 	d <- merge(d, geo, by="hhid", all.x=TRUE)

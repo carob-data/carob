@@ -18,6 +18,7 @@
 ## NOT PROCESSED
 # Customer village, buyer type, selling point, and distance travelled. The row is the seller's transaction.
 # Number of small bundles, kept out because the unit relative to BundlesSold is not defined.
+# Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # bundles_sold_: vine bundles sold

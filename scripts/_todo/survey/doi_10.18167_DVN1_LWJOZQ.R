@@ -16,6 +16,8 @@
 # Cot_var_used.xlsx: variety name, Bt, and area in mu. Several varieties can occur on one farm, and the yield above is the farm seedcotton yield.
 # Farm_families.xlsx and Farm_Land.xlsx. Land area is total mu, not the cotton yield area.
 # Plastic-film and growth-regulator costs.
+# List_variables.xlsx: not read. sheet info: Variables, Meaning, Comments. Observation records are missing from d until this file is standardized.
+# Read_me.txt: not read. columns: The meaning of the variables are indicated in the file List_variables.. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -76,12 +78,12 @@ Data on a sample of cotton farms in Hebei province, out of which a sub-sample wa
 		is_survey = TRUE
 	)
 
-	fs <- ff[basename(ff) == "Sub_Spray_Date_WhatControlled.xlsx"]
-	s <- carobiner::read.excel(fs, sheet="Sub_Spray_Date_WhatControlled")
+	f1 <- ff[basename(ff) == "Sub_Spray_Date_WhatControlled.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Sub_Spray_Date_WhatControlled")
 	long <- data.frame(
-		hhid = trimws(as.character(s$Farm_ID)),
-		date = as.character(as.Date(s$Date_spraying, tz="UTC")),
-		spray_target_ = trimws(as.character(s$pest_controlled))
+		hhid = trimws(as.character(r1$Farm_ID)),
+		date = as.character(as.Date(r1$Date_spraying, tz="UTC")),
+		spray_target_ = trimws(as.character(r1$pest_controlled))
 	)
 	long <- long[!is.na(long$hhid) & !is.na(long$date), ]
 	long$spray_order_ <- ave(seq_len(nrow(long)), long$hhid, long$date, long$spray_target_, FUN=seq_along)

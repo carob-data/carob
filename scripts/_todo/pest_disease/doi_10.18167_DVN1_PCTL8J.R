@@ -45,34 +45,34 @@ The aim of the experiment was to study the effect of different pest control stra
 	)
 
 	f <- ff[basename(ff) == "RawData_ToppingCotton.xlsx"]
-	y <- carobiner::read.excel(f, sheet="YellowCotton&CottonYield")
-	p <- carobiner::read.excel(f, sheet="Pests")
+	r1 <- carobiner::read.excel(f, sheet="YellowCotton&CottonYield")
+	r2 <- carobiner::read.excel(f, sheet="Pests")
 
 	# Comments: 1 control, 2 chemical control, 3 to 6 are 2, 10, 20, and 100 percent topping without insecticide.
 	top_pct <- c("1"=0, "2"=0, "3"=2, "4"=10, "5"=20, "6"=100)
-	topping <- unname(top_pct[as.character(y$Treatment)])
-	chem <- y$Treatment == 2
-	prod <- rep("none", nrow(y))
-	prod[chem & y$Year == 2011] <- "cypermethrin;acetamiprid;flubendiamide;spirotetramat"
-	prod[chem & y$Year == 2012] <- "cypermethrin;chlorpyrifos"
-	prod[chem & y$Year == 2014] <- "cypermethrin;imidacloprid"
+	topping <- unname(top_pct[as.character(r1$Treatment)])
+	chem <- r1$Treatment == 2
+	prod <- rep("none", nrow(r1))
+	prod[chem & r1$Year == 2011] <- "cypermethrin;acetamiprid;flubendiamide;spirotetramat"
+	prod[chem & r1$Year == 2012] <- "cypermethrin;chlorpyrifos"
+	prod[chem & r1$Year == 2014] <- "cypermethrin;imidacloprid"
 
 	d <- data.frame(
-		trial_id = paste(y$Station, y$Year),
+		trial_id = paste(r1$Station, r1$Year),
 		country = "Mali",
 		adm1 = "Sikasso",
-		location = as.character(y$Station),
+		location = as.character(r1$Station),
 		crop = "cotton",
 		variety = "STAM 59A",
-		treatment = as.character(y$Treatment),
+		treatment = as.character(r1$Treatment),
 		topping_rate_ = topping,
 		insecticide_used = chem,
 		insecticide_product = prod,
-		rep = as.integer(y$Block),
-		plot_id = as.character(y$Plot),
-		yield = as.numeric(y$CottonYield_kgPerHect),
+		rep = as.integer(r1$Block),
+		plot_id = as.character(r1$Plot),
+		yield = as.numeric(r1$CottonYield_kgPerHect),
 		yield_part = "seed",
-		yellow_cotton_ = as.numeric(y$PercentageYellowCotton),
+		yellow_cotton_ = as.numeric(r1$PercentageYellowCotton),
 		row_spacing = 80,
 		plant_spacing = 40,
 		stress = "pests",
@@ -84,12 +84,12 @@ The aim of the experiment was to study the effect of different pest control stra
 	long <- NULL
 	for (col in names(spp)) {
 		one <- data.frame(
-			trial_id = paste(p$Station, p$Year),
-			pest_plot_ = as.character(p$Plot),
-			date = as.character(as.Date(p$Date, tz="UTC")),
+			trial_id = paste(r2$Station, r2$Year),
+			pest_plot_ = as.character(r2$Plot),
+			date = as.character(as.Date(r2$Date, tz="UTC")),
 			pest_species = unname(spp[[col]]),
-			pest_incidence = as.integer(p[[col]]),
-			plants_observed_ = as.integer(p$NPlantsObs)
+			pest_incidence = as.integer(r2[[col]]),
+			plants_observed_ = as.integer(r2$NPlantsObs)
 		)
 		long <- rbind(long, one)
 	}

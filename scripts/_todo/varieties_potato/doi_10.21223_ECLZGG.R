@@ -18,6 +18,10 @@
 # 02_Data_catalogue: disease and processing notes on the clones, not plot measurements.
 # TWTG and TWTH: the same weight as TWTKG in g and tonnes.
 # NTP and NPH: tubers planted and tubers at harvest, with no plot area, so they are not a density.
+# 02_Data_catalogue_Mel_4798.xlsx: not read. sheet Catalogue description: Number, Clone ID, Population, Processing potential, LB, PVX, PVY, PLRV, BW, NOTE. Observation records are missing from d until this file is standardized.
+# 03_Summary_Mel_4798.xlsx: not read. sheet Summary table 6 clones: INSTN, NTP, YIELD, NT_III, NMT_III, NT_II, NT_I. Observation records are missing from d until this file is standardized.
+# 04_Data_dictionary_Mel_4798.xlsx: documentation or a codebook, not an observation table.
+# 05_Map_Mel_4798.xlsx: not read. sheet Map 2016 A: PD: 22.3.16. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

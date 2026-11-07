@@ -19,6 +19,7 @@
 # AVG columns and the closing Dry Matter % column.
 # The control block after the second header (Set, Control, CIP Number, Cultivar Name). Those columns do not line up with the clone table: High and Low rows put dry matter in the specific-gravity columns.
 # The dictionary workbook.
+# Data_Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -56,12 +57,12 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 
 	f <- ff[basename(ff) == "Solid.xls"]
 	# skip 2 and hdr 2: trait row, environment row, and the season row used as the readxl name row.
-	h <- carobiner::read.excel.hdr(f, sheet="Solid", skip=2, hdr=2, fix_names=FALSE)
-	clone <- trimws(as.character(h[[2]]))
+	r <- carobiner::read.excel.hdr(f, sheet="Solid", skip=2, hdr=2, fix_names=FALSE)
+	clone <- trimws(as.character(r[[2]]))
 	ok <- grepl("^CIP[0-9]", clone)
-	h <- h[ok, ]
+	r <- r[ok, ]
 	clone <- clone[ok]
-	set <- as.integer(h[[1]])
+	set <- as.integer(r[[1]])
 	num <- function(x) {
 		x <- trimws(as.character(x))
 		x[x %in% c("Pend", "")] <- NA_character_
@@ -84,10 +85,10 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 	# Columns: 4 winter DM, 5 spring DM, 7 highland dry DM, 8 highland rain DM.
 	# 11-12 and 14-15 are the specific gravities in that same season order. 6, 9, 10, 13, 16, 17, 18 are averages.
 	d <- rbind(
-		piece("lowland winter", h[[4]], h[[11]]),
-		piece("lowland spring", h[[5]], h[[12]]),
-		piece("highland dry", h[[7]], h[[14]]),
-		piece("highland rain", h[[8]], h[[15]])
+		piece("lowland winter", r[[4]], r[[11]]),
+		piece("lowland spring", r[[5]], r[[12]]),
+		piece("highland dry", r[[7]], r[[14]]),
+		piece("highland rain", r[[8]], r[[15]])
 	)
 	d <- d[!(is.na(d$yield_moisture) & is.na(d$specific_gravity_)), ]
 	rownames(d) <- NULL

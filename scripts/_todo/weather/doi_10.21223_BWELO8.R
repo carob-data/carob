@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # ID: row number.
 # None of the measurement columns were dropped.
+# 02_Data_dictionary_Chugay.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

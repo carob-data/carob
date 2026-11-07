@@ -15,6 +15,43 @@
 # GeographicDistributionVarieties_Cusco.xlsx, one row per variety on the same parcels.
 # Variety frequency and rotation workbooks, and the community-boundary shapefiles.
 # SubParcela on the plot table is empty.
+# CommunityBoundaries_Cusco_Chacclabamba.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Chacclabamba.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Cochacochayoc.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Cusco_Turuyoc.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# FrecuencyOfVarietiesByArea_A_Cusco.xlsx: not read. sheet Lista_Area (of 4): categoria, Variedad, Area m2. Observation records are missing from d until this file is standardized.
+# Plots_Cusco.CPG: same table as the file of this name that is read.
+# Plots_Cusco.prj: same table as the file of this name that is read.
+# Plots_Cusco.rar: same table as the file of this name that is read.
+# Plots_Cusco.sbn: same table as the file of this name that is read.
+# Plots_Cusco.sbx: same table as the file of this name that is read.
+# Plots_Cusco.shp: same table as the file of this name that is read.
+# Plots_Cusco.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# Plots_Cusco.shx: same table as the file of this name that is read.
+# RotationRatio_Cusco.xlsx: not read. sheet data (of 2): R_Alt_100m, R_Alt_200, CategoriaFinal, Area, Country, Region, Community, Code...8, Fam, Par, Code...11, latitud, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

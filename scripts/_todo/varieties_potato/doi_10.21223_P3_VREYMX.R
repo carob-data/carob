@@ -68,8 +68,10 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		carob_effort = 0.8
 	)
 
-	y <- carobiner::read.excel(ff[basename(ff) == "Losses yield determination.xls"], col_types="text")
-	g <- carobiner::read.excel(ff[basename(ff) == "Field geographic locations.xlsx"])
+	f1 <- ff[basename(ff) == "Losses yield determination.xls"]
+	r1 <- carobiner::read.excel(f1, col_types="text")
+	f2 <- ff[basename(ff) == "Field geographic locations.xlsx"]
+	r2 <- carobiner::read.excel(f2)
 	num <- function(x) {
 		x <- trimws(as.character(x))
 		x[!nzchar(x) | x %in% c("NA", ".")] <- NA_character_
@@ -87,14 +89,14 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		ifelse(hem %in% c("S", "W"), -deg, deg)
 	}
 
-	prov <- trimws(as.character(g$Province))
+	prov <- trimws(as.character(r2$Province))
 	prov[!nzchar(prov)] <- NA_character_
 	for (i in seq_along(prov)[-1]) {
 		if (is.na(prov[i])) prov[i] <- prov[i - 1]
 	}
 	# localidad 1 to 11, in the dictionary order, pointing at geographic-sheet rows
 	geo_row <- c(1, 3, 2, 5, 6, 8, 10, 11, 7, 4, 9)
-	gi <- geo_row[as.integer(y$Localidad)]
+	gi <- geo_row[as.integer(r1$Localidad)]
 	varmap <- c(
 		"1"="Dolores",
 		"2"="Única",
@@ -103,51 +105,51 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		"5"="INIAP-Gabriela",
 		"6"="INIAP-Yana Shungo"
 	)
-	variety <- unname(varmap[trimws(y$Variedad)])
-	loc <- as.integer(y$Localidad)
-	community <- as.character(g[["Community name"]])
-	area_col <- grep("^Area", names(g), value=TRUE)[1]
+	variety <- unname(varmap[trimws(r1$Variedad)])
+	loc <- as.integer(r1$Localidad)
+	community <- as.character(r2[["Community name"]])
+	area_col <- grep("^Area", names(r2), value=TRUE)[1]
 
 	d <- data.frame(
 		trial_id = paste0("F", loc),
 		crop = "potato",
 		variety = variety,
 		treatment = variety,
-		plot_id = paste(loc, seq_len(nrow(y)), sep="-"),
-		tuber_code_ = trimws(y$Numero),
+		plot_id = paste(loc, seq_len(nrow(r1)), sep="-"),
+		tuber_code_ = trimws(r1$Numero),
 		country = "Ecuador",
 		adm1 = carobiner::fix_name(prov[gi], "title"),
 		location = carobiner::fix_name(community[gi], "title"),
-		elevation = as.numeric(g$Altitude[gi]),
-		latitude = dms(g$Latitude)[gi],
-		longitude = dms(g$Longitude)[gi],
-		seed_source = trimws(as.character(g[["Seed source"]][gi])),
-		source_field_m2_ = as.numeric(g[[area_col]][gi]),
+		elevation = as.numeric(r2$Altitude[gi]),
+		latitude = dms(r2$Latitude)[gi],
+		longitude = dms(r2$Longitude)[gi],
+		seed_source = trimws(as.character(r2[["Seed source"]][gi])),
+		source_field_m2_ = as.numeric(r2[[area_col]][gi]),
 		planting_date = "2010-10",
-		seed_tuber_weight_g_ = num(y$Peso),
-		sprout_number_ = num(y$NumBrote),
-		emerged_ = flag(y$Emerg),
-		stem_number_ = num(y$Num_tallos),
-		plant_height = num(y$Altura) * 100,
-		misshapen_ = flag(y$Deformidad),
-		mechanical_damage_ = flag(y$D_mecanico),
-		immature_ = flag(y$Pelona),
-		pvx_ = flag(y$PVX),
-		pvy_ = flag(y$PVY),
-		pvs_ = flag(y$PVS),
-		plrv_ = flag(y$PLRV),
-		aplv_ = flag(y$APLV),
-		apmov_ = flag(y$APMoV),
-		pva_ = flag(y$PVA),
-		pyvv_ = flag(y$PYVV),
-		tubers_gt80g_ = num(y$Num_prim),
-		tubers_61_80g_ = num(y$Num_seg),
-		tubers_41_60g_ = num(y$Num_ter),
-		tubers_lt40g_ = num(y$Num_cuar),
-		weight_gt80g_ = num(y$P_prim),
-		weight_61_80g_ = num(y$P_seg),
-		weight_41_60g_ = num(y$P_ter),
-		weight_lt40g_ = num(y$P_cuar),
+		seed_tuber_weight_g_ = num(r1$Peso),
+		sprout_number_ = num(r1$NumBrote),
+		emerged_ = flag(r1$Emerg),
+		stem_number_ = num(r1$Num_tallos),
+		plant_height = num(r1$Altura) * 100,
+		misshapen_ = flag(r1$Deformidad),
+		mechanical_damage_ = flag(r1$D_mecanico),
+		immature_ = flag(r1$Pelona),
+		pvx_ = flag(r1$PVX),
+		pvy_ = flag(r1$PVY),
+		pvs_ = flag(r1$PVS),
+		plrv_ = flag(r1$PLRV),
+		aplv_ = flag(r1$APLV),
+		apmov_ = flag(r1$APMoV),
+		pva_ = flag(r1$PVA),
+		pyvv_ = flag(r1$PYVV),
+		tubers_gt80g_ = num(r1$Num_prim),
+		tubers_61_80g_ = num(r1$Num_seg),
+		tubers_41_60g_ = num(r1$Num_ter),
+		tubers_lt40g_ = num(r1$Num_cuar),
+		weight_gt80g_ = num(r1$P_prim),
+		weight_61_80g_ = num(r1$P_seg),
+		weight_41_60g_ = num(r1$P_ter),
+		weight_lt40g_ = num(r1$P_cuar),
 		stress = "pests;disease",
 		on_farm = TRUE,
 		is_survey = TRUE,
@@ -182,7 +184,7 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		list("I_Agrietamiento", "progeny", "cracking", "incidence")
 	)
 	parts <- lapply(specs, function(sp) {
-		val <- y[[sp[[1]]]]
+		val <- r1[[sp[[1]]]]
 		if (sp[[1]] == "Rhizoctoniasis") val[trimws(val) == "0,1"] <- "0.1"
 		pct <- num(val)
 		keep <- !is.na(pct)

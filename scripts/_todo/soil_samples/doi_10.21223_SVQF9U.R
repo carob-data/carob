@@ -25,6 +25,7 @@
 # Total Cations and Total Bases: sums of the exchangeable cations.
 # Soluble Magnesium: empty.
 # Iron, Copper, Zinc, Soluble Boron: 0/1 flags, not concentrations.
+# data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

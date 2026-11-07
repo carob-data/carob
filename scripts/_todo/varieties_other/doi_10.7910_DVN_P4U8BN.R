@@ -24,6 +24,12 @@
 # PS and Trial are IL and MET on every row.
 # Year is 2016 on every row and is not a planting date.
 # 2016-IL-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
+# 2016-IL-MET-Burkina Faso-Vallee du Kou.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-IL-MET-Gambia-Sapu.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-IL-MET-Mali-Niono.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-IL-MET-Senegal-Fanaye.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, TILL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-IL-MET-Senegal-Ndiaye.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, TILL, FLWR, BIOM, GW1000, FERT, .... Observation records are missing from d until this file is standardized.
+# 2016-IL-MET-Uganda-Namulongue.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # panicle_length_: panicle length (cm), from PNL

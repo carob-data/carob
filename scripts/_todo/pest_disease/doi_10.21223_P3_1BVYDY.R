@@ -23,6 +23,7 @@
 
 ## NOT PROCESSED
 # total mean. It equals mean flies + mean parasitoids + mean pupae.
+# 2.2_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES

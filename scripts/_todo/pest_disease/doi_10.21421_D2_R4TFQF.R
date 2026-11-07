@@ -16,6 +16,7 @@
 ## NOT PROCESSED
 # ANOVA workbook: source of variation, DF, SS, MSS, F value, F probability. Summary statistics, not plot scores.
 # IJPP extract column Mean: the mean of the five isolate scores on the same row.
+# ANOVA Evaluation of designated hybrid seed parents of Pearl millet for blast resistance.xlsx: design, layout, or protocol sheet, not plot or survey records.
 
 ## NEW VARIABLES
 # pathotype_: isolate code from the column header (Pg 45, Pg 53, Pg 56, Pg 118, Pg 119).

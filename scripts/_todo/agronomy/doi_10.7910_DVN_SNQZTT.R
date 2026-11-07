@@ -33,6 +33,11 @@
 # penetrom_max_: maximum cone index (kPa); penetrom_max_depth_: depth of maximum cone index (cm); penetrom_30cm_: cone index at 30 cm (kPa)
 
 
+
+## NOT PROCESSED
+# rainfall tensiom water table.csv: not read. columns: Year, location, DAS, Rainfall, Water table, tensiom. Observation records are missing from d until this file is standardized.
+# Variable Descriptions.txt: not read. columns: Year - Year of the experiment was conducted. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

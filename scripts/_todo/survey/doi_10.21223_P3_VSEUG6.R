@@ -16,6 +16,24 @@
 # Enumerator names, phone numbers, woman names, and interview clock times.
 # Modules B through P (people, diet, knowledge, crops, assets, and anthropometry). Crop area in Module I is stored with a unit code.
 # The intervention list, village maps, fieldwork report, dictionary, and questionnaire.
+# Intervention List.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Mama SASHA Baseline Survey - Data Dictionary.lst: documentation or a codebook, not an observation table.
+# Module B - Household Members 5 Years and Above.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module C - Household Members Less Than 5 Years.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module D - Dietary Diversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module E - Women's Knowledge about Nutrition and Vitamin A.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module F - Attitudes.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module G - Health and Nutrition Practice.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module H - Frequency of Consumption of Vitamin A Rich Foods past 7 Days.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module I - Crop Production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module J - SP Production -Part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module J - SP Production -Part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module K - SP Knowledge & Practice.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module L - SP Preference & Practice.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module M1 - Household Assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module M2 - Radio Use.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module N - Household Asset Characteristics.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module P - Anthropemetry & Blood Sampling.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

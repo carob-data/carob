@@ -14,6 +14,7 @@
 
 ## NOT PROCESSED
 # shoot t/ha, 200-grain weights (g/m2, not a seed weight), striga counts, and tiller and panicle counts.
+# DataWeedRiceYield_AntsaPhDthesis_Metadata.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # species_cover_: percent cover of one species on a survey date. Zeros are omitted.
@@ -44,62 +45,62 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		carob_effort = 0.7
 	)
 
-	fy <- ff[grepl("WeedBiomass", basename(ff))][1]
-	fc <- ff[grepl("WeedCover", basename(ff))][1]
-	y <- carobiner::read.excel(fy)
-	wc <- carobiner::read.excel(fc)
+	f1 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedBiomassRiceYield.xlsx"]
+	f2 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedCover.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	r2 <- carobiner::read.excel(f2)
 
-	y$weed_management_ <- gsub("-", ".", y$weeds)
-	y$N_fertilizer <- ifelse(y$ferti == "F2", 80 * 0.11, 0)
-	y$P_fertilizer <- ifelse(y$ferti == "F2", 80 * 0.22 / 2.29, 0)
-	y$K_fertilizer <- ifelse(y$ferti == "F2", 80 * 0.16 / 1.2051, 0)
-	y$fertilizer_type <- ifelse(y$ferti == "F2", "NPK", "none")
+	r1$weed_management_ <- gsub("-", ".", r1$weeds)
+	r1$N_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.11, 0)
+	r1$P_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.22 / 2.29, 0)
+	r1$K_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.16 / 1.2051, 0)
+	r1$fertilizer_type <- ifelse(r1$ferti == "F2", "NPK", "none")
 
 	d <- data.frame(
-		trial_id = paste("Ivory", y$year, sep = "_"),
-		plot_id = paste(y$year, y$block, y$soil, y$ferti, y$weed_management_, y$replicates, sep = "_"),
+		trial_id = paste("Ivory", r1$year, sep = "_"),
+		plot_id = paste(r1$year, r1$block, r1$soil, r1$ferti, r1$weed_management_, r1$replicates, sep = "_"),
 		crop = "rice",
 		country = "Madagascar",
 		location = "Ivory",
 		adm1 = "Vakinankaratra",
-		block_id = as.character(y$block),
-		rep = as.integer(y$replicates),
-		land_prep_method = ifelse(y$soil == "CT", "conventional", "none"),
-		N_fertilizer = y$N_fertilizer,
-		P_fertilizer = y$P_fertilizer,
-		K_fertilizer = y$K_fertilizer,
-		fertilizer_type = y$fertilizer_type,
+		block_id = as.character(r1$block),
+		rep = as.integer(r1$replicates),
+		land_prep_method = ifelse(r1$soil == "CT", "conventional", "none"),
+		N_fertilizer = r1$N_fertilizer,
+		P_fertilizer = r1$P_fertilizer,
+		K_fertilizer = r1$K_fertilizer,
+		fertilizer_type = r1$fertilizer_type,
 		OM_used = TRUE,
-		treatment = y$weed_management_,
-		weeding_done = y$weed_management_ != "weedy",
-		intercrops = ifelse(y$soil == "NT", "stylosanthes", "none"),
-		intercropped = y$soil == "NT",
-		yield = as.numeric(y$yield) * 1000,
+		treatment = r1$weed_management_,
+		weeding_done = r1$weed_management_ != "weedy",
+		intercrops = ifelse(r1$soil == "NT", "stylosanthes", "none"),
+		intercropped = r1$soil == "NT",
+		yield = as.numeric(r1$yield) * 1000,
 		yield_part = "grain",
-		weed_biomass = as.numeric(y$tot.weeds) * 10,
+		weed_biomass = as.numeric(r1$tot.weeds) * 10,
 		irrigated = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
 
-	wc$weeds <- gsub("-", ".", wc$weeds)
-	wc$plot_id <- paste(wc$year, wc$block, wc[["soil management"]], wc$fertilization, wc$weeds, wc$replicates, sep = "_")
-	wc <- wc[wc$plot_id %in% d$plot_id, ]
+	r2$weeds <- gsub("-", ".", r2$weeds)
+	r2$plot_id <- paste(r2$year, r2$block, r2[["soil management"]], r2$fertilization, r2$weeds, r2$replicates, sep = "_")
+	r2 <- r2[r2$plot_id %in% d$plot_id, ]
 	tot <- data.frame(
-		plot_id = wc$plot_id,
-		DAP = as.integer(wc$DAS),
-		weed_cover = as.numeric(wc$WeedCover)
+		plot_id = r2$plot_id,
+		DAP = as.integer(r2$DAS),
+		weed_cover = as.numeric(r2$WeedCover)
 	)
 	idcols <- c("year", "DAS", "block", "fertilization", "soil management", "weeds", "replicates", "WeedStyloCover", "WeedCover", "plot_id")
-	spp <- setdiff(names(wc), idcols)
+	spp <- setdiff(names(r2), idcols)
 	sp <- vector("list", length(spp))
 	for (i in seq_along(spp)) {
-		v <- as.numeric(wc[[spp[i]]])
+		v <- as.numeric(r2[[spp[i]]])
 		k <- !is.na(v) & v > 0
 		if (!any(k)) next
 		sp[[i]] <- data.frame(
-			plot_id = wc$plot_id[k],
-			DAP = as.integer(wc$DAS[k]),
+			plot_id = r2$plot_id[k],
+			DAP = as.integer(r2$DAS[k]),
 			weed_species = spp[i],
 			species_cover_ = v[k]
 		)

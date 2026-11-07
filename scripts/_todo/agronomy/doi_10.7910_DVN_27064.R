@@ -30,6 +30,15 @@
 # soil_fertility_: farmer-reported soil fertility (very fertile, fertile, unfertile)
 
 
+
+## NOT PROCESSED
+# 3.1 Submergence condition.xlsx: not read. sheet 3.1 Submergence condition: COUNTRY, RESPNO, FLDOCC, NOFLOOD, FLOODING, MONWKFLD, STGRCFLD, DAYSREMAIN, DAYSTOTSUB, MAXDEPSUB, SUBTOLHAP, EXISVARHAP, .... Observation records are missing from d until this file is standardized.
+# 3.2 Salinity condition.xlsx: not read. sheet 3.2 Salinity condition: COUNTRY, RESPNO, SSNSALSEV, MONSALSEV, SALCAUSE1, SALCAUSE2, STGSALCRIT1, STGSALCRIT2, STGSALCRIT3, STDIE, STPERDIE, LCDIE, .... Observation records are missing from d until this file is standardized.
+# 4. Second visit.xlsx: not read. sheet 4. Second visit: COUNTRY, RESPNO, VARIETY, STRTOLVAR, LOCVAR, SEX, TILLERING, PLNTHT, TOLSUB, TOLPEST, TOLDIS, LODGRES, .... Observation records are missing from d until this file is standardized.
+# 5. Third visit.xlsx: not read. sheet 5. Third visit: COUNTRY, RESPNO, VARIETY, STRTOLVAR, LOCVAR, SEX, GRNYLD, HARVEST, THRESH, MILREC, MKTPRC, OTHUSES, .... Observation records are missing from d until this file is standardized.
+# 7. Seed distribution.xlsx: not read. sheet 7. Seed distribution: COUNTRY, RESPNO, MEMDEC, DOMDEC, VARIETY, STRTOLVAR, PLNGROW, WHYPLAN1, WHYPLAN2, WHYPLAN3, AREAPLAN, PLANSHARE, .... Observation records are missing from d until this file is standardized.
+# 8. Technology tracking.xlsx: not read. sheet 8. Technology tracking: COUNTRY, RESPNO, SEXFAR, AGEFAR, RELFAR, PLNSHARE, TYPESHARE, VARNAME, AMTSEED, DATEOCC. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

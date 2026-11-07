@@ -95,16 +95,16 @@ A total of 89 actinomycetes were screened for their antago-nistic activity again
 		geo_from_source = FALSE
 	)
 
-	fs <- ff[basename(ff) == "Effect of the four actinomycetes on rhizosphere.xlsx"]
-	rs <- carobiner::read.excel(fs, na="NA")
+	f1 <- ff[basename(ff) == "Effect of the four actinomycetes on rhizosphere.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
 	long <- data.frame(
 		trial_id = "Patancheru_2013",
-		seed_treatment = trimws(rs$Treatments),
-		rep = as.integer(rs$`Replication number`),
-		DAP = as.integer(sub(" days", "", rs$`Days after sowing`)),
-		soil_N_total = as.numeric(rs$Nitrogen),
-		soil_P = as.numeric(rs$Phosphorus),
-		soil_SOC = as.numeric(rs$`Organic Carbon`)
+		seed_treatment = trimws(r1$Treatments),
+		rep = as.integer(r1$`Replication number`),
+		DAP = as.integer(sub(" days", "", r1$`Days after sowing`)),
+		soil_N_total = as.numeric(r1$Nitrogen),
+		soil_P = as.numeric(r1$Phosphorus),
+		soil_SOC = as.numeric(r1$`Organic Carbon`)
 	)
 
 	carobiner::write_files(path, meta, d, long=long)

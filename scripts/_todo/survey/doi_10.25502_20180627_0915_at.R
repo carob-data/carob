@@ -32,6 +32,34 @@
 # dna.csv and metadata_cassava_dna.csv.
 # cassava_variety columns on traits, product use, stem source, months to harvest, storage and root colour.
 # All metadata_*.csv files (descriptions used only to confirm that area and harvest units are separate columns).
+# cassava_traits-preference_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Trait1, Trait2, Trait3, hhd_apply_fert, per_hh_inc_cassav, .... Observation records are missing from d until this file is standardized.
+# farmer_preference1_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Trait_Id, Trait_Id_remark, B01_Rank. Observation records are missing from d until this file is standardized.
+# farmer_preference2_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Traits_id, Rank, Remark. Observation records are missing from d until this file is standardized.
+# farmer_preference3_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, trait, B01_3_Ranking, Remark. Observation records are missing from d until this file is standardized.
+# farmer_preference4_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Varietal_traits, Rank_traits, Remark. Observation records are missing from d until this file is standardized.
+# household_assets_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Household_asset, asset_own,  UnitValue_Naira , Total_Number, Women_portion, .... Observation records are missing from d until this file is standardized.
+# household_composition_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Individual_family_code, Name_hhd_member, Sex, Age, Age_checked, .... Observation records are missing from d until this file is standardized.
+# institution_variable_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Institution_Id, Ecntact, time_mem, FemaleContact_No, MaleContact_No, .... Observation records are missing from d until this file is standardized.
+# livestock_owned_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, Livestock_owned, livestock_ownership, Total_Number_of_livestk_owned, Number_of_male_livestk_owned, Number_of_female_livestk_owned, .... Observation records are missing from d until this file is standardized.
+# metadata_association_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_cass_ppi_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_cass_trait_prefernc_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_cass_variety_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_farmer_preference1.csv: documentation or a codebook, not an observation table.
+# metadata_farmer_preference2.csv: documentation or a codebook, not an observation table.
+# metadata_farmer_preference3.csv: documentation or a codebook, not an observation table.
+# metadata_farmer_preference4.csv: documentation or a codebook, not an observation table.
+# metadata_gps_data_offset.csv: documentation or a codebook, not an observation table.
+# metadata_hhcomposition_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_house_asset_all-region.csv: documentation or a codebook, not an observation table.
+# metadata_input_use.csv: documentation or a codebook, not an observation table.
+# metadata_institution_variable_all-regions.csv: documentation or a codebook, not an observation table.
+# metadata_land_category_all_region.csv: documentation or a codebook, not an observation table.
+# metadata_livestockowned_allregion.csv: documentation or a codebook, not an observation table.
+# metadata_processing_machine_allregion.csv: documentation or a codebook, not an observation table.
+# metadata_production_asset_all-regions.csv: documentation or a codebook, not an observation table.
+# processing_machines_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, ProcessingID, Access, Male_or_Female, OtherProcessing_ID, Process_Other_Name, .... Observation records are missing from d until this file is standardized.
+# production_asset_all-regions.csv: not read. columns: ID, ZoneID, StateID, LgaID, LocalityID, EnumerationID, HouseID, production_asset, asset_ownership, Value_Naira, Total_portion, women_portion, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -61,8 +89,10 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "cassava_variety_all-regions.csv"])
-	g <- read.csv(ff[basename(ff) == "gps_data_offset.csv"])
+	f1 <- ff[basename(ff) == "cassava_variety_all-regions.csv"]
+	r <- read.csv(f1)
+	f2 <- ff[basename(ff) == "gps_data_offset.csv"]
+	r1 <- read.csv(f2)
 
 	unit <- trimws(r$Unit_Area_cass_pltd)
 	area <- r$Area_cass_pltd
@@ -81,14 +111,14 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 	variety <- trimws(r$Imp_cassv_var_name)
 	variety[variety %in% c("", "NA")] <- NA
 
-	g <- g[!duplicated(g$HouseID), ]
-	lat <- g$Lat
-	lon <- g$Long
+	r1 <- r1[!duplicated(r1$HouseID), ]
+	lat <- r1$Lat
+	lon <- r1$Long
 	ok <- !is.na(lat) & !is.na(lon) & lat >= 4 & lat <= 14 & lon >= 2.5 & lon <= 15
 	lat[!ok] <- NA
 	lon[!ok] <- NA
 	gps <- data.frame(
-		HouseID = g$HouseID,
+		HouseID = r1$HouseID,
 		longitude = lon,
 		latitude = lat
 	)

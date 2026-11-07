@@ -19,6 +19,8 @@
 ## NOT PROCESSED
 # Material_List Population and Accession_Code. Female and male parents are mapped when the institutional number matches.
 # CLASS: not defined as a treatment in the file.
+# 12582_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 17582_DataDictionary_UniqueIdentifier.xls: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 
@@ -49,8 +51,8 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 
 	f <- ff[basename(ff) == "12582_Data.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Data")
-	ml <- carobiner::read.excel(f, sheet="Material_List")
-	m <- match(trimws(as.character(r$INSTN)), trimws(as.character(ml$INSTN)))
+	r1 <- carobiner::read.excel(f, sheet="Material_List")
+	m <- match(trimws(as.character(r$INSTN)), trimws(as.character(r1$INSTN)))
 	variety <- trimws(as.character(r$ACCENAME))
 	blank <- is.na(variety) | !nzchar(variety)
 	variety[blank] <- trimws(as.character(r$INSTN))[blank]
@@ -81,8 +83,8 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 	d$female_parent <- NA_character_
 	d$male_parent <- NA_character_
 	ok <- !is.na(m)
-	d$female_parent[ok] <- trimws(as.character(ml$FEMALE[m[ok]]))
-	d$male_parent[ok] <- trimws(as.character(ml$MALE[m[ok]]))
+	d$female_parent[ok] <- trimws(as.character(r1$FEMALE[m[ok]]))
+	d$male_parent[ok] <- trimws(as.character(r1$MALE[m[ok]]))
 	d$female_parent[!nzchar(d$female_parent)] <- NA_character_
 	d$male_parent[!nzchar(d$male_parent)] <- NA_character_
 

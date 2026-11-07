@@ -16,6 +16,33 @@
 # Household_Dataset_Apurimac.xlsx: the first row is a grouped header and the sheet is not a single table.
 # CommunityBoundaries shapefiles and the survey PDFs.
 # Year columns 2001-2015 and the other rotation descriptors in RotationRatio_Apurimac.xlsx.
+# CommunityBoundaries_Apurimac_HuancacallaChico.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_HuancacallaChico.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Pauchimarcalla.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Apurimac_Queñuapampa.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # area_recorded_: Area column, unit not stated.
@@ -73,9 +100,9 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		out
 	}
 
-	fr <- ff[basename(ff) == "RotationRatio_Apurimac.xlsx"]
-	fv <- ff[basename(ff) == "FrecuencyOfVarietiesByArea_Huancavelica.xlsx"]
-	r <- carobiner::read.excel(fr, sheet="data")
+	f1 <- ff[basename(ff) == "RotationRatio_Apurimac.xlsx"]
+	f2 <- ff[basename(ff) == "FrecuencyOfVarietiesByArea_Huancavelica.xlsx"]
+	r <- carobiner::read.excel(f1, sheet="data")
 	d1 <- data.frame(
 		country = chr(r$Country),
 		adm1 = chr(r$Region),
@@ -88,11 +115,11 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		harvest_date = as_date(r[["Harvest date"]]),
 		rotation_code_ = chr(r$Cultivar_Final)
 	)
-	v <- carobiner::read.excel(fv, sheet="Lista_Area")
+	r1 <- carobiner::read.excel(f2, sheet="Lista_Area")
 	d2 <- data.frame(
 		country = "Peru",
-		variety = chr(v$Variedad),
-		area_m2_ = num(v[["Area m2"]])
+		variety = chr(r1$Variedad),
+		area_m2_ = num(r1[["Area m2"]])
 	)
 	d <- carobiner::bindr(d1, d2)
 	miss <- is.na(d$hhid) | !nzchar(d$hhid)

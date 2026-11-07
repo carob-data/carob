@@ -23,6 +23,33 @@
 # Fertilizer, manure, seed, herbicide, and pesticide quantities. Urea, DAP, and NPS amounts do not name a unit, and manure is not an elemental nutrient rate.
 # Labour, costs, tenure, soil classes, and stress scores.
 # The other questionnaire modules.
+# Module 10  PART A.  HOUSEHOLD CREDIT NEED AND SOURCES DURING 2014_15 CROPPING YEAR.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10  PART B. HOUSEHOLD SAVINGS, ENUMERATOR.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 PART C. ACCESS TO EXTENSION SERVICES.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 PART D.  PRODUCTION EQUIPMENT AND MAJOR HOUSEHOLD FURNITURE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 11 PART A LIVESTOCK OWNERSHIP, MARKETING AND PRODUCTION cost.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 12 HOUSEHOLD INCOME FOR THE LAST 12 MONTHS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 13 PART A  RISK, LIVELIHOOD SHOCKS, AND COPPING STRATEGIES IN THE LAST 10 years.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 13 PART B  RISK, LIVELIHOOD SHOCKS, AND COPING STRATEGIES IN THE LAST 5 YEARS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 14 PART B DECISION MAKING, CONTINUED.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 14 PART B RISK, LIVELIHOOD SHOCKS, AND COPING STRATEGIES IN THE LAST 5 YEARS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 15.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 2  PART B.  HOUSING CONDITIONS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 2 PART A. HOUSEHOLD COMPOSITION AND CHARACTERISTICS - BLURRED 1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 2 PART A. HOUSEHOLD COMPOSITION AND CHARACTERISTICS - BLURRED 2.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 3  part C.  MARKETING OF CROPS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 3  part D. PERCENTAGE UTILIZATION OF CROP RESIDUES PRODUCED.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 3 PART B. UTILIZATION OF CROP HARVESTED.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 4. CONSTRAINTS IN ACCESSING KEY INPUTS AND CROP PRODUCTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 5 PART A.  MAIZE VARIETY KNOWLEDGE, SOURCES OF INFORMATION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 5 PART B.  LEGUME VARIETY KNOWLEDGE, SOURCES OF INFORMATION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 6 PART A.  FOOD CONSUMPTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 6 PART B. NON-FOOD EXPENDITURE IN LAST 12 MONTHS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 Part A.  SOCIAL CAPITAL, NETWORKING AND INFRASTRUCTURE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 PART B  INFRASTRUCTURE (all distances in walking minutes).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 PART C. SOCIAL NETWORKS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 8. HOUSEHOLD DIETARY DIVERSITY SCORE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 9.  PART A HOUSEHOLD FOOD INSECURITY.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -51,7 +78,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("Plot level crop production", basename(ff)) & grepl("\\.sav$", basename(ff))]
+	f <- ff[basename(ff) == "Part 6A1_A7 Plot level crop production data - BLURRED.sav"]
 	r <- haven::read_sav(f)
 
 	txt <- function(x) {

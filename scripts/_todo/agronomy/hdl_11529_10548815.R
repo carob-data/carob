@@ -105,7 +105,7 @@ This experiments were established with different rates of nitrogen in order to g
 		dec
 	}
 
-	f <- ff[grepl("\\.xlsx$", basename(ff))][1]
+	f <- ff[basename(ff) == "GreenSeeker Sinaloa (Maiz).xlsx"]
 	sheets <- c(
 		"2008 to 2012", "O.I13-14", "PV14",
 		"O.I. 15-16 (HA2)", "O.I 15-16 (HA1)", "O.I. 15-16 (HB1)", "O.I. 15-16 (HB2)",
@@ -116,25 +116,25 @@ This experiments were established with different rates of nitrogen in order to g
 	)
 
 	read_plots <- function(sheet) {
-		raw <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
-		lab <- trimws(as.character(raw[[1]]))
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
+		lab <- trimws(as.character(r[[1]]))
 		lab[is.na(lab)] <- ""
-		val <- trimws(as.character(raw[[2]]))
+		val <- trimws(as.character(r[[2]]))
 		pick <- function(label) {
 			i <- which(lab == label)
 			if (!length(i)) NA_character_ else val[i[1]]
 		}
 		h <- NA_integer_
-		for (i in seq_len(nrow(raw))) {
-			row <- trimws(as.character(unlist(raw[i, ])))
+		for (i in seq_len(nrow(r))) {
+			row <- trimws(as.character(unlist(r[i, ])))
 			row[is.na(row)] <- ""
 			if (any(row %in% c("Plot", "No. Parcela")) && any(grepl("^N at Planting", row))) h <- i
 		}
-		hdr <- trimws(as.character(unlist(raw[h, ])))
-		unit <- trimws(as.character(unlist(raw[h + 1, ])))
+		hdr <- trimws(as.character(unlist(r[h, ])))
+		unit <- trimws(as.character(unlist(r[h + 1, ])))
 		hdr[is.na(hdr)] <- ""
 		unit[is.na(unit)] <- ""
-		sub <- raw[(h + 2):nrow(raw), ]
+		sub <- r[(h + 2):nrow(r), ]
 		keep <- !is.na(num(sub[[1]]))
 		sub <- sub[keep, ]
 		n <- nrow(sub)
@@ -194,21 +194,21 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	read_shifted <- function(sheet) {
-		raw <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
-		lab <- trimws(as.character(raw[[1]]))
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
+		lab <- trimws(as.character(r[[1]]))
 		lab[is.na(lab)] <- ""
-		val <- trimws(as.character(raw[[2]]))
+		val <- trimws(as.character(r[[2]]))
 		pick <- function(label) {
 			i <- which(lab == label)
 			if (!length(i)) NA_character_ else val[i[1]]
 		}
-		ndvi_n <- apply(raw, 1, function(r) sum(trimws(as.character(r)) == "NDVI", na.rm=TRUE))
+		ndvi_n <- apply(r, 1, function(r) sum(trimws(as.character(r)) == "NDVI", na.rm=TRUE))
 		h <- which(ndvi_n >= 3)[1]
-		hdr <- trimws(as.character(unlist(raw[h, ])))
-		unit <- trimws(as.character(unlist(raw[h + 1, ])))
+		hdr <- trimws(as.character(unlist(r[h, ])))
+		unit <- trimws(as.character(unlist(r[h + 1, ])))
 		hdr[is.na(hdr)] <- ""
 		unit[is.na(unit)] <- ""
-		sub <- raw[(h + 2):nrow(raw), ]
+		sub <- r[(h + 2):nrow(r), ]
 		keep <- !is.na(num(sub[[4]])) & !is.na(num(sub[[6]]))
 		sub <- sub[keep, ]
 		n <- nrow(sub)
@@ -258,19 +258,19 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	read_early <- function(sheet) {
-		raw <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
-		c1 <- trimws(as.character(raw[[1]]))
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
+		c1 <- trimws(as.character(r[[1]]))
 		c1[is.na(c1)] <- ""
-		val <- trimws(as.character(raw[[2]]))
+		val <- trimws(as.character(r[[2]]))
 		pick <- function(label) {
 			i <- which(c1 == label)
 			if (!length(i)) NA_character_ else val[i[1]]
 		}
-		c3 <- trimws(as.character(raw[[3]]))
+		c3 <- trimws(as.character(r[[3]]))
 		c3[is.na(c3)] <- ""
 		hloc <- which(c1 == "Loc" & c3 == "Locality")[1]
-		hdat <- which(c1 == "Loc" & grepl("N at Planting", as.character(raw[[3]])))[1]
-		loc <- raw[(hloc + 1):(hdat - 1), ]
+		hdat <- which(c1 == "Loc" & grepl("N at Planting", as.character(r[[3]])))[1]
+		loc <- r[(hloc + 1):(hdat - 1), ]
 		loc <- loc[!is.na(num(loc[[1]])), ]
 		sites <- data.frame(
 			loc = as.integer(num(loc[[1]])),
@@ -281,7 +281,7 @@ This experiments were established with different rates of nitrogen in order to g
 			dap8 = num(loc[[6]]),
 			dap12 = num(loc[[7]])
 		)
-		sub <- raw[(hdat + 1):nrow(raw), ]
+		sub <- r[(hdat + 1):nrow(r), ]
 		sub <- sub[!is.na(num(sub[[1]])) & !is.na(num(sub[[3]])), ]
 		n <- nrow(sub)
 		key <- paste(as.integer(num(sub[[1]])), trimws(as.character(sub[[2]])))

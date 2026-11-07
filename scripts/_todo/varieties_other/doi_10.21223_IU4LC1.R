@@ -14,6 +14,8 @@
 ## NOT PROCESSED
 # Check-all-that-apply columns in the sweetpotato workbooks (attractive, fibrous, orange, and the other yes/no descriptors).
 # The two dictionary workbooks.
+# 05_Data_dictionary_sweetpotato (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx: codebook for the sweetpotato tests.
+# 06_Data_dictionary_potato (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx: codebook for the potato tests.
 
 ## NEW VARIABLES
 # color_, sweetness_, firmness_, mealiness_: hedonic scores as recorded.
@@ -103,12 +105,15 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 			trial_place_ = place
 		)
 	}
-	bybase <- function(pattern) ff[grepl(pattern, basename(ff))]
+	f1 <- ff[basename(ff) == "01_Sweetpotato_Kamwenge_data (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx"]
+	f2 <- ff[basename(ff) == "02_Sweetpotato_Lira_data (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx"]
+	f3 <- ff[basename(ff) == "03_Potato_Rakai_data (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx"]
+	f4 <- ff[basename(ff) == "04_Potato_Kabale_data (Dataset_for_Sensory_attributes_and_consumer_accept...).xlsx"]
 	d <- carobiner::bindr(
-		sweet(bybase("^01_"), "Kamwenge"),
-		sweet(bybase("^02_"), "Lira"),
-		potato(bybase("^03_"), "Rakai"),
-		potato(bybase("^04_"), "Kabale")
+		sweet(f1, "Kamwenge"),
+		sweet(f2, "Lira"),
+		potato(f3, "Rakai"),
+		potato(f4, "Kabale")
 	)
 	okc <- !is.na(d$residence_country_) & grepl("^[A-Za-z][A-Za-z .'-]+$", d$residence_country_)
 	d$country <- NA_character_

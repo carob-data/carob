@@ -13,6 +13,7 @@
 ## NOT PROCESSED
 # Pigment and the AVG columns in Standard Evaluation Trial for chipping quality Data.xls.
 # The dictionary workbook.
+# Standard Evaluation Trial for chipping quality Dictionary.xls: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # environment_: lowland winter, lowland spring, highland dry, or highland rain.
@@ -48,24 +49,24 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("chipping quality Data", basename(ff))]
-	x <- readxl::read_excel(f, col_names=FALSE, .name_repair="minimal")
-	x <- x[-c(1, 2, 3), ]
+	f <- ff[basename(ff) == "Standard Evaluation Trial for chipping quality Data.xls"]
+	r <- readxl::read_excel(f, col_names=FALSE, .name_repair="minimal")
+	r <- r[-c(1, 2, 3), ]
 	num <- function(v) {
 		v <- trimws(as.character(v))
 		ok <- grepl("^-?[0-9.]+$", v)
 		v[!ok] <- NA_character_
 		as.numeric(v)
 	}
-	variety <- trimws(as.character(x[[2]]))
+	variety <- trimws(as.character(r[[2]]))
 	piece <- function(env, color, sugar, oil) {
 		data.frame(
 			variety = variety,
 			treatment = variety,
 			environment_ = env,
-			chipping_color_ = num(x[[color]]),
-			reducing_sugar_mg_dl_ = if (is.na(sugar)) NA_real_ else num(x[[sugar]]),
-			oil_absorption_pct_ = num(x[[oil]])
+			chipping_color_ = num(r[[color]]),
+			reducing_sugar_mg_dl_ = if (is.na(sugar)) NA_real_ else num(r[[sugar]]),
+			oil_absorption_pct_ = num(r[[oil]])
 		)
 	}
 	d <- rbind(

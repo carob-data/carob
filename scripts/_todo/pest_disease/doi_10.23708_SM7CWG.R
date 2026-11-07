@@ -14,6 +14,11 @@
 # harvest_date; invalid pest_species terms.
 
 
+
+## NOT PROCESSED
+# bdd_kenya_muhaka_lab_climate.csv: not read. columns: "dateUTC", "temperature", "rh", "dewpoint". Observation records are missing from d until this file is standardized.
+# bdd_kenya_muhaka_rpi_climate.csv: not read. columns: "dateUTC", "temperature", "temperatureDS18B20", "rh", "pressure", "lightVisible", "lightIR", "lightUV". Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -74,13 +79,13 @@ This dataset corresponds to climate data and maize pests monitoring of Busseola 
 	d$stress <- "pests"
 
 	# field sensor near the traps; indoor lab/rpi files omitted
-	w <- read.csv(f4)
-	w$date <- as.Date(w$dateUTC)
-	wmean <- aggregate(w[, c("temperature", "rh", "dewpoint")], w["date"], mean)
+	r1 <- read.csv(f4)
+	r1$date <- as.Date(r1$dateUTC)
+	wmean <- aggregate(r1[, c("temperature", "rh", "dewpoint")], r1["date"], mean)
 	names(wmean) <- c("date", "temp", "rhum", "dewp")
-	wmin <- aggregate(w["temperature"], w["date"], min)
+	wmin <- aggregate(r1["temperature"], r1["date"], min)
 	names(wmin) <- c("date", "tmin")
-	wmax <- aggregate(w["temperature"], w["date"], max)
+	wmax <- aggregate(r1["temperature"], r1["date"], max)
 	names(wmax) <- c("date", "tmax")
 	weather <- merge(merge(wmean, wmin, by="date"), wmax, by="date")
 	weather$date <- as.character(weather$date)

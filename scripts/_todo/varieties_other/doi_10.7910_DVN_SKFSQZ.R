@@ -118,12 +118,12 @@ Explanations of the changes
 		data.frame(site_label=label, country=country, location=loc)
 	}
 
-	fy <- ff[basename(ff) == "BLUP-Yield-2017-Irrigated-Lowland.xls"]
-	fh <- ff[basename(ff) == "BLUP-Height-2017-Irrigated-Lowland.xls"]
-	ffl <- ff[basename(ff) == "BLUP-Flowering-2017-Irrigated-Lowland.xls"]
-	y <- blup_long(fy, "yield")
-	h <- blup_long(fh, "plant_height")
-	fl <- blup_long(ffl, "flowering_days")
+	f1 <- ff[basename(ff) == "BLUP-Yield-2017-Irrigated-Lowland.xls"]
+	f2 <- ff[basename(ff) == "BLUP-Height-2017-Irrigated-Lowland.xls"]
+	f3 <- ff[basename(ff) == "BLUP-Flowering-2017-Irrigated-Lowland.xls"]
+	y <- blup_long(f1, "yield")
+	h <- blup_long(f2, "plant_height")
+	fl <- blup_long(f3, "flowering_days")
 
 	d <- merge(y, h, by=c("variety", "site_label"), all=TRUE)
 	d <- merge(d, fl, by=c("variety", "site_label"), all=TRUE)

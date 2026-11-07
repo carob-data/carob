@@ -23,6 +23,8 @@
 # Resin-trap leaching workbooks.
 # Chamber volume, air pressure, soil moisture, and the linear-model diagnostics.
 # The field-map variety list beyond the variety named on each measurement row.
+# Leaching_Batan_2024_BNI.xlsx: not read. sheet Meta Data (of 2): Column header, Meaning. Observation records are missing from d until this file is standardized.
+# Leaching_Obregon_2025_BNI.xlsx: not read. sheet Meta data (of 2): Column header, Meaning. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -108,8 +110,8 @@ Soil mineral nitrogen and N2O flux from a split-plot nitrogen-rate trial.
 		)
 	}
 
-	batan <- read_min(ff[grepl("Min_N_Batan", basename(ff))], "MIN N Batan from dataset", "El Batan")
-	obregon <- read_min(ff[grepl("Min_N_Obregon", basename(ff))], "Min N Obregon-2025-BNI", "Obregon")
+	batan <- read_min(ff[basename(ff) == "Min_N_Batan_2024-BNI.xlsx"], "MIN N Batan from dataset", "El Batan")
+	obregon <- read_min(ff[basename(ff) == "Min_N_Obregon_2025_BNI.xlsx"], "Min N Obregon-2025-BNI", "Obregon")
 	m <- rbind(batan, obregon)
 	m <- m[!is.na(m$plot) & nzchar(m$plot) & !is.na(m$N_fertilizer) & !is.na(m$bni_component_) & nzchar(m$bni_component_), ]
 	m$variety[is.na(m$variety) | !nzchar(m$variety)] <- NA_character_
@@ -148,14 +150,14 @@ Soil mineral nitrogen and N2O flux from a split-plot nitrogen-rate trial.
 		n2o_n_ug_m2_h_ = NA_real_
 	)
 
-	n2of <- ff[grepl("^N2O_", basename(ff))]
-	flux <- vector("list", length(n2of))
-	for (i in seq_along(n2of)) {
+	f1 <- ff[basename(ff) %in% c("N2O_El_Batan_2024_BNI.xlsx", "N2O_Obregon_2025_BNI.xlsx")]
+	flux <- vector("list", length(f1))
+	for (i in seq_along(f1)) {
 		sh <- NA_character_
-		if (grepl("Batan", basename(n2of[i]))) sh <- "Batan_2024_N2O"
-		if (grepl("Obregon", basename(n2of[i]))) sh <- "Obregon_2025_N2O"
-		r <- as.data.frame(carobiner::read.excel(n2of[i], sheet=sh, col_types="text"))
-		loc <- if (grepl("Batan", basename(n2of[i]))) "El Batan" else "Obregon"
+		if (grepl("Batan", basename(f1[i]))) sh <- "Batan_2024_N2O"
+		if (grepl("Obregon", basename(f1[i]))) sh <- "Obregon_2025_N2O"
+		r <- as.data.frame(carobiner::read.excel(f1[i], sheet=sh, col_types="text"))
+		loc <- if (grepl("Batan", basename(f1[i]))) "El Batan" else "Obregon"
 		vn <- trimws(as.character(r[["Variety number"]]))
 		variety <- rep(NA_character_, length(vn))
 		variety[vn == "7"] <- "Roelfs"

@@ -13,6 +13,14 @@
 # uncertain. write_files: missing yield, yield_moisture, yield_part,
 # N/P/K_fertilizer, harvest_date.
 
+
+## NOT PROCESSED
+# 01a. Codebook - Combined Data Dictionary.xlsx: documentation or a codebook, not an observation table.
+# 01b. Data Dictionary - Nakuru.xlsx: documentation or a codebook, not an observation table.
+# 01c. Codebook - Embu.xlsx: documentation or a codebook, not an observation table.
+# 02b. Nakuru.csv: not read. columns: Enumerator, Date_interview, Sub_County, Division, location, village, Sex, Marital_status, Education, Age, HH_Head, Tot_farmsize, .... Observation records are missing from d until this file is standardized.
+# 02c. Embu.csv: not read. columns: id, Q1, A01, village, sex, age, agecat, respondent_type, enterprise, hhead, relationship, marital, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

@@ -18,6 +18,13 @@
 # Plot-level workbooks without the -1 suffix. Those sheets are field-book templates without yield values.
 # 06EVT16A-Combined.xls and 06EVT16A-Grain Yield.xls repeat the location means.
 # Disease and lodging scores in the means files: gray leaf spot, rust, blight, ear rot, husk cover, weevil, and streak.
+# 06EVT16A16.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A18.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A19.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A20.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A29.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A34.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 06EVT16A9.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -57,28 +64,28 @@ Summary results and individual trial results from the International Intermediate
 		num(z)
 	}
 
-	floc <- ff[basename(ff) == "06EVT16A-Locations.xls"]
-	loc0 <- carobiner::read.excel(floc, col_names=FALSE)
-	c2 <- trimws(as.character(loc0[[2]]))
+	f1 <- ff[basename(ff) == "06EVT16A-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE)
+	c2 <- trimws(as.character(r1[[2]]))
 	keep <- !is.na(c2) & nzchar(c2) & !c2 %in% c("Country", "País", "Pais")
-	loc0 <- loc0[keep, ]
-	lat <- num_piece(loc0[[5]]) + num_piece(loc0[[6]]) / 60
-	lon <- num_piece(loc0[[8]]) + num_piece(loc0[[9]]) / 60
-	ns <- toupper(trimws(as.character(loc0[[7]])))
-	we <- toupper(trimws(as.character(loc0[[10]])))
+	r1 <- r1[keep, ]
+	lat <- num_piece(r1[[5]]) + num_piece(r1[[6]]) / 60
+	lon <- num_piece(r1[[8]]) + num_piece(r1[[9]]) / 60
+	ns <- toupper(trimws(as.character(r1[[7]])))
+	we <- toupper(trimws(as.character(r1[[10]])))
 	lat[ns == "S"] <- -abs(lat[ns == "S"])
 	lon[we == "W"] <- -abs(lon[we == "W"])
-	country <- carobiner::fix_name(trimws(as.character(loc0[[2]])), "title")
+	country <- carobiner::fix_name(trimws(as.character(r1[[2]])), "title")
 	country[country == "México"] <- "Mexico"
 	locs <- data.frame(
-		set_no = as.integer(num(loc0[[4]])),
+		set_no = as.integer(num(r1[[4]])),
 		country = country,
-		location = carobiner::fix_name(trimws(as.character(loc0[[3]])), "title"),
+		location = carobiner::fix_name(trimws(as.character(r1[[3]])), "title"),
 		latitude = lat,
 		longitude = lon,
-		elevation = num(loc0[[11]]),
-		planting_date = excel_date(loc0[[12]]),
-		harvest_date = excel_date(loc0[[13]])
+		elevation = num(r1[[11]]),
+		planting_date = excel_date(r1[[12]]),
+		harvest_date = excel_date(r1[[13]])
 	)
 
 	read_means <- function(f) {
@@ -108,8 +115,16 @@ Summary results and individual trial results from the International Intermediate
 		)
 	}
 
-	trials <- ff[grepl("-1\\.xls$", basename(ff), ignore.case=TRUE)]
-	d <- do.call(rbind, lapply(trials, read_means))
+	f2 <- ff[basename(ff) %in% c(
+		"06EVT16A16-1.xls",
+		"06EVT16A18-1.xls",
+		"06EVT16A19-1.xls",
+		"06EVT16A20-1.xls",
+		"06EVT16A29-1.xls",
+		"06EVT16A34-1.xls",
+		"06EVT16A9-1.xls"
+	)]
+	d <- do.call(rbind, lapply(f2, read_means))
 	d <- merge(d, locs, by="set_no", all.x=TRUE)
 	d$crop <- "maize"
 	d$treatment <- d$variety

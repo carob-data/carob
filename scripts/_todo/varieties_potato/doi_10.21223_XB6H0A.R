@@ -22,6 +22,9 @@
 # Hobo_data: empty.
 # Weather PAR columns (µE, not kJ/m2), temperature amplitude, barometric pressure (mm). Gust speed has no unit.
 # Summary by clone, Ranks by Clone, Charts, Format checks, Fieldbook_backup, Var List.
+# 01_Fieldbook_PTYL201007_TASHKENT-LTVR.txt: not read. columns: PLOT, REP, INSTN, NTP, NPE, PPE, NPH, PPH, MTWCI, MTWCII, NoMTWP, TTWP, .... Observation records are missing from d until this file is standardized.
+# 02_Material_list_PTYL201007_TASHKENT_LTVR.txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
+# 03_Data_dictionary.txt: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # None.
@@ -56,7 +59,7 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 
 	f <- ff[basename(ff) == "PTYL201007_TASHKENT-LTVR.xls"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	ml <- carobiner::read.excel(f, sheet="Material List")
+	r1 <- carobiner::read.excel(f, sheet="Material List")
 
 	plot_m2 <- 2.7
 	d <- data.frame(
@@ -69,14 +72,14 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 		plant_density = as.numeric(r$NPE) * 10000 / plot_m2
 	)
 
-	name <- trimws(as.character(ml[["Clone or variety name"]]))
+	name <- trimws(as.character(r1[["Clone or variety name"]]))
 	name[!nzchar(name)] <- NA_character_
-	fem <- trimws(as.character(ml[["Female Institutional number"]]))
-	mal <- trimws(as.character(ml[["Male Institutional number"]]))
+	fem <- trimws(as.character(r1[["Female Institutional number"]]))
+	mal <- trimws(as.character(r1[["Male Institutional number"]]))
 	ped <- paste(fem, mal, sep=" x ")
 	ped[is.na(fem) | is.na(mal) | !nzchar(fem) | !nzchar(mal)] <- NA_character_
 	alias <- data.frame(
-		variety = trimws(as.character(ml[["Institutional number"]])),
+		variety = trimws(as.character(r1[["Institutional number"]])),
 		variety_alt = name,
 		variety_pedigree = ped
 	)
@@ -103,20 +106,20 @@ In this trial, 16 potato clones were assessed using a randomized complete block 
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 
-	w0 <- carobiner::read.excel(f, sheet="Weather_data")
-	names(w0) <- trimws(names(w0))
+	r2 <- carobiner::read.excel(f, sheet="Weather_data")
+	names(r2) <- trimws(names(r2))
 	wth <- data.frame(
 		station_id = "TASHKENT",
 		station_name = "Kok Saroy",
-		date = as.character(as.Date(w0[["Date of weather observation"]])),
-		prec = as.numeric(w0[["Rainfall (mm)"]]),
-		temp = as.numeric(w0[["Average temperature (°C)"]]),
-		tmin = as.numeric(w0[["Minimum temperature (°C)"]]),
-		tmax = as.numeric(w0[["Maximum temperature (°C)"]]),
-		rhum = as.numeric(w0[["Relative humidity (%)"]]),
-		dewp = as.numeric(w0[["Dew point (°C)"]]),
-		wspd = as.numeric(w0[["Wind speed (m/s)"]]),
-		wdir = as.numeric(w0[["Wind direction"]])
+		date = as.character(as.Date(r2[["Date of weather observation"]])),
+		prec = as.numeric(r2[["Rainfall (mm)"]]),
+		temp = as.numeric(r2[["Average temperature (°C)"]]),
+		tmin = as.numeric(r2[["Minimum temperature (°C)"]]),
+		tmax = as.numeric(r2[["Maximum temperature (°C)"]]),
+		rhum = as.numeric(r2[["Relative humidity (%)"]]),
+		dewp = as.numeric(r2[["Dew point (°C)"]]),
+		wspd = as.numeric(r2[["Wind speed (m/s)"]]),
+		wdir = as.numeric(r2[["Wind direction"]])
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

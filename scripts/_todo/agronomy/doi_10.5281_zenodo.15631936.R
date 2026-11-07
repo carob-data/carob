@@ -42,7 +42,7 @@ The dataset contains yields and field management data of two adjacent randomised
 		carob_effort = 1.5
 	)
 
-	f <- ff[grepl("\\.sqlite$", ff)]
+	f <- ff[basename(ff) == "TI_TI-SOC-Enrichment_2025_06_13.sqlite"]
 	con <- DBI::dbConnect(RSQLite::SQLite(), f)
 	h <- DBI::dbReadTable(con, "harvest_view")
 	fert <- DBI::dbReadTable(con, "farm_operation_fertilisation_tbl")

@@ -61,7 +61,8 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 	pieces <- list()
 	longs <- list()
 	for (i in seq_len(nrow(files))) {
-		r <- read.csv(ff[basename(ff) == files$file[i]], check.names=FALSE)
+		f <- ff[basename(ff) == files$file[i]]
+		r <- read.csv(f, check.names=FALSE)
 		r <- r[, names(r) != ""]
 		for (j in seq_len(nrow(r))) {
 			for (seed in c("HS", "FP")) {

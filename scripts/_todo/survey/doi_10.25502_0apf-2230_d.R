@@ -23,6 +23,7 @@
 # Fodder area and production, livestock (milk), labor, gender income-control, and food-security columns.
 # Season irrigation shares (aman_maincrops_irri, boro_maincrops_irri, aus_maincrops_irri) and fertilizers_u.
 # Homestead, orchard, and vegetable-diversity indices that are not a crop area or yield.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # variety is not a name; variety_type holds the codebook class

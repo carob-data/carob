@@ -15,6 +15,7 @@
 ## NOT PROCESSED
 # P01 through P133, including production questions. The question text is not joined, and production is not mapped to kg/ha.
 # 02_DataDictionary and the docx questionnaire.
+# 02_DataDictionary_CAP Anemia - La Libertad 2021 - Linea de Salida v2.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -42,7 +43,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("^01_DataSet", basename(ff))]
+	f <- ff[basename(ff) == "01_DataSet_CAP Anemia - La Libertad 2021 - Linea de Salida v2.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 	id <- trimws(as.character(r$ID))
 	keep <- !is.na(id) & nzchar(id)

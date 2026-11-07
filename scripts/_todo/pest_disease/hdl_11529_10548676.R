@@ -25,6 +25,8 @@
 # Phytotoxicity scores. The legend calls the same score both disease damage and phytotoxicity, on a 0-5 scale.
 # Subsample weights used to compute yield.
 # Lodging counts that are already stored per hectare.
+# DAT-BV101-17-WeedCounts_Maize.xlsx: not read. sheet Legend (of 4): Count of weeds in Maize. Observation records are missing from d until this file is standardized.
+# DAT-BV101-17-WeedDryWeight_Maize.xlsx: not read. sheet Legend (of 2): Dry weight of weeds in Maize. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

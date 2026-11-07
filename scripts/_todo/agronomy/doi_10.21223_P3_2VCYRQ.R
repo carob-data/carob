@@ -53,16 +53,16 @@ The objective of this study was to evaluate the UNICA potato crop variety's yiel
 
 	f <- ff[basename(ff) == "Data.xls"]
 	lab <- c(T1="T1 full irrigation", T2="T2 CWSI < 0.4", T3="T3 CWSI < 0.7")
-	bio <- carobiner::read.excel(f, sheet="Biomass")
-	cc <- carobiner::read.excel(f, sheet="Canopy cover")
-	hum <- carobiner::read.excel(f, sheet="Soil humidity")
-	ir <- carobiner::read.excel(f, sheet="Irrigation")
-	cw <- carobiner::read.excel(f, sheet="CWSI")
+	r1 <- carobiner::read.excel(f, sheet="Biomass")
+	r2 <- carobiner::read.excel(f, sheet="Canopy cover")
+	r3 <- carobiner::read.excel(f, sheet="Soil humidity")
+	r4 <- carobiner::read.excel(f, sheet="Irrigation")
+	r5 <- carobiner::read.excel(f, sheet="CWSI")
 
 	d <- unique(data.frame(
-		plot_id = as.character(bio$plot),
-		block_id = as.character(bio$block),
-		treatment = unname(lab[as.character(bio$treatment)])
+		plot_id = as.character(r1$plot),
+		block_id = as.character(r1$block),
+		treatment = unname(lab[as.character(r1$treatment)])
 	))
 	d$record_id <- as.integer(d$plot_id)
 	d$crop <- "potato"
@@ -86,38 +86,38 @@ The objective of this study was to evaluate the UNICA potato crop variety's yiel
 		as.numeric(x)
 	}
 	b <- data.frame(
-		record_id = as.integer(bio$plot),
-		DAP = as.integer(bio$dap),
-		harvest_ = as.integer(bio$harvest),
-		fresh_leaf_ = num(bio$FL),
-		fresh_stem_ = num(bio$FS),
-		fresh_root_ = num(bio$FR),
-		fresh_tuber_ = num(bio$FT),
-		tuber_number_ = num(bio$nT),
-		dry_leaf_ = num(bio$DL),
-		dry_stem_ = num(bio$DS),
-		dry_root_ = num(bio$DR),
-		dry_tuber_ = num(bio$DT)
+		record_id = as.integer(r1$plot),
+		DAP = as.integer(r1$dap),
+		harvest_ = as.integer(r1$harvest),
+		fresh_leaf_ = num(r1$FL),
+		fresh_stem_ = num(r1$FS),
+		fresh_root_ = num(r1$FR),
+		fresh_tuber_ = num(r1$FT),
+		tuber_number_ = num(r1$nT),
+		dry_leaf_ = num(r1$DL),
+		dry_stem_ = num(r1$DS),
+		dry_root_ = num(r1$DR),
+		dry_tuber_ = num(r1$DT)
 	)
 	c <- data.frame(
-		record_id = as.integer(cc$plot),
-		DAP = as.integer(cc$dap),
-		canopy_cover_ = num(cc$CC)
+		record_id = as.integer(r2$plot),
+		DAP = as.integer(r2$dap),
+		canopy_cover_ = num(r2$CC)
 	)
 	h <- data.frame(
-		record_id = as.integer(hum$plot),
-		DAP = as.integer(hum$dap),
-		soil_GWC = num(hum$Hv)
+		record_id = as.integer(r3$plot),
+		DAP = as.integer(r3$dap),
+		soil_GWC = num(r3$Hv)
 	)
 	v <- data.frame(
-		record_id = as.integer(ir$plot),
-		DAP = as.integer(ir$dap),
-		irrigation_volume_ = num(ir$V)
+		record_id = as.integer(r4$plot),
+		DAP = as.integer(r4$dap),
+		irrigation_volume_ = num(r4$V)
 	)
 	w <- data.frame(
-		record_id = as.integer(cw$plot),
-		DAP = as.integer(cw$dap),
-		cwsi_ = num(cw$CWSI)
+		record_id = as.integer(r5$plot),
+		DAP = as.integer(r5$dap),
+		cwsi_ = num(r5$CWSI)
 	)
 	dlong <- carobiner::bindr(b, c, h, v, w)
 

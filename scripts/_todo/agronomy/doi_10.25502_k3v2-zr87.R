@@ -27,6 +27,8 @@
 # f_farmer_assessment.csv: relative scores.
 # g_treatments_1/2/lead_farmer.csv: no rows. g_treatments_n2africa_plot.csv: opinion text.
 # variable_definitions.csv: dictionary.
+# g_treatments_2.csv: not read. columns: id, farm_id, most_useful_information, not_so_useful, comments. Observation records are missing from d until this file is standardized.
+# g_treatments_lead_farmer.csv: not read. columns: id, farm_id, new_or_existing_farmer_group, no_farmers_in_group, no_men, no_women, received_training_within_n2africa, why_no_training, trained_other_farmers_in, why_no_farmers_trained, trained_topics, training_methods, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -76,30 +78,30 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		out
 	}
 
-	f0 <- ff[basename(ff) == "a_general.csv"]
+	f2 <- ff[basename(ff) == "a_general.csv"]
 	f1 <- ff[basename(ff) == "c_use_of_package_1.csv"]
 	f3 <- ff[basename(ff) == "c_use_of_package_3.csv"]
 	f4 <- ff[basename(ff) == "d_cropping_calendar.csv"]
 	f5 <- ff[basename(ff) == "e_harvest.csv"]
 	f7 <- ff[basename(ff) == "b_info_site_2.csv"]
 
-	r0 <- read.csv(f0, na.strings = c("", "NA"))
+	r2 <- read.csv(f2, na.strings = c("", "NA"))
 	r1 <- read.csv(f1, na.strings = c("", "NA"))
 	r3 <- read.csv(f3, na.strings = c("", "NA"))
 	r4 <- read.csv(f4, na.strings = c("", "NA"))
 	r5 <- read.csv(f5, na.strings = c("", "NA"))
 	r7 <- read.csv(f7, na.strings = c("", "NA"))
 
-	loc <- carobiner::fix_name(r0$vilage, "title")
+	loc <- carobiner::fix_name(r2$vilage, "title")
 	loc[which(loc == "")] <- NA
 	d0 <- data.frame(
-		trial_id = as.character(r0$farm_id),
-		season = as.character(r0$season),
+		trial_id = as.character(r2$farm_id),
+		season = as.character(r2$season),
 		country = "Uganda",
-		adm2 = carobiner::fix_name(r0$district, "title"),
+		adm2 = carobiner::fix_name(r2$district, "title"),
 		location = loc,
-		elevation = r0$gps_altitude,
-		farmer_gender = tolower(trimws(r0$gender_of_farmer))
+		elevation = r2$gps_altitude,
+		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)
 
 	prev <- tolower(trimws(r7$main_crop_last_season))

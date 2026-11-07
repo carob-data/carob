@@ -86,36 +86,36 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	part <- c("red amaranth"="leaves", "spinach"="leaves", "pea"="pod")
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		ic <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
-		si <- as.data.frame(carobiner::read.excel.hdr(f, sheet="2 - Site information", skip=4, hdr=2))
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Site.No), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
-		ic <- ic[!is.na(ic$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
+		r5 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="2 - Site information", skip=4, hdr=2))
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Site.No), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
+		r4 <- r4[!is.na(r4$Tmnt), ]
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		gh$seq <- add_seq(gh)
-		ft$seq <- add_seq(ft)
-		ic$seq <- add_seq(ic)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
+		r4$seq <- add_seq(r4)
 		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
-		ii <- match(key(ph), key(ic))
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
+		ii <- match(key(r1), key(r4))
 
 		site <- data.frame(
-			Site.No = si$Site.No.Unique.farmer.ID,
-			latitude = num(si$Latitude.North.Degree.and.decimal.format.only),
-			longitude = num(si$Longitude.East.Degree.and.decimal.format.only)
+			Site.No = r5$Site.No.Unique.farmer.ID,
+			latitude = num(r5$Latitude.North.Degree.and.decimal.format.only),
+			longitude = num(r5$Longitude.East.Degree.and.decimal.format.only)
 		)
 		site <- site[!is.na(site$Site.No), ]
 		site <- site[!duplicated(site$Site.No), ]
-		isite <- match(ph$Site.No, site$Site.No)
+		isite <- match(r1$Site.No, site$Site.No)
 
-		K <- pick(ft, c("K2O.kg.ha", "K2.Okg.ha")) / 1.2051
-		gypsum <- pick(ft, c("gypsum.kg.ha", "Gypsum.Kg.ha"))
+		K <- pick(r3, c("K2O.kg.ha", "K2.Okg.ha")) / 1.2051
+		gypsum <- pick(r3, c("gypsum.kg.ha", "Gypsum.Kg.ha"))
 		base <- data.frame(
 			country = "Bangladesh",
 			adm2 = "Rajshahi",
@@ -123,25 +123,25 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			season = "rabi",
 			latitude = site$latitude[isite],
 			longitude = site$longitude[isite],
-			site_no = as.character(ph$Site.No),
-			year = as.character(ph$Year),
-			seq = ph$seq,
-			treatment = as.character(ph$Tmnt),
-			variety = blank(ph$Variety),
-			plot_area = num(ph$Plot.size.m2),
-			row_spacing = num(ph$Row.spacing.cm),
-			planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
-			harvest_date = as_date(ph$Date.of.harvest.dd.mm.yy),
-			anthesis_days = num(ph$X50pct.anthesis.DAS),
-			maturity_days = num(ph$X80pct.physiological.maturity.DAS),
-			seed_rate = num(ph$Seedrate.kg.ha),
-			yield = pick(gh, "Grain.yield.t.ha")[ig] * 1000,
-			N_fertilizer = pick(ft, "N.kg.ha")[ifr],
-			P_fertilizer = pick(ft, "P2O5.kg.ha")[ifr] / 2.29,
+			site_no = as.character(r1$Site.No),
+			year = as.character(r1$Year),
+			seq = r1$seq,
+			treatment = as.character(r1$Tmnt),
+			variety = blank(r1$Variety),
+			plot_area = num(r1$Plot.size.m2),
+			row_spacing = num(r1$Row.spacing.cm),
+			planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
+			harvest_date = as_date(r1$Date.of.harvest.dd.mm.yy),
+			anthesis_days = num(r1$X50pct.anthesis.DAS),
+			maturity_days = num(r1$X80pct.physiological.maturity.DAS),
+			seed_rate = num(r1$Seedrate.kg.ha),
+			yield = pick(r2, "Grain.yield.t.ha")[ig] * 1000,
+			N_fertilizer = pick(r3, "N.kg.ha")[ifr],
+			P_fertilizer = pick(r3, "P2O5.kg.ha")[ifr] / 2.29,
 			K_fertilizer = K[ifr],
 			# Gypsum is CaSO4.2H2O. terminag gives 19 percent S.
 			S_fertilizer = gypsum[ifr] * 0.19,
-			Zn_fertilizer = pick(ft, "ZnSO4.kg.ha.1")[ifr],
+			Zn_fertilizer = pick(r3, "ZnSO4.kg.ha.1")[ifr],
 			crop = "maize",
 			yield_part = "grain",
 			yield_isfresh = FALSE
@@ -151,15 +151,15 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		leaf <- base[veg_rows, ]
 		leaf$crop <- veg[veg_rows]
 		leaf$yield_part <- unname(part[leaf$crop])
-		leaf$yield <- pick(ic, "Ccalculaation_Intercrop.t.ha")[ii][veg_rows] * 1000
-		leaf$seed_rate <- pick(ic, "Seed.rate.of.intercrop.kg.ha")[ii][veg_rows]
-		leaf$variety <- blank(ic$Variety[ii])[veg_rows]
+		leaf$yield <- pick(r4, "Ccalculaation_Intercrop.t.ha")[ii][veg_rows] * 1000
+		leaf$seed_rate <- pick(r4, "Seed.rate.of.intercrop.kg.ha")[ii][veg_rows]
+		leaf$variety <- blank(r4$Variety[ii])[veg_rows]
 		leaf$anthesis_days <- NA_real_
 		leaf$yield_isfresh <- TRUE
 		rbind(base, leaf)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c("Inter-cropping 2014-15-Premtoli-Rajshahi.xlsx", "Inter-cropping 2015-16-Premtoli-Rajshahi.xlsx")]
 	d <- do.call(rbind, lapply(ff, one))
 	d$trial_id <- paste(d$location, d$year, sep="_")
 	d$plot_id <- paste(d$site_no, d$treatment, d$seq, sep="_")

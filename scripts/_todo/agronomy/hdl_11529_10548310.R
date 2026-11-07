@@ -17,6 +17,14 @@
 # The duplicate database workbook, and the separate soil, grain, stover, and yield files. Plot yields and the 2015 soil columns are taken from TAMASA_NOTs_Database_Nigeria_2015_2016.
 # Farmer-estimated yields, manure rate, and the leaf sulphur column. The sulphur unit is not labeled.
 # Mg is 0 unless the treatment name lists Mg. The S fertilizer source includes magnesium sulphate.
+# NG-2015_NOTs_soil_leaf_yield_database_PC (blurred).xlsx: not read. sheet Meta-data (of 4): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_GRAIN_2015 (blurred).xlsx: not read. sheet METADATA (of 5): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_SOIL_2015 (blurred).xlsx: not read. sheet Meta Data (of 5): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_Soil_2016 (blurred).xlsx: not read. sheet Meta Data (of 4): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_Stover_2015 (blurred).xlsx: not read. sheet Metadata (of 5): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_Yield_2015 (blurred).xlsx: not read. sheet Metadata (of 7): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# NG_NOT_Yield_2016 (blurred).xlsx: not read. sheet Meta Data (of 7): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
+# TAMASA_NOTs_Database_Nigeria_2015_2016-1 (blurred).xlsx: not read. sheet Meta-data (of 7): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -132,19 +140,19 @@ This dataset contains data from nutrient omission trials (NOTs) conducted in far
 	}
 
 	f <- ff[basename(ff) == "TAMASA_NOTs_Database_Nigeria_2015_2016 (blurred).xlsx"]
-	ft <- carobiner::read.excel(f, sheet="Fertilizer rates & variety", na=c("", "NA"))
-	ft <- ft[!is.na(ft$LGAs), ]
-	ft <- ft[!duplicated(as.character(ft$LGAs)), ]
+	r3 <- carobiner::read.excel(f, sheet="Fertilizer rates & variety", na=c("", "NA"))
+	r3 <- r3[!is.na(r3$LGAs), ]
+	r3 <- r3[!duplicated(as.character(r3$LGAs)), ]
 	rates <- data.frame(
-		adm2 = trimws(as.character(ft$LGAs)),
-		n = num(ft[["N (kg/ha)"]]),
-		p = num(ft[["P2O5 (kg/ha)"]]) / 2.29,
-		k = num(ft[["K2O (kg/ha)"]]) / 1.2051,
-		s = num(ft[["S (kg/ha)"]]),
-		ca = num(ft[["Ca (kg/ha)"]]),
-		mg = num(ft[["Mg (kg/ha)"]]),
-		zn = num(ft[["Zn (kg/ha)"]]),
-		b = num(ft[["B (kg/ha)"]])
+		adm2 = trimws(as.character(r3$LGAs)),
+		n = num(r3[["N (kg/ha)"]]),
+		p = num(r3[["P2O5 (kg/ha)"]]) / 2.29,
+		k = num(r3[["K2O (kg/ha)"]]) / 1.2051,
+		s = num(r3[["S (kg/ha)"]]),
+		ca = num(r3[["Ca (kg/ha)"]]),
+		mg = num(r3[["Mg (kg/ha)"]]),
+		zn = num(r3[["Zn (kg/ha)"]]),
+		b = num(r3[["B (kg/ha)"]])
 	)
 
 	r1 <- carobiner::read.excel(f, sheet="Raw_Data_2015", skip=1, na=c("", "NA", "n/a"))

@@ -75,86 +75,86 @@ Farmer participatory on-farm intercropping of leafy vegetables in maize, compare
 		x
 	}
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
-	ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-	gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
-	ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-	ic <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
-	ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Crop), ]
-	gh <- gh[!is.na(gh$Tmnt), ]
-	ft <- ft[!is.na(ft$Tmnt), ]
+	f <- ff[basename(ff) == "Inter-cropping 2015-16-all nodes-Madhubani.xlsx"]
+	r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+	r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
+	r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+	r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
+	r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Crop), ]
+	r2 <- r2[!is.na(r2$Tmnt), ]
+	r3 <- r3[!is.na(r3$Tmnt), ]
 	add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-	ph$seq <- add_seq(ph)
-	gh$seq <- add_seq(gh)
-	ft$seq <- add_seq(ft)
+	r1$seq <- add_seq(r1)
+	r2$seq <- add_seq(r2)
+	r3$seq <- add_seq(r3)
 	key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-	ig <- match(key(ph), key(gh))
-	ifr <- match(key(ph), key(ft))
-	Kox <- take(ft, ifr, "K2O.kg.ha")
-	kplain <- take(ft, ifr, "K.kg.ha")
+	ig <- match(key(r1), key(r2))
+	ifr <- match(key(r1), key(r3))
+	Kox <- take(r3, ifr, "K2O.kg.ha")
+	kplain <- take(r3, ifr, "K.kg.ha")
 	K <- ifelse(is.na(Kox), kplain, Kox / 1.2051)
-	B <- take(ft, ifr, c("Boric.acid.kg.ha", "Boric.Acid.kg.ha"))
-	sp <- num(ph$Row.spacing.cm)
+	B <- take(r3, ifr, c("Boric.acid.kg.ha", "Boric.Acid.kg.ha"))
+	sp <- num(r1$Row.spacing.cm)
 	sp[!is.na(sp) & sp < 1] <- NA_real_
-	hd <- as_date(ph$Datw.of.harvest.dd.mm.yy)
+	hd <- as_date(r1$Datw.of.harvest.dd.mm.yy)
 	hd[!is.na(hd) & hd > "2018-06-05"] <- NA_character_
-	crop <- tolower(trimws(ph$Crop))
+	crop <- tolower(trimws(r1$Crop))
 	part <- ifelse(crop == "potato", "tubers", "grain")
-	hi <- take(gh, ig, "HI")
+	hi <- take(r2, ig, "HI")
 	hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
 	d <- data.frame(
 		country = "India",
 		adm1 = "Bihar",
 		adm2 = "Madhubani",
-		location = ph$Node,
-		trial_id = paste(ph$Year, ph$Node, ph$Trial.Code),
-		plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
-		treatment = ph$Tmnt,
+		location = r1$Node,
+		trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
+		plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
+		treatment = r1$Tmnt,
 		crop = crop,
-		variety = ph$Variety,
+		variety = r1$Variety,
 		yield_part = part,
-		planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
+		planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
 		harvest_date = hd,
 		row_spacing = sp,
-		seed_rate = num(ph$Seedrate.kg.ha),
-		plot_area = num(ph$Plot.size.m2),
-		yield = take(gh, ig, c("Grain.yield.t.ha", "Calculation_Grain.Yield.t.ha")) * 1000,
-		biomass_kg_ha_ = take(gh, ig, "Biomass.t.ha") * 1000,
+		seed_rate = num(r1$Seedrate.kg.ha),
+		plot_area = num(r1$Plot.size.m2),
+		yield = take(r2, ig, c("Grain.yield.t.ha", "Calculation_Grain.Yield.t.ha")) * 1000,
+		biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
 		harvest_index = hi,
-		seed_weight = take(gh, ig, "TGW.g"),
-		N_fertilizer = take(ft, ifr, "N.kg.ha"),
-		P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
+		seed_weight = take(r2, ig, "TGW.g"),
+		N_fertilizer = take(r3, ifr, "N.kg.ha"),
+		P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
 		K_fertilizer = K,
-		Zn_fertilizer = take(ft, ifr, "Zn.kg.ha"),
-		gypsum = take(ft, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
+		Zn_fertilizer = take(r3, ifr, "Zn.kg.ha"),
+		gypsum = take(r3, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
 		B_fertilizer = B * 10.81 / 61.83,
 		on_farm = TRUE,
 		is_survey = FALSE,
 		geo_from_source = FALSE
 	)
 
-	iname <- ic$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop
-	ic <- ic[!is.na(ic$Tmnt) & !is.na(iname) & nzchar(trimws(as.character(iname))), ]
-	if (nrow(ic) > 0) {
-		icn <- tolower(trimws(as.character(ic$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop)))
-		ihd <- as_date(ic$Date.of.harvest.dd.mm.yy)
+	iname <- r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop
+	r4 <- r4[!is.na(r4$Tmnt) & !is.na(iname) & nzchar(trimws(as.character(iname))), ]
+	if (nrow(r4) > 0) {
+		icn <- tolower(trimws(as.character(r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop)))
+		ihd <- as_date(r4$Date.of.harvest.dd.mm.yy)
 		ihd[!is.na(ihd) & ihd > "2018-06-05"] <- NA_character_
-		loc <- ph$Node[match(paste(ic$Site.No, ic$Tmnt), paste(ph$Site.No, ph$Tmnt))]
+		loc <- r1$Node[match(paste(r4$Site.No, r4$Tmnt), paste(r1$Site.No, r1$Tmnt))]
 		d2 <- data.frame(
 			country = "India",
 			adm1 = "Bihar",
 			adm2 = "Madhubani",
 			location = loc,
-			trial_id = paste(ic$Year, "intercrop", ic$Site.No, ic$Tmnt),
-			plot_id = paste(ic$Site.No, ic$Tmnt, "intercrop"),
-			treatment = ic$Tmnt,
+			trial_id = paste(r4$Year, "intercrop", r4$Site.No, r4$Tmnt),
+			plot_id = paste(r4$Site.No, r4$Tmnt, "intercrop"),
+			treatment = r4$Tmnt,
 			crop = icn,
-			variety = ic$Variety,
+			variety = r4$Variety,
 			yield_part = "aboveground biomass",
-			planting_date = as_date(ic$Date.of.seeding.dd.mm.yy),
+			planting_date = as_date(r4$Date.of.seeding.dd.mm.yy),
 			harvest_date = ihd,
-			row_spacing = num(ic$Row.spacing.cm),
-			yield = num(ic$Intercrop.t.ha) * 1000,
+			row_spacing = num(r4$Row.spacing.cm),
+			yield = num(r4$Intercrop.t.ha) * 1000,
 			yield_isfresh = TRUE,
 			on_farm = TRUE,
 			is_survey = FALSE,

@@ -18,6 +18,7 @@
 # TubApp, TubUni, TubSiz: scores with no stated scale.
 # NTP, NMTb, NNMTb, MTbWg, NoMTWg, TubWg, MTYNA, TbYldNAj: plot counts and the unadjusted yields. TTYA and MTYA are the per-area yields.
 # 02_DataDictionary: column definitions.
+# 02_DataDictionary_LBHT_Advanced_SRamon2021.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

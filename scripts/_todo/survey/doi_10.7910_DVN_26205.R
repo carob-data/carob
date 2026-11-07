@@ -25,6 +25,12 @@
 # hhid_2000_: household sample number in the 2000 round
 
 
+
+## NOT PROCESSED
+# HHDataY2004_part 4.xls: not read. could not read the header. Observation records are missing from d until this file is standardized.
+# HHDataY2004_part 5.xls: not read. sheet HHDataY2004_part 5: Filename:    HHDataY2004_part 5. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Livelihood Systems in Bangladesh --for each year of study and the panel households created for all the years of study. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Livelihood Systems in Bangladesh (2004)
@@ -105,17 +111,17 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		as.data.frame(out, check.names=FALSE)
 	}
 
-	fdoc <- ff[basename(ff) == "Documentation of 2004_Bangladesh.xls"]
+	f1 <- ff[basename(ff) == "Documentation of 2004_Bangladesh.xls"]
 	# value labels from the codebook: variable name (filled down), code, label
 	codes <- function(sheet, var) {
-		x <- carobiner::read.excel(fdoc, sheet=sheet, col_names=FALSE)
-		nm <- x[[1]]
+		r <- carobiner::read.excel(f1, sheet=sheet, col_names=FALSE)
+		nm <- r[[1]]
 		nm <- nm[!is.na(nm)][cumsum(!is.na(nm))]
-		k <- nm %in% var & !is.na(x[[4]])
-		data.frame(code=as.numeric(x[[2]][k]), label=trimws(x[[4]][k]))
+		k <- nm %in% var & !is.na(r[[4]])
+		data.frame(code=as.numeric(r[[2]][k]), label=trimws(r[[4]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(x, cds$code)]
+		cds$label[match(r, cds$code)]
 	}
 
 	r1 <- read_biff2(ff[basename(ff) == "HHDataY2004_part 1.xls"])

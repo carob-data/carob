@@ -29,6 +29,10 @@
 # cavan_weight_: kilograms per cavan at harvest (KGCAV), used by the data providers to convert cavans to kg
 
 
+
+## NOT PROCESSED
+# Read Me.txt: not read. columns: These publications are compiled publications of Central Luzon Loop Survey conducted on the following time series:. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Central Luzon Loop Survey (1994-1995)
@@ -56,62 +60,62 @@ The objective of the study is to monitor the changes in rice farming in the majo
 
 	f <- ff[basename(ff) == "Central Luzon Loop 1994-95.xlsx"]
 
-	rP <- carobiner::read.excel(f, sheet="Production", skip=2)
-	rF <- carobiner::read.excel(f, sheet="Farm Char", skip=1)
-	rN <- carobiner::read.excel(f, sheet="Fertilizer", skip=1)
-	rE <- carobiner::read.excel(f, sheet="Crop Estab", skip=1)
-	rS <- carobiner::read.excel(f, sheet="Seeds", skip=1)
-	rH <- carobiner::read.excel(f, sheet="HHInfo", skip=1, na=c("", "no data"))
+	r1 <- carobiner::read.excel(f, sheet="Production", skip=2)
+	r2 <- carobiner::read.excel(f, sheet="Farm Char", skip=1)
+	r3 <- carobiner::read.excel(f, sheet="Fertilizer", skip=1)
+	r4 <- carobiner::read.excel(f, sheet="Crop Estab", skip=1)
+	r5 <- carobiner::read.excel(f, sheet="Seeds", skip=1)
+	r6 <- carobiner::read.excel(f, sheet="HHInfo", skip=1, na=c("", "no data"))
 
 	key <- function(r) paste(r$YEAR, r$SEASON, r$HHCODE, r$PARNO, sep="_")
-	rP$id <- key(rP)
-	rF$id <- key(rF)
-	rN$id <- key(rN)
-	rE$id <- key(rE)
-	rS$id <- key(rS)
+	r1$id <- key(r1)
+	r2$id <- key(r2)
+	r3$id <- key(r3)
+	r4$id <- key(r4)
+	r5$id <- key(r5)
 
 	d <- data.frame(
-		hhid = as.character(rP$HHCODE),
-		field_id = as.character(rP$PARNO),
-		date = as.character(rP$YEAR),
-		season = c("wet", "dry")[rP$SEASON],
+		hhid = as.character(r1$HHCODE),
+		field_id = as.character(r1$PARNO),
+		date = as.character(r1$YEAR),
+		season = c("wet", "dry")[r1$SEASON],
 		country = "Philippines",
 		crop = "rice",
-		variety = trimws(rP$VARIETY),
-		field_size = rP$FSIZE,
-		yield = rP$PRODNKG / rP$FSIZE,
+		variety = trimws(r1$VARIETY),
+		field_size = r1$FSIZE,
+		yield = r1$PRODNKG / r1$FSIZE,
 		yield_part = "grain",
-		cavan_weight_ = rP$KGCAV,
-		crop_price = rP$PRICE,
-		crop_amount_sold = rP$SOLDKG,
+		cavan_weight_ = r1$KGCAV,
+		crop_price = r1$PRICE,
+		crop_amount_sold = r1$SOLDKG,
 		currency = "PHP"
 	)
 
 	## parcel characteristics
-	i <- match(paste(rP$id, rP$FSIZE), paste(rF$id, rF$FSIZE))
-	j <- match(rP$id, rF$id)
+	i <- match(paste(r1$id, r1$FSIZE), paste(r2$id, r2$FSIZE))
+	j <- match(r1$id, r2$id)
 	i[is.na(i)] <- j[is.na(i)]
-	irr <- trimws(rF$IRRTYPE[i])
+	irr <- trimws(r2$IRRTYPE[i])
 	d$irrigated <- irr != "Rainfed"
 	d$irrigation_source <- as.vector(c(Irrigated="gravity irrigation system", Pump="pump", Rainfed=NA)[irr])
-	d$land_tenure <- tolower(trimws(rF$TENURE[i]))
+	d$land_tenure <- tolower(trimws(r2$TENURE[i]))
 
 	## fertilizer
-	brand <- toupper(trimws(rN$BRAND))
+	brand <- toupper(trimws(r3$BRAND))
 	organic <- brand %in% c("BONENA (ORGANIC)", "CARABAO MANURE", "ORGANIC")
-	inorg <- rN$ACTIVTY %in% "FERTILIZER APPLICATION" & !organic
+	inorg <- r3$ACTIVTY %in% "FERTILIZER APPLICATION" & !organic
 	# unnamed product with kg applied but TOT_N = 0: nutrient content unknown
-	totN <- rN$TOT_N
-	totN[is.na(brand) & !is.na(rN$QTYKG) & rN$QTYKG > 0] <- NA
-	fN <- tapply(totN[inorg], rN$id[inorg], sum)
-	fP <- tapply(rN$TOT_P[inorg], rN$id[inorg], sum)
-	fK <- tapply(rN$TOT_K[inorg], rN$id[inorg], sum)
-	d$N_fertilizer <- as.vector(fN[rP$id]) / d$field_size
-	d$P_fertilizer <- as.vector(fP[rP$id]) / d$field_size
-	d$K_fertilizer <- as.vector(fK[rP$id]) / d$field_size
+	totN <- r3$TOT_N
+	totN[is.na(brand) & !is.na(r3$QTYKG) & r3$QTYKG > 0] <- NA
+	fN <- tapply(totN[inorg], r3$id[inorg], sum)
+	fP <- tapply(r3$TOT_P[inorg], r3$id[inorg], sum)
+	fK <- tapply(r3$TOT_K[inorg], r3$id[inorg], sum)
+	d$N_fertilizer <- as.vector(fN[r1$id]) / d$field_size
+	d$P_fertilizer <- as.vector(fP[r1$id]) / d$field_size
+	d$K_fertilizer <- as.vector(fK[r1$id]) / d$field_size
 	d$P_fertilizer[is.na(d$N_fertilizer)] <- NA
 	d$K_fertilizer[is.na(d$N_fertilizer)] <- NA
-	nofert <- rP$id %in% rN$id[rN$ACTIVTY %in% "no operation" | organic] & !(rP$id %in% rN$id[inorg | rN$ACTIVTY %in% "no data"])
+	nofert <- r1$id %in% r3$id[r3$ACTIVTY %in% "no operation" | organic] & !(r1$id %in% r3$id[inorg | r3$ACTIVTY %in% "no data"])
 	d$N_fertilizer[nofert] <- 0
 	d$P_fertilizer[nofert] <- 0
 	d$K_fertilizer[nofert] <- 0
@@ -122,23 +126,23 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	ftype[brand %in% c("0-0-60", "M. POTASH")] <- "KCl"
 	ftype[grepl("^[1-9][0-9]*-[1-9][0-9]*-[1-9][0-9]*$", brand)] <- "NPK"
 	ok <- inorg & !is.na(ftype)
-	ft <- tapply(ftype[ok], rN$id[ok], function(x) paste(unique(x), collapse=";"))
-	d$fertilizer_type <- as.vector(ft[rP$id])
+	ft <- tapply(ftype[ok], r3$id[ok], function(x) paste(unique(x), collapse=";"))
+	d$fertilizer_type <- as.vector(ft[r1$id])
 	d$fertilizer_type[nofert] <- "none"
-	om <- tapply(tolower(brand[organic]), rN$id[organic], function(x) paste(unique(x), collapse=";"))
-	d$OM_type <- as.vector(om[rP$id])
+	om <- tapply(tolower(brand[organic]), r3$id[organic], function(x) paste(unique(x), collapse=";"))
+	d$OM_type <- as.vector(om[r1$id])
 
 	## crop establishment
-	act <- toupper(trimws(rE$ACTIVITY))
+	act <- toupper(trimws(r4$ACTIVITY))
 	pm <- as.vector(c("TRANSPLANTING"="transplanting", "DIRECT SEEDING"="direct seeding")[act])
-	pm <- tapply(pm[!is.na(pm)], rE$id[!is.na(pm)], function(x) paste(sort(unique(x)), collapse=";"))
-	d$planting_method <- as.vector(pm[rP$id])
+	pm <- tapply(pm[!is.na(pm)], r4$id[!is.na(pm)], function(x) paste(sort(unique(x)), collapse=";"))
+	d$planting_method <- as.vector(pm[r1$id])
 
-	d$seed_source <- trimws(rS$SEEDSRC[match(rP$id, rS$id)])
+	d$seed_source <- trimws(r5$SEEDSRC[match(r1$id, r5$id)])
 
 	## household head
-	h <- rH[tolower(trimws(rH[["HOUSEHOLD MEMBER"]])) %in% "head", ]
-	k <- match(rP$HHCODE, h$HHCODE)
+	h <- r6[tolower(trimws(r6[["HOUSEHOLD MEMBER"]])) %in% "head", ]
+	k <- match(r1$HHCODE, h$HHCODE)
 	d$sex <- as.vector(c(M="male", F="female")[toupper(trimws(h$SEX[k]))])
 	d$age <- as.numeric(h$AGE[k])
 

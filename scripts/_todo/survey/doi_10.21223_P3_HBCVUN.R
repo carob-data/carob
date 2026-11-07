@@ -14,6 +14,31 @@
 # Modules 2 to 12 (composition, sweetpotato farming, diet, training, and assets).
 # Names, phone, reference-woman age and education, and the interview clock times in Module 1.
 # QDBH BASELINE SURVEY DATA DICTIONARY.txt and the Amharic-English questionnaire pdf.
+# Module 1 - Household Information.sav: same table as the file of this name that is read.
+# Module 10 - Training in Nutrition, OFSP Farming and Processing.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 - Training in Nutrition, OFSP Farming and Processing.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 11 - Nutrition and Vitamin A Knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 11 - Nutrition and Vitamin A Knowledge.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 12 - Other Household Assets and WASH.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 12 - Other Household Assets and WASH.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 2 - Household Composition and Assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 2 - Household Composition and Assets.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 3 - Changes in SP Farmer Past 3 Years.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 3 - Changes in SP Farmer Past 3 Years.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 4A - SP Farming and Harvesting.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 4A - SP Farming and Harvesting.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 4B - SP Sales and Seed Systems.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 4B - SP Sales and Seed Systems.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 5 - Food Security.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 5 - Food Security.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 6 - Food Consumption Frequency Past 24 Hours.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 6 - Food Consumption Frequency Past 24 Hours.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 7 - Minimal Acceptable Diet.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 - Minimal Acceptable Diet.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 8 - Consumption of Vitamin A Rich Foods.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 8 - Consumption of Vitamin A Rich Foods.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 9 - Consumption of SP and OFSP.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 9 - Consumption of SP and OFSP.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

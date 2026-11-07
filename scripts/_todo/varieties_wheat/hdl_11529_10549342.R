@@ -82,7 +82,14 @@ Preliminary yield and agronomic trial data collected from 6 different trials car
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"EXP 1 Y24-25.xlsx",
+		"EXP 2 Y24-25.xlsx",
+		"EXP 3 Y24-25.xlsx",
+		"EXP 4 Y24-25.xlsx",
+		"EXP 5 Y24-25.xlsx",
+		"EXP 6 Y24-25.xlsx"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d$treatment <- d$variety
 	d$crop <- "wheat"

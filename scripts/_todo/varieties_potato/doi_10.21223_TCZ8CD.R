@@ -19,6 +19,9 @@
 # Summary by clone, Charts, Ranks by Clone, Fieldbook_backup.
 # Per-plot tuber counts and weights other than the yield check. NPH is used for plant_density.
 # 03_Data_dictionary.txt does not give units.
+# 01_Fieldbook_PTYL201106_Muminabad_heat.txt: not read. columns: PLOT, REP, INSTN, NTP, NPE, PPE, NPH, PPH, NMTCI, NMTCII, NNoMTP, TNTP, .... Observation records are missing from d until this file is standardized.
+# 02_Fieldbook_PTYL201106_FAYZABAD_heat.txt: not read. columns: PLOT, REP, INSTN, NTP, NPE, PPE, NPH, PPH, NMTCI, NMTCII, NNoMTP, TNTP, .... Observation records are missing from d until this file is standardized.
+# 04_Material_list.txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -51,17 +54,17 @@ The evaluation of 10 potato clones was conducted in the Tajikistan region, speci
 	one <- function(f, trial, adm1, location, elevation, latitude, longitude, planting, harvest) {
 		r <- carobiner::read.excel(f, sheet="Fieldbook", na="NA")
 		names(r) <- trimws(names(r))
-		ml <- carobiner::read.excel(f, sheet="Material List", na="NA")
-		names(ml) <- trimws(names(ml))
+		r1 <- carobiner::read.excel(f, sheet="Material List", na="NA")
+		names(r1) <- trimws(names(r1))
 		instn <- trimws(as.character(r$INSTN))
-		vname <- trimws(as.character(ml[["Clone or variety name"]]))
+		vname <- trimws(as.character(r1[["Clone or variety name"]]))
 		vname[!nzchar(vname)] <- NA_character_
-		key <- trimws(as.character(ml[["Institutional number"]]))
+		key <- trimws(as.character(r1[["Institutional number"]]))
 		nm <- vname[match(instn, key)]
 		variety <- ifelse(is.na(nm), instn, nm)
-		female <- trimws(as.character(ml[["Female code"]]))
+		female <- trimws(as.character(r1[["Female code"]]))
 		female[!nzchar(female)] <- NA_character_
-		male <- trimws(as.character(ml[["Male code"]]))
+		male <- trimws(as.character(r1[["Male code"]]))
 		male[!nzchar(male)] <- NA_character_
 		data.frame(
 			trial_id = trial,
@@ -94,10 +97,10 @@ The evaluation of 10 potato clones was conducted in the Tajikistan region, speci
 		)
 	}
 
-	fy <- ff[basename(ff) == "PTYL201106_FAYZABAD_HEAT.xls"]
-	mu <- ff[basename(ff) == "PTYL201106_MUMINABAD_HEAT.xls"]
-	d1 <- one(fy, "Fayzabad_2011", "Fayzabad", "Fayzabad", 1294, 38.55706, 69.368261, "2011-06-03", "2011-10-20")
-	d2 <- one(mu, "Muminabad_2011", "Khatlon", "Muminabad", 1211, 38.14893, 69.993258, "2011-06-05", "2011-10-08")
+	f1 <- ff[basename(ff) == "PTYL201106_FAYZABAD_HEAT.xls"]
+	f2 <- ff[basename(ff) == "PTYL201106_MUMINABAD_HEAT.xls"]
+	d1 <- one(f1, "Fayzabad_2011", "Fayzabad", "Fayzabad", 1294, 38.55706, 69.368261, "2011-06-03", "2011-10-20")
+	d2 <- one(f2, "Muminabad_2011", "Khatlon", "Muminabad", 1211, 38.14893, 69.993258, "2011-06-05", "2011-10-08")
 	d <- rbind(d1, d2)
 	rownames(d) <- NULL
 

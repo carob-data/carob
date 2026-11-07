@@ -14,6 +14,7 @@
 
 ## NOT PROCESSED
 # Farmer name was not copied.
+# 02_DataDictionary_Ulcumayo (1).xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # education_, farmer_gender: as recorded.

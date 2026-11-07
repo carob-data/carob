@@ -13,6 +13,7 @@
 
 ## NOT PROCESSED
 # S1.Data_journal.pone.0232173.s001.csv: SNP marker rows (AlleleID, sequence, chromosome position, and one column per accession). Not reshaped.
+# Dictionary_journal.pone.0232173.s008.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

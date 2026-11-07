@@ -19,6 +19,7 @@
 ## NOT PROCESSED
 # The dictionary, other than the scale description and the statement that the crop is potato.
 # Derived wilt averages listed in the notes.
+# Standard Evaluation Trial for Bacterial Wilt Resistance Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -60,7 +61,7 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for Bacterial Wilt Resistance Data.xls"]
-	raw <- carobiner::read.excel(f, sheet="Bacterial Wilt", col_names=FALSE, col_types="text")
+	r <- carobiner::read.excel(f, sheet="Bacterial Wilt", col_names=FALSE, col_types="text")
 	clean <- function(x) {
 		x <- gsub("\u00a0", " ", as.character(x), fixed=TRUE)
 		x <- trimws(x)
@@ -96,11 +97,11 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 		do.call(rbind, parts)
 	}
 
-	main_i <- which(grepl("^CIP", clean(raw[[2]])))
-	header <- which(clean(raw[[2]]) == "Control")
-	ctrl_i <- which(seq_len(nrow(raw)) > header & !is.na(clean(raw[[4]])))
-	m <- raw[main_i, ]
-	c <- raw[ctrl_i, ]
+	main_i <- which(grepl("^CIP", clean(r[[2]])))
+	header <- which(clean(r[[2]]) == "Control")
+	ctrl_i <- which(seq_len(nrow(r)) > header & !is.na(clean(r[[4]])))
+	m <- r[main_i, ]
+	c <- r[ctrl_i, ]
 	variety_m <- clean(m[[2]])
 	variety_c <- clean(c[[4]])
 	code_c <- clean(c[[3]])

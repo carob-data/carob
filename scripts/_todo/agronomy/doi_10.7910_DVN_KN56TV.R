@@ -40,6 +40,47 @@
 # cobs_per_plant_, kernels_per_cob_, cob_length_ (cm), cob_diameter_ (cm), achenes_per_head_
 
 
+
+## NOT PROCESSED
+# Biomass_2012-13.xlsx: not read. sheet Sheet1 (of 3): Treatment, Green leaf biomass (kg/ha), ...3, ...4, Dead leaf biomass (kg/ha), ...6, Stem biomass (kg/ha), ...8, ...9, Cob biomass (kg/ha), ...11. Observation records are missing from d until this file is standardized.
+# Biomass_2012-14.xlsx: not read. sheet Sheet1 (of 3): Treatment, Green leaf biomass (kg/ha), ...3, ...4, ...5, Dead leaf biomass (kg/ha), ...7, Stem biomass (kg/ha), ...9, ...10, ...11, Head biomass (kg/ha), .... Observation records are missing from d until this file is standardized.
+# Biomass_2013-14.xlsx: not read. sheet Sheet1 (of 3): Treatment, Green leaf biomass (kg/ha), ...3, ...4, Dead leaf biomass (kg/ha), ...6, Stem biomass (kg/ha), ...8, ...9, Cob biomass (kg/ha), ...11. Observation records are missing from d until this file is standardized.
+# Biomass_2013-15.xlsx: not read. sheet Sheet1 (of 3): Treatment, Green leaf biomass (kg/ha), ...3, ...4, ...5, Dead leaf biomass (kg/ha), ...7, Stem biomass (kg/ha), ...9, ...10, ...11, Head biomass (kg/ha), .... Observation records are missing from d until this file is standardized.
+# Biomass_Aman_2012.xlsx: not read. sheet Sheet1 (of 3): D1 (20 June), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12. Observation records are missing from d until this file is standardized.
+# Biomass_Aman_2013.xlsx: not read. sheet Sheet1 (of 3): D1 (20 June), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Biomass_Aus 2013.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12. Observation records are missing from d until this file is standardized.
+# Biomass_Aus 2014.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12. Observation records are missing from d until this file is standardized.
+# Economic analysis.xlsx: not read. sheet Variable & fixed cost (of 7): Table 1: The variable and fixed costs used in the economic analysis. Observation records are missing from d until this file is standardized.
+# LAI 2012-13.xlsx: not read. sheet Sheet1 (of 3): ...1, 8-10 leaf stage, ...3, ...4, ...5, ...6, Flowering stage, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LAI 2013-14.xlsx: not read. sheet Sheet1 (of 3): ...1, 8-10 leaf stage, ...3, ...4, ...5, ...6, Flowering stage, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LAI_2012-13.xlsx: not read. sheet Sheet1 (of 3): ...1, 8-10 Leaf stage, ...3, ...4, ...5, ...6, ...7, Taselling and silking stage, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LAI_2013-14.xlsx: not read. sheet Sheet1 (of 3): ...1, 8-10 Leaf stage, ...3, ...4, ...5, ...6, ...7, Taselling and silking stage, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LAI_Aus 2013.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A4 (5 May), ...8. Observation records are missing from d until this file is standardized.
+# LAI_Aus 2014.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A4 (5 May), ...8. Observation records are missing from d until this file is standardized.
+# Leaf area index_Aman 2013.xlsx: not read. sheet Sheet1 (of 3): Treatment, Leaf area index, ...3, ...4, ...5. Observation records are missing from d until this file is standardized.
+# Longterm Weather 1973-2012.xlsx: not read. sheet Max. Temp (of 8): Maximum Temperature, ...2, ...3, ...4, ...5, ...6, ...7. Observation records are missing from d until this file is standardized.
+# Plant height_2012-13.xlsx: not read. sheet Sheet1 (of 3): Treatment...1, Plant height (cm) at 8-10 leaf stage, ...3, ...4, ...5, ...6, ...7, ...8, Treatment...9, Plant height (cm) at taselling stage, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plant height_2012-14.xlsx: not read. sheet Sheet1 (of 3): Treatment...1, Plant height (cm) at 8-10 leaf stage, ...3, ...4, ...5, ...6, ...7, ...8, ...9, Treatment...10, Plant height (cm) at FBI stage, ...12, .... Observation records are missing from d until this file is standardized.
+# Plant height_2013-14.xlsx: not read. sheet Sheet1 (of 3): Treatment...1, Plant height (cm) at 8-10 leaf stage, ...3, ...4, ...5, ...6, ...7, ...8, Treatment...9, Plant height (cm) at taselling stage, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plant height_2013-15.xlsx: not read. sheet Sheet1 (of 3): Treatment...1, Plant height (cm) at 8-10 leaf stage, ...3, ...4, ...5, ...6, ...7, ...8, ...9, Treatment...10, Plant height (cm) at FBI stage, ...12, .... Observation records are missing from d until this file is standardized.
+# Plant height_Aman 2012.xlsx: not read. sheet Sheet1 (of 3): ...1, Plant height (cm), ...3, ...4, ...5. Observation records are missing from d until this file is standardized.
+# Plant height_Aman 2013.xlsx: not read. sheet Sheet1 (of 3): Treatment, Plant height (cm), ...3, ...4, ...5. Observation records are missing from d until this file is standardized.
+# Plant height_Aus 2013.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A2 (5 April), ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plant height_Aus 2014.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A2 (5 April), ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plot water depth_Aman 2012.xlsx: not read. sheet Sheet1 (of 3): 43271, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plot water depth_Aman 2013.xlsx: not read. sheet Sheet1 (of 3): 43271, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plot water depth_Aus 2013.xlsx: not read. sheet Sheet1 (of 3): 43179, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Plot water depth_Aus 2014.xlsx: not read. sheet Sheet1 (of 3): 43179, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Tensiometer data_2012-13.xlsx: not read. sheet S1 (of 5): Maize with mulch (C1M1), Rep, Plot, 1, 2, 3, 4, 5, 6, 7, 8, 9, .... Observation records are missing from d until this file is standardized.
+# Tensiometer data_2012-14.xlsx: not read. sheet S1 (of 5): Sunflower with mulch (C2M1), Rep, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Tensiometer data_2013-14.xlsx: not read. sheet S1 (of 5): Maize with mulch (C1M1), Rep, Plot, 1, 2, 3, 4, 5, 6, 7, 8, 9, .... Observation records are missing from d until this file is standardized.
+# Tensiometer data_2013-15.xlsx: not read. sheet S1 (of 5): Sunflower with mulch (C2M1), Rep, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Tiller density_Aman 2012.xlsx: not read. sheet Sheet1 (of 3): ...1, Tiller density/m2, ...3, ...4, ...5. Observation records are missing from d until this file is standardized.
+# Tiller density_Aman 2013.xlsx: not read. sheet Sheet1 (of 3): Treatment, Tiller density/m2, ...3, ...4, ...5. Observation records are missing from d until this file is standardized.
+# Tiller density_Aus 2013.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A2 (5 April), ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Tiller density_Aus 2014.xlsx: not read. sheet Sheet1 (of 3): A1 (20 March), ...2, ...3, ...4, ...5, ...6, A2 (5 April), ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Weather Data_expt site_2012-2014.xlsx: not read. sheet Max. Temp (of 11): Maximum Temperature, ...2, ...3, ...4, ...5, ...6, ...7. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

@@ -28,6 +28,10 @@
 # establishment_method_: rice crop establishment code (TPR = transplanted, DSR = dry direct seeded, WSR = wet direct seeded)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, CPWF-IFAD baseline survey in Vietnam. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -57,9 +61,9 @@ This farm household survey is an activity under the socio-economic component of 
 
 	f1 <- ff[basename(ff) == "Landhold-Landuse.xls"]
 	f2 <- ff[basename(ff) == "Rice inputs.xls"]
-	rL <- carobiner::read.excel(f1, sheet="Lowland use", skip=8)
-	rU <- carobiner::read.excel(f1, sheet="Upland use", skip=8)
-	rI <- carobiner::read.excel(f2, sheet="Input", skip=7)
+	r1 <- carobiner::read.excel(f1, sheet="Lowland use", skip=8)
+	r2 <- carobiner::read.excel(f1, sheet="Upland use", skip=8)
+	r3 <- carobiner::read.excel(f2, sheet="Input", skip=7)
 
 	crops <- c("1"="rice", "3"="maize", "5"="groundnut", "14"="cassava", "15"="soybean", "16"="tea",
 		"19"="cinnamon", "20"="acacia", "24"="cabbage", "25"="pumpkin", "26"="ginger", "28"="longan", "33"="taro")
@@ -68,39 +72,39 @@ This farm household survey is an activity under the socio-economic component of 
 	cem <- c("1"="TPR", "2"="DSR", "3"="WSR")
 
 	d1 <- data.frame(
-		village = rL$Village,
-		farmer = rL$Farmer,
-		field_id = rL$Parcel,
-		plot_id = as.character(rL$Plot),
-		season = c("wet", "dry")[rL$Season],
+		village = r1$Village,
+		farmer = r1$Farmer,
+		field_id = r1$Parcel,
+		plot_id = as.character(r1$Plot),
+		season = c("wet", "dry")[r1$Season],
 		planting_date = "2005",
-		crop_code = rL$Crop,
-		intercropped = rL$Cropping == 2,
-		field_size = rL[["Area...2"]],
-		production = rL$Prod,
-		variety = varieties[as.character(rL$Variety)],
-		variety_type = c("modern", "traditional")[rL$MVTV],
-		variety_traits = c("glutinous", "non-glutinous")[rL$Glut],
-		establishment_method_ = cem[as.character(rL$CEMethod)],
+		crop_code = r1$Crop,
+		intercropped = r1$Cropping == 2,
+		field_size = r1[["Area...2"]],
+		production = r1$Prod,
+		variety = varieties[as.character(r1$Variety)],
+		variety_type = c("modern", "traditional")[r1$MVTV],
+		variety_traits = c("glutinous", "non-glutinous")[r1$Glut],
+		establishment_method_ = cem[as.character(r1$CEMethod)],
 		land_type_ = "lowland"
 	)
 
 	d2 <- data.frame(
-		village = rU$Village,
-		farmer = rU$Farmer,
-		field_id = rU$Parcel,
-		plot_id = as.character(rU$Plot),
-		season = c("wet", "dry")[rU$Season],
-		planting_date = as.character(rU$Year),
-		crop_code = rU$Crop,
-		intercropped = rU$Cropping == 2,
-		field_size = rU$Area,
-		production = rU$Prod,
-		seed_rate = rU$Seed / rU$Area,
-		variety = varieties[as.character(rU$Variety)],
-		variety_type = c("modern", "traditional")[rU$MVTV],
-		variety_traits = c("glutinous", "non-glutinous")[rU$Glut],
-		establishment_method_ = cem[as.character(rU$CEMethod)],
+		village = r2$Village,
+		farmer = r2$Farmer,
+		field_id = r2$Parcel,
+		plot_id = as.character(r2$Plot),
+		season = c("wet", "dry")[r2$Season],
+		planting_date = as.character(r2$Year),
+		crop_code = r2$Crop,
+		intercropped = r2$Cropping == 2,
+		field_size = r2$Area,
+		production = r2$Prod,
+		seed_rate = r2$Seed / r2$Area,
+		variety = varieties[as.character(r2$Variety)],
+		variety_type = c("modern", "traditional")[r2$MVTV],
+		variety_traits = c("glutinous", "non-glutinous")[r2$Glut],
+		establishment_method_ = cem[as.character(r2$CEMethod)],
 		land_type_ = "upland"
 	)
 
@@ -114,18 +118,18 @@ This farm household survey is an activity under the socio-economic component of 
 
 	# fertilizer on rice, kg product per plot -> kg/ha
 	fert <- data.frame(
-		land_type_ = tolower(rI$Landtype),
-		key = paste(rI$Village, rI$Farmer, rI$Parcel, rI$Plot, rI$Season),
-		OM_amount = rI$OrgQty / rI$Area
+		land_type_ = tolower(r3$Landtype),
+		key = paste(r3$Village, r3$Farmer, r3$Parcel, r3$Plot, r3$Season),
+		OM_amount = r3$OrgQty / r3$Area
 	)
 	# empty quantity cells in the input form are taken to mean the product was not used
 	for (v in c("FertQty1", "FertQty2", "FertQty3", "FertQty4")) {
-		rI[[v]][is.na(rI[[v]])] <- 0
+		r3[[v]][is.na(r3[[v]])] <- 0
 	}
-	fert$N_fertilizer <- (0.46 * rI$FertQty1 + 0.03 * rI$FertQty3) / rI$Area
-	fert$P_fertilizer <- (0.22 * rI$FertQty2 + 0.10 * rI$FertQty3) / 2.29 / rI$Area
-	fert$K_fertilizer <- (0.05 * rI$FertQty3 + 0.51 * rI$FertQty4) / 1.2051 / rI$Area
-	fert$fertilizer_type <- apply(rI[, c("FertQty1", "FertQty2", "FertQty3", "FertQty4")] > 0, 1,
+	fert$N_fertilizer <- (0.46 * r3$FertQty1 + 0.03 * r3$FertQty3) / r3$Area
+	fert$P_fertilizer <- (0.22 * r3$FertQty2 + 0.10 * r3$FertQty3) / 2.29 / r3$Area
+	fert$K_fertilizer <- (0.05 * r3$FertQty3 + 0.51 * r3$FertQty4) / 1.2051 / r3$Area
+	fert$fertilizer_type <- apply(r3[, c("FertQty1", "FertQty2", "FertQty3", "FertQty4")] > 0, 1,
 		function(i) paste(c("urea", "SSP", "NPK", "KCl")[i], collapse="; "))
 	fert$fertilizer_type[fert$fertilizer_type == ""] <- "none"
 

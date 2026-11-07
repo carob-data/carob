@@ -16,6 +16,7 @@
 # The household workbook (demographics and the full management module).
 # Cob weights and stand counts used to compute the yield column.
 # Quadrat-level intercrop weights. The crop of that intercrop is not named.
+# NG_APS_HH_main_2016 (blurred).xlsx: not read. sheet metadata (of 4): DC Element, Qualifier, Required?, Definition, This file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -44,7 +45,7 @@ Household survey and maize crop-cut data collected in Kaduna, Kano, and Katsina 
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("CC_Yield", basename(ff))][1]
+	f <- ff[basename(ff) == "NG_APS_CC_Yield_2016 (blurred).xlsx"]
 	r <- as.data.frame(carobiner::read.excel(f, sheet="Data"))
 	state <- as.character(r$state)
 	state[state == "KD"] <- "Kaduna"

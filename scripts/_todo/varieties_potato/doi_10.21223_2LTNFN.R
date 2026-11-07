@@ -19,6 +19,7 @@
 # 04_Datadictionary.txt, Lists, Notes, Summary by clone, ICPAES Results: definitions, summaries, or a laboratory layout that is not one row per plot.
 # The Minerals and VitaminC sheets in the xls fieldbooks repeat the tidy text files in a layout that is not one row per plot.
 # Breeder code, laboratory code, and numeration.
+# TVIT200312_MUQUI_B1C5_RanchaII.xls: not read. sheet Minimal (of 10): Factor, Value. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -55,36 +56,36 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		as.numeric(x)
 	}
 
-	fm <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_B1C5_RanchaII.txt"]
-	fv <- ff[basename(ff) == "02_Fieldbook_TVIT200312_MUQUI_B1C5_RanchaII.txt"]
-	fl <- ff[basename(ff) == "03_Material_list.txt"]
-	m <- read.delim(fm, check.names=FALSE, fileEncoding="latin1", quote="\"")
-	v <- read.delim(fv, check.names=FALSE, fileEncoding="latin1", quote="\"")
-	ml <- read.delim(fl, check.names=FALSE, fileEncoding="latin1", quote="\"")
-	names(m) <- trimws(names(m))
-	names(v) <- trimws(names(v))
-	names(ml) <- trimws(names(ml))
+	f1 <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_B1C5_RanchaII.txt"]
+	f2 <- ff[basename(ff) == "02_Fieldbook_TVIT200312_MUQUI_B1C5_RanchaII.txt"]
+	f3 <- ff[basename(ff) == "03_Material_list.txt"]
+	r1 <- read.delim(f1, check.names=FALSE, fileEncoding="latin1", quote="\"")
+	r2 <- read.delim(f2, check.names=FALSE, fileEncoding="latin1", quote="\"")
+	r3 <- read.delim(f3, check.names=FALSE, fileEncoding="latin1", quote="\"")
+	names(r1) <- trimws(names(r1))
+	names(r2) <- trimws(names(r2))
+	names(r3) <- trimws(names(r3))
 
-	instn <- trimws(as.character(m$INSTN))
-	key <- gsub(" ", "", trimws(as.character(ml[["CIP number"]])))
-	acc <- trimws(as.character(ml[["Accession name"]]))
+	instn <- trimws(as.character(r1$INSTN))
+	key <- gsub(" ", "", trimws(as.character(r3[["CIP number"]])))
+	acc <- trimws(as.character(r3[["Accession name"]]))
 	acc[!nzchar(acc) | acc == "-"] <- NA_character_
 	nm <- acc[match(gsub(" ", "", instn), key)]
 	variety <- ifelse(is.na(nm), instn, nm)
 
-	vk <- paste(trimws(as.character(v$INSTN)), as.integer(v$REP))
-	mk <- paste(instn, as.integer(m$REP))
+	vk <- paste(trimws(as.character(r2$INSTN)), as.integer(r2$REP))
+	mk <- paste(instn, as.integer(r1$REP))
 	vi <- match(mk, vk)
 
 	# Column order is the published fieldbook. Names are trimmed above; positions are used because the header text is long.
-	mc <- names(m)
+	mc <- names(r1)
 	d <- data.frame(
 		trial_id = "Muqui_2003",
 		crop = "potato",
 		variety = variety,
 		variety_code = instn,
 		treatment = variety,
-		rep = as.integer(m$REP),
+		rep = as.integer(r1$REP),
 		country = "Peru",
 		adm1 = "Junin",
 		adm2 = "Jauja",
@@ -97,37 +98,37 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		geo_from_source = TRUE,
 		planting_date = "2003-12-04",
 		harvest_date = "2004-05-04",
-		dry_matter_minerals_percent_ = num(m[[mc[13]]]),
-		tuber_Fe_mg_kg_dw_ = num(m[[mc[14]]]),
-		tuber_Fe_mg_100g_fw_ = num(m[[mc[15]]]),
-		tuber_Mn_mg_kg_dw_ = num(m[[mc[16]]]),
-		tuber_Mn_mg_100g_fw_ = num(m[[mc[17]]]),
-		tuber_B_mg_kg_dw_ = num(m[[mc[18]]]),
-		tuber_B_mg_100g_fw_ = num(m[[mc[19]]]),
-		tuber_Cu_mg_kg_dw_ = num(m[[mc[20]]]),
-		tuber_Cu_mg_100g_fw_ = num(m[[mc[21]]]),
-		tuber_Zn_mg_kg_dw_ = num(m[[mc[22]]]),
-		tuber_Zn_mg_100g_fw_ = num(m[[mc[23]]]),
-		tuber_Ca_mg_kg_dw_ = num(m[[mc[24]]]),
-		tuber_Ca_mg_100g_fw_ = num(m[[mc[25]]]),
-		tuber_Mg_mg_kg_dw_ = num(m[[mc[26]]]),
-		tuber_Mg_mg_100g_fw_ = num(m[[mc[27]]]),
-		tuber_K_mg_kg_dw_ = num(m[[mc[28]]]),
-		tuber_K_mg_100g_fw_ = num(m[[mc[29]]]),
-		tuber_P_mg_kg_dw_ = num(m[[mc[30]]]),
-		tuber_P_mg_100g_fw_ = num(m[[mc[31]]]),
-		tuber_S_mg_kg_dw_ = num(m[[mc[32]]]),
-		tuber_S_mg_100g_fw_ = num(m[[mc[33]]]),
-		tuber_Na_mg_kg_dw_ = num(m[[mc[34]]]),
-		tuber_Na_mg_100g_fw_ = num(m[[mc[35]]]),
-		tuber_Al_mg_kg_dw_ = num(m[[mc[36]]]),
-		tuber_Cd_mg_kg_dw_ = num(m[[mc[37]]]),
-		tuber_Mo_mg_kg_dw_ = num(m[[mc[38]]]),
-		tuber_Co_mg_kg_dw_ = num(m[[mc[39]]]),
-		tuber_Ni_mg_kg_dw_ = num(m[[mc[40]]]),
-		ascorbic_acid_mg_100g_dw_ = num(v[[names(v)[13]]][vi]),
-		ascorbic_acid_mg_100g_fw_ = num(v[[names(v)[14]]][vi]),
-		dry_matter_vitamin_c_percent_ = num(v[[names(v)[15]]][vi]),
+		dry_matter_minerals_percent_ = num(r1[[mc[13]]]),
+		tuber_Fe_mg_kg_dw_ = num(r1[[mc[14]]]),
+		tuber_Fe_mg_100g_fw_ = num(r1[[mc[15]]]),
+		tuber_Mn_mg_kg_dw_ = num(r1[[mc[16]]]),
+		tuber_Mn_mg_100g_fw_ = num(r1[[mc[17]]]),
+		tuber_B_mg_kg_dw_ = num(r1[[mc[18]]]),
+		tuber_B_mg_100g_fw_ = num(r1[[mc[19]]]),
+		tuber_Cu_mg_kg_dw_ = num(r1[[mc[20]]]),
+		tuber_Cu_mg_100g_fw_ = num(r1[[mc[21]]]),
+		tuber_Zn_mg_kg_dw_ = num(r1[[mc[22]]]),
+		tuber_Zn_mg_100g_fw_ = num(r1[[mc[23]]]),
+		tuber_Ca_mg_kg_dw_ = num(r1[[mc[24]]]),
+		tuber_Ca_mg_100g_fw_ = num(r1[[mc[25]]]),
+		tuber_Mg_mg_kg_dw_ = num(r1[[mc[26]]]),
+		tuber_Mg_mg_100g_fw_ = num(r1[[mc[27]]]),
+		tuber_K_mg_kg_dw_ = num(r1[[mc[28]]]),
+		tuber_K_mg_100g_fw_ = num(r1[[mc[29]]]),
+		tuber_P_mg_kg_dw_ = num(r1[[mc[30]]]),
+		tuber_P_mg_100g_fw_ = num(r1[[mc[31]]]),
+		tuber_S_mg_kg_dw_ = num(r1[[mc[32]]]),
+		tuber_S_mg_100g_fw_ = num(r1[[mc[33]]]),
+		tuber_Na_mg_kg_dw_ = num(r1[[mc[34]]]),
+		tuber_Na_mg_100g_fw_ = num(r1[[mc[35]]]),
+		tuber_Al_mg_kg_dw_ = num(r1[[mc[36]]]),
+		tuber_Cd_mg_kg_dw_ = num(r1[[mc[37]]]),
+		tuber_Mo_mg_kg_dw_ = num(r1[[mc[38]]]),
+		tuber_Co_mg_kg_dw_ = num(r1[[mc[39]]]),
+		tuber_Ni_mg_kg_dw_ = num(r1[[mc[40]]]),
+		ascorbic_acid_mg_100g_dw_ = num(r2[[names(r2)[13]]][vi]),
+		ascorbic_acid_mg_100g_fw_ = num(r2[[names(r2)[14]]][vi]),
+		dry_matter_vitamin_c_percent_ = num(r2[[names(r2)[15]]][vi]),
 		on_farm = FALSE,
 		is_survey = FALSE
 	)

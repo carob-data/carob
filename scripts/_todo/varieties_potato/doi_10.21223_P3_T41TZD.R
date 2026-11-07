@@ -57,23 +57,23 @@ Eight CIP-bred potato clones (V1 = 392745.7, V2 = 392780.1, V3 = 397006.18, V4 =
 
 	f <- ff[basename(ff) == "PTDrought012012_JODHPUR.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	mn <- carobiner::read.excel(f, sheet="Minimal")
-	ml <- carobiner::read.excel(f, sheet="Material_List", na=c("", "NA"))
-	v <- setNames(trimws(as.character(mn$Value)), trimws(mn$Factor))
+	r1 <- carobiner::read.excel(f, sheet="Minimal")
+	r2 <- carobiner::read.excel(f, sheet="Material_List", na=c("", "NA"))
+	v <- setNames(trimws(as.character(r1$Value)), trimws(r1$Factor))
 	clean <- function(x) {
 		x <- gsub("\u00a0", " ", as.character(x), fixed=TRUE)
 		x <- trimws(x)
 		x[!nzchar(x)] <- NA_character_
 		x
 	}
-	key <- clean(ml$Accession_Number)
-	nm <- clean(ml$Accession_Name)
+	key <- clean(r2$Accession_Number)
+	nm <- clean(r2$Accession_Name)
 	instn <- clean(r$INSTN)
 	i <- match(instn, key)
 	variety <- nm[i]
 	variety[is.na(variety)] <- instn[is.na(variety)]
 	parent <- function(col) {
-		p <- clean(ml[[col]][i])
+		p <- clean(r2[[col]][i])
 		p
 	}
 	factor <- clean(r$FACTOR)

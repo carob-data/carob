@@ -58,9 +58,19 @@ Enhanced breeding for increased productivity and improved quality in West Africa
 		notes = NA
 	)
 
-	fs <- ff[grepl("alata|rotundata", basename(ff), ignore.case=TRUE)]
+	f1 <- ff[basename(ff) %in% c(
+		"d-alata-bottom-ikenne.csv",
+		"d.-alata-bottom.csv",
+		"d.-alata-head-ikenne-.csv",
+		"d.-alata-head.csv",
+		"d.-alata-middle-.csv",
+		"d.-alata-middle-ikenne.csv",
+		"d.-rotundata-bottom-.csv",
+		"d.-rotundata-head-.csv",
+		"d.-rotundata-middle.csv"
+	)]
 	rows <- list()
-	for (f in fs) {
+	for (f in f1) {
 		r <- read.csv(f, na.strings=c("", "NA"), check.names=FALSE)
 		r <- r[!is.na(r$AccessionNo) & trimws(r$AccessionNo) != "", ]
 		anth <- if ("Anthrc_Sev_Sep" %in% names(r)) r$Anthrc_Sev_Sep else r$Anthrc_Sev_Sept

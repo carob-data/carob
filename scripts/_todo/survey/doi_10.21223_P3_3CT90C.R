@@ -12,6 +12,7 @@
 
 ## NOT PROCESSED
 # None of the measurement sheets were dropped. The dictionary workbook is documentation.
+# Dictionary_Potato_seed_degeneration_in_Ecuador.xls: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # seed_management_: positive selection, roguing, or random selection.
@@ -61,80 +62,80 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 	}
 	f <- function(name) ff[basename(ff) == name]
 
-	loc <- carobiner::read.excel(f("Locations_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Locations data")
-	loc$key <- paste(loc$Cycle, loc$Control, loc$Location)
-	loc <- loc[!duplicated(loc$key), ]
+	r1 <- carobiner::read.excel(f("Locations_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Locations data")
+	r1$key <- paste(r1$Cycle, r1$Control, r1$Location)
+	r1 <- r1[!duplicated(r1$key), ]
 
-	h <- carobiner::read.excel(f("Harvest_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Harvest Data")
-	ih <- match(paste(h$Cycle, h$Control, h$Location), loc$key)
+	r2 <- carobiner::read.excel(f("Harvest_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Harvest Data")
+	ih <- match(paste(r2$Cycle, r2$Control, r2$Location), r1$key)
 	d1 <- data.frame(
-		variety = chr(h$Variety),
-		seed_management_ = chr(h$Management),
-		location = chr(h$Location),
-		elevation = num(h$Altitude),
-		cycle_ = chr(h$Cycle),
-		plot_manager_ = chr(h$Control),
-		plant_number_ = num(h$Plantnum),
-		tuber_number_ = num(h$TubN_Ct_plant),
-		tuber_weight_g_ = num(h$TubWg_Cp_plant),
-		black_scurf_ = num(h$BScurf_Inci_0t01),
-		wireworm_ = num(h$WWorm_Inci_0to1),
-		powdery_scab_ = num(h$PScab_Inci_0to1),
-		common_scab_ = num(h$CScab_Inci_0to1),
-		malformation_ = num(h$Malform_Inci_0to1),
-		pcn_ = num(h$PCN_Inci_0to1),
-		black_leg_ = num(h$BLeg_Inci_0to1),
-		physical_damage_ = num(h$PhysDam_Inci_0to1),
-		cracking_ = num(h$Cracking_Inci_0to1),
-		surface_cracking_ = num(h$Scracking_Inci_0to1),
-		insect_damage_ = num(h$DamOtherInsects_Inci_0to1),
-		mechanical_damage_ = num(h$MechDamage_Inci_0to1),
-		dry_rot_ = num(h$DryRut_Inci_0to1),
-		smut_ = num(h$Smut_Inci_0to1),
-		latitude = num(loc$Latitude[ih]),
-		longitude = num(loc$Longitude[ih]),
-		planting_date = as.character(as.Date(loc[["Planting date"]][ih])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ih]))
+		variety = chr(r2$Variety),
+		seed_management_ = chr(r2$Management),
+		location = chr(r2$Location),
+		elevation = num(r2$Altitude),
+		cycle_ = chr(r2$Cycle),
+		plot_manager_ = chr(r2$Control),
+		plant_number_ = num(r2$Plantnum),
+		tuber_number_ = num(r2$TubN_Ct_plant),
+		tuber_weight_g_ = num(r2$TubWg_Cp_plant),
+		black_scurf_ = num(r2$BScurf_Inci_0t01),
+		wireworm_ = num(r2$WWorm_Inci_0to1),
+		powdery_scab_ = num(r2$PScab_Inci_0to1),
+		common_scab_ = num(r2$CScab_Inci_0to1),
+		malformation_ = num(r2$Malform_Inci_0to1),
+		pcn_ = num(r2$PCN_Inci_0to1),
+		black_leg_ = num(r2$BLeg_Inci_0to1),
+		physical_damage_ = num(r2$PhysDam_Inci_0to1),
+		cracking_ = num(r2$Cracking_Inci_0to1),
+		surface_cracking_ = num(r2$Scracking_Inci_0to1),
+		insect_damage_ = num(r2$DamOtherInsects_Inci_0to1),
+		mechanical_damage_ = num(r2$MechDamage_Inci_0to1),
+		dry_rot_ = num(r2$DryRut_Inci_0to1),
+		smut_ = num(r2$Smut_Inci_0to1),
+		latitude = num(r1$Latitude[ih]),
+		longitude = num(r1$Longitude[ih]),
+		planting_date = as.character(as.Date(r1[["Planting date"]][ih])),
+		harvest_date = as.character(as.Date(r1[["Harvest date"]][ih]))
 	)
 
-	el <- carobiner::read.excel(f("ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="ELISA Data")
-	ie <- match(paste(el$Cycle, el$Control, el$Location), loc$key)
+	r3 <- carobiner::read.excel(f("ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="ELISA Data")
+	ie <- match(paste(r3$Cycle, r3$Control, r3$Location), r1$key)
 	d2 <- data.frame(
-		variety = chr(el$Variety),
-		seed_management_ = chr(el$Management),
-		location = chr(el$Location),
-		elevation = num(el$Altitude),
-		cycle_ = chr(el$Cycle),
-		plot_manager_ = chr(el$Control),
-		growth_stage = chr(el$Stage),
-		DAP = as.integer(round(num(el$DAP))),
-		pvx_ = num(el$PPVX_Inci_0to1),
-		pvy_ = num(el$PPVY_Inci_0to1),
-		pvs_ = num(el$PPVS_Inci_0to1),
-		plrv_ = num(el$PPLRV_Inci_0to1),
-		aplv_ = num(el$AAPLV_Inci_0to1),
-		apmov_ = num(el$AAPMoV_Inci_0to1),
-		latitude = num(loc$Latitude[ie]),
-		longitude = num(loc$Longitude[ie]),
-		planting_date = as.character(as.Date(loc[["Planting date"]][ie])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ie]))
+		variety = chr(r3$Variety),
+		seed_management_ = chr(r3$Management),
+		location = chr(r3$Location),
+		elevation = num(r3$Altitude),
+		cycle_ = chr(r3$Cycle),
+		plot_manager_ = chr(r3$Control),
+		growth_stage = chr(r3$Stage),
+		DAP = as.integer(round(num(r3$DAP))),
+		pvx_ = num(r3$PPVX_Inci_0to1),
+		pvy_ = num(r3$PPVY_Inci_0to1),
+		pvs_ = num(r3$PPVS_Inci_0to1),
+		plrv_ = num(r3$PPLRV_Inci_0to1),
+		aplv_ = num(r3$AAPLV_Inci_0to1),
+		apmov_ = num(r3$AAPMoV_Inci_0to1),
+		latitude = num(r1$Latitude[ie]),
+		longitude = num(r1$Longitude[ie]),
+		planting_date = as.character(as.Date(r1[["Planting date"]][ie])),
+		harvest_date = as.character(as.Date(r1[["Harvest date"]][ie]))
 	)
 
-	ap <- carobiner::read.excel(f("Aphids_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Aphids data")
-	ia <- match(paste(ap$Cycle, ap$Control, ap$Location), loc$key)
+	r4 <- carobiner::read.excel(f("Aphids_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="Aphids data")
+	ia <- match(paste(r4$Cycle, r4$Control, r4$Location), r1$key)
 	d3 <- data.frame(
-		variety = chr(ap$Variety),
-		seed_management_ = chr(ap$Management),
-		location = chr(ap$Location),
-		elevation = num(ap$Altitude),
-		cycle_ = chr(ap$Cycle),
-		plot_manager_ = chr(ap$Control),
-		DAP = as.integer(round(num(ap$DAP))),
-		aphid_count_ = num(ap$Aphids_numb),
-		latitude = num(loc$Latitude[ia]),
-		longitude = num(loc$Longitude[ia]),
-		planting_date = as.character(as.Date(loc[["Planting date"]][ia])),
-		harvest_date = as.character(as.Date(loc[["Harvest date"]][ia]))
+		variety = chr(r4$Variety),
+		seed_management_ = chr(r4$Management),
+		location = chr(r4$Location),
+		elevation = num(r4$Altitude),
+		cycle_ = chr(r4$Cycle),
+		plot_manager_ = chr(r4$Control),
+		DAP = as.integer(round(num(r4$DAP))),
+		aphid_count_ = num(r4$Aphids_numb),
+		latitude = num(r1$Latitude[ia]),
+		longitude = num(r1$Longitude[ia]),
+		planting_date = as.character(as.Date(r1[["Planting date"]][ia])),
+		harvest_date = as.character(as.Date(r1[["Harvest date"]][ia]))
 	)
 
 	d <- carobiner::bindr(d1, d2, d3)
@@ -151,18 +152,18 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 	d$seed_management_[is.na(d$seed_management_) | !nzchar(d$seed_management_)] <- "not recorded"
 	d$treatment <- trimws(paste(d$variety, d$seed_management_))
 
-	w <- carobiner::read.excel(f("Weather_Data_Potato_seed_degeneration_in_Ecuador_v2.xls"), sheet="Weather Data")
-	mins <- round(num(w$Time) * 24 * 60)
+	r5 <- carobiner::read.excel(f("Weather_Data_Potato_seed_degeneration_in_Ecuador_v2.xls"), sheet="Weather Data")
+	mins <- round(num(r5$Time) * 24 * 60)
 	time <- rep(NA_character_, length(mins))
 	ok <- !is.na(mins)
 	time[ok] <- sprintf("%02d:%02d", (mins[ok] %/% 60) %% 24, mins[ok] %% 60)
 	wth <- data.frame(
-		station_id = chr(w$Location),
-		date = as.character(as.Date(w$Date, "%m/%d/%Y")),
+		station_id = chr(r5$Location),
+		date = as.character(as.Date(r5$Date, "%m/%d/%Y")),
 		time = time,
-		temp = num(w$Temp),
-		humidity_ = num(w$HR),
-		rain_recorded_ = num(w$Rain)
+		temp = num(r5$Temp),
+		humidity_ = num(r5$HR),
+		rain_recorded_ = num(r5$Rain)
 	)
 	wth <- wth[!is.na(wth$date), ]
 

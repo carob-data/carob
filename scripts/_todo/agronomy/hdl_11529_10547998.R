@@ -24,6 +24,7 @@
 # 2016-17 CSE-2017 and Cal-syst: costs and returns, no crop yield.
 # 2016-17 Incrop-17: maize q/bigha mixed with overall means and a second layout. Vegetable columns are returns, not yields.
 # 2016-17 tillage codes CT and ZT. They are not on the 2015-16 yield rows.
+# Rabi crops 2016-17-ACST-All nodes-Choochbehar.xlsx: not read. sheet Incrop-17 (of 5): Tractor Tilling, Seed, Fertilizer, Irrigation, Weeding, Pesticide, Labour, Harvesting, Total Cost (Rs/bigha), SOLE MAIZE (q/bigha), PRICE (Rs/q), T Return Rs/b), .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

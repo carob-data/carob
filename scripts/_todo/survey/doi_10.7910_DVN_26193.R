@@ -28,6 +28,11 @@
 # land_type_: upland or wetland (sawah) field
 
 
+
+## NOT PROCESSED
+# Household Consumption.xls: not read. sheet Household consumption: Filename:Household consumption. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Economics of upland rice production in Indonesia. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

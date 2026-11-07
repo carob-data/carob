@@ -56,7 +56,7 @@ Field evaluation trials for relative resistance requires the testing material to
 	)
 
 	f <- ff[basename(ff) == "Potato Virus X.xls"]
-	raw <- carobiner::read.excel(f, sheet="Potato Virus X", col_names=FALSE, col_types="text")
+	r <- carobiner::read.excel(f, sheet="Potato Virus X", col_names=FALSE, col_types="text")
 	clean <- function(x) {
 		x <- gsub("\u00a0", " ", as.character(x), fixed=TRUE)
 		x <- trimws(x)
@@ -89,10 +89,10 @@ Field evaluation trials for relative resistance requires the testing material to
 		do.call(rbind, parts)
 	}
 
-	main_i <- which(grepl("^CIP[0-9]", clean(raw[[2]])))
-	ctrl_i <- which(grepl("^CIP[0-9]", clean(raw[[3]])))
-	m <- raw[main_i, ]
-	ctrl <- raw[ctrl_i, ]
+	main_i <- which(grepl("^CIP[0-9]", clean(r[[2]])))
+	ctrl_i <- which(grepl("^CIP[0-9]", clean(r[[3]])))
+	m <- r[main_i, ]
+	ctrl <- r[ctrl_i, ]
 	variety_m <- clean(m[[2]])
 	variety_c <- clean(ctrl[[4]])
 	code_c <- clean(ctrl[[3]])

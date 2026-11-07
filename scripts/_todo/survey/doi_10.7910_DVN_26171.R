@@ -25,6 +25,10 @@
 # crop_slot_: crop slot in the land use form (1 = wet season, 2 = dry season, 3 = second dry-season crop)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Economics of direct seeding in Northeast Thailand. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -52,11 +56,11 @@ The objective of the study is to conduct an economic assessment of direct seedin
 		carob_effort = 0.5
 	)
 
-	fA <- ff[basename(ff) == "FormA.xls"]
-	fB <- ff[basename(ff) == "FormB.XLS"]
-	r1 <- carobiner::read.excel(fA, sheet="LandUse", skip=7)
-	r2 <- carobiner::read.excel(fA, sheet="Village")
-	r3 <- carobiner::read.excel(fB, sheet="Fert", skip=8)
+	f1 <- ff[basename(ff) == "FormA.xls"]
+	f2 <- ff[basename(ff) == "FormB.XLS"]
+	r1 <- carobiner::read.excel(f1, sheet="LandUse", skip=7)
+	r2 <- carobiner::read.excel(f1, sheet="Village")
+	r3 <- carobiner::read.excel(f2, sheet="Fert", skip=8)
 
 	crops <- c("rice", "rice", "sugarcane", "cassava", "groundnut", "soybean", "maize", "sesame", "mango; tamarind",
 		"banana", "rubber", "tomato", "melon", "flower", "mushrooms", "cucumber", "pasture", "mulberry", "eucalyptus",

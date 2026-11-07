@@ -17,6 +17,8 @@
 # 4030_Kinigi_2016_.xlsx and 4030_Sigira_2016.xlsx: block, plot, and clone lists without a yield.
 # Summary sheet "Summary 3 sites 2015" if it repeats the first sheet.
 # NMTP: tuber count, not a density.
+# 4030_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 4030_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # fe_recorded_: FeDw as recorded
@@ -52,10 +54,10 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 	)
 
 	f <- ff[basename(ff) == "4030_Data.xlsx"]
-	x <- as.data.frame(carobiner::read.excel(f, sheet=1, col_names=FALSE))
-	lab <- trimws(as.character(x[[2]]))
+	r <- as.data.frame(carobiner::read.excel(f, sheet=1, col_names=FALSE))
+	lab <- trimws(as.character(r[[2]]))
 	i <- which(lab == "Accession_Number")[1]
-	y <- x[(i + 1):nrow(x), ]
+	y <- r[(i + 1):nrow(r), ]
 	keep <- !is.na(y[[2]]) & nzchar(trimws(as.character(y[[2]])))
 	y <- y[keep, ]
 	num <- function(v) as.numeric(trimws(as.character(v)))

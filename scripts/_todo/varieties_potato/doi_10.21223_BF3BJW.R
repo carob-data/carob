@@ -20,6 +20,9 @@
 # Fieldbook NTP, NPE, PPE, NPH, PPH, MTWCI, MTWCII, NoMTWP, TTWP, TTWPL, TTYA, MTWP, MTWPL: per-plot counts or the stand-adjusted yield.
 # Weather_data solar radiation (PAR µE), temperature amplitude, barometric pressure, dew point, gust speed, and wind direction. Wind speed was empty in the rows read with the other weather columns; it is kept only when present.
 # Soil_analysis, Hobo_data, Summary by clone, Charts, Ranks by Clone, Fieldbook_backup.
+# 01_Fieldbook_PTYL201007_TASHKENT_BMZ.txt: not read. columns: PLOT, REP, INSTN, NTP, NPE, PPE, NPH, PPH, MTWCI, MTWCII, NoMTWP, TTWP, .... Observation records are missing from d until this file is standardized.
+# 02_Material_list_PTYL201007_TASHKENT_BMZ..txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
+# 03_Data_dictionary.txt: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 
@@ -49,14 +52,14 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	)
 
 	f <- ff[basename(ff) == "PTYL201007_TASHKENT-BMZ.xls"]
-	info <- carobiner::read.excel(f, sheet="Minimal")
-	kv <- stats::setNames(as.character(info$Value), trimws(as.character(info$Factor)))
-	inst <- carobiner::read.excel(f, sheet="Installation")
-	ik <- stats::setNames(as.character(inst$Value), trimws(as.character(inst$Factor)))
+	r1 <- carobiner::read.excel(f, sheet="Minimal")
+	kv <- stats::setNames(as.character(r1$Value), trimws(as.character(r1$Factor)))
+	r2 <- carobiner::read.excel(f, sheet="Installation")
+	ik <- stats::setNames(as.character(r2$Value), trimws(as.character(r2$Factor)))
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	ml <- carobiner::read.excel(f, sheet="Material List")
-	name <- trimws(as.character(ml[["Clone or variety name"]]))
-	code <- trimws(as.character(ml[["Institutional number"]]))
+	r3 <- carobiner::read.excel(f, sheet="Material List")
+	name <- trimws(as.character(r3[["Clone or variety name"]]))
+	code <- trimws(as.character(r3[["Institutional number"]]))
 	name[!nzchar(name)] <- NA_character_
 	m <- match(trimws(as.character(r$INSTN)), code)
 	variety <- trimws(as.character(r$INSTN))
@@ -97,20 +100,20 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		geo_source = "HIDAP Minimal sheet"
 	)
 
-	w <- carobiner::read.excel(f, sheet="Weather_data")
+	r4 <- carobiner::read.excel(f, sheet="Weather_data")
 	wth <- data.frame(
 		country = d$country[1],
 		location = d$location[1],
 		latitude = d$latitude[1],
 		longitude = d$longitude[1],
 		geo_from_source = TRUE,
-		date = as.character(as.Date(w[["Date of weather observation"]])),
-		prec = as.numeric(w[["Rainfall (mm)"]]),
-		temp = as.numeric(w[["Average temperature (°C)"]]),
-		tmin = as.numeric(w[["Minimum temperature (°C)"]]),
-		tmax = as.numeric(w[["Maximum temperature (°C)"]]),
-		rhum = as.numeric(w[["Relative humidity (%)"]]),
-		wspd = as.numeric(w[["Wind speed (m/s)"]])
+		date = as.character(as.Date(r4[["Date of weather observation"]])),
+		prec = as.numeric(r4[["Rainfall (mm)"]]),
+		temp = as.numeric(r4[["Average temperature (°C)"]]),
+		tmin = as.numeric(r4[["Minimum temperature (°C)"]]),
+		tmax = as.numeric(r4[["Maximum temperature (°C)"]]),
+		rhum = as.numeric(r4[["Relative humidity (%)"]]),
+		wspd = as.numeric(r4[["Wind speed (m/s)"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 	if (all(is.na(wth$wspd))) wth$wspd <- NULL

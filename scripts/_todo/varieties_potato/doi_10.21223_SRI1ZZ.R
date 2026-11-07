@@ -12,6 +12,8 @@
 
 ## NOT PROCESSED
 # NTP, NPH, category weights, insect counts, and the material list. The element-description dictionary is documentation.
+# 4029_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 4029_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # fe_dw_, zn_dw_, dm_: mineral sheet columns, unit not stated.
@@ -55,22 +57,22 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 		x[!nzchar(x) | x == "NA"] <- NA_character_
 		x
 	}
-	fy <- ff[basename(ff) == "4029_PTYield2015_Hole_Harvesting_parameters.xlsx"]
-	fm <- ff[basename(ff) == "4029_2015_Minerals.xlsx"]
-	y <- carobiner::read.excel(fy, sheet="Yield")
-	m <- carobiner::read.excel(fm, sheet="Minerals_2015")
+	f1 <- ff[basename(ff) == "4029_PTYield2015_Hole_Harvesting_parameters.xlsx"]
+	f2 <- ff[basename(ff) == "4029_2015_Minerals.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Yield")
+	r2 <- carobiner::read.excel(f2, sheet="Minerals_2015")
 	minr <- data.frame(
-		variety = chr(m$ACCENUMB),
-		fe_dw_ = num(m$FeDW),
-		zn_dw_ = num(m$ZnDw),
-		dm_ = num(m$DM)
+		variety = chr(r2$ACCENUMB),
+		fe_dw_ = num(r2$FeDW),
+		zn_dw_ = num(r2$ZnDw),
+		dm_ = num(r2$DM)
 	)
 	minr <- minr[!is.na(minr$variety) & !duplicated(minr$variety), ]
 	d <- data.frame(
-		variety = chr(y$ACCENUMB),
-		treatment = chr(y$ACCENUMB),
-		block_id = chr(y$BLOCK),
-		yield = num(y$TTWP)
+		variety = chr(r1$ACCENUMB),
+		treatment = chr(r1$ACCENUMB),
+		block_id = chr(r1$BLOCK),
+		yield = num(r1$TTWP)
 	)
 	d <- merge(d, minr, by="variety", all.x=TRUE)
 	d$crop <- "potato"

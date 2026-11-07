@@ -20,6 +20,7 @@
 # banana-weevil-dynamic-_psmnr-project.csv: ID. Row number.
 # banana-weevil-dynamic-_psmnr-project.csv: Name. Farmer name, entirely blank.
 # banana-weevil-dynamic-_psmnr-project.csv: Month and Year. The visit date is already stored.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # cluster_: Buea or Bomboko (dataset: clusters of Mount Cameroon). Not an administrative unit.

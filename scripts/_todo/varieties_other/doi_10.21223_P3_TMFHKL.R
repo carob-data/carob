@@ -16,6 +16,7 @@
 ## NOT PROCESSED
 # Material_List_genotypes: pedigree columns. The accession number is the variety.
 # Cooking TREATMENT (T1-T3): the same information as TYPE.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # tuber_Fe_: iron in the root, mg/100 g fresh weight.
@@ -52,9 +53,9 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 	)
 
 	f <- ff[basename(ff) == "Data_storage_cooking_sweetpotato.xls"]
-	g <- carobiner::read.excel(f, sheet="Genotypes (SR-LM)")
-	ck <- carobiner::read.excel(f, sheet="Cooking")
-	st <- carobiner::read.excel(f, sheet="Storage")
+	r1 <- carobiner::read.excel(f, sheet="Genotypes (SR-LM)")
+	r2 <- carobiner::read.excel(f, sheet="Cooking")
+	r3 <- carobiner::read.excel(f, sheet="Storage")
 
 	sites <- data.frame(
 		environment = c("La Molina", "San Ramon"),
@@ -66,15 +67,15 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 	)
 
 	d1 <- data.frame(
-		environment = trimws(as.character(g$ENVIRONMENT)),
-		variety = trimws(as.character(g$INSTN)),
-		treatment = trimws(as.character(g$INSTN)),
-		rep = as.integer(g$REP),
-		beta_carotene = as.numeric(g$BCFW),
-		tuber_Fe_ = as.numeric(g$FeFW),
-		tuber_Zn_ = as.numeric(g$ZnFW),
-		dm_ = as.numeric(g$DM),
-		trial_id = paste(trimws(as.character(g$ENVIRONMENT)), "composition")
+		environment = trimws(as.character(r1$ENVIRONMENT)),
+		variety = trimws(as.character(r1$INSTN)),
+		treatment = trimws(as.character(r1$INSTN)),
+		rep = as.integer(r1$REP),
+		beta_carotene = as.numeric(r1$BCFW),
+		tuber_Fe_ = as.numeric(r1$FeFW),
+		tuber_Zn_ = as.numeric(r1$ZnFW),
+		dm_ = as.numeric(r1$DM),
+		trial_id = paste(trimws(as.character(r1$ENVIRONMENT)), "composition")
 	)
 	d1 <- merge(d1, sites, by="environment", all.x=TRUE)
 	d1$environment <- NULL
@@ -82,12 +83,12 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 	d1$on_farm <- FALSE
 
 	d2 <- data.frame(
-		variety = trimws(as.character(ck$INSTN)),
-		treatment = trimws(as.character(ck$TYPE)),
-		rep = as.integer(ck$REP),
-		beta_carotene = as.numeric(ck$BCFW),
-		vitamin_A = as.numeric(ck[["Pro-vitamin A (ug RAE/100g FW)"]]),
-		dm_ = as.numeric(ck$DM),
+		variety = trimws(as.character(r2$INSTN)),
+		treatment = trimws(as.character(r2$TYPE)),
+		rep = as.integer(r2$REP),
+		beta_carotene = as.numeric(r2$BCFW),
+		vitamin_A = as.numeric(r2[["Pro-vitamin A (ug RAE/100g FW)"]]),
+		dm_ = as.numeric(r2$DM),
 		trial_id = "cooking",
 		country = "Peru",
 		geo_from_source = NA,
@@ -95,12 +96,12 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 	)
 
 	d3 <- data.frame(
-		variety = trimws(as.character(st$INSTN)),
-		treatment = trimws(as.character(st$TREATMENT)),
-		storage_code_ = trimws(as.character(st$TREATMENT)),
-		rep = as.integer(st$REP),
-		beta_carotene = as.numeric(st$BCFW),
-		dm_ = as.numeric(st$DM),
+		variety = trimws(as.character(r3$INSTN)),
+		treatment = trimws(as.character(r3$TREATMENT)),
+		storage_code_ = trimws(as.character(r3$TREATMENT)),
+		rep = as.integer(r3$REP),
+		beta_carotene = as.numeric(r3$BCFW),
+		dm_ = as.numeric(r3$DM),
 		trial_id = "storage",
 		country = "Peru",
 		geo_from_source = NA,

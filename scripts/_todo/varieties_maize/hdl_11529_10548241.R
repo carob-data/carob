@@ -20,6 +20,7 @@
 # Experiment zone.
 # Plot size.
 # Data-history sheet.
+# TAMASA_TZ_VT__2016.xls: same table as the file of this name that is read.
 
 
 carob_script <- function(path) {
@@ -48,7 +49,7 @@ Experiments at multiple locations in Tanzania (800 to 1500m) to calibrate develo
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff))]
+	f <- ff[basename(ff) == "TAMASA_TZ_VT__2016.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Raw data", col_types="text")
 	variety <- trimws(as.character(r[[10]]))
 	country <- trimws(as.character(r[[2]]))

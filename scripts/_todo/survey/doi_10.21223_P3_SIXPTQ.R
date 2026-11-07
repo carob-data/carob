@@ -15,6 +15,26 @@
 
 ## NOT PROCESSED
 # MODULE B household composition, MODULE C resources, MODULE D crop activity, MODULE E technical assistance, MODULE F control methods, MODULE G sweetpotato management, MODULE H vitamin A foods, MODULE I diet diversity: .dta and .sav copies, and the dictionaries and PDFs. Module F is used only for potato area, varieties, and the inorganic-fertilizer question.
+# MODULE A HOUSEHOLD IDENTIFICATION.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE B HOUSEHOLD COMPOSITION-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE B HOUSEHOLD COMPOSITION.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE C HOUSEHOLD RESOURCES-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE C HOUSEHOLD RESOURCES.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE D HOUSEHOLD CROP ACTIVITY BELG SEASON-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE D HOUSEHOLD CROP ACTIVITY BELG SEASON.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE D HOUSEHOLD CROP ACTIVITY MEHER SEASON-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE D HOUSEHOLD CROP ACTIVITY MEHER SEASON.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE E  HOUSEHOLD PRIOR EXPOSURE TO AGRICULTURE TECHNICAL ASSISTANCE-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE E  HOUSEHOLD PRIOR EXPOSURE TO AGRICULTURE TECHNICAL ASSISTANCE.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE F POTATO MANAGEMENT CONTROL METHODS-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE F POTATO MANAGEMENT CONTROL METHODS.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE F POTATO MANAGEMENT.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE G SWEETPOTATO MANAGEMENT -1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE G SWEETPOTATO MANAGEMENT .sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE H FREQUENCY OF CONSUMPTION OF VITAMIN A RICH FOODS-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE H FREQUENCY OF CONSUMPTION OF VITAMIN A RICH FOODS.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE I HOUSEHOLD LEVEL DIETARY DIVERSITY AND YOUNG CHILD DIET DIVERSITY-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE I HOUSEHOLD LEVEL DIETARY DIVERSITY AND YOUNG CHILD DIET DIVERSITY.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # region_code_, zone_code_, woreda_code_, kebele_code_, crop_type_, farm_type_.
@@ -71,44 +91,44 @@ The baseline survey is designed with an aim of determining the level of communit
 		out
 	}
 
-	fa <- ff[basename(ff) == "MODULE A HOUSEHOLD IDENTIFICATION-1.dta"]
-	fp <- ff[basename(ff) == "MODULE F POTATO MANAGEMENT-1.dta"]
-	a <- haven::read_dta(fa)
-	p <- haven::read_dta(fp)
+	f1 <- ff[basename(ff) == "MODULE A HOUSEHOLD IDENTIFICATION-1.dta"]
+	f2 <- ff[basename(ff) == "MODULE F POTATO MANAGEMENT-1.dta"]
+	r1 <- haven::read_dta(f1)
+	r2 <- haven::read_dta(f2)
 
-	year <- num(a$A24C)
-	month <- num(a$A24B)
-	day <- num(a$A24A)
+	year <- num(r1$A24C)
+	month <- num(r1$A24B)
+	day <- num(r1$A24A)
 	okd <- !is.na(year) & !is.na(month) & !is.na(day) & month >= 1 & month <= 12 & day >= 1 & day <= 31
-	date <- rep(NA_character_, nrow(a))
+	date <- rep(NA_character_, nrow(r1))
 	date[okd] <- sprintf("%04d-%02d-%02d", year[okd], month[okd], day[okd])
 	date[okd] <- as.character(as.Date(date[okd]))
 
 	d <- data.frame(
-		hhid = chr(a$HHID),
-		region_code_ = chr(a$A01B),
-		zone_code_ = chr(a$A02B),
-		woreda_code_ = chr(a$A03B),
-		kebele_code_ = chr(a$A04B),
-		location = tools::toTitleCase(tolower(chr(a$A05B))),
-		crop_type_ = chr(a$CROPTYPE),
-		farm_type_ = chr(a$FARMTYPE),
+		hhid = chr(r1$HHID),
+		region_code_ = chr(r1$A01B),
+		zone_code_ = chr(r1$A02B),
+		woreda_code_ = chr(r1$A03B),
+		kebele_code_ = chr(r1$A04B),
+		location = tools::toTitleCase(tolower(chr(r1$A05B))),
+		crop_type_ = chr(r1$CROPTYPE),
+		farm_type_ = chr(r1$FARMTYPE),
 		date = date,
-		latitude = dms(a$BPLG, a$BPLS, a$BPLM, 3, 15),
-		longitude = dms(a$BPLOG, a$BPLOS, a$BPLOM, 30, 48),
-		elevation = num(a$BPAL),
-		potato_area_m2_ = num(a$BPP),
-		sweetpotato_area_m2_ = num(a$BSPP),
-		ofsp_area_m2_ = num(a$BOFSP)
+		latitude = dms(r1$BPLG, r1$BPLS, r1$BPLM, 3, 15),
+		longitude = dms(r1$BPLOG, r1$BPLOS, r1$BPLOM, 30, 48),
+		elevation = num(r1$BPAL),
+		potato_area_m2_ = num(r1$BPP),
+		sweetpotato_area_m2_ = num(r1$BSPP),
+		ofsp_area_m2_ = num(r1$BOFSP)
 	)
 	pf <- data.frame(
-		hhid = chr(p$HH_ID),
-		potato_area_belg_m2_ = num(p$F4A),
-		potato_area_meher_m2_ = num(p$F4B),
-		variety = chr(p$VU_1),
-		variety_2_ = chr(p$VU_2),
-		variety_3_ = chr(p$VU_3),
-		fertilizer_inorganic_ = chr(p$F12)
+		hhid = chr(r2$HH_ID),
+		potato_area_belg_m2_ = num(r2$F4A),
+		potato_area_meher_m2_ = num(r2$F4B),
+		variety = chr(r2$VU_1),
+		variety_2_ = chr(r2$VU_2),
+		variety_3_ = chr(r2$VU_3),
+		fertilizer_inorganic_ = chr(r2$F12)
 	)
 	pf <- pf[!duplicated(pf$hhid), ]
 	d <- merge(d, pf, by="hhid", all.x=TRUE)

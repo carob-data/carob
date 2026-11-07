@@ -17,6 +17,7 @@
 # Farm area, faba sales, association questions, and the other production blocks. The area columns are described as green faba while the product names also list other crops.
 # Locality is blank for 35 of 93 rows, so the community is the location.
 # Dictionary, the pdf questionnaire, and the pdf report.
+# 02_Data dictionary_Caso DOI (HABA).xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

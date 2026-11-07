@@ -10,6 +10,18 @@
 # write_files: missing longitude/latitude/yield_moisture; 2 harvest dates >366 days after planting; common bean yield to 12500 kg/ha left as recorded; NA yield_part when crop missing.
 
 
+
+## NOT PROCESSED
+# a_farmer_group.csv: not read. columns: id, farm_id, farmer_group, purpose. Observation records are missing from d until this file is standardized.
+# a_livestock.csv: not read. columns: id, farm_id, livestock, no. Observation records are missing from d until this file is standardized.
+# b_info_site_1.csv: not read. columns: SN, id, farm_id, time_trial_site_homestead, owner_trial_plot, location_plot, perception_fert_soil_farmer, local_name_soil, soil_samples_taken, soil_sampling_dd, soil_sampling_mm, soil_sampling_yyyy, .... Observation records are missing from d until this file is standardized.
+# c_use_of_package_3.csv: not read. columns: SN, id, farm_id, inoculant_stored_at_farm, way_of_storage, no_days, time_passed_between_mixing_and_planting, instanceid. Observation records are missing from d until this file is standardized.
+# c_use_of_package_5.csv: not read. columns: SN, id, farm_id, crop_protection_agent_applied, active_ingredient_agent_1, brand_name_agent_1, crop_stage_applied_agent_1, active_ingredient_agent_2, brand_name_agent_2, crop_stage_applied_agent_2, instanceid. Observation records are missing from d until this file is standardized.
+# f_treatments.csv: not read. columns: SN, id, farm_id, plot_no, labour, weediness, diseases_pests, yield, overall, instanceid. Observation records are missing from d until this file is standardized.
+# g_visits_farmer.csv: not read. columns: id, farm_id, visits_no, date_dd, date_mm, date_yyyy, remarks. Observation records are missing from d until this file is standardized.
+# g_visits_officer.csv: not read. columns: id, farm_id, visits_no, date_dd, date_mm, date_yyyy, name_officer, remarks. Observation records are missing from d until this file is standardized.
+# variable_definitions.csv: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "
@@ -38,7 +50,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_effort = 0.8
 	)
 
-	f0 <- ff[basename(ff) == "a_general.csv"]
+	f8 <- ff[basename(ff) == "a_general.csv"]
 	f1 <- ff[basename(ff) == "c_use_of_package_1.csv"]
 	f2 <- ff[basename(ff) == "c_use_of_package_2.csv"]
 	f3 <- ff[basename(ff) == "c_use_of_package_4.csv"]
@@ -47,7 +59,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	f6 <- ff[basename(ff) == "h_soil_data.csv"]
 	f7 <- ff[basename(ff) == "b_info_site_2.csv"]
 
-	r0 <- read.csv(f0, na.strings = c("", "NA"))
+	r8 <- read.csv(f8, na.strings = c("", "NA"))
 	r1 <- read.csv(f1, na.strings = c("", "NA"))
 	r2 <- read.csv(f2, na.strings = c("", "NA"))
 	r3 <- read.csv(f3, na.strings = c("", "NA"))
@@ -57,13 +69,13 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	r7 <- read.csv(f7, na.strings = c("", "NA"))
 
 	d0 <- data.frame(
-		trial_id = r0$farm_id,
+		trial_id = r8$farm_id,
 		country = "Rwanda",
-		adm2 = carobiner::fix_name(r0$district, "title"),
-		adm3 = carobiner::fix_name(r0$sector_ward, "title"),
-		location = carobiner::fix_name(r0$vilage, "title"),
-		elevation = r0$gps_altitude,
-		farmer_gender = tolower(r0$gender_of_farmer)
+		adm2 = carobiner::fix_name(r8$district, "title"),
+		adm3 = carobiner::fix_name(r8$sector_ward, "title"),
+		location = carobiner::fix_name(r8$vilage, "title"),
+		elevation = r8$gps_altitude,
+		farmer_gender = tolower(r8$gender_of_farmer)
 	)
 	d0$location[d0$location == ""] <- NA
 

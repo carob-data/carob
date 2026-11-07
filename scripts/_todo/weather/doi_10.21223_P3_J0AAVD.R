@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # Name of farmer.
 # UniDate. It is the same day as Year, Month, and Day (40691 is 2011-05-28).
+# DataDictionary.txt: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -39,7 +40,7 @@ Weather stations in the Mantaro valley, Peru
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("Instalation", basename(ff))]
+	f <- ff[basename(ff) == "WeatherStationsInMantaro(Instalation).xlsx"]
 	r <- carobiner::read.excel(f, sheet="Coordinates", col_types="text")
 	loc <- tolower(gsub(" ", "", trimws(as.character(r$Locality))))
 	d <- data.frame(
@@ -56,8 +57,8 @@ Weather stations in the Mantaro valley, Peru
 		is_survey = FALSE
 	)
 
-	g <- ff[grepl("Dataset", basename(ff))]
-	r2 <- carobiner::read.excel(g, col_types="text")
+	f1 <- ff[basename(ff) == "WeatherStationsInMantaro(Dataset).xlsx"]
+	r2 <- carobiner::read.excel(f1, col_types="text")
 	# The sheet column MaxTemp is the cold value and MinTemp is the warm value.
 	cold <- as.numeric(r2$MaxTemp)
 	warm <- as.numeric(r2$MinTemp)

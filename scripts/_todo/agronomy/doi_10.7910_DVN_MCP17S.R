@@ -41,6 +41,10 @@
 # maturity_group_: 2012DS drought maturity group (early, med, late)
 
 
+
+## NOT PROCESSED
+# Table S1 list of aus accessions_rev1.xlsx: not read. sheet Sheet1 (of 3): Table S1. List of aus accessions included in each experiment of this study., ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

@@ -40,6 +40,27 @@
 # intercropped_: plot was intercropped (second crop not processed)
 
 
+
+## NOT PROCESSED
+# BANGLADESH_2011_Animals_BD.xls: not read. sheet Sheet1: household, livestock_id, livestock_yesno, n_livestock, v_livestock. Observation records are missing from d until this file is standardized.
+# BANGLADESH_2011_Rice sales_BD.xls: not read. sheet Sheet1: household, district, upazila_kurigram, village_kurigram, upazila_rangpur, village_rangpur, upazila_lalmonirhat, village_lalmonirhat, ou_yes_no, plot_list, plot_name, plot_are_dec, .... Observation records are missing from d until this file is standardized.
+# BANGLADESH_2011_Rice_variety_BD.xls: not read. sheet Sheet1: household, plot_list, Rice_variety, crop_sell, quantity_sold, price_sold, place_sold, sold_kg. Observation records are missing from d until this file is standardized.
+# BANGLADESH_2011_Transfer_list_BD.xls: not read. sheet Sheet1: household, transfer_id, transfer_whom, transfer_where, transfer_kg, transfer_method, transfer_kg_rice, transfer_taka, transfer_whom_NH, transfer_where_NH, transfer_kg_NH, transfer_method_NH, .... Observation records are missing from d until this file is standardized.
+# INDIA_2011_Animal_Odisha.xls: not read. sheet Sheet1: HHID, Animal_ID, animal_own, n_animal, v_animals. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Animals_UP.xls: not read. sheet Sheet1: HHID, Animal_ID, animal_own, n_animal, v_animals. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Asset_Odisha.xls: not read. sheet Sheet1: HHID, Asset_ID, asset_yesno, n_asset, v_asset. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Asset_UP.xls: not read. sheet Sheet1: HHID, Asset_ID, asset_yesno, n_asset, v_asset. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Individual list_Odisha.xls: not read. sheet Sheet1: HHID, Indiv_ID, gender, age_member, Relationship_head, marital_stat, edu_mem, vote_registered, schooling_yes, schooling_grade, school_type. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Individual_list_UP.xls: not read. sheet Sheet1: HHID, Indiv_ID, gender, age_member, Relationship_head, marital_stat, edu_mem, vote_registered, schooling_yes, schooling_grade, school_type. Observation records are missing from d until this file is standardized.
+# INDIA_2011_Transfer_list_UP.xls: not read. sheet Sheet1: HHID, Transfer_ID, transfer_whom, gender_transfer, transfer_where, transfer_kgs, transfer_method, transfer_kgs_rice, transfer_rupee, transfer_whom_NH, gender_neighbor_transfer, transfer_where_NH, .... Observation records are missing from d until this file is standardized.
+# INDIA_2011_Transfer_Odisha.xls: not read. sheet Sheet1: HHID, Transfer_ID, transfer_whom_NH, gender_neighbor_transfer, transfer_where_NH, transfer_kgs_NH, transfer_method_NH, transfer_kgs_rice_NH, transfer_rupee_NH, transfer_whom, gender_transfer, transfer_where, .... Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Animal.xls: not read. sheet Raw data (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Animal_ID, animal_own, n_animal. Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Asset.xls: not read. sheet Raw data (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Asset_ID, asset_yesno, n_asset. Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Crop.xls: not read. sheet Raw data (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Plot_ID, Crop_2013, crop_which, prop_plot_area, variety_name_rice, not_coded, method_planting, unit_prod, .... Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Household.xls: not read. sheet Raw data (of 3): Region_ID, District_ID, VDC_ID, Household_ID, region, district, VDC, village_name, rice_producer, available, original_respondent_yes, starting_time, .... Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Plot_list.xls: not read. sheet Raw data (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Plot_ID, plot_name, unit_plot, plot_size, tenure, land_type, irrigation_source, irrigation_percent. Observation records are missing from d until this file is standardized.
+# NEPAL_2011_Variety_list.xls: not read. sheet Raw data (of 2): Region_ID, District_ID, VDC_ID, Household_ID, variety_list, variety_name_rice2, not_coded2, own_seeds, replenish_year, replenish_source, why_seed_source, seed_exchange, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

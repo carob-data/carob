@@ -17,6 +17,13 @@
 ## NOT PROCESSED
 # arthropods_imagej.csv and earthworms_imagej.csv. Body-size measurements.
 # soil_properties.csv, canopee_opening.csv, composition_litter.csv, and traits_litter.csv.
+# arthropods_imagej_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
+# canopee_opening_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
+# composition_litter_labels.xlsx: not read. sheet Feuil1: Category_TW, The masse of the twig of the litter sample (g). Observation records are missing from d until this file is standardized.
+# diversity _label.csv: not read. columns: Date;The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
+# earthworms_imagej_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
+# soil_properties_labels.xlsx: not read. sheet Feuil1: Plot, The plot of the sample among the six plots. Observation records are missing from d until this file is standardized.
+# traits_litter_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES

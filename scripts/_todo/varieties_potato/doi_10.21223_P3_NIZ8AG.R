@@ -28,6 +28,7 @@
 # Total nitrogen is a percentage. soil_N is extractable N in mg/kg, so the percentage is not stored.
 # Exchangeable and soluble cations other than the available P and K above.
 # Soil iron, copper, zinc, boron, and manganese.
+# Dictionary_VitaminC.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -76,29 +77,29 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 
 	one <- function(f) {
 		r <- carobiner::read.excel(f, sheet="Fieldbook")
-		mn <- carobiner::read.excel(f, sheet="Minimal")
-		ins <- carobiner::read.excel(f, sheet="Installation")
-		cm <- carobiner::read.excel(f, sheet="Crop_management")
+		r1 <- carobiner::read.excel(f, sheet="Minimal")
+		r2 <- carobiner::read.excel(f, sheet="Installation")
+		r3 <- carobiner::read.excel(f, sheet="Crop_management")
 		bn <- basename(f)
 		mat_sheet <- if (grepl("RANGR", bn)) "Material-list" else "Material List"
 		soil_sheet <- if (grepl("RANGR", bn)) "Soil-analysis" else "Soil_analysis"
-		ml <- carobiner::read.excel(f, sheet=mat_sheet)
-		so <- carobiner::read.excel(f, sheet=soil_sheet)
-		v <- setNames(trimws(as.character(mn$Value)), trimws(mn$Factor))
-		w <- setNames(trimws(as.character(ins$Value)), trimws(ins$Factor))
+		r4 <- carobiner::read.excel(f, sheet=mat_sheet)
+		r5 <- carobiner::read.excel(f, sheet=soil_sheet)
+		v <- setNames(trimws(as.character(r1$Value)), trimws(r1$Factor))
+		w <- setNames(trimws(as.character(r2$Value)), trimws(r2$Factor))
 		soil <- function(code) {
-			hit <- which(trimws(as.character(so$Abbreviture)) == code)
-			as.numeric(so$Data1[hit[1]])
+			hit <- which(trimws(as.character(r5$Abbreviture)) == code)
+			as.numeric(r5$Data1[hit[1]])
 		}
-		tex <- trimws(as.character(so$Data1[trimws(as.character(so$Abbreviture)) == "STEX"][1]))
+		tex <- trimws(as.character(r5$Data1[trimws(as.character(r5$Abbreviture)) == "STEX"][1]))
 		tex <- c(
 			"Franco arcillosos"="clay loam",
 			"Franco arcillosa"="clay loam",
 			"Franco arenoso"="sandy loam",
 			"Franco"="loam"
 		)[tex]
-		key <- clean(ml[["Institutional number"]])
-		nm <- clean(ml[["Clone or variety name"]])
+		key <- clean(r4[["Institutional number"]])
+		nm <- clean(r4[["Clone or variety name"]])
 		instn <- clean(r$INSTN)
 		i <- match(instn, key)
 		variety <- nm[i]
@@ -139,8 +140,8 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 			elevation = as.numeric(v[["Elevation"]]),
 			latitude = as.numeric(v[["Latitude"]]),
 			longitude = as.numeric(v[["Longitude"]]),
-			planting_date = as.character(as.Date(cm$Date[cm$Intervention_type == "Planting"][1])),
-			harvest_date = as.character(as.Date(cm$Date[cm$Intervention_type == "Harvest"][1])),
+			planting_date = as.character(as.Date(r3$Date[r3$Intervention_type == "Planting"][1])),
+			harvest_date = as.character(as.Date(r3$Date[r3$Intervention_type == "Harvest"][1])),
 			soil_pH = soil("SOILPH"),
 			soil_SOM = soil("ORGM"),
 			soil_P = soil("PHOS"),

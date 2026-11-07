@@ -15,6 +15,23 @@
 
 ## NOT PROCESSED
 # The other baseline modules (income, assets, revenue, and the pro-WEAI file).
+# GROWING ANTHROPOMETRY Questionnaire Dictionary.xlsx: documentation or a codebook, not an observation table.
+# C01bs_overview_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_agriculture_incomge_generating_activity_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_agriculture_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_household_assets_Table_clean_NoPII.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_m015_3_Crops_Revenue_Table_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_m019_11_Crops_Marketing_Challenges_Table_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_m04_04_SP_Production_Table_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_m19_1_Agric_Services_Table_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C02bs_m19_2_Post_Harvest_Services_Table_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C03bs_nutrition_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C04bs_empowered_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C04bs_pro_weai_clean_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C05bs_Attitudes towards gender equity_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# C06bs_Nutritional knowledge_nopii.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# GROWING Household Survey Questionnaire Dictionary.xlsx: documentation or a codebook, not an observation table.
+# GROWING Pro-WEAI Survey Questionnaire Dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plot_size_recorded_: crop_plot_size_r as recorded
@@ -47,7 +64,7 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("Crops_Details_Table", basename(ff))]
+	f <- ff[basename(ff) == "C02bs_m015_1_Crops_Details_Table_nopii.dta"]
 	r <- carobiner::read.dta(f)
 	qty <- as.numeric(r$crop_plot_size_r)
 	unit <- tolower(trimws(as.character(r$crop_unit_r)))

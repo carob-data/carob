@@ -19,6 +19,25 @@
 # none
 
 
+
+## NOT PROCESSED
+# 01.DICTONARY.xlsx: not read. sheet Dictonary: TABLA/TABLE, COLUMNA/COLUMN, DESCRIPCION, DESCRIPTION, UNIDAD DE MEDIDA/UNITS OF MEASUREMENT. Observation records are missing from d until this file is standardized.
+# 03.MBIO_ENSAYOS.csv: not read. columns: ENSAYO, DESC_ENSA. Observation records are missing from d until this file is standardized.
+# 04.MBIO_TRATAMIENTOS.csv: not read. columns: SITIO, ENSAYO, TRAT, CULT, DESC_TRAT, DESC_CULT. Observation records are missing from d until this file is standardized.
+# 05.MBIO_DESC_HOJ_RAI.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, SUBTRAT, PARTE, EVAL, DISTRIBUCION, DIA_DES_DIS, .... Observation records are missing from d until this file is standardized.
+# 06.MBIO_PROD_HOJ_RAI.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, MARCO, TAM_MARCO, DIA_DES_DIS, MATE_SEC_MAR, MATE_SEC_M2, .... Observation records are missing from d until this file is standardized.
+# 08.MBIO_FIJA_N.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, MATE_SEC_LEG, MATE_SEC_GRAM, N_LEG, N_GRAM, N_TOT_LEG, .... Observation records are missing from d until this file is standardized.
+# 09.MBIO_15N.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, DIA_DES_15N, CANT_15N, MATE_SEC, N, N_TOT, .... Observation records are missing from d until this file is standardized.
+# 10.MBIO_BALANCE.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, AREA_MUE, TALLO, HOJA, CAPACHO, TUSA, .... Observation records are missing from d until this file is standardized.
+# 11.MBIO_INOC_INV.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, TIPO, NUME_HOJ, AREA_FOL, TALLO, RAIZ, .... Observation records are missing from d until this file is standardized.
+# 12.MBIO_15N_SUE.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, PROF, CANT_15N, CANT_AT15_EXC, AREA_MUE, AT15_FER, .... Observation records are missing from d until this file is standardized.
+# 13.MBIO_POTE_MIN.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, EVAL, PROF, NNH4_T0, NNO3_T0, NNH4_T7, .... Observation records are missing from d until this file is standardized.
+# 14.MBIO_FIJA_N_INV.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, AREA_FOL, MATE_SEC_ARE, RAIZ, MATE_SEC_TOT, N, .... Observation records are missing from d until this file is standardized.
+# 15.MBIO_NIVE_N.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, PROF, PESO_SH, PESO_SS, NNH4, NNO3, .... Observation records are missing from d until this file is standardized.
+# 16.MBIO_BIOM_MIC.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, REPI, PROF, PESO_SH, PESO_SS, C_FUM, C_NFUM, .... Observation records are missing from d until this file is standardized.
+# 18.MBIO_PLANTAS.csv: not read. columns: CODIGO, SITIO, ENSAYO, FECH_EVA, TRAT, CULT, NUME_PLA, DIA_DES_TRA, DIAM_PLA, ALTU_PLA. Observation records are missing from d until this file is standardized.
+# 19.MBIO_DETERMIN.csv: not read. columns: DETER, CODIGO, FECH_EVA, SITIO, ENSAYO, TRAT, CULT. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Long-term field experiments carried out in savannas and hillsides agroecosystems by Soil Biology (PE-2: Soils project of CIAT)
@@ -44,10 +63,10 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 		carob_effort = 0.4
 	)
 
-	fp <- ff[basename(ff) == "17.MBIO_PRODUCCI.csv"]
-	fs <- ff[basename(ff) == "02.MBIO_SITIOS.csv"]
-	r <- read.csv(fp)
-	sites <- read.csv(fs)
+	f1 <- ff[basename(ff) == "17.MBIO_PRODUCCI.csv"]
+	f2 <- ff[basename(ff) == "02.MBIO_SITIOS.csv"]
+	r <- read.csv(f1)
+	r1 <- read.csv(f2)
 
 	# skipped: 01 dictionary; 03-06 treatments/litter; 07 soil; 08-16 N-15/inoculation/microbial; 18 plants; 19 determinations
 
@@ -58,12 +77,12 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 		})
 	}
 
-	i <- match(r$SITIO, sites$SITIO)
+	i <- match(r$SITIO, r1$SITIO)
 	d <- data.frame(
-		country = sites$PAIS[i],
-		adm1 = carobiner::fix_name(sites$DEPARTAMENTO[i], "title"),
-		adm2 = carobiner::fix_name(sites$CIUDAD[i], "title"),
-		location = sites$UBICACION[i],
+		country = r1$PAIS[i],
+		adm1 = carobiner::fix_name(r1$DEPARTAMENTO[i], "title"),
+		adm2 = carobiner::fix_name(r1$CIUDAD[i], "title"),
+		location = r1$UBICACION[i],
 		site = r$SITIO,
 		trial_id = paste(r$SITIO, r$ENSAYO),
 		treatment = r$TRAT,

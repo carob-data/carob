@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # Carbonates, and the isotope values (d13SOC and d13C of the size fractions).
 # Aggregate and particulate fractions (WSA, POC, and C in the 2 mm, 250 µm, and 53 µm classes) and microbial biomass C. They are size classes of one sample and are not a single soil concentration.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES

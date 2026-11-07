@@ -25,6 +25,7 @@
 # ATW: average tuber weight, unit not labeled.
 # TTYA, TTWP, TTWPL, TNTPL, PPH, and the Aco marketable-count columns. The yield uses TTYNA.
 # Summary sheet.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -60,18 +61,18 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 
 	one <- function(f) {
 		r <- carobiner::read.excel(f, sheet="Fieldbook")
-		ml <- carobiner::read.excel(f, sheet="Material_List")
-		mn <- carobiner::read.excel(f, sheet="Minimal")
-		so <- carobiner::read.excel(f, sheet="Soil_analysis")
-		cm <- carobiner::read.excel(f, sheet="Crop_management")
-		v <- setNames(trimws(as.character(mn$Value)), trimws(mn$Factor))
-		soil <- function(name) as.numeric(so$Data1[so$Abbreviature == name][1])
-		tex <- trimws(as.character(so$Data1[so$Abbreviature == "Soil texture"][1]))
+		r1 <- carobiner::read.excel(f, sheet="Material_List")
+		r2 <- carobiner::read.excel(f, sheet="Minimal")
+		r3 <- carobiner::read.excel(f, sheet="Soil_analysis")
+		r4 <- carobiner::read.excel(f, sheet="Crop_management")
+		v <- setNames(trimws(as.character(r2$Value)), trimws(r2$Factor))
+		soil <- function(name) as.numeric(r3$Data1[r3$Abbreviature == name][1])
+		tex <- trimws(as.character(r3$Data1[r3$Abbreviature == "Soil texture"][1]))
 		tex <- c("CLAY-SILT" = "silty clay", "Loamy sand soil" = "loamy sand")[tex]
-		key <- trimws(as.character(ml$Accession_Number))
-		nm <- trimws(as.character(ml$Accession_Name))
+		key <- trimws(as.character(r1$Accession_Number))
+		nm <- trimws(as.character(r1$Accession_Name))
 		nm[!nzchar(nm)] <- NA_character_
-		code <- trimws(as.character(ml$Accession_Code))
+		code <- trimws(as.character(r1$Accession_Code))
 		code[!nzchar(code)] <- NA_character_
 		instn <- trimws(as.character(r$INSTN))
 		i <- match(instn, key)
@@ -90,9 +91,9 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 			variety = variety,
 			variety_code = instn,
 			treatment = variety,
-			selection_cycle_ = blank(ml$Cycle[i]),
-			female_parent = blank(ml$Female_AcceNumb[i]),
-			male_parent = blank(ml$Male_AcceNumb[i]),
+			selection_cycle_ = blank(r1$Cycle[i]),
+			female_parent = blank(r1$Female_AcceNumb[i]),
+			male_parent = blank(r1$Male_AcceNumb[i]),
 			rep = as.integer(r$REP),
 			plot_id = as.character(r$PLOT),
 			yield = as.numeric(r$TTYNA) * 1000,
@@ -110,8 +111,8 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 			elevation = as.numeric(v[["Elevation"]]),
 			latitude = as.numeric(v[["Latitude"]]),
 			longitude = as.numeric(v[["Longitude"]]),
-			planting_date = as.character(as.Date(cm$Date[cm$Intervention_type == "Planting"][1])),
-			harvest_date = as.character(as.Date(cm$Date[cm$Intervention_type == "Harvest"][1])),
+			planting_date = as.character(as.Date(r4$Date[r4$Intervention_type == "Planting"][1])),
+			harvest_date = as.character(as.Date(r4$Date[r4$Intervention_type == "Harvest"][1])),
 			soil_pH = soil("Soil PH"),
 			soil_SOM = soil("Organic matter"),
 			soil_P = soil("Phosphorus"),

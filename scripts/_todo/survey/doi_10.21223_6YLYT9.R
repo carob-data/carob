@@ -14,6 +14,7 @@
 
 ## NOT PROCESSED
 # None of the questionnaire columns were dropped. Farmer names are not a separate column in this file.
+# 02_DataDictionary_Paucartambo.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # education_, farmer_gender: as recorded.

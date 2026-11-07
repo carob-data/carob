@@ -29,6 +29,15 @@
 # e_changes_*.csv, e_legumes_produced_4_years_ago.csv: recall of area and use four years earlier, haulm and grain processing.
 # f_nutrition_1.csv to f_nutrition_4.csv: nutrition module.
 # variable_definitions.csv: dictionary (units column is empty for harvest and fertiliser).
+# a_general_3.csv: not read. columns: SN, id, farm_id, importance_agriculture_hh, main_source_income_hh, proportion_of_total_income, instanceid. Observation records are missing from d until this file is standardized.
+# a_general_4.csv: not read. columns: SN, id, farm_id, most_valuable_asset, value, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_area_in_last_4_years.csv: not read. columns: SN, id, farm_id, area, crop, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_legume_grain_process.csv: not read. columns: SN, id, farm_id, number, legume_type, legume_processing_now, legume_processing_past, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_legume_haulm_process.csv: not read. columns: SN, id, farm_id, number, legume_haulm_type, haulm_use_now, haulm_use_past, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_production_use.csv: not read. columns: SN, id, farm_id, cultivated_land_change_last_4_years, size_4_years_ago, size_now, size_unit, why_changed, cultivated_legumes_before_contact_n2africa, describe_change_last_4_years, process_legume_grain_at_home, use_legume_haulms, .... Observation records are missing from d until this file is standardized.
+# e_changes_production_use_2.csv: not read. columns: SN, id, farm_id, crop, yield_changed_last_4_years, yield_amount_4_years_ago, yield_unit_4_years_ago, yield_amount_now, yield_unit_now, legume_area_changed, legume_area_4_years_ago_acre, legume_area_4_years_ago_ha, .... Observation records are missing from d until this file is standardized.
+# f_nutrition_2.csv: not read. columns: SN, id, farm_id, legume_part, legume_type, peak_season_per_week, low_season_per_week, dish_type, instanceid. Observation records are missing from d until this file is standardized.
+# f_nutrition_3.csv: not read. columns: SN, id, farm_id, dish_type, dish, ingredients, instanceid. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -174,7 +183,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	f <- ff[basename(ff) == "c_land_holding_management_2.csv"]
 	r <- read.csv(f)
-	g <- read.csv(ff[basename(ff) == "a_general_1.csv"])
+	f1 <- ff[basename(ff) == "a_general_1.csv"]
+	r1 <- read.csv(f1)
 
 	# Plain numbers are kg. "20/70" is the harvest of each crop in a mixture, summed.
 	# A piece >= 1900 is a date typed into the harvest field and is left NA.
@@ -219,30 +229,30 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	is_kg <- unit == "kg"
 	yield <- ifelse(is_kg & !is.na(size) & size > 0, harvest / size, NA_real_)
 
-	country <- trimws(g$country)
+	country <- trimws(r1$country)
 	country[country == ""] <- NA
 
 	# gps_dec_* are empty; unsigned gps_latitude is Malawi latitude with the sign dropped (see NOTES)
-	lat <- g$gps_latitude
-	lon <- g$gps_longitude
+	lat <- r1$gps_latitude
+	lon <- r1$gps_longitude
 	flip <- !is.na(lat) & lat > 0 & !is.na(lon) & lon > 30 & lon < 40
 	lat[flip] <- -lat[flip]
 
-	date <- rep(NA_character_, nrow(g))
-	okd <- !is.na(g$date_interview_yyyy) & g$date_interview_yyyy >= 2000 &
-		!is.na(g$date_interview_mm) & g$date_interview_mm >= 1 & g$date_interview_mm <= 12 &
-		!is.na(g$date_interview_dd) & g$date_interview_dd >= 1 & g$date_interview_dd <= 31
-	date[okd] <- sprintf("%04d-%02d-%02d", g$date_interview_yyyy[okd], g$date_interview_mm[okd], g$date_interview_dd[okd])
+	date <- rep(NA_character_, nrow(r1))
+	okd <- !is.na(r1$date_interview_yyyy) & r1$date_interview_yyyy >= 2000 &
+		!is.na(r1$date_interview_mm) & r1$date_interview_mm >= 1 & r1$date_interview_mm <= 12 &
+		!is.na(r1$date_interview_dd) & r1$date_interview_dd >= 1 & r1$date_interview_dd <= 31
+	date[okd] <- sprintf("%04d-%02d-%02d", r1$date_interview_yyyy[okd], r1$date_interview_mm[okd], r1$date_interview_dd[okd])
 
 	loc <- data.frame(
-		farm_id = g$farm_id,
+		farm_id = r1$farm_id,
 		country = country,
 		adm1 = "Central Region",
-		adm2 = carobiner::fix_name(g$action_site, "title"),
-		location = carobiner::fix_name(g$village, "title"),
+		adm2 = carobiner::fix_name(r1$action_site, "title"),
+		location = carobiner::fix_name(r1$village, "title"),
 		longitude = lon,
 		latitude = lat,
-		elevation = g$gps_altitude,
+		elevation = r1$gps_altitude,
 		date = date
 	)
 	loc <- loc[!duplicated(loc$farm_id), ]

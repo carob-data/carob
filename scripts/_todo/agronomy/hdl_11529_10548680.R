@@ -55,11 +55,11 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 	origin <- c("Morocco", "Pakistan", "Nepal", "Turkey", "Algeria", "Morocco", "Bangladesh", "Bangladesh", "Bulgaria", "Bangladesh", "Bangladesh", "Bangladesh", "Germany", "Greece", "Greece", "Bangladesh", "Greece", "Greece", "Greece", "Bangladesh", "Bangladesh", "Bangladesh", NA, NA, NA)
 	key <- data.frame(trt=1:25, variety=acc, variety_origin=origin)
 
-	fy <- ff[basename(ff) == "DAT-BV105-17-Yield_Grasspea.xlsx"]
-	fb <- ff[basename(ff) == "DAT-BV105-17-Biomass_Grasspea.xlsx"]
-	r <- carobiner::read.excel(fy, sheet="Calculations")
-	b <- carobiner::read.excel(fb, sheet="Calculation")
-	ib <- match(paste(r$Rep, r$Trt), paste(b$Rep, b$Trt))
+	f1 <- ff[basename(ff) == "DAT-BV105-17-Yield_Grasspea.xlsx"]
+	f2 <- ff[basename(ff) == "DAT-BV105-17-Biomass_Grasspea.xlsx"]
+	r <- carobiner::read.excel(f1, sheet="Calculations")
+	r1 <- carobiner::read.excel(f2, sheet="Calculation")
+	ib <- match(paste(r$Rep, r$Trt), paste(r1$Rep, r1$Trt))
 	ik <- match(as.integer(r$Trt), key$trt)
 
 	variety <- key$variety[ik]
@@ -80,7 +80,7 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 		yield_part = "seed",
 		yield = as.numeric(r$`Yield_12%H₂O`),
 		yield_moisture = 12,
-		dmy_total = as.numeric(b$Yield_Dry[ib]),
+		dmy_total = as.numeric(r1$Yield_Dry[ib]),
 		seed_weight = as.numeric(r$Thou),
 		spike_density = as.numeric(r$`Spikes/m²`) * 10000,
 		grains_per_spike = as.numeric(r$`Grains/spike`),

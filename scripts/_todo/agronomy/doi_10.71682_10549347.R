@@ -10,6 +10,10 @@
 # Two soybean uuids not in raw survey so GPS/variety missing (write_files: NA lat/lon).
 
 
+
+## NOT PROCESSED
+# EiA_2022_survey_2025-09-26_v0.rds: same table as the file of this name that is read.
+
 carob_script <- function(path) {
 
 "
@@ -37,9 +41,9 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 	)
 
 	f <- ff[basename(ff) == "EiA_2022_survey_2025-09-26_v0.xlsx"]
-	rmz <- carobiner::read.excel(f, sheet = "maize_clean_data")
-	rsy <- carobiner::read.excel(f, sheet = "soybean_clean_data")
-	rr <- carobiner::read.excel(f, sheet = "raw_survey_data")
+	r1 <- carobiner::read.excel(f, sheet = "maize_clean_data")
+	r2 <- carobiner::read.excel(f, sheet = "soybean_clean_data")
+	r3 <- carobiner::read.excel(f, sheet = "raw_survey_data")
 
 	# Codebook: planting/harvest are julian day. Season is 2022-2023.
 	doy_date <- function(doy) {
@@ -48,51 +52,51 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 	}
 
 	geo <- data.frame(
-		X_uuid = rr$X_uuid,
-		latitude = rr[["_field_gps_latitude"]],
-		longitude = rr[["_field_gps_longitude"]],
-		elevation = rr[["_field_gps_altitude"]],
-		variety = rr$variety_name,
-		adm1 = carobiner::fix_name(rr$province, "title")
+		X_uuid = r3$X_uuid,
+		latitude = r3[["_field_gps_latitude"]],
+		longitude = r3[["_field_gps_longitude"]],
+		elevation = r3[["_field_gps_altitude"]],
+		variety = r3$variety_name,
+		adm1 = carobiner::fix_name(r3$province, "title")
 	)
 	geo <- geo[!duplicated(geo$X_uuid), ]
 
 	d1 <- data.frame(
-		record_id = rmz$X_uuid,
-		country = rmz$country,
-		adm2 = carobiner::fix_name(rmz$district, "title"),
-		location = rmz$epa,
+		record_id = r1$X_uuid,
+		country = r1$country,
+		adm2 = carobiner::fix_name(r1$district, "title"),
+		location = r1$epa,
 		crop = "maize",
-		yield = rmz$maize_yield_kgha,
-		plant_density = rmz$maize_plantpop_plha,
-		seed_rate = rmz$seed_kgha,
-		variety_type = rmz$seed_type,
-		N_fertilizer = rmz$nfert_kgha,
+		yield = r1$maize_yield_kgha,
+		plant_density = r1$maize_plantpop_plha,
+		seed_rate = r1$seed_kgha,
+		variety_type = r1$seed_type,
+		N_fertilizer = r1$nfert_kgha,
 		# codebook: P2O5 and K2O
-		P_fertilizer = rmz$pfert_kgha / 2.29,
-		K_fertilizer = rmz$kfert_kgha / 1.2051,
-		OM_used = rmz$orgfert_yn == "y",
-		planting_date = doy_date(rmz$date_planting),
-		harvest_date = doy_date(rmz$date_harvest),
-		weeding_times = as.integer(rowSums(!is.na(cbind(rmz$weeding_1st_das, rmz$weeding_2nd_das)))),
+		P_fertilizer = r1$pfert_kgha / 2.29,
+		K_fertilizer = r1$kfert_kgha / 1.2051,
+		OM_used = r1$orgfert_yn == "y",
+		planting_date = doy_date(r1$date_planting),
+		harvest_date = doy_date(r1$date_harvest),
+		weeding_times = as.integer(rowSums(!is.na(cbind(r1$weeding_1st_das, r1$weeding_2nd_das)))),
 		yield_part = "grain",
 		yield_moisture = 0
 	)
 
 	d2 <- data.frame(
-		record_id = rsy$X_uuid,
-		country = rsy$country,
-		adm2 = carobiner::fix_name(rsy$district, "title"),
-		location = rsy$epa,
+		record_id = r2$X_uuid,
+		country = r2$country,
+		adm2 = carobiner::fix_name(r2$district, "title"),
+		location = r2$epa,
 		crop = "soybean",
-		yield = rsy$soy_yield_kgha,
-		dmy_total = rsy$soy_biomass_kgha,
-		seed_rate = rsy$seed_kgha,
-		variety_type = rsy$seed_type,
-		OM_used = rsy$orgfert_yn == "y",
-		planting_date = doy_date(rsy$date_planting),
-		harvest_date = doy_date(rsy$date_harvest),
-		weeding_times = as.integer(rowSums(!is.na(cbind(rsy$weeding_1st_das, rsy$weeding_2nd_das)))),
+		yield = r2$soy_yield_kgha,
+		dmy_total = r2$soy_biomass_kgha,
+		seed_rate = r2$seed_kgha,
+		variety_type = r2$seed_type,
+		OM_used = r2$orgfert_yn == "y",
+		planting_date = doy_date(r2$date_planting),
+		harvest_date = doy_date(r2$date_harvest),
+		weeding_times = as.integer(rowSums(!is.na(cbind(r2$weeding_1st_das, r2$weeding_2nd_das)))),
 		yield_part = "seed",
 		yield_moisture = 0
 	)

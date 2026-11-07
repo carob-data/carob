@@ -98,53 +98,53 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	)
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		ic <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Node), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
-		ic <- ic[!is.na(ic$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 - Grain Harvest ", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="15-Intercrop", skip=4, hdr=2))
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Node), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
+		r4 <- r4[!is.na(r4$Tmnt), ]
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		gh$seq <- add_seq(gh)
-		ft$seq <- add_seq(ft)
-		ic$seq <- add_seq(ic)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
+		r4$seq <- add_seq(r4)
 		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
-		ii <- match(key(ph), key(ic))
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
+		ii <- match(key(r1), key(r4))
 
-		hv_name <- intersect(c("Datw.of.harvest.dd.mm.yy", "Date.of.harvest.dd.mm.yy"), names(ph))[1]
-		sp <- num(ph$Row.spacing.cm)
+		hv_name <- intersect(c("Datw.of.harvest.dd.mm.yy", "Date.of.harvest.dd.mm.yy"), names(r1))[1]
+		sp <- num(r1$Row.spacing.cm)
 		sp[!is.na(sp) & sp == 0] <- NA_real_
-		hi <- num(gh$HI[ig])
+		hi <- num(r2$HI[ig])
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
-		veg <- unname(second[as.character(ph$Tmnt)])
-		loc <- carobiner::fix_name(trimws(as.character(ph$Node)), "title")
+		veg <- unname(second[as.character(r1$Tmnt)])
+		loc <- carobiner::fix_name(trimws(as.character(r1$Node)), "title")
 		base <- data.frame(
 			country = "India",
 			adm1 = "West Bengal",
 			adm2 = "Malda",
 			location = loc,
-			trial_id = paste(loc, ph$Year, ph$seq),
-			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
+			trial_id = paste(loc, r1$Year, r1$seq),
+			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			season = "rabi",
-			treatment = as.character(ph$Tmnt),
-			variety = blank(ph$Variety),
-			plot_area = num(ph$Plot.size.m2),
+			treatment = as.character(r1$Tmnt),
+			variety = blank(r1$Variety),
+			plot_area = num(r1$Plot.size.m2),
 			row_spacing = sp,
-			planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
-			harvest_date = as_date(ph[[hv_name]]),
-			anthesis_days = num(ph$X50pct.anthesis.DAS),
-			maturity_days = num(ph$X80pct.physiological.maturity.DAS),
-			seed_rate = num(ph$Seedrate.kg.ha),
-			yield = num(gh$Calculation_Grain.yield.t.ha[ig]) * 1000,
+			planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
+			harvest_date = as_date(r1[[hv_name]]),
+			anthesis_days = num(r1$X50pct.anthesis.DAS),
+			maturity_days = num(r1$X80pct.physiological.maturity.DAS),
+			seed_rate = num(r1$Seedrate.kg.ha),
+			yield = num(r2$Calculation_Grain.yield.t.ha[ig]) * 1000,
 			harvest_index = hi,
-			N_fertilizer = num(ft$N.kg.ha[ifr]),
-			P_fertilizer = num(ft$P2O5.kg.ha[ifr]) / 2.29,
-			K_fertilizer = num(ft$K.kg.ha[ifr]),
+			N_fertilizer = num(r3$N.kg.ha[ifr]),
+			P_fertilizer = num(r3$P2O5.kg.ha[ifr]) / 2.29,
+			K_fertilizer = num(r3$K.kg.ha[ifr]),
 			on_farm = TRUE,
 			is_survey = FALSE,
 			geo_from_source = FALSE,
@@ -156,15 +156,15 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		leaf <- base[veg_rows, ]
 		leaf$crop <- veg[veg_rows]
 		leaf$yield_part <- unname(leaf_part[leaf$crop])
-		leaf$yield <- num(ic$Intercrop.t.ha[ii])[veg_rows] * 1000
-		leaf$seed_rate <- num(ic$Seed.rate.of.intercrop.kg.ha[ii])[veg_rows]
+		leaf$yield <- num(r4$Intercrop.t.ha[ii])[veg_rows] * 1000
+		leaf$seed_rate <- num(r4$Seed.rate.of.intercrop.kg.ha[ii])[veg_rows]
 		leaf$variety <- NA_character_
 		leaf$anthesis_days <- NA_real_
 		leaf$harvest_index <- NA_real_
 		rbind(base, leaf)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) == "Inter-cropping 2016-17-all nodes-Malda.xlsx"]
 	d <- do.call(rbind, lapply(ff, one))
 	carobiner::write_files(path, meta, d)
 }

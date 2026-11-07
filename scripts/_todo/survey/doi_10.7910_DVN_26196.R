@@ -28,6 +28,10 @@
 # education_years_: years of education of the respondent
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Impact Assessment of Three Reductions – Three Gains in South Vietnam. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -124,13 +128,13 @@ Measure awareness and adoption of 3R3G in the Mekong Delta Region and assess dif
 	d$location <- rng[j, 3]
 	d$adm2 <- rng[j, 4]
 
-	h <- carobiner::read.excel(f, sheet="CY", skip=3)
-	h <- h[!is.na(h$ResNo), ]
-	k <- match(d$hhid, as.character(h$ResNo))
-	d$age <- h$Age[k]
-	d$education_years_ <- h$Educ[k]
-	d$farmland <- h$TFArea[k]
-	d$hh_size <- h$HHSize[k]
+	r1 <- carobiner::read.excel(f, sheet="CY", skip=3)
+	r1 <- r1[!is.na(r1$ResNo), ]
+	k <- match(d$hhid, as.character(r1$ResNo))
+	d$age <- r1$Age[k]
+	d$education_years_ <- r1$Educ[k]
+	d$farmland <- r1$TFArea[k]
+	d$hh_size <- r1$HHSize[k]
 
 	d$country <- "Vietnam"
 	d$crop <- "rice"

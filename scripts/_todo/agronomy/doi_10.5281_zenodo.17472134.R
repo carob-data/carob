@@ -16,6 +16,22 @@
 # yield_per_plant_: mean bunch yield of three sampled vines (kg/vine)
 # irrigation_deficit_: TRUE if deficit irrigation, FALSE if full (100%) irrigation
 
+
+## NOT PROCESSED
+# desktop.ini: not read. .ini file. Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_Dosel vegetativo_2024.xls: not read. sheet 2024-05-28 (of 2): ASSAIG   ET4 Drought    Vinya Raimat  2024. Observation records are missing from d until this file is standardized.
+# readme.txt: documentation or a codebook, not an observation table.
+# ET4DROUGHT_IRTA_Intercepcio radiacio_2024.xls: not read. sheet 2024-05-09 (of 7): ASSAIG ET4 DROUGHT   Vinya Chardonnay   Raimat 2024. Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_05_28_porometro.xlsx: not read. sheet Ametller_JGG_2024_05_28T14_23_3: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_06_28_porometro.xlsx: not read. sheet Ametller_JGG_2024_06_28T08_57_3: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_07_08_porometro.xlsx: not read. sheet Ametller_JGG_2024_07_08T07_51_2: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_07_16_porometro.xlsx: not read. sheet Pistatxer: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_07_23_porometro.xlsx: not read. sheet Lisimetres: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_08_20_porometro.xlsx: not read. sheet Lisimetres_JGG_2024_08_20_08_48: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_2024_09_13_porometro.xlsx: not read. sheet Lisimetres: SYS...1, SYS...2, SYS...3, SYS...4, SYS...5, USERDEF...6, USERDEF...7, USERDEF...8, USERDEF...9, PORO...10, PORO...11, PORO...12, .... Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_Potencial stem 2024.xlsx: not read. sheet 2024-05-28 (of 10): Parcel·la Vinya ET4 Drought  Raimat   2024. Observation records are missing from d until this file is standardized.
+# ET4DROUGHT_IRTA_Sondaneutronesvinya_2024.xls: not read. sheet Calibració 2023 (of 22): Lectura sonda, ...2. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -42,7 +58,7 @@ This dataset correponds to physiological measurements conducted in a vineyard tr
 		carob_effort = 0.8
 	)
 
-	f <- ff[grepl("Cosecha_2024", basename(ff))]
+	f <- ff[basename(ff) == "ET4DROUGHT_IRTA_Cosecha_2024.xls"]
 	r <- carobiner::read.excel(f, skip=11)
 	# 12 plots; drop trailing summary rows
 	r <- r[!is.na(r[[1]]) & r[[1]] %in% 1:12, ]

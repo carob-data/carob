@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # Fertilizer products and quantities. The nutrient contents are not stated.
 # Carbon-credit awareness, machinery, and the lead-farmer questionnaire.
+# Carbon Farming Lead Farmer 2023 CIMMYT Survey Data.xlsx: not read. sheet Questionnaire (of 4): Click on the PDF file below to open the questionnaire. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -53,10 +54,10 @@ Plot crops and area from the 2023 carbon-farming household survey.
 		x
 	}
 
-	f <- ff[grepl("Carbon Farming HH", basename(ff))]
-	p <- as.data.frame(carobiner::read.excel(f, sheet="Plot_inf_details", col_types="text"))
-	m <- as.data.frame(carobiner::read.excel(f, sheet="Carbon_farming_Main_sheet", col_types="text"))
-	gps <- data.frame(HH_ID=blank(m$HH_ID), latitude=num(m$Latitude), longitude=num(m$Longitude))
+	f <- ff[basename(ff) == "Carbon Farming HH 2023 CIMMYT Survey Data_1.xlsx"]
+	r1 <- as.data.frame(carobiner::read.excel(f, sheet="Plot_inf_details", col_types="text"))
+	r2 <- as.data.frame(carobiner::read.excel(f, sheet="Carbon_farming_Main_sheet", col_types="text"))
+	gps <- data.frame(HH_ID=blank(r2$HH_ID), latitude=num(r2$Latitude), longitude=num(r2$Longitude))
 	gps <- gps[!is.na(gps$HH_ID) & !duplicated(gps$HH_ID), ]
 
 	cmap <- c(
@@ -69,12 +70,12 @@ Plot crops and area from the 2023 carbon-farming household survey.
 	acre_ha <- 0.404686
 
 	one <- function(cropcol, areacol, season) {
-		raw <- blank(p[[cropcol]])
+		raw <- blank(r1[[cropcol]])
 		crop <- unname(cmap[raw])
-		ha <- num(p[[areacol]]) / num(p$Land_unit_convertion) * acre_ha
+		ha <- num(r1[[areacol]]) / num(r1$Land_unit_convertion) * acre_ha
 		ok <- !is.na(crop) & !is.na(ha) & ha > 0
-		hh <- blank(p$HH_ID)
-		st <- blank(p$State)
+		hh <- blank(r1$HH_ID)
+		st <- blank(r1$State)
 		adm <- unname(stn[st])
 		adm[is.na(adm)] <- st[is.na(adm)]
 		variety <- rep(NA_character_, length(raw))
@@ -83,12 +84,12 @@ Plot crops and area from the 2023 carbon-farming household survey.
 		data.frame(
 			country = "India",
 			adm1 = adm[ok],
-			adm2 = blank(p$District)[ok],
-			location = blank(p$Village)[ok],
+			adm2 = blank(r1$District)[ok],
+			location = blank(r1$Village)[ok],
 			latitude = gps$latitude[ig][ok],
 			longitude = gps$longitude[ig][ok],
 			hhid = hh[ok],
-			trial_id = paste(hh[ok], blank(p$Index)[ok], season),
+			trial_id = paste(hh[ok], blank(r1$Index)[ok], season),
 			crop = crop[ok],
 			variety = variety[ok],
 			field_size = ha[ok],

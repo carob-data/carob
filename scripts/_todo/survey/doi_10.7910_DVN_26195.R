@@ -38,6 +38,27 @@
 # planting_month_, harvest_month_: reported month (year not given)
 
 
+
+## NOT PROCESSED
+# BaselineVarList_GSR.xls: not read. sheet Variable labels: Variable labels for exported data from Access. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2. Observation records are missing from d until this file is standardized.
+# tbl01hhinfo_x.xlsx: not read. sheet tbl01hhinfo_x: farmerid, hhmember, relation, age, farmyrs, sex, educyear, primoccup, secoccup, comments. Observation records are missing from d until this file is standardized.
+# tbl02landholding_x.xlsx: not read. sheet tbl02landholding_x: farmerid, parcel, plot, villageloc, landtype, area, soiltype, salinity_aman, salinity_boro, tenure, irrigsource, areaws, .... Observation records are missing from d until this file is standardized.
+# tbl03landuse_x.xlsx: not read. sheet tbl03landuse_x: farmerid, parcel, plot, landtype, season, croptype, crop_id, crop, area, prod, prodloc, unit, .... Observation records are missing from d until this file is standardized.
+# tbl04bdesiredtraits.xlsx: not read. sheet tbl04bdesiredtraits: farmerid, desired01, desired02, desired03, undesired01, undesired02, undesired03, newvariety, newvarietywhy. Observation records are missing from d until this file is standardized.
+# tbl04breasonsgrowing_x.xlsx: not read. sheet tbl04breasonsgrowing_x: farmerid, variety, season, pos_yield, pos_lodge, pos_pest, pos_taste, pos_grain, pos_price, pos_oth, neg_yield, neg_lodge, .... Observation records are missing from d until this file is standardized.
+# tbl05cropdisposal_x.xlsx: not read. sheet tbl05cropdisposal_x: farmerid, season, variety, totalprod, sold, salevalue, seeds, feeds, payment, food, futureuse, otheruses, .... Observation records are missing from d until this file is standardized.
+# tbl06laborinput_x.xlsx: not read. sheet tbl06laborinput_x: farmerid, salineaffected, season, ricevar, laborinput, specify, gender, famlyno, famlyday, famlyhr, hiredno, hiredday, .... Observation records are missing from d until this file is standardized.
+# tbl06poweruse_x.xlsx: not read. sheet tbl06poweruse_x: farmerid, salineaffected, ricevar, poweruse, season, hireowned, unit, dayshour, pricerent, cost, cropshr, cropshrdenom, .... Observation records are missing from d until this file is standardized.
+# tbl07gsrvarieties_x.xlsx: not read. sheet tbl07gsrvarieties_x: farmerid, farmertype, farmer, village, gsrvar, amount, transaction, payment, xchgvar, xchgamt, area. Observation records are missing from d until this file is standardized.
+# tbl08afarmnonfarmlabor_x.xlsx: not read. sheet tbl08afarmnonfarmlabor_x: farmerid, season, activitytype, worktype, hhmembers, workplace, daysworked, kindpayment, cashpayment, comments. Observation records are missing from d until this file is standardized.
+# tbl08banimalsales_x.xlsx: not read. sheet tbl08banimalsales_x: farmerid, items, unit, quantity, price, salevalue, whosold, comments. Observation records are missing from d until this file is standardized.
+# tbl08cotherincome_x.xlsx: not read. sheet tbl08cotherincome_x: farmerid, incomesource, qty, price, male, female, both, comments. Observation records are missing from d until this file is standardized.
+# tbl08seedsource_x.xlsx: not read. sheet tbl08seedsource_x: farmerid, season, variety, quantity, unitperkg, source, cost, xchgdvar. Observation records are missing from d until this file is standardized.
+# tbl09asset.xlsx: not read. sheet tbl09asset: farmerid, asset_type, asset, qty, unit, presentvalue, yearacqrd. Observation records are missing from d until this file is standardized.
+# tbl09credit_x.xlsx: not read. sheet tbl09credit_x: farmerid, season, itemborrowed, source, loanterm, amountkind, unit, amountcash, paymentcash, paymentharvest, unitperkg. Observation records are missing from d until this file is standardized.
+# tbl10training_x.xlsx: not read. sheet tbl10training_x: farmerid, training, trainingmo, duration, whoprovided, whoattended. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -65,13 +86,13 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 		carob_effort = 0.6
 	)
 
-	f0 <- ff[basename(ff) == "tbl00surveyinfo.xlsx"]
+	f1 <- ff[basename(ff) == "tbl00surveyinfo.xlsx"]
 	f4 <- ff[basename(ff) == "tbl04aricevariety_x.xlsx"]
 	f6 <- ff[basename(ff) == "tbl06matinputs_x.xlsx"]
 
-	s <- carobiner::read.excel(f0)
+	r1 <- carobiner::read.excel(f1)
 	r <- carobiner::read.excel(f4)
-	m <- carobiner::read.excel(f6)
+	r2 <- carobiner::read.excel(f6)
 
 	area <- as.numeric(r$area)
 	area[area == 0] <- NA
@@ -95,14 +116,14 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 		crop_price = as.numeric(r$prodprice),
 		currency = "PHP"
 	)
-	i <- match(d$hhid, as.character(s$farmerid))
+	i <- match(d$hhid, as.character(r1$farmerid))
 	d$country <- "Philippines"
 	d$adm1 <- "Laguna"
-	d$adm2 <- s$district[i]
-	d$location <- s$village[i]
+	d$adm2 <- r1$district[i]
+	d$location <- r1$village[i]
 
 	## fertilizer, kg per farmer x variety x season, divided by the area of that combination
-	f <- m[m$matinputs == "Fertilizer", ]
+	f <- r2[r2$matinputs == "Fertilizer", ]
 	f$specify <- tolower(trimws(f$specify))
 	npk <- data.frame(
 		specify = c("urea", "46-0-0", "14-14-14", "ammonium sulfate", "21-0-0", "16-20-0"),

@@ -43,6 +43,10 @@
 # production_status_: "on or above average yield" or "below average yield"
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Survey for Assessment of Rural Socio-Economic Conditions in China. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -72,33 +76,33 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 
 	f <- ff[basename(ff) == "CHINA05.xls"]
 	rd <- function(sheet, sfx) {
-		x <- carobiner::read.excel(f, sheet=sheet, skip=5, .name_repair="minimal")
-		x <- x[, names(x) != "" & !is.na(names(x))]
-		names(x) <- sub(paste0(sfx, "(\\.[0-9]+)?$"), "\\1", make.unique(names(x)))
-		x
+		r2 <- carobiner::read.excel(f, sheet=sheet, skip=5, .name_repair="minimal")
+		r2 <- r2[, names(r2) != "" & !is.na(names(r2))]
+		names(r2) <- sub(paste0(sfx, "(\\.[0-9]+)?$"), "\\1", make.unique(names(r2)))
+		r2
 	}
 	# numbers stored as text, with some free text entries
 	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[!grepl("^[0-9]*\\.?[0-9]+$", x)] <- NA
-		as.numeric(x)
+		r2 <- trimws(as.character(r2))
+		r2[!grepl("^[0-9]*\\.?[0-9]+$", r2)] <- NA
+		as.numeric(r2)
 	}
 	join <- function(x, y) {
-		if (nrow(x) == nrow(y) && all(x$HHNO == y$HHNO)) {
-			cbind(x, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
+		if (nrow(r2) == nrow(y) && all(r2$HHNO == y$HHNO)) {
+			cbind(r2, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
 		} else {
 			y <- y[!duplicated(paste(y$VLAGE, y$HHNO)), ]
-			merge(x, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
+			merge(r2, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
 		}
 	}
 	prefix <- function(x, p) {
-		i <- !(names(x) %in% c("HHNO", "VLAGE"))
-		names(x)[i] <- paste0(p, names(x)[i])
-		x
+		i <- !(names(r2) %in% c("HHNO", "VLAGE"))
+		names(r2)[i] <- paste0(p, names(r2)[i])
+		r2
 	}
 	sumNA <- function(...) {
-		x <- cbind(...)
-		ifelse(rowSums(!is.na(x)) > 0, rowSums(x, na.rm=TRUE), NA)
+		r2 <- cbind(...)
+		ifelse(rowSums(!is.na(r2)) > 0, rowSums(r2, na.rm=TRUE), NA)
 	}
 
 	mu <- 1/15
@@ -109,37 +113,37 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	)
 	# crop entries: codes, "code-variety", variety names and Chinese crop names
 	parse_crop <- function(x) {
-		x <- trimws(as.character(x))
-		code <- rep(NA_real_, length(x))
-		crop <- rep(NA_character_, length(x))
-		variety <- rep(NA_character_, length(x))
-		i <- grepl("^[0-9]+$", x) & x %in% as.character(1:11)
-		code[i] <- as.numeric(x[i])
-		i <- grepl("^[0-9]+-[0-9]", x)
-		code[i] <- as.numeric(sub("-.*", "", x[i]))
-		variety[i] <- sub("^[0-9]+-", "", x[i])
+		r2 <- trimws(as.character(r2))
+		code <- rep(NA_real_, length(r2))
+		crop <- rep(NA_character_, length(r2))
+		variety <- rep(NA_character_, length(r2))
+		i <- grepl("^[0-9]+$", r2) & r2 %in% as.character(1:11)
+		code[i] <- as.numeric(r2[i])
+		i <- grepl("^[0-9]+-[0-9]", r2)
+		code[i] <- as.numeric(sub("-.*", "", r2[i]))
+		variety[i] <- sub("^[0-9]+-", "", r2[i])
 		# Xiushui (japonica)
-		i <- grepl("\u79c0\u6c34", x) | x %in% c("03", "09", "110")
+		i <- grepl("\u79c0\u6c34", r2) | r2 %in% c("03", "09", "110")
 		code[i] <- 1
-		variety[i] <- paste("Xiushui", sub("\u79c0\u6c34", "", x[i]))
+		variety[i] <- paste("Xiushui", sub("\u79c0\u6c34", "", r2[i]))
 		# hybrid 2070
-		i <- x %in% c("2070", "\u6742\u4ea42070")
+		i <- r2 %in% c("2070", "\u6742\u4ea42070")
 		code[i] <- 3
 		variety[i] <- "2070"
 		code[code > 11] <- NA
 		crop <- crops$crop[match(code, crops$code)]
 		rtype <- crops$rice_type[match(code, crops$code)]
 		# Huayu 1 (groundnut)
-		i <- x == "\u82b1\u80b21\u53f7"
+		i <- r2 == "\u82b1\u80b21\u53f7"
 		crop[i] <- "groundnut"
 		variety[i] <- "Huayu 1"
-		crop[grepl("\u68a8", x)] <- "pear"
-		crop[x == "\u6843\u6728"] <- "peach"
-		crop[grepl("\u82a6\u7b0b", x)] <- "asparagus"
-		crop[x == "\u83dc\u7c7b"] <- "vegetable"
-		crop[x == "\u897f\u74dc"] <- "watermelon"
-		crop[x %in% c("\u6c34\u679c", "11\uff08\u6c34\u679c\uff09", "\u6c34\u679c\uff08\u68a8\u3001\u6843\uff09")] <- "fruit"
-		data.frame(crop=crop, variety=variety, rice_type_=rtype, variety_type=ifelse(code %in% 3, "hybrid", NA), crop_label_=x)
+		crop[grepl("\u68a8", r2)] <- "pear"
+		crop[r2 == "\u6843\u6728"] <- "peach"
+		crop[grepl("\u82a6\u7b0b", r2)] <- "asparagus"
+		crop[r2 == "\u83dc\u7c7b"] <- "vegetable"
+		crop[r2 == "\u897f\u74dc"] <- "watermelon"
+		crop[r2 %in% c("\u6c34\u679c", "11\uff08\u6c34\u679c\uff09", "\u6c34\u679c\uff08\u68a8\u3001\u6843\uff09")] <- "fruit"
+		data.frame(crop=crop, variety=variety, rice_type_=rtype, variety_type=ifelse(code %in% 3, "hybrid", NA), crop_label_=r2)
 	}
 	loss <- data.frame(code = 1:8,
 		label = c("drought", "flood", "typhoon", "diseases", "insects", "weeds", "low input use", "others"),
@@ -159,40 +163,40 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	## household x season
 	d2 <- lapply(1:3, function(i) {
 		s <- seasons[i, ]
-		x <- join(join(join(prefix(rd(s$agprac, s$sfx), "a_"), prefix(rd(s$labA, s$sfx), "l1_")), prefix(rd(s$labB, s$sfx), "l2_")), prefix(rd(s$prod, s$sfx), "p_"))
-		ha <- num(x$a_AR) * mu
+		r2 <- join(join(join(prefix(rd(s$agprac, s$sfx), "a_"), prefix(rd(s$labA, s$sfx), "l1_")), prefix(rd(s$labB, s$sfx), "l2_")), prefix(rd(s$prod, s$sfx), "p_"))
+		ha <- num(r2$a_AR) * mu
 		data.frame(
-			hhid = paste(x$VLAGE, x$HHNO, sep="_"),
-			village = num(x$VLAGE),
+			hhid = paste(r2$VLAGE, r2$HHNO, sep="_"),
+			village = num(r2$VLAGE),
 			season_label_ = s$label,
 			harvest_date = s$year,
-			parse_crop(x$a_CR),
+			parse_crop(r2$a_CR),
 			field_size = ha,
-			planting_method = c("direct seeding", "transplanting")[match(num(x$l1_CE.1), 1:2)],
-			land_prep_times = as.integer(num(x$l1_NP)),
-			weeding_times = as.integer(num(x$l1_NW)),
-			irrigation_number = as.integer(num(x$l2_NI)),
-			fertilizer_times_ = num(x$l2_NF),
-			pesticide_times_ = num(x$l2_NP),
-			seed_quantity_ = num(x$l1_QS) / ha,
-			fertilizer_product_ = num(x$l2_QF) / ha,
-			N_fertilizer_product_ = num(x$l2_QNF) / ha,
-			P_fertilizer_product_ = num(x$l2_QPF) / ha,
-			K_fertilizer_product_ = num(x$l2_QKF) / ha,
-			land_prep_cost = num(x$l1_LP) / ha,
-			planting_cost = num(x$l1_CE) / ha,
-			seed_cost = num(x$l1_VS) / ha,
-			weeding_cost = num(x$l1_WD) / ha,
-			herbicide_cost = num(x$l1_VH) / ha,
-			irrigation_cost = num(x$l2_IRR) / ha,
-			fertilizer_cost = num(x$l2_FER) / ha,
-			pesticide_cost = num(x$l2_PEST) / ha,
-			labour = sumNA(num(x$l1_TMP), num(x$l1_TMCE), num(x$l1_TMH), num(x$l2_TMI), num(x$l2_TMF), num(x$l2_TMP), num(x$l2_TMHT), num(x$l2_TMO)) / ha,
-			yield = num(x$p_CR) / ha,
-			expected_yield = num(x$p_NP) / ha,
-			crop_price = num(x$p_PRIC),
-			production_status_ = c("on or above average yield", "below average yield")[match(num(x$p_PSTUS), 1:2)],
-			loss_code = num(x$p_R1),
+			planting_method = c("direct seeding", "transplanting")[match(num(r2$l1_CE.1), 1:2)],
+			land_prep_times = as.integer(num(r2$l1_NP)),
+			weeding_times = as.integer(num(r2$l1_NW)),
+			irrigation_number = as.integer(num(r2$l2_NI)),
+			fertilizer_times_ = num(r2$l2_NF),
+			pesticide_times_ = num(r2$l2_NP),
+			seed_quantity_ = num(r2$l1_QS) / ha,
+			fertilizer_product_ = num(r2$l2_QF) / ha,
+			N_fertilizer_product_ = num(r2$l2_QNF) / ha,
+			P_fertilizer_product_ = num(r2$l2_QPF) / ha,
+			K_fertilizer_product_ = num(r2$l2_QKF) / ha,
+			land_prep_cost = num(r2$l1_LP) / ha,
+			planting_cost = num(r2$l1_CE) / ha,
+			seed_cost = num(r2$l1_VS) / ha,
+			weeding_cost = num(r2$l1_WD) / ha,
+			herbicide_cost = num(r2$l1_VH) / ha,
+			irrigation_cost = num(r2$l2_IRR) / ha,
+			fertilizer_cost = num(r2$l2_FER) / ha,
+			pesticide_cost = num(r2$l2_PEST) / ha,
+			labour = sumNA(num(r2$l1_TMP), num(r2$l1_TMCE), num(r2$l1_TMH), num(r2$l2_TMI), num(r2$l2_TMF), num(r2$l2_TMP), num(r2$l2_TMHT), num(r2$l2_TMO)) / ha,
+			yield = num(r2$p_CR) / ha,
+			expected_yield = num(r2$p_NP) / ha,
+			crop_price = num(r2$p_PRIC),
+			production_status_ = c("on or above average yield", "below average yield")[match(num(r2$p_PSTUS), 1:2)],
+			loss_code = num(r2$p_R1),
 			currency = "CNY"
 		)
 	})

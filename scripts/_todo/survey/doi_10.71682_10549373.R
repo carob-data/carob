@@ -45,7 +45,7 @@ CIMMYT and Universidad Zamorano carried out a study across five departments of H
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "Caracterizacion_de_la_mecanizacion_en_Honduras_database_revJPE.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Mecanizacion_Honduras_data")
 	topo <- c("Plano"="plain", "Laderas"="hillside", "Mixto"="mixed")
 	one <- function(crop, flag, area, top, tool) {

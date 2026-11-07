@@ -101,8 +101,8 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 		r[!is.na(r$hhid), ]
 	}
 
-	rA <- carobiner::read.excel(f, sheet="PART A", skip=4, na=".")
-	rA <- rA[!is.na(rA$HHID), ]
+	r1 <- carobiner::read.excel(f, sheet="PART A", skip=4, na=".")
+	r1 <- r1[!is.na(r1$HHID), ]
 	rB <- read_gps("PART B")
 	rC <- read_crops("PART C")
 	rD <- read_maize("PART D")
@@ -143,7 +143,7 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$crop <- ifelse(d$maize_in_plot == 1, "maize", NA)
-	d$harvest_date <- parse_xl_date(rA$DATE[match(d$hhid, as.character(rA$HHID))])
+	d$harvest_date <- parse_xl_date(r1$DATE[match(d$hhid, as.character(r1$HHID))])
 
 	# maize_in_plot was only used to set crop
 	d$maize_in_plot <- NULL

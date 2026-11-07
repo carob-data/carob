@@ -43,7 +43,7 @@ Intensive tillage operations, indiscriminate use of irrigation water, chemical f
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("xlsx$", basename(ff))]
+	f <- ff[basename(ff) == "Kakraliya et al Scientific Reports 2022.xlsx"]
 	label <- c(
 		"1" = "Sc1 conventional tillage without residue",
 		"2" = "Sc2 conventional tillage with residue",

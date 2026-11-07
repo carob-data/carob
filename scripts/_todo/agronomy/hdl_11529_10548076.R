@@ -49,21 +49,21 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 	)
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Crop) & !is.na(ph$Node), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Crop) & !is.na(r1$Node), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
 		# The same treatment code is entered twice for some farmers, with different yields.
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		gh$seq <- add_seq(gh)
-		ft$seq <- add_seq(ft)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
 
 		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
 
 		take <- function(df, idx, nms) {
 			n <- nms[nms %in% names(df)]
@@ -76,46 +76,46 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 			as.character(df[[n[1]]][idx])
 		}
 
-		y <- take(gh, ig, c("Sun.dry.grain.yield.t.ha", "Calculation_Sun.dry.grain.yield.t.ha", "Sun.dry.grain.t.ha"))
-		bio <- take(gh, ig, c("Total.Biomass.t.ha", "Biomass.t.ha"))
-		hi <- take(gh, ig, "HI")
+		y <- take(r2, ig, c("Sun.dry.grain.yield.t.ha", "Calculation_Sun.dry.grain.yield.t.ha", "Sun.dry.grain.t.ha"))
+		bio <- take(r2, ig, c("Total.Biomass.t.ha", "Biomass.t.ha"))
+		hi <- take(r2, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
-		moist <- take(gh, ig, "Moisture.pct")
+		moist <- take(r2, ig, "Moisture.pct")
 
-		K <- take(ft, ifr, "K2O.kg.ha")
-		k_plain <- take(ft, ifr, "K.kg.ha")
+		K <- take(r3, ifr, "K2O.kg.ha")
+		k_plain <- take(r3, ifr, "K.kg.ha")
 		K <- ifelse(is.na(K), k_plain, K / 1.2051)
 
 		bname <- c("Boric.acid.kg.ha", "Boric.Acid.kg.ha")
-		B <- take(ft, ifr, bname)
+		B <- take(r3, ifr, bname)
 
-		sp <- as.character(ph$Row.spacing.cm)
+		sp <- as.character(r1$Row.spacing.cm)
 		sp[sp %in% c("30-40", "40-50", "0")] <- NA
-		hd <- as.character(as.Date(take_c(ph, seq_len(nrow(ph)), c("Date.of.harvest.mm.dd.yy", "Datw.of.harvest.dd.mm.yy"))))
+		hd <- as.character(as.Date(take_c(r1, seq_len(nrow(r1)), c("Date.of.harvest.mm.dd.yy", "Datw.of.harvest.dd.mm.yy"))))
 		# One maize harvest is recorded as 2026-05-18. The dataset was published in 2018.
 		hd[!is.na(hd) & hd > "2018-01-01"] <- NA
 
 		data.frame(
 			country = "Bangladesh",
 			adm2 = "Rangpur",
-			location = ph$Node,
-			trial_id = paste(ph$Year, ph$Node),
-			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
-			treatment = ph$Tmnt,
-			crop = tolower(ph$Crop),
-			variety = ph$Variety,
+			location = r1$Node,
+			trial_id = paste(r1$Year, r1$Node),
+			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
+			treatment = r1$Tmnt,
+			crop = tolower(r1$Crop),
+			variety = r1$Variety,
 			yield_part = "grain",
-			planting_date = as.character(as.Date(ph$Date.of.seeding.mm.dd.yy)),
+			planting_date = as.character(as.Date(r1$Date.of.seeding.mm.dd.yy)),
 			harvest_date = hd,
 			row_spacing = as.numeric(sp),
 			yield = y * 1000,
 			yield_moisture = moist,
 			biomass_kg_ha_ = bio * 1000,
 			harvest_index = hi,
-			N_fertilizer = take(ft, ifr, "N.kg.ha"),
-			P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
+			N_fertilizer = take(r3, ifr, "N.kg.ha"),
+			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
 			K_fertilizer = K,
-			gypsum = take(ft, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
+			gypsum = take(r3, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
 			B_fertilizer = B * 10.81 / 61.83,
 			on_farm = TRUE,
 			is_survey = FALSE,
@@ -123,7 +123,14 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Maize 2014-15-LT-All node-Rangpur.xlsx",
+		"Maize 2015-16-LT-All nodes-Rangpur.xlsx",
+		"Maize 2016-17-LT-All nodes-Rangpur.xlsx",
+		"Wheat 2014-15-LT-All nodes-Rangpur.xlsx",
+		"Wheat 2015-16-LT-All nodes-Rangpur.xlsx",
+		"Wheat 2016-17-LT-All nodes-Rangpur.xlsx"
+	)]
 	d <- lapply(ff, one)
 	d <- do.call(rbind, d)
 	carobiner::write_files(path, meta, d)

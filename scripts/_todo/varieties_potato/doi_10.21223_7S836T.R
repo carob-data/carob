@@ -24,6 +24,8 @@
 # 04_Datadictionary.txt and the Excel summary and notes sheets.
 # Crop_management: categories without a product or dose.
 # Breeder code is "-" in this file.
+# 03_Material_list.txt: not read. columns: CIP number. Observation records are missing from d until this file is standardized.
+# TVIT200312_MUQUI_B3C1_RanchaI.xls: not read. sheet Minimal (of 11): Factor, Value. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -57,15 +59,15 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		raw <- readBin(f, "raw", file.info(f)$size)
 		if (length(raw) && raw[length(raw)] != as.raw(10L)) raw <- c(raw, as.raw(10L))
 		txt <- iconv(rawToChar(raw), from="Latin1", to="UTF-8")
-		x <- read.delim(text=txt, check.names=FALSE,
+		r1 <- read.delim(text=txt, check.names=FALSE,
 			sep="\t", quote="", comment.char="", na.strings=c("", "NA", "-"))
-		names(x) <- gsub("\\s+", " ", trimws(names(x)))
-		x
+		names(r1) <- gsub("\\s+", " ", trimws(names(r1)))
+		r1
 	}
 	col_one <- function(x, pattern) {
-		hit <- grep(pattern, names(x))
-		if (length(hit) != 1) return(rep(NA_real_, nrow(x)))
-		z <- trimws(as.character(x[[hit]]))
+		hit <- grep(pattern, names(r1))
+		if (length(hit) != 1) return(rep(NA_real_, nrow(r1)))
+		z <- trimws(as.character(r1[[hit]]))
 		# Below-detection results are stored as "< 0.2" and similar. They are missing concentrations, not zeros.
 		z[grepl("^<", z)] <- NA_character_
 		as.numeric(z)
@@ -76,23 +78,23 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		for (el in elements) {
 			dw <- paste0("^", el, " \\(mg/kg, ?DW\\)?$")
 			fw <- paste0("^", el, " \\(mg/100 ?g, ?FW\\)?$")
-			if (length(grep(dw, names(x))) == 1) out[[paste0("tuber_", el, "_dw_")]] <- col_one(x, dw)
-			if (length(grep(fw, names(x))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(x, fw)
+			if (length(grep(dw, names(r1))) == 1) out[[paste0("tuber_", el, "_dw_")]] <- col_one(r1, dw)
+			if (length(grep(fw, names(r1))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(r1, fw)
 		}
 		as.data.frame(out)
 	}
 
-	minf <- ff[grepl("^01_Fieldbook_TMIN", basename(ff))]
-	vitf <- ff[grepl("^02_Fieldbook_TVIT", basename(ff))]
-	xls <- ff[grepl("^TMIN.*\\.xls$", basename(ff))]
-	m <- read_txt(minf)
-	v <- read_txt(vitf)
-	mini <- carobiner::read.excel(xls, sheet="Minimal")
+	f1 <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_B3C1_RanchaI.txt"]
+	f2 <- ff[basename(ff) == "02_Fieldbook_TVIT_MUQUI_B3C1_Rancha_VitaminC.txt"]
+	f3 <- ff[basename(ff) == "TMIN200312_MUQUI_B3C1_RanchaI.xls"]
+	m <- read_txt(f1)
+	v <- read_txt(f2)
+	r2 <- carobiner::read.excel(f3, sheet="Minimal")
 	meta_val <- function(nm) {
-		hit <- mini$Value[trimws(as.character(mini$Factor)) == nm]
-		x <- hit[1]
-		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
-		trimws(as.character(x))
+		hit <- r2$Value[trimws(as.character(r2$Factor)) == nm]
+		r1 <- hit[1]
+		if (inherits(r1, "POSIXt") || inherits(r1, "Date")) return(format(r1, "%Y-%m-%d"))
+		trimws(as.character(r1))
 	}
 
 	instn <- trimws(as.character(m$INSTN))

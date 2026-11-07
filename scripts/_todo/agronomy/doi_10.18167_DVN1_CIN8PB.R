@@ -14,6 +14,21 @@
 # In-season crop N (CroN-ma) and P (CroP-ma) not mapped.
 # write_files: P_fertilizer/K_fertilizer NA except Benin (0) and Ghana P=30.
 
+
+## NOT PROCESSED
+# Agmip_LowInput_template_variable_definition0717-2.xlsx: documentation or a codebook, not an observation table.
+# AgMIP_Smallholder_Observation_daily_average.txt: not read. columns: Site.name, Experiment.name, Year, Day.of.year, Date, Yield, Biom, LAI, CroN, CroP, SoilWTot.MaxMeasDepth, SoilNTot.MaxMeasDepth. Observation records are missing from d until this file is standardized.
+# AgMIP_Smallholder_Observation_daily_sd.txt: not read. columns: Site.name, Experiment.name, Year, Day.of.Year, Date, Yield, Biom, LAI, CroN, SoilWTot.MaxMeasDepth, SoilNTot.MaxMeasDepth. Observation records are missing from d until this file is standardized.
+# AgMIP_Smallholder_Observation_SoilWN_layers_average.txt: not read. columns: Experiment.name, Date, Day.of.Year, Soil.layer.base.depth, Soil.layer.thikness, SoilW.layer.cm3.cm3, SoilW.layer.mm, SoilN.layer.ppm, SoilN.layer.kg.ha. Observation records are missing from d until this file is standardized.
+# AgMIP_Smallholder_Observation_SoilWN_layers_sd.txt: not read. columns: Experiment.name, Date, Day.of.Year, Soil.layer.base.depth, Soil.layer.thikness, SoilW.layer.cm3.cm3, SoilW.layer.mm, SoilN.layer.ppm, SoilN.layer.kg.ha. Observation records are missing from d until this file is standardized.
+# AgMIP_Smallholder_Observation_summary_sd.txt: not read. columns: Site.name, Experiment.name, Planting.date, Ant.date, Mat.date, Yield, Biom-ma, MaxLAI, CroN-ma, CroP-ma, SoilN. Observation records are missing from d until this file is standardized.
+# BEOU_field_mgmt_soils_weather070518LI-2.xlsx: not read. sheet Field-mgmt (of 3): ! Field Experiment Data Template, ...2, ...3, ...4, ...5, ...6, v2.3, 41149. Observation records are missing from d until this file is standardized.
+# ETBA_field_mgmt_soils_weather070518LI-2.xlsx: not read. sheet Field-mgmt (of 3): ! Field Experiment Data Template, ...2, ...3, ...4, ...5, ...6, v2.3, 41149. Observation records are missing from d until this file is standardized.
+# GHKP_field_mgmt_soils_weather071718LI-2.xlsx: not read. sheet Field-mgmt (of 3): ! Field Experiment Data Template, ...2, ...3, ...4, ...5, ...6, v2.3, 41149. Observation records are missing from d until this file is standardized.
+# MANT_field_mgmt_soils_weather062018LI-2.xlsx: not read. sheet Field-mgmt (of 3): ! Field Experiment Data Template, ...2, ...3, ...4, ...5, ...6, v2.3, 41149. Observation records are missing from d until this file is standardized.
+# readme_dataverse.txt: documentation or a codebook, not an observation table.
+# RWBU_field_mgmt_soils_weather060818LI-2.xlsx: not read. sheet Field-mgmt (of 3): ! Field Experiment Data Template, ...2, ...3, ...4, ...5, ...6, v2.3, 41149. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

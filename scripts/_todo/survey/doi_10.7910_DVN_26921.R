@@ -36,6 +36,10 @@
 # planting_pattern_: Farmchar PLANT SPACING (straight-row vs ordinary/random planting)
 
 
+
+## NOT PROCESSED
+# Laguna Loop Survey_ Coding Manual.xlsx: not read. sheet HH Info (of 9): SEASON, Season. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Laguna Loop Survey (1975)

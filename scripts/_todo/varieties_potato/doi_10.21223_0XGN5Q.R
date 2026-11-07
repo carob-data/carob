@@ -19,6 +19,7 @@
 # 03_Data_dictionary.xlsx and Lists, Notes, Summary by clone: definitions and summaries.
 # VitaminC sheet: the same results in a layout that is not one row per plot. The tidy workbook is used.
 # Breeder Code or Collecting Number, Code laboratory, Numeration.
+# 02_Material_list_VitaminC_Huancayo_Set5_2007.xlsx: not read. sheet Sheet1: Numeration, Institutionalnumber, Breeder Code or Collecting Number. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

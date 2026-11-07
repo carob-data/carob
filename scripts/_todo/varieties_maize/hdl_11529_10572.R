@@ -26,6 +26,22 @@
 # Plant aspect, ear aspect, husk cover, grain texture, and anthesis-silking interval.
 # Unspecified leaf-disease and plant-health scores.
 # 05CHTTW-Combined.xls and the fieldbook workbooks that are not the "-1" means.
+# 05CHTTW10.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW18.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW19.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW20.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial (CHTTW  - 2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW23.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW - 2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW24.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005), ...7, ...8. Observation records are missing from d until this file is standardized.
+# 05CHTTW25.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW26.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW27.xls: not read. sheet Fieldbook (2) (of 6): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW28.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW32.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW38.xls: not read. sheet Fieldbook (2) (of 6): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial. Observation records are missing from d until this file is standardized.
+# 05CHTTW5.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW7.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW8.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
+# 05CHTTW9.xls: not read. sheet Fieldbook (of 5): 2005 CHTTW  (ILWH0505), ...2, ...3, ...4, ...5, ...6, ...7, CIMMYT Hybrid Trial Tropical White Normal and QPM Trial  (CHTTW  -  2005). Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -90,11 +106,11 @@ Summary results and individual trial results from the International Late White H
 		trimws(x)
 	}
 
-	floc <- ff[basename(ff) == "05CHTTW-Locations.xls"]
-	loc <- carobiner::read.excel(floc, col_names=FALSE, col_types="text")
-	c2 <- blank(loc[[2]])
+	f1 <- ff[basename(ff) == "05CHTTW-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE, col_types="text")
+	c2 <- blank(r1[[2]])
 	hdr <- which(c2 == "Country")[1]
-	sites <- loc[seq_len(nrow(loc)) > hdr, ]
+	sites <- r1[seq_len(nrow(r1)) > hdr, ]
 	set_no <- num(sites[[4]])
 	sites <- sites[!is.na(set_no), ]
 	set_no <- set_no[!is.na(set_no)]
@@ -246,8 +262,26 @@ Summary results and individual trial results from the International Late White H
 		list(d=d, long=long)
 	}
 
-	files <- ff[grepl("-1\\.xls$", basename(ff))]
-	parts <- lapply(files, one)
+	f2 <- ff[basename(ff) %in% c(
+		"05CHTTW10-1.xls",
+		"05CHTTW18-1.xls",
+		"05CHTTW19-1.xls",
+		"05CHTTW20-1.xls",
+		"05CHTTW23-1.xls",
+		"05CHTTW24-1.xls",
+		"05CHTTW25-1.xls",
+		"05CHTTW26-1.xls",
+		"05CHTTW27-1.xls",
+		"05CHTTW28-1.xls",
+		"05CHTTW32-1.xls",
+		"05CHTTW38-1.xls",
+		"05CHTTW5-1.xls",
+		"05CHTTW6-1.xls",
+		"05CHTTW7-1.xls",
+		"05CHTTW8-1.xls",
+		"05CHTTW9-1.xls"
+	)]
+	parts <- lapply(f2, one)
 	d <- do.call(rbind, lapply(parts, function(x) x$d))
 	long <- do.call(rbind, lapply(parts, function(x) x$long))
 	d <- merge(d, sites, by="set_no", all.x=TRUE)

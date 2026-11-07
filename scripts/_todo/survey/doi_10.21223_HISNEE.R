@@ -14,6 +14,64 @@
 
 ## NOT PROCESSED
 # Modules B through T (rosters, diet, sweetpotato production, sales, assets, and food security). The column names are questionnaire codes.
+# 2.GH_JP_Base_questionnaire.xls: design, layout, or protocol sheet, not plot or survey records.
+# BF_JP_Base_data_dictionary.txt: documentation or a codebook, not an observation table.
+# Module B - Household Roster (Above 5 years).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module B - Household Roster (Above 5 years).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module C - Household Roster (5 years and Below).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module C - Household Roster (5 years and Below).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module D - Diet Diversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module D - Diet Diversity.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module E - Farmer's Membership to Associations (Main).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module E - Farmer's Membership to Associations (Main).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module E02 - Farmer Associations (Details)-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module E02 - Farmer Associations (Details).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module F1 - Food Crop Production-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module F1 - Food Crop Production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module F2 - Cash Crop Production-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module F2 - Cash Crop Production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module G02 - Crop Sales (Roster).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module G02 - Crop Sales (Roster).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module H - Road Access.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module H - Road Access.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module I - SP Production (Preamble)-1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module I - SP Production (Preamble).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module I - SP Production (Roster).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module I - SP Production (Roster).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module I - SP Sales (Roster).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module I - SP Sales (Roster).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module J - Labour.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module J - Labour.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module K - APPK.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module K - APPK.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module L1 - Seed System (Preamble).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module L1 - Seed System (Preamble).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module L2 - Seed System (Vine Dispatch).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module L2 - Seed System (Vine Dispatch).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module L3 - Seed System (Vine Receipt).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module L3 - Seed System (Vine Receipt).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module L4 - Seed System (Postscript).dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module L4 - Seed System (Postscript).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module M - SP Knowledge & Practices.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module M - SP Knowledge & Practices.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module N - Vitamin A Knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module N - Vitamin A Knowledge.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module O - Nutrition Knowledge and Habits.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module O - Nutrition Knowledge and Habits.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module P - Vitamin A Rich Foods Consumption.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module P - Vitamin A Rich Foods Consumption.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module Q - Minimum Meal Frequency.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module Q - Minimum Meal Frequency.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module R - Household Food security.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module R - Household Food security.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module S01 - Livestock Status-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module S01 - Livestock Status.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module S02 - Fish Sales-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module S02 - Fish Sales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module T01 - Household Assets-1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module T01 - Household Assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module T02 - Main Housing.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module T02 - Main Housing.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 

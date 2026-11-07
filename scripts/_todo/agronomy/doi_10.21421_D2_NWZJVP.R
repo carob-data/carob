@@ -94,32 +94,32 @@ This dataset contains, Actinomycetes (CAI-13, CAI-85, CAI-93, CAI-140, CAI-155 a
 		geo_from_source = FALSE
 	)
 
-	fs <- ff[basename(ff) == "Effect of the six actinomycetes on soil properties.xlsx"]
-	rs <- carobiner::read.excel(fs, na="NA")
+	f1 <- ff[basename(ff) == "Effect of the six actinomycetes on soil properties.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
 	s <- data.frame(
-		seed_treatment = trimws(rs$Treatment),
-		rep = as.integer(rs$`Replication number`),
-		soil_N_total = as.numeric(rs$Nitrogen),
-		soil_P = as.numeric(rs$Phosphorus),
-		soil_SOC = as.numeric(rs$`Organic carbon`),
-		soil_MBC = as.numeric(rs$`Microbial boimass C`),
-		soil_MBN = as.numeric(rs$`Microbial boimass N`),
-		dehydrogenase_ = as.numeric(rs$Dehydrogenase)
+		seed_treatment = trimws(r1$Treatment),
+		rep = as.integer(r1$`Replication number`),
+		soil_N_total = as.numeric(r1$Nitrogen),
+		soil_P = as.numeric(r1$Phosphorus),
+		soil_SOC = as.numeric(r1$`Organic carbon`),
+		soil_MBC = as.numeric(r1$`Microbial boimass C`),
+		soil_MBN = as.numeric(r1$`Microbial boimass N`),
+		dehydrogenase_ = as.numeric(r1$Dehydrogenase)
 	)
 	d <- merge(d, s, by=c("seed_treatment", "rep"), all.x=TRUE)
 
-	fr <- ff[basename(ff) == "Effect of the six actinomycetes on the development in Rice.xlsx"]
-	rr <- carobiner::read.excel(fr, na="NA")
-	depth <- rr$Depth
+	f2 <- ff[basename(ff) == "Effect of the six actinomycetes on the development in Rice.xlsx"]
+	r2 <- carobiner::read.excel(f2, na="NA")
+	depth <- r2$Depth
 	long <- data.frame(
 		trial_id = "Patancheru_B1",
-		seed_treatment = trimws(rr$Treatment),
-		rep = as.integer(rr$`Replication number`),
+		seed_treatment = trimws(r2$Treatment),
+		rep = as.integer(r2$`Replication number`),
 		depth_top = as.numeric(sub("-.*", "", depth)),
 		depth_bottom = as.numeric(sub(".*-", "", depth)),
-		root_length_m_m2_ = as.numeric(rr$`Root length`),
-		root_volume_cm3_m2_ = as.numeric(rr$`Root volume`),
-		root_weight_g_m2_ = as.numeric(rr$`Root weight`)
+		root_length_m_m2_ = as.numeric(r2$`Root length`),
+		root_volume_cm3_m2_ = as.numeric(r2$`Root volume`),
+		root_weight_g_m2_ = as.numeric(r2$`Root weight`)
 	)
 
 	carobiner::write_files(path, meta, d, long=long)

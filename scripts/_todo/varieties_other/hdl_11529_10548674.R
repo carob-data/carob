@@ -15,6 +15,9 @@
 # The right-hand block on the Irapuato sheet repeats variety means.
 # ADT_GTO cover sheet names triticale and barley entries and has no yield table.
 # Quality Analyses Wheat and Trait Names of Quality. The trait file is a dictionary.
+# ADT_GTO_wheat_triticale_OI_2016 - Copy.xlsx: not read. sheet Details (of 2): Adaptive Trials on Wheat, Triticale  and Barley_OI_2016. Observation records are missing from d until this file is standardized.
+# Quality Analyses Wheat_OI. 2016 (RSG) (2).xlsx: not read. sheet Sheet1: Best SOURCES OF Strength. Observation records are missing from d until this file is standardized.
+# Trait Names of Quality New (Eng) (2).xls: not read. sheet Sheet1 (of 3): QUALITY TRAIT STORED IN. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -50,7 +53,7 @@ Evaluation of wheat, barley and triticale elite lines for Bajio region in Centra
 	}
 	excel_date <- function(z) as.character(as.Date(num(z), origin="1899-12-30"))
 
-	f <- ff[grepl("Rendimientos", basename(ff))]
+	f <- ff[basename(ff) == "GTO_Rendimientos Trigos OI 2016-2017.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Irapuato_OI 16", col_names=FALSE)
 	rep <- trimws(as.character(r[[2]]))
 	keep <- rep %in% c("1", "2", "3")

@@ -47,7 +47,7 @@ Macroinvertebrates play a central role in processes supporting soil fertility. I
 
 	f <- ff[basename(ff) == "Dataverse_Macrofauna_240229.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Macrofauna Densities", na="NA(notassigned)")
-	s <- carobiner::read.excel(f, sheet="Soil parameters")
+	r1 <- carobiner::read.excel(f, sheet="Soil parameters")
 
 	clean <- function(x) {
 		x <- trimws(as.character(x))
@@ -77,17 +77,17 @@ Macroinvertebrates play a central role in processes supporting soil fertility. I
 	)
 
 	soil <- data.frame(
-		sample_key = trimws(as.character(s$Sample)),
-		soil_pH = as.numeric(s[["pH.H2O"]]),
-		soil_SOC = as.numeric(s$Corg),
-		soil_N_total = as.numeric(s$Ntot) * 1000,
-		soil_P = as.numeric(s$Pavail),
+		sample_key = trimws(as.character(r1$Sample)),
+		soil_pH = as.numeric(r1[["pH.H2O"]]),
+		soil_SOC = as.numeric(r1$Corg),
+		soil_N_total = as.numeric(r1$Ntot) * 1000,
+		soil_P = as.numeric(r1$Pavail),
 		soil_P_method = "Olsen-Dabin",
-		soil_CEC = as.numeric(s$CEC),
-		soil_K_exch = as.numeric(s$Kexch),
-		soil_Na_exch = as.numeric(s$Naexch),
-		soil_Ca_exch = as.numeric(s$Caexch),
-		soil_Mg_exch = as.numeric(s$Mgexch)
+		soil_CEC = as.numeric(r1$CEC),
+		soil_K_exch = as.numeric(r1$Kexch),
+		soil_Na_exch = as.numeric(r1$Naexch),
+		soil_Ca_exch = as.numeric(r1$Caexch),
+		soil_Mg_exch = as.numeric(r1$Mgexch)
 	)
 	d <- merge(d, soil, by="sample_key", all.x=TRUE)
 	d$sample_key <- NULL

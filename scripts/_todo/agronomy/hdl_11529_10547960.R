@@ -79,10 +79,10 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 	}
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(basename(f)), skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		if (!"Node" %in% names(ph) || all(is.na(ph$Node))) {
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(basename(f)), skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		if (!"Node" %in% names(r1) || all(is.na(r1$Node))) {
 			bn <- basename(f)
 			node <- NA_character_
 			if (grepl("Bhaluwa", bn)) node <- "Bhaluwa"
@@ -90,60 +90,60 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 			if (grepl("Kaptanganj", bn)) node <- "Kaptanganj"
 			if (grepl("Saalbani", bn)) node <- "Saalbani"
 			if (grepl("Simariya", bn)) node <- "Simariya"
-			ph$Node <- node
+			r1$Node <- node
 		}
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Crop) & !is.na(ph$Node), ]
-		ph <- ph[!trimws(as.character(ph$Crop)) %in% c("0", "NA"), ]
-		if (nrow(ph) == 0) return(NULL)
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Crop) & !is.na(r1$Node), ]
+		r1 <- r1[!trimws(as.character(r1$Crop)) %in% c("0", "NA"), ]
+		if (nrow(r1) == 0) return(NULL)
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		gh$seq <- add_seq(gh)
-		ft$seq <- add_seq(ft)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
 		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
-		y <- take(gh, ig, c("Calculation_Grain.Yield.t.ha", "Calulation_Grain.Yield.t.ha", "Grain.yield.t.ha"))
-		Kox <- take(ft, ifr, "K2O.kg.ha")
-		kplain <- take(ft, ifr, "K.kg.ha")
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
+		y <- take(r2, ig, c("Calculation_Grain.Yield.t.ha", "Calulation_Grain.Yield.t.ha", "Grain.yield.t.ha"))
+		Kox <- take(r3, ifr, "K2O.kg.ha")
+		kplain <- take(r3, ifr, "K.kg.ha")
 		K <- ifelse(is.na(Kox), kplain, Kox / 1.2051)
-		B <- take(ft, ifr, c("Boric.acid.kg.ha", "Boric.Acid.kg.ha"))
-		spx <- trimws(as.character(ph$Row.spacing.cm))
+		B <- take(r3, ifr, c("Boric.acid.kg.ha", "Boric.Acid.kg.ha"))
+		spx <- trimws(as.character(r1$Row.spacing.cm))
 		spx[is.na(spx) | !nzchar(spx) | spx %in% c("-", "NA", "0") | grepl("x", spx, ignore.case=TRUE)] <- NA_character_
 		sp <- as.numeric(spx)
 		sp[!is.na(sp) & sp < 1] <- NA_real_
-		hcol <- intersect(c("Datw.of.harvest.dd.mm.yy", "Date.of.harvest.dd.mm.yy"), names(ph))
-		hd <- as_date(ph[[hcol[1]]])
+		hcol <- intersect(c("Datw.of.harvest.dd.mm.yy", "Date.of.harvest.dd.mm.yy"), names(r1))
+		hd <- as_date(r1[[hcol[1]]])
 		hd[!is.na(hd) & hd > "2018-06-05"] <- NA_character_
-		crop <- tolower(trimws(ph$Crop))
+		crop <- tolower(trimws(r1$Crop))
 		crop[grepl("rice", crop)] <- "rice"
-		hi <- take(gh, ig, "HI")
+		hi <- take(r2, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
 		data.frame(
 			country = "Nepal",
 			adm2 = "Sunsari",
-			location = ph$Node,
-			trial_id = paste(ph$Year, ph$Node, ph$Trial.Code),
-			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
-			treatment = ph$Tmnt,
+			location = r1$Node,
+			trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
+			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
+			treatment = r1$Tmnt,
 			crop = crop,
-			variety = ph$Variety,
+			variety = r1$Variety,
 			yield_part = "grain",
-			planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
+			planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
 			harvest_date = hd,
 			row_spacing = sp,
-			seed_rate = num(ph[[intersect(c("Seedrate.kg.ha", "Seed.rate.kg.ha"), names(ph))[1]]]),
-			plot_area = { pa <- num(ph$Plot.size.m2); pa[!is.na(pa) & pa < 1] <- NA_real_; pa },
+			seed_rate = num(r1[[intersect(c("Seedrate.kg.ha", "Seed.rate.kg.ha"), names(r1))[1]]]),
+			plot_area = { pa <- num(r1$Plot.size.m2); pa[!is.na(pa) & pa < 1] <- NA_real_; pa },
 			yield = y * 1000,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = take(gh, ig, "Biomass.t.ha") * 1000,
+			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
-			seed_weight = take(gh, ig, "TGW.g"),
-			N_fertilizer = take(ft, ifr, "N.kg.ha"),
-			P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
+			seed_weight = take(r2, ig, "TGW.g"),
+			N_fertilizer = take(r3, ifr, "N.kg.ha"),
+			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
 			K_fertilizer = K,
-			gypsum = take(ft, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
+			gypsum = take(r3, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
 			B_fertilizer = B * 10.81 / 61.83,
 			on_farm = TRUE,
 			is_survey = FALSE,
@@ -151,7 +151,24 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Aman rice 2014-LT-All nodes-Sunsari.xlsx",
+		"Aman rice 2015-LT-Bhaluwa-Sunsaril.xlsx",
+		"Aman rice 2015-LT-Bhokraha-Sunsari.xlsx",
+		"Aman rice 2015-LT-Kaptanganj-Sunsari.xlsx",
+		"Aman rice 2015-LT-Saalbani-Sunsari.xlsx",
+		"Aman rice 2015-LT-Simariya-Sunsari.xlsx",
+		"Aman rice 2016-LT-Bhaluwa-Sunsari.xlsx",
+		"Aman rice 2016-LT-Bhokraha_Sunsari.xlsx",
+		"Aman rice 2016-LT-Kaptanganj-Sunsari.xlsx",
+		"Aman rice 2016-LT-Saalbani-Sunsari.xlsx",
+		"Aman rice 2016-LT-Simariya-Sunsari.xlsx",
+		"Aman rice 2017-LT-Bhaluwa_Sunsari.xlsx",
+		"Aman rice 2017-LT-Bhokraha-Sunsari.xlsx",
+		"Aman rice 2017-LT-Kaptanganj-Sunsari.xlsx",
+		"Aman rice 2017-LT-Saalbani-Sunsar.xlsx",
+		"Aman rice 2017-LT-Simariya-Sunsari.xlsx"
+	)]
 	parts <- lapply(ff, one)
 	parts <- parts[!vapply(parts, is.null, logical(1))]
 	d <- do.call(rbind, parts)

@@ -17,6 +17,27 @@
 # Labour, costs, credit, herbicide and pesticide amounts, and urea and manure quantities. The amount columns do not state a unit.
 # Stress scores, tenure, and soil fertility classes.
 # The other questionnaire modules (income, food consumption, livestock, extension, and adoption of practices).
+# MODULE 10_DECISION MAKING.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 11_LEADERSHIP AND INFLUENCE IN COMMUNITY.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 2A_HOUSEHOLD COMP AND CHARACT - BLURRED 1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# MODULE 2A_HOUSEHOLD COMP AND CHARACT - BLURRED 2.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 2B_HOUSING CONDITIONS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 3_SOCIAL CAPITAL NETWORKING.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 4_UTILIZATION OF CROPS HARVESTED.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 4A_HOUSEHOLD CREDIT NEED AND SOURCES.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 4C_ HOUSEHOLD ACCESS TO EXTENSION SERVICES.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 4D_HOUSEHOLD ASSETS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 5_CONSTRAINTS IN ACCESSING KEY INPUTS AND CROP PRODUCTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 5_LIVESTOCK PRODUCTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 6_HOUSEHOLD INCOME.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 6A_IMPROVED MAIZE VARIETY KNOWLEDGE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 6B_IMPROVED LEGUMES VARIETY KNOWLEDGE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 7_IMPROVED CROP VARIETY KNOWLEDGE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 7_RISK, LIVELIHOOD SHOCKS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 8_CLIMATE CHANGE AND ADAPTATION OPTIONS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 8_FOOD CONSUMPTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 8B_ NON FOOD CONSUMPTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 9_HOUSEHOLD FOOD INSECURITY ACCESS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -45,7 +66,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("CROP PRODUCTION", basename(ff)) & grepl("\\.sav$", basename(ff))]
+	f <- ff[basename(ff) == "MODULE 3_MERGED_CROP PRODUCTION FOR ALL CROPS - BLURRED.sav"]
 	r <- haven::read_sav(f)
 	txt <- function(x) {
 		z <- trimws(as.character(haven::as_factor(x)))

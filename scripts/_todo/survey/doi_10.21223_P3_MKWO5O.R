@@ -20,6 +20,7 @@
 # The transfer, consumption, and other household columns in SUSTAIN_Baseline_HHSurvey2015_HH_level_v11.dta.
 # SUSTAIN_Baseline_HHSurvey2015_CROP_level_v11.dta, SUSTAIN_Baseline_HHSurvey2015_PLOT_level_v11.dta, SUSTAIN_Baseline_HHSurvey2015_INDIVIDUAL_Level_v11.dta, and SUSTAIN_Baseline_LISTING_Data2015_v11.dta.
 # Anonymized cell and village codes. The pdf metadata and the Word questionnaires were not in the files returned by get_data.
+# SUSTAIN_README.txt: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

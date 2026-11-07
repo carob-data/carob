@@ -34,7 +34,8 @@ Dataset for: Efecto de una barra nutricional NUTRIBARRA ANDINA en el control de 
 		
 	)
 
-	r <- carobiner::read.excel(ff[basename(ff) == "01_Datos_NUTRI_BARRAS.xlsx"])
+	f <- ff[basename(ff) == "01_Datos_NUTRI_BARRAS.xlsx"]
+	r <- carobiner::read.excel(f)
 
 	date_initial <- ifelse(grepl("-", r[["Fecha-tamizaje-inicial"]]),
 		as.character(as.Date(r[["Fecha-tamizaje-inicial"]], format = "%d-%m-%y")),

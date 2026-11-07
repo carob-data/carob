@@ -16,6 +16,7 @@
 # Names and the rest of the household roster.
 # Production and plot questions. Units are not taken from the closed questionnaire.
 # Dictionary, the docx questionnaire, and the pdf.
+# 02_Data dictionary - Metodologia Mama&Bebe - Peru.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -43,7 +44,7 @@ El presente es un informe del estudio de base de la metodología 'Mamá y Bebé'
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("^01_DataBase", basename(ff))]
+	f <- ff[basename(ff) == "01_DataBase Madre&Bebe - Peru.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 
 	d <- data.frame(

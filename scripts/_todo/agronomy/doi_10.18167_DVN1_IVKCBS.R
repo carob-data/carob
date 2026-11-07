@@ -45,28 +45,28 @@ This dataset provide data for calibration and evaluation of the model Stics in t
 	)
 
 	f <- ff[basename(ff) == "DatasetModellingRiceLegume.xlsx"]
-	g <- carobiner::read.excel(f, sheet = "Rice Biomass & Grains")
-	fz <- carobiner::read.excel(f, sheet = "Fertilization")
+	r1 <- carobiner::read.excel(f, sheet = "Rice Biomass & Grains")
+	r2 <- carobiner::read.excel(f, sheet = "Fertilization")
 
-	om_col <- grep("fumier", names(fz), ignore.case = TRUE, value = TRUE)[1]
-	fz$OM_amount <- as.numeric(fz[[om_col]]) * 1000
-	fz$N_fertilizer <- ifelse(fz$Fertilization == "F1", 0, 400 * 0.11 + 200 * 0.46)
-	fz$P_fertilizer <- ifelse(fz$Fertilization == "F1", 0, 400 * 0.22 / 2.29)
-	fz$K_fertilizer <- ifelse(fz$Fertilization == "F1", 0, 400 * 0.16 / 1.2051)
-	fz$fertilizer_type <- ifelse(fz$Fertilization == "F1", "none", "NPK;urea")
-	fz <- fz[, c("Year", "Fertilization", "OM_amount", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type")]
+	om_col <- grep("fumier", names(r2), ignore.case = TRUE, value = TRUE)[1]
+	r2$OM_amount <- as.numeric(r2[[om_col]]) * 1000
+	r2$N_fertilizer <- ifelse(r2$Fertilization == "F1", 0, 400 * 0.11 + 200 * 0.46)
+	r2$P_fertilizer <- ifelse(r2$Fertilization == "F1", 0, 400 * 0.22 / 2.29)
+	r2$K_fertilizer <- ifelse(r2$Fertilization == "F1", 0, 400 * 0.16 / 1.2051)
+	r2$fertilizer_type <- ifelse(r2$Fertilization == "F1", "none", "NPK;urea")
+	r2 <- r2[, c("Year", "Fertilization", "OM_amount", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type")]
 
-	veg <- g[g[["Type of biomass"]] == "Vegetative biomass", ]
-	g <- g[g[["Type of biomass"]] == "Grain", ]
-	g <- merge(g, fz, by = c("Year", "Fertilization"), all.x = TRUE)
+	veg <- r1[r1[["Type of biomass"]] == "Vegetative biomass", ]
+	r1 <- r1[r1[["Type of biomass"]] == "Grain", ]
+	r1 <- merge(r1, r2, by = c("Year", "Fertilization"), all.x = TRUE)
 
 	# Description: 19°33'18.90" S, 46°24'53.83" E, 930 m a.s.l.
 	lat <- -(19 + 33/60 + 18.90/3600)
 	lon <- 46 + 24/60 + 53.83/3600
 
 	d <- data.frame(
-		trial_id = g$Year,
-		plot_id = paste(g$Year, g$Treatment, g$Fertilization, sep = "_"),
+		trial_id = r1$Year,
+		plot_id = paste(r1$Year, r1$Treatment, r1$Fertilization, sep = "_"),
 		crop = "rice",
 		variety = "Nerica 4",
 		country = "Madagascar",
@@ -75,18 +75,18 @@ This dataset provide data for calibration and evaluation of the model Stics in t
 		longitude = lon,
 		elevation = 930,
 		geo_from_source = TRUE,
-		planting_date = ifelse(g$Year == "2016-2017", "2016-11", "2017-11"),
-		harvest_date = as.character(as.Date(g[["Date of Observation"]])),
-		crop_rotation = ifelse(g$Treatment == "RMC", "velvet bean;crotalaria", "rice"),
-		treatment = paste(g$Treatment, g$Fertilization),
-		N_fertilizer = g$N_fertilizer,
-		P_fertilizer = g$P_fertilizer,
-		K_fertilizer = g$K_fertilizer,
-		fertilizer_type = g$fertilizer_type,
-		OM_amount = g$OM_amount,
+		planting_date = ifelse(r1$Year == "2016-2017", "2016-11", "2017-11"),
+		harvest_date = as.character(as.Date(r1[["Date of Observation"]])),
+		crop_rotation = ifelse(r1$Treatment == "RMC", "velvet bean;crotalaria", "rice"),
+		treatment = paste(r1$Treatment, r1$Fertilization),
+		N_fertilizer = r1$N_fertilizer,
+		P_fertilizer = r1$P_fertilizer,
+		K_fertilizer = r1$K_fertilizer,
+		fertilizer_type = r1$fertilizer_type,
+		OM_amount = r1$OM_amount,
 		OM_used = TRUE,
-		yield = as.numeric(g[["Mean amount (t/ha)"]]) * 1000,
-		yield_se_ = as.numeric(g[["Standard error"]]) * 1000,
+		yield = as.numeric(r1[["Mean amount (t/ha)"]]) * 1000,
+		yield_se_ = as.numeric(r1[["Standard error"]]) * 1000,
 		yield_part = "grain",
 		irrigated = FALSE,
 		on_farm = FALSE,

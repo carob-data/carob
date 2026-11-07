@@ -17,6 +17,15 @@
 
 ## NOT PROCESSED
 # Canopy cover, photosynthesis, isotopes, irrigation volume, and PRI workbooks. Irrigation volume is not joined because this table is the sequential harvest, and the volume unit is not applied here.
+# CANOPY COVER-EX17-I.xlsx: not read. sheet hoja 1: ID, DAP, irrigation, treatment, plot, CC. Observation records are missing from d until this file is standardized.
+# Data_Dictionary.xlsx: documentation or a codebook, not an observation table.
+# Documentation_v2.xlsx: not read. sheet Ecophysiology (of 8): Variable name, Abbreviation, Unit, Description, Method, Formula, Reference. Observation records are missing from d until this file is standardized.
+# ECOPHYSIOLOGY-EX17-I.xlsx: not read. sheet Hoja1: ID, date, dap, irrigation, treatment, plot, plant, A, gs. Observation records are missing from d until this file is standardized.
+# HARVEST ISOTOPES-EX17-I.xlsx: not read. sheet Hoja4: ID, harvest, dap, irrigation, treatment, plot, tm, dw, D13. Observation records are missing from d until this file is standardized.
+# IRRIGATION VOLUME-EX17-I.xlsx: not read. sheet Hoja2: ID, date, dap, irrigation, treatment, plot, IV. Observation records are missing from d until this file is standardized.
+# Photosynthesis recovery-2017_v2.xlsx: not read. sheet Ecophysiology (of 8): id, date, dap, irrigation, treatment, plot, plant, Pn, gs_max, Fv'/Fm'. Observation records are missing from d until this file is standardized.
+# PRI EX17-I.xlsx: not read. sheet hoja 1: ID, dap, irrigation, treatment, plot, plant, PRI. Observation records are missing from d until this file is standardized.
+# RECOVERY ISOTOPES-EX17-I.xlsx: not read. sheet hoja 1: ID, dap, ms, irrigation, treatment, plot, tm, dw, D13. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

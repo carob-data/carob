@@ -49,7 +49,7 @@ Household maize area and grain production in three palikas of Nepal.
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("CRP_Maize_NEPAL", basename(ff))]
+	f <- ff[basename(ff) == "CRP_Maize_NEPAL_HH_DATA_Excel.xlsx"]
 	r <- carobiner::read.excel(f, sheet="CRPmaize_Data_Nepal", col_types="text")
 	r <- r[!is.na(r$MaizeProd_ThisYr_unit) & r$MaizeProd_ThisYr_unit == "Kg", ]
 

@@ -34,6 +34,7 @@
 # m28multiloc-data-ii.csv, NP, PL, SD: undefined abbreviations (NP and PL about 28-36, SD about 60-74). Not assigned to density or silking.
 # m28striga-data.csv, ENV: used only inside trial_id.
 # No data dictionary is in the download.
+# m28drought_stress-data.csv: not read. columns: YEAR, REP, BLK, PLOT, ENTRY, YIELD (kg/ha), Antheis Day, Silking date, ASI, Plant height, Eear height, Ears per plant, .... Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant as recorded (dimensionless).

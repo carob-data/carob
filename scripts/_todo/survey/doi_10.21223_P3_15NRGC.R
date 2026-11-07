@@ -48,7 +48,7 @@ The baseline study was conducted to assess and understand the socio-economic sit
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("Part 4 Input Use", basename(ff))]
+	f <- ff[basename(ff) == "Part 4 Input Use in Potato Production_2.dta"]
 	r <- haven::read_dta(f)
 	r <- r[!duplicated(as.data.frame(r)), ]
 	applied <- as.integer(r$part4b9)

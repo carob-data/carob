@@ -20,6 +20,7 @@
 # Input costs, fertilizer product lists, pesticide lists, loss-perception modules, buyer names, and the decision-tool qualitative scores.
 # quant_cm_M02_03_6_1 and quant_cm_M02_03_7_1 are centimetres, but the sheet does not say which is the plant spacing and which is the row spacing.
 # Variety slots other than the first production column.
+# 02_Datadictionary_Perdidas_Precosecha_Uso DST Tizon.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -49,9 +50,9 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 		carob_effort = 0.45
 	)
 
-	f <- ff[grepl("^01_DataSet", basename(ff))]
-	who <- carobiner::read.excel(f, sheet="1. DATOS PRODUCTOR")
-	prod <- carobiner::read.excel(f, sheet="3. DATOS PRODUCCION Y CALIDAD")
+	f <- ff[basename(ff) == "01_DataSet - Perdidas precosecha - Uso DST tizón.xlsx"]
+	r1 <- carobiner::read.excel(f, sheet="1. DATOS PRODUCTOR")
+	r2 <- carobiner::read.excel(f, sheet="3. DATOS PRODUCCION Y CALIDAD")
 	txt <- function(x) {
 		z <- trimws(as.character(x))
 		z[!nzchar(z)] <- NA_character_
@@ -59,20 +60,20 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 	}
 
 	d <- data.frame(
-		hhid = txt(who$unique_id),
-		treatment = txt(who$tratamiento),
+		hhid = txt(r1$unique_id),
+		treatment = txt(r1$tratamiento),
 		country = "Ecuador",
-		adm1 = txt(who$provincia),
-		adm2 = txt(who$canton),
-		adm3 = txt(who$parroquia),
-		location = txt(who$recinto),
-		elevation = as.numeric(who[["gps-Altitude"]]),
+		adm1 = txt(r1$provincia),
+		adm2 = txt(r1$canton),
+		adm3 = txt(r1$parroquia),
+		location = txt(r1$recinto),
+		elevation = as.numeric(r1[["gps-Altitude"]]),
 		crop = "potato"
 	)
 	q <- data.frame(
-		hhid = txt(prod$unique_id),
-		area_ha_ = as.numeric(prod$quant_ha_M03_01_3_1),
-		production_quintals_ = as.numeric(prod$quant_quint_M3a_01A7_1)
+		hhid = txt(r2$unique_id),
+		area_ha_ = as.numeric(r2$quant_ha_M03_01_3_1),
+		production_quintals_ = as.numeric(r2$quant_quint_M3a_01A7_1)
 	)
 	d <- merge(d, q, by="hhid", all.x=TRUE)
 	d$geo_from_source <- FALSE

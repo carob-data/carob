@@ -70,7 +70,7 @@ This study in general aims to look at the impacts of drought on rice production,
 
 	f <- ff[basename(ff) == "A Baseline Study of Autonomous Adaptation Against Drought Among Indonesian Rice Farmers_Dataset_DManzanilla et al.xlsx"]
 
-	r0 <- carobiner::read.excel(f, sheet="Section 0. Cover sheet")
+	r3 <- carobiner::read.excel(f, sheet="Section 0. Cover sheet")
 	r1 <- carobiner::read.excel(f, sheet="Section 1.1. Demographic inform")
 	r2 <- carobiner::read.excel(f, sheet="Section 2. Landholdings")
 	r4 <- carobiner::read.excel(f, sheet="Section 4. Rice crops")
@@ -105,11 +105,11 @@ This study in general aims to look at the impacts of drought on rice production,
 	commune <- c("Gantar", "Haurgeulis", "Pujut", "Praya Barat", "Pucakwangi", "Jakenan", "Sumber")
 	district <- c("Indramayu", "Pati", "Lombok Tengah")
 	province <- c("Jawa Barat", "Jawa Tengah", "Nusa Tenggara Barat")
-	h <- match(r4$hhid, r0$hhid)
-	d$adm1 <- province[r0$province[h]]
-	d$adm2 <- district[r0$district[h]]
-	d$adm3 <- commune[r0$commune[h]]
-	d$location <- village[r0$village[h]]
+	h <- match(r4$hhid, r3$hhid)
+	d$adm1 <- province[r3$province[h]]
+	d$adm2 <- district[r3$district[h]]
+	d$adm3 <- commune[r3$commune[h]]
+	d$location <- village[r3$village[h]]
 
 	## household head
 	hd <- r1[r1$relationship == 1, ]

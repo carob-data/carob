@@ -24,6 +24,7 @@
 # Free-text pesticide, soil-management, cultural-practice, and post-harvest answers.
 # Shock and food-security block ERAAL51-ERAAL55.
 # GPS precision.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # area_reported_: crop area as recorded; unit not stated

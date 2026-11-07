@@ -55,53 +55,53 @@ On-farm long-term jute trials at Rangpur, Bangladesh, 2015 and 2016.
 	}
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		jh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 -  jute harvest", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Crop) & !is.na(ph$Node), ]
-		jh <- jh[!is.na(jh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="13 -  jute harvest", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Crop) & !is.na(r1$Node), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		jh$seq <- add_seq(jh)
-		ft$seq <- add_seq(ft)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
 		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
-		ij <- match(key(ph), key(jh))
-		ifr <- match(key(ph), key(ft))
+		ij <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
 		take <- function(df, idx, nms) {
 			n <- nms[nms %in% names(df)]
 			if (length(n) == 0) return(rep(NA_real_, length(idx)))
 			as.numeric(df[[n[1]]][idx])
 		}
-		sp <- as.character(ph$Row.spacing.cm)
+		sp <- as.character(r1$Row.spacing.cm)
 		sp[sp %in% c("0", "30-40", "40-50")] <- NA
-		hi <- take(jh, ij, "HI")
+		hi <- take(r2, ij, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
-		hd <- as_date(ph$Date.of.harvest.mm.dd.yy)
+		hd <- as_date(r1$Date.of.harvest.mm.dd.yy)
 		hd[!is.na(hd) & hd > "2018-06-05"] <- NA_character_
 		data.frame(
 			country = "Bangladesh",
 			adm2 = "Rangpur",
-			location = ph$Node,
-			trial_id = paste(ph$Year, ph$Node),
-			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
-			treatment = ph$Tmnt,
+			location = r1$Node,
+			trial_id = paste(r1$Year, r1$Node),
+			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
+			treatment = r1$Tmnt,
 			crop = "jute",
-			variety = ph$Variety,
+			variety = r1$Variety,
 			yield_part = "fiber",
-			planting_date = as_date(ph$Date.of.seeding.mm.dd.yy),
+			planting_date = as_date(r1$Date.of.seeding.mm.dd.yy),
 			harvest_date = hd,
 			row_spacing = as.numeric(sp),
-			seed_rate = as.numeric(ph$Seedrate.kg.ha),
-			plot_area = as.numeric(ph$Plot.size.m2),
-			yield = take(jh, ij, "Dry.Fiber") * 1000,
-			dmy_stems = take(jh, ij, "Dry.jute.steak") * 1000,
-			dmy_total = take(jh, ij, "Dry.biomass.t.ha") * 1000,
+			seed_rate = as.numeric(r1$Seedrate.kg.ha),
+			plot_area = as.numeric(r1$Plot.size.m2),
+			yield = take(r2, ij, "Dry.Fiber") * 1000,
+			dmy_stems = take(r2, ij, "Dry.jute.steak") * 1000,
+			dmy_total = take(r2, ij, "Dry.biomass.t.ha") * 1000,
 			harvest_index = hi,
-			N_fertilizer = take(ft, ifr, "N.kg.ha"),
-			P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
-			K_fertilizer = take(ft, ifr, "K2O.kg.ha") / 1.2051,
-			gypsum = take(ft, ifr, c("Gypsum.Kg.ha.1", "Gypsum.Kg.ha")),
+			N_fertilizer = take(r3, ifr, "N.kg.ha"),
+			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
+			K_fertilizer = take(r3, ifr, "K2O.kg.ha") / 1.2051,
+			gypsum = take(r3, ifr, c("Gypsum.Kg.ha.1", "Gypsum.Kg.ha")),
 			on_farm = TRUE,
 			is_survey = FALSE,
 			geo_from_source = FALSE,
@@ -109,7 +109,7 @@ On-farm long-term jute trials at Rangpur, Bangladesh, 2015 and 2016.
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c("Kharif-I Jute  2015-LT-Kolkondo-Rangpur.xlsx", "Kharif-I Jute  2016 -LT-Kolkondo & Mohonpur-Rangpur.xlsx")]
 	d <- do.call(rbind, lapply(ff, one))
 	carobiner::write_files(path, meta, d)
 }

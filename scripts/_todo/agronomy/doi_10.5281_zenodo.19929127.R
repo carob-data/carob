@@ -17,6 +17,11 @@
 # biochar_amount_: biochar applied (kg/ha)
 # rock_powder_amount_: basanite/rock powder applied (kg/ha)
 
+
+## NOT PROCESSED
+# Data_Meyer_zu_Drewer_P-sorption.csv: not read. columns: parameter;treatment;unit;replicate;value. Observation records are missing from d until this file is standardized.
+# readme_Meyer-zu-Drewer_fin.rtf: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "

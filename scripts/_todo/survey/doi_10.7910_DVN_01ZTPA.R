@@ -22,6 +22,10 @@
 # none
 
 
+
+## NOT PROCESSED
+# Central Luzon Coding Manual.xlsx: not read. sheet HH Info (of 9): SEASON, Season. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Central Luzon Loop Survey (2015-2016)
@@ -49,11 +53,11 @@ The objective of the study is to monitor the changes in rice farming in the majo
 
 	f <- ff[basename(ff) == "Central Luzon Loop 2015-206.xlsx"]
 
-	rF <- carobiner::read.excel(f, sheet="Farm Char", skip=5, na=".")
-	rP <- carobiner::read.excel(f, sheet="Production", skip=7, na=".")
-	rN <- carobiner::read.excel(f, sheet="Fertilizer", skip=8, na=".")
-	rE <- carobiner::read.excel(f, sheet="Crop Estab", skip=5, na=".")
-	rH <- carobiner::read.excel(f, sheet="HHInfo", skip=5, na=".")
+	r1 <- carobiner::read.excel(f, sheet="Farm Char", skip=5, na=".")
+	r2 <- carobiner::read.excel(f, sheet="Production", skip=7, na=".")
+	r3 <- carobiner::read.excel(f, sheet="Fertilizer", skip=8, na=".")
+	r4 <- carobiner::read.excel(f, sheet="Crop Estab", skip=5, na=".")
+	r5 <- carobiner::read.excel(f, sheet="HHInfo", skip=5, na=".")
 
 	# skipped: Land Prep, Crop Care, HarvThreshPHarv, Seeds (labor, pesticides, seed source)
 
@@ -62,79 +66,79 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	}
 
 	# FSIZE typo ".0.3" in Farm Char
-	rF$FSIZE <- gsub("^\\.(0\\.[0-9]+)$", "\\1", trimws(as.character(rF$FSIZE)))
-	rF$FSIZE <- as.numeric(rF$FSIZE)
+	r1$FSIZE <- gsub("^\\.(0\\.[0-9]+)$", "\\1", trimws(as.character(r1$FSIZE)))
+	r1$FSIZE <- as.numeric(r1$FSIZE)
 
-	rF$id <- key(rF$YEAR, rF$SEASON, rF$HHCODE, rF$PARNO)
-	rP$id <- key(rP$YEAR, rP$SEASON, rP$HHCODE, rP$PARNO)
+	r1$id <- key(r1$YEAR, r1$SEASON, r1$HHCODE, r1$PARNO)
+	r2$id <- key(r2$YEAR, r2$SEASON, r2$HHCODE, r2$PARNO)
 
 	# sum elemental nutrients on the parcel, then convert to kg/ha
-	rN <- rN[!is.na(rN$TOT_N), ]
-	rN$id <- key(rN$YEAR, rN$SEASON, rN$HHCODE, rN$PARNO)
+	r3 <- r3[!is.na(r3$TOT_N), ]
+	r3$id <- key(r3$YEAR, r3$SEASON, r3$HHCODE, r3$PARNO)
 	fert <- data.frame(
-		id = unique(rN$id)
+		id = unique(r3$id)
 	)
-	fert$N_fertilizer <- tapply(rN$TOT_N, rN$id, sum, na.rm=TRUE)[fert$id]
-	fert$P_fertilizer <- tapply(rN$TOT_P, rN$id, sum, na.rm=TRUE)[fert$id]
-	fert$K_fertilizer <- tapply(rN$TOT_K, rN$id, sum, na.rm=TRUE)[fert$id]
-	fert$fsize <- tapply(rN$FSIZE, rN$id, function(z) as.numeric(z[!is.na(z)][1]))[fert$id]
+	fert$N_fertilizer <- tapply(r3$TOT_N, r3$id, sum, na.rm=TRUE)[fert$id]
+	fert$P_fertilizer <- tapply(r3$TOT_P, r3$id, sum, na.rm=TRUE)[fert$id]
+	fert$K_fertilizer <- tapply(r3$TOT_K, r3$id, sum, na.rm=TRUE)[fert$id]
+	fert$fsize <- tapply(r3$FSIZE, r3$id, function(z) as.numeric(z[!is.na(z)][1]))[fert$id]
 	fert$N_fertilizer <- as.numeric(fert$N_fertilizer) / as.numeric(fert$fsize)
 	fert$P_fertilizer <- as.numeric(fert$P_fertilizer) / as.numeric(fert$fsize)
 	fert$K_fertilizer <- as.numeric(fert$K_fertilizer) / as.numeric(fert$fsize)
 
 	# planting date: transplanting preferred, else direct-seeding
-	rE$act <- trimws(rE$ACTIVITY)
-	rE <- rE[rE$act %in% c("Transplanting", "Direct-seeding") & !is.na(rE$DATE), ]
-	rE$id <- key(rE$YEAR, rE$SEASON, rE$HHCODE, rE$PARNO)
-	rE$ord <- ifelse(rE$act == "Transplanting", 1, 2)
-	rE <- rE[order(rE$id, rE$ord), ]
-	rE <- rE[!duplicated(rE$id), ]
-	dx <- trimws(as.character(rE$DATE))
-	rE$planting_date <- rep(NA_character_, nrow(rE))
+	r4$act <- trimws(r4$ACTIVITY)
+	r4 <- r4[r4$act %in% c("Transplanting", "Direct-seeding") & !is.na(r4$DATE), ]
+	r4$id <- key(r4$YEAR, r4$SEASON, r4$HHCODE, r4$PARNO)
+	r4$ord <- ifelse(r4$act == "Transplanting", 1, 2)
+	r4 <- r4[order(r4$id, r4$ord), ]
+	r4 <- r4[!duplicated(r4$id), ]
+	dx <- trimws(as.character(r4$DATE))
+	r4$planting_date <- rep(NA_character_, nrow(r4))
 	is_serial <- grepl("^[0-9]+(\\.[0-9]+)?$", dx)
-	rE$planting_date[is_serial] <- as.character(as.Date(as.numeric(dx[is_serial]), origin="1899-12-30"))
+	r4$planting_date[is_serial] <- as.character(as.Date(as.numeric(dx[is_serial]), origin="1899-12-30"))
 	# "27 Aug. 2015", "03 Sept. 2015"
 	is_mon <- grepl("^[0-9]{1,2} [A-Za-z]+\\.? [0-9]{4}$", dx)
 	mon <- dx[is_mon]
 	mon <- sub("Sept\\.", "Sep", mon)
 	mon <- sub("Aug\\.", "Aug", mon)
-	rE$planting_date[is_mon] <- as.character(as.Date(mon, format="%d %b %Y"))
+	r4$planting_date[is_mon] <- as.character(as.Date(mon, format="%d %b %Y"))
 	# skipped ambiguous range "7/16-22/2015"
 
-	headHH <- rH[tolower(trimws(rH[["HOUSEHOLD MEMBER"]])) == "head", ]
+	headHH <- r5[tolower(trimws(r5[["HOUSEHOLD MEMBER"]])) == "head", ]
 	headHH <- headHH[!duplicated(paste(headHH$YEAR, headHH$SEASON, headHH$HHCODE)), ]
 
 	d <- data.frame(
-		hhid = as.character(rF$HHCODE),
-		field_id = as.character(rF$PARNO),
+		hhid = as.character(r1$HHCODE),
+		field_id = as.character(r1$PARNO),
 		country = "Philippines",
 		crop = "rice",
-		variety = rF$VARIETY,
-		field_size = as.numeric(rF$FSIZE),
-		land_tenure = rF$TENURE,
-		soil_type = rF[["SOIL TYPE"]],
-		season = ifelse(as.numeric(rF$SEASON) == 1, "wet",
-			ifelse(as.numeric(rF$SEASON) == 2, "dry", NA)),
-		planting_date = ifelse(grepl("^[0-9]{4}$", as.character(rF$YEAR)),
-			as.character(rF$YEAR), NA)
+		variety = r1$VARIETY,
+		field_size = as.numeric(r1$FSIZE),
+		land_tenure = r1$TENURE,
+		soil_type = r1[["SOIL TYPE"]],
+		season = ifelse(as.numeric(r1$SEASON) == 1, "wet",
+			ifelse(as.numeric(r1$SEASON) == 2, "dry", NA)),
+		planting_date = ifelse(grepl("^[0-9]{4}$", as.character(r1$YEAR)),
+			as.character(r1$YEAR), NA)
 	)
 
-	irr <- trimws(tolower(as.character(rF$IRRTYPE)))
+	irr <- trimws(tolower(as.character(r1$IRRTYPE)))
 	d$irrigated <- ifelse(is.na(irr) | irr == "", NA,
 		ifelse(irr == "rainfed", FALSE, TRUE))
 
-	d$yield <- as.numeric(rP$PRODNKG[match(rF$id, rP$id)]) / d$field_size
+	d$yield <- as.numeric(r2$PRODNKG[match(r1$id, r2$id)]) / d$field_size
 	d$yield_part <- "grain"
 
-	i <- match(rF$id, fert$id)
+	i <- match(r1$id, fert$id)
 	d$N_fertilizer <- fert$N_fertilizer[i]
 	d$P_fertilizer <- fert$P_fertilizer[i]
 	d$K_fertilizer <- fert$K_fertilizer[i]
 
-	j <- match(rF$id, rE$id)
-	d$planting_date[!is.na(j)] <- rE$planting_date[j[!is.na(j)]]
+	j <- match(r1$id, r4$id)
+	d$planting_date[!is.na(j)] <- r4$planting_date[j[!is.na(j)]]
 
-	hhkey <- paste(rF$YEAR, rF$SEASON, rF$HHCODE)
+	hhkey <- paste(r1$YEAR, r1$SEASON, r1$HHCODE)
 	hk <- paste(headHH$YEAR, headHH$SEASON, headHH$HHCODE)
 	hh <- match(hhkey, hk)
 	sex <- tolower(trimws(headHH$SEX[hh]))

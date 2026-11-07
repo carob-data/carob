@@ -22,6 +22,26 @@
 # Household modules other than the focal plot.
 # Crops recorded as fiwi or other.
 # Region and district codes.
+# TZAPS17_cmty.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_fp_othinp.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_fp_seed.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_fp_weed.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_cropsales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_fertavail.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_groupmemb.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_mroster.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plot.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotmc.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotmcc.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotml.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotsc.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotscc.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_hh_plotsl.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# TZAPS17_metadata.xlsx: documentation or a codebook, not an observation table.
+# TZAPS17_ODK_community.xlsx: not read. sheet survey (of 4): type, name, label, choice_filter, hint, constraint, constrain_message, required, appearance, default, relevant, calculation, .... Observation records are missing from d until this file is standardized.
+# TZAPS17_ODK_fp.xlsx: not read. sheet survey (of 4): type, name, label, choice_filter, hint, constraint, constraint_message, required, appearance, default, relevant, calculation, .... Observation records are missing from d until this file is standardized.
+# TZAPS17_ODK_hh.xls: not read. sheet survey (of 4): type, name, label, choice_filter, hint, constraint, constraint_message, required, appearance, default, relevant, calculation, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

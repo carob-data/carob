@@ -17,6 +17,7 @@
 # Education, marital status, and the coded seed-source, storage, labour, and variety blocks. Units for quantity and price are codes.
 # Plot sizes. The unit code is not defined in the dictionary.
 # Phone numbers and the Word questionnaire.
+# 02_Data_dictionary_seed.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

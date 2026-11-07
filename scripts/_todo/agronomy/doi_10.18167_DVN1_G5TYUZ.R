@@ -45,9 +45,9 @@ These are the raw data of the paper \"Intercrop overyielding is maintained under
 	)
 
 	f <- ff[basename(ff) == "Kwenda_et_al_data_vf.xlsx"]
-	y <- carobiner::read.excel(f, sheet = "pLER_LER")
-	sites <- carobiner::read.excel(f, sheet = "Sites")
-	cl <- carobiner::read.excel(f, sheet = "Climate_data")
+	r1 <- carobiner::read.excel(f, sheet = "pLER_LER")
+	r2 <- carobiner::read.excel(f, sheet = "Sites")
+	r3 <- carobiner::read.excel(f, sheet = "Climate_data")
 
 	num <- function(x) {
 		if (is.numeric(x)) return(x)
@@ -58,13 +58,13 @@ These are the raw data of the paper \"Intercrop overyielding is maintained under
 
 	piece <- function(crop, intercrops, yield_col, biom_col) {
 		out <- data.frame(
-			farmer = y$farmer,
-			season = y[["growing season"]],
-			variety = if (crop == "maize") y[["maize variety"]] else NA_character_,
+			farmer = r1$farmer,
+			season = r1[["growing season"]],
+			variety = if (crop == "maize") r1[["maize variety"]] else NA_character_,
 			crop = crop,
 			intercrops = intercrops,
-			yield = num(y[[yield_col]]) * 1000,
-			dmy_total = num(y[[biom_col]]) * 1000
+			yield = num(r1[[yield_col]]) * 1000,
+			dmy_total = num(r1[[biom_col]]) * 1000
 		)
 		out <- out[!(is.na(out$yield) & is.na(out$dmy_total)), ]
 		out
@@ -82,8 +82,8 @@ These are the raw data of the paper \"Intercrop overyielding is maintained under
 	cow <- cow[!duplicated(cow[, c("farmer", "season", "intercrops", "yield", "dmy_total")]), ]
 	d <- rbind(maize, cow)
 
-	sites <- sites[, c("id_site", "country", "longitude", "latitude", "elevation")]
-	d <- merge(d, sites, by.x = "farmer", by.y = "id_site", all.x = TRUE)
+	r2 <- r2[, c("id_site", "country", "longitude", "latitude", "elevation")]
+	d <- merge(d, r2, by.x = "farmer", by.y = "id_site", all.x = TRUE)
 
 	d <- data.frame(
 		trial_id = paste(d$farmer, gsub(" ", "", d$season), sep = "_"),
@@ -114,13 +114,13 @@ These are the raw data of the paper \"Intercrop overyielding is maintained under
 		as.character(x)
 	}
 	wth <- data.frame(
-		station_id = as.character(cl$id_wst),
-		date = as_date(cl$Date),
-		tmax = as.numeric(cl[[grep("^max_temperature", names(cl))]]),
-		tmin = as.numeric(cl[[grep("^min_temperture", names(cl))]]),
-		prec = as.numeric(cl[[grep("^rainfall", names(cl))]]),
-		wspd = as.numeric(cl[[grep("^wind_speed", names(cl))]]),
-		rhum = as.numeric(cl[[grep("^relative_humidity", names(cl))]])
+		station_id = as.character(r3$id_wst),
+		date = as_date(r3$Date),
+		tmax = as.numeric(r3[[grep("^max_temperature", names(r3))]]),
+		tmin = as.numeric(r3[[grep("^min_temperture", names(r3))]]),
+		prec = as.numeric(r3[[grep("^rainfall", names(r3))]]),
+		wspd = as.numeric(r3[[grep("^wind_speed", names(r3))]]),
+		rhum = as.numeric(r3[[grep("^relative_humidity", names(r3))]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 

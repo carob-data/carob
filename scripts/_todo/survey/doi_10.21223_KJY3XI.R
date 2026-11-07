@@ -14,6 +14,10 @@
 # Coordonne_es_GPS_Adamaoua csv: columns X and Y are decimal degrees, and the file has no country column. The dataset description does not name that survey, so the points were not given a country.
 # The three Adamaoua SPSS files.
 # The remaining caregiver-questionnaire items in the Homa Bay .dta.
+# Coordonne_es_GPS_Adamaoua (Dataset_from_Baseline_survey).csv: not read. columns: , X, Y, , E, N. Observation records are missing from d until this file is standardized.
+# DATA_ADAMAOUA (Dataset_from_Baseline_survey).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# DATA_ADAMAOUA_PG (Dataset_from_Baseline_survey).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# DATA_ADAMAOUA_TECH (Dataset_from_Baseline_survey).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # study_group_, subcounty_, center_.
@@ -58,7 +62,7 @@ Background: Persistent prevalence of high malnutrition in poor households in dev
 		x[!ok] <- NA_character_
 		as.numeric(x)
 	}
-	f <- ff[grepl("^Homa_Bay", basename(ff))]
+	f <- ff[basename(ff) == "Homa_Bay_ECD_CAREGIVERS_SURVEY_DATA (Homa_Bay_ECD_CAREGIVERS_SURVEY_DATA) (1).dta"]
 	r <- haven::read_dta(f)
 	d <- data.frame(
 		hhid = chr(r$study_no),

@@ -19,6 +19,8 @@
 # Summary by clone, Charts, Ranks by Clone.
 # NS, PC, and the per-plot tuber counts and weights other than the yield check. NPH is used for plant_density.
 # 03_Data_dictionary.txt does not give units.
+# 01_Fieldbook_PTYL200907_TASHKENT_heat.txt: not read. columns: PLOT, REP, INSTN, NTP, NPH, NMTCI, NMTCII, NNoMTP, TNTP, TNTPL, NMTP, NMTPL, .... Observation records are missing from d until this file is standardized.
+# 02_Material_list_PTYL200907_TASHKENT_heat.txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code, Seed source1, References to silmultaneous trials, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -51,18 +53,18 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	f <- ff[basename(ff) == "PTYL200907_TASHKENT_HEAT.xls"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook", na="NA")
 	names(r) <- trimws(names(r))
-	ml <- carobiner::read.excel(f, sheet="Material List", na="NA")
-	names(ml) <- trimws(names(ml))
+	r1 <- carobiner::read.excel(f, sheet="Material List", na="NA")
+	names(r1) <- trimws(names(r1))
 
 	instn <- trimws(as.character(r$INSTN))
-	vname <- trimws(as.character(ml[["Clone or variety name"]]))
+	vname <- trimws(as.character(r1[["Clone or variety name"]]))
 	vname[!nzchar(vname)] <- NA_character_
-	key <- trimws(as.character(ml[["Institutional number"]]))
+	key <- trimws(as.character(r1[["Institutional number"]]))
 	nm <- vname[match(instn, key)]
 	variety <- ifelse(is.na(nm), instn, nm)
-	female <- trimws(as.character(ml[["Female code"]]))
+	female <- trimws(as.character(r1[["Female code"]]))
 	female[!nzchar(female)] <- NA_character_
-	male <- trimws(as.character(ml[["Male code"]]))
+	male <- trimws(as.character(r1[["Male code"]]))
 	male[!nzchar(male)] <- NA_character_
 
 	d <- data.frame(

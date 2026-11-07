@@ -39,6 +39,7 @@
 # Weather wind, evaporation and sunshine. The 2014-15 wind column is labeled km/h. Julian day repeats the date.
 # Plot-details genotypes that were never sampled in the experiment or growth sheets.
 # Complete dataset workbook: it duplicates the standalone experiment, growth, plot and weather files.
+# Complete Dataset.xls: not read. sheet Dataverse (of 11): Title, Patancheru_multifactorial treatments_rabi_sorghum_2015-16, sequential observations of agronomicaly important traits during cropping season. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # plant_number_: destructive sample index within the plot
@@ -183,10 +184,10 @@ Sequential observations of agronomicaly important traits during cropping season 
 	}
 	
 	col_hit <- function(nm, pat, excl = NULL) {
-		hit <- grep(pat, nm)
-		if (!is.null(excl) && length(hit)) hit <- hit[!grepl(excl, nm[hit])]
-		if (length(hit) == 0) return(NA_integer_)
-		hit[1]
+		f1 <- grep(pat, nm)
+		if (!is.null(excl) && length(f1)) f1 <- f1[!grepl(excl, nm[f1])]
+		if (length(f1) == 0) return(NA_integer_)
+		f1[1]
 	}
 	
 	read_grid <- function(f, sheet = 1) {
@@ -516,8 +517,8 @@ Sequential observations of agronomicaly important traits during cropping season 
 				pref <- as.character(unlist(g[k, , drop = TRUE]))
 				pref[is.na(pref)] <- ""
 				pref[grepl("total crop|main plant|main stem|tiller [0-9]|all tiller", pref, ignore.case = TRUE)] <- ""
-				hit <- nzchar(trimws(pref))
-				prefix[hit] <- trimws(paste(prefix[hit], trimws(pref[hit])))
+				f1 <- nzchar(trimws(pref))
+				prefix[f1] <- trimws(paste(prefix[f1], trimws(pref[f1])))
 			}
 			use <- nzchar(prefix)
 			name[use] <- trimws(paste(prefix[use], name[use]))
@@ -537,9 +538,9 @@ Sequential observations of agronomicaly important traits during cropping season 
 		}
 	
 		take <- function(pred) {
-			hit <- which(pred)
-			if (length(hit) == 0) return(rep(NA_real_, nrow(dat)))
-			num_clean(dat[[hit[1]]])
+			f1 <- which(pred)
+			if (length(f1) == 0) return(rep(NA_real_, nrow(dat)))
+			num_clean(dat[[f1[1]]])
 		}
 		take_chr <- function(idx) {
 			if (is.na(idx)) return(rep(NA_character_, nrow(dat)))
@@ -649,13 +650,13 @@ Sequential observations of agronomicaly important traits during cropping season 
 	
 	read_weather <- function(f, start_year) {
 		if (is.na(f) || !nzchar(f) || !file.exists(f)) return(NULL)
-		w <- carobiner::read.excel(f)
-		nm <- norm_txt(names(w))
+		r1 <- carobiner::read.excel(f)
+		nm <- norm_txt(names(r1))
 		if (!any(grepl("rain|prec", nm))) return(NULL)
 		col <- function(pat) {
-			hit <- grep(pat, nm)
-			if (length(hit) == 0) return(rep(NA, nrow(w)))
-			w[[hit[1]]]
+			f1 <- grep(pat, nm)
+			if (length(f1) == 0) return(rep(NA, nrow(r1)))
+			r1[[f1[1]]]
 		}
 		rad <- col("^radn$|solar|^radiation")
 		srad <- num_clean(rad)
@@ -783,9 +784,9 @@ Sequential observations of agronomicaly important traits during cropping season 
 	ff <- carobiner::get_data(uri, path, group)
 
 	pick <- function(name) {
-		hit <- ff[basename(ff) == name]
-		if (length(hit) != 1) stop("Expected one file named ", name)
-		hit
+		f1 <- ff[basename(ff) == name]
+		if (length(f1) != 1) stop("Expected one file named ", name)
+		f1
 	}
 	fexp <- pick("Experiment.xls")
 	fgro <- pick("Growth&development.xls")

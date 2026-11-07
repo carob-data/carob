@@ -45,6 +45,11 @@
 # tillers_plant_: tiller number per plant (hill)
 
 
+
+## NOT PROCESSED
+# Exp 10 tensiom.csv: not read. columns: Ave Tensio, SE, DAS. Observation records are missing from d until this file is standardized.
+# Exp 8 tensio.csv: not read. columns: DAS, Ave Tensio, StdDev of Tensio, Count of Tensio2, SE. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -100,27 +105,27 @@ Whereas many indica and rainfed rice-growing regions have historically been cons
 
 ## 2. IRRI Expt 10, 2018DS
 	f2 <- ff[basename(ff) == "10_Taiwan lines-Data 2018DS.xlsx"]
-	r2a <- carobiner::read.excel(f2, sheet="Harvest", skip=1)
-	r2b <- carobiner::read.excel(f2, sheet="DTF & Ht", skip=1)
-	r2b <- r2b[!is.na(r2b[["Ent#"]]), ]
-	r2b <- data.frame(Plot=as.numeric(r2b$Plot), flowering_days=r2b[["DTF*"]], plant_height=r2b[["Ave ht"]])
+	r2 <- carobiner::read.excel(f2, sheet="Harvest", skip=1)
+	r5 <- carobiner::read.excel(f2, sheet="DTF & Ht", skip=1)
+	r5 <- r5[!is.na(r5[["Ent#"]]), ]
+	r5 <- data.frame(Plot=as.numeric(r5$Plot), flowering_days=r5[["DTF*"]], plant_height=r5[["Ave ht"]])
 
 	d2 <- data.frame(
-		Plot = r2a$Plot,
-		trial_id = paste0("2018DS_Expt10_", r2a$Trt),
+		Plot = r2$Plot,
+		trial_id = paste0("2018DS_Expt10_", r2$Trt),
 		season = "dry",
 		planting_date = "2017-12-21",
 		transplanting_date = "2018-01-14",
-		variety_code = r2a[["Ent#"]],
-		variety = trimws(r2a$Genotype),
-		treatment = r2a$Trt,
-		rep = as.integer(r2a$Rep),
-		plot_id = as.character(r2a$Plot),
-		yield = r2a$GY14,
+		variety_code = r2[["Ent#"]],
+		variety = trimws(r2$Genotype),
+		treatment = r2$Trt,
+		rep = as.integer(r2$Rep),
+		plot_id = as.character(r2$Plot),
+		yield = r2$GY14,
 		location = "IRRI, Los Banos",
 		country = "Philippines"
 	)
-	d2 <- merge(d2, r2b, by="Plot", all.x=TRUE)
+	d2 <- merge(d2, r5, by="Plot", all.x=TRUE)
 	d2$Plot <- NULL
 
 ## 3. IRRI Expt 8, 2019DS

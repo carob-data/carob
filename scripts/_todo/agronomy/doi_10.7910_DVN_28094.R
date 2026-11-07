@@ -40,6 +40,29 @@
 #   root_laterals_ (% of root length as lateral roots < 0.2 mm diameter)
 
 
+
+## NOT PROCESSED
+# Breeding lines data 2009 DS_ICRISAT_MOD.xls: not read. sheet Description (of 2): STUDY, Breeding lines 2009 DS. Observation records are missing from d until this file is standardized.
+# GCP 2012 field Ibadan_Nigeria_mod2.xls: not read. sheet Description (of 2): STUDY, GCP2012FieldIbandanNigeria. Observation records are missing from d until this file is standardized.
+# GCP Project Root Phenotyping Data 4070100 days 2010 DS Barwale foundationHyderabad New Format Final 7-2-12_MOD.xls: not read. sheet Description (of 2): STUDY, OryzaSNPBarwale. Observation records are missing from d until this file is standardized.
+# ICRISAT lysimeter Trial2.xlsx: not read. sheet Description (of 2): STUDY, OryzaSNP lysimeter 2009DS. Observation records are missing from d until this file is standardized.
+# IRRI lysimeter Trial1.xls: not read. sheet Description (of 2): STUDY, OryzaSNP lysimeter 2008WS. Observation records are missing from d until this file is standardized.
+# IRRI lysimeter Trial3.xlsx: not read. sheet Description (of 2): STUDY, OryzaSNP lysimeter 2009WS. Observation records are missing from d until this file is standardized.
+# osnp20_introg_blocks_for_R.xlsx: not read. sheet osnp20_aus (of 5): SINo, RILS, M_1|0_1, M_1|0_2, M_1|0_3, M_1|0_4, M_1|0_5, M_1|0_6, M_1|0_7, M_1|0_8, M_1|0_9, M_1|1, .... Observation records are missing from d until this file is standardized.
+# README-OryzaSNP-introgression-assoc-analysis.txt: documentation or a codebook, not an observation table.
+# Rice_Expt_1_Final.xls: not read. sheet Description (of 2): STUDY, ORYZASNPWade. Observation records are missing from d until this file is standardized.
+# Rice_Expt_2_Final.xls: not read. sheet Description (of 2): STUDY, ORYZASNPWade2. Observation records are missing from d until this file is standardized.
+# Rice_Expt_3_Final.xls: not read. sheet Description (of 2): STUDY, ORYZASNPWade3. Observation records are missing from d until this file is standardized.
+# sample-input-file.txt: not read. columns: SINo, RILS, M_1|0_1, M_1|0_2, M_1|0_3, M_1|0_4, M_1|0_5, M_1|0_6, M_1|0_7, M_1|0_8, M_1|0_9, M_1|1, .... Observation records are missing from d until this file is standardized.
+# SNPs results Nagoya2009_MOD.xls: not read. sheet Description (of 2): STUDY, SNPNagoya2009. Observation records are missing from d until this file is standardized.
+# SNPs results Nagoya2010_MOD.xls: not read. sheet Description (of 2): STUDY, SNPNagoya2010. Observation records are missing from d until this file is standardized.
+# SNPs results Nagoya2011_MOD.xls: not read. sheet Description (of 2): STUDY, SNPNagoya2012. Observation records are missing from d until this file is standardized.
+# template_SMR_OSNP20_aus.r: not read. .r file. Observation records are missing from d until this file is standardized.
+# WorkbookAberdeenHerbicideScorefor GCP roots_mod.xls: not read. sheet Description (of 2): STUDY, WorkbookAberdeenHerbicideScorefor GCP roots. Observation records are missing from d until this file is standardized.
+# WorkbookAberdeenHydroponicsfor GCP roots.xls: not read. sheet Description (of 2): STUDY, AberdeenHydroponic. Observation records are missing from d until this file is standardized.
+# WorkbookAberdeenNon-wovenfabricsfor GCP roots_MOD.xls: not read. sheet Description (of 2): STUDY, AberdeenNonWoven. Observation records are missing from d until this file is standardized.
+# WorkbookAberdeenRhizotronfor GCP rootsMOD.xls: not read. sheet Description (of 2): STUDY, AberdeenRhizotron. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

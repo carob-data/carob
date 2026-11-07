@@ -20,6 +20,7 @@
 # Metadata xlsx, Entry number: one entry per hybrid name.
 # Metadata xlsx, Total fertiles and Total steriles: every row is fully fertile, so these are determined by Total plants and sterility_index.
 # Metadata xlsx, Fertile percentage: used for sterility_index.
+# Metadata-Multi location trial - medium duration disease resistant Pigeonpea hybrids trial (MLT-MDDRPHT).txt: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # seeds_per_pod_: seeds per pod

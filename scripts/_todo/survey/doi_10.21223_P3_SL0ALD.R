@@ -17,6 +17,36 @@
 # Pages 2-22 of the baseline .sav files (membership, crop flags, sweetpotato, labor, diet, assets, livestock). They are not joined.
 # Names of household heads, interviewees, enumerators, and digitizers.
 # BaseLineSurvey Data Dictionary.txt and the narrative PDF.
+# Niass baseline pag_4.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag 7.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_10.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_101.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_11.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_12.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_13.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_14.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_15.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_16.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_17.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_18.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_19.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_2.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_20.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_21.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_22.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa Baseline pag_3.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_32.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_4_new.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_41.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_5.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_51.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_6.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_62.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_63.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_71.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_72.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_8.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa baseline pag_9.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # interview_date_: date of interview (A16).

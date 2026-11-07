@@ -20,6 +20,27 @@
 # Education of the household head. The dictionary does not list the codes.
 # Altitude. Values include 0 and 9995.
 # Crop area, production, sales, diet modules, the questionnaire, and the pdf report.
+# B02c-B042-Crop_Area.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# B02c_Production culture_.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# B044and_B046_OFSPsold_and_price.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# B07_Criteria_for_Varieties_Selection.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# B09_Name_of_Varieties_per_HHs.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Endline Questionary Niassa.xls: not read. sheet Cover page (of 7): AVALIACAO INTERNA - BATATA DOCE NUTRITIVA PARA NIASSA, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# FSC_Compsution_7days_6to-59monthly_Control_Group.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# FSC_Compsution_7days_6to-59monthly_Intervention_Group.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# FSC_Compsution_7days_HHs_Control_Area.xlsx.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# FSC_Compsution_7days_HHs_Intervention_Area.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N19 to_N20_Source diet Information.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C1_Comsuption_24_hours_benificiary_group _6to23_monthy.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C1_Comsuption_24_hours_control_group _6to23_monthy.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C2_Comsuption_24_hours_benificiary_group _24to59_monthly.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C2_Comsuption_24_hours_control_group _24to59_monthly.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C3_Comsuption_24_hours_benificiary_group_MDD-W15to49years.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C3_Comsuption_24_hours_control_group_MDD-W15to49years.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C4_Comsuption_24_hours_benificiary_group_HDDS.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# N1to_N16_C4_Comsuption_24_hours_control_group_HDDS.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Niassa Endline Survey - Data Dictionary.txt: documentation or a codebook, not an observation table.
+# O01_Roots_Storage.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

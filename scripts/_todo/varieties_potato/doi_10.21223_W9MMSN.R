@@ -16,6 +16,8 @@
 ## NOT PROCESSED
 # TMIN200312_MUQUI_Varieties.xls and TVIT200312_MUQUI_Varieties.xls: workbook summaries. The tab file has one row per replicate.
 # Mn, B, Cu, Al, Se, Pb, Cd, Mo, Co, and Ni columns. The mapped minerals are dry matter, iron, and zinc.
+# 03_Material_list.txt: not read. columns: CIP number, Breeder Code or Collecting Number, Accession name. Observation records are missing from d until this file is standardized.
+# 04_Datadictionary.txt: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # dm_pct_: dry matter, percent, from the column header

@@ -22,6 +22,7 @@
 # PodPerPlt1-14, DamagedPodPerPlt*, PlantHeight1-5, StemDiameter1-5, PodNum1-5, PW1-13, PodL1-12, PodW1-12: individual plant or pod records. Plot means or totals were used instead (AvPlntHt, AvStemDiam, AvPodL, AvPodW, AvPodWt, TotPodHarvest, TotDamagedPod, TotWt, TotPod).
 # AvgNoPodsPerPlt: derived from the pod counts.
 # ID: row number.
+# data_dictionary_okra_adaptation_and_yield_stability.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # stem_diameter_cm_, pod_length_cm_, pod_width_cm_, pod_weight_g_, total_pod_weight_g_: units inferred from magnitude, not from the dictionary.

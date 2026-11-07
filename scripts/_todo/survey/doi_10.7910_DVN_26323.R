@@ -36,6 +36,10 @@
 # irr_rain_perc_: share of water from rain (dry season: rain/creek), %
 
 
+
+## NOT PROCESSED
+# LVFResurvey2.xls: not read. sheet PowerW (of 7): Filename:  POWERW. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -64,10 +68,10 @@ To examine how the influence of various modernizing forces affect the income lev
 	)
 
 	f <- ff[basename(ff) == "LVFResurvey1.xls"]
-	rW <- carobiner::read.excel(f, sheet="ProdnWS", skip=10, col_types="text")
-	rD <- carobiner::read.excel(f, sheet="ProdDS", skip=9, col_types="text")
-	iW <- carobiner::read.excel(f, sheet="CurrentWS", skip=11, col_types="text")
-	iD <- carobiner::read.excel(f, sheet="CurrentDS", skip=10, col_types="text")
+	r1 <- carobiner::read.excel(f, sheet="ProdnWS", skip=10, col_types="text")
+	r2 <- carobiner::read.excel(f, sheet="ProdDS", skip=9, col_types="text")
+	r3 <- carobiner::read.excel(f, sheet="CurrentWS", skip=11, col_types="text")
+	r4 <- carobiner::read.excel(f, sheet="CurrentDS", skip=10, col_types="text")
 
 	mon <- function(x) {
 		m <- regmatches(x, regexpr("Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec", x, ignore.case=TRUE))
@@ -101,7 +105,7 @@ To examine how the influence of various modernizing forces affect the income lev
 			irrigation_source = apply(src, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
 		)
 	}
-	d <- rbind(prod(rW, "wet"), prod(rD, "dry"))
+	d <- rbind(prod(r1, "wet"), prod(r2, "dry"))
 
 	dm <- tolower(d$damage_)
 	st <- cbind(
@@ -118,7 +122,7 @@ To examine how the influence of various modernizing forces affect the income lev
 		r <- r[!is.na(r$HHCODE), ]
 		data.frame(hhid = r$HHCODE, season = seas, input = toupper(trimws(r$INPUT)), kind = toupper(trimws(r$KIND)))
 	}
-	i <- rbind(inp(iW, "wet"), inp(iD, "dry"))
+	i <- rbind(inp(r3, "wet"), inp(r4, "dry"))
 	i$key <- paste(i$hhid, i$season)
 	fe <- i[grepl("^FERT", i$input) & !is.na(i$kind), ]
 	he <- i[grepl("^HERB", i$input) & !is.na(i$kind), ]

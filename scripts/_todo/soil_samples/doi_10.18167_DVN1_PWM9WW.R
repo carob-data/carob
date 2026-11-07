@@ -29,6 +29,8 @@
 ## NOT PROCESSED
 # C_N: ratio of the carbon and nitrogen columns already mapped
 # Satur is soil_BS. Fe, Mn, Cu, Zn and B in the soil file are mapped.
+# CIV_Cacao_feuilles Nguessan.txt: same table as the file of this name that is read.
+# CIV_Cacao_sols Nguessan.txt: same table as the file of this name that is read.
 
 carob_script <- function(path) {
 
@@ -71,60 +73,60 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		carob_effort = 0.6
 	)
 
-	fs <- ff[basename(ff) == "CIV_Cacao_sols Nguessan.xlsx"]
-	s <- carobiner::read.excel(fs, sheet="Feuil1")
+	f1 <- ff[basename(ff) == "CIV_Cacao_sols Nguessan.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Feuil1")
 	d1 <- data.frame(
-		sample_id = as.character(s$ID),
-		longitude = as.numeric(s$Lon),
-		latitude = as.numeric(s$Lat),
-		location = trimws(as.character(s$region)),
+		sample_id = as.character(r1$ID),
+		longitude = as.numeric(r1$Lon),
+		latitude = as.numeric(r1$Lat),
+		location = trimws(as.character(r1$region)),
 		country = "Côte d'Ivoire",
 		crop = "cocoa",
 		depth_top = 0,
 		depth_bottom = 30,
-		soil_clay = as.numeric(s$Clay),
-		soil_SOC = as.numeric(s$C_org),
-		soil_N_total = as.numeric(s$N_tot) * 10000,
-		soil_P = as.numeric(s$P_avail),
+		soil_clay = as.numeric(r1$Clay),
+		soil_SOC = as.numeric(r1$C_org),
+		soil_N_total = as.numeric(r1$N_tot) * 10000,
+		soil_P = as.numeric(r1$P_avail),
 		soil_P_method = "Olsen-Dabin",
-		soil_K_exch = as.numeric(s$K),
-		soil_Ca_exch = as.numeric(s$Ca),
-		soil_Mg_exch = as.numeric(s$Mg),
-		soil_CEC = as.numeric(s$CEC),
-		soil_pH = as.numeric(s$pH_water),
-		soil_BS = as.numeric(s$Satur),
-		soil_Fe = as.numeric(s$Fe),
-		soil_Mn = as.numeric(s$Mn),
-		soil_Cu = as.numeric(s$Cu),
-		soil_Zn = as.numeric(s$Zn),
-		soil_B = as.numeric(s$B),
+		soil_K_exch = as.numeric(r1$K),
+		soil_Ca_exch = as.numeric(r1$Ca),
+		soil_Mg_exch = as.numeric(r1$Mg),
+		soil_CEC = as.numeric(r1$CEC),
+		soil_pH = as.numeric(r1$pH_water),
+		soil_BS = as.numeric(r1$Satur),
+		soil_Fe = as.numeric(r1$Fe),
+		soil_Mn = as.numeric(r1$Mn),
+		soil_Cu = as.numeric(r1$Cu),
+		soil_Zn = as.numeric(r1$Zn),
+		soil_B = as.numeric(r1$B),
 		record_type = "soil"
 	)
 	# depth 0-30 cm from the dataset description. N_tot percent to mg/kg. C_org is percent.
 
-	fl <- ff[basename(ff) == "CIV_Cacao_feuilles Nguessan.xlsx"]
-	lf <- carobiner::read.excel(fl, sheet="Feuil1")
+	f2 <- ff[basename(ff) == "CIV_Cacao_feuilles Nguessan.xlsx"]
+	r2 <- carobiner::read.excel(f2, sheet="Feuil1")
 	d2 <- data.frame(
-		sample_id = as.character(lf$ID),
-		longitude = as.numeric(lf$Lon),
-		latitude = as.numeric(lf$Lat),
-		location = trimws(as.character(lf$region)),
+		sample_id = as.character(r2$ID),
+		longitude = as.numeric(r2$Lon),
+		latitude = as.numeric(r2$Lat),
+		location = trimws(as.character(r2$region)),
 		country = "Côte d'Ivoire",
 		crop = "cocoa",
-		yield = as.numeric(lf$Produc),
+		yield = as.numeric(r2$Produc),
 		yield_part = "seed",
 		yield_moisture = 0,
-		leaf_N = as.numeric(lf$N) * 10,
-		leaf_P = as.numeric(lf$P) * 10,
-		leaf_K = as.numeric(lf$K) * 10,
-		leaf_Ca = as.numeric(lf$Ca) * 10,
-		leaf_Mg = as.numeric(lf$Mg) * 10,
-		leaf_Fe_ppm_ = as.numeric(lf$Fe),
-		leaf_Mn_ppm_ = as.numeric(lf$Mn),
-		leaf_B_ppm_ = as.numeric(lf$B),
-		leaf_Cu_ppm_ = as.numeric(lf$Cu),
-		leaf_Mo_ppm_ = as.numeric(lf$Mo),
-		leaf_Zn_ppm_ = as.numeric(lf$Zn),
+		leaf_N = as.numeric(r2$N) * 10,
+		leaf_P = as.numeric(r2$P) * 10,
+		leaf_K = as.numeric(r2$K) * 10,
+		leaf_Ca = as.numeric(r2$Ca) * 10,
+		leaf_Mg = as.numeric(r2$Mg) * 10,
+		leaf_Fe_ppm_ = as.numeric(r2$Fe),
+		leaf_Mn_ppm_ = as.numeric(r2$Mn),
+		leaf_B_ppm_ = as.numeric(r2$B),
+		leaf_Cu_ppm_ = as.numeric(r2$Cu),
+		leaf_Mo_ppm_ = as.numeric(r2$Mo),
+		leaf_Zn_ppm_ = as.numeric(r2$Zn),
 		record_type = "leaf"
 	)
 

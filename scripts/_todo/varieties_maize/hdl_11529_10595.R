@@ -66,31 +66,31 @@ Summary results and individual trial results from the International Late White V
 		as.numeric(x)
 	}
 
-	floc <- ff[basename(ff) == "05EVT17HLW-Locations.xls"]
-	loc0 <- carobiner::read.excel(floc, col_names=FALSE, na=c("", "- - -"))
-	c2 <- trimws(as.character(loc0[[2]]))
+	f1 <- ff[basename(ff) == "05EVT17HLW-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE, na=c("", "- - -"))
+	c2 <- trimws(as.character(r1[[2]]))
 	keep <- !is.na(c2) & !c2 %in% c("Country", "País", "Pais") & nzchar(c2)
-	loc0 <- loc0[keep, ]
-	lat <- num_piece(loc0[[5]]) + num_piece(loc0[[6]]) / 60
-	lon <- num_piece(loc0[[8]]) + num_piece(loc0[[9]]) / 60
-	ns <- toupper(trimws(as.character(loc0[[7]])))
-	we <- toupper(trimws(as.character(loc0[[10]])))
+	r1 <- r1[keep, ]
+	lat <- num_piece(r1[[5]]) + num_piece(r1[[6]]) / 60
+	lon <- num_piece(r1[[8]]) + num_piece(r1[[9]]) / 60
+	ns <- toupper(trimws(as.character(r1[[7]])))
+	we <- toupper(trimws(as.character(r1[[10]])))
 	i <- which(ns == "S")
 	lat[i] <- -abs(lat[i])
 	i <- which(we == "W")
 	lon[i] <- -abs(lon[i])
-	country <- carobiner::fix_name(trimws(as.character(loc0[[2]])), "title")
+	country <- carobiner::fix_name(trimws(as.character(r1[[2]])), "title")
 	country[country == "México"] <- "Mexico"
 	country[country == "Viet Nam"] <- "Vietnam"
 	locs <- data.frame(
-		set_no = as.integer(loc0[[4]]),
+		set_no = as.integer(r1[[4]]),
 		country = country,
-		location = carobiner::fix_name(trimws(as.character(loc0[[3]])), "title"),
+		location = carobiner::fix_name(trimws(as.character(r1[[3]])), "title"),
 		latitude = lat,
 		longitude = lon,
-		elevation = as.numeric(loc0[[11]]),
-		planting_date = excel_date(loc0[[12]]),
-		harvest_date = excel_date(loc0[[13]])
+		elevation = as.numeric(r1[[11]]),
+		planting_date = excel_date(r1[[12]]),
+		harvest_date = excel_date(r1[[13]])
 	)
 
 	empty_long <- function() {
@@ -222,8 +222,15 @@ Summary results and individual trial results from the International Late White V
 		list(wide=wide, long=long)
 	}
 
-	trials <- ff[grepl("^05EVT17HLW[0-9]", basename(ff)) & grepl("\\.xls$", basename(ff), ignore.case=TRUE)]
-	parts <- lapply(trials, read_trial)
+	f2 <- ff[basename(ff) %in% c(
+		"05EVT17HLW11.xls",
+		"05EVT17HLW20.xls",
+		"05EVT17HLW21.xls",
+		"05EVT17HLW22.xls",
+		"05EVT17HLW30.xls",
+		"05EVT17HLW31.xls"
+	)]
+	parts <- lapply(f2, read_trial)
 	parts <- parts[!vapply(parts, is.null, logical(1))]
 	d <- do.call(rbind, lapply(parts, function(p) p$wide))
 	long <- do.call(rbind, lapply(parts, function(p) p$long))
