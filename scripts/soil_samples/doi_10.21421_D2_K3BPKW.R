@@ -57,9 +57,9 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		geo_from_source = TRUE,
 		hhid = trimws(as.character(r[["Farmer No"]])),
 		field_id = trimws(as.character(r[["Survey No."]])),
-		nutrient_type_ = trimws(r[["Macro/ Micro nutrient"]]),
+		# nutrient_type_ = trimws(r[["Macro/ Micro nutrient"]]),
 		soil_type = trimws(r[["Soil type"]]),
-		field_size = as.numeric(r[["Extent (AC)"]]) * 0.404686,
+		field_size = as.numeric(gsub("AREA-", "", r[["Extent (AC)"]])) * 0.404686,
 		soil_pH = as.numeric(r$pH),
 		soil_EC = as.numeric(r$EC),
 		soil_SOC = as.numeric(r$OC),
@@ -86,8 +86,8 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		"anaar"="pomegranate", "bajra"="pearl millet", "beans"="common bean",
 		"beera"="luffa", "ridge guard"="luffa", "benda"="okra",
 		"bengalgram"="chickpea", "senaga"="chickpea", "erra senaga"="chickpea",
-		"blackgram"="black gram", "menumu"="black gram", "minumu"="black gram",
-		"brinjal"="eggplant", "cabage"="cabbage",
+		"blackgram"="black gram", "horsegram" = "horse gram",  "menumu"="black gram", "minumu"="black gram",
+		"brinjal"="eggplant", "cabage"="cabbage", "donda" = "ivy gourd", "maagu" = "managu", 
 		"cane"="sugarcane", "sugar cane"="sugarcane", "suger cane"="sugarcane", "sugercane"="sugarcane",
 		"cashew nut"="cashew", "cashewnut"="cashew", "cashew raina"="cashew",
 		"castor"="castor bean", "clastor"="castor bean", "castral"="castor bean",
@@ -109,8 +109,9 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		"pogaku"="tobacco", "potatao"="potato", "ragi"="finger millet",
 		"rajma"="kidney bean", "seasamum"="sesame", "sesamum"="sesame", "sesumum"="sesame",
 		"sweetcorn"="sweet corn", "tamato"="tomato","niger"="niger",
-		"topioca"="cassava", "topica"="cassava", "turmaric"="turmeric","vegetable"="vegetables",
-		"vegitable"="vegetable", "eucaliptus"="eucalyptus"
+		"topioca"="cassava", "topica"="cassava", "turmaric"="turmeric","vegetable"="vegetable",
+		"vegitable"="vegetable", "eucaliptus"="eucalyptus", "red sandal" = "sandalwood", "sandal" = "sandalwood",
+		 "mc" = NA, "red" = NA, "sandy" = NA
 	)
 
 	fix_crop <- function(x) {
