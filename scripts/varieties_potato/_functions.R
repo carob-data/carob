@@ -25,8 +25,11 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	names(n) <- tolower(gsub(" ", "_", trimws(installation$Factor)))
 	names(r) <- trimws(tolower(names(r)))
 	
-	for (v in addvars) if (is.null(r[[v]])) r[v] <- NA
-
+	if (!is.null(addvars)) {
+		addvars <- tolower(addvars)
+		for (v in addvars) if (is.null(r[[v]])) r[v] <- NA
+	}
+	
 	plot_size <- as.numeric(n$`plot_size_(m2)`)
 	plot_adj <- 10000 / plot_size
      
@@ -45,7 +48,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		m$End_date <- as.character(as.Date(m$end_date,format = "%d/%m/%Y"))
 		j <- is.na(m$end_date)
 		if (sum(j) > sum(i)) warning("NAs introduced in End_date")
-	} 
+	}
 	d <- data.frame(
 		rep = as.integer(r$rep),
 		variety = r$instn,
@@ -75,7 +78,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		d$plant_density <- as.numeric(r$npe) * plot_adj
 	}
 	if (!is.null(r$tntp)) {
-		d$tuber_density <- as.numeric(n$tntp) * plot_adj	
+		d$tuber_density <- as.numeric(r$tntp) * plot_adj	
 	}
 
 	if (!is.null(r$avdm)) {
@@ -111,37 +114,27 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		d$soil_SOM <- soil$organic_matter
 	}
 	
-	
 
 	fm <- list.files(dirname(filename), pattern="material_list", ignore.case=TRUE, full.names=TRUE)
 	if (length(fm) > 1) {
 		stop("multiple material files")
 	} else if (length(fm) == 1) {
-		m <- utils::read.delim(f2, colClasses="character", na.strings="", strip.white=TRUE)
-		fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
-		mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
-		i <- match(d$variety, m$Institutional.number)
-		j <- !is.na(i)
-		k <- i[j]
-		d$female_parent[j] <- fem[k]
-		d$male_parent[j] <- mal[k]
-		d$variety_pedigree[j] <- paste(fem[k], mal[k], sep=" x ")
-		nm <- m$Clone.or.variety.name[i]
-		d$variety_code <- d$variety
-		d$variety[!is.na(nm)] <- nm[!is.na(nm)]
+		m <- utils::read.delim(fm, colClasses="character", na.strings="", strip.white=TRUE)
+		names(m) <- tolower(names(m))
+		fem <- ifelse(is.na(m$female.code), m$female.institutional.number, m$female.code)
+		mal <- ifelse(is.na(m$male.code), m$male.institutional.number, m$male.code)
+		i <- match(d$variety, m$institutional.number)
+		if (!(all(is.na(i)))) {
+			j <- !is.na(i)
+			k <- i[j]
+			d$female_parent[j] <- fem[k]
+			d$male_parent[j] <- mal[k]
+			d$variety_pedigree[j] <- paste(fem[k], mal[k], sep=" x ")
+			nm <- m$clone.or.variety.name[i]
+			d$variety_code <- d$variety
+			d$variety[!is.na(nm)] <- nm[!is.na(nm)]
+		}
 	}
-	
-	
-	## material list: pedigree (NOTES 4)
-	f2 <- ff[basename(ff) == "02_Material_list.txt"]
-	m <- utils::read.delim(f2, colClasses="character", na.strings="", strip.white=TRUE, fileEncoding="UTF-8-BOM")
-	fem <- ifelse(is.na(m$Female.code), m$Female.Institutional.number, m$Female.code)
-	mal <- ifelse(is.na(m$Male.code), m$Male.Institutional.number, m$Male.code)
-	ped <- ifelse(is.na(fem) & is.na(mal), NA, paste(fem, mal, sep=" x "))
-	d$variety_pedigree <- ped[match(d$variety, m$Institutional.number)]
-
-	
-	
 #    d$on_farm <- TRUE
     d$is_survey <- FALSE
     d$irrigated <- FALSE
