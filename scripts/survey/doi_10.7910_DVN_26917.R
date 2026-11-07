@@ -59,6 +59,7 @@ This study in general aims to look at the impacts of drought on rice production,
 		response_vars = NA,
 		notes = NA,
 		carob_date = "2026-10-29",
+		carob_contributor = "Preeti Bharti",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 40,
 		carob_effort = 0.8
@@ -189,6 +190,13 @@ This study in general aims to look at the impacts of drought on rice production,
 	d$K_fertilizer[nof] <- 0
 	d$S_fertilizer[nof] <- 0
 	d$fertilizer_type[nof] <- "none"
+
+	## georeferencing: approximate municipality-centre coordinates (to be refined to village level)
+	lon <- c("San Nicolas"=120.765, "Pura"=120.648, "Victoria"=120.682)
+	lat <- c("San Nicolas"=16.070, "Pura"=15.625, "Victoria"=15.578)
+	d$longitude <- as.vector(lon[d$adm2])
+	d$latitude <- as.vector(lat[d$adm2])
+	d$geo_from_source <- FALSE
 
 	d$trial_id <- paste(d$hhid, d$season, d$field_id, sep="_")
 
