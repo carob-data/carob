@@ -27,7 +27,7 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;irrigation_amount",
-		response_vars = "soil_mite_abundance", 
+		response_vars = "insect_abundance", 
 		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-19",
@@ -50,8 +50,8 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	  planting_date = as.character(r$Year),
 	  N_fertilizer = r$Nitrogen,
 	  treatment = r$Irrigation,
-	  soil_mite = tolower(r$soil_mite),
-	  soil_mite_abundance = r$soil_mite_abundance, # individual/m2
+	  insect_species = tolower(r$soil_mite),
+	  insect_abundance = r$soil_mite_abundance, # individual/m2
 	  irrigated = TRUE,
 	  crop = "wheat",
 	  yield = NA,
@@ -75,8 +75,6 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	d$yield_isfresh <- NA
 	d$yield_part <- "none"
 	d$K_fertilizer <- d$P_fertilizer <- as.numeric(NA)
-	
-	
 	
 	carobiner::write_files(path, meta, d)
 }
