@@ -2,15 +2,50 @@
 # license: GPL (>=3)
 
 ## NOTES
-# 26 measured variables across a 3-season maize biochar/basanite trial;
-# Selected only: Yield, root biomass, bulk density, and Striga
-# Root Biomass and Soil Bulk Density were measured once for the whole trial
+# Three-season maize field trial (2023-2025) on an Oxisol in Siaya, western Kenya
+# (PyMiCCS project): 9 treatments x 3 replicates; biochar, basanite (rock powder),
+# rock-enhanced biochar and their co-application, with/without NPK fertilizer.
+# Treatment N:P:K rates and amendment rates are from the dataset readme. For the amended
+# treatments P and K rates changed from 0/0 (season 1) to 10/20 kg/ha (seasons 2-3).
+# Root morphology and soil bulk density were measured once for the whole trial; they are
+# repeated on each season (trial_id) row of the wide table.
+# The associated manuscript (Meyer zu Drewer et al.) is not yet published; no DOI found
+# (checked 2026-11-07).
 
-# Suggested new terms"
-#  striga_count
-#  amend_rate
-#  ammendment_type
 
+## ignored the "per plot" and "per plant" data
+
+## ISSUES
+# - No planting or harvest dates in the data; the trial ran 2023-2025 but which
+#   season fell in which year (Siaya has two cropping seasons per year) is not stated,
+#   so no dates are recorded.
+# - Whether the trial was on a farm or a research site, and whether it was irrigated,
+#   is not stated; on_farm and irrigated are NA.
+# - Yield moisture basis is not stated (grain and stover yields in t/ha).
+# - Root biomass (g dry weight) and the other root morphology measures are per plant
+#   (excavated root system); plot area and plant density are unknown so they cannot be
+#   expressed per ha.
+# - The grain/stover yields of "Root Shoot factor" rows: not clear if the factor uses
+#   total biomass; kept as the reported ratio.
+
+## NEW VARIABLES
+# striga_count_       number of emerged striga plants counted per plot (plot area unknown)
+# root_biomass_       root biomass per plant (g dry weight)
+# root_length_        root length per plant (cm)
+# root_angle_         root opening angle (degrees)
+# root_shoot_ratio_   root:shoot ratio (dimensionless)
+# root_area_          root surface area per plant (cm2)
+
+## NOT PROCESSED
+# - Data_Meyer_zu_Drewer_P-sorption.csv: in-vitro laboratory batch experiment
+#   (P sorption in centrifuge tubes), not field data; out of scope for carob.
+# - Data_Meyer_zu_Drewer_Kenya.csv, parameter "Soil pH in-situ season 1" (243 rows, two
+#   depths plus the amendment application zone): recorded with replicates 1-9 per
+#   treatment that cannot be linked to the 3 field plots.
+# - Data_Meyer_zu_Drewer_Kenya.csv, parameters "TFP Grain/Stover" and "TPP Grain":
+#   total factor / total phosphorus productivity, derived as yield divided by the
+#   fertilizer input already recorded (verified, e.g. TFP 34.8 = 3130 kg / 90 kg N), redundant.
+# - readme_Meyer-zu-Drewer_fin.rtf: codebook (treatment and parameter definitions), no data.
 
 
 carob_script <- function(path) {
@@ -33,129 +68,126 @@ and during a complementary six-week in-vitro phosphorus sorption batch experimen
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=6, minor=NA,
-	          data_organization = "Ithaka Institute",
+	          data_organization = "ITIN",   # Ithaka Institute
 	          publication = NA,
 	          project = "PyMiCCS",
-	          design = "9 treatments (controls, biochar, basanite, co-application)",
-	          data_type = NA,
-	          treatment_vars = "treatment; N_fertilizer; P_fertilizer; K_fertilizer",
-	          response_vars = "yield; dmy_residue",
+	          design = NA,
+	          data_type = "experiment",
+	          treatment_vars = "soil_amendment;soil_amendment_type;N_fertilizer;P_fertilizer;K_fertilizer",
+	          response_vars = "yield;dmy_residue",
 	          notes = NA,
 	          carob_contributor = "Stella Muthoni",
+	          carob_LLM = "Claude Fable 5",
 	          carob_date = "2026-08-30",
-	          carob_completion = 75,
+	          carob_completion = 95,
 	          carob_effort = 3
 	)
 	
 	f1 <- ff[basename(ff) == "Data_Meyer_zu_Drewer_Kenya.csv"]          # field trial, long format
-	f2 <- ff[basename(ff) == "Data_Meyer_zu_Drewer_P-sorption.csv"]     # in-vitro P-sorption batch experiment, long format
-	f3 <- ff[basename(ff) == "readme_Meyer-zu-Drewer_fin.rtf"]          # Meta-data
+	# Data_Meyer_zu_Drewer_P-sorption.csv and the readme are not read; see NOT PROCESSED
 	
 	r1 <- read.csv(f1, sep=";", skip=1)
-	r2 <- read.csv(f2, sep=";")
 	
-	# Create the yield trial database
-	## season 1 N:P:K rates (kg/ha) - season 2-3 differs for the amended treatments (P/K rise from 0/0 to 10/20)
+	## treatment table from the readme: N:P:K rates (kg/ha) and amendment rates (t/ha).
+	## Season 1 rates; for seasons 2-3 the amended treatments got P/K 10/20 instead of 0/0
 	trt <- data.frame(
-	  treatment = c("Zero Control","Control","PK-half","PK-full","RE-BC_5","RE-BC_10","Co-Ap_10","BC_5","RP_5"),
-	  N_fertilizer = c(0,90,90,90,90,90,90,90,90),
-	  P_fertilizer = c(0,0,10,20,0,0,0,0,0),
-	  K_fertilizer = c(0,0,20,40,0,0,0,0,0),
-    amendment_type = c("none","none","none","none","rock-enhanced biochar","rock-enhanced biochar","biochar+basanite co-application","biochar","basanite (rock powder)"),
-	  amend_rate = c(0,0,0,0,5,10,10,5,5),
-	  OM_used = c(FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE)   # TRUE only for biochar-containing treatments
+	  treatment = c("Zero Control", "Control", "PK-half", "PK-full", "RE-BC_5", "RE-BC_10", "Co-Ap_10", "BC_5", "RP_5"),
+	  N_fertilizer = c(0, 90, 90, 90, 90, 90, 90, 90, 90),
+	  P_fertilizer = c(0, 0, 10, 20, 0, 0, 0, 0, 0),
+	  K_fertilizer = c(0, 0, 20, 40, 0, 0, 0, 0, 0),
+	  soil_amendment_type = c("none", "none", "none", "none", "rock-enhanced biochar",
+	                          "rock-enhanced biochar", "biochar; basanite", "biochar", "basanite"),
+	  # t/ha -> kg/ha ("Co-Ap_10" is a 1:1 biochar:basanite mix at 10 t/ha in total)
+	  soil_amendment = c(0, 0, 0, 0, 5, 10, 10, 5, 5) * 1000,
+	  # biochar and basanite are soil amendments, not organic fertilizer
+	  OM_used = FALSE
 	)
-	trt$OM_amount <- ifelse(trt$OM_used, trt$amend_rate * 1000, NA)   # kg/ha
 	
 	trt2 <- trt
 	trt2$P_fertilizer[5:9] <- 10
 	trt2$K_fertilizer[5:9] <- 20
-	trt <- rbind(data.frame(season=1, trt), data.frame(season="2", trt2), data.frame(season="3", trt2))
+	trt <- rbind(data.frame(season="1", trt), data.frame(season="2", trt2), data.frame(season="3", trt2))
 
-	# get season 
+	## season from the parameter name
 	r1$season <- gsub("\\D", "", r1$parameter)
 
-	# make wide
-	s <- r1[grepl("season", r1$parameter) & !grepl("Soil pH|Striga", r1$parameter), ]
+	## grain and stover yield, wide
+	s <- r1[grepl("season", r1$parameter) & !grepl("Soil pH|Striga|TFP|TPP", r1$parameter), ]
 	s$parameter <- gsub(" 1st season| 2nd season| 3rd season", "", s$parameter)
-	s <- reshape(s, timevar = "parameter",  idvar = c("season", "treatment", "subgroup", "replicate"),  direction = "wide")
+	s <- reshape(s, timevar="parameter", idvar=c("season", "treatment", "subgroup", "replicate"), direction="wide")
 
-	d1 <- data.frame(
-		treatment = s$treatment, 
-		replicate = s$replicate,
-		season = s$season,
-		yield = s$`value.Grain Yield t ha` * 1000, 
-		dmy_residue = s$`value.Stover Yield t ha`  * 1000
+	d <- data.frame(
+		treatment = s$treatment,
+		rep = as.integer(s$replicate),
+		trial_id = s$season,
+		yield = s$`value.Grain Yield t ha` * 1000,     # t/ha -> kg/ha
+		dmy_residue = s$`value.Stover Yield t ha` * 1000
 	)
-    d1 <- merge(d1, trt, by=c("treatment", "season"), all.x=TRUE)
+	d <- merge(d, trt, by.x=c("treatment", "trial_id"), by.y=c("treatment", "season"), all.x=TRUE)
 	
-	#Bulk density - Measured once 
-	bd <- r1[r1$parameter == "Soil Bulk Density g cm3", c("treatment","replicate","value")]
-	names(bd)[3] <- "soil_bd"
-	d1 <- merge(d1, bd, by=c("treatment","replicate"), all.x=TRUE)
+	## soil bulk density and root morphology - measured once for the whole trial;
+	## repeated on each season row (see NOTES)
+	bd <- r1[r1$parameter == "Soil Bulk Density g cm3", c("treatment", "replicate", "value")]
+	names(bd) <- c("treatment", "rep", "soil_bd")
+	d <- merge(d, bd, by=c("treatment", "rep"), all.x=TRUE)
 	
-	# Roots biomass - measured once for the whole trial
-	roots <- r1[r1$parameter == "Root Biomass g dw", c("treatment","replicate","value")]
-	names(roots)[3] <- "dw_roots"
-	d1 <- merge(d1, roots, by=c("treatment","replicate"), all.x=TRUE)
+	roots <- reshape(r1[grepl("^Root", r1$parameter), c("parameter", "treatment", "replicate", "value")],
+	                 timevar="parameter", idvar=c("treatment", "replicate"), direction="wide")
+	roots <- data.frame(
+		treatment = roots$treatment,
+		rep = as.integer(roots$replicate),
+		root_biomass_ = roots$`value.Root Biomass g dw`,    # g dry weight per plant
+		root_length_ = roots$`value.Root length cm`,
+		root_angle_ = roots$`value.Root opening angle`,
+		root_shoot_ratio_ = roots$`value.Root Shoot factor`,
+		root_area_ = roots$`value.Root surface area cm2`
+	)
+	d <- merge(d, roots, by=c("treatment", "rep"), all.x=TRUE)
 	
-	## Soil pH, wide - averaged per treatment+season
-	ph_exsitu_s1 <- r1[r1$parameter == "Soil pH ex-situ season 1", c("treatment","value")]
-	ph_exsitu_s1$season <- "1"
-	ph_exsitu_s2 <- r1[r1$parameter == "Soil pH ex-situ season 2", c("treatment","value")]
-	ph_exsitu_s2$season <- "2"
-	ph_insitu <- r1[r1$parameter == "Soil pH in-situ season 1", c("treatment","value")]
-	ph_insitu$season <- "1"
+	d$plot_id <- paste(d$trial_id, d$treatment, d$rep, sep="_")
 	
-	ph_all <- rbind(ph_exsitu_s1, ph_exsitu_s2, ph_insitu)
-	ph_mean <- aggregate(value ~ treatment + season, data=ph_all, FUN=mean)
-	names(ph_mean)[names(ph_mean)=="value"] <- "soil_pH"
-	
-	d1 <- merge(d1, ph_mean, by=c("treatment","season"), all.x=TRUE)
-	
-	## Extract the striga data - long format,
-	## DAP assumed as week_number * 7
-	striga_s2 <- r1[r1$parameter == "Striga count season 2", c("treatment","replicate","subgroup","value")]
-	names(striga_s2) <- c("treatment","replicate","week","striga_count")
-	striga_s2$trial_id <- "2"
-	
-	striga_s3 <- r1[r1$parameter == "Striga count season 3", c("treatment","replicate","subgroup","value")]
-	names(striga_s3) <- c("treatment","replicate","week","striga_count")
-	striga_s3$trial_id <- "3"
-	
-	d_striga <- rbind(striga_s2, striga_s3)
-	d_striga$DAP <- as.integer(gsub("\\D", "", d_striga$week)) * 7L
-	d_striga$week <- NULL
-	names(d_striga)[names(d_striga)=="replicate"] <- "rep"
-	d_striga$plot_id <- paste(d_striga$trial_id, d_striga$treatment, d_striga$rep, sep="_")
-	d_striga$treatment <- NULL
-	d_striga$rep <- NULL
-	
-	d1$crop <- "maize"
-	d1$country <- "Kenya"
-	d1$adm1 <- "Siaya"
+	d$crop <- "maize"
+	d$country <- "Kenya"
+	d$adm1 <- "Siaya"
 	## Georeference Siaya county (adm1) per https://carob-data.org/contribute/georeference.html
-	d1$longitude = 34.2488
-	d1$latitude = -0.0546
-	d1$geo_uncertainty = 44931
-	d1$geo_source = "GADM 4.1, adm1"
-	d1$geo_from_source <- FALSE
-		
-	d1$is_survey <- FALSE
-	d1$on_farm <- TRUE
-	d1$irrigated <- FALSE
-	d1$planting_date <- NA
-	d1$harvest_date <- NA
-	d1$yield_moisture <- NA
-	d1$yield_isfresh <- NA
-	d1$yield_part <- "grain"
+	d$longitude <- 34.2488
+	d$latitude <- -0.0546
+	d$geo_uncertainty <- 44931
+	d$geo_source <- "GADM 4.1, adm1"
+	d$geo_from_source <- FALSE
 	
-	names(d1)[names(d1)=="replicate"] <- "rep"
-	names(d1)[names(d1)=="season"] <- "trial_id"
+	d$is_survey <- FALSE
+	# not stated whether the trial was on a farm or a research site, nor whether irrigated
+	d$on_farm <- NA
+	d$irrigated <- NA
+	d$yield_part <- "grain"
 	
-	d1$plot_id <- paste(d1$trial_id, d1$treatment, d1$rep, sep="_")
+	############################################################
+	# long records: striga counts (weekly) and soil pH (by depth and method)
+	############################################################
 	
-	carobiner::write_files(path, meta, wide=d1, long=d_striga)
+	## striga counts, weekly in seasons 2 and 3
+	striga <- r1[grepl("^Striga count", r1$parameter), c("parameter", "treatment", "replicate", "subgroup", "value")]
+	d_striga <- data.frame(
+		trial_id = gsub("\\D", "", striga$parameter),
+		plot_id = paste(gsub("\\D", "", striga$parameter), striga$treatment, striga$replicate, sep="_"),
+		# DAP assumed as week number x 7 (counting weeks are given, not dates)
+		DAP = as.integer(gsub("\\D", "", striga$subgroup)) * 7L,
+		striga_count_ = striga$value
+	)
+	
+	## ex-situ soil pH at two depths (seasons 1-2), per plot and depth (not averaged).
+	## In-situ pH is not processed (replicates cannot be linked to plots, see NOT PROCESSED)
+	ph <- r1[grepl("^Soil pH ex-situ", r1$parameter), c("parameter", "treatment", "replicate", "subgroup", "value")]
+	d_ph <- data.frame(
+		trial_id = gsub("\\D", "", ph$parameter),
+		plot_id = paste(gsub("\\D", "", ph$parameter), ph$treatment, ph$replicate, sep="_"),
+		# depth of the sampled layer's base: "0-15 cm" -> 15, "15-30 cm" -> 30
+		depth = ifelse(grepl("15-30", ph$subgroup), 30, 15),
+		soil_pH = ph$value
+	)
+	
+	d_long <- carobiner::bindr(d_striga, d_ph)
+	
+	carobiner::write_files(path, meta, wide=d, long=d_long)
 }
-
-
