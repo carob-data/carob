@@ -3,13 +3,13 @@
 
 ## NOTES
 # Soil biology field trials in Colombia 1990-2001: 
-            # litter decomposition, N fixation, soil N and microbial biomass under pastures and crops; 
-            # maize yield response to urea and tree prunings (TSBF)
+  # litter decomposition, N fixation, soil N and microbial biomass under pastures and crops; 
+  # maize yield response to urea and tree prunings (TSBF)
 # Green manure- assumed foliage
 # greenhouse experiments (SITIO == "CIAT - Invernaderos") are not standardized & where mixed greenhouse rows are dropped
-                       # Green house only: 11.MBIO_INOC_INV.csv, 14.MBIO_FIJA_N_INV.csv
-                       # Mixed fields & greenhouse: f5, f12
-                       # lookup tables with greenhouse entries: f2, f4
+   # Green house only: 11.MBIO_INOC_INV.csv, 14.MBIO_FIJA_N_INV.csv
+   # Mixed fields & greenhouse: f5, f12
+   # lookup tables with greenhouse entries: f2, f4
 
 ## Suggested new terms
 # agrozone (agroecological zone of the site; here "savanna" or "hillside")
@@ -19,6 +19,37 @@
 # bag_batch_: litterbag distribution number
 # plant_no_: tree number within plot
 # plant_species: plant species as given in the data (CULT)
+# residue_days_: days after litterbag placement
+# residue_remaining_: dry matter remaining in litterbag (% of initial)
+# residue_OM_, residue_lignin_, residue_digestibility_, residue_hemicellulose_,
+#   residue_tannin_, residue_phenols_, residue_tannin_soluble_, residue_tannin_insoluble_:
+#   litter quality, % of dry matter
+# frame_no_: quadrat (subsample) number; trap_days_: days of litter accumulation
+# litterfall_: litter/root production, kg/ha dry matter (ash-corrected)
+# Ndfa_: % N derived from the atmosphere (15N isotope dilution, grass reference)
+# dmy_legume_, dmy_grass_: dry matter of legume and grass component (kg/ha)
+# legume_N_, grass_N_: N content of legume and grass component (mg/g)
+# legume_fraction_: legume % of total dry matter
+# soil_NH4_7d_, soil_NO3_7d_: after 7-day anaerobic incubation (ug/g dry soil)
+# soil_N_mineralization_: potentially mineralizable N (ug/g dry soil per day)
+# dmy_husk_, dmy_cob_ (kg/ha); stem_N_, stem_P_, stem_K_, husk_N_, cob_N_, straw_N_, root_P_ (mg/g)
+
+## NOT PROCESSED
+# 03.MBIO_ENSAYOS.csv: trial lookup, descriptions nearly all empty
+# 09.MBIO_15N.csv: 15N-labeled litter tracer study (atom% 15N, recovery); specialized
+#   isotope data without terminag terms; grass dry matter per m2 also present
+# 11.MBIO_INOC_INV.csv, 14.MBIO_FIJA_N_INV.csv: greenhouse experiments
+# 19.MBIO_DETERMIN.csv: index of which determinations exist per trial (administrative)
+# f5: MATE_SEC, CENIZA, MATE_SEC_COR (per-bag g; residue_remaining_ is derived from them)
+# f8: N_TOT_LEG/N_TOT_GRAM (redundant: dm x N%), AT15* (isotope raw data),
+#   N_FIJ_SAB/N_DA_SAB (same with savanna reference; grass reference kept),
+#   N_FER_GRAM/N_SUE_GRAM (% N from fertilizer/soil)
+# f10: PORC_* (redundant shares), N_PLA*/AT15*/N_ABO_VER (isotope/green manure tracer)
+# f12: 15N tracer columns (CANT_15N, AT15*, RECU_15N), sample weights
+# f13: NNH4_T0 etc per fresh soil (dry-soil values used), N_TOT_SS_T0, N_SS_T7_T0 (redundant)
+# f15/f16: per fresh soil and sample weight columns (dry-soil values used)
+# f17: *_HUM (part moistures), *_SUB (subsample weights), GRANO/GRAN_12 (yield used),
+#   MATE_SEC_MAZ (ear, g per area; husk+cob+grain kept separately)
 
 ## ISSUES
 # f5 PARTE: 20 rows have "Suelo" (soil), which is not a plant part; set to NA
@@ -27,6 +58,10 @@
 # treatments apply to one trial each: N rates RFN60, OM_used RFN42, inoculated RFN49; crop NA for tree species, prunings and RFN53 land uses
 # yield only for RFN60 maize (Feb 2001); other plots have no yield
 # crop terms not in terminag: centrosema, desmodium, gamba grass, pinto peanut, tropical kudzu
+# several sites are fields within the same station (e.g. 7 sites at Carimagua) and share
+#   coordinates ("duplicate coordinates" message); field-level coordinates are not available
+# f17 dictionary labels HUME "Soil Moisture" but values (12-17%) next to GRAN_12
+#   (grain at 12.5%) indicate it is grain moisture at harvest
 
 
 carob_script <- function(path) {
@@ -49,10 +84,10 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 		design = "Multiple long-term experiments on forage/legume cover fixation assessed via 15N isotope dilution.",
 		data_type = "experiment",   # on-station and on-farm
 		treatment_vars = "crop;N_fertilizer;N_organic;OM_used;inoculated",
-		response_vars = "yield;dmy_total;dmy_storage;dmy_stems;dmy_roots;grain_N;root_N;root_K",
+		response_vars = "yield;dmy_total;dmy_storage;dmy_stems;dmy_roots;grain_N;root_N;root_K;N_fixation",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
-		carob_LLM = "Claude Opus 5.5",
+		carob_LLM = "Claude Opus 5.5; Claude Fable 5",
 		carob_date = "2026-09-22",
 		carob_completion = 80,
 		carob_effort = 5
@@ -151,12 +186,40 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	  plant_part_ = pp[r5$PARTE],
 	  sampling_no_ = r5$EVAL,
 	  bag_batch_ = r5$DISTRIBUCION,
+	  residue_days_ = r5$DIA_DES_DIS,
+	  residue_remaining_ = r5$MATE_SEC_RES,   # % of initial dry matter (the decomposition response)
 	  residue_N = r5$N * 10,
 	  residue_P = r5$P * 10,
 	  residue_K = r5$K * 10,
 	  residue_Ca = r5$CA * 10,
 	  residue_Mg = r5$MG * 10,
-	  residue_C = r5$C * 10
+	  residue_C = r5$C * 10,
+	  # litter quality, all % of dry matter
+	  residue_OM_ = r5$MO,
+	  residue_lignin_ = r5$LIGNINA,
+	  residue_digestibility_ = r5$DIGE_MAT,   # in vitro dry matter digestibility
+	  residue_hemicellulose_ = r5$HEMICELU,
+	  residue_tannin_ = r5$TANINO,
+	  residue_phenols_ = r5$FENOLE,
+	  residue_tannin_soluble_ = r5$TANI_SOL,   # soluble condensed tannin
+	  residue_tannin_insoluble_ = r5$TANI_INS
+	)
+	
+	# litter/root production per quadrat ("marco", 0.75 m2 frame)
+	f6 <- ff[basename(ff) == "06.MBIO_PROD_HOJ_RAI.csv"]
+	r6 <- read.csv(f6)
+	d6 <- data.frame(
+	  trial_id = r6$CODIGO,
+	  site = r6$SITIO,
+	  trial_name = r6$ENSAYO,
+	  treatment = r6$TRAT,
+	  plant_species = r6$CULT,
+	  block_id = as.character(r6$REPI),
+	  date = as.character(as.Date(r6$FECH_EVA, "%d-%b-%y")),
+	  frame_no_ = r6$MARCO,   # quadrat (subsample) number within plot
+	  trap_days_ = r6$DIA_DES_DIS,
+	  litterfall_ = r6$MATE_SEC_COR_M2 * 10,   # ash-corrected g/m2 -> kg/ha
+	  residue_N = r6$N * 10   # % -> mg/g
 	)
 	
 	
@@ -184,7 +247,13 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	  plant_species = r8$CULT,
 	  block_id = as.character(r8$REPI),
 	  date = as.character(as.Date(r8$FECH_EVA, "%d-%b-%y")),
-	  N_fixation = r8$N_FIJ_GRAM   # grass as reference
+	  N_fixation = r8$N_FIJ_GRAM,   # kg/ha, 15N isotope dilution with grass as reference
+	  Ndfa_ = r8$N_DA_GRAM,         # % N derived from the atmosphere (grass reference)
+	  dmy_legume_ = r8$MATE_SEC_LEG,   # kg/ha
+	  dmy_grass_ = r8$MATE_SEC_GRAM,   # kg/ha
+	  legume_N_ = r8$N_LEG * 10,       # % -> mg/g
+	  grass_N_ = r8$N_GRAM * 10,
+	  legume_fraction_ = r8$PORC_LEG   # legume % of total dry matter
 	)
 	
 	
@@ -203,8 +272,15 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	  dmy_leaves = r10$HOJA * 10000 / r10$AREA_MUE,
 	  dmy_residue = r10$TAMO * 10000 / r10$AREA_MUE,   # rice straw
 	  dmy_storage = r10$GRANO * 10000 / r10$AREA_MUE,
+	  # "capacho" = husk, "tusa" = cob (the dictionary's English says chaff/husk)
+	  dmy_husk_ = r10$CAPACHO * 10000 / r10$AREA_MUE,
+	  dmy_cob_ = r10$TUSA * 10000 / r10$AREA_MUE,
 	  dmy_total = r10$MATE_SEC_TOT * 10000 / r10$AREA_MUE,
+	  stem_N_ = r10$N_TAL * 10,   # % -> mg/g
 	  leaf_N = r10$N_HOJ * 10,
+	  husk_N_ = r10$N_CAP * 10,
+	  cob_N_ = r10$N_TUS * 10,
+	  straw_N_ = r10$N_TAM * 10,   # rice straw; not residue_N, which is used in the long table
 	  grain_N = r10$N_GRA * 10
 	)
 	
@@ -235,7 +311,11 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	  depth_bottom = as.numeric(sub(".*-", "", r13$PROF)),
 	  sampling_no_ = r13$EVAL,
 	  soil_NH4 = r13$NNH4_SS_T0,
-	  soil_NO3 = r13$NNO3_SS_T0
+	  soil_NO3 = r13$NNO3_SS_T0,
+	  # after 7-day anaerobic incubation (ug/g dry soil)
+	  soil_NH4_7d_ = r13$NNH4_SS_T7,
+	  soil_NO3_7d_ = r13$NNO3_SS_T7,
+	  soil_N_mineralization_ = r13$N_POT_SS   # potentially mineralizable N, ug/g dry soil per day
 	)
 
 	# soil mineral N
@@ -286,8 +366,15 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	  sampled_plot_area = r17$AREA_MUE,
 	  dmy_stems = r17$MATE_SEC_CAN_HEC,
 	  dmy_roots = r17$MATE_SEC_RAI_HEC,
+	  # "capacho" = husk, "tusa" = cob (kg/ha)
+	  dmy_husk_ = r17$MATE_SEC_CAP_HEC,
+	  dmy_cob_ = r17$MATE_SEC_TUS_HEC,
 	  grain_N = r17$N_GRA * 10,
+	  stem_N_ = r17$N_CAN * 10,   # % -> mg/g
+	  stem_P_ = r17$P_CAN * 10,
+	  stem_K_ = r17$K_CAN * 10,
 	  root_N = r17$N_RAI * 10,
+	  root_P_ = r17$P_RAI * 10,   # root_P is not in terminag
 	  root_K = r17$K_RAI * 10
 	)
 	
@@ -305,7 +392,7 @@ hillsides agroecosystems. The data collected from 1990 to 2000 were organized sy
 	)
 
 	# measurements are on different dates per file: stack, don't merge
-	long <- carobiner::bindr(d5, d7, d8, d12, d13, d15, d16, d18)
+	long <- carobiner::bindr(d5, d6, d7, d8, d12, d13, d15, d16, d18)
 	long$trial_id <- paste(long$trial_id, long$site, sep = "_")
 
 	# harvests: one row per plot and harvest, go to d
