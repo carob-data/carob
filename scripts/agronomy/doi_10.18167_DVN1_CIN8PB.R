@@ -1,19 +1,68 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES: 
-# 5 sites: BEOU (Benin), ETBA (Ethiopia), GHKP (Ghana), MANT (Mali), RWBU (Rwanda), 2 experiments (seasons) each. 
-# GHKP TRT_NAME encodes N-P rate and residue as free text, not parsed. 
-# RWBU soil_id does not follow the SITEyyNNNN pattern used elsewhere. 
-# RWBU initial-conditions layer block has a stray value outside the defined columns, left as NA rather than guessed. 
-# BEOU soils sheet showed only a profile summary row, no deeper layer table - needs re-checking against the raw data
+## NOTES:
+# Compilation of 5 published maize experiments used for AgMIP crop model calibration:
+# BEOU (Benin; Amouzou et al. 2018), ETBA (Ethiopia; Sida et al. 2018), GHKP (Ghana;
+# MacCarthy et al. 2015), MANT (Mali; Traore et al. 2014), RWBU (Rwanda; Ndoli et al. 2018);
+# 2 experiments (seasons) each.
+# The publication (Falconnier et al. 2020, doi:10.1111/gcb.15261) confirms: total N applied
+# was 0 (Benin), 64 (Rwanda), 80 (Ghana), 85 (Mali), 87 (Ethiopia) kg/ha; no irrigation
+# anywhere; open-pollinated varieties everywhere except Ethiopia (hybrid). The N totals
+# computed here from the fertilizer tables match these values exactly.
+# The original site experiments are described in (per Falconnier et al. 2020):
+#   BEOU: Amouzou, Naab, Lamers & Becker (2018), Field Crops Research 217, 134-149, doi:10.1016/j.fcr.2017.12.017
+#   ETBA: Sida, Baudron, Hadgu, Derero & Giller (2018), Agriculture, Ecosystems & Environment 260, 36-46, doi:10.1016/j.agee.2018.03.011
+#   GHKP: MacCarthy, Akponikpe, Narh & Tegbe (2015), Nutrient Cycling in Agroecosystems 102, 45-64, doi:10.1007/s10705-015-9701-x
+#   MANT: Traore, van Wijk, Descheemaeker, Corbeels, Rufino & Giller (2014), Field Crops Research 156, 63-75, doi:10.1016/j.fcr.2013.10.014
+#   RWBU: Ndoli, Baudron, Sida, Schut, van Heerwaarden & Giller (2018), Field Crops Research 221, 238-244, doi:10.1016/j.fcr.2018.03.003
+# GHKP TRT_NAME encodes N-P rate and residue as free text, kept verbatim in "treatment".
+# GHKP had no tillage ("!No Tillage" in source).
+# Maximum measurement depths for the profile totals in the long table
+# (soil_SWC / soil_N_min_total): BEOU 60/60 cm (water/N), ETBA 100 cm (water; no
+# in-season N measured), GHKP 100/100 cm, MANT 80 cm (water), RWBU 100 cm (water).
+# RWBU initial-conditions NH4/NO3 are NA in the source.
+# RWBU weather spans two seasons across calendar years.
+# harvest_date is not reported (maturity_date is physiological maturity).
 
-## SUGGESTED NEW TERMINAG TERMS
-#        soil_sample_date (pre-planting soil sample); tillage_date; tillage_depth;
-#        planting_depth; land_prep_traction (tillage power source, e.g. animal-drawn);
-#        crop_N, crop_P (in-season crop nutrient content); soil_water_total,
-#        soil_N_total (whole-profile totals, distinct from the depth-resolved
-#        soil_water_layer/soil_N_layer); *_sd companion columns
+## ISSUES:
+# - on_farm = TRUE is kept from the earlier draft; the five source experiments are described
+#   in separate papers and it was not verified for each site whether the trial was on a
+#   farmer's field or a research station.
+# - fertilization_method "broadcast; incorporated" was taken over from the earlier draft;
+#   verify against the fertilizer-application method codes in the Field-mgmt sheets.
+# - BEOU1401 above-ground biomass at maturity differs between the daily file (4.24 t/ha)
+#   and the season summary (3.963 t/ha); both are kept (the in-season series as
+#   dmy_total in the long table, the maturity value as dmy_total in the wide table).
+# - The long table combines four record types (daily crop observations, in-season soil
+#   water/N by layer, initial soil conditions by layer, and the static soil profile by
+#   layer). Static soil-profile rows have no date (depth is their key).
+# - soil_FC and soil_PWP are volumetric fractions (cm3/cm3) as in the source; terminag
+#   does not specify a unit for these.
+
+## NEW VARIABLES 
+# yield_sd_           sd of grain yield across replicates (kg/ha)
+# dmy_total_sd_       sd of above-ground biomass (kg/ha)
+# LAI_sd_             sd of in-season leaf area index
+# crop_N_sd_          sd of N in above-ground plant parts (kg/ha)
+# soil_SWC_sd_        sd of soil water in the profile up to the max measurement depth (mm)
+# soil_N_min_total_sd_ sd of mineral N in the profile up to the max measurement depth (kg/ha)
+# soil_VWC_sd_        sd of volumetric soil water content of a layer (cm3/cm3)
+# soil_N_sd_          sd of layer mineral N concentration (mg/kg)
+
+## NOT PROCESSED:
+# - Agmip_LowInput_template_variable_definition0717-2.xlsx: codebook only (variable
+#   definitions and units); used to interpret the observation files, no data.
+# - readme_dataverse.txt: file inventory, no data.
+# - Weather sheet station rows, "tav" and "tamp": long-term average temperature and
+#   amplitude (model inputs, not measurements).
+# - AgMIP_Smallholder_Observation_SoilWN_layers_*.txt: "SoilW.layer.mm" and
+#   "SoilN.layer.kg.ha" are derived from the processed cm3/cm3 and ppm values
+#   (x layer thickness / x bulk density), redundant.
+# - AgMIP_Smallholder_Observation_summary_*.txt: Planting.date, Ant.date and Mat.date
+#   duplicate the Field-mgmt sheet values already processed; MaxLAI (and its sd) is
+#   exactly the maximum of the daily LAI series (verified), redundant.
+# - Field-mgmt sheets: institution, suite_name, local_name, exp_dur (administrative).
 
 
 carob_script <- function(path) {
@@ -33,42 +82,38 @@ with average and standard deviation) are provided for 10 experiments
   ff <- carobiner::get_data(uri, path, group, filter=F)
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-                                  data_organization = "CIRAD; APNI; CIMMYT; ICRISAT",
-                                  publication = NA,
-                                  project = NA,
-                                  carob_date = "2026-08-03",
-                                  design = "on-farm calibration trials, 2 seasons per site, 5 sites",
-                                  data_type = NA,
-                                  treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer", 
-                                  response_vars = "yield; dmy_total; LAI; crop_N; crop_P; soil_water_total; soil_N_total",
-                                  carob_contributor = "Stella Muthoni",
-                                  notes = NA,
-                                  carob_completion = 70,
-                                  carob_effort = 16
+          data_organization = "CIRAD; APNI; CIMMYT; ICRISAT",
+          ## Falconnier et al. 2020, Global Change Biologye
+          publication = "doi:10.1111/gcb.15261",
+          project = "AgMIP",
+          carob_date = "2026-08-03",
+          design = NA,
+          data_type = "experiment",
+          treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+          response_vars = "yield;dmy_total;LAI",
+          carob_contributor = "Stella Muthoni;Robert Hijmans",
+          carob_LLM = "Claude Fable 5",
+          notes = NA,
+          carob_completion = 90,
+          carob_effort = 16
   )
   
-  f1  <- ff[basename(ff) == "Agmip_LowInput_template_variable_definition0717-2.xlsx"]
+  # f1 (variable-definition codebook) and the readme are not read; see NOT PROCESSED
   
-  #Field management, soil and daily weather
-  f2  <- ff[basename(ff) == "BEOU_field_mgmt_soils_weather070518LI-2.xlsx"] #Benin 
+  # Field management, soil and daily weather
+  f2  <- ff[basename(ff) == "BEOU_field_mgmt_soils_weather070518LI-2.xlsx"] # Benin
   f3  <- ff[basename(ff) == "ETBA_field_mgmt_soils_weather070518LI-2.xlsx"]
   f4  <- ff[basename(ff) == "GHKP_field_mgmt_soils_weather071718LI-2.xlsx"]
   f5  <- ff[basename(ff) == "MANT_field_mgmt_soils_weather062018LI-2.xlsx"]
   f6  <- ff[basename(ff) == "RWBU_field_mgmt_soils_weather060818LI-2.xlsx"]
   
-  #
+  # observations (txt, "na" is the missing-value flag)
   f7  <- ff[basename(ff) == "AgMIP_Smallholder_Observation_daily_average.txt"]
   f8  <- ff[basename(ff) == "AgMIP_Smallholder_Observation_daily_sd.txt"]
   f9  <- ff[basename(ff) == "AgMIP_Smallholder_Observation_SoilWN_layers_average.txt"]
   f10 <- ff[basename(ff) == "AgMIP_Smallholder_Observation_SoilWN_layers_sd.txt"]
   f11 <- ff[basename(ff) == "AgMIP_Smallholder_Observation_summary_average.txt"]
   f12 <- ff[basename(ff) == "AgMIP_Smallholder_Observation_summary_sd.txt"]
-  
-  f13 <- ff[basename(ff) == "readme_dataverse.txt"]
-  
-  r1a <- carobiner::read.excel(f1, sheet="Summary")
-  r1b <- carobiner::read.excel(f1, sheet="Daily")
-  
   
   ############################################################
   # BEOU (Benin)
@@ -104,14 +149,13 @@ with average and standard deviation) are provided for 10 experiments
   r2c_station <- carobiner::read.excel(f2, sheet="Weather", skip=3, n_max=1)
   r2c_daily   <- carobiner::read.excel(f2, sheet="Weather", skip=9, n_max=730)
   r2c_daily$w_date <- as.Date(r2c_daily$w_date)
-  r2c_daily$exname <- ifelse(r2c_daily$`!YEAR` == 2014, "BEOU1401", "BEOU1501")
   
   # small data.frames, one per source table
   d2_exp <- data.frame(
     trial_id  = r2a_exp$exname,
     location_id = "BEOU",
     country   = "Benin",
-    location  = tools::toTitleCase(tolower(r2a_exp$site_name[1])),
+    location  = carobiner::fix_name(tolower(r2a_exp$site_name[1]), "title"),
     latitude  = r2a_exp$fl_lat,
     longitude = r2a_exp$fl_long,
     elevation = r2a_exp$flele,
@@ -123,7 +167,6 @@ with average and standard deviation) are provided for 10 experiments
   )
   d2_prevcrop <- data.frame(
     trial_id = r2a_prevcrop$exname,
-    soil_sample_date = r2a_prevcrop$icdat,
     previous_crop = tolower(r2a_prevcrop$`!...5`),
     residue_prevcrop = r2a_prevcrop$icrag + r2a_prevcrop$icrt,
     residue_prevcrop_used = (r2a_prevcrop$icrag + r2a_prevcrop$icrt) > 0
@@ -131,7 +174,7 @@ with average and standard deviation) are provided for 10 experiments
   d2_tillage <- data.frame(
     trial_id = r2a_tillage$exname,
     land_prep_traction = r2a_tillage$text,
-    tillage_date = r2a_tillage$`yyyy-mm-dd`,
+    land_prep_date = r2a_tillage$`yyyy-mm-dd`,
     tillage_depth = r2a_tillage$cm
   )
   d2_planting <- data.frame(
@@ -141,7 +184,7 @@ with average and standard deviation) are provided for 10 experiments
     variety_type = r2a_planting$text...12,
     plant_density = r2a_planting$`#/m2` * 10000,
     row_spacing = r2a_planting$cm,
-    planting_depth = r2a_planting$mm
+    planting_depth = r2a_planting$mm / 10  # mm -> cm
   )
   d2_summary <- data.frame(
     trial_id = r2a_summary$exname,
@@ -150,32 +193,28 @@ with average and standard deviation) are provided for 10 experiments
     maturity_date = r2a_summary$mdat
   )
   
-  d2a <- Reduce(function(x, y) merge(x, y, by = "trial_id"),
+  d2a <- Reduce(function(x, y) merge(x, y, by = "trial_id", all.x = TRUE),
                 list(d2_exp, d2_prevcrop, d2_tillage, d2_planting, d2_summary))
   
-  # single confirmed facts (explicit "!No fertiliser" / "!No organic amendment" in source)
   d2a$crop <- "maize"
   d2a$irrigated <- FALSE
+  # explicit "!No fertiliser" / "!No organic amendment" in source: zero, not unknown
   d2a$OM_used <- FALSE
-  d2a$N_organic <- NA
-  d2a$P_organic <- NA
-  d2a$K_organic <- NA
-  d2a$N_fertilizer <- NA
-  d2a$P_fertilizer <- NA
-  d2a$K_fertilizer <- NA
-  d2a$N_splits <- NA
-  d2a$fertilizer_amount <- NA
-  d2a$fertilization_method <- NA
+  d2a$N_organic <- 0
+  d2a$P_organic <- 0
+  d2a$K_organic <- 0
+  d2a$N_fertilizer <- 0
+  d2a$P_fertilizer <- 0
+  d2a$K_fertilizer <- 0
+  d2a$N_splits <- 0L
+  d2a$fertilizer_amount <- 0
+  d2a$fertilization_method <- "none"
   
-  # soil for BEOU - kept SEPARATE, combined across sites later
-  r2b_beou <- data.frame(
-    location_id = "BEOU",
-    soil_id = "BEOU150001",
+  # soil profile for BEOU - kept separate, combined across sites later
+  d2_soil <- data.frame(
+    trial_id = "BEOU150001",   # soil_id, remapped to the trials below
+    depth = r2b_layers$sllb,
     soil_texture = r2b_profile$sltx,
-    max_rooting_depth = 60,   # source profile row: "Maximum rooting depth"
-    max_water_depth = 60,     # "Maximum water measurement depth"
-    max_N_depth = 60,         # "Maximum Nitrogen measurement depth"
-    depth = r2b_layers$sllb,  # each layer's own sample depth - distinct from the 3 max-depths above
     soil_bd     = r2b_layers$slbdm,
     soil_SOC    = r2b_layers$sloc,
     soil_clay   = r2b_layers$slcly,
@@ -185,40 +224,42 @@ with average and standard deviation) are provided for 10 experiments
     soil_P      = r2b_layers$slpx,
     soil_K_exch = r2b_layers$slke,
     soil_pH     = r2b_layers$slhw,
-    soil_N      = r2b_layers$slni * 10000,
-    soil_FC     = r2b_layers$sldul,
-    soil_PWP    = r2b_layers$slll,
-    soil_saturation = r2b_layers$slsat
+    soil_N_total = r2b_layers$slni * 10000,  # % -> mg/kg
+    soil_FC     = r2b_layers$sldul,          # cm3/cm3 (no unit in terminag)
+    soil_PWP    = r2b_layers$slll,           # cm3/cm3
+    soil_SP     = r2b_layers$slsat * 100     # cm3/cm3 -> %
   )
   
-  # weather for BEOU - kept SEPARATE, combined across sites later
-  r2c_beou <- data.frame(
+  # weather for BEOU - kept separate, combined across sites later
+  d2_weather <- data.frame(
     location_id = "BEOU",
+    country = "Benin",
+    station_id = r2c_station$wst_id,
+    longitude = r2c_station$wst_long,
+    latitude = r2c_station$wst_lat,
+    elevation = r2c_station$wst_elev,
     date = r2c_daily$w_date,
     tmax = r2c_daily$tmax,
     tmin = r2c_daily$tmin,
     prec = r2c_daily$rain,
     srad = r2c_daily$srad,
-    wspd = r2c_daily$wind /86.4,  # km/d -> m/s
+    wspd = r2c_daily$wind / 86.4,  # km/d -> m/s
     rhum = r2c_daily$rhum
   )
   
   # initial conditions (iclayers) - depth-resolved, one date per experiment
-  r2_iclayers_long <- data.frame(
+  d2_iclayers <- data.frame(
     trial_id = r2a_iclayers$exname,
-    location_id = "BEOU",
     depth = r2a_iclayers$`icbl...2`,
-    date = d2_prevcrop$soil_sample_date[match(r2a_iclayers$exname, d2_prevcrop$trial_id)],
+    date = r2a_prevcrop$icdat[match(r2a_iclayers$exname, r2a_prevcrop$exname)],
     soil_NH4 = r2a_iclayers$icnh4,
     soil_NO3 = r2a_iclayers$icno3,
-    soil_GWC = r2a_iclayers$ich2o / r2b_layers$slbdm[match(r2a_iclayers$`icbl...2`, r2b_layers$sllb)]
+    soil_VWC = r2a_iclayers$ich2o  # cm3/cm3
   )
-  
   
   ############################################################
   # ETBA (Ethiopia)
   ############################################################
-  #Reading small tables for Ethiopia
   r3a_exp      <- carobiner::read.excel(f3, sheet="Field-mgmt", skip=19, n_max=2)
   
   r3a_prevcrop <- carobiner::read.excel(f3, sheet="Field-mgmt", skip=27, n_max=2)
@@ -243,6 +284,7 @@ with average and standard deviation) are provided for 10 experiments
   names(fert_totals_3) <- c("trial_id", "N_fertilizer", "P_fertilizer", "K_fertilizer")
   n_splits_3 <- aggregate(`kg[N]/ha` ~ exname, data = r3a_fert[r3a_fert$`kg[N]/ha` > 0, ], length)
   names(n_splits_3) <- c("trial_id", "N_splits")
+  # product weight from elemental N and the product N fraction (DAP 18% N, urea 46% N)
   r3a_fert$product_kg <- ifelse(r3a_fert$`!Fertilizer type - code signification` == "Di-ammonium Phosphate", r3a_fert$`kg[N]/ha` / 0.18,
                                 ifelse(r3a_fert$`!Fertilizer type - code signification` == "Urea", r3a_fert$`kg[N]/ha` / 0.46, NA))
   fert_amount_3 <- aggregate(product_kg ~ exname, data = r3a_fert, sum)
@@ -260,13 +302,12 @@ with average and standard deviation) are provided for 10 experiments
   r3c_station <- carobiner::read.excel(f3, sheet="Weather", skip=3, n_max=1)
   r3c_daily   <- carobiner::read.excel(f3, sheet="Weather", skip=9, n_max=730)
   r3c_daily$w_date <- as.Date(r3c_daily$w_date)
-  r3c_daily$exname <- ifelse(r3c_daily$`!YEAR` == 2013, "ETBA1301", "ETBA1401")
   
   d3_exp <- data.frame(
     trial_id  = r3a_exp$exname,
     location_id = "ETBA",
     country   = "Ethiopia",
-    location  = tools::toTitleCase(tolower(r3a_exp$site_name[1])),
+    location  = carobiner::fix_name(tolower(r3a_exp$site_name[1]), "title"),
     latitude  = r3a_exp$fl_lat,
     longitude = r3a_exp$fl_long,
     elevation = r3a_exp$flele,
@@ -278,7 +319,6 @@ with average and standard deviation) are provided for 10 experiments
   )
   d3_prevcrop <- data.frame(
     trial_id = r3a_prevcrop$exname,
-    soil_sample_date = r3a_prevcrop$icdat,
     previous_crop = tolower(r3a_prevcrop$`!...5`),
     residue_prevcrop = r3a_prevcrop$icrag + r3a_prevcrop$icrt,
     residue_prevcrop_used = (r3a_prevcrop$icrag + r3a_prevcrop$icrt) > 0
@@ -286,45 +326,42 @@ with average and standard deviation) are provided for 10 experiments
   d3_tillage <- data.frame(
     trial_id = r3a_tillage$exname,
     land_prep_traction = r3a_tillage$text,
-    tillage_date = r3a_tillage$`yyyy-mm-dd`,
+    land_prep_date = r3a_tillage$`yyyy-mm-dd`,
     tillage_depth = r3a_tillage$cm
   )
   d3_planting <- data.frame(
     trial_id = r3a_planting$exname,
     planting_date = r3a_planting$`yyyy-mm-dd`,
-    variety = "ETBA_CUL",
-    variety_type = "Hybrid",
+    variety = "ETBA_CUL",  # cultivar code used in the dataset; a hybrid (Falconnier et al. 2020)
+    variety_type = "hybrid",
     plant_density = r3a_planting$`#/m2` * 10000,
     row_spacing = r3a_planting$cm,
-    planting_depth = r3a_planting$mm
+    planting_depth = r3a_planting$mm / 10  # mm -> cm
   )
   d3_summary <- data.frame(
     trial_id = r3a_summary$exname,
-    emergence_date = as.Date(NA),  # not recorded at ETBA
     flowering_date = r3a_summary$adat,
     maturity_date = r3a_summary$mdat
   )
   
-  d3a <- Reduce(function(x, y) merge(x, y, by = "trial_id"),
+  d3a <- Reduce(function(x, y) merge(x, y, by = "trial_id", all.x = TRUE),
                 list(d3_exp, d3_prevcrop, d3_tillage, d3_planting, d3_summary,
                      fert_totals_3, n_splits_3, fert_amount_3))
   
+  d3a$emergence_date <- as.Date(NA)  # not recorded at ETBA
   d3a$crop <- "maize"
   d3a$irrigated <- FALSE
   d3a$OM_used <- FALSE
-  d3a$N_organic <- NA
-  d3a$P_organic <- NA
-  d3a$K_organic <- NA
-  d3a$fertilization_method <- "Broadcast, incorporated"
+  # no organic amendment applied
+  d3a$N_organic <- 0
+  d3a$P_organic <- 0
+  d3a$K_organic <- 0
+  d3a$fertilization_method <- "broadcast; incorporated"
   
-  r3b_etba <- data.frame(
-    location_id = "ETBA",
-    soil_id = "ETBA140001",
-    soil_texture = r3b_profile$sltx,
-    max_rooting_depth = 120,
-    max_water_depth = 100,
-    max_N_depth = 0,
+  d3_soil <- data.frame(
+    trial_id = "ETBA140001",
     depth = r3b_layers$sllb,
+    soil_texture = r3b_profile$sltx,
     soil_bd     = r3b_layers$slbdm,
     soil_SOC    = r3b_layers$sloc,
     soil_clay   = r3b_layers$slcly,
@@ -334,37 +371,40 @@ with average and standard deviation) are provided for 10 experiments
     soil_P      = r3b_layers$slpx,
     soil_K_exch = r3b_layers$slke,
     soil_pH     = r3b_layers$slhw,
-    soil_N      = r3b_layers$slni * 10000,
+    soil_N_total = r3b_layers$slni * 10000,
     soil_FC     = r3b_layers$sldul,
     soil_PWP    = r3b_layers$slll,
-    soil_saturation = r3b_layers$slsat
+    soil_SP     = r3b_layers$slsat * 100
   )
   
-  r3c_etba <- data.frame(
+  d3_weather <- data.frame(
     location_id = "ETBA",
+    country = "Ethiopia",
+    station_id = r3c_station$wst_id,
+    longitude = r3c_station$wst_long,
+    latitude = r3c_station$wst_lat,
+    elevation = r3c_station$wst_elev,
     date = r3c_daily$w_date,
     tmax = r3c_daily$tmax,
     tmin = r3c_daily$tmin,
     prec = r3c_daily$rain,
     srad = r3c_daily$srad,
-    wspd = r3c_daily$wind/86.4,  # km/d -> m/s,
+    wspd = r3c_daily$wind / 86.4,  # km/d -> m/s
     rhum = r3c_daily$rhum
   )
   
-  r3_iclayers_long <- data.frame(
+  d3_iclayers <- data.frame(
     trial_id = r3a_iclayers$exname,
-    location_id = "ETBA",
     depth = r3a_iclayers$icbl,
-    date = d3_prevcrop$soil_sample_date[match(r3a_iclayers$exname, d3_prevcrop$trial_id)],
+    date = r3a_prevcrop$icdat[match(r3a_iclayers$exname, r3a_prevcrop$exname)],
     soil_NH4 = r3a_iclayers$icnh4,
     soil_NO3 = r3a_iclayers$icno3,
-    soil_GWC = r3a_iclayers$ich2o / r3b_layers$slbdm[match(r3a_iclayers$icbl, r3b_layers$sllb)]
+    soil_VWC = r3a_iclayers$ich2o
   )
   
   ############################################################
   # GHKP (Ghana)
   ############################################################
-  # Reading small tables for Ghana
   r4a_exp      <- carobiner::read.excel(f4, sheet="Field-mgmt", skip=19, n_max=2)
   r4a_prevcrop <- carobiner::read.excel(f4, sheet="Field-mgmt", skip=27, n_max=2)
   r4a_prevcrop$exname <- ifelse(r4a_prevcrop$`!...1` == 1, "GHKP0801", "GHKP0901")
@@ -381,6 +421,8 @@ with average and standard deviation) are provided for 10 experiments
   
   r4a_fert <- carobiner::read.excel(f4, sheet="Field-mgmt", skip=64, n_max=8)
   r4a_fert$exname <- ifelse(r4a_fert$`%` == 1, "GHKP0801", "GHKP0901")
+  # product weight from the elemental rate and product nutrient fraction
+  # (urea 46% N, TSP 19.23% P, MOP 49.8% K)
   r4a_fert$product_kg <- ifelse(r4a_fert$`!Fertilizer type - code signification` == "Urea", r4a_fert$`kg[N]/ha` / 0.46,
                                 ifelse(r4a_fert$`!Fertilizer type - code signification` == "Triple Super Phosphate", r4a_fert$`kg[P]/ha` / 0.1923,
                                        r4a_fert$`kg[K]/ha` / 0.498))
@@ -404,13 +446,12 @@ with average and standard deviation) are provided for 10 experiments
   r4c_station <- carobiner::read.excel(f4, sheet="Weather", skip=3, n_max=1)
   r4c_daily <- carobiner::read.excel(f4, sheet="Weather", skip=9, n_max=730)
   r4c_daily$w_date <- as.Date(r4c_daily$w_date)
-  r4c_daily$exname <- ifelse(r4c_daily$`!YEAR` == 2008, "GHKP0801", "GHKP0901")
   
   d4_exp <- data.frame(
     trial_id  = r4a_exp$exname,
     location_id = "GHKP",
     country   = "Ghana",
-    location  = tools::toTitleCase(tolower(r4a_exp$site_name[1])),
+    location  = carobiner::fix_name(tolower(r4a_exp$site_name[1]), "title"),
     latitude  = r4a_exp$fl_lat,
     longitude = r4a_exp$fl_long,
     elevation = r4a_exp$flele,
@@ -422,7 +463,6 @@ with average and standard deviation) are provided for 10 experiments
   )
   d4_prevcrop <- data.frame(
     trial_id = r4a_prevcrop$exname,
-    soil_sample_date = r4a_prevcrop$icdat,
     previous_crop = tolower(r4a_prevcrop$`!...5`),
     residue_prevcrop = r4a_prevcrop$icrag + r4a_prevcrop$icrt,
     residue_prevcrop_used = (r4a_prevcrop$icrag + r4a_prevcrop$icrt) > 0
@@ -430,11 +470,11 @@ with average and standard deviation) are provided for 10 experiments
   d4_planting <- data.frame(
     trial_id = r4a_planting$exname,
     planting_date = r4a_planting$`yyyy-mm-dd`,
-    variety = "GHKP_CUL",
-    variety_type = "Open Pollinated Variety (OPV)",
+    variety = "GHKP_CUL",  # cultivar code used in the dataset; an OPV (Falconnier et al. 2020)
+    variety_type = "OPV",
     plant_density = r4a_planting$`#/m2` * 10000,
     row_spacing = r4a_planting$cm,
-    planting_depth = r4a_planting$mm
+    planting_depth = r4a_planting$mm / 10  # mm -> cm
   )
   d4_summary <- data.frame(
     trial_id = r4a_summary$exname,
@@ -443,31 +483,28 @@ with average and standard deviation) are provided for 10 experiments
     maturity_date = r4a_summary$mdat
   )
   
-  d4a <- Reduce(function(x, y) merge(x, y, by = "trial_id"),
+  d4a <- Reduce(function(x, y) merge(x, y, by = "trial_id", all.x = TRUE),
                 list(d4_exp, d4_prevcrop, d4_planting, d4_summary,
                      fert_totals_4, n_splits_4, fert_amount_4))
   
   # no tillage at GHKP - confirmed "!No Tillage" in source
   d4a$land_prep_traction <- NA
-  d4a$tillage_date <- as.Date(NA)
+  d4a$land_prep_date <- as.Date(NA)
   d4a$tillage_depth <- NA
   
   d4a$crop <- "maize"
   d4a$irrigated <- FALSE
   d4a$OM_used <- FALSE
-  d4a$N_organic <- NA
-  d4a$P_organic <- NA
-  d4a$K_organic <- NA
-  d4a$fertilization_method <- "Broadcast, incorporated"
+  # no organic amendment applied
+  d4a$N_organic <- 0
+  d4a$P_organic <- 0
+  d4a$K_organic <- 0
+  d4a$fertilization_method <- "broadcast; incorporated"
   
-  r4b_ghkp <- data.frame(
-    location_id = "GHKP",
-    soil_id = r4b_layers$soil_id,
-    soil_texture = r4b_profile$sltx[match(r4b_layers$soil_id, ifelse(r4b_profile$`%`=="A","GHKP080001","GHKP090001"))],
-    max_rooting_depth = 100,
-    max_water_depth = 100,
-    max_N_depth = 100,
+  d4_soil <- data.frame(
+    trial_id = r4b_layers$soil_id,
     depth = r4b_layers$sllb,
+    soil_texture = r4b_profile$sltx[match(r4b_layers$soil_id, ifelse(r4b_profile$`%`=="A","GHKP080001","GHKP090001"))],
     soil_bd     = r4b_layers$slbdm,
     soil_SOC    = r4b_layers$sloc,
     soil_clay   = r4b_layers$slcly,
@@ -477,39 +514,40 @@ with average and standard deviation) are provided for 10 experiments
     soil_P      = r4b_layers$slpx,
     soil_K_exch = r4b_layers$slke,
     soil_pH     = r4b_layers$slhw,
-    soil_N      = r4b_layers$slni * 10000,
+    soil_N_total = r4b_layers$slni * 10000,
     soil_FC     = r4b_layers$sldul,
     soil_PWP    = r4b_layers$slll,
-    soil_saturation = r4b_layers$slsat
+    soil_SP     = r4b_layers$slsat * 100
   )
   
-  r4c_ghkp <- data.frame(
+  d4_weather <- data.frame(
     location_id = "GHKP",
+    country = "Ghana",
+    station_id = r4c_station$wst_id,
+    longitude = r4c_station$wst_long,
+    latitude = r4c_station$wst_lat,
+    elevation = r4c_station$wst_elev,
     date = r4c_daily$w_date,
     tmax = r4c_daily$tmax,
     tmin = r4c_daily$tmin,
     prec = r4c_daily$rain,
     srad = r4c_daily$srad,
-    wspd = r4c_daily$wind/86.4,  # km/d -> m/s,
+    wspd = r4c_daily$wind / 86.4,  # km/d -> m/s
     rhum = r4c_daily$rhum
   )
   
-  r4_iclayers_long <- data.frame(
+  d4_iclayers <- data.frame(
     trial_id = r4a_iclayers$exname,
-    location_id = "GHKP",
     depth = r4a_iclayers$`icbl...2`,
-    date = d4_prevcrop$soil_sample_date[match(r4a_iclayers$exname, d4_prevcrop$trial_id)],
+    date = r4a_prevcrop$icdat[match(r4a_iclayers$exname, r4a_prevcrop$exname)],
     soil_NH4 = r4a_iclayers$icnh4,
     soil_NO3 = r4a_iclayers$icno3,
-    soil_GWC = r4a_iclayers$ich2o / r4b_layers$slbdm[match(
-      paste(ifelse(r4a_iclayers$exname=="GHKP0801","GHKP080001","GHKP090001"), r4a_iclayers$`icbl...2`),
-      paste(r4b_layers$soil_id, r4b_layers$sllb))]
+    soil_VWC = r4a_iclayers$ich2o
   )
   
   ############################################################
   # MANT (Mali)
   ############################################################
-  #Reading small tables for Mali
   r5a_exp      <- carobiner::read.excel(f5, sheet="Field-mgmt", skip=19, n_max=2)
   r5a_prevcrop <- carobiner::read.excel(f5, sheet="Field-mgmt", skip=27, n_max=2)
   r5a_prevcrop$exname <- ifelse(r5a_prevcrop$`!...1` == 1, "MANT1001", "MANT0901")
@@ -529,6 +567,7 @@ with average and standard deviation) are provided for 10 experiments
   r5a_organic <- carobiner::read.excel(f5, sheet="Field-mgmt", skip=64, n_max=3)
   r5a_organic$exname <- ifelse(r5a_organic$`%...1` == 1, "MANT1001", "MANT0901")
   r5a_organic$`yyyy-mm-dd` <- as.Date(r5a_organic$`yyyy-mm-dd`)
+  # nutrient content of the organic amendment is given as % in the source
   r5a_organic$N_organic_kg <- r5a_organic$`kg/ha` * r5a_organic$`%...15` / 100
   r5a_organic$P_organic_kg <- r5a_organic$`kg/ha` * r5a_organic$`%...17` / 100
   r5a_organic$K_organic_kg <- r5a_organic$`kg/ha` * r5a_organic$`%...19` / 100
@@ -540,6 +579,7 @@ with average and standard deviation) are provided for 10 experiments
   names(fert_totals_5) <- c("trial_id", "N_fertilizer", "P_fertilizer", "K_fertilizer")
   n_splits_5 <- aggregate(`kg[N]/ha` ~ exname, data = r5a_fert[r5a_fert$`kg[N]/ha` > 0, ], length)
   names(n_splits_5) <- c("trial_id", "N_splits")
+  # product weight only computable for urea (46% N); other products lack a stated fraction
   r5a_fert$product_kg <- ifelse(r5a_fert$`!Fertilizer type - code signification` == "Urea", r5a_fert$`kg[N]/ha` / 0.46, NA)
   fert_amount_5 <- aggregate(product_kg ~ exname, data = r5a_fert, sum, na.rm = TRUE)
   names(fert_amount_5) <- c("trial_id", "fertilizer_amount")
@@ -556,13 +596,12 @@ with average and standard deviation) are provided for 10 experiments
   r5c_station <- carobiner::read.excel(f5, sheet="Weather", skip=3, n_max=1)
   r5c_daily   <- carobiner::read.excel(f5, sheet="Weather", skip=9, n_max=730)
   r5c_daily$w_date <- as.Date(r5c_daily$w_date)
-  r5c_daily$exname <- ifelse(r5c_daily$`!YEAR` == 2009, "MANT0901", "MANT1001")
   
   d5_exp <- data.frame(
     trial_id  = r5a_exp$exname,
     location_id = "MANT",
     country   = "Mali",
-    location  = tools::toTitleCase(tolower(r5a_exp$site_name[1])),
+    location  = carobiner::fix_name(tolower(r5a_exp$site_name[1]), "title"),
     latitude  = r5a_exp$fl_lat,
     longitude = r5a_exp$fl_long,
     elevation = r5a_exp$flele,
@@ -574,7 +613,6 @@ with average and standard deviation) are provided for 10 experiments
   )
   d5_prevcrop <- data.frame(
     trial_id = r5a_prevcrop$exname,
-    soil_sample_date = r5a_prevcrop$icdat,
     previous_crop = tolower(r5a_prevcrop$`!...5`),
     residue_prevcrop = r5a_prevcrop$icrag + r5a_prevcrop$icrt,
     residue_prevcrop_used = (r5a_prevcrop$icrag + r5a_prevcrop$icrt) > 0
@@ -582,17 +620,17 @@ with average and standard deviation) are provided for 10 experiments
   d5_tillage <- data.frame(
     trial_id = r5a_tillage$exname,
     land_prep_traction = r5a_tillage$text,
-    tillage_date = r5a_tillage$`yyyy-mm-dd`,
+    land_prep_date = r5a_tillage$`yyyy-mm-dd`,
     tillage_depth = r5a_tillage$cm
   )
   d5_planting <- data.frame(
     trial_id = r5a_planting$exname,
     planting_date = r5a_planting$`yyyy-mm-dd`,
-    variety = "MANT_CUL",
-    variety_type = "Open Pollinated Variety (OPV)",
+    variety = "MANT_CUL",  # cultivar code used in the dataset; an OPV (Falconnier et al. 2020)
+    variety_type = "OPV",
     plant_density = r5a_planting$`#/m2` * 10000,
     row_spacing = r5a_planting$cm,
-    planting_depth = r5a_planting$mm
+    planting_depth = r5a_planting$mm / 10  # mm -> cm
   )
   d5_organic <- data.frame(
     trial_id = r5a_organic$exname,
@@ -603,27 +641,23 @@ with average and standard deviation) are provided for 10 experiments
   )
   d5_summary <- data.frame(
     trial_id = r5a_summary$exname,
-    emergence_date = as.Date(NA),  # not recorded at MANT
     flowering_date = r5a_summary$adat,
     maturity_date = r5a_summary$mdat
   )
   
-  d5a <- Reduce(function(x, y) merge(x, y, by = "trial_id"),
+  d5a <- Reduce(function(x, y) merge(x, y, by = "trial_id", all.x = TRUE),
                 list(d5_exp, d5_prevcrop, d5_tillage, d5_planting, d5_organic, d5_summary,
                      fert_totals_5, n_splits_5, fert_amount_5))
   
+  d5a$emergence_date <- as.Date(NA)  # not recorded at MANT
   d5a$crop <- "maize"
   d5a$irrigated <- FALSE
-  d5a$fertilization_method <- "Broadcast, incorporated"
+  d5a$fertilization_method <- "broadcast; incorporated"
   
-  r5b_mant <- data.frame(
-    location_id = "MANT",
-    soil_id = "MANT100001",
-    soil_texture = r5b_profile$sltx,
-    max_rooting_depth = 120,
-    max_water_depth = 80,
-    max_N_depth = 0,
+  d5_soil <- data.frame(
+    trial_id = "MANT100001",
     depth = r5b_layers$sllb,
+    soil_texture = r5b_profile$sltx,
     soil_bd     = r5b_layers$slbdm,
     soil_SOC    = r5b_layers$sloc,
     soil_clay   = r5b_layers$slcly,
@@ -633,37 +667,40 @@ with average and standard deviation) are provided for 10 experiments
     soil_P      = r5b_layers$slpx,
     soil_K_exch = r5b_layers$slke,
     soil_pH     = r5b_layers$slhw,
-    soil_N      = r5b_layers$slni * 10000,
+    soil_N_total = r5b_layers$slni * 10000,
     soil_FC     = r5b_layers$sldul,
     soil_PWP    = r5b_layers$slll,
-    soil_saturation = r5b_layers$slsat
+    soil_SP     = r5b_layers$slsat * 100
   )
   
-  r5c_mant <- data.frame(
+  d5_weather <- data.frame(
     location_id = "MANT",
+    country = "Mali",
+    station_id = r5c_station$wst_id,
+    longitude = r5c_station$wst_long,
+    latitude = r5c_station$wst_lat,
+    elevation = r5c_station$wst_elev,
     date = r5c_daily$w_date,
     tmax = r5c_daily$tmax,
     tmin = r5c_daily$tmin,
     prec = r5c_daily$rain,
     srad = r5c_daily$srad,
-    wspd = r5c_daily$wind/86.4,  # km/d -> m/s,
+    wspd = r5c_daily$wind / 86.4,  # km/d -> m/s
     rhum = r5c_daily$rhum
   )
   
-  r5_iclayers_long <- data.frame(
+  d5_iclayers <- data.frame(
     trial_id = r5a_iclayers$exname,
-    location_id = "MANT",
     depth = r5a_iclayers$icbl,
-    date = d5_prevcrop$soil_sample_date[match(r5a_iclayers$exname, d5_prevcrop$trial_id)],
+    date = r5a_prevcrop$icdat[match(r5a_iclayers$exname, r5a_prevcrop$exname)],
     soil_NH4 = r5a_iclayers$icnh4,
     soil_NO3 = r5a_iclayers$icno3,
-    soil_GWC = r5a_iclayers$ich2o / r5b_layers$slbdm[match(r5a_iclayers$icbl, r5b_layers$sllb)]
+    soil_VWC = r5a_iclayers$ich2o
   )
   
   ############################################################
   # RWBU (Rwanda)
   ############################################################
-  # Reading small tables for Rwanda
   r6a_exp      <- carobiner::read.excel(f6, sheet="Field-mgmt", skip=19, n_max=2)
   r6a_prevcrop <- carobiner::read.excel(f6, sheet="Field-mgmt", skip=27, n_max=2)
   r6a_prevcrop$exname <- ifelse(r6a_prevcrop$`!...1` == 1, "RWBU1501", "RWBU1401")
@@ -688,6 +725,7 @@ with average and standard deviation) are provided for 10 experiments
   names(fert_totals_6) <- c("trial_id", "N_fertilizer", "P_fertilizer", "K_fertilizer")
   n_splits_6 <- aggregate(`kg[N]/ha` ~ exname, data = r6a_fert[r6a_fert$`kg[N]/ha` > 0, ], length)
   names(n_splits_6) <- c("trial_id", "N_splits")
+  # product weight from elemental N and the product N fraction (DAP 18% N, urea 46% N)
   r6a_fert$product_kg <- ifelse(r6a_fert$`!Fertilizer type - code signification` == "Di-ammonium Phosphate", r6a_fert$`kg[N]/ha` / 0.18,
                                 ifelse(r6a_fert$`!Fertilizer type - code signification` == "Urea", r6a_fert$`kg[N]/ha` / 0.46, NA))
   fert_amount_6 <- aggregate(product_kg ~ exname, data = r6a_fert, sum)
@@ -705,21 +743,12 @@ with average and standard deviation) are provided for 10 experiments
   r6c_station <- carobiner::read.excel(f6, sheet="Weather", skip=3, n_max=1)
   r6c_daily   <- carobiner::read.excel(f6, sheet="Weather", skip=9, n_max=867)
   r6c_daily$w_date <- as.Date(r6c_daily$w_date)
-  # RWBU's two seasons cross a calendar-year boundary and the weather
-  # record runs well beyond both (station kept recording after the
-  # second harvest) - each day is assigned to a season only if it falls
-  # within that season's real planting-to-maturity window; everything
-  # else stays NA rather than being force-assigned to whichever season
-  # happens to be "most recent"
-  r6c_daily$exname <- NA
-  r6c_daily$exname[r6c_daily$w_date >= as.Date("2013-09-24") & r6c_daily$w_date <= as.Date("2014-01-22")] <- "RWBU1401"
-  r6c_daily$exname[r6c_daily$w_date >= as.Date("2014-10-09") & r6c_daily$w_date <= as.Date("2015-02-04")] <- "RWBU1501"
   
   d6_exp <- data.frame(
     trial_id  = r6a_exp$exname,
     location_id = "RWBU",
     country   = "Rwanda",
-    location  = tools::toTitleCase(tolower(r6a_exp$site_name[1])),
+    location  = carobiner::fix_name(tolower(r6a_exp$site_name[1]), "title"),
     latitude  = r6a_exp$fl_lat,
     longitude = r6a_exp$fl_long,
     elevation = r6a_exp$flele,
@@ -727,11 +756,10 @@ with average and standard deviation) are provided for 10 experiments
     is_survey = FALSE,
     on_farm = TRUE,
     treatment = r6a_exp$TRT_NAME[1],
-    station_id = r6a_exp$wst_id[1] 
+    station_id = r6a_exp$wst_id[1]
   )
   d6_prevcrop <- data.frame(
     trial_id = r6a_prevcrop$exname,
-    soil_sample_date = r6a_prevcrop$icdat,
     previous_crop = tolower(r6a_prevcrop$`!...5`),
     residue_prevcrop = r6a_prevcrop$icrag + r6a_prevcrop$icrt,
     residue_prevcrop_used = (r6a_prevcrop$icrag + r6a_prevcrop$icrt) > 0
@@ -739,45 +767,42 @@ with average and standard deviation) are provided for 10 experiments
   d6_tillage <- data.frame(
     trial_id = r6a_tillage$exname,
     land_prep_traction = r6a_tillage$text,
-    tillage_date = r6a_tillage$`yyyy-mm-dd`,
+    land_prep_date = r6a_tillage$`yyyy-mm-dd`,
     tillage_depth = r6a_tillage$cm
   )
   d6_planting <- data.frame(
     trial_id = r6a_planting$exname,
     planting_date = r6a_planting$`yyyy-mm-dd`,
-    variety = "RWBU_CUL",
-    variety_type = "Open Pollinated Variety (OPV)",
+    variety = "RWBU_CUL",  # cultivar code used in the dataset; an OPV (Falconnier et al. 2020)
+    variety_type = "OPV",
     plant_density = r6a_planting$`#/m2` * 10000,
     row_spacing = r6a_planting$cm,
-    planting_depth = r6a_planting$mm
+    planting_depth = r6a_planting$mm / 10  # mm -> cm
   )
   d6_summary <- data.frame(
     trial_id = r6a_summary$exname,
-    emergence_date = as.Date(NA),
     flowering_date = r6a_summary$adat,
     maturity_date = r6a_summary$mdat
   )
   
-  d6a <- Reduce(function(x, y) merge(x, y, by = "trial_id"),
+  d6a <- Reduce(function(x, y) merge(x, y, by = "trial_id", all.x = TRUE),
                 list(d6_exp, d6_prevcrop, d6_tillage, d6_planting, d6_summary,
                      fert_totals_6, n_splits_6, fert_amount_6))
   
+  d6a$emergence_date <- as.Date(NA)  # not recorded at RWBU
   d6a$crop <- "maize"
   d6a$irrigated <- FALSE
   d6a$OM_used <- FALSE
-  d6a$N_organic <- NA
-  d6a$P_organic <- NA
-  d6a$K_organic <- NA
-  d6a$fertilization_method <- "Broadcast, incorporated"
+  # no organic amendment applied
+  d6a$N_organic <- 0
+  d6a$P_organic <- 0
+  d6a$K_organic <- 0
+  d6a$fertilization_method <- "broadcast; incorporated"
   
-  r6b_rwbu <- data.frame(
-    location_id = "RWBU",
-    soil_id = "RWBU",
-    soil_texture = r6b_profile$sltx,
-    max_rooting_depth = 100,
-    max_water_depth = 100,
-    max_N_depth = 0,
+  d6_soil <- data.frame(
+    trial_id = "RWBU",   # RWBU soil_id does not follow the SITEyyNNNN pattern used elsewhere
     depth = r6b_layers$sllb,
+    soil_texture = r6b_profile$sltx,
     soil_bd     = r6b_layers$slbdm,
     soil_SOC    = r6b_layers$sloc,
     soil_clay   = r6b_layers$slcly,
@@ -787,58 +812,83 @@ with average and standard deviation) are provided for 10 experiments
     soil_P      = r6b_layers$slpx,
     soil_K_exch = r6b_layers$slke,
     soil_pH     = r6b_layers$slhw,
-    soil_N      = r6b_layers$slni * 10000,
+    soil_N_total = r6b_layers$slni * 10000,
     soil_FC     = r6b_layers$sldul,
     soil_PWP    = r6b_layers$slll,
-    soil_saturation = r6b_layers$slsat
+    soil_SP     = r6b_layers$slsat * 100
   )
   
-  r6c_rwbu <- data.frame(
+  d6_weather <- data.frame(
     location_id = "RWBU",
+    country = "Rwanda",
+    station_id = r6c_station$wst_id,
+    longitude = r6c_station$wst_long,
+    latitude = r6c_station$wst_lat,
+    elevation = r6c_station$wst_elev,
     date = r6c_daily$w_date,
     tmax = r6c_daily$tmax,
     tmin = r6c_daily$tmin,
     prec = r6c_daily$rain,
     srad = r6c_daily$srad,
-    wspd = r6c_daily$wind/86.4,  # km/d -> m/s,
+    wspd = r6c_daily$wind / 86.4,  # km/d -> m/s
     rhum = r6c_daily$rhum
   )
   
   # RWBU icnh4/icno3 are NA throughout - genuine source gap, not a read error
-  r6_iclayers_long <- data.frame(
+  d6_iclayers <- data.frame(
     trial_id = r6a_iclayers$exname,
-    location_id = "RWBU",
     depth = r6a_iclayers$icbl,
-    date = d6_prevcrop$soil_sample_date[match(r6a_iclayers$exname, d6_prevcrop$trial_id)],
-    soil_NH4 = NA,
-    soil_NO3 = NA,
-    soil_GWC = r6a_iclayers$ich2o / r6b_layers$slbdm[match(r6a_iclayers$icbl, r6b_layers$sllb)]
+    date = r6a_prevcrop$icdat[match(r6a_iclayers$exname, r6a_prevcrop$exname)],
+    soil_NH4 = as.numeric(NA),
+    soil_NO3 = as.numeric(NA),
+    soil_VWC = r6a_iclayers$ich2o
   )
   
   ############################################################
-  # Combine field management, soil, and weather across all 5 sites
+  # Combine field management, soil profiles, and weather across all 5 sites
   ############################################################
   
-  d_fieldmgmt <- rbind(d2a, d3a, d4a, d5a, d6a)
-  d_soil      <- rbind(r2b_beou, r3b_etba, r4b_ghkp, r5b_mant, r6b_rwbu)
-  d_weather   <- rbind(r2c_beou, r3c_etba, r4c_ghkp, r5c_mant, r6c_rwbu)
+  d <- rbind(d2a, d3a, d4a, d5a, d6a)
+  d_weather   <- rbind(d2_weather, d3_weather, d4_weather, d5_weather, d6_weather)
+  
+  # static soil profiles: map the soil_id used above to the trial(s) it describes
+  d_soilprofile <- rbind(d2_soil, d3_soil, d4_soil, d5_soil, d6_soil)
+  soil_trials <- data.frame(
+    trial_id = c("BEOU150001","BEOU150001", "ETBA140001","ETBA140001",
+                 "GHKP080001","GHKP090001", "MANT100001","MANT100001", "RWBU","RWBU"),
+    new_id = c("BEOU1401","BEOU1501", "ETBA1301","ETBA1401",
+               "GHKP0801","GHKP0901", "MANT0901","MANT1001", "RWBU1401","RWBU1501")
+  )
+  d_soilprofile <- merge(d_soilprofile, soil_trials, by = "trial_id")
+  d_soilprofile$trial_id <- d_soilprofile$new_id
+  d_soilprofile$new_id <- NULL
+  # SCS texture codes -> accepted terms
+  texture_lookup <- c("CL" = "clay loam", "LOSA" = "loamy sand", "SALO" = "sandy loam")
+  d_soilprofile$soil_texture <- texture_lookup[d_soilprofile$soil_texture]
   
   ############################################################
-  # Raw daily crop observations (r7/r8) - the important data.
-  # Reshaped long: one row per real measurement event, using date to
-  # distinguish records
+  # Observations (txt files; "na" flags missing values)
   ############################################################
-  r7  <- read.delim(f7,  header=TRUE) # daily observations, average: Yield, Biomass, LAI, CroN, CroP, SoilWTot, SoilNTot
-  r8  <- read.delim(f8,  header=TRUE) # daily observations, sd: same variables except CroP (no sd reported for crop P in source)
-  r9  <- read.delim(f9,  header=TRUE) # soil water/N by layer, average: depth-resolved SoilW/SoilN, multiple dates per experiment
-  r10 <- read.delim(f10, header=TRUE) # soil water/N by layer, sd: same structure as r9, standard deviation
-  r11 <- read.delim(f11, header=TRUE) # season summary, average: one row per experiment - Planting/Ant/Mat dates, final Yield, Biom.ma, MaxLAI, CroN.ma, CroP.ma, SoilN
-  r12 <- read.delim(f12, header=TRUE) # season summary, sd: same variables as r11, standard deviation
+  r7  <- read.delim(f7,  na.strings = c("na", "")) # daily obs, average
+  r8  <- read.delim(f8,  na.strings = c("na", "")) # daily obs, sd (no CroP sd in source)
+  r9  <- read.delim(f9,  na.strings = c("na", "")) # soil water/N by layer, average
+  r10 <- read.delim(f10, na.strings = c("na", "")) # soil water/N by layer, sd
+  r11 <- read.delim(f11, na.strings = c("na", "")) # season summary, average (one row per experiment)
+  r12 <- read.delim(f12, na.strings = c("na", "")) # season summary, sd
   
-  r13 <- readLines(f13) # reference only
+  ### season summary (r11/r12) -> wide
+  # grain yield is reported as dry matter (codebook: "t/DM/ha"), so yield_moisture = 0
+  i11 <- match(d$trial_id, r11$Experiment.name)
+  i12 <- match(d$trial_id, r12$Experiment.name)
+  d$yield <- r11$Yield[i11] * 1000          # t/ha -> kg/ha
+  d$yield_sd_ <- r12$Yield[i12] * 1000
+  d$yield_part <- "grain"
+  d$yield_moisture <- 0
+  # summary MaxLAI (and its sd) is exactly the maximum of the daily LAI series (verified),
+  # and summary Biom.ma goes into the long table with the daily series (see below)
   
-  ### d: raw daily crop growth observations (r7/r8), reshaped WIDE
-  # r7_agg/r8_agg: same date sometimes split across separate rows.
+  ### daily crop growth observations (r7/r8)
+  # the same date is sometimes split across separate rows; collapse to one row per date
   r7_agg <- aggregate(cbind(Yield, Biom, LAI, CroN, CroP, SoilWTot.MaxMeasDepth, SoilNTot.MaxMeasDepth) ~ Experiment.name + Date,
                       data = r7, FUN = function(x) x[!is.na(x)][1], na.action = na.pass)
   r8_agg <- aggregate(cbind(Yield, Biom, LAI, CroN, SoilWTot.MaxMeasDepth, SoilNTot.MaxMeasDepth) ~ Experiment.name + Date,
@@ -846,76 +896,93 @@ with average and standard deviation) are provided for 10 experiments
   
   r7a <- merge(r7_agg, r8_agg, by = c("Experiment.name", "Date"), suffixes = c("", "_sd"), all.x = TRUE)
   
-  d <- data.frame(
+  # the daily "Yield" is only reported at maturity and equals the season-summary yield,
+  # which is already in the wide table; it is not repeated here
+  d_daily <- data.frame(
     trial_id = r7a$Experiment.name,
-    date = as.Date(r7a$Date),
-    yield = as.numeric(r7a$Yield) * 1000,          # t -> kg
-    yield_sd = as.numeric(r7a$Yield_sd) * 1000,
-    dmy_total = as.numeric(r7a$Biom) * 1000,        # t -> kg
-    dmy_total_sd = as.numeric(r7a$Biom_sd) * 1000,
-    LAI = as.numeric(r7a$LAI),
-    LAI_sd = as.numeric(r7a$LAI_sd),
-    crop_N = as.numeric(r7a$CroN),          # not in terminag - kept as interpreted
-    crop_N_sd = as.numeric(r7a$CroN_sd),
-    crop_P = as.numeric(r7a$CroP),          # not in terminag - no sd in source
-    soil_water_total = as.numeric(r7a$SoilWTot.MaxMeasDepth),      # not in terminag
-    soil_water_total_sd = as.numeric(r7a$SoilWTot.MaxMeasDepth_sd),
-    soil_N_total = as.numeric(r7a$SoilNTot.MaxMeasDepth),          # not in terminag
-    soil_N_total_sd = as.numeric(r7a$SoilNTot.MaxMeasDepth_sd)
+    date = as.character(as.Date(r7a$Date)),
+    dmy_total = r7a$Biom * 1000,        # t/ha -> kg/ha
+    dmy_total_sd_ = r7a$Biom_sd * 1000,
+    LAI = r7a$LAI,
+    LAI_sd_ = r7a$LAI_sd,
+    crop_N = r7a$CroN,
+    crop_N_sd_ = r7a$CroN_sd,
+    crop_P = r7a$CroP,
+    soil_SWC = r7a$SoilWTot.MaxMeasDepth,
+    soil_SWC_sd_ = r7a$SoilWTot.MaxMeasDepth_sd,
+    soil_N_min_total = r7a$SoilNTot.MaxMeasDepth,
+    soil_N_min_total_sd_ = r7a$SoilNTot.MaxMeasDepth_sd
   )
-  value_cols <- c("yield","dmy_total","LAI","crop_N","crop_P","soil_water_total","soil_N_total")
-  d <- d[rowSums(!is.na(d[value_cols])) > 0, ]   # drops only rows where EVERY variable is NA - a single measured variable is enough to keep the row
-  d$date <- as.character(d$date)
+  value_cols <- c("dmy_total", "LAI", "crop_N", "crop_P", "soil_SWC", "soil_N_min_total")
+  # drop only rows where every measured variable is NA
+  d_daily <- d_daily[rowSums(!is.na(d_daily[value_cols])) > 0, ]
   
+  # biomass, crop N/P and profile mineral N at maturity from the season summary belong
+  # with the daily series, dated at maturity. Where both tables report a value at the
+  # maturity date they are identical (verified; except BEOU1401 biomass, see ISSUES), so
+  # the summary only fills gaps in the daily rows; BEOU1501 has no daily row at its
+  # maturity date and gets a new row
+  i_sd <- match(r11$Experiment.name, r12$Experiment.name)
+  d_mat <- data.frame(
+    trial_id = r11$Experiment.name,
+    date = r11$Mat.date,
+    dmy_total = r11$Biom.ma * 1000,        # t/ha -> kg/ha
+    dmy_total_sd_ = r12$Biom.ma[i_sd] * 1000,
+    crop_N = r11$CroN.ma,
+    crop_N_sd_ = r12$CroN.ma[i_sd],
+    crop_P = r11$CroP.ma,
+    soil_N_min_total = r11$SoilN
+  )
+  mat_vars <- c("dmy_total", "dmy_total_sd_", "crop_N", "crop_N_sd_", "crop_P", "soil_N_min_total")
+  i_mat <- match(paste(d_mat$trial_id, d_mat$date), paste(d_daily$trial_id, d_daily$date))
+  for (v in mat_vars) {
+    j <- which(!is.na(i_mat) & !is.na(d_mat[[v]]))
+    k <- i_mat[j]
+    fill <- is.na(d_daily[[v]][k])
+    # only fill gaps; where both tables have a value the daily one is kept
+    d_daily[[v]][k[fill]] <- d_mat[[v]][j[fill]]
+  }
+  d_mat <- d_mat[is.na(i_mat), ]
+  d_mat <- d_mat[rowSums(!is.na(d_mat[mat_vars])) > 0, ]
   
-  ### SoilWN layers (r9/r10).
+  ### in-season soil water and mineral N by layer (r9/r10)
   r9$Date  <- as.Date(r9$Date,  format = "%d.%m.%Y")   # r9's own format
   r10$Date <- as.Date(r10$Date, format = "%Y-%m-%d")   # r10's own format
   r9_10 <- merge(r9, r10, by = c("Experiment.name", "Date", "Soil.layer.base.depth"),
                  suffixes = c("", "_sd"), all.x = TRUE)
   
+  # SoilW.layer.mm and SoilN.layer.kg.ha are derived from these values (see NOT PROCESSED)
   d_soilwn <- data.frame(
     trial_id = r9_10$Experiment.name,
-    location_id = substr(r9_10$Experiment.name, 1, 4),
     depth = r9_10$Soil.layer.base.depth,
     date  = as.character(r9_10$Date),
-    soil_water_layer = as.numeric(r9_10$SoilW.layer.mm),          # not in terminag
-    soil_water_layer_sd = as.numeric(r9_10$SoilW.layer.mm_sd),
-    soil_N_layer = as.numeric(r9_10$SoilN.layer.kg.ha),           # not in terminag
-    soil_N_layer_sd = as.numeric(r9_10$SoilN.layer.kg.ha_sd)
+    soil_VWC = r9_10$SoilW.layer.cm3.cm3,
+    soil_VWC_sd_ = r9_10$SoilW.layer.cm3.cm3_sd,
+    soil_N = r9_10$SoilN.layer.ppm,      # mineral N (NO3+NH4), mg/kg
+    soil_N_sd_ = r9_10$SoilN.layer.ppm_sd
   )
-  d_soilwn <- d_soilwn[!is.na(d_soilwn$soil_water_layer) | !is.na(d_soilwn$soil_N_layer), ]
+  d_soilwn <- d_soilwn[!is.na(d_soilwn$soil_VWC) | !is.na(d_soilwn$soil_N), ]
   
+  ### initial conditions (per site, per layer)
+  d_iclayers <- rbind(d2_iclayers, d3_iclayers, d4_iclayers, d5_iclayers, d6_iclayers)
+  d_iclayers$date <- as.character(d_iclayers$date)
+  d_iclayers <- d_iclayers[rowSums(!is.na(d_iclayers[c("soil_NH4","soil_NO3","soil_VWC")])) > 0, ]
   
-  ### initial conditions (iclayers, per site) - same treatment as d_soilwn
-  iclayers_all <- rbind(r2_iclayers_long, r3_iclayers_long, r4_iclayers_long,
-                        r5_iclayers_long, r6_iclayers_long)
+  ### combine all long record types
+  d_long <- carobiner::bindr(d_daily, d_mat, d_soilwn, d_iclayers, d_soilprofile)
   
-  d_iclayers <- data.frame(
-    trial_id = iclayers_all$trial_id,
-    location_id = iclayers_all$location_id,
-    depth = iclayers_all$depth,
-    date  = as.character(iclayers_all$date),
-    soil_NH4 = iclayers_all$soil_NH4,
-    soil_NO3 = iclayers_all$soil_NO3,
-    soil_GWC = iclayers_all$soil_GWC
-  )
-  d_iclayers <- d_iclayers[rowSums(!is.na(d_iclayers[c("soil_NH4","soil_NO3","soil_GWC")])) > 0, ]
+  ### d date conversions
+  d$land_prep_date <- as.character(d$land_prep_date)
+  d$planting_date <- as.character(d$planting_date)
+  d$emergence_date <- as.character(d$emergence_date)
+  d$flowering_date <- as.character(d$flowering_date)
+  d$maturity_date <- as.character(d$maturity_date)
+  prevcrop_term_lookup <- c("fallow" = "none", "dry bean" = "common bean")
+  d$previous_crop <- ifelse(
+    d$previous_crop %in% names(prevcrop_term_lookup),
+    prevcrop_term_lookup[d$previous_crop], d$previous_crop)
   
-  
-  ### d_fieldmgmt date conversions
-  d_fieldmgmt$soil_sample_date <- as.character(d_fieldmgmt$soil_sample_date)
-  d_fieldmgmt$tillage_date <- as.character(d_fieldmgmt$tillage_date)
-  d_fieldmgmt$planting_date <- as.character(d_fieldmgmt$planting_date)
-  d_fieldmgmt$emergence_date <- as.character(d_fieldmgmt$emergence_date)
-  d_fieldmgmt$flowering_date <- as.character(d_fieldmgmt$flowering_date)
-  d_fieldmgmt$maturity_date <- as.character(d_fieldmgmt$maturity_date)
-  prevcrop_term_lookup <- c("fallow" = "none","dry bean" = "common bean")
-  d_fieldmgmt$previous_crop <- ifelse(
-    d_fieldmgmt$previous_crop %in% names(prevcrop_term_lookup),
-    prevcrop_term_lookup[d_fieldmgmt$previous_crop],d_fieldmgmt$previous_crop)
-
   d_weather$date <- as.character(d_weather$date)
   
-  carobiner::write_files(path, meta, wide=d_fieldmgmt, long=d, wth=d_weather)
+  carobiner::write_files(path, meta, wide=d, long=d_long, wth=d_weather)
 }
