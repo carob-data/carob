@@ -4,10 +4,13 @@
 ## ISSUES
 ## - The dataset description says 3 replications, but the Fieldbook, the "Installation" sheet and
 ##   the "Croquis" sheet all show 4 replications (RCBD). The data (4 reps) are used.
-## - Plot size is inconsistent: "Installation" gives 10 plants/plot and 2.625 m2 (38095 plants/ha),
-##   while the Fieldbook has NTP = 30 tubers planted per plot and the "Croquis" sheet says 40 plants/rep.
-##   TTYNA (t/ha) in the source is computed from TTWP with a 2.625 m2 plot. Yield is taken as given
-##   (TTYNA), but seed_density and plant_density were not computed.
+## - Plot size is inconsistent: "Installation" gives 10 plants/plot and 2.625 m2, while the Fieldbook
+##   has NTP = 30 plants per plot and up to 28 plants harvested (NPH), so all plants of a 30-plant plot
+##   were harvested. The "Croquis" sheet gives one 14 m row per entry and rep, 0.35 m between plants
+##   and 0.75 m between rows ("No. plts/rep: 40"). TTYNA in the source (TTWP / 2.625 m2) therefore
+##   overestimates yield about three times. Yield is computed as TTWP / (30 x 0.35 m x 0.75 m = 7.875 m2),
+##   not adjusted for missing plants; TTYNA and TTYA are not used (yield_adj_ is computed instead). Plot of 30 plants confirmed by
+##   V. Hualla (CIP).
 ## - Fertilizer (NPK 180-180-160; diammonium phosphate, ammonium nitrate, potassium chloride) comes
 ##   only from a note in the "Croquis" sheet. It is assumed to be kg/ha of N-P2O5-K2O.
 ## - "Vine cutting / killing" date (2004-09-01) is before planting (2004-09-24); not used.
@@ -17,12 +20,19 @@
 ## - Entries are progenies (CIP3xxxxx family numbers) from crosses listed in the Material List;
 ##   the "Original_Elisa" sheet refers to "evaluation of families". Planting material (tubers vs.
 ##   transplanted seedlings, see "Croquis") is not fully clear.
-## - Male parent CIP392745.7 has code "92.187" in the source (without the "C" prefix used for the
-##   other CIP codes, e.g. C93.154); kept as in the source.
+## - Male parent CIP392745.7 has code "92.187" in the source; changed to the standard CIP code
+##   "C92.187" (as C93.154, C91.612).
 
-## NOT PROCESSED
-## Plant_Unif, Plant_Vigor, Flower, SE (senescence), Tub_Unif (1-9 scales): no terminag variables.
-## TTYA (adjusted yield) is not used; the non-adjusted yield (TTYNA) is reported.
+## NEW VARIABLES (scores per plot, CIP 1-9 scales; the meaning of the scale values is not
+## documented in the data dictionary)
+## plant_uniformity_: plant uniformity score (Plant_Unif), 45 days after planting
+## plant_vigor_: plant vigor score (Plant_Vigor), 45 days after planting
+## flowering_score_: flowering degree score (Flower; values 0-5), 45 days after planting
+## senescence_score_: senescence score (SE), 75 days after planting ("Precoc 75 dias")
+## tuber_uniformity_: tuber uniformity score at harvest (Tub_Unif)
+## (days after planting from the column names in the "Original_Elisa" sheet)
+## yield_adj_: total tuber yield adjusted for missing plants (kg/ha), TTWP / NPH x 38095 plants/ha
+##   (30 plants per 7.875 m2); equivalent to TTYA in the source (t/ha) x 1000
 
 carob_script <- function(path) {
 
@@ -43,11 +53,11 @@ An evaluation of 23 clones was conducted in the Poroma area of Nazca during the 
 		design = "randomized complete block design",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
-		notes = "Yield is the non-adjusted total tuber yield (TTYNA) reported in the source.",
+		response_vars = "yield;yield_adj_",
+		notes = NA,
 		carob_contributor = "Vilma Hualla",
 		carob_LLM = "Claude Opus 5.5",
-		carob_date = "2026-11-05",
+		carob_date = "2026-11-09",
 		carob_completion = 80,
 		carob_effort = 3
 	)
@@ -66,8 +76,12 @@ An evaluation of 23 clones was conducted in the Poroma area of Nazca during the 
 	# pedigree from the material list (female x male; name if no code)
 	fem <- ifelse(is.na(r3[["Female.code"]]), r3[["Female.Institutional.number"]], r3[["Female.code"]])
 	mal <- ifelse(is.na(r3[["Male.code"]]), r3[["Male.Institutional.number"]], r3[["Male.code"]])
+	# standard CIP code: "92.187" -> "C92.187" (ISSUES)
+	fem <- gsub("^([0-9]{2}\\.[0-9]+)$", "C\\1", fem)
+	mal <- gsub("^([0-9]{2}\\.[0-9]+)$", "C\\1", mal)
 	ped <- paste(fem, mal, sep=" x ")
 
+	plot_area <- 30 * 0.35 * 0.75
 	d <- data.frame(
 		trial_id = "PTYL200409_NAZCA",
 		plot_id = as.character(r$PLOT),
@@ -90,7 +104,20 @@ An evaluation of 23 clones was conducted in the Poroma area of Nazca during the 
 		on_farm = FALSE,
 		is_survey = FALSE,
 		yield_part = "tubers",
-		yield = as.numeric(r$TTYNA) * 1000,
+		# all plants of a 30-plant plot harvested, 0.35 x 0.75 m (ISSUES)
+		yield = as.numeric(r$TTWP) * 10000 / plot_area,
+		seed_density = 10000 / (0.35 * 0.75),
+		plant_density = as.numeric(r$NPH) * 10000 / plot_area,
+		plot_area = plot_area,
+		# yield adjusted for missing plants: weight per harvested plant x plants planted per ha
+		yield_adj_ = as.numeric(r$TTWP) / as.numeric(r$NPH) * 10000 / (0.35 * 0.75),
+		row_spacing = 75,
+		plant_spacing = 35,
+		plant_uniformity_ = as.integer(r$Plant_Unif),
+		plant_vigor_ = as.integer(r$Plant_Vigor),
+		flowering_score_ = as.integer(r$Flower),
+		senescence_score_ = as.integer(r$SE),
+		tuber_uniformity_ = as.integer(r$Tub_Unif),
 		yield_moisture = as.numeric(NA),
 		yield_isfresh = TRUE
 	)
