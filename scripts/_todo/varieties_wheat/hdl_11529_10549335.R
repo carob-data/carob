@@ -17,6 +17,10 @@
 # harvest_date.
 
 
+
+## NOT PROCESSED
+# BNI data_Final_ Pakistan 2024-25.xlsx: not read. sheet Experimental Plot (of 4): Width first-to-last-row: 275cm, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

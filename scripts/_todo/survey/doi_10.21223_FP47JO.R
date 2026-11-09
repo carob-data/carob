@@ -43,25 +43,25 @@ Root and tuber crops (RTC) play an important role in diverse Asian agri-food sys
 	)
 
 	f <- ff[basename(ff) == "DataSet_Typhoon Philippines.xlsx"]
-	s0 <- carobiner::read.excel(f, sheet = "Section 0", na=c("", "NA"))
-	codes <- carobiner::read.excel(f, sheet = "Codes", na=c("", "NA"))
+	r1 <- carobiner::read.excel(f, sheet = "Section 0", na=c("", "NA"))
+	r2 <- carobiner::read.excel(f, sheet = "Codes", na=c("", "NA"))
 	lookup <- function(code, name) {
 		code <- as.integer(trimws(as.character(code)))
 		name <- trimws(as.character(name))
 		keep <- !is.na(code) & !is.na(name) & nzchar(name)
 		stats::setNames(name[keep], code[keep])
 	}
-	prov <- lookup(codes[[2]], codes[[1]])
-	muni <- lookup(codes[[5]], codes[[4]])
-	brgy <- lookup(codes[[8]], codes[[7]])
+	prov <- lookup(r2[[2]], r2[[1]])
+	muni <- lookup(r2[[5]], r2[[4]])
+	brgy <- lookup(r2[[8]], r2[[7]])
 
 	d <- data.frame(
 		trial_id = "RTC_typhoon_Philippines",
-		hhid = trimws(as.character(s0$HH_uniqueID)),
+		hhid = trimws(as.character(r1$HH_uniqueID)),
 		country = "Philippines",
-		adm1 = unname(prov[as.character(as.integer(s0[["0.3"]]))]),
-		adm2 = unname(muni[as.character(as.integer(s0[["0.4"]]))]),
-		location = unname(brgy[as.character(as.integer(s0[["0.5"]]))]),
+		adm1 = unname(prov[as.character(as.integer(r1[["0.3"]]))]),
+		adm2 = unname(muni[as.character(as.integer(r1[["0.4"]]))]),
+		location = unname(brgy[as.character(as.integer(r1[["0.5"]]))]),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE

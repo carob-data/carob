@@ -20,6 +20,8 @@
 # Var List and 03_Data_dictionary.txt: column definitions. The dictionary does not state units.
 # Crop_management rows that only name the measurements already in the fieldbook.
 # NTP, NPH, PPH, NoMTWP, TTWP, TTWPL, TTYNA, MTWP, MTYNA: used to check units or left as plot counts. NPH is used for plant_density.
+# 01_Fieldbook_PTYL201010_LADOL.txt: not read. columns: PLOT, REP, INSTN, NTP, NPH, PPH, NoMTWP, TTWP, TTWPL, TTYA, TTYNA, MTWP, .... Observation records are missing from d until this file is standardized.
+# 02_Material_list_PTYL201010_LADOL.txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -52,18 +54,18 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	f <- ff[basename(ff) == "PTYL201010_LADOL.xls"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook", na="NA")
 	names(r) <- trimws(names(r))
-	ml <- carobiner::read.excel(f, sheet="Material List", na="NA")
-	names(ml) <- trimws(names(ml))
+	r1 <- carobiner::read.excel(f, sheet="Material List", na="NA")
+	names(r1) <- trimws(names(r1))
 
 	instn <- trimws(as.character(r$INSTN))
-	vname <- trimws(as.character(ml[["Clone or variety name"]]))
+	vname <- trimws(as.character(r1[["Clone or variety name"]]))
 	vname[!nzchar(vname)] <- NA_character_
-	key <- trimws(as.character(ml[["Institutional number"]]))
+	key <- trimws(as.character(r1[["Institutional number"]]))
 	nm <- vname[match(instn, key)]
 	variety <- ifelse(is.na(nm), instn, nm)
-	female <- trimws(as.character(ml[["Female code"]]))
+	female <- trimws(as.character(r1[["Female code"]]))
 	female[!nzchar(female)] <- NA_character_
-	male <- trimws(as.character(ml[["Male code"]]))
+	male <- trimws(as.character(r1[["Male code"]]))
 	male[!nzchar(male)] <- NA_character_
 
 	d <- data.frame(

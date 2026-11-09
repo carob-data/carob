@@ -25,6 +25,14 @@
 # 2016-RL-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
 # Benin Lema PNL is 109-320 and Ghana Nobewan PNL is 84-140. Those are not panicle lengths in cm (other sites are about 16-28 cm). Not converted and not stored as panicle_length_.
 # Tillers, biomass, and spikelet fertility are not in these workbooks.
+# 2016-RL-Benin-Lema.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Burkina Faso-Banfora.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotypes, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Cote d'Ivoire-Gagnoa.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Ghana-Nobewan.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Guinea-Seredou.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Mali-Sikasso.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Nigeria-Edozhigi.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-RL-MET-Sierra Leone-Rokupr.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # panicle_length_: panicle length (cm), from PNL, except Lema and Nobewan

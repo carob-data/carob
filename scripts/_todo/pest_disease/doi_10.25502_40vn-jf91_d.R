@@ -97,17 +97,17 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 	)
 
 	f <- ff[basename(ff) == "maize-survey-database.csv"]
-	s <- read.csv(f, check.names = TRUE, fileEncoding = "latin1")
+	r <- read.csv(f, check.names = TRUE, fileEncoding = "latin1")
 
-	rawd <- trimws(s$Date)
+	rawd <- trimws(r$Date)
 	obs <- rep(NA_character_, length(rawd))
 	i <- grepl("^[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}$", rawd)
 	obs[i] <- as.character(as.Date(rawd[i], "%Y/%m/%d"))
 	j <- grepl("^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$", rawd)
 	obs[j] <- as.character(as.Date(rawd[j], "%d/%m/%Y"))
-	planting <- as.character(as.Date(obs) - as.integer(s$age_day))
+	planting <- as.character(as.Date(obs) - as.integer(r$age_day))
 
-	reg <- tolower(trimws(s$Region))
+	reg <- tolower(trimws(r$Region))
 	adm_map <- c(
 		"adamawa" = "Adamaoua",
 		"centre" = "Centre",
@@ -126,41 +126,41 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		x <- tolower(trimws(x))
 		x %in% c("", "0", "/", "no", "non", "na", "inconu", "inconnu")
 	}
-	village <- trimws(s$Village)
+	village <- trimws(r$Village)
 	village[blank_token(village)] <- NA_character_
 	okv <- !is.na(village)
 	village[okv] <- carobiner::fix_name(village[okv], "title")
-	camp <- trimws(s$Location)
+	camp <- trimws(r$Location)
 	camp[blank_token(camp)] <- NA_character_
 	okc <- !is.na(camp)
 	camp[okc] <- carobiner::fix_name(camp[okc], "title")
 
-	farmer <- trimws(s$Farmer)
+	farmer <- trimws(r$Farmer)
 	farmer[farmer %in% c("", "0")] <- "not recorded"
-	hhid <- paste(adm1, ifelse(is.na(village), "no village", village), farmer, trimws(as.character(s$FieldNo)), sep = "_")
+	hhid <- paste(adm1, ifelse(is.na(village), "no village", village), farmer, trimws(as.character(r$FieldNo)), sep = "_")
 
-	variety <- trimws(s$Variety)
+	variety <- trimws(r$Variety)
 	variety[blank_token(variety)] <- NA_character_
-	seed <- trimws(s$Seed_source)
+	seed <- trimws(r$Seed_source)
 	seed[blank_token(seed)] <- NA_character_
-	dyears <- trimws(as.character(s$IncDamDu_yrs))
+	dyears <- trimws(as.character(r$IncDamDu_yrs))
 	dyears[is.na(dyears) | dyears == ""] <- NA_character_
 
 	yn <- function(x) {
 		x <- tolower(trimws(x))
 		ifelse(x %in% c("yes", "oui"), TRUE, ifelse(x %in% c("no", "non"), FALSE, NA))
 	}
-	ip <- tolower(trimws(s$product))
+	ip <- tolower(trimws(r$product))
 	ip[blank_token(ip) | ip %in% c("yes", "oui", "unknow", "unknown", "-1")] <- NA_character_
 	ip <- gsub("[[:space:]]+", " ", ip)
 	ip <- gsub("[/,]", ";", ip)
 	ip <- trimws(gsub("[[:space:]]*;[[:space:]]*", ";", ip))
 	ip[!is.na(ip) & ip == ""] <- NA_character_
-	ins_used <- yn(s$Pesticide)
+	ins_used <- yn(r$Pesticide)
 	ins_used[!is.na(ip)] <- TRUE
 
-	fert_flag <- tolower(trimws(s$Fertilizer))
-	prod <- tolower(trimws(s[["product.1"]]))
+	fert_flag <- tolower(trimws(r$Fertilizer))
+	prod <- tolower(trimws(r[["product.1"]]))
 	prod[prod %in% c("", "0", "no", "non", "inconu", "inconnu")] <- ""
 	take <- prod == "" & !fert_flag %in% c("", "yes", "oui", "no", "non")
 	prod[take] <- fert_flag[take]
@@ -178,35 +178,35 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 	ftype <- trimws(ftype)
 	ftype <- gsub("[[:space:]]+", ";", ftype)
 	ftype[!is.na(ftype) & ftype == ""] <- NA_character_
-	fert_used <- yn(s$Fertilizer)
+	fert_used <- yn(r$Fertilizer)
 	fert_used[is_npk | is_urea | is_agrovert | is_foliar] <- TRUE
 	grade <- prod
 	grade[prod == ""] <- NA_character_
 
-	freq_i <- trimws(s$Freq_month)
+	freq_i <- trimws(r$Freq_month)
 	freq_i[freq_i %in% c("", "0")] <- NA_character_
-	freq_f <- trimws(s$Frequency)
+	freq_f <- trimws(r$Frequency)
 	freq_f[freq_f %in% c("", "0")] <- NA_character_
 
-	gs <- trimws(as.character(s[["maize_dev._stage"]]))
+	gs <- trimws(as.character(r[["maize_dev._stage"]]))
 	gs[gs == ""] <- NA_character_
-	co <- tolower(trimws(s$Cooccurence))
+	co <- tolower(trimws(r$Cooccurence))
 	co[!is.na(co) & co == ""] <- NA_character_
-	pup <- trimws(s$Pupae)
+	pup <- trimws(r$Pupae)
 	pup[pup == ""] <- NA_character_
-	nat <- trimws(s$nat_en)
+	nat <- trimws(r$nat_en)
 	nat[nat %in% c("", "0")] <- NA_character_
-	oth <- trimws(as.character(s$Others))
+	oth <- trimws(as.character(r$Others))
 	oth[oth %in% c("", "0")] <- NA_character_
-	note <- trimws(s$Recent_Change_in_damage)
+	note <- trimws(r$Recent_Change_in_damage)
 	note[note %in% c("", "/")] <- NA_character_
-	dia <- trimws(as.character(s$Dia_cm))
+	dia <- trimws(as.character(r$Dia_cm))
 	dia[dia %in% c("", "-")] <- NA_character_
-	sv1 <- trimws(s$SurrVege)
+	sv1 <- trimws(r$SurrVege)
 	sv1[sv1 == ""] <- NA_character_
-	sv2 <- trimws(s$Surrounding_Vege2)
+	sv2 <- trimws(r$Surrounding_Vege2)
 	sv2[sv2 == ""] <- NA_character_
-	sv3 <- trimws(s$Within_Field_veg)
+	sv3 <- trimws(r$Within_Field_veg)
 	sv3[sv3 == ""] <- NA_character_
 
 	d <- data.frame(
@@ -214,25 +214,25 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		adm1 = adm1,
 		location = village,
 		camp_location_ = camp,
-		latitude = s$latitude,
-		longitude = s$longitude,
-		elevation = s$elevation,
+		latitude = r$latitude,
+		longitude = r$longitude,
+		elevation = r$elevation,
 		geo_from_source = TRUE,
 		hhid = hhid,
-		survey_round_ = trimws(s$Survey),
-		plot_id = as.character(s$Plot),
-		plant_id_ = as.character(s$Plant_no),
+		survey_round_ = trimws(r$Survey),
+		plot_id = as.character(r$Plot),
+		plant_id_ = as.character(r$Plant_no),
 		date = obs,
 		planting_date = planting,
-		field_size = s$FieldSize_sqrm / 10000,
+		field_size = r$FieldSize_sqrm / 10000,
 		variety = variety,
 		seed_source = seed,
 		crop = "maize",
 		growth_stage = gs,
 		stress = "pests",
 		pest_species = "Spodoptera frugiperda",
-		pest_incidence = as.integer(s$FAW),
-		stemborer_count_ = as.integer(s$stem_borer),
+		pest_incidence = as.integer(r$FAW),
+		stemborer_count_ = as.integer(r$stem_borer),
 		cooccurrence_ = co,
 		pupae_record_ = pup,
 		natural_enemies_ = nat,
@@ -252,9 +252,9 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		surrounding_vegetation_ = sv1,
 		surrounding_vegetation_2_ = sv2,
 		within_field_vegetation_ = sv3,
-		weediness_score_ = s$Weddiness,
+		weediness_score_ = r$Weddiness,
 		stem_diameter_cm_ = as.numeric(dia),
-		trial_id = paste(hhid, s$Plot, sep = "_"),
+		trial_id = paste(hhid, r$Plot, sep = "_"),
 		on_farm = TRUE,
 		is_survey = TRUE
 	)

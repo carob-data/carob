@@ -25,6 +25,7 @@
 # WorldClim temperature, rainfall, relative humidity, agro-ecological zone flags, and market access.
 # District codes, SEA numbers, and whether cobs were shelled.
 # The questionnaire PDF and the SPSS syntax.
+# Zambia storage analysis v4.sps: not read. .sps file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -52,7 +53,7 @@ In this data base, representative georeferenced farmer survey data from Zambia f
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("\\.sav$", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "Zambia_storage loss  2011 survey v4_curated.sav"]
 	r <- haven::read_sav(f)
 	num <- function(x) as.numeric(haven::zap_labels(x))
 	chr <- function(x) {

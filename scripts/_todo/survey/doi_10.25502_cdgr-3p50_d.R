@@ -59,7 +59,8 @@ It is widely recognized that female farmers have considerably less access to pro
 		carob_effort = 0.4
 	)
 
-	r <- read.csv(ff[basename(ff) == "gender_data_final.csv"])
+	f <- ff[basename(ff) == "gender_data_final.csv"]
+	r <- read.csv(f)
 
 	adm2 <- rep(NA_character_, nrow(r))
 	adm2[r$Lilongwe == 1] <- "Lilongwe"

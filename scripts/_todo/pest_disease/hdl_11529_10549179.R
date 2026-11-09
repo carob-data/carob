@@ -45,32 +45,32 @@ Wheat blast disease, which began in South America, has now spread to Asia and Af
 		carob_effort = 0.7
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff))][1]
+	f <- ff[basename(ff) == "221002 1st, 2nd and 3rd years data of Cultivar Mixture Trial_Jashore.xlsx"]
 	num <- function(x) as.numeric(as.character(x))
 	as_date <- function(x) as.character(as.Date(num(x), origin="1899-12-30"))
 
 	one_year <- function(sheet, rawsheet) {
-		a <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
-		if (!grepl("Kg/ha", as.character(a[3, 50]))) stop("yield column moved in ", sheet)
-		n <- nrow(a)
-		plot <- num(a[4:n, 1])
+		r1 <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
+		if (!grepl("Kg/ha", as.character(r1[3, 50]))) stop("yield column moved in ", sheet)
+		n <- nrow(r1)
+		plot <- num(r1[4:n, 1])
 		keep <- !is.na(plot)
-		variety <- trimws(as.character(a[4:n, 4]))
-		fung <- trimws(as.character(a[4:n, 3]))
+		variety <- trimws(as.character(r1[4:n, 4]))
+		fung <- trimws(as.character(r1[4:n, 3]))
 		d <- data.frame(
 			plot_id = as.character(plot),
-			rep = as.integer(num(a[4:n, 2])),
+			rep = as.integer(num(r1[4:n, 2])),
 			variety = variety,
 			fungicide_used = fung == "Fungicide",
 			treatment = paste(variety, fung, sep="; "),
-			latitude = num(a[4:n, 5]),
-			longitude = num(a[4:n, 6]),
-			planting_date = as_date(a[4:n, 7]),
-			plot_area = num(a[4:n, 38]),
-			heading_days = num(a[4:n, 39]),
-			seed_weight = num(a[4:n, 44]),
-			yield_moisture = num(a[4:n, 47]),
-			yield = num(a[4:n, 50]),
+			latitude = num(r1[4:n, 5]),
+			longitude = num(r1[4:n, 6]),
+			planting_date = as_date(r1[4:n, 7]),
+			plot_area = num(r1[4:n, 38]),
+			heading_days = num(r1[4:n, 39]),
+			seed_weight = num(r1[4:n, 44]),
+			yield_moisture = num(r1[4:n, 47]),
+			yield = num(r1[4:n, 50]),
 			country = "Bangladesh",
 			location = "Jashore",
 			crop = "wheat",
@@ -87,19 +87,19 @@ Wheat blast disease, which began in South America, has now spread to Asia and Af
 		d$trial_id <- paste("Jashore", substr(d$planting_date, 1, 4), sep="_")
 		d$record_id <- paste(d$trial_id, d$plot_id, sep="_")
 
-		raw <- carobiner::read.excel(f, sheet=rawsheet)
-		sev_names <- grep("wb_sev_%$", names(raw), value=TRUE)
+		r2 <- carobiner::read.excel(f, sheet=rawsheet)
+		sev_names <- grep("wb_sev_%$", names(r2), value=TRUE)
 		sev_names <- sev_names[order(sev_names)]
 		long <- NULL
 		if (length(sev_names) > 0) {
-			rp <- as.character(raw[["Plot No"]])
+			rp <- as.character(r2[["Plot No"]])
 			blocks <- list()
 			for (j in seq_along(sev_names)) {
 				blocks[[j]] <- data.frame(
 					record_id = paste(d$trial_id[1], rp, sep="_"),
 					order = j,
 					disease = "wheat blast",
-					disease_severity = as.character(num(raw[[sev_names[j]]]))
+					disease_severity = as.character(num(r2[[sev_names[j]]]))
 				)
 			}
 			long <- do.call(rbind, blocks)

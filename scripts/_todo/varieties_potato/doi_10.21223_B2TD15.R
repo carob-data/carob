@@ -16,6 +16,8 @@
 # 4034_Summary_yield2014.xlsx: site means on a different numeric scale from fieldbook TTWP, and the unit is not stated.
 # 4034_Summary_minerals2013_2014.xlsx: dry-matter and Fe and Zn means. The unit columns are not a clean unit label.
 # Map sheets and the two dictionaries.
+# 4034_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 4034_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # None beyond yield.
@@ -102,10 +104,10 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 	)
 	parts <- lapply(seq_len(nrow(books)), function(i) {
 		f <- ff[basename(ff) == books$file[i]]
-		mn <- carobiner::read.excel(f, sheet=books$meta[i])
+		r1 <- carobiner::read.excel(f, sheet=books$meta[i])
 		val <- function(key) {
-			hit <- which(mn[[1]] == key)
-			if (!length(hit)) NA_character_ else chr(mn[[2]][hit[1]])
+			hit <- which(r1[[1]] == key)
+			if (!length(hit)) NA_character_ else chr(r1[[2]][hit[1]])
 		}
 		r <- carobiner::read.excel(f, sheet=books$fieldbook[i])
 		data.frame(

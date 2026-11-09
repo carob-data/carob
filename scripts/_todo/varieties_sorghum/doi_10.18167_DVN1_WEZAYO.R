@@ -16,6 +16,14 @@
 ## NOT PROCESSED
 # Observations.csv variety means. Biomass components other than TotBiom. Pesticides. Soil files. KO fertilizer. The protocol pdf.
 # Radiation duplicates mean temperature on the rows that were checked. windtot and eto are not mapped.
+# readme.txt: documentation or a codebook, not an observation table.
+# Sorghum_West_Africa_Country.csv: countrycode lookup (BF, ML, SN). The site country code is stored directly.
+# Sorghum_West_Africa_Crop.csv: crop code list. The crop is sorghum.
+# Sorghum_West_Africa_Days.csv: trial-level DAP and GDD. Plot records use the observation date instead.
+# Sorghum_West_Africa_Genesoil.csv and Sorghum_West_Africa_Layersoil.csv: soil-profile parameters (p0, ru, layer water limits). No plot soil sample is linked to a carob soil variable from these codes.
+# Sorghum_West_Africa_Lib.csv: French/English label dictionary.
+# Sorghum_West_Africa_Observations.csv: trial-by-variety means. Plot grain yield is taken from Obsplant.
+# Sorghum_West_Africa_Variety.csv: variety code list. The variety name is already on the plot.
 
 ## NEW VARIABLES
 # None.
@@ -53,8 +61,6 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		x[x %in% c("", "NA")] <- NA
 		as.character(as.Date(x, "%m/%d/%Y"))
 	}
-	pick <- function(ff, pat) ff[grepl(pat, basename(ff), fixed = TRUE)][1]
-
 	utf8 <- function(x) {
 		x <- as.character(x)
 		bad <- !is.na(x) & !validUTF8(x)
@@ -62,28 +68,37 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		x
 	}
 
-	plot <- read.csv(pick(ff, "Plot.csv"))
-	pc <- read.csv(pick(ff, "Plotcrop.csv"))
-	trial <- read.csv(pick(ff, "Trial.csv"))
-	site <- read.csv(pick(ff, "Site.csv"))
-	ws <- read.csv(pick(ff, "_Ws.csv"))
-	wt <- read.csv(pick(ff, "Wstrial.csv"))
-	itk <- read.csv(pick(ff, "Itk.csv"))
-	ob <- read.csv(pick(ff, "Obsplant.csv"))
-	wd <- read.csv(pick(ff, "Wdataday.csv"))
+	f1 <- ff[basename(ff) == "Sorghum_West_Africa_Plot.csv"]
+	f2 <- ff[basename(ff) == "Sorghum_West_Africa_Plotcrop.csv"]
+	f3 <- ff[basename(ff) == "Sorghum_West_Africa_Trial.csv"]
+	f4 <- ff[basename(ff) == "Sorghum_West_Africa_Site.csv"]
+	f5 <- ff[basename(ff) == "Sorghum_West_Africa_Ws.csv"]
+	f6 <- ff[basename(ff) == "Sorghum_West_Africa_Wstrial.csv"]
+	f7 <- ff[basename(ff) == "Sorghum_West_Africa_Itk.csv"]
+	f8 <- ff[basename(ff) == "Sorghum_West_Africa_Obsplant.csv"]
+	f9 <- ff[basename(ff) == "Sorghum_West_Africa_Wdataday.csv"]
+	r1 <- read.csv(f1)
+	r2 <- read.csv(f2)
+	r3 <- read.csv(f3)
+	r4 <- read.csv(f4)
+	r5 <- read.csv(f5)
+	r6 <- read.csv(f6)
+	r7 <- read.csv(f7)
+	r8 <- read.csv(f8)
+	r9 <- read.csv(f9)
 
-	plot <- merge(plot, pc[, c("plotcode", "variety")], by = "plotcode", all.x = TRUE)
-	trial <- merge(trial, site[, c("sitecode", "countrycode", "sitename")], by = "sitecode", all.x = TRUE)
-	ws$wscode <- as.character(ws$wscode)
-	wt$wscode <- as.character(wt$wscode)
-	trial <- merge(trial, wt[, c("trialcode", "wscode")], by = "trialcode", all.x = TRUE)
-	trial <- merge(trial, ws[, c("wscode", "wslat", "wslong", "wsalt")], by = "wscode", all.x = TRUE)
+	r1 <- merge(r1, r2[, c("plotcode", "variety")], by = "plotcode", all.x = TRUE)
+	r3 <- merge(r3, r4[, c("sitecode", "countrycode", "sitename")], by = "sitecode", all.x = TRUE)
+	r5$wscode <- as.character(r5$wscode)
+	r6$wscode <- as.character(r6$wscode)
+	r3 <- merge(r3, r6[, c("trialcode", "wscode")], by = "trialcode", all.x = TRUE)
+	r3 <- merge(r3, r5[, c("wscode", "wslat", "wslong", "wsalt")], by = "wscode", all.x = TRUE)
 
 	cty <- c("BF" = "Burkina Faso", "ML" = "Mali", "SN" = "Senegal")
-	trial$country <- unname(cty[trial$countrycode])
-	trial$sitename <- utf8(trial$sitename)
+	r3$country <- unname(cty[r3$countrycode])
+	r3$sitename <- utf8(r3$sitename)
 
-	fert <- itk[itk$itklib == "fertilizin", c("trialcode", "Product", "itkval")]
+	fert <- r7[r7$itklib == "fertilizin", c("trialcode", "Product", "itkval")]
 	fert$product <- toupper(trimws(fert$Product))
 	fert$itkval <- as.numeric(fert$itkval)
 	fert <- aggregate(itkval ~ trialcode + product, fert, sum)
@@ -91,7 +106,7 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		i <- fert$trialcode == tr & fert$product == prod
 		if (!any(i)) 0 else sum(fert$itkval[i])
 	}
-	tr <- unique(as.character(plot$trialcode))
+	tr <- unique(as.character(r1$trialcode))
 	fm <- data.frame(trialcode = tr, npk = 0, urea = 0, dap = 0, om = 0)
 	for (i in seq_along(tr)) {
 		fm$npk[i] <- dose(tr[i], "NPK")
@@ -112,25 +127,25 @@ The database contains location, weather, soil, management techniques, sorghum cr
 	}
 	fm$fertilizer_type <- vapply(seq_len(nrow(fm)), ftype, "")
 
-	sow <- itk[itk$itklib == "sowing", c("trialcode", "itkdate", "itkval")]
+	sow <- r7[r7$itklib == "sowing", c("trialcode", "itkdate", "itkval")]
 	sow <- sow[!duplicated(sow$trialcode), ]
 	sow$planting_date <- mdy(sow$itkdate)
 	sow$plant_density <- as.numeric(sow$itkval)
 
-	gy <- ob[ob$obsplantlib == "GrainYield", c("plotcode", "obsplantval")]
+	gy <- r8[r8$obsplantlib == "GrainYield", c("plotcode", "obsplantval")]
 	names(gy)[2] <- "yield"
-	tb <- ob[ob$obsplantlib == "TotBiom", c("plotcode", "obsplantval")]
+	tb <- r8[r8$obsplantlib == "TotBiom", c("plotcode", "obsplantval")]
 	tb <- tb[!duplicated(tb$plotcode), ]
 	names(tb)[2] <- "dmy_total"
-	sw <- ob[ob$obsplantlib == "1000GrWe", c("plotcode", "obsplantval")]
+	sw <- r8[r8$obsplantlib == "1000GrWe", c("plotcode", "obsplantval")]
 	sw <- sw[!duplicated(sw$plotcode), ]
 	sw$seed_weight <- as.numeric(sw$obsplantval) * 1000
 	sw <- sw[, c("plotcode", "seed_weight")]
 
-	d <- merge(plot, gy, by = "plotcode", all.x = TRUE)
+	d <- merge(r1, gy, by = "plotcode", all.x = TRUE)
 	d <- merge(d, tb, by = "plotcode", all.x = TRUE)
 	d <- merge(d, sw, by = "plotcode", all.x = TRUE)
-	d <- merge(d, trial[, c("trialcode", "country", "sitename", "wslat", "wslong", "wsalt", "wscode")], by = "trialcode", all.x = TRUE)
+	d <- merge(d, r3[, c("trialcode", "country", "sitename", "wslat", "wslong", "wsalt", "wscode")], by = "trialcode", all.x = TRUE)
 	d <- merge(d, fm[, c("trialcode", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type", "om")], by = "trialcode", all.x = TRUE)
 	d <- merge(d, sow[, c("trialcode", "planting_date", "plant_density")], by = "trialcode", all.x = TRUE)
 
@@ -164,8 +179,8 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		is_survey = FALSE
 	)
 
-	hp <- ob[ob$obsplantlib %in% c("Pl_Height", "height_pc") & !is.na(ob$obsplantval), ]
-	lai <- ob[ob$obsplantlib %in% c("LAI", "lai") & !is.na(ob$obsplantval), ]
+	hp <- r8[r8$obsplantlib %in% c("Pl_Height", "height_pc") & !is.na(r8$obsplantval), ]
+	lai <- r8[r8$obsplantlib %in% c("LAI", "lai") & !is.na(r8$obsplantval), ]
 	h <- data.frame(
 		plot_id = hp$plotcode,
 		date = mdy(hp$obsplantdate),
@@ -179,26 +194,26 @@ The database contains location, weather, soil, management techniques, sorghum cr
 	long <- merge(h, l, by = c("plot_id", "date"), all = TRUE)
 	long <- long[long$plot_id %in% d$plot_id, ]
 
-	wd$tmin <- as.numeric(wd$tmin)
-	wd$tmax <- as.numeric(wd$tmax)
-	wd$temp <- as.numeric(wd$tmoy)
-	wd$prec <- as.numeric(wd$rainfall)
-	wd$rhum <- as.numeric(wd$rhmoy)
-	wd$rhmn <- as.numeric(wd$rhmin)
-	wd$rhmx <- as.numeric(wd$rhmax)
+	r9$tmin <- as.numeric(r9$tmin)
+	r9$tmax <- as.numeric(r9$tmax)
+	r9$temp <- as.numeric(r9$tmoy)
+	r9$prec <- as.numeric(r9$rainfall)
+	r9$rhum <- as.numeric(r9$rhmoy)
+	r9$rhmn <- as.numeric(r9$rhmin)
+	r9$rhmx <- as.numeric(r9$rhmax)
 	for (v in c("tmin", "tmax", "temp", "prec", "rhum", "rhmn", "rhmx")) {
-		wd[[v]][wd[[v]] == -999] <- NA
+		r9[[v]][r9[[v]] == -999] <- NA
 	}
 	wth <- data.frame(
-		station_id = as.character(wd$wscode),
-		date = mdy(wd$weatherdate),
-		tmin = wd$tmin,
-		tmax = wd$tmax,
-		temp = wd$temp,
-		prec = wd$prec,
-		rhum = wd$rhum,
-		rhmn = wd$rhmn,
-		rhmx = wd$rhmx
+		station_id = as.character(r9$wscode),
+		date = mdy(r9$weatherdate),
+		tmin = r9$tmin,
+		tmax = r9$tmax,
+		temp = r9$temp,
+		prec = r9$prec,
+		rhum = r9$rhum,
+		rhmn = r9$rhmn,
+		rhmx = r9$rhmx
 	)
 	wth <- wth[wth$station_id %in% d$station_id & !is.na(wth$date), ]
 	# Drop values outside the weather bounds, including temp of -492 and humidity above 100.

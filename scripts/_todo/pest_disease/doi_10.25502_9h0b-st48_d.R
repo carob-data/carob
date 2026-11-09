@@ -23,6 +23,7 @@
 # Columns IncTurnAphids, InCabAph, IncHelul, IncPlut. 0/1 incidence flags.
 # SN. Row number.
 # Dictionary legend rows Cab, Turn, Aphi, Inc, Tot, Entomopath. Not observations.
+# effect-of-neem-seed-oil-at-different-dos_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plant_number_: plant 1-5 in the block.

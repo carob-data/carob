@@ -18,6 +18,7 @@
 
 ## NOT PROCESSED
 # Consent, gender, prices in soles, hired labor, harvest amount (P18), sales, COVID information, assistance, food, and migration questions. Prices are not per kg in the unit cell.
+# 02_Datadictionary_Segunda Encuesta COVID La Libertad_2021.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -47,7 +48,7 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("^01_DataSet_COVID", basename(ff))]
+	f <- ff[basename(ff) == "01_DataSet_COVID-19_La Libertad_2021.xlsx"]
 	r <- carobiner::read.excel(f)
 	txt <- function(x) {
 		z <- trimws(as.character(x))

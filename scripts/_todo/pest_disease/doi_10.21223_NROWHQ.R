@@ -23,6 +23,7 @@
 # Family cover columns (fabaceae through linaceae), superficie_can_total, and num_superficietotal_par. Parish land-cover composition, not a plot measurement.
 # ual_prov, ual_cant, ual_parr, DPA_PARROQ: administrative codes. The province name is kept.
 # year: the calendar year of fecha.
+# 03_Data_dictionary_Surveillance_of_the_potato.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # incidence_: recorded incidence, percent

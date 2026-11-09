@@ -99,7 +99,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c("CEIGUA hourly data 2012.xlsx", "CEIGUA hourly data 2013.xlsx")]
 	ff <- ff[order(basename(ff))]
 	wth <- do.call(carobiner::bindr, lapply(ff, read_one))
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]

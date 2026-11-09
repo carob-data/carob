@@ -35,6 +35,15 @@
 # pest_species_: labelled insect/pest causing damage
 
 
+
+## NOT PROCESSED
+# HHDataY2000.xls_part1.xls: not read. sheet HHDataY2000.xls_part1: sample, survey, sam#87, splithh, village, union, upazila, ctrl, zila, Ecosystem, religion, selfeco, .... Observation records are missing from d until this file is standardized.
+# HHDataY2000.xls_part2.xls: not read. sheet HHDataY2000.xls_part2: sample, survey, sam#87, splithh, village, union, upazila, Ecosystem, zila, edwrkr, edwrm, edwrf, .... Observation records are missing from d until this file is standardized.
+# HHDataY2000.xls_part3.xls: not read. sheet HHDataY2000.xls_part3: sample, survey, sam#87, splithh, village, union, upazila, Ecosystem, zila, homsland, grdnland, clvtland, .... Observation records are missing from d until this file is standardized.
+# HHDataY2000.xls_part4.xls: not read. sheet HHDataY2000.xls_part4: sample, survey, sam#87, splithh, village, union, upazila, Ecosystem, zila, hyvinfo, ao_know, ao_vilv, .... Observation records are missing from d until this file is standardized.
+# HHDataY2000.xls_part5.xls: not read. sheet HHDataY2000.xls_part5 (of 2): Filename:    HHDataY2000_part 5. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Livelihood Systems in Bangladesh --for each year of study and the panel households created for all the years of study. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Livelihood Systems in Bangladesh (2000)
@@ -115,17 +124,17 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		as.data.frame(out, check.names=FALSE)
 	}
 
-	fdoc <- ff[basename(ff) == "Documentation of 2000_Bangladesh.xls"]
+	f1 <- ff[basename(ff) == "Documentation of 2000_Bangladesh.xls"]
 	# value labels from the codebook: variable name (filled down), code, label
 	codes <- function(sheet, var) {
-		x <- carobiner::read.excel(fdoc, sheet=sheet, col_names=FALSE)
-		nm <- x[[1]]
+		r <- carobiner::read.excel(f1, sheet=sheet, col_names=FALSE)
+		nm <- r[[1]]
 		nm <- nm[!is.na(nm)][cumsum(!is.na(nm))]
-		k <- nm %in% var & !is.na(x[[4]])
-		data.frame(code=as.numeric(x[[2]][k]), label=trimws(x[[4]][k]))
+		k <- nm %in% var & !is.na(r[[4]])
+		data.frame(code=as.numeric(r[[2]][k]), label=trimws(r[[4]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(x, cds$code)]
+		cds$label[match(r, cds$code)]
 	}
 
 	# crop codes 1-12 (sheet Cost&Retrn_val); 13 and higher are rice varieties (Parcel_val)

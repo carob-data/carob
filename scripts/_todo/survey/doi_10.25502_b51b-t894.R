@@ -24,6 +24,7 @@
 # hh_e8mzharv / hh_e8soyharv: another harvest field without a year label in the column name.
 # hh_e13* and hh_f3* fertiliser quantities (see ISSUES).
 # Metadata file, aside from the descriptions used above.
+# 20190109aao_metadata_iita_isfm_end-project-evaluation-survey.csv: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -52,7 +53,8 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "20190109aao_iita_isfm_end-project-evaluation-survey.csv"])
+	f <- ff[basename(ff) == "20190109aao_iita_isfm_end-project-evaluation-survey.csv"]
+	r <- read.csv(f)
 
 	prod_type <- function(can, dcomp, urea, mix, other) {
 		n <- length(can)

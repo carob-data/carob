@@ -101,18 +101,18 @@ Dry direct-seeded rice herbicide trials on research stations, comparing pre-emer
 		out
 	}
 	join_ai <- function(a, b) {
-		out <- paste(a, b, sep=";")
+		out <- paste(r, b, sep=";")
 		out <- gsub("(^none;|;none$)", "", out)
-		out[a == "none" & b == "none"] <- "none"
-		out[is.na(a) | is.na(b)] <- NA_character_
+		out[r == "none" & b == "none"] <- "none"
+		out[is.na(r) | is.na(b)] <- NA_character_
 		out
 	}
 
 	one <- function(f) {
-		a <- carobiner::read.excel(f, sheet="16.WeedBio & cropData (harvest)", col_names=FALSE)
-		hr <- which(as.character(a[[1]]) == "Year")[1]
-		h1 <- as.character(unlist(a[hr, ]))
-		h2 <- as.character(unlist(a[hr + 1, ]))
+		r <- carobiner::read.excel(f, sheet="16.WeedBio & cropData (harvest)", col_names=FALSE)
+		hr <- which(as.character(r[[1]]) == "Year")[1]
+		h1 <- as.character(unlist(r[hr, ]))
+		h2 <- as.character(unlist(r[hr + 1, ]))
 		h1[is.na(h1)] <- ""
 		h2[is.na(h2)] <- ""
 		at <- function(pat, row="h1") {
@@ -122,10 +122,10 @@ Dry direct-seeded rice herbicide trials on research stations, comparing pre-emer
 			i[1]
 		}
 		pull <- function(i) {
-			if (is.na(i)) return(rep(NA, nrow(a)))
-			a[[i]]
+			if (is.na(i)) return(rep(NA, nrow(r)))
+			r[[i]]
 		}
-		year <- as.numeric(as.character(a[[1]]))
+		year <- as.numeric(as.character(r[[1]]))
 		ok <- !is.na(year) & year >= 2000 & year <= 2100
 		subv <- function(v) v[ok]
 		pre <- pre_ai(subv(pull(at("pre-emergence herb"))))
@@ -197,7 +197,20 @@ Dry direct-seeded rice herbicide trials on research stations, comparing pre-emer
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Aman rice  2016-herbicide trial-SRFSI-OFRD-Rangpur.xlsx",
+		"Aman rice 2015-herbicide trial-DSR-Dhanusha.xlsx",
+		"Aman rice 2015-herbicide trial-RARS-Sunsari.xlsx",
+		"Aman rice 2015-herbicide trial-RWRC-Rajshahi.xlsx",
+		"Aman rice 2015-herbicide trial-SRFSI-BAU-Bihar.xlsx",
+		"Aman rice 2015-herbicide trial-UBKV-C'behar.xlsx",
+		"Aman rice 2015-herbicide trial-WRC-Dinajpur.xlsx",
+		"Aman rice 2016-herbicide trial-SRFSI-BAU-Bihar.xlsx",
+		"Aman rice 2016-herbicide trial-SRFSI-RARS-Nepal.xlsx",
+		"Aman rice 2016-Herbicide trial-SRFSI-UVKV-C'Behar.xlsx",
+		"Aman rice 2016-herbicide trial-SRFSI-WRC-Dinajpur.xlsx",
+		"Aman rice 2016-herbicides trial-SRFSI-WRC-Rajshahi.xlsx"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d$yield_moisture[!is.na(d$yield_moisture) & d$yield_moisture > 100] <- NA_real_
 	d$plant_height[!is.na(d$plant_height) & d$plant_height <= 0] <- NA_real_

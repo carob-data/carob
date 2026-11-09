@@ -16,6 +16,24 @@
 # Household_Dataset_Pasco.xlsx: the first row is a grouped header.
 # CommunityBoundaries shapefiles and the survey PDFs.
 # Year columns 2001-2015 and the other rotation descriptors in RotationRatio_Pasco.xlsx.
+# CommunityBoundaries_Pasco_Bellavista.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Bellavista.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Pasco_Chupaca.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # area_recorded_: Area column, unit not stated.
@@ -80,9 +98,9 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		out
 	}
 
-	fr <- ff[basename(ff) == "RotationRatio_Pasco.xlsx"]
-	fv <- ff[basename(ff) == "FrecuencyOfVarietiesByArea_Pasco.xlsx"]
-	r <- carobiner::read.excel(fr, sheet="data")
+	f1 <- ff[basename(ff) == "RotationRatio_Pasco.xlsx"]
+	f2 <- ff[basename(ff) == "FrecuencyOfVarietiesByArea_Pasco.xlsx"]
+	r <- carobiner::read.excel(f1, sheet="data")
 	d1 <- data.frame(
 		country = chr(r$Country),
 		adm1 = chr(r$Region),
@@ -95,11 +113,11 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		harvest_date = as_date(r[["Harvest date"]]),
 		rotation_code_ = chr(r$Cultivar_Final)
 	)
-	v <- carobiner::read.excel(fv, sheet="Lista_Area")
+	r1 <- carobiner::read.excel(f2, sheet="Lista_Area")
 	d2 <- data.frame(
 		country = "Peru",
-		variety = chr(v$Variedad),
-		area_m2_ = num(v[["Area m2"]])
+		variety = chr(r1$Variedad),
+		area_m2_ = num(r1[["Area m2"]])
 	)
 	d <- carobiner::bindr(d1, d2)
 	miss <- is.na(d$hhid) | !nzchar(d$hhid)

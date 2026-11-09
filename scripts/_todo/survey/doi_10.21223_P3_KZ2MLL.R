@@ -23,6 +23,8 @@
 # Kebele or tabia (A03B). The labels are in the file and were not assigned to an admin level.
 # Crops, yields, assets, income, and food-consumption columns in this table.
 # 09142011  Data for Baseline Nutrition Project Tigray.sav (same table), the data dictionary, and the questionnaire.
+# Data Dictionary for Tigray Nutrition Project.xlsx: documentation or a codebook, not an observation table.
+# Questionnaire for Baseline survey of Tigray Nutrition project.xlsx: design, layout, or protocol sheet, not plot or survey records.
 
 
 carob_script <- function(path) {

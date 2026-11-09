@@ -104,7 +104,12 @@ A standard quantitative genetic model was used to examine how genotype-environme
 		)
 	}
 
-	ff <- ff[grepl("_ALL_LINES_clean_ARC5\\.csv$", basename(ff))]
+	ff <- ff[basename(ff) %in% c(
+		"ESWYT_ALL_LINES_clean_ARC5.csv",
+		"HTWYT_ALL_LINES_clean_ARC5.csv",
+		"IDYN_ALL_LINES_clean_ARC5.csv",
+		"SAWYT_ALL_LINES_clean_ARC5.csv"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	keep <- !is.na(d$variety_code) | !is.na(d$yield)
 	d <- d[keep, ]

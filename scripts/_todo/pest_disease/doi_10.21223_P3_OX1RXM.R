@@ -62,9 +62,9 @@ Habitat manipulation by trap crops establishes a management component which allo
 	)
 
 	f <- ff[basename(ff) == "Student thesis data 4 data.xlsx"]
-	lar <- carobiner::read.excel(f, sheet="Larval Infestation data")
-	feed <- carobiner::read.excel(f, sheet="Feeding data")
-	ad <- carobiner::read.excel(f, sheet="Adult traps")
+	r1 <- carobiner::read.excel(f, sheet="Larval Infestation data")
+	r2 <- carobiner::read.excel(f, sheet="Feeding data")
+	r3 <- carobiner::read.excel(f, sheet="Adult traps")
 
 	leg <- data.frame(
 		treatment = c("papa(+)_haba(+)", "papa(+)_haba(-)", "papa(+)", "papa(-)_haba(+)", "papa(-)_haba(-)", "papa(-)"),
@@ -74,9 +74,9 @@ Habitat manipulation by trap crops establishes a management component which allo
 		stringsAsFactors = FALSE
 	)
 	keep <- function(x) trimws(as.character(x[["Treatment Name"]])) %in% leg$treatment
-	lar <- lar[keep(lar), ]
-	feed <- feed[keep(feed), ]
-	ad <- ad[keep(ad), ]
+	r1 <- r1[keep(r1), ]
+	r2 <- r2[keep(r2), ]
+	r3 <- r3[keep(r3), ]
 
 	trap <- rep(leg$trap_crop_, times=3)
 	has_trap <- trap == "faba bean"
@@ -118,8 +118,8 @@ Habitat manipulation by trap crops establishes a management component which allo
 		do.call(rbind, out)
 	}
 
-	lv <- week_block(lar[["Treatment Name"]], lar$Repetition, lar$Leaflet, lar, "Infest_")
-	fv <- week_block(feed[["Treatment Name"]], feed$Repetition, feed$Leaflet, feed, "FeedPunct_")
+	lv <- week_block(r1[["Treatment Name"]], r1$Repetition, r1$Leaflet, r1, "Infest_")
+	fv <- week_block(r2[["Treatment Name"]], r2$Repetition, r2$Leaflet, r2, "FeedPunct_")
 	leaf <- merge(
 		data.frame(record_id=lv$record_id, week_=lv$week_, leaflet_=lv$leaflet_, larvae_per_leaflet_=lv$value),
 		data.frame(record_id=fv$record_id, week_=fv$week_, leaflet_=fv$leaflet_, feeding_punctures_=fv$value),
@@ -131,12 +131,12 @@ Habitat manipulation by trap crops establishes a management component which allo
 	trap <- vector("list", 10)
 	for (w in 1:10) {
 		trap[[w]] <- data.frame(
-			record_id = rid(ad[["Treatment Name"]], ad$Repetition),
+			record_id = rid(r3[["Treatment Name"]], r3$Repetition),
 			week_ = as.integer(w),
 			leaflet_ = NA_integer_,
 			larvae_per_leaflet_ = NA_real_,
 			feeding_punctures_ = NA_real_,
-			adult_trap_count_ = as.numeric(ad[[paste0("tramp", w)]])
+			adult_trap_count_ = as.numeric(r3[[paste0("tramp", w)]])
 		)
 	}
 	tr <- do.call(rbind, trap)

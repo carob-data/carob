@@ -55,10 +55,10 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		notes = NA
 	)
 
-	f_str <- ff[basename(ff) == "phenotypic-data-of-the-300-diallel-cross-and-6-checks.csv"]
-	f_opt <- ff[basename(ff) == "phenotypic-data-optimum-of-the-300-diallel-cross-and-6-checks.csv"]
-	r1 <- read.csv(f_str)
-	r2 <- read.csv(f_opt)
+	f1 <- ff[basename(ff) == "phenotypic-data-of-the-300-diallel-cross-and-6-checks.csv"]
+	f2 <- ff[basename(ff) == "phenotypic-data-optimum-of-the-300-diallel-cross-and-6-checks.csv"]
+	r1 <- read.csv(f1)
+	r2 <- read.csv(f2)
 
 	v1 <- trimws(as.character(r1$Pedigree))
 	d1 <- data.frame(

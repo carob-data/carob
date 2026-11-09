@@ -20,6 +20,11 @@
 ## NOT PROCESSED
 # Hourly workbooks for 2012-2016.
 # Unnamed columns after pan evaporation in the 1973-2000 workbooks.
+# Tlaltizapan hourly data 2012.xlsx: not read. sheet RowDataTlaltizapan2012 (of 2): Year, Month, Day, Hour, Minutes, Minutos, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, .... Observation records are missing from d until this file is standardized.
+# Tlaltizapan hourly data 2013.xlsx: not read. sheet RowDataTlaltizapan2013 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Tlaltizapan hourly data 2014.xlsx: not read. sheet RowDataTlaltizapan2014 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Tlaltizapan hourly data 2015.xlsx: not read. sheet RowData_Tlaltizapan2015 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Tlaltizapan hourly data 2016.xlsx: not read. sheet RowData_Tlaltizapan2016 (of 2): Year, Month, day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -149,14 +154,26 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 
 	bn <- basename(ff)
 	parts <- list()
-	old <- ff[grepl("^Tlaltizapan (19|20)", bn) & grepl("\\.xls$", bn, ignore.case=TRUE)]
-	if (length(old)) parts <- c(parts, lapply(old, read_old))
-	f2001 <- ff[grepl("2001_2010", bn)]
-	if (length(f2001)) parts <- c(parts, lapply(f2001, read_2001))
-	f2011 <- ff[grepl("hourly data 2011", bn)]
-	if (length(f2011)) parts <- c(parts, lapply(f2011, read_2011))
-	daily <- ff[grepl("daily data", bn)]
-	if (length(daily)) parts <- c(parts, lapply(daily, read_daily))
+	f1 <- ff[basename(ff) %in% c(
+		"Tlaltizapan 1982 - 1973.xls",
+		"Tlaltizapan 1992 - 1983.xls",
+		"Tlaltizapan 1996 - 1993.xls",
+		"Tlaltizapan 2000 - 1997.xls"
+	)]
+	if (length(f1)) parts <- c(parts, lapply(f1, read_old))
+	f2 <- ff[basename(ff) == "Tlaltizapan hourly data 2001_2010.xlsx"]
+	if (length(f2)) parts <- c(parts, lapply(f2, read_2001))
+	f3 <- ff[basename(ff) == "Tlaltizapan hourly data 2011.xlsx"]
+	if (length(f3)) parts <- c(parts, lapply(f3, read_2011))
+	f4 <- ff[basename(ff) %in% c(
+		"Tlaltizapan daily data 2012.xlsx",
+		"Tlaltizapan daily data 2013.xlsx",
+		"Tlaltizapan daily data 2014.xlsx",
+		"Tlaltizapan daily data 2015.xlsx",
+		"Tlaltizapan daily data 2016.xlsx",
+		"Tlaltizapan daily data 2017.xlsx"
+	)]
+	if (length(f4)) parts <- c(parts, lapply(f4, read_daily))
 	parts <- parts[!vapply(parts, is.null, TRUE)]
 	wth <- do.call(carobiner::bindr, parts)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]

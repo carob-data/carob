@@ -16,6 +16,7 @@
 # Standard deviations next to dry matter and vitamin C.
 # Primary Trait.
 # The dictionary workbook.
+# Standard Evaluation Trial for Vitamin C Content Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -45,7 +46,7 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("Vitamin C Content Data", basename(ff))]
+	f <- ff[basename(ff) == "Standard Evaluation Trial for Vitamin C Content Data.xls"]
 	r <- carobiner::read.excel(f, sheet="VIT.C", na=c("", "NA"))
 	names(r) <- trimws(names(r))
 	num <- function(x) {

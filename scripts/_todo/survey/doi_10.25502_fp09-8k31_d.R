@@ -57,13 +57,18 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		carob_effort = 0.5
 	)
 
-	resp <- read.csv(ff[basename(ff) == "responses.csv"])
-	land <- read.csv(ff[basename(ff) == "section-a.-land.csv"])
-	mz <- read.csv(ff[basename(ff) == "section-c.-crop-budget.csv"])
-	harv <- read.csv(ff[basename(ff) == "section-d.-harvest-.csv"])
-	oth <- read.csv(ff[basename(ff) == "section-e.-other-crop.csv"])
+	f1 <- ff[basename(ff) == "responses.csv"]
+	r1 <- read.csv(f1)
+	f2 <- ff[basename(ff) == "section-a.-land.csv"]
+	r2 <- read.csv(f2)
+	f3 <- ff[basename(ff) == "section-c.-crop-budget.csv"]
+	r3 <- read.csv(f3)
+	f4 <- ff[basename(ff) == "section-d.-harvest-.csv"]
+	r4 <- read.csv(f4)
+	f5 <- ff[basename(ff) == "section-e.-other-crop.csv"]
+	r5 <- read.csv(f5)
 
-	gps <- strsplit(as.character(resp$GPS), ",", fixed=TRUE)
+	gps <- strsplit(as.character(r1$GPS), ",", fixed=TRUE)
 	lat <- lon <- elev <- rep(NA_real_, length(gps))
 	for (i in seq_along(gps)) {
 		z <- trimws(gps[[i]])
@@ -73,12 +78,12 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		if (length(z) >= 3 && z[3] != "" && grepl("^-?[0-9]+(\\.[0-9]+)?$", z[3])) elev[i] <- as.numeric(z[3])
 	}
 	elev[!is.na(elev) & (elev < 0 | elev > 500)] <- NA
-	dist <- trimws(resp$District)
+	dist <- trimws(r1$District)
 	dist[tolower(dist) == "busi"] <- "Buzi"
 	hh <- data.frame(
-		Response = resp$Response,
+		Response = r1$Response,
 		country = "Mozambique",
-		adm1 = carobiner::fix_name(resp$Region, "title"),
+		adm1 = carobiner::fix_name(r1$Region, "title"),
 		adm2 = carobiner::fix_name(dist, "title"),
 		longitude = lon,
 		latitude = lat,
@@ -94,11 +99,11 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		out
 	}
 
-	land$field_size <- acres_to_ha(land$LndSiz_val, land$LndSiz_unt)
+	r2$field_size <- acres_to_ha(r2$LndSiz_val, r2$LndSiz_unt)
 	land_key <- data.frame(
-		Response = land$Response,
-		plot = trimws(land$Plt_farm),
-		field_size = land$field_size
+		Response = r2$Response,
+		plot = trimws(r2$Plt_farm),
+		field_size = r2$field_size
 	)
 	land_key <- land_key[!duplicated(land_key[, c("Response", "plot")]), ]
 
@@ -111,38 +116,38 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		ifelse(u == "100Kg", q * 100, NA_real_)
 	}
 
-	harv$plot <- trimws(harv$Plt_farmn)
-	harv$harvest_kg <- kg_from(harv$Qty_Valu, harv$Qty_harUnt)
-	harv_key <- harv[, c("Response", "plot", "Qty_Valu", "Qty_harUnt", "harvest_kg")]
+	r4$plot <- trimws(r4$Plt_farmn)
+	r4$harvest_kg <- kg_from(r4$Qty_Valu, r4$Qty_harUnt)
+	harv_key <- r4[, c("Response", "plot", "Qty_Valu", "Qty_harUnt", "harvest_kg")]
 	names(harv_key)[names(harv_key) == "Qty_Valu"] <- "harvest_reported_"
 	names(harv_key)[names(harv_key) == "Qty_harUnt"] <- "harvest_unit_"
 
-	mz$plot <- trimws(mz$mainplot)
-	mz$Response <- mz$Response
+	r3$plot <- trimws(r3$mainplot)
+	r3$Response <- r3$Response
 	d1 <- data.frame(
-		Response = mz$Response,
-		plot_id = mz$plot,
+		Response = r3$Response,
+		plot_id = r3$plot,
 		crop = "maize",
 		yield_part = "grain",
-		fertilizer_type = ifelse(tolower(trimws(mz$applyfert)) == "yes", "NPK", NA_character_),
-		fertilizer_amount_ = mz$Qtyfert_1st
+		fertilizer_type = ifelse(tolower(trimws(r3$applyfert)) == "yes", "NPK", NA_character_),
+		fertilizer_amount_ = r3$Qtyfert_1st
 	)
 	d1 <- merge(d1, land_key, by.x=c("Response", "plot_id"), by.y=c("Response", "plot"), all.x=TRUE)
 	d1 <- merge(d1, harv_key, by.x=c("Response", "plot_id"), by.y=c("Response", "plot"), all.x=TRUE)
 
-	ocrop <- tolower(trimws(oth$Crop_type))
+	ocrop <- tolower(trimws(r5$Crop_type))
 	ocrop[ocrop == "millet"] <- "pearl millet"
 	ocrop[ocrop == "soybeans"] <- "soybean"
 	ocrop[ocrop %in% c("beans", "bean")] <- "common bean"
 	ocrop[grepl("bambara", ocrop)] <- "bambara groundnut"
 	ocrop[ocrop %in% c("", "na")] <- NA
 	d2 <- data.frame(
-		Response = oth$Response,
-		plot_id = trimws(oth$Plt_farmn),
+		Response = r5$Response,
+		plot_id = trimws(r5$Plt_farmn),
 		crop = ocrop,
-		field_size = acres_to_ha(oth$Area_Value, oth$Area_Unit),
-		harvest_reported_ = oth$Value_Yield,
-		harvest_unit_ = trimws(oth$Yield_Unit),
+		field_size = acres_to_ha(r5$Area_Value, r5$Area_Unit),
+		harvest_reported_ = r5$Value_Yield,
+		harvest_unit_ = trimws(r5$Yield_Unit),
 		fertilizer_type = NA_character_,
 		fertilizer_amount_ = NA_real_
 	)

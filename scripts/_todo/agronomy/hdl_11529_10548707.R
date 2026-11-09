@@ -81,36 +81,36 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 		rbind(ct, ca)
 	}
 
-	f <- ff[grepl("data.xlsx$", basename(ff))]
-	a <- carobiner::read.excel(f, sheet="OF_Data_yld", fix_names=TRUE)
-	a <- a[!is.na(a$Crop), ]
-	texture <- texture_name(a$Soil.texture.17)
+	f <- ff[basename(ff) == "Jat et al-CA based SI in South Asia-Nature Sustainability (2020) data.xlsx"]
+	r1 <- carobiner::read.excel(f, sheet="OF_Data_yld", fix_names=TRUE)
+	r1 <- r1[!is.na(r1$Crop), ]
+	texture <- texture_name(r1$Soil.texture.17)
 	d1 <- pair(
-		carobiner::fix_name(a$country, "title"),
-		carobiner::fix_name(a$State, "title"),
-		carobiner::fix_name(a$Location, "title"),
-		crop_name(a$Crop),
+		carobiner::fix_name(r1$country, "title"),
+		carobiner::fix_name(r1$State, "title"),
+		carobiner::fix_name(r1$Location, "title"),
+		crop_name(r1$Crop),
 		texture,
-		as.character(a$Yr),
+		as.character(r1$Yr),
 		TRUE,
-		a$CT_GY,
-		a$CA_GY,
-		paste(a$country, a$Location, a$Yr, a$Sty.No, a$Crop)
+		r1$CT_GY,
+		r1$CA_GY,
+		paste(r1$country, r1$Location, r1$Yr, r1$Sty.No, r1$Crop)
 	)
 
-	b <- carobiner::read.excel(f, sheet="OS_Data_YLD", fix_names=TRUE)
-	b <- b[!is.na(b$Crop), ]
+	r2 <- carobiner::read.excel(f, sheet="OS_Data_YLD", fix_names=TRUE)
+	r2 <- r2[!is.na(r2$Crop), ]
 	d2 <- pair(
-		carobiner::fix_name(b$Country, "title"),
+		carobiner::fix_name(r2$Country, "title"),
 		NA_character_,
-		carobiner::fix_name(b$Location, "title"),
-		crop_name(b$Crop),
-		texture_name(b$Soil_texture),
+		carobiner::fix_name(r2$Location, "title"),
+		crop_name(r2$Crop),
+		texture_name(r2$Soil_texture),
 		NA_character_,
 		FALSE,
-		b$GY_C,
-		b$GY_CA,
-		paste("OS", b$Country, b$Location, b$Stud_No, b$Crop)
+		r2$GY_C,
+		r2$GY_CA,
+		paste("OS", r2$Country, r2$Location, r2$Stud_No, r2$Crop)
 	)
 
 	d <- rbind(d1, d2)

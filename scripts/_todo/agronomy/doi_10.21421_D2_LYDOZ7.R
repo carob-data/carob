@@ -102,18 +102,18 @@ The dataset contains five strains of Streptomyces (CAI-17, CAI-68, CAI-78, KAI-2
 		geo_from_source = FALSE
 	)
 
-	fr <- ff[basename(ff) == "Effect of Streptomyces strains root development of rice.xlsx"]
-	rr <- carobiner::read.excel(fr, na="NA")
-	depth <- rr$Depth
+	f1 <- ff[basename(ff) == "Effect of Streptomyces strains root development of rice.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
+	depth <- r1$Depth
 	long <- data.frame(
 		trial_id = "Patancheru_B1",
-		seed_treatment = trimws(rr$Treatment),
-		rep = as.integer(rr$`Replication number`),
+		seed_treatment = trimws(r1$Treatment),
+		rep = as.integer(r1$`Replication number`),
 		depth_top = as.numeric(sub("-.*", "", depth)),
 		depth_bottom = as.numeric(sub(".*-", "", depth)),
-		root_length_mm_m2_ = as.numeric(rr$`Root length`),
-		root_volume_cm3_m2_ = as.numeric(rr$`Root volume`),
-		root_weight_g_m2_ = as.numeric(rr$`Root weight`)
+		root_length_mm_m2_ = as.numeric(r1$`Root length`),
+		root_volume_cm3_m2_ = as.numeric(r1$`Root volume`),
+		root_weight_g_m2_ = as.numeric(r1$`Root weight`)
 	)
 
 	carobiner::write_files(path, meta, d, long=long)

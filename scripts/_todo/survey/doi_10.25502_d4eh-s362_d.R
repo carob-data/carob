@@ -30,6 +30,22 @@
 # production_consumption_demand.csv, utilization_of_crop_revenue.csv, food_consumption and dietary_diversity files, food_insecurity, shocks, migration, income, assets, livestock, market_access, group_formation, climate and drought perception.
 # plot.csv labour counts, wages, severity scores, seed and pesticide cost columns.
 # csat_iita_baseline_questionnaire_mali_niger.pdf (see ISSUES).
+# climate_change_perception_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, CLIMATE_CHANGE_PERCEPTION, causClimateChng. Observation records are missing from d until this file is standardized.
+# dietary_diversity_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, DIETARY_DIVERSITY, hhCons_7days, numConsmptnDays, .... Observation records are missing from d until this file is standardized.
+# dietary_diversity2_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, DIETARY_DIVERSITY2, numMeals_7days. Observation records are missing from d until this file is standardized.
+# drought_risk_perception_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, DROUGHT_RISK_PERCEPTION, expDrought, drghtDuratn, .... Observation records are missing from d until this file is standardized.
+# food_consumption_cereal_legumes_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, FOOD_CONSUMPTION_CEREAL_LEGUMES, freqConsmptn, qtyLocUnit_lowAv, .... Observation records are missing from d until this file is standardized.
+# food_insecurity_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, FOOD_INSECURITY, respFdInscrty, freqFdInscrty. Observation records are missing from d until this file is standardized.
+# group_formation_and_organization_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, GROUP_FORMATION_AND_ORGANIZATION, hhmem_group, numGrpMale, .... Observation records are missing from d until this file is standardized.
+# household_asset_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, HOUSEHOLD_ASSET, qtyAsset, unitValueAsset. Observation records are missing from d until this file is standardized.
+# household_income_m.csv: not read. empty file. Observation records are missing from d until this file is standardized.
+# livestock_assets_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, LIVESTOCK_ASSETS, qtyLvstck. Observation records are missing from d until this file is standardized.
+# market_access_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, MARKET_ACCESS, relevntCommdty, transptMode, .... Observation records are missing from d until this file is standardized.
+# migration_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, MIGRATION, migrantName, migrantGndr, .... Observation records are missing from d until this file is standardized.
+# nonfood_expenses_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, NONFOOD_EXPENSES, buyItem, purchPeriod, .... Observation records are missing from d until this file is standardized.
+# other_food_products_m.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, OTHER_FOOD_PRODUCTS, qtyOthCropConsmd, priceOthCropConsmd, .... Observation records are missing from d until this file is standardized.
+# productive_assets.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, PRODUCTIVE_ASSETS, qtyEquipmt, unitValue. Observation records are missing from d until this file is standardized.
+# shocks_and_coping_mechanisms.csv: not read. columns: ID, PAYS, REGION, CERCLE, COMMUNE, STATUS, VILLAGE, ENQUETEUR, HOUSEHOLD, SHOCKS_AND_COPING_MECHANISMS, hhAffctd_shock, shckSeverty, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -58,8 +74,10 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "plot.csv"])
-	g <- read.csv(ff[basename(ff) == "general_details_m.csv"])
+	f1 <- ff[basename(ff) == "plot.csv"]
+	r <- read.csv(f1)
+	f2 <- ff[basename(ff) == "general_details_m.csv"]
+	r1 <- read.csv(f2)
 
 	crop <- tolower(trimws(r$plot1_cropCultvtd))
 	crop[crop == "millet"] <- "pearl millet"
@@ -72,7 +90,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 	size[unit == "Acre"] <- size[unit == "Acre"] * 0.404686
 	size[!(unit %in% c("Hectare", "Acre"))] <- NA
 
-	gps_txt <- as.character(g$homeGPS)
+	gps_txt <- as.character(r1$homeGPS)
 	bad_enc <- !is.na(gps_txt) & is.na(iconv(gps_txt, from="UTF-8", to="UTF-8"))
 	if (any(bad_enc)) gps_txt[bad_enc] <- iconv(gps_txt[bad_enc], from="latin1", to="UTF-8", sub="")
 	gps <- strsplit(gps_txt, ",", fixed=TRUE)
@@ -90,7 +108,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 	lat[bad_xy] <- NA
 	lon[bad_xy] <- NA
 	loc <- data.frame(
-		HOUSEHOLD = g$HOUSEHOLD,
+		HOUSEHOLD = r1$HOUSEHOLD,
 		longitude = lon,
 		latitude = lat,
 		elevation = elev

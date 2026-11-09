@@ -59,10 +59,10 @@ To examine how such a pattern of agrarian change has emerged through the interac
 
 	f1 <- ff[basename(ff) == "Tubuan 1995_1.xls"]
 	f2 <- ff[basename(ff) == "Tubuan 1995_2.xls"]
-	rW <- carobiner::read.excel(f1, sheet="ProdnWS94", skip=1, col_types="text")
-	rD <- carobiner::read.excel(f1, sheet="ProdnDS95", skip=2, col_types="text")
-	iW <- carobiner::read.excel(f2, sheet="CurrentWS", skip=2, col_types="text")
-	iD <- carobiner::read.excel(f2, sheet="CurrentDS", skip=2, col_types="text")
+	r1 <- carobiner::read.excel(f1, sheet="ProdnWS94", skip=1, col_types="text")
+	r2 <- carobiner::read.excel(f1, sheet="ProdnDS95", skip=2, col_types="text")
+	r3 <- carobiner::read.excel(f2, sheet="CurrentWS", skip=2, col_types="text")
+	r4 <- carobiner::read.excel(f2, sheet="CurrentDS", skip=2, col_types="text")
 
 	prod <- function(r, seas) {
 		names(r) <- sub("WS$|DS$", "", names(r))
@@ -83,7 +83,7 @@ To examine how such a pattern of agrarian change has emerged through the interac
 			harvest_date = ifelse(is.na(hm), NA, sprintf("%d-%02d", hy, hm))
 		)
 	}
-	d <- rbind(prod(rW, "wet"), prod(rD, "dry"))
+	d <- rbind(prod(r1, "wet"), prod(r2, "dry"))
 	d$yield <- d$production_ * 45 / d$field_size
 
 	inp <- function(r, seas) {
@@ -91,7 +91,7 @@ To examine how such a pattern of agrarian change has emerged through the interac
 		r <- r[!is.na(r$HHCODE), ]
 		data.frame(hhid = r$HHCODE, season = seas, input = toupper(trimws(r$INPUT)), kind = toupper(trimws(r$KIND)))
 	}
-	i <- rbind(inp(iW, "wet"), inp(iD, "dry"))
+	i <- rbind(inp(r3, "wet"), inp(r4, "dry"))
 	i$key <- paste(i$hhid, i$season)
 	fe <- i[grepl("^FERT", i$input) & !is.na(i$kind), ]
 	he <- i[grepl("^HERB", i$input) & !is.na(i$kind), ]

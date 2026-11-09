@@ -27,6 +27,17 @@
 # education_years_: years of education of the household head
 
 
+
+## NOT PROCESSED
+# H2OSKED2.XLS: not read. sheet PRODN: H2OSKED2.WK1 (CONTINUATION...), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPDIKEREPAIR.xls: not read. sheet LPPLOW: LPPLOW.WK1 Land Preparation (Cleaning and Repair of Dikes), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPDUKIT.XLS: not read. sheet LPPLOW: LPPLOW.WK1 Land Preparation (Dukit), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPHARROW.XLS: not read. sheet LPHARROW: LPHARROW.WK1 Land Preparation (Harrowing), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPLEVEL.XLS: not read. sheet LPLEVEL: LPLEVEL.WK1 Land Preparation (Levelling), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPPLOW.XLS: not read. sheet LPPLOW: LPPLOW.WK1 Land Preparation (Plowing), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LPROTAV.XLS: not read. sheet LPROTAV: LPROTAV.WK1 Land Preparation (Rotavating), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, The Effects of Pumping on Water Use and Profitability in dry season rice:  A case study in Upper Pampanga River Irrigation System (UPRIIS), Philippines. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -55,7 +66,8 @@ To compare economic performance of rice production and water management practice
 	)
 
 	read_wk1 <- function(name) {
-		r <- carobiner::read.excel(ff[basename(ff) == name], col_names=FALSE)
+		f <- ff[basename(ff) == name]
+		r <- carobiner::read.excel(f, col_names=FALSE)
 		h <- which(r[[1]] == "COUNTRY")[1]
 		nms <- as.character(unlist(r[h, ]))
 		nms[is.na(nms)] <- paste0("V", which(is.na(nms)))

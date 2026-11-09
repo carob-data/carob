@@ -40,6 +40,21 @@
 # residue_price_: price of rice straw (currency/kg)
 
 
+
+## NOT PROCESSED
+# tbl07nonricecost.xls: not read. sheet tbl07nonricecost: farmerid, district, village, plotsize, nonricecrop, seedplant, fertilizer, pesticide, hiredlabor, others, otherspecify, comments. Observation records are missing from d until this file is standardized.
+# tbl08afarmnonfarmlabor.xls: not read. sheet tbl08afarmnonfarmlabor: farmerid, district, village, gender, incomesource, activitytype, worktype, hhmembers, workplace, daysworked, kindpayment, cashpayment, .... Observation records are missing from d until this file is standardized.
+# tbl08banimalsales.xls: not read. sheet tbl08banimalsales: farmerid, district, village, incomesource, items, unit, quantity, salevalue, price, whosold, comments. Observation records are missing from d until this file is standardized.
+# tbl08cotherincome.xls: not read. sheet tbl08cotherincome: farmerid, district, village, incomesource, qty, price, male, female, both, income, comments. Observation records are missing from d until this file is standardized.
+# tbl09borrowing.xls: not read. sheet tbl09borrowing: farmerid, district, village, itemborrwed, quantity, unit, itemvalue, price, source, interestrate, collateral, purpose. Observation records are missing from d until this file is standardized.
+# tbl10consumption.xls: not read. sheet tbl10consumption: farmerid, district, village, fooditem, normalyear, ndaily, noccassion, stressyear, sdaily, soccassion, comments. Observation records are missing from d until this file is standardized.
+# tbl11adjustment.xls: not read. sheet tbl11adjustment: farmerid, district, village, normal, stress, normalmeal, stressmeal, eatless, eatlesswhy, consumeseed, consumeseedwhy, sellmore, .... Observation records are missing from d until this file is standardized.
+# tbl12aawareness.xls: not read. sheet tbl12aawareness: farmerid, district, village, stresstolheard, stresstolerantyes, stresstolplanted, stresstolwilling, stresstolwillingyes. Observation records are missing from d until this file is standardized.
+# tbl13adecisions.xls: not read. sheet tbl13adecisions: farmerid, district, village, ricevar, hiredlabor, eatorsell, qty2eatorsell, whenwhere2sell, price2sell, farmimpl, slaughorsell, adoptech, .... Observation records are missing from d until this file is standardized.
+# tbl13borganization.xls: not read. sheet tbl13borganization: farmerid, district, village, husbandwife, organization, position, activity. Observation records are missing from d until this file is standardized.
+# tbl13bparticipate.xls: not read. sheet tbl13bparticipate: farmerid, district, village, husbandwife, participate. Observation records are missing from d until this file is standardized.
+# tbl13ctraining.xls: not read. sheet tbl13ctraining: farmerid, district, village, husbandwife, training. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

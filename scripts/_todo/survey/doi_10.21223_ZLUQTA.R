@@ -18,6 +18,14 @@
 # Selection, flowering, dormancy, and organoleptic workbooks.
 # Per-plot tuber counts and weights (NTP, NPH, TTWP, and the stand-adjusted TTYA). Plot area is not in the yield sheet.
 # PTPV201203_JUMLA.xls if present: the same trial in HIDAP form was not required once the yield sheets had one row per plot.
+# 01_data_F1_Select_crit.xlsx: not read. sheet F1_Selec_Crit: ORD, PHASE, Identified criteria, SCMEN, OR_M, SCWM, OR_WM, SGLOB, PMEN, PWM, PGLOB. Observation records are missing from d until this file is standardized.
+# 02_data_F2_02_data_F2 Clones_Select_Flowering.xlsx: not read. sheet F2 Clones_Select_Flowering: PLOT, REP, INSTN, Code, MSM, MSWM, MSGLO, BSM, BSWM, BSGLO, Plant_Vigor, PGH, .... Observation records are missing from d until this file is standardized.
+# 03_data_F3_Clones_Selec_Harvest.xlsx: not read. sheet F3_Clones_Selec_Harvest: PLOT, REP, INSTN, Code, MSM, MSWM, MSGLO, BSM, BSWM, BSGLO. Observation records are missing from d until this file is standardized.
+# 06_data_F8_Dormancy.xlsx: not read. sheet F8_Dormancy: PLOT, REP, INSTN, NTE, ITW, FTWSPT, PWL_SPT. Observation records are missing from d until this file is standardized.
+# 07_data_Data_organoleptic_Mother.xlsx: not read. sheet Data_organoleptic_Mother: INSTN, PanelNo, Sex, appearance, taste, texture. Observation records are missing from d until this file is standardized.
+# 08_data_Data_organoleptic_Baby.xlsx: not read. sheet Data_organoleptic_Baby: INSTN, PanelNo, Sex, appearance, taste, texture. Observation records are missing from d until this file is standardized.
+# 09_Material_list.xlsx: not read. sheet Sheet1: Numeration, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
+# 10_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # tuber_class_: mother or baby harvest, as named by the file
@@ -63,8 +71,8 @@ New LB-resistant potato varieties with improved yield, resistance, and nutrition
 		)
 	}
 
-	f4 <- ff[grepl("F4_", basename(ff)) & grepl("xlsx$", basename(ff))]
-	f5 <- ff[grepl("F5_", basename(ff)) & grepl("xlsx$", basename(ff))]
+	f4 <- ff[basename(ff) == "04_data_yield_F4_ Harvest_Mother.xlsx"]
+	f5 <- ff[basename(ff) == "05_data_yield_F5_harvest_Baby.xlsx"]
 	d <- carobiner::bindr(one(f4, "mother"), one(f5, "baby"))
 	d$crop <- "potato"
 	d$yield_part <- "tubers"

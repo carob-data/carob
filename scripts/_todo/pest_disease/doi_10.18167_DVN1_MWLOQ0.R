@@ -24,6 +24,9 @@
 # Facteurs not mapped: n°, Exploitation, Type_culture (all maraichage),
 # bordure/culture (b = border, c = crop), Altitude (m), Climat.
 # Données origine, Méta Données, FLO, FAC, and PA repeat the workbook or the DOC.
+# MAU-PAY-2020-MAR-AD-FLO.txt: not read. columns: "MAU-PAY-01" "MAU-PAY-02" "MAU-PAY-03" "MAU-PAY-04" "MAU-PAY-05" "MAU-PAY-06" "MAU-PAY-07" "MAU-PAY-08" "MAU-PAY-09" "MAU-PAY-10" "MAU-PAY-11" "MAU-PAY-12" "MAU-PAY-13" "MAU-PAY-14" "MAU-PAY-15" "MAU-PAY-16" "MAU-PAY-17" "MAU-PAY-18" "MAU-PAY-19" "MAU-PAY-20" "MAU-PAY-21" "MAU-PAY-22" "MAU-PAY-23" "MAU-PAY-24" "MAU-PAY-25" "MAU-PAY-26" "MAU-PAY-27" "MAU-PAY-28" "MAU-PAY-29" "MAU-PAY-30" "MAU-PAY-31" "MAU-PAY-32" "MAU-PAY-33" "MAU-PAY-34" "MAU-PAY-35" "MAU-PAY-36" "MAU-PAY-37" "MAU-PAY-38" "MAU-PAY-39" "MAU-PAY-40" "MAU-PAY-41" "MAU-PAY-42" "MAU-PAY-43" "MAU-PAY-44" "MAU-PAY-45" "MAU-PAY-46" "MAU-PAY-47" "MAU-PAY-48" "MAU-PAY-49" "MAU-PAY-50" "MAU-PAY-51" "MAU-PAY-52" "MAU-PAY-53" "MAU-PAY-54" "MAU-PAY-55" "MAU-PAY-56" "MAU-PAY-57" "MAU-PAY-58" "MAU-PAY-59" "MAU-PAY-60" "MAU-PAY-61" "MAU-PAY-62" "MAU-PAY-63" "MAU-PAY-64" "MAU-PAY-65" "MAU-PAY-66" "MAU-PAY-67" "MAU-PAY-68" "MAU-PAY-69". Observation records are missing from d until this file is standardized.
+# MAU-PAY-2020-MAR-FAC.txt: not read. columns: "MAU-PAY-01" "MAU-PAY-02" "MAU-PAY-03" "MAU-PAY-04" "MAU-PAY-05" "MAU-PAY-06" "MAU-PAY-07" "MAU-PAY-08" "MAU-PAY-09" "MAU-PAY-10" "MAU-PAY-11" "MAU-PAY-12" "MAU-PAY-13" "MAU-PAY-14" "MAU-PAY-15" "MAU-PAY-16" "MAU-PAY-17" "MAU-PAY-18" "MAU-PAY-19" "MAU-PAY-20" "MAU-PAY-21" "MAU-PAY-22" "MAU-PAY-23" "MAU-PAY-24" "MAU-PAY-25" "MAU-PAY-26" "MAU-PAY-27" "MAU-PAY-28" "MAU-PAY-29" "MAU-PAY-30" "MAU-PAY-31" "MAU-PAY-32" "MAU-PAY-33" "MAU-PAY-34" "MAU-PAY-35" "MAU-PAY-36" "MAU-PAY-37" "MAU-PAY-38" "MAU-PAY-39" "MAU-PAY-40" "MAU-PAY-41" "MAU-PAY-42" "MAU-PAY-43" "MAU-PAY-44" "MAU-PAY-45" "MAU-PAY-46" "MAU-PAY-47" "MAU-PAY-48" "MAU-PAY-49" "MAU-PAY-50" "MAU-PAY-51" "MAU-PAY-52" "MAU-PAY-53" "MAU-PAY-54" "MAU-PAY-55" "MAU-PAY-56" "MAU-PAY-57" "MAU-PAY-58" "MAU-PAY-59" "MAU-PAY-60" "MAU-PAY-61" "MAU-PAY-62" "MAU-PAY-63" "MAU-PAY-64" "MAU-PAY-65" "MAU-PAY-66" "MAU-PAY-67" "MAU-PAY-68" "MAU-PAY-69". Observation records are missing from d until this file is standardized.
+# MAU-PAY-2020-MAR-PA-FLO.txt: not read. columns: "MAU-PAY-01" "MAU-PAY-02" "MAU-PAY-03" "MAU-PAY-04" "MAU-PAY-05" "MAU-PAY-06" "MAU-PAY-07" "MAU-PAY-08" "MAU-PAY-09" "MAU-PAY-10" "MAU-PAY-11" "MAU-PAY-12" "MAU-PAY-13" "MAU-PAY-14" "MAU-PAY-15" "MAU-PAY-16" "MAU-PAY-17" "MAU-PAY-18" "MAU-PAY-19" "MAU-PAY-20" "MAU-PAY-21" "MAU-PAY-22" "MAU-PAY-23" "MAU-PAY-24" "MAU-PAY-25" "MAU-PAY-26" "MAU-PAY-27" "MAU-PAY-28" "MAU-PAY-29" "MAU-PAY-30" "MAU-PAY-31" "MAU-PAY-32" "MAU-PAY-33" "MAU-PAY-34" "MAU-PAY-35" "MAU-PAY-36" "MAU-PAY-37" "MAU-PAY-38" "MAU-PAY-39" "MAU-PAY-40" "MAU-PAY-41" "MAU-PAY-42" "MAU-PAY-43" "MAU-PAY-44" "MAU-PAY-45" "MAU-PAY-46" "MAU-PAY-47" "MAU-PAY-48" "MAU-PAY-49" "MAU-PAY-50" "MAU-PAY-51" "MAU-PAY-52" "MAU-PAY-53" "MAU-PAY-54" "MAU-PAY-55" "MAU-PAY-56" "MAU-PAY-57" "MAU-PAY-58" "MAU-PAY-59" "MAU-PAY-60" "MAU-PAY-61" "MAU-PAY-62" "MAU-PAY-63" "MAU-PAY-64" "MAU-PAY-65" "MAU-PAY-66" "MAU-PAY-67" "MAU-PAY-68" "MAU-PAY-69". Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -55,10 +58,10 @@ Abundance scale notation 1-9. This dataset covers 69 plant surveys for 131 weed 
 	)
 
 	f <- ff[basename(ff) == "MAU-PAY-2020-MAR-AD.xlsx"]
-	r1b <- carobiner::read.excel(f, sheet="Facteurs")
-	r1c <- carobiner::read.excel(f, sheet="Floristique")
+	r1 <- carobiner::read.excel(f, sheet="Facteurs")
+	r2 <- carobiner::read.excel(f, sheet="Floristique")
 
-	get_row <- function(label) unname(unlist(r1b[r1b[[1]] == label, -1]))
+	get_row <- function(label) unname(unlist(r1[r1[[1]] == label, -1]))
 
 	# MAU-PAY-2020-MAR-AD-DOC.txt: 1-9 note to % cover, same table as Benin 2013.
 	rating_to_cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
@@ -99,7 +102,7 @@ Abundance scale notation 1-9. This dataset covers 69 plant surveys for 131 weed 
 	irr <- tolower(trimws(as.character(get_row("Irrigation"))))
 	enh <- as.integer(as.numeric(get_row("Enherbement")))
 	d1b <- data.frame(
-		trial_id = names(r1b)[-1],
+		trial_id = names(r1)[-1],
 		crop = crop,
 		previous_crop = unname(prev_map[tolower(trimws(as.character(get_row("Précedent"))))]),
 		date = as.character(get_row("Année")),
@@ -114,11 +117,11 @@ Abundance scale notation 1-9. This dataset covers 69 plant surveys for 131 weed 
 	d1b$is_survey <- TRUE
 	d1b$geo_from_source <- FALSE
 
-	present <- which(!is.na(r1c[, -1]) & r1c[, -1] > 0, arr.ind=TRUE)
-	scores <- as.integer(as.numeric(r1c[, -1][present]))
+	present <- which(!is.na(r2[, -1]) & r2[, -1] > 0, arr.ind=TRUE)
+	scores <- as.integer(as.numeric(r2[, -1][present]))
 	d <- data.frame(
-		trial_id = names(r1c)[-1][present[, "col"]],
-		weed_species = trimws(as.character(r1c[[1]][present[, "row"]])),
+		trial_id = names(r2)[-1][present[, "col"]],
+		weed_species = trimws(as.character(r2[[1]][present[, "row"]])),
 		ground_cover = rating_to_cover[match(scores, 1:9)]
 	)
 	d <- merge(d, d1b, by="trial_id", all.x=TRUE)

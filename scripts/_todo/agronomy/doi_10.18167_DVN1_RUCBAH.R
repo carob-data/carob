@@ -16,6 +16,13 @@
 # Earthworm and macroarthropod counts.
 # Plant cover, shade, and species richness.
 # Temperature range. It is the difference of the daily minimum and maximum.
+# Decomposer's community_labels.csv: not read. columns: code_field;The code of the field among the six fields selected in this study. Observation records are missing from d until this file is standardized.
+# Decomposition_labels.csv: not read. columns: agriculture;Plot's agricultural practices : either organic or conventional . Observation records are missing from d until this file is standardized.
+# Earthworm's community.csv: not read. columns: code_field;code_sample;abundance;species_name. Observation records are missing from d until this file is standardized.
+# Macroarthropod's community.csv: not read. columns: code_field;code_sample;class;order;family;abundance;species. Observation records are missing from d until this file is standardized.
+# Plant variables.csv: not read. columns: agriculture;plantation;code_field;code_sample;%soil_cover;%shadow. Observation records are missing from d until this file is standardized.
+# Plant variables_labels.csv: not read. columns: agriculture;Agricultural practices in the fields,  either organic or conventional. Observation records are missing from d until this file is standardized.
+# Temperature & humidity_labels.csv: not read. columns: agriculture;Agricultural practices in the plots,  either organic or conventional. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES
@@ -54,9 +61,9 @@ Data from a field experiment in the banana agroecosystems of Martinique (Lesser 
 		carob_effort = 0.5
 	)
 
-	fd <- ff[basename(ff) == "Decomposition.csv"]
-	ft <- ff[basename(ff) == "Temperature & humidity.csv"]
-	r <- read.csv(fd, sep=";", na.strings=c("NA", ""), check.names=FALSE)
+	f1 <- ff[basename(ff) == "Decomposition.csv"]
+	f2 <- ff[basename(ff) == "Temperature & humidity.csv"]
+	r <- read.csv(f1, sep=";", na.strings=c("NA", ""), check.names=FALSE)
 	names(r) <- trimws(names(r))
 
 	d <- data.frame(
@@ -78,19 +85,19 @@ Data from a field experiment in the banana agroecosystems of Martinique (Lesser 
 	)
 	d$treatment <- paste(d$farming_, d$mesh_, ifelse(d$glyphosate_, "glyphosate", "no glyphosate"))
 
-	w <- read.csv(ft, sep=";", na.strings=c("NA", ""), check.names=FALSE)
-	names(w) <- trimws(names(w))
+	r1 <- read.csv(f2, sep=";", na.strings=c("NA", ""), check.names=FALSE)
+	names(r1) <- trimws(names(r1))
 	wth <- data.frame(
-		station_id = as.character(w$code_plot),
-		station_name = carobiner::fix_name(w$plantation, "title"),
+		station_id = as.character(r1$code_plot),
+		station_name = carobiner::fix_name(r1$plantation, "title"),
 		country = "Martinique",
-		date = as.character(as.Date(w$date, "%d/%m/%Y")),
-		tmin = as.numeric(w$Temp_min),
-		tmax = as.numeric(w$Temp_max),
-		temp = as.numeric(w$Temp_mean),
-		rhmn = as.numeric(w$hum_min),
-		rhmx = as.numeric(w$hum_max),
-		rhum = as.numeric(w$hum_mean)
+		date = as.character(as.Date(r1$date, "%d/%m/%Y")),
+		tmin = as.numeric(r1$Temp_min),
+		tmax = as.numeric(r1$Temp_max),
+		temp = as.numeric(r1$Temp_mean),
+		rhmn = as.numeric(r1$hum_min),
+		rhmx = as.numeric(r1$hum_max),
+		rhum = as.numeric(r1$hum_mean)
 	)
 
 	carobiner::write_files(path, meta, d, wth=wth)

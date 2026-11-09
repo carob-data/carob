@@ -23,6 +23,7 @@
 # Buz_type, affected_COVID, How affected_COVID, Other_comments: trader business notes, not a field measurement.
 # month_data collection on the eastern file: interview month, not a planting date.
 # 003 dictionary: definitions already used.
+# 003­_Data_dictioanry_of_OFSP_traders_UG.xlsx: not read. sheet dictionary: Abbreviature, Name, Category. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

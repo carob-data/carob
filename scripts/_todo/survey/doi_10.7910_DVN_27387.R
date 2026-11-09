@@ -32,6 +32,22 @@
 # education_years_: schooling of the household head (schhh, years)
 
 
+
+## NOT PROCESSED
+# CHEMINPUT for SEEDBED_WA_08.xls: not read. sheet Raw Data: Fertilizer, Insecticide, and Herbicide application for seedbed. Observation records are missing from d until this file is standardized.
+# FARMERS_08.xls: not read. sheet Seedbed parcel_area (of 2): Seedbed parcel, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12. Observation records are missing from d until this file is standardized.
+# FO1_DEMOG_08.xls: not read. sheet Demog (of 10): 1.Demographic Characteristics. Observation records are missing from d until this file is standardized.
+# FO1_SUPP_08.xls: not read. sheet FO1_Supp: HERB.WK1 (Weed Control - Herbicide Application). Observation records are missing from d until this file is standardized.
+# GO1_08.xls: not read. sheet Landchar1 (of 8): 1. Land charateristics of our sample group, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# HARVEST_WA_O8.xls: not read. sheet SUMMARY_HT (of 6): YEAR, SEASON, TOWN, COUNTY, VILLAGE, HHCODE, AREAPLTD. Observation records are missing from d until this file is standardized.
+# HERBICIDE_WA_08.xls: not read. sheet Herbicide application 2008: HERB.WK1 (Weed Control - Herbicide Application), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# INSECTICIDE_WA_08.xls: not read. sheet Insecticide application 2008: INS.WK1 (Insecticide Application), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# IRRIGATION_WA_08.xls: not read. sheet Seedbed parcel_area (of 5): Seedbed parcel, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# IRRIGATION_WA_08_kk_022509.xls: not read. sheet Irrigation_raw: IRRIGATION, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# LANDPREP_WA_08.xls: not read. sheet SUMMARY_SB (of 9): SUMMARY SEEDBED LAND PREP, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# MANHANDWEED_WA_08.xls: not read. sheet Manure (of 2): MANURE.xls, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Role of Institution and Policies for adoption of water saving technology in China. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

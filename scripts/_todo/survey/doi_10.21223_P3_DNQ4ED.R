@@ -18,6 +18,33 @@
 # Livestock counts, farm labor, and off-farm income.
 # FrecuencyOfVarietiesByArea_Junin.xlsx and RotationRatio_Junin.xlsx. They are summaries without a household key.
 # Community boundary shapefiles.
+# CommunityBoundaries_Junin_Casacancha.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Casacancha.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.shp.CIP1006.23008.22044.sr: not read. .sr file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Quilcas.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Junin_Rangra.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

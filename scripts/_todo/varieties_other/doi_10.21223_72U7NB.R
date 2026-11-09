@@ -21,6 +21,12 @@
 # Morphology file, canopy-trait means, and the Piura weather workbook. The weather file is a station series and is not joined to accessions here.
 # Biomass in kg per plot and yield in kg per plant. Plot area is not used to convert those.
 # Accession origin latitude and longitude. They are collecting sites, not the Piura trial.
+# Data dictionary_swp_heat stress screening.xlsx: documentation or a codebook, not an observation table.
+# elevation.csv: not read. columns: CIP_number;Country_co;Elevation. Observation records are missing from d until this file is standardized.
+# geographic_origin_accessions.csv: not read. columns: ID;CIP_number;Country_co;Country_Na;Location;Latitude_Y;Longitude_X;Elevation;F_Lat_Y;F_Long_X. Observation records are missing from d until this file is standardized.
+# harvest_canopy_traits_mean_across_rep.csv: not read. columns: CIPNumber;plots;colum;block;rep;noph;nopr;nrpp;ypp;trw;rytha;frw;ncrw;nonc;crw;nocr;vw;fytha;biom;hi;dmf;dmvf;dmd;dmvd;dm;dmv;dmry;dmvy;ndvi;LAI_sqm;Mean_T;Std_T;Min_T;Max_T;Median_T;Variety_T;Major_T;Minor_T;Count_px;dap;treat;nops;nope. Observation records are missing from d until this file is standardized.
+# Meteorol_data Piura.xlsb.xlsx: not read. sheet Sheet1 (of 2): Date Time, GMT-05:00, Temp, °C (LGR S/N: 10292755, SEN S/N: 10238859), RH, % (LGR S/N: 10292755, SEN S/N: 10238859), Solar Radiation, W/m² (LGR S/N: 10292755, SEN S/N: 10280981), VPD kPa. Observation records are missing from d until this file is standardized.
+# morph_data_biostat2.csv: not read. columns: CIPNumber;biostat. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

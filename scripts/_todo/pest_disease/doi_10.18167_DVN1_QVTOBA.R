@@ -16,6 +16,8 @@
 ## NOT PROCESSED
 # Nicaglobale.xlsx: shade, DBH, temperature, and diversity indices. Fruit counts there repeat brocaarbre. X and Z were not converted.
 # ExplicationNicaglobal.docx and the analysis script.
+# Readme.txt: documentation or a codebook, not an observation table.
+# Script_BagnyBeilhe_et_al_2020.R: not read. .r file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -51,8 +53,8 @@ Données collectées à La Dalia, Nicaragua, de 2017 à 2018. Données issues de
 		paste0("20", yy, "-", unname(mon[mm]))
 	}
 
-	fb <- ff[basename(ff) == "brocaarbre.csv"]
-	r <- read.csv(fb, sep=";", check.names=FALSE)
+	f1 <- ff[basename(ff) == "brocaarbre.csv"]
+	r <- read.csv(f1, sep=";", check.names=FALSE)
 	d1 <- data.frame(
 		trial_id = trimws(as.character(r$farm_id)),
 		hhid = trimws(as.character(r$farm_id)),
@@ -69,26 +71,26 @@ Données collectées à La Dalia, Nicaragua, de 2017 à 2018. Données issues de
 		record_type_ = "coffee berry borer"
 	)
 
-	fa <- ff[basename(ff) == "antarbre.xlsx"]
-	a <- carobiner::read.excel(fa, sheet="antarbre")
+	f2 <- ff[basename(ff) == "antarbre.xlsx"]
+	r1 <- carobiner::read.excel(f2, sheet="antarbre")
 	# Three plant-date pairs are entered twice, with different counts for some species.
-	a$visit_ <- ave(seq_len(nrow(a)), a$plant_id, a$date, FUN=seq_along)
+	r1$visit_ <- ave(seq_len(nrow(r1)), r1$plant_id, r1$date, FUN=seq_along)
 	idcols <- c("plant_id", "date", "plant_id2", "farm_id", "plot_id", "visit_")
-	spp <- a[, !(names(a) %in% idcols)]
-	n <- nrow(a)
+	spp <- r1[, !(names(r1) %in% idcols)]
+	n <- nrow(r1)
 	d2 <- data.frame(
-		trial_id = rep(trimws(as.character(a$farm_id)), ncol(spp)),
-		hhid = rep(trimws(as.character(a$farm_id)), ncol(spp)),
-		plot_id = rep(trimws(as.character(a$plot_id)), ncol(spp)),
-		plant_id_ = rep(trimws(as.character(a$plant_id)), ncol(spp)),
-		date = rep(month_year(trimws(as.character(a$date))), ncol(spp)),
-		farm_practice_ = rep(trimws(as.character(a$farm_id)), ncol(spp)),
+		trial_id = rep(trimws(as.character(r1$farm_id)), ncol(spp)),
+		hhid = rep(trimws(as.character(r1$farm_id)), ncol(spp)),
+		plot_id = rep(trimws(as.character(r1$plot_id)), ncol(spp)),
+		plant_id_ = rep(trimws(as.character(r1$plant_id)), ncol(spp)),
+		date = rep(month_year(trimws(as.character(r1$date))), ncol(spp)),
+		farm_practice_ = rep(trimws(as.character(r1$farm_id)), ncol(spp)),
 		crop = "coffee",
 		pest_species = rep(gsub("_", " ", names(spp), fixed=TRUE), each=n),
 		pest_incidence = as.integer(unlist(spp, use.names=FALSE)),
 		fruits_sampled_ = NA_real_,
 		bored_fruits_ = NA_real_,
-		visit_ = rep(a$visit_, ncol(spp)),
+		visit_ = rep(r1$visit_, ncol(spp)),
 		record_type_ = "ant"
 	)
 

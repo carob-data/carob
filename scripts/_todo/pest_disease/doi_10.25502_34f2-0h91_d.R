@@ -21,6 +21,7 @@
 
 ## NOT PROCESSED
 # All four data files: ID. Row number.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plant_number_: plant 1-12 (Rep in the whitefly files, Plant in the yield files).
@@ -59,14 +60,14 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		carob_effort = 0.7
 	)
 
-	fw23 <- ff[basename(ff) == "2023-whitefly-virus.csv"]
-	fy23 <- ff[basename(ff) == "2023-root-yield.csv"]
-	fw24 <- ff[basename(ff) == "2024-whitefly-virus.csv"]
-	fy24 <- ff[basename(ff) == "2024-root-yield.csv"]
-	w23 <- read.csv(fw23, check.names=FALSE)
-	y23 <- read.csv(fy23, check.names=FALSE)
-	w24 <- read.csv(fw24, check.names=FALSE)
-	y24 <- read.csv(fy24, check.names=FALSE)
+	f1 <- ff[basename(ff) == "2023-whitefly-virus.csv"]
+	f2 <- ff[basename(ff) == "2023-root-yield.csv"]
+	f3 <- ff[basename(ff) == "2024-whitefly-virus.csv"]
+	f4 <- ff[basename(ff) == "2024-root-yield.csv"]
+	r1 <- read.csv(f1, check.names=FALSE)
+	r2 <- read.csv(f2, check.names=FALSE)
+	r3 <- read.csv(f3, check.names=FALSE)
+	r4 <- read.csv(f4, check.names=FALSE)
 
 	align23 <- function(x) {
 		x <- trimws(x)
@@ -83,24 +84,24 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		x
 	}
 
-	w23$treatment <- align23(w23$Treatment)
-	w23$block_id <- as.character(w23$Block)
-	w23$plant_number_ <- as.integer(w23$Rep)
-	w23$observation_month_ <- as.integer(w23$Month)
-	w23$months_after_planting_ <- NA_integer_
-	y23$treatment <- align23(y23$Treatment)
-	y23$block_id <- as.character(y23$Block)
-	y23$plant_number_ <- as.integer(y23$Plant)
+	r1$treatment <- align23(r1$Treatment)
+	r1$block_id <- as.character(r1$Block)
+	r1$plant_number_ <- as.integer(r1$Rep)
+	r1$observation_month_ <- as.integer(r1$Month)
+	r1$months_after_planting_ <- NA_integer_
+	r2$treatment <- align23(r2$Treatment)
+	r2$block_id <- as.character(r2$Block)
+	r2$plant_number_ <- as.integer(r2$Plant)
 
 	# 2024 whitefly file: product is in Block, block number is in Treatment.
-	w24$treatment <- align24(w24$Block)
-	w24$block_id <- as.character(w24$Treatment)
-	w24$plant_number_ <- as.integer(w24$Rep)
-	w24$observation_month_ <- NA_integer_
-	w24$months_after_planting_ <- as.integer(sub("MAP", "", w24$Month))
-	y24$treatment <- align24(y24$Treatment)
-	y24$block_id <- as.character(y24$Block)
-	y24$plant_number_ <- as.integer(y24$Plant)
+	r3$treatment <- align24(r3$Block)
+	r3$block_id <- as.character(r3$Treatment)
+	r3$plant_number_ <- as.integer(r3$Rep)
+	r3$observation_month_ <- NA_integer_
+	r3$months_after_planting_ <- as.integer(sub("MAP", "", r3$Month))
+	r4$treatment <- align24(r4$Treatment)
+	r4$block_id <- as.character(r4$Block)
+	r4$plant_number_ <- as.integer(r4$Plant)
 
 	plants <- function(w, y, year) {
 		id <- unique(data.frame(
@@ -119,7 +120,7 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		m <- merge(id, yy, by=c("block_id", "treatment", "plant_number_"), all=TRUE)
 		m
 	}
-	d <- rbind(plants(w23, y23, "2023"), plants(w24, y24, "2024"))
+	d <- rbind(plants(r1, r2, "2023"), plants(r3, r4, "2024"))
 	d <- d[order(d$trial_year_, d$block_id, d$treatment, d$plant_number_), ]
 	d$record_id <- seq_len(nrow(d))
 	d$crop <- "cassava"
@@ -142,8 +143,8 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		stopifnot(!any(is.na(w$record_id)))
 		w
 	}
-	w23 <- attach_id(w23, "2023")
-	w24 <- attach_id(w24, "2024")
+	r1 <- attach_id(r1, "2023")
+	r3 <- attach_id(r3, "2024")
 
 	piece <- function(w) {
 		base <- data.frame(
@@ -177,7 +178,7 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		cbsd$disease_severity <- as.character(w$CBSD_severity)
 		rbind(a, n, cmd, cbsd)
 	}
-	dd <- rbind(piece(w23), piece(w24))
+	dd <- rbind(piece(r1), piece(r3))
 	dd$severity_scale <- ifelse(is.na(dd$disease), NA_character_, "1-5")
 	d$key <- NULL
 

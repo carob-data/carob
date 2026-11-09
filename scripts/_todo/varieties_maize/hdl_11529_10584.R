@@ -19,6 +19,7 @@
 # 05TTWSCWL6.xls. The Results sheet is a block of numbers and pedigrees with no column labels, so grain yield cannot be identified. The location sheet calls set 6 Celaya (2).
 # Percent of the best check, and the number of plants harvested, because plot area is not given.
 # Summary rows (mean, maximum, minimum, LSD, CV).
+# 05TTWSCWL-Combined.xls: not read. sheet 05TTWSCWL-Combined: International Maize Report 2005 for TTWSCWL. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -63,8 +64,8 @@ Summary results and individual trial results from the International Late White H
 	}
 
 	f <- ff[basename(ff) == "05TTWSCWL-Locations.xls"]
-	loc <- as.data.frame(carobiner::read.excel(f, col_types="text"))
-	sites <- loc[10:nrow(loc), ]
+	r1 <- as.data.frame(carobiner::read.excel(f, col_types="text"))
+	sites <- r1[10:nrow(r1), ]
 	sites <- data.frame(
 		set_no = num(sites[[4]]),
 		country = trimws(as.character(sites[[2]])),
@@ -84,24 +85,24 @@ Summary results and individual trial results from the International Late White H
 	sites$geo_from_source <- !is.na(sites$latitude) & !is.na(sites$longitude)
 
 	one <- function(f) {
-		raw <- as.data.frame(carobiner::read.excel(f, sheet="Results", col_types="text"))
-		row1 <- as.character(unlist(raw[1, ]))
+		r2 <- as.data.frame(carobiner::read.excel(f, sheet="Results", col_types="text"))
+		row1 <- as.character(unlist(r2[1, ]))
 		location <- field(row1, "Location:")
 		country <- field(row1, "Country:")
-		lab <- apply(raw[1:8, ], 2, function(z) paste(z, collapse=" "))
+		lab <- apply(r2[1:8, ], 2, function(z) paste(z, collapse=" "))
 		ycol <- grep("Yield|Rend", lab)[1]
 		if (is.na(ycol)) return(NULL)
 		acol <- grep("Pollen|Flor", lab)[1]
 		hcol <- grep("Plnt|Altur", lab)[1]
 		mcol <- grep("Moist|Hum", lab)[1]
-		hdr <- grep("Kg/ha|t/ha|Kg / ha", as.character(raw[[ycol]]))
+		hdr <- grep("Kg/ha|t/ha|Kg / ha", as.character(r2[[ycol]]))
 		start <- if (length(hdr)) max(hdr) + 1 else 1
-		raw <- raw[start:nrow(raw), ]
-		ent <- trimws(as.character(raw[[1]]))
+		r2 <- r2[start:nrow(r2), ]
+		ent <- trimws(as.character(r2[[1]]))
 		ent[grepl("Location:|Agroecological|^Ent\\.$|^No\\.$", ent)] <- NA_character_
 		ent_n <- num(ent)
-		ped <- trimws(as.character(raw[[2]]))
-		keep <- !is.na(ent_n) & !is.na(num(raw[[ycol]]))
+		ped <- trimws(as.character(r2[[2]]))
+		keep <- !is.na(ent_n) & !is.na(num(r2[[ycol]]))
 		if (!any(keep)) return(NULL)
 		variety <- ped[keep]
 		miss <- is.na(variety) | variety %in% c("", "NA")
@@ -114,15 +115,23 @@ Summary results and individual trial results from the International Late White H
 			location = rep(location, n),
 			variety = variety,
 			treatment = variety,
-			yield = num(raw[[ycol]][keep]),
-			anthesis_days = if (!is.na(acol)) num(raw[[acol]][keep]) else rep(NA_real_, n),
-			plant_height = if (!is.na(hcol)) num(raw[[hcol]][keep]) else rep(NA_real_, n),
-			yield_moisture = if (!is.na(mcol)) num(raw[[mcol]][keep]) else rep(NA_real_, n)
+			yield = num(r2[[ycol]][keep]),
+			anthesis_days = if (!is.na(acol)) num(r2[[acol]][keep]) else rep(NA_real_, n),
+			plant_height = if (!is.na(hcol)) num(r2[[hcol]][keep]) else rep(NA_real_, n),
+			yield_moisture = if (!is.na(mcol)) num(r2[[mcol]][keep]) else rep(NA_real_, n)
 		)
 	}
 
-	files <- ff[grepl("TTWSCWL[0-9]+\\.xls$", basename(ff))]
-	blocks <- lapply(files, one)
+	f1 <- ff[basename(ff) %in% c(
+		"05TTWSCWL1.xls",
+		"05TTWSCWL13.xls",
+		"05TTWSCWL15.xls",
+		"05TTWSCWL16.xls",
+		"05TTWSCWL6.xls",
+		"05TTWSCWL7.xls",
+		"05TTWSCWL8.xls"
+	)]
+	blocks <- lapply(f1, one)
 	blocks <- blocks[!vapply(blocks, is.null, TRUE)]
 	d <- do.call(carobiner::bindr, blocks)
 	d$country[d$country %in% c("", "NA")] <- NA_character_

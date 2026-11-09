@@ -27,8 +27,11 @@ carob_script <- function(path) {
   f <- ff[grep("CIPHYO", basename(ff))]
   f <- f[grep("^0._|_Data_dictionary", basename(f), invert=TRUE)]
   d <- lapply(f, process, addvars=c("AUDPC","rAUDPC","TTWP","MTWP"))
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
   
+  ## CIP experimental station at Huancayo (Santa Ana, El Tambo)
+  d$on_farm <- FALSE
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

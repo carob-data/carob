@@ -47,7 +47,7 @@ Earthworm abundance and soil properties after 10 years of climate-smart agricult
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)][1]
+	f <- ff[basename(ff) == "Agronomy 12-0065_SK.xlsx"]
 	r <- carobiner::read.excel(f, sheet=1, col_names=FALSE)
 	num <- function(x) {
 		x <- trimws(as.character(x))

@@ -11,6 +11,7 @@
 
 ## NOT PROCESSED
 # Names, household roster, and the production and conversion modules.
+# 02_Diccionario de Variables MyB - Colombia.xlsx: not read. sheet Diccionario: Variable name, Description, Base_de_Datos, Comentarios. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -40,7 +41,7 @@ El presente es un informe del estudio de base de la metodología 'Mama y Bebé' 
 		carob_effort = 0.25
 	)
 
-	f <- ff[grepl("^01_DataBase", basename(ff))]
+	f <- ff[basename(ff) == "01_DataBase Mother&Baby Colombia.xlsx"]
 	r <- carobiner::read.excel(f)
 	txt <- function(x) {
 		z <- trimws(as.character(x))

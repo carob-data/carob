@@ -23,6 +23,7 @@
 # su_other (unspecified crop). Land shares s_* (the ha columns were used).
 # Homestead production, fodder, livestock (milk, eggs), TAPE, food-security months, and labor/gender columns.
 # seasons (an index of season diversity, not a season name).
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # irrigation_pct_: percent of the crop reported as irrigated

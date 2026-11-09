@@ -45,19 +45,19 @@ New CWR LB- resistant sources
 		carob_effort = 0.35
 	)
 
-	fb <- ff[basename(ff) == "01_Field_book_CRW_late_blight_resistant.xlsx"]
-	ped <- ff[basename(ff) == "02_Pedigree_CRW_late_blight_resistant.xlsx"]
-	ckf <- ff[basename(ff) == "03_Check-data_CRW_late_blight_resistant.xlsx"]
-	r <- carobiner::read.excel(fb, sheet="Fieldbook")
-	p <- carobiner::read.excel(ped, sheet="Pedigree")
-	ck <- carobiner::read.excel(ckf, sheet="Check Info")
+	f1 <- ff[basename(ff) == "01_Field_book_CRW_late_blight_resistant.xlsx"]
+	f2 <- ff[basename(ff) == "02_Pedigree_CRW_late_blight_resistant.xlsx"]
+	f3 <- ff[basename(ff) == "03_Check-data_CRW_late_blight_resistant.xlsx"]
+	r <- carobiner::read.excel(f1, sheet="Fieldbook")
+	r1 <- carobiner::read.excel(f2, sheet="Pedigree")
+	r2 <- carobiner::read.excel(f3, sheet="Check Info")
 
 	code <- trimws(as.character(r$CIPN))
-	mck <- match(code, trimws(as.character(ck[["CIP Number"]])))
+	mck <- match(code, trimws(as.character(r2[["CIP Number"]])))
 	variety <- code
 	ok <- !is.na(mck)
-	variety[ok] <- trimws(as.character(ck[["Variety name"]][mck[ok]]))
-	mp <- match(code, trimws(as.character(p$Accession_Number)))
+	variety[ok] <- trimws(as.character(r2[["Variety name"]][mck[ok]]))
+	mp <- match(code, trimws(as.character(r1$Accession_Number)))
 
 	d <- data.frame(
 		crop = "potato",
@@ -82,8 +82,8 @@ New CWR LB- resistant sources
 	d$female_parent <- NA_character_
 	d$male_parent <- NA_character_
 	okp <- !is.na(mp)
-	d$female_parent[okp] <- trimws(as.character(p$Female_AcceNumb[mp[okp]]))
-	d$male_parent[okp] <- trimws(as.character(p$Male_AcceNumb[mp[okp]]))
+	d$female_parent[okp] <- trimws(as.character(r1$Female_AcceNumb[mp[okp]]))
+	d$male_parent[okp] <- trimws(as.character(r1$Male_AcceNumb[mp[okp]]))
 
 	carobiner::write_files(path, meta, d)
 }

@@ -27,6 +27,7 @@
 # Days after treatment initiation. Days after planting is the time used.
 # Harvest number. It matches the six biomass dates.
 # Biomass, canopy, irrigation, soil, and CWSI identifier columns.
+# Data_Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -66,11 +67,11 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 	)
 
 	f <- ff[basename(ff) == "Yield estimation of Unica potato.xls"]
-	b <- carobiner::read.excel(f, sheet="Biomass")
-	cc <- carobiner::read.excel(f, sheet="Canopy cover")
-	ir <- carobiner::read.excel(f, sheet="Irrigation volume")
-	so <- carobiner::read.excel(f, sheet="Soil humidity")
-	cw <- carobiner::read.excel(f, sheet="CWSI")
+	r1 <- carobiner::read.excel(f, sheet="Biomass")
+	r2 <- carobiner::read.excel(f, sheet="Canopy cover")
+	r3 <- carobiner::read.excel(f, sheet="Irrigation volume")
+	r4 <- carobiner::read.excel(f, sheet="Soil humidity")
+	r5 <- carobiner::read.excel(f, sheet="CWSI")
 
 	num <- function(x) {
 		x <- trimws(as.character(x))
@@ -86,7 +87,7 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 			stringsAsFactors = FALSE
 		)
 	}
-	plots <- rbind(plot_attr(b), plot_attr(cc), plot_attr(ir), plot_attr(so), plot_attr(cw))
+	plots <- rbind(plot_attr(r1), plot_attr(r2), plot_attr(r3), plot_attr(r4), plot_attr(r5))
 	plots <- plots[!duplicated(plots$plot), ]
 	plots <- plots[order(as.integer(plots$plot)), ]
 	rule <- c("T1"="full", "T2"="0.4", "T3"="0.6", "T4"="0.7")
@@ -156,48 +157,48 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 		out
 	}
 
-	nb <- nrow(b)
+	nb <- nrow(r1)
 	lb <- nblank(nb)
-	lb$record_id <- rid(b$plot)
-	lb$DAP <- as.integer(num(b$dap))
-	lb$fw_leaves <- num(b$FL)
-	lb$fw_stems <- num(b$FS)
-	lb$fw_roots <- num(b$FR)
-	lb$fw_tubers <- num(b$FT)
-	lb$dw_leaves <- num(b$DL)
-	lb$dw_stems <- num(b$DS)
-	lb$dw_roots <- num(b$DR)
-	lb$dw_tubers <- num(b$DT)
-	lb$tubers_per_plant_ <- num(b$nT)
+	lb$record_id <- rid(r1$plot)
+	lb$DAP <- as.integer(num(r1$dap))
+	lb$fw_leaves <- num(r1$FL)
+	lb$fw_stems <- num(r1$FS)
+	lb$fw_roots <- num(r1$FR)
+	lb$fw_tubers <- num(r1$FT)
+	lb$dw_leaves <- num(r1$DL)
+	lb$dw_stems <- num(r1$DS)
+	lb$dw_roots <- num(r1$DR)
+	lb$dw_tubers <- num(r1$DT)
+	lb$tubers_per_plant_ <- num(r1$nT)
 
-	nc <- nrow(cc)
+	nc <- nrow(r2)
 	lc <- nblank(nc)
-	lc$record_id <- rid(cc$plot)
-	lc$DAP <- as.integer(num(cc$dap))
-	lc$ground_cover <- num(cc$CC)
+	lc$record_id <- rid(r2$plot)
+	lc$DAP <- as.integer(num(r2$dap))
+	lc$ground_cover <- num(r2$CC)
 
-	ni <- nrow(ir)
+	ni <- nrow(r3)
 	li <- nblank(ni)
-	li$record_id <- rid(ir$plot)
-	li$DAP <- as.integer(num(ir$dap))
-	li$irrigation_event_ <- as.integer(num(ir$nIrri))
-	li$irrigation_amount <- num(ir$V) / 45 * 1000
+	li$record_id <- rid(r3$plot)
+	li$DAP <- as.integer(num(r3$dap))
+	li$irrigation_event_ <- as.integer(num(r3$nIrri))
+	li$irrigation_amount <- num(r3$V) / 45 * 1000
 
-	ns <- nrow(so)
+	ns <- nrow(r4)
 	ls <- nblank(ns)
-	ls$record_id <- rid(so$plot)
-	ls$DAP <- as.integer(num(so$dap))
+	ls$record_id <- rid(r4$plot)
+	ls$DAP <- as.integer(num(r4$dap))
 	ls$depth <- 30
-	ls$soil_GWC <- num(so$Hv)
+	ls$soil_GWC <- num(r4$Hv)
 
-	nw <- nrow(cw)
+	nw <- nrow(r5)
 	lw <- nblank(nw)
-	lw$record_id <- rid(cw$plot)
-	lw$DAP <- as.integer(num(cw$dap))
-	lw$time <- clock(cw$hour)
-	lw$cwsi_ <- num(cw$CWSI)
-	lw$foliage_temperature_ <- num(cw$Tf)
-	lw$foliage_air_dt_ <- num(cw$dT)
+	lw$record_id <- rid(r5$plot)
+	lw$DAP <- as.integer(num(r5$dap))
+	lw$time <- clock(r5$hour)
+	lw$cwsi_ <- num(r5$CWSI)
+	lw$foliage_temperature_ <- num(r5$Tf)
+	lw$foliage_air_dt_ <- num(r5$dT)
 
 	x <- rbind(lb, lc, li, ls, lw)
 	rownames(x) <- NULL

@@ -49,7 +49,7 @@ INIAP (Instituto Nacional de Investigaciones Agropecuarias) and CIMMYT implement
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "AppendixA-Database-PostharvestManagementGrain-2025-12-10.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Data")
 	num <- function(x) {
 		if (is.numeric(x)) return(x)

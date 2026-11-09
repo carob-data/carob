@@ -22,6 +22,7 @@
 # Soil_analysis, Hobo_data, Weather_data, Weather_Original, Weather_monthly, Summary by clone, Charts, Ranks by Clone: summaries, logger dumps, or soil tables not mapped here.
 # Weather_daily n_sample and TSD: sample size and temperature standard deviation, not a weather variable in the vocabulary.
 # Material List Control, pedigree columns used only when a parent code is present are otherwise blank.
+# 03_Material_list.xlsx: not read. sheet Sheet1: Numeration, Institutional number, Clone or variety name, Code of clone, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # none
@@ -54,17 +55,17 @@ An evaluation of 11 potato clones was carried out in the cities of Mugerero and 
 	)
 
 	kv <- function(f, sheet) {
-		x <- carobiner::read.excel(f, sheet=sheet)
-		stats::setNames(as.character(x$Value), trimws(as.character(x$Factor)))
+		r1 <- carobiner::read.excel(f, sheet=sheet)
+		stats::setNames(as.character(r1$Value), trimws(as.character(r1$Factor)))
 	}
 
 	one_site <- function(f) {
 		info <- kv(f, "Minimal")
 		inst <- kv(f, "Installation")
 		r <- carobiner::read.excel(f, sheet="Fieldbook")
-		ml <- carobiner::read.excel(f, sheet="Material List")
-		name <- trimws(as.character(ml[["Clone or variety name"]]))
-		code <- trimws(as.character(ml[["Institutional number"]]))
+		r2 <- carobiner::read.excel(f, sheet="Material List")
+		name <- trimws(as.character(r2[["Clone or variety name"]]))
+		code <- trimws(as.character(r2[["Institutional number"]]))
 		name[!nzchar(name) | is.na(name)] <- NA_character_
 		m <- match(trimws(as.character(r$INSTN)), code)
 		variety <- trimws(as.character(r$INSTN))
@@ -73,8 +74,8 @@ An evaluation of 11 potato clones was carried out in the cities of Mugerero and 
 		female <- rep(NA_character_, nrow(r))
 		male <- female
 		if (!is.na(m[1]) || any(!is.na(m))) {
-			female[!is.na(m)] <- trimws(as.character(ml[["Female Institutional number"]][m[!is.na(m)]]))
-			male[!is.na(m)] <- trimws(as.character(ml[["Male Institutional number"]][m[!is.na(m)]]))
+			female[!is.na(m)] <- trimws(as.character(r2[["Female Institutional number"]][m[!is.na(m)]]))
+			male[!is.na(m)] <- trimws(as.character(r2[["Male Institutional number"]][m[!is.na(m)]]))
 		}
 		female[!nzchar(female)] <- NA_character_
 		male[!nzchar(male)] <- NA_character_
@@ -101,15 +102,15 @@ An evaluation of 11 potato clones was carried out in the cities of Mugerero and 
 			plant_density = as.numeric(inst[["Planting density (plants/Ha)"]]),
 			trial_id = paste(loc, substr(info[["Begin date"]], 1, 4))
 		)
-		w <- carobiner::read.excel(f, sheet="Weather_daily")
+		r3 <- carobiner::read.excel(f, sheet="Weather_daily")
 		wth <- data.frame(
-			country = as.character(w$Country),
-			adm1 = as.character(w$Department),
-			location = as.character(w$Locality),
-			date = sprintf("%04d-%02d-%02d", as.integer(w$Year), as.integer(w$Month), as.integer(w$Day)),
-			tmin = as.numeric(w$TMIN),
-			tmax = as.numeric(w$TMAX),
-			temp = as.numeric(w$TMEAN),
+			country = as.character(r3$Country),
+			adm1 = as.character(r3$Department),
+			location = as.character(r3$Locality),
+			date = sprintf("%04d-%02d-%02d", as.integer(r3$Year), as.integer(r3$Month), as.integer(r3$Day)),
+			tmin = as.numeric(r3$TMIN),
+			tmax = as.numeric(r3$TMAX),
+			temp = as.numeric(r3$TMEAN),
 			latitude = d$latitude[1],
 			longitude = d$longitude[1],
 			geo_from_source = TRUE

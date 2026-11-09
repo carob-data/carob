@@ -12,6 +12,7 @@
 ## NOT PROCESSED
 # Enumerator name and the perception items v1 to v11 (knowledge, frequency, importance, and agreement with Wong).
 # The dictionary workbook and the questionnaire pdf.
+# 02_Data dictionary- La percepcion de los consumidores sobre las papas nativas de color.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

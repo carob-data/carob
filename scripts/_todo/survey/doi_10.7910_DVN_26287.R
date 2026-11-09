@@ -40,6 +40,10 @@
 # pesticide_times_: number of pesticide sprays
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Survey for assessing changes in agriculture and livelihood in Ayeyarwardy division, Myanmar. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -67,17 +71,17 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		carob_effort = 0.8
 	)
 
-	fdoc <- ff[basename(ff) == "Documentation of 1996 survey.xls"]
+	f3 <- ff[basename(ff) == "Documentation of 1996 survey.xls"]
 	# value labels from the codebook: variable name (filled down), code, label (last column)
 	codes <- function(sheet, var) {
-		x <- carobiner::read.excel(fdoc, sheet=sheet, col_names=FALSE)
-		nm <- x[[1]]
+		r3 <- carobiner::read.excel(f3, sheet=sheet, col_names=FALSE)
+		nm <- r3[[1]]
 		nm <- nm[!is.na(nm)][cumsum(!is.na(nm))]
-		k <- nm %in% var & !is.na(x[[ncol(x)]])
-		data.frame(code=as.numeric(x[[2]][k]), label=trimws(x[[ncol(x)]][k]))
+		k <- nm %in% var & !is.na(r3[[ncol(r3)]])
+		data.frame(code=as.numeric(r3[[2]][k]), label=trimws(r3[[ncol(r3)]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(x, cds$code)]
+		cds$label[match(r3, cds$code)]
 	}
 
 	acre <- 0.4046863
@@ -90,7 +94,8 @@ To assess the impact of adoption of new rice-based technologies on income and em
 	rvar <- codes("CostRet_val", "VARIETY")
 
 	## Parcel96
-	r1 <- carobiner::read.excel(ff[basename(ff) == "Parcel96.xls"])
+	f1 <- ff[basename(ff) == "Parcel96.xls"]
+	r1 <- carobiner::read.excel(f1)
 	crops <- data.frame(code=1:8,
 		label = c("Rice", "Maize", "Pulses", "Oilseeds", "Vegetables", "Spices", "Jute", "Thatch"),
 		crop = c("rice", "maize", "pulse", "oilseed", "vegetable", "spices", "jute", NA)
@@ -133,7 +138,8 @@ To assess the impact of adoption of new rice-based technologies on income and em
 	d1$record_type_ <- "parcel"
 
 	## Cost&Return96 (rice only)
-	r2 <- carobiner::read.excel(ff[basename(ff) == "Cost&Return96.xls"])
+	f2 <- ff[basename(ff) == "Cost&Return96.xls"]
+	r2 <- carobiner::read.excel(f2)
 	ha <- r2$SOWNAREA * acre
 	labour <- c("CARRFAM", "CARRHIRE", "TRANFAM", "TRANHIRE", "DIRFAM", "DIRHIRE", "BROFAM", "BROHIRE", "WEEDFAM", "WEEHIRE", "IRRFAM", "IRRHIRE", "FERTFAM", "FERTHIRE", "PESTFAM", "PESTHIRE", "HARFAM", "HARHIRE", "BUNDFAM", "BUNDHIRE", "CARFAM", "CARHIRE", "THRESFAM", "THRESHIRE", "WINFAM", "WINHIRE", "DRYFAM", "DRYHIRE", "STORFAM", "STORHIRE")
 	d2 <- data.frame(
@@ -171,7 +177,7 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		currency = "MMK"
 	)
 	ft <- cbind(ifelse(r2$UREA > 0, "urea", NA), ifelse(r2$TSP > 0, "TSP", NA), ifelse(r2$MOP > 0, "KCl", NA), ifelse(r2$GYPSUM > 0, "gypsum", NA))
-	d2$fertilizer_type <- apply(ft, 1, function(x) paste(x[!is.na(x)], collapse="; "))
+	d2$fertilizer_type <- apply(ft, 1, function(x) paste(r3[!is.na(r3)], collapse="; "))
 	d2$fertilizer_type[d2$fertilizer_type == ""] <- "none"
 	d2$OM_used <- r2$FYM > 0
 	d2$OM_type <- ifelse(r2$FYM > 0, "farmyard manure", NA)

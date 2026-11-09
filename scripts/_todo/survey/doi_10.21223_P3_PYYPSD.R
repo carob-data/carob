@@ -16,6 +16,42 @@
 # Animal counts, farm labour, and off-farm income.
 # Shapefiles for Coromata, Icrana, Pairumani, and Pongonhuyo.
 # Family_Survey.pdf, MappingPlots_template.pdf, and Protocol_Spanish.pdf.
+# CommunityBoundaries_Bolivia_Coromata.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Coromata.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Icrana.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pairumani.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Bolivia_Pongonhuyo.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

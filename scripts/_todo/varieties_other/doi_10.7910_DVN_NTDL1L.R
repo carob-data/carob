@@ -62,9 +62,14 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		carob_effort = 0.5
 	)
 
-	xl <- ff[grepl("\\.xlsx$", basename(ff))]
-	xl <- xl[order(basename(xl))]
-	d <- lapply(xl, function(f) {
+	f1 <- ff[basename(ff) %in% c(
+		"2015-IL-PET-Burkina Faso-Vallee du Kou.xlsx",
+		"2015-IL-PET-Mali-Niono.xlsx",
+		"2015-IL-PET-Senegal-Fanaye-AfricaRice.xlsx",
+		"2015-IL-PET-Senegal-Fanaye-ISRA.xlsx"
+	)]
+	f1 <- f1[order(basename(f1))]
+	d <- lapply(f1, function(f) {
 		r <- carobiner::read.excel(f)
 		num <- function(col) {
 			if (col %in% names(r)) as.numeric(r[[col]]) else rep(NA_real_, nrow(r))

@@ -18,6 +18,7 @@
 # Stem weights. They are grams per 100 stems, and stems per hectare are not given.
 # Quality workbooks and soil nitrogen sheets.
 # The data-dictionary file, used here for the yield definition.
+# Data Dictionary_Yield_Trial+_El Batan_2023.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -66,13 +67,13 @@ Grain Yield and Grain Protein data of CIMMYT Elite Spring Wheat lines with the B
 		c(loc, yr)
 	}
 	one <- function(f, sheet) {
-		raw <- as.data.frame(carobiner::read.excel(f, sheet=sheet))
-		if ("Grain weight (g) plot-1" %in% names(raw)) {
-			top <- raw[1, ]
-			top[1, ] <- names(raw)
-			raw <- rbind(top, raw)
+		r <- as.data.frame(carobiner::read.excel(f, sheet=sheet))
+		if ("Grain weight (g) plot-1" %in% names(r)) {
+			top <- r[1, ]
+			top[1, ] <- names(r)
+			r <- rbind(top, r)
 		}
-		cells <- as.matrix(raw)
+		cells <- as.matrix(r)
 		cells[] <- trimws(as.character(cells))
 		at <- function(pattern, fixed=TRUE) {
 			m <- matrix(grepl(pattern, cells, fixed=fixed), nrow=nrow(cells))
@@ -97,19 +98,19 @@ Grain Yield and Grain Protein data of CIMMYT Elite Spring Wheat lines with the B
 		if (nrow(id_at) == 0) return(NULL)
 		hrow <- id_at[1, 1]
 		vcol <- id_at[1, 2]
-		hdr <- trimws(as.character(unlist(raw[hrow, ])))
+		hdr <- trimws(as.character(unlist(r[hrow, ])))
 		repcol <- match(c("Rep", "REP"), hdr)
 		repcol <- repcol[!is.na(repcol)][1]
 		plotcol <- match(c("Plot", "PLOT NO.", "PLOT CODE"), hdr)
 		plotcol <- plotcol[!is.na(plotcol)][1]
-		desc <- if (hrow > 1) trimws(as.character(unlist(raw[hrow - 1, ]))) else rep(NA_character_, ncol(raw))
+		desc <- if (hrow > 1) trimws(as.character(unlist(r[hrow - 1, ]))) else rep(NA_character_, ncol(r))
 		flcol <- match("Flowering", desc)
 		if (is.na(flcol)) flcol <- match("Flowering", hdr)
 		mtcol <- match("Maturity", desc)
 		if (is.na(mtcol)) mtcol <- match("Maturity", hdr)
 		htcol <- match("Plant height", desc)
 		if (is.na(htcol)) htcol <- match("Plant height", hdr)
-		dat <- raw[(max(hrow, grow) + 1):nrow(raw), ]
+		dat <- r[(max(hrow, grow) + 1):nrow(r), ]
 		variety <- trimws(as.character(dat[[vcol]]))
 		variety[variety %in% c("", "NA", id_names)] <- NA_character_
 		keep <- !is.na(variety)

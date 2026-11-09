@@ -16,6 +16,7 @@
 
 ## NOT PROCESSED
 # Cross identification number and source identification number. The genotype id is stored in variety_code. The cross is the variety name and the selection history is variety_pedigree.
+# Data Dictionary_Template_XHe.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

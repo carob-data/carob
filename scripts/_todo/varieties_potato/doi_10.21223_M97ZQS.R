@@ -14,6 +14,17 @@
 ## NOT PROCESSED
 # Flowering, storage, organoleptic, dormancy, rank, and PCA sheets in PTPV200908_BUMTHANG.xls, and the separate xlsx extracts of those sheets.
 # TTYA_HM and TTYA_HB summary grids.
+# 01_data_F1_Select_crit.xlsx: not read. sheet F1_Selec_Crit: ORD, PHASE, Identified criteria, SCMEN, OR_M, SCWM, OR_WM, SGLOB, PMEN, PWM, PGLOB. Observation records are missing from d until this file is standardized.
+# 02_data_F2 Clones_Select_Flowering.xlsx: not read. sheet Sheet1: PLOT, REP, INSTN, Country, Admin1, Admin2, Locality, NTP, NPE, NPH, PPH, NNoMTP, .... Observation records are missing from d until this file is standardized.
+# 02_data_F2_Select_crit.xlsx: not read. sheet F2 Clones_Select_Flowering: PLOT, REP, INSTN, Code, MSM, MSWM, MSGLO, BSM, BSWM, BSGLO. Observation records are missing from d until this file is standardized.
+# 03_data_F3_Clones_Selec_Harvest.xlsx: not read. sheet F3_Clones_Selec_Harvest: PLOT, REP, INSTN, Code, MSM, MSWM, MSGLO, BSM, BSWM, BSGLO. Observation records are missing from d until this file is standardized.
+# 04_data_yield_F4_ Harvest_Mother.xlsx: not read. sheet F4_ Harvest_Mother: PLOT, REP, INSTN, Code, NTP, NPH, PPH, NMTP, NNoMTP, NMTPL, MTWP, NoMTWP, .... Observation records are missing from d until this file is standardized.
+# 05_data_yield_F5_harvest_Baby.xlsx: not read. sheet F5_harvest_Baby: PLOT, REP, INSTN, Code, NTP, NPH, PPH, NMTP, NNoMTP, NMTPL, MTWP, NoMTWP, .... Observation records are missing from d until this file is standardized.
+# 06_data_F9_Clones_Select_Storage.xlsx: not read. sheet F9_Clones_Select_Storage: PLOT, REP, INSTN, Code, STYPE, SCMEN, SCWM, SGLOB, PMEN, PWM, PGLOB. Observation records are missing from d until this file is standardized.
+# 07_data_Data_organoleptic_Mother.xlsx: not read. sheet Data_organoleptic_Mother: INSTN, PanelNo, Sex, appearance, taste, texture. Observation records are missing from d until this file is standardized.
+# 08_data_Data_organoleptic_Baby.xlsx: not read. sheet Data_organoleptic_Baby: INSTN, PanelNo, Sex, appearance, taste, texture. Observation records are missing from d until this file is standardized.
+# 09_Material_list.xlsx: not read. sheet Sheet1: Numeration, Institutional number, Clone or variety name, Female Institutional number, Female code, Male Institutional number, References to previous trials. Observation records are missing from d until this file is standardized.
+# 10_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # trial_type_: mother or baby.
@@ -59,10 +70,10 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		x
 	}
 	f <- ff[basename(ff) == "PTPV200908_BUMTHANG.xls"]
-	mn <- carobiner::read.excel(f, sheet="Minimal")
+	r1 <- carobiner::read.excel(f, sheet="Minimal")
 	val <- function(key) {
-		i <- which(trimws(mn[[1]]) == key)
-		if (!length(i)) NA_character_ else chr(mn[[2]][i[1]])
+		i <- which(trimws(r1[[1]]) == key)
+		if (!length(i)) NA_character_ else chr(r1[[2]][i[1]])
 	}
 	one <- function(sheet, kind) {
 		r <- carobiner::read.excel(f, sheet=sheet)

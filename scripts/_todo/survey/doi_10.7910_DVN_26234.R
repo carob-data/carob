@@ -28,6 +28,12 @@
 # land_type_: upland, medium land, lowland
 
 
+
+## NOT PROCESSED
+# Hhinfo-Income-Asset.xlsx: not read. sheet HHInfo (of 3): Filename:HHINFO. Observation records are missing from d until this file is standardized.
+# Nonrice-Inputs and Labor.xls: not read. sheet MatInp (of 2): Filename:MATINP, ...2, ...3, ...4, Filename:FORM C\MATINP.WK1. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Risk management in rice production in inland areas of Orissa. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

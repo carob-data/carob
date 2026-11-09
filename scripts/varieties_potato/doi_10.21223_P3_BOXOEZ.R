@@ -28,8 +28,9 @@ B3C1 is the first cycle of recombination of advanced B3C0 potato clones. These c
   f <- ff[!grepl("Dictionary_Lateblight.xls", basename(ff))]
   f <- f[grep("^0._|_Data_dictionary|_processed", basename(f), invert=TRUE)]
   d <- lapply(f, process, addvars="TTWP")
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
   
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
-

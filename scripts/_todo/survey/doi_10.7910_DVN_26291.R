@@ -28,6 +28,10 @@
 # loss_reason_: reason for crop losses as reported (text)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Survey on Rice Cultivar Diversity and Yield Losses from Pests. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

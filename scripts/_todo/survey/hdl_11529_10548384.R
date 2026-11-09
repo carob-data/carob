@@ -71,19 +71,19 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 	}
 
 	# Bangladesh: yield is kg and area is treated as decimals.
-	f <- ff[grepl("Bangladesh", basename(ff))]
-	b <- carobiner::read.excel(f, sheet="Plots")
+	f <- ff[basename(ff) == "1-SRFSI-HH survey-Bangladesh-IWMI.xlsm"]
+	r1 <- carobiner::read.excel(f, sheet="Plots")
 	dec_ha <- 0.4046863 / 100
 	bang <- function(area, yld, crop, season) {
-		a <- num(b[[area]])
-		y <- num(b[[yld]])
+		a <- num(r1[[area]])
+		y <- num(r1[[yld]])
 		ha <- a * dec_ha
 		out <- ifelse(!is.na(y) & !is.na(ha) & ha > 0, y / ha, NA_real_)
 		data.frame(
-			hhid = blank(b$Respondent),
-			adm2 = blank(b$District),
-			location = blank(b$Village),
-			plot_id = blank(b[["plot no"]]),
+			hhid = blank(r1$Respondent),
+			adm2 = blank(r1$District),
+			location = blank(r1$Village),
+			plot_id = blank(r1[["plot no"]]),
 			country = "Bangladesh",
 			adm1 = NA_character_,
 			crop = crop,
@@ -103,20 +103,20 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		bang("Summer paddy area cultivated summer paddy", "Summer paddy yield of summer paddy", "rice", NA_character_)
 	)
 
-	f <- ff[grepl("Bihar", basename(ff))]
-	h <- carobiner::read.excel(f, sheet="plot")
+	f <- ff[basename(ff) == "2-SRFSI-HH survey-Bihar -IWMI.xlsx"]
+	r2 <- carobiner::read.excel(f, sheet="plot")
 	bih <- function(yld, crop, season, variety=NULL, as_kg=TRUE) {
 		data.frame(
-			hhid = blank(h$respondentno),
-			adm2 = blank(h$Nameofdistricts),
-			location = blank(h$Nodes),
+			hhid = blank(r2$respondentno),
+			adm2 = blank(r2$Nameofdistricts),
+			location = blank(r2$Nodes),
 			plot_id = NA_character_,
 			country = "India",
 			adm1 = "Bihar",
 			crop = crop,
 			season = season,
-			yield = num(h[[yld]]),
-			variety = if (is.null(variety)) NA_character_ else blank(h[[variety]]),
+			yield = num(r2[[yld]]),
+			variety = if (is.null(variety)) NA_character_ else blank(r2[[variety]]),
 			as_kg = as_kg
 		)
 	}
@@ -128,20 +128,20 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		bih("yieldofsummerpaddyperhectare", "rice", NA_character_, "varietyofsummmerpaddy", FALSE)
 	)
 
-	f <- ff[grepl("Westbengal", basename(ff), ignore.case=TRUE)]
-	w <- carobiner::read.excel(f, sheet="plot")
+	f <- ff[basename(ff) == "3-SRFSI HH survey-Westbengal-IWMI.xls"]
+	r3 <- carobiner::read.excel(f, sheet="plot")
 	wb <- function(yld, crop, season, variety=NULL, as_kg=TRUE) {
 		data.frame(
-			hhid = blank(w$respondentno),
-			adm2 = blank(w$Nameofdistricts),
-			location = blank(w$Nodes),
-			plot_id = blank(w$plotno),
+			hhid = blank(r3$respondentno),
+			adm2 = blank(r3$Nameofdistricts),
+			location = blank(r3$Nodes),
+			plot_id = blank(r3$plotno),
 			country = "India",
 			adm1 = "West Bengal",
 			crop = crop,
 			season = season,
-			yield = num(w[[yld]]),
-			variety = if (is.null(variety)) NA_character_ else blank(w[[variety]]),
+			yield = num(r3[[yld]]),
+			variety = if (is.null(variety)) NA_character_ else blank(r3[[variety]]),
 			as_kg = as_kg
 		)
 	}
@@ -153,19 +153,19 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		wb("yieldofsummerpaddyperhectare", "rice", NA_character_, "varietyofsummmerpaddy", FALSE)
 	)
 
-	f <- ff[grepl("Nepal", basename(ff))]
-	n <- carobiner::read.excel(f, sheet="plot")
+	f <- ff[basename(ff) == "4-SRFSI-HH survey-Nepal-IWMI.xls"]
+	r4 <- carobiner::read.excel(f, sheet="plot")
 	nep <- function(yld, crop, season, as_kg) {
 		data.frame(
-			hhid = blank(n$form_no),
-			adm2 = blank(n$Districts),
-			location = blank(n$Nodes),
+			hhid = blank(r4$form_no),
+			adm2 = blank(r4$Districts),
+			location = blank(r4$Nodes),
 			plot_id = NA_character_,
 			country = "Nepal",
 			adm1 = NA_character_,
 			crop = crop,
 			season = season,
-			yield = num(n[[yld]]),
+			yield = num(r4[[yld]]),
 			variety = NA_character_,
 			as_kg = as_kg
 		)

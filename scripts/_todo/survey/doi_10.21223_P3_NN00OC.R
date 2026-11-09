@@ -17,6 +17,21 @@
 ## NOT PROCESSED
 # Dietary diversity, seed-system modules, marketing, vitamin A knowledge, and the area and fertilizer file. Fertilizer unit codes are not converted to kg/ha.
 # Household member and child modules. Names are not copied.
+# BaseLineSurvey_VISTA Baseline Survey Dictionary Nampula_Mozambique_2015: documentation or a codebook, not an observation table.
+# Lista of FILES contained in the folder_DATASET Mozambique_VISTA BASELINE SURVEY 2015.xlsx: not read. sheet Sheet1: 1. DATA. Observation records are missing from d until this file is standardized.
+# PAG16_Baseline Survey VISTA_2015_Practices and Preferences.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAG2B_Baseline Survey VISTA_2015_Household members with age above 60 Months.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 11_Baseline Survey VISTA_2015_Seed System_General.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 11_Baseline Survey VISTA_2015_Seed System_Vine Dissemination.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 13_Baseline Survey VISTA_2015_Attitude, Knowledge, practices.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 17_Baseline Survey VISTA_2015_Women Knowledge on Vitamina A.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 19_Baseline Survey VISTA_2015_Dietary Diversity for Women and Children.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 2_Bseline Survey VISTA_2015_Demographic of Members of Household who are less or equal to 60 months of Age (5 years).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 3_Baseline Survey VISTA_2015_Affiliation to ssociation or group.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 4_Baseline Survey VISTA_2015 Crop production.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 5_Baseline Survey VISTA_2015_Crop production_Area and use of fertilizer.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# PAGE 9_Baseline Survey VISTA_2015_Sweetpotato marketing and selling.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Questionnaires for VISTA Modules of the  Baseline Survey in Portuguese.xls: design, layout, or protocol sheet, not plot or survey records.
 
 
 carob_script <- function(path) {
@@ -57,20 +72,22 @@ The baseline survey for Viable Sweetpotato Technologies in Africa (VISTA) projec
 		z[!ok] <- NA_character_
 		as.numeric(z)
 	}
-	id <- haven::read_sav(ff[grepl("^PAGE 1_", basename(ff))])
-	sp <- haven::read_sav(ff[grepl("^PAGE 6_", basename(ff))])
+	f1 <- ff[basename(ff) == "PAGE 1_Baseline Survey VISTA_2015_Household identification and statement of agreement.sav"]
+	r1 <- haven::read_sav(f1)
+	f2 <- ff[basename(ff) == "PAGE 6_Baseline Survey VISTA_2015_Sweetpotato production.sav"]
+	r2 <- haven::read_sav(f2)
 	d <- data.frame(
-		hhid = lab(id$T_RG),
-		treatment = lab(id$IN_CT),
-		adm1 = lab(id$A01),
-		adm2 = lab(id$A02),
-		adm3 = lab(id$A03),
-		location = lab(id$A04)
+		hhid = lab(r1$T_RG),
+		treatment = lab(r1$IN_CT),
+		adm1 = lab(r1$A01),
+		adm2 = lab(r1$A02),
+		adm3 = lab(r1$A03),
+		location = lab(r1$A04)
 	)
 	q <- data.frame(
-		hhid = lab(sp$T_RG),
-		upland_fields_ = num(sp$G02A),
-		lowland_fields_ = num(sp$G03A)
+		hhid = lab(r2$T_RG),
+		upland_fields_ = num(r2$G02A),
+		lowland_fields_ = num(r2$G03A)
 	)
 	d <- merge(d, q, by="hhid", all.x=TRUE)
 	d$country <- "Mozambique"

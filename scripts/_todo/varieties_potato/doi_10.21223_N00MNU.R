@@ -17,6 +17,10 @@
 # Fieldbook NTP, NPE, NPH, NMTP, NNoMTP, NMTPL, ATMW, TNTP, TNTPL, NoMTWP, TTWPL: counts and per-plant weights. Plot tuber weights are kept as ttwp_ and mtwp_.
 # 04_Weather_data: see ISSUES.
 # Soil Requester, Operator, Date, total cations, total bases, exchangeable sodium percentage: administration or sums.
+# 03_RRC_G2_serp-HERLB_PER_2022_LateBlight_Oxa.xlsx: not read. sheet Sheet 1: row, column, rowgroup, colgroup, RC.group, treatment, Item, CIP_Number, Family_Number, Type, Rep. Observation records are missing from d until this file is standardized.
+# 04_Weather_data-HERLB_PER_2022_LateBlight_Oxa.xlsx: not read. sheet Sheet 1: Date, Time, GMT, TEMP, RH. Observation records are missing from d until this file is standardized.
+# 06_Layout-HERLB_PER_2022_LateBlight_Oxa.xlsx: design, layout, or protocol sheet, not plot or survey records.
+# 07_Data_dictionary-HERLB_PER_2022_LateBlight_Oxa.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # ttwp_: total tuber weight per plot. Unit is not stated.
@@ -52,10 +56,12 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 
 	f <- ff[basename(ff) == "01_Fieldbook_HERLB_PER_2022_LateBlight_Oxa.xlsx"]
 	r <- carobiner::read.excel(f)
-	ml <- carobiner::read.excel(ff[basename(ff) == "02_Material_List_HERLB_PER_2022_LateBlight_Oxa.xlsx"])
-	s <- carobiner::read.excel(ff[basename(ff) == "05_Soil_Data-HERLB_PER_2022_LateBlight_Oxa.xlsx"])
+	f1 <- ff[basename(ff) == "02_Material_List_HERLB_PER_2022_LateBlight_Oxa.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	f2 <- ff[basename(ff) == "05_Soil_Data-HERLB_PER_2022_LateBlight_Oxa.xlsx"]
+	r2 <- carobiner::read.excel(f2)
 	sval <- function(nm) {
-		hit <- s$Data[trimws(as.character(s$Abbreviture)) == nm]
+		hit <- r2$Data[trimws(as.character(r2$Abbreviture)) == nm]
 		if (length(hit) == 0) return(NA_character_)
 		trimws(as.character(hit[1]))
 	}
@@ -77,10 +83,10 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 		mtwp_ = num(r$MTWP)
 	)
 
-	ctrl <- tolower(trimws(as.character(ml$Is_control)))
+	ctrl <- tolower(trimws(as.character(r1$Is_control)))
 	alias <- data.frame(
-		variety = trimws(as.character(ml$CIPNumber)),
-		variety_alt = trimws(as.character(ml$Accesion_Name)),
+		variety = trimws(as.character(r1$CIPNumber)),
+		variety_alt = trimws(as.character(r1$Accesion_Name)),
 		variety_type = ifelse(ctrl == "yes", "check", NA_character_)
 	)
 	alias$variety_alt[!nzchar(alias$variety_alt)] <- NA_character_

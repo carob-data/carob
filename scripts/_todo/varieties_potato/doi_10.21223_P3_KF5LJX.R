@@ -55,15 +55,16 @@ The wild and cultivated species of potato have been utilized in potato breeding 
 
 	f <- ff[basename(ff) == "Data_screening_for_resistance.xls"]
 	r <- carobiner::read.excel(f, na=c("", ".", "NA"))
-	ml <- carobiner::read.excel(ff[basename(ff) == "Material_List.xls"], na=c("", "NA"))
+	f1 <- ff[basename(ff) == "Material_List.xls"]
+	r1 <- carobiner::read.excel(f1, na=c("", "NA"))
 	clean <- function(x) {
 		x <- gsub("\u00a0", " ", as.character(x), fixed=TRUE)
 		x <- trimws(x)
 		x[!nzchar(x)] <- NA_character_
 		x
 	}
-	key <- clean(ml$Accession_Number)
-	nm <- clean(ml$Accession_Name)
+	key <- clean(r1$Accession_Number)
+	nm <- clean(r1$Accession_Name)
 	acc <- clean(r$Accession)
 	i <- match(acc, key)
 	variety <- nm[i]

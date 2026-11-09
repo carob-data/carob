@@ -23,6 +23,7 @@
 # data.csv ENTRY_NO, ENTRY_CODE: within-trial entry numbers 1-25, not a stable germplasm id (DESIGNATION is the variety name).
 # abbr.csv: generic unit abbreviations, not plot data.
 # Dictionary descriptions for BROWN_SPOT through BB look shifted relative to the column names; irrelevant here because those columns are empty.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # pod_clearance_: dictionary "pod clearance", measured, unit not stated (values 5-20).

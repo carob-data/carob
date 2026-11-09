@@ -18,6 +18,8 @@
 # 04_BLUEs_by_env.csv. Those are model estimates, not the plot measurements.
 # Row and column coordinates of the field plan, beyond using them as plot_id.
 # Material-list genus, species, and ploidy. The species column is incomplete.
+# 05_Material_list.csv: not read. columns: INSTN, genus, species, subtaxa, acronym, ploidy, pop, notes. Observation records are missing from d until this file is standardized.
+# 06_Variables.csv: not read. columns: Abrev, Variable. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES

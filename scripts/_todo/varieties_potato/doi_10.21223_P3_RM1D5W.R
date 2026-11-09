@@ -20,6 +20,10 @@
 # flesh_color_cooked_: flesh color after cooking
 # cooking_class_: classification text
 
+
+## NOT PROCESSED
+# Standard Evaluation Trial for cooking quality Dictionary.xls: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "

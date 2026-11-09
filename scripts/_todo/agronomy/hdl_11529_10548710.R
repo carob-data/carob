@@ -152,15 +152,15 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	site_info <- function(f) {
-		info <- carobiner::read.excel(f, sheet="Variable Description", col_names=FALSE)
-		name_at <- which(!is.na(as.character(unlist(info[1, ]))))
+		r1 <- carobiner::read.excel(f, sheet="Variable Description", col_names=FALSE)
+		name_at <- which(!is.na(as.character(unlist(r1[1, ]))))
 		out <- list()
 		for (j in name_at) {
-			site <- trimws(as.character(info[1, j]))
+			site <- trimws(as.character(r1[1, j]))
 			if (!nzchar(site) || site == "NA") next
-			if (j + 2 > ncol(info)) next
-			labs <- as.character(info[[j + 1]])
-			vals <- trimws(as.character(info[[j + 2]]))
+			if (j + 2 > ncol(r1)) next
+			labs <- as.character(r1[[j + 1]])
+			vals <- trimws(as.character(r1[[j + 2]]))
 			getv <- function(label) {
 				i <- which(labs == label)
 				if (length(i) == 0) return(NA_character_)
@@ -181,20 +181,20 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	lookup_site <- function(loc, info) {
-		keys <- names(info)
-		if (length(keys) == 1) return(info[[keys]])
+		keys <- names(r1)
+		if (length(keys) == 1) return(r1[[keys]])
 		want <- site_key(loc)
 		keyed <- vapply(keys, site_key, character(1))
 		hit <- keys[keyed == want]
-		if (length(hit) == 1) return(info[[hit]])
+		if (length(hit) == 1) return(r1[[hit]])
 		inside <- vapply(keyed, function(k) {
 			nzchar(want) && nzchar(k) && (grepl(want, k, fixed=TRUE) || grepl(k, want, fixed=TRUE))
 		}, logical(1))
 		hit <- keys[inside]
-		if (length(hit) == 1) return(info[[hit]])
+		if (length(hit) == 1) return(r1[[hit]])
 		pref <- substr(want, 1, 7)
 		hit <- keys[substr(keyed, 1, 7) == pref]
-		if (length(hit) == 1) return(info[[hit]])
+		if (length(hit) == 1) return(r1[[hit]])
 		NULL
 	}
 
@@ -213,24 +213,24 @@ This experiments were established with different rates of nitrogen in order to g
 		f <- ff[basename(ff) == bn]
 		yrs <- regmatches(bn, gregexpr("20[0-9]{2}", bn))[[1]]
 		year <- paste(yrs, collapse="-")
-		info <- site_info(f)
+		r1 <- site_info(f)
 		sheets <- books[[bn]]
 		headers <- unlist(lapply(sheets, function(s) {
-			raw <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
-			hdr <- as.character(unlist(raw[1, ]))
-			unit <- as.character(unlist(raw[2, ]))
+			r <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
+			hdr <- as.character(unlist(r[1, ]))
+			unit <- as.character(unlist(r[2, ]))
 			unit[hdr == "NDVI"]
 		}))
 		dmy <- day_order(headers)
 		for (s in sheets) {
-			raw <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
-			hdr <- trimws(as.character(unlist(raw[1, ])))
-			unit <- as.character(unlist(raw[2, ]))
-			r <- raw[-(1:2), ]
+			r <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
+			hdr <- trimws(as.character(unlist(r[1, ])))
+			unit <- as.character(unlist(r[2, ]))
+			r <- r[-(1:2), ]
 			r <- r[!is.na(r[[1]]), ]
 			if (nrow(r) == 0) next
 			loc <- trimws(sub("^Data[- ]*", "", s))
-			meta_s <- lookup_site(loc, info)
+			meta_s <- lookup_site(loc, r1)
 			n_col <- if ("Total N" %in% hdr) which(hdr == "Total N")[1] else which(hdr == "N at Planting")[1]
 			y_col <- which(hdr == "Yield at 14% hum")[1]
 			p_col <- which(hdr == "Plot size")

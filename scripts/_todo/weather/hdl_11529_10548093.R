@@ -17,6 +17,11 @@
 ## NOT PROCESSED
 # Hourly workbooks for 2012-2016. Daily files cover those years.
 # Metadata sheets.
+# AguaFria hourly data 2012.xlsx: not read. sheet RowDataAguaFria2012 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# AguaFria hourly data 2013.xlsx: not read. sheet RowDataAguaFria2013 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# AguaFria hourly data 2014.xlsx: not read. sheet RowDataAguaFria2014 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# AguaFria hourly data 2015.xlsx: not read. sheet RowData_AguaFria2015 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# AguaFria hourly data 2016.xlsx: not read. sheet RowData_AguaFria2016 (of 2): Year, Month, Day, Hour, Minuts, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -79,8 +84,26 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		)
 	}
 
-	ff <- ff[grepl("daily|DrErnest", basename(ff), ignore.case=TRUE)]
-	ff <- ff[!grepl("hourly", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Agua Fria daily data 1969_1999.xlsx",
+		"Agua Fria DrErnest  daily data 2001_2011.xlsx",
+		"AguaFria daily data 2012.xlsx",
+		"AguaFria daily data 2013.xlsx",
+		"AguaFria daily data 2014.xlsx",
+		"AguaFria daily data 2015.xlsx",
+		"AguaFria daily data 2016.xlsx",
+		"AguaFria daily data 2017.xlsx"
+	)]
+	ff <- ff[basename(ff) %in% c(
+		"Agua Fria daily data 1969_1999.xlsx",
+		"Agua Fria DrErnest  daily data 2001_2011.xlsx",
+		"AguaFria daily data 2012.xlsx",
+		"AguaFria daily data 2013.xlsx",
+		"AguaFria daily data 2014.xlsx",
+		"AguaFria daily data 2015.xlsx",
+		"AguaFria daily data 2016.xlsx",
+		"AguaFria daily data 2017.xlsx"
+	)]
 	ff <- ff[order(basename(ff))]
 	wth <- do.call(carobiner::bindr, lapply(ff, read_one))
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]

@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # Names of people, the member roster after person 01, association and production questions. Area and production units are not mapped from the closed questionnaire.
 # Dictionary, pdf questionnaire, and the pdf report.
+# 02_Data dictionary_Caso Name - EPCP - COLOMBIA.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

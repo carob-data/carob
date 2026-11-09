@@ -13,6 +13,7 @@
 # Root counts, sale units, weights, and prices. One product block is labeled KENYA on a Malawi form that prices in Malawi kwacha, so the product names are not used.
 # Substitute crops, seller counts, cassava form, and the closing questions about iron-rich beans, vitamin A maize, and purple-fleshed sweetpotato.
 # Enumerator remarks and interview duration.
+# DataDictionary_Market OFSP Malawi.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

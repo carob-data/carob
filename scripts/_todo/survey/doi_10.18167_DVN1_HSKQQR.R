@@ -16,6 +16,9 @@
 # Household, credit, training, and opinion columns in the typology sheet.
 # Farmer-stated urea and NPK doses. The company credit doses are the ones stored.
 # Organic-manure columns. They record whether manure is produced, not a kg/ha rate.
+# List_variables_perf.xlsx: not read. sheet list perf: Paysan_ID, Identifiant du paysan, unique. Observation records are missing from d until this file is standardized.
+# List_variables_typo.xlsx: not read. sheet list_typo: Paysan_ID, Identifiant du paysan, unique. Observation records are missing from d until this file is standardized.
+# Readme.txt: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

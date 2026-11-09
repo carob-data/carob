@@ -15,6 +15,15 @@
 ## NOT PROCESSED
 # Farmer, sowing, visit, harvest, manual-activity, and soil workbooks in this dataset. The productivity sheet is the yield record.
 # factor_difference and the environmental and management factor columns: coded reasons, not a rate.
+# 01_Data-Agronomic-La Libertad-2021-2022-Farmers-Crop-Site.xlsx: not read. sheet 1-Farmers-crops: ID, Site, level_education, province, district, locality, experience, organization, plot_area, latitude, longitude, elevation, .... Observation records are missing from d until this file is standardized.
+# 02_Data-Agronomic-La Libertad-2021-2022-Sowing.xlsx: not read. sheet 2-Planting: ID, Site, activity, crop_before_planting, planting_area, how_register_cost, determine_planting, how_planting, planting_date, planting_in, arrangement, slope_was_considered, .... Observation records are missing from d until this file is standardized.
+# 03_Data-Agronomic-La Libertad-2021-2022-Visit.xlsx: not read. sheet 3-Visit: ID, Site, visit_date, crop_name, crop_stage, current_problem_crop, establishment_problems, percentage_establishment_problems, caused_by, part_affect_plagues, severity, ipm_type, .... Observation records are missing from d until this file is standardized.
+# 04.1_Data-Agronomic-La Libertad-2021-2022-Crop.xlsx: not read. sheet 4.1-cultivo: crop_name1, communal_work, obtained_product_harvest, harvest_start_date, harvest_end_date, how_determine_harvest, parent_key1. Observation records are missing from d until this file is standardized.
+# 04.2_Data-Agronomic-La Libertad-2021-2022-Manual activity.xlsx: not read. sheet 4.2-Manual activity: crop_name2, perform_manual_harvest, date_manual_activity, manual_activity_performed, uses_implements_manual, number_implements_used_manual, cosecha_manual-actividad1-mas_de_un_implemento-implemento_utilizado, number_people_harvest, labor_cost_day, jornal_used, duration_jornal_day, cost_type, .... Observation records are missing from d until this file is standardized.
+# 04_Data-Agronomic-La Libertad-2021-2022-Harvest.xlsx: not read. sheet 4-Harvest: ID, Site, meta-instance, plot_name, surfice, crop1, harvest_method, percentage_stubble_plot, description_harvest, number_manual_harvest, manual1. Observation records are missing from d until this file is standardized.
+# 05.1_Data-Agronomic-La Libertad-2021-2022-Products.xlsx: not read. sheet 5.1-producto: product_obtained, estimated_yield, real_yield, percentage_for_sale, percentage_to_self-consumption, percentage_to_seed, sold_product, sale_price, parent_key3. Observation records are missing from d until this file is standardized.
+# 06_Data-Agronomic-La Libertad-2021-2022-Soil analysis.xlsx: not read. sheet 6-Soil anlysis: N, Site, pH, EC, CaCo3, OM, P, K, Sand, Silt, Clay, TC, .... Observation records are missing from d until this file is standardized.
+# 07_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # previous_yield_: previous year yield as recorded
@@ -46,7 +55,7 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("Productivity", basename(ff))]
+	f <- ff[basename(ff) == "05_Data-Agronomic-La Libertad-2021-2022-Productivity.xlsx"]
 	r <- carobiner::read.excel(f, sheet="5-Productivity")
 	crop <- tolower(trimws(as.character(r$crop_name)))
 	crop[crop %in% c("papa", "potato", "patata")] <- "potato"

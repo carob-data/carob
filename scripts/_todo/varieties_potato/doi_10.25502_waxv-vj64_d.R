@@ -20,6 +20,7 @@
 # Ranking questions other than best/worst growing, best/worst yield, and best/worst overall (storage, dormancy, taste, tuber size, bacterial wilt, marketability). They name an option, not a measured rate.
 # GPS_Point_Longitude / Latitude on the last form: empty or "None". Farm_Geolocation was used.
 # data dictionary.
+# report_data_pot21a-4datadictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # package_id_: tricot package code.

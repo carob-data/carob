@@ -16,6 +16,22 @@
 ## NOT PROCESSED
 # Percent saturation of Ca, Mg, K, Na, Al, and H.
 # Hydrogen in ppm, map images, and the METADATA dictionary sheet.
+# Azufre-Salvatierra-Gto.png: image, not a data table.
+# Boro-Salvatierra-Gto.png: image, not a data table.
+# Calcio-Salvatierra-Gto.png: image, not a data table.
+# CIC-Salvatierra-Gto.png: image, not a data table.
+# Cobre-Salvatierra-Gto.png: image, not a data table.
+# Fosforo Bray 1-Salvatierra-Gto.png: image, not a data table.
+# Hierro-Salvatierra-Gto.png: image, not a data table.
+# Magnesio-Salvatierra-Gto.png: image, not a data table.
+# Manganeso-Salvatierra-Gto.png: image, not a data table.
+# Materia Organica-Salvatierra-Gto.png: image, not a data table.
+# Nitratos-Salvatierra-Gto.png: image, not a data table.
+# pH 12agua-Salvatierra-Gto.png: image, not a data table.
+# Potasio-Salvatierra-Gto.png: image, not a data table.
+# Salinidad CE Extracto-Salvatierra-Gto.png: image, not a data table.
+# Sodio porc sat-Salvatierra-Gto.png: image, not a data table.
+# Zinc-Salvatierra-Gto.png: image, not a data table.
 
 carob_script <- function(path) {
 

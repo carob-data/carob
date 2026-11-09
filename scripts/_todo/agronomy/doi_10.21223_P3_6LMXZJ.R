@@ -19,6 +19,7 @@
 
 ## NOT PROCESSED
 # Farmers name.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

@@ -22,6 +22,9 @@
 
 ## NOT PROCESSED
 # Stand count is plants per field, and the field area is not given.
+# DataDictionary_ElementDescription.csv: documentation or a codebook, not an observation table.
+# DataDictionary_Introduction.csv: documentation or a codebook, not an observation table.
+# DataDictionary_UniqueIdentifier.csv: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -49,13 +52,13 @@ Effect of ridging and tie-ridging time on the yield performance of sorghum at Gu
 	)
 
 	f <- ff[basename(ff) == "ExperimentalData.csv"]
-	t <- ff[basename(ff) == "Treatment.csv"]
+	f1 <- ff[basename(ff) == "Treatment.csv"]
 	r <- read.csv(f, sep=";", check.names=FALSE)
-	tr <- read.csv(t, sep=";", check.names=FALSE, fill=TRUE)
-	tr <- tr[, 1:2]
-	names(tr) <- c("Treatment", "treatment")
+	r1 <- read.csv(f1, sep=";", check.names=FALSE, fill=TRUE)
+	r1 <- r1[, 1:2]
+	names(r1) <- c("Treatment", "treatment")
 	r <- r[!is.na(r$Year), ]
-	r$treatment <- tr$treatment[match(r$Treatment, tr$Treatment)]
+	r$treatment <- r1$treatment[match(r$Treatment, r1$Treatment)]
 
 	start <- c("1" = "2014-06-01", "2" = "2015-06-01")
 	end <- c("1" = "2014-12-01", "2" = "2015-12-31")

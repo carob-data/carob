@@ -66,12 +66,12 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 	)
 
 	f <- ff[basename(ff) == "Aflatoxin problem Anantapur AP India.xlsx"]
-	p <- carobiner::read.excel(f, sheet="Personal information", skip=1, na=c("NA", ""))
-	ag <- carobiner::read.excel(f, sheet="Agricultural information", skip=4, col_names=FALSE, na=c("NA", ""))
-	bi <- carobiner::read.excel(f, sheet="Biotic constraints", skip=1, na=c("NA", ""))
-	ab <- carobiner::read.excel(f, sheet="Abiotic constraints ", skip=1, na=c("NA", ""))
-	aw <- carobiner::read.excel(f, sheet="Awareness on aflatoxin conta", skip=2, na=c("NA", ""))
-	mk <- carobiner::read.excel(f, sheet="Market ", skip=1, na=c("NA", ""))
+	r1 <- carobiner::read.excel(f, sheet="Personal information", skip=1, na=c("NA", ""))
+	r2 <- carobiner::read.excel(f, sheet="Agricultural information", skip=4, col_names=FALSE, na=c("NA", ""))
+	r3 <- carobiner::read.excel(f, sheet="Biotic constraints", skip=1, na=c("NA", ""))
+	r4 <- carobiner::read.excel(f, sheet="Abiotic constraints ", skip=1, na=c("NA", ""))
+	r5 <- carobiner::read.excel(f, sheet="Awareness on aflatoxin conta", skip=2, na=c("NA", ""))
+	r6 <- carobiner::read.excel(f, sheet="Market ", skip=1, na=c("NA", ""))
 
 	align <- function(x) {
 		id <- as.character(x[[1]])
@@ -81,22 +81,22 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 	}
 
 	acre <- 0.4046863
-	hhid <- as.character(p[["S.No"]])
-	ag <- align(ag)
-	bi <- align(bi)
-	ab <- align(ab)
-	aw <- align(aw)
-	mk <- align(mk)
+	hhid <- as.character(r1[["S.No"]])
+	r2 <- align(r2)
+	r3 <- align(r3)
+	r4 <- align(r4)
+	r5 <- align(r5)
+	r6 <- align(r6)
 
-	sex <- tolower(trimws(p$Gender))
-	inc <- gsub(",", "", as.character(p[["Yearly Income"]]))
+	sex <- tolower(trimws(r1$Gender))
+	inc <- gsub(",", "", as.character(r1[["Yearly Income"]]))
 
-	heard <- tolower(trimws(aw[[2]]))
+	heard <- tolower(trimws(r5[[2]]))
 	heard[heard == "n0"] <- "no"
-	seen <- tolower(trimws(aw[[4]]))
+	seen <- tolower(trimws(r5[[4]]))
 
-	major <- trimws(ab[[2]])
-	zinc <- tolower(trimws(ab[[5]])) == "zinc"
+	major <- trimws(r4[[2]])
+	zinc <- tolower(trimws(r4[[5]])) == "zinc"
 	zinc[is.na(zinc)] <- FALSE
 	stress <- ifelse(tolower(major) == "drought", "drought", NA_character_)
 	stress[zinc & !is.na(stress)] <- paste(stress[zinc & !is.na(stress)], "zinc deficiency", sep=";")
@@ -108,26 +108,26 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		country = "India",
 		adm1 = "Andhra Pradesh",
 		adm2 = "Ananthapuram",
-		adm3 = carobiner::fix_name(trimws(p[["Name of the mandal"]]), "title"),
-		location = carobiner::fix_name(trimws(p[["Name of the village"]]), "title"),
+		adm3 = carobiner::fix_name(trimws(r1[["Name of the mandal"]]), "title"),
+		location = carobiner::fix_name(trimws(r1[["Name of the village"]]), "title"),
 		sex = sex,
-		age = as.numeric(p$Age),
-		education = trimws(p[["Educational level"]]),
-		civil_status = tolower(trimws(p[["Mariatal status"]])),
+		age = as.numeric(r1$Age),
+		education = trimws(r1[["Educational level"]]),
+		civil_status = tolower(trimws(r1[["Mariatal status"]])),
 		hh_income = as.numeric(inc),
-		farmland = as.numeric(ag[[4]]) * acre,
-		land_irrigated = as.numeric(ag[[2]]) * acre,
-		rainfed_area_ = as.numeric(ag[[3]]) * acre,
+		farmland = as.numeric(r2[[4]]) * acre,
+		land_irrigated = as.numeric(r2[[2]]) * acre,
+		rainfed_area_ = as.numeric(r2[[3]]) * acre,
 		aflatoxin_aware_ = heard == "yes",
 		kernels_seen_ = seen == "yes",
-		kernel_appearance_ = trimws(gsub("\\s+", " ", aw[[5]])),
+		kernel_appearance_ = trimws(gsub("\\s+", " ", r5[[5]])),
 		abiotic_constraint_ = major,
-		drought_timing_ = trimws(ab[[3]]),
-		drought_management_ = trimws(ab[[4]]),
+		drought_timing_ = trimws(r4[[3]]),
+		drought_management_ = trimws(r4[[4]]),
 		stress = stress,
-		pest_control_ = trimws(bi[[12]]),
-		sale_place_ = trimws(mk[[2]]),
-		sale_month_ = trimws(mk[[7]]),
+		pest_control_ = trimws(r3[[12]]),
+		sale_place_ = trimws(r6[[2]]),
+		sale_month_ = trimws(r6[[7]]),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE
@@ -159,7 +159,7 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 	}
 
 	crop_rows <- function(col, year, season) {
-		parts <- split_crops(as.character(ag[[col]]))
+		parts <- split_crops(as.character(r2[[col]]))
 		h <- rep(hhid, lengths(parts))
 		crops <- trimws(unlist(parts))
 		if (is.null(crops)) crops <- character()
@@ -202,8 +202,8 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		x <- x[keep]
 		id <- hhid[keep]
 		parts <- lapply(strsplit(x, ";"), function(p) {
-			p <- trimws(p)
-			p[nzchar(p)]
+			r1 <- trimws(r1)
+			r1[nzchar(r1)]
 		})
 		data.frame(
 			hhid = rep(id, lengths(parts)),
@@ -212,11 +212,11 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		)
 	}
 	pests <- rbind(
-		pest_rows(bi[[2]], "field"),
-		pest_rows(bi[[3]], "field"),
-		pest_rows(bi[[4]], "field"),
-		pest_rows(bi[[5]], "field"),
-		pest_rows(bi[[11]], "storage")
+		pest_rows(r3[[2]], "field"),
+		pest_rows(r3[[3]], "field"),
+		pest_rows(r3[[4]], "field"),
+		pest_rows(r3[[5]], "field"),
+		pest_rows(r3[[11]], "storage")
 	)
 
 	dis_rows <- function(x) {
@@ -225,7 +225,7 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		keep <- !is.na(x)
 		data.frame(hhid = hhid[keep], disease = x[keep])
 	}
-	diseases <- rbind(dis_rows(bi[[7]]), dis_rows(bi[[8]]), dis_rows(bi[[9]]))
+	diseases <- rbind(dis_rows(r3[[7]]), dis_rows(r3[[8]]), dis_rows(r3[[9]]))
 
 	animal_rows <- function(x, animal) {
 		nhead <- as.numeric(x)
@@ -233,10 +233,10 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		data.frame(hhid = hhid[keep], animal = animal, heads = nhead[keep])
 	}
 	livestock <- rbind(
-		animal_rows(ag[[11]], "cattle"),
-		animal_rows(ag[[12]], "buffalo"),
-		animal_rows(ag[[13]], "sheep"),
-		animal_rows(ag[[14]], "goat")
+		animal_rows(r2[[11]], "cattle"),
+		animal_rows(r2[[12]], "buffalo"),
+		animal_rows(r2[[13]], "sheep"),
+		animal_rows(r2[[14]], "goat")
 	)
 
 	long <- rbind(

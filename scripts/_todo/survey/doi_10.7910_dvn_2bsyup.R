@@ -79,9 +79,136 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		NA_character_
 	}
 
-	files <- ff[grepl("\\.xls[x]?$", basename(ff), ignore.case=TRUE)]
+	f1 <- ff[basename(ff) %in% c(
+		"Ba_3_Long_ 1.xlsx",
+		"Ba_3_Long_ 2.xlsx",
+		"Ba_3_Long_ 3.xlsx",
+		"Ba_3_Long_ 4.xlsx",
+		"Ba_8_Long_1.xls",
+		"Ba_8_Long_2.xls",
+		"Ba_8_Long_3.xls",
+		"Ba_8_Long_4.xls",
+		"Ba_3_Sabilo_ 1.xlsx",
+		"Ba_3_Sabilo_ 2.xlsx",
+		"Ba_3_Sabilo_ 3.xlsx",
+		"Ba_3_Sabilo_ 4.xlsx",
+		"Ba_8_Sabilo_1.xls",
+		"Ba_8_Sabilo_2.xls",
+		"Ba_8_Sabilo_3.xls",
+		"Ba_8_Sabilo_4.xls",
+		"Ba_3_Seloto_ 1.xlsx",
+		"Ba_3_Seloto_ 2.xlsx",
+		"Ba_3_Seloto_ 3.xlsx",
+		"Ba_3_Seloto_ 4.xlsx",
+		"Ba_8_Seloto_1.xls",
+		"Ba_8_Seloto_2.xls",
+		"Ba_8_Seloto_3.xls",
+		"ba_8_seloto_4.xls",
+		"Ba_3_Shaurimoyo_ 1.xlsx",
+		"Ba_3_Shaurimoyo_ 2.xlsx",
+		"Ba_3_Shaurimoyo_ 3.xls",
+		"Ba_3_Shaurimoyo_ 4.xlsx",
+		"Ba_8_Shaurimoyo_1.xls",
+		"Ba_8_Shaurimoyo_2.xls",
+		"Ba_8_Shaurimoyo_3.xls",
+		"Ba_8_Shaurimoyo_4.xls",
+		"Ba_3_Matufa_ 1.xlsx",
+		"Ba_3_Matufa_ 2.xlsx",
+		"Ba_3_Matufa_ 3.xlsx",
+		"Ba_3_Matufa_ 4.xlsx",
+		"Ba_8_Matufa_1.xls",
+		"Ba_8_Matufa_2.xls",
+		"Ba_8_Matufa_3.xls",
+		"Ba_8_Matufa_4.xls",
+		"Ba_3_Hallu_3.xlsx",
+		"Ba_3_Hallu_4.xlsx",
+		"Ba_8_Hallu_1.xls",
+		"Ba_8_Hallu_2.xls",
+		"Ba_8_Hallu_3.xls",
+		"Ba_8_Hallu_4.xls",
+		"KI_4_Njoro_1.xls",
+		"KI_4_Njoro_2.xls",
+		"KI_4_Njoro_3.xls",
+		"KI_4_Njoro_4.xls",
+		"Kit-Njo-Eli-17.xls",
+		"Kit-Njo-Eli-18.xls",
+		"Kit-Njo-Eli-19.xls",
+		"Kit-Njo-Eli-20.xls",
+		"Kit_5_Njoro_1.xls",
+		"Kit_5_Njoro_2.xls",
+		"Kit_5_Njoro_3.xls",
+		"Kit_5_Njoro_4.xls",
+		"Kit_7_Njoro_1.xlsx",
+		"Kit_7_Njoro_2.xlsx",
+		"Kit_7_Njoro_3.xlsx",
+		"Kit_7_Njoro_4.xlsx",
+		"ko-chit-eli-13.xls",
+		"Ko-Chit-Eli-14.xls",
+		"ko-chit-eli-15.xls",
+		"ko-chit-eli-16.xls",
+		"KO_4_Chitego_1.xls",
+		"KO_4_Chitego_2.xls",
+		"KO_4_Chitego_3.xls",
+		"KO_4_Chitego_4.xls",
+		"Ko_5_Chitego_1.xls",
+		"Ko_5_Chitego_2.xls",
+		"Ko_5_Chitego_3.xls",
+		"Ko_5_Chitego_4.xls",
+		"ko_7_chitego_1.xlsx",
+		"Ko_7_Chitego_2.xlsx",
+		"Ko_7_Chitego_3.xlsx",
+		"Ko_7_Chitego_4.xlsx",
+		"Ko-Lai-Eli-05.xls",
+		"Ko-Lai-Eli-06.xls",
+		"Ko-Lai-Eli-07.xls",
+		"Ko-Lai-Eli-08.xls",
+		"KO_4_Laikala_1.xls",
+		"KO_4_Laikala_2.xls",
+		"KO_4_Laikala_3.xls",
+		"KO_4_Laikala_4.xls",
+		"Ko_5_Laikala_1.xls",
+		"Ko_5_Laikala_2.xls",
+		"Ko_5_Laikala_3.xls",
+		"Ko_5_Laikala_4.xls",
+		"Ko_7_Laikala_1.xlsx",
+		"Ko_7_Laikala_2.xlsx",
+		"Ko_7_Laikala_3.xlsx",
+		"Ko_7_Laikala_4.xlsx",
+		"Ko-Mla-Eli-09.xls",
+		"Ko-Mla-Eli-10.xls",
+		"Ko-Mla-Eli-11.xls",
+		"Ko-Mla-Eli-12.xls",
+		"KO_4_Mlali_1.xls",
+		"KO_4_Mlali_2.xls",
+		"KO_4_Mlali_3.xls",
+		"KO_4_Mlali_4.xls",
+		"Ko_5_Mlali_1.xls",
+		"Ko_5_Mlali_2.xls",
+		"Ko_5_Mlali_3.xls",
+		"Ko_5_Mlali_4.xls",
+		"Ko_7_Mlali_1.xlsx",
+		"Ko_7_Mlali_2.xlsx",
+		"Ko_7_Mlali_3.xlsx",
+		"Ko_7_Mlali_4.xlsx",
+		"Ko-Mol-Eli-1.xls",
+		"Ko-Mol-Eli-2.xls",
+		"Ko-Mol-Eli-3.xls",
+		"Ko-Mol-Eli-4.xls",
+		"KO_4_Moleti_1.xls",
+		"KO_4_Moleti_2.xls",
+		"KO_4_Moleti_3.xls",
+		"KO_4_Moleti_4.xls",
+		"Ko_5_Moleti_1.xls",
+		"Ko_5_Moleti_2.xls",
+		"ko_5_moleti_3.xls",
+		"ko_5_moleti_4.xls",
+		"Ko_7_Moleti_1.xlsx",
+		"Ko_7_Moleti_2.xlsx",
+		"Ko_7_Moleti_3.xlsx",
+		"Ko_7_Moleti_4.xlsx"
+	)]
 	rows <- list()
-	for (f in files) {
+	for (f in f1) {
 		sheets <- readxl::excel_sheets(f)
 		crop_sheet <- sheets[grepl("crop", sheets, ignore.case=TRUE)]
 		field_sheet <- sheets[grepl("field", sheets, ignore.case=TRUE)]
@@ -103,9 +230,9 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		village <- sub("^Village[[:space:]]+[0-9]+[[:space:]]+", "", folder)
 		village <- sub("^[0-9]+\\.[[:space:]]*[^-]+-[[:space:]]*", "", village)
 
-		crops <- carobiner::read.excel(f, sheet=crop_sheet[1], col_names=FALSE)
-		fields <- carobiner::read.excel(f, sheet=field_sheet[1], col_names=FALSE)
-		cells <- trimws(as.character(unlist(fields)))
+		r1 <- carobiner::read.excel(f, sheet=crop_sheet[1], col_names=FALSE)
+		r2 <- carobiner::read.excel(f, sheet=field_sheet[1], col_names=FALSE)
+		cells <- trimws(as.character(unlist(r2)))
 		cells <- cells[!is.na(cells)]
 		area_cell <- cells[grepl("^[0-9.]+[[:space:]]*(acre|acres|ha|hectare|hectares|m2)$", cells, ignore.case=TRUE)]
 		field_size <- NA_real_
@@ -116,15 +243,15 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 			else field_size <- num
 		}
 
-		c1 <- trimws(as.character(crops[[1]]))
-		c2 <- if (ncol(crops) >= 2) trimws(as.character(crops[[2]])) else rep(NA_character_, nrow(crops))
-		c3 <- if (ncol(crops) >= 3) trimws(as.character(crops[[3]])) else rep(NA_character_, nrow(crops))
+		c1 <- trimws(as.character(r1[[1]]))
+		c2 <- if (ncol(r1) >= 2) trimws(as.character(r1[[2]])) else rep(NA_character_, nrow(r1))
+		c3 <- if (ncol(r1) >= 3) trimws(as.character(r1[[3]])) else rep(NA_character_, nrow(r1))
 		is_code <- grepl("^[0-9]+$", c1) & c1 %in% names(code_crop)
 		if (!any(is_code)) next
 		idx <- which(is_code)
 		note <- rep(NA_character_, length(idx))
 		for (k in seq_along(idx)) {
-			end <- if (k < length(idx)) idx[k + 1] - 1 else min(idx[k] + 6, nrow(crops))
+			end <- if (k < length(idx)) idx[k + 1] - 1 else min(idx[k] + 6, nrow(r1))
 			block <- c1[(idx[k] + 1):end]
 			block <- block[!is.na(block) & nzchar(block)]
 			block <- block[!grepl("^Fertilizers used", block, ignore.case=TRUE)]

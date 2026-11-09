@@ -22,6 +22,29 @@
 # Division, location, and sublocation names.
 # The other modules: adult and child demography, diet, food security, nutrition, attitudes, crop production, sweetpotato sales and practice, seed system, project exposure, assets, housing, and anthropometry.
 # haconver.dta, sp_conv.dta, the questionnaire workbook, and the Stata dictionary.
+# MAMA SASHA _end_questionnaire.xlsx: design, layout, or protocol sheet, not plot or survey records.
+# MAMA SASHA end_data_dictionary.do: documentation or a codebook, not an observation table.
+# MAMA_SASHA-end_pg17_seedsystem_02.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg10_parity_woman.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg11_consumption_VitA.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg12_crop_production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg13_sp_sales_01.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg13_sp_sales_02.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg15_project_exposure.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg17_seedsystem_01.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg18_SP_practise_01.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg2_adult_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg20_sp_practice_02.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg21_assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg22_housing.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg23_anthropometry.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg3A_child_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg3B_refchild.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg4_dietdiversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg5_food_security.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg6_nutrition.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg8_attitudes.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA_SASHA_end_pg9_health_nutrition.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

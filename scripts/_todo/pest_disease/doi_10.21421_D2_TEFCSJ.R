@@ -63,27 +63,27 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 	)
 
 	f <- ff[basename(ff) == "Data file of Elite groundnut trial in Minjibir 2016.xlsx"]
-	a <- carobiner::read.excel(f, sheet="Elite groundnut trial-2016", na="NA")
-	b <- carobiner::read.excel(f, sheet="Groundnut trial-2016", na="NA")
+	r1 <- carobiner::read.excel(f, sheet="Elite groundnut trial-2016", na="NA")
+	r2 <- carobiner::read.excel(f, sheet="Groundnut trial-2016", na="NA")
 
 	d <- data.frame(
-		variety = trimws(a$Genotypes),
-		treatment = trimws(a$Genotypes),
-		rep = as.integer(a[["Replication number"]]),
-		block_id = as.character(a$Block),
-		plot_id = as.character(a[["Plot No"]]),
-		emergence_days = as.numeric(a$DEM),
-		flowering_days = as.numeric(a$DF50),
-		plant_population_ = as.numeric(a$NPLE),
-		plants_harvested_ = as.numeric(a$NPH),
-		yield = as.numeric(a$DPWkgha),
-		dmy_residue = as.numeric(a$DFWkgha),
-		seed_weight = as.numeric(a[["SW_ M_g100sd"]]) * 10,
-		shelling_percentage = as.numeric(a$SH_Calc_pct),
-		sound_mature_kernel_ = as.numeric(a$SMK)
+		variety = trimws(r1$Genotypes),
+		treatment = trimws(r1$Genotypes),
+		rep = as.integer(r1[["Replication number"]]),
+		block_id = as.character(r1$Block),
+		plot_id = as.character(r1[["Plot No"]]),
+		emergence_days = as.numeric(r1$DEM),
+		flowering_days = as.numeric(r1$DF50),
+		plant_population_ = as.numeric(r1$NPLE),
+		plants_harvested_ = as.numeric(r1$NPH),
+		yield = as.numeric(r1$DPWkgha),
+		dmy_residue = as.numeric(r1$DFWkgha),
+		seed_weight = as.numeric(r1[["SW_ M_g100sd"]]) * 10,
+		shelling_percentage = as.numeric(r1$SH_Calc_pct),
+		sound_mature_kernel_ = as.numeric(r1$SMK)
 	)
-	b$plot_id <- as.character(b[["Plot No"]])
-	d <- merge(d, b[, c("plot_id", "DROUGHT")], by="plot_id", all.x=TRUE, sort=FALSE)
+	r2$plot_id <- as.character(r2[["Plot No"]])
+	d <- merge(d, r2[, c("plot_id", "DROUGHT")], by="plot_id", all.x=TRUE, sort=FALSE)
 	d$drought_stress <- as.character(d$DROUGHT)
 	d$DROUGHT <- NULL
 
@@ -106,12 +106,12 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
 	n <- nrow(d)
-	ia <- match(d$plot_id, as.character(a[["Plot No"]]))
-	ib <- match(d$plot_id, as.character(b[["Plot No"]]))
+	ia <- match(d$plot_id, as.character(r1[["Plot No"]]))
+	ib <- match(d$plot_id, as.character(r2[["Plot No"]]))
 	dis <- data.frame(
 		record_id = rep(d$record_id, 3),
 		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = as.character(c(b$ELS[ib], b$LLS[ib], b$Rust[ib])),
+		disease_severity = as.character(c(r2$ELS[ib], r2$LLS[ib], r2$Rust[ib])),
 		reading_ = NA_character_,
 		canopy_temperature_ = NA_real_,
 		SPAD = NA_real_,
@@ -122,9 +122,9 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		disease = NA_character_,
 		disease_severity = NA_character_,
 		reading_ = rep(c("150days", "250days", "NDVI1", "NDVI2"), each=n),
-		canopy_temperature_ = c(b$CT150DAY[ib], b$CT250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
-		SPAD = c(b$SPAD150Days[ib], b$SPAD250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
-		NDVI = c(rep(NA_real_, n), rep(NA_real_, n), a$NDVI1[ia], a$NDVI2[ia])
+		canopy_temperature_ = c(r2$CT150DAY[ib], r2$CT250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
+		SPAD = c(r2$SPAD150Days[ib], r2$SPAD250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
+		NDVI = c(rep(NA_real_, n), rep(NA_real_, n), r1$NDVI1[ia], r1$NDVI2[ia])
 	)
 	long <- rbind(dis, ph)
 	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))

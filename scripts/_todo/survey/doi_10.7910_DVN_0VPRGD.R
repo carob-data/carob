@@ -47,6 +47,19 @@
 # irrigated_percent_: % of the plot area irrigated
 
 
+
+## NOT PROCESSED
+# BANGLADESH_2014_Animal_list_BD.xls: not read. sheet Animal_list (of 2): Division_ID, District_ID, Thana_ID, Village_ID, Household_ID, Animal_ID, animal_own, n_animal. Observation records are missing from d until this file is standardized.
+# BANGLADESH_2014_Asset_list_BD.xls: not read. sheet Asset_list (of 2): Division_ID, District_ID, Thana_ID, Village_ID, Household_ID, Asset_ID, asset_yesno, n_asset. Observation records are missing from d until this file is standardized.
+# BANGLADESH_2014_Household_BD.xls: not read. sheet Hosuehold (of 2): Division_ID, District_ID, Thana_ID, Village_ID, Household_ID, division, district, Thana, village, HHID, rice_producer, original_respondent_yes, .... Observation records are missing from d until this file is standardized.
+# BANGLADESH_2014_VarietyList_BD.xls: not read. sheet Variety_list (of 2): Division_ID, District_ID, Thana_ID, Village_ID, Household_ID, variety_list, variety_name_rice2, not_coded2, season, RiVarietyDecisionMaker, own_seeds, replenish_year, .... Observation records are missing from d until this file is standardized.
+# INDIA_2014_Animal_IN.xls: not read. sheet Animal (of 2): State_ID, District_ID, Tahsil_ID, Village_ID, Household_number, Animal_ID, animal_own, n_animal. Observation records are missing from d until this file is standardized.
+# INDIA_2014_Asset_IN.xls: not read. sheet Asset (of 2): State_ID, District_ID, Tahsil_ID, Village_ID, Household_number, Asset_ID, asset_yesno, n_asset. Observation records are missing from d until this file is standardized.
+# INDIA_2014_VarietyList_IN.xls: not read. sheet VarietyList (of 2): State_ID, District_ID, Tahsil_ID, Village_ID, Household_number, variety_list, variety_name_rice2, not_coded2, own_seeds, replenish_year, replenish_source, why_seed_source, .... Observation records are missing from d until this file is standardized.
+# NEPAL_2014_Animal_NP.xls: not read. sheet Animal (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Animal_ID, animal_own, n_animal. Observation records are missing from d until this file is standardized.
+# NEPAL_2014_Asset_NP.xls: not read. sheet Asset (of 2): Region_ID, District_ID, VDC_ID, Household_ID, Asset_ID, asset_yesno, n_asset. Observation records are missing from d until this file is standardized.
+# NEPAL_2014_VarietyList_NP.xls: not read. sheet VarietyList (of 2): Region_ID, District_ID, VDC_ID, Household_ID, variety_list, variety_name_rice2, not_coded2, own_seeds, replenish_year, replenish_source, why_seed_source, seed_exchange, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

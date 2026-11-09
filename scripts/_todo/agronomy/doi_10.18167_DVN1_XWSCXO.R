@@ -24,6 +24,10 @@
 # farming_practices operation log (mowing, tarp, weeding). Planting and fertilizer rates used here come from the plant sheets and the TREATMENT sheet.
 # DM_ratio sheet. It repeats fresh and dry weights as ratios.
 # WAP. The long table uses the calendar date.
+# 2.management.xlsx: not read. sheet TREATMENT (of 2): Treatments, Cover crop species name, Type of N fertilizer, Amount of N fertilizer, Amount of fertilizer per application, Plant population. Observation records are missing from d until this file is standardized.
+# 3.banana_cycle_1.xlsx: not read. sheet READ_ME (of 5): Sheet ' C10'. Observation records are missing from d until this file is standardized.
+# 4.banana_cycle_2.xlsx: not read. sheet READ_ME (of 4): Sheet ' C10'. Observation records are missing from d until this file is standardized.
+# 5.banana_cycle_3.xlsx: not read. sheet READ_ME (of 3): Sheet ' C10'. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES
@@ -95,25 +99,25 @@ A tropical cyclone occurring in September 2022 affected the experiment, resultin
 	growth <- NULL
 	for (cy in 1:3) {
 		f <- pick(ff, paste0(cy + 2, ".banana_cycle_", cy, ".xlsx"))
-		fl <- carobiner::read.excel(f, sheet="FLOWERING")
-		gr <- carobiner::read.excel(f, sheet="C10")
+		r1 <- carobiner::read.excel(f, sheet="FLOWERING")
+		r2 <- carobiner::read.excel(f, sheet="C10")
 		# Cycle 3 has no HARVEST sheet.
 		hv <- tryCatch(carobiner::read.excel(f, sheet="HARVEST"), error=function(e) NULL)
-		names(fl) <- trimws(names(fl))
-		names(gr) <- trimws(names(gr))
-		fl$Banana_ID <- trimws(as.character(fl$Banana_ID))
+		names(r1) <- trimws(names(r1))
+		names(r2) <- trimws(names(r2))
+		r1$Banana_ID <- trimws(as.character(r1$Banana_ID))
 		a <- data.frame(
-			banana_id = fl$Banana_ID,
-			treatment = trimws(as.character(fl$Treatment)),
-			block = fl$Block,
-			planting_date = as_day(fl$Planting_date),
-			flowering_date = as_day(fl$Flowering_date),
+			banana_id = r1$Banana_ID,
+			treatment = trimws(as.character(r1$Treatment)),
+			block = r1$Block,
+			planting_date = as_day(r1$Planting_date),
+			flowering_date = as_day(r1$Flowering_date),
 			# Cycle 3 flowering sheet has no ht column.
-			plant_height = if ("ht" %in% names(fl)) as_num(fl$ht) else rep(NA_real_, nrow(fl))
+			plant_height = if ("ht" %in% names(r1)) as_num(r1$ht) else rep(NA_real_, nrow(r1))
 		)
 		if (is.null(hv)) {
 			b <- data.frame(
-				banana_id = fl$Banana_ID,
+				banana_id = r1$Banana_ID,
 				treatment_h = NA_character_,
 				block_h = NA,
 				planting_h = NA_character_,
@@ -143,12 +147,12 @@ A tropical cyclone occurring in September 2022 affected the experiment, resultin
 		plants <- rbind(plants, m)
 		growth <- rbind(growth, data.frame(
 			trial_id = "Neufchateau",
-			date = as_day(gr$Date),
-			banana_id_ = trimws(as.character(gr$Banana_ID)),
+			date = as_day(r2$Date),
+			banana_id_ = trimws(as.character(r2$Banana_ID)),
 			banana_cycle_ = cy,
-			LAI = as_num(gr$LAI),
-			pseudostem_circ10_ = as_num(gr$Circ10),
-			leaf_n_ = as_num(gr$Leaf_N_content)
+			LAI = as_num(r2$LAI),
+			pseudostem_circ10_ = as_num(r2$Circ10),
+			leaf_n_ = as_num(r2$Leaf_N_content)
 		))
 	}
 
@@ -186,25 +190,25 @@ A tropical cyclone occurring in September 2022 affected the experiment, resultin
 	d$K_fertilizer <- k_ox / 1.2051
 	d <- d[d$treatment %in% c("BS", "OL", "ML", "MG", "OG"), ]
 
-	cc <- carobiner::read.excel(pick(ff, "6.cover_crop.xlsx"), sheet="cover_crop")
-	names(cc) <- trimws(names(cc))
+	r3 <- carobiner::read.excel(pick(ff, "6.cover_crop.xlsx"), sheet="cover_crop")
+	names(r3) <- trimws(names(r3))
 	cover <- data.frame(
 		trial_id = "Neufchateau",
-		date = as_day(cc$Date),
-		cover_part_ = trimws(as.character(cc$Species_type)),
-		cover_biomass_ = as_num(cc$Biomass_kg_ha)
+		date = as_day(r3$Date),
+		cover_part_ = trimws(as.character(r3$Species_type)),
+		cover_biomass_ = as_num(r3$Biomass_kg_ha)
 	)
-	sn <- carobiner::read.excel(pick(ff, "7.Soil_N.xlsx"), sheet="Soil_N")
-	names(sn) <- trimws(names(sn))
-	depth <- as_num(sn$Soil_Depth)
+	r4 <- carobiner::read.excel(pick(ff, "7.Soil_N.xlsx"), sheet="Soil_N")
+	names(r4) <- trimws(names(r4))
+	depth <- as_num(r4$Soil_Depth)
 	soil <- data.frame(
 		trial_id = "Neufchateau",
-		date = as_day(sn$Date),
+		date = as_day(r4$Date),
 		depth_top = ifelse(depth == 30, 0, ifelse(depth == 60, 30, NA_real_)),
 		depth_bottom = depth,
-		soil_NO3 = as_num(sn$NO3_mg_kg),
-		soil_NH4 = as_num(sn$NH4_mg_kg),
-		soil_position_ = trimws(as.character(sn$Location))
+		soil_NO3 = as_num(r4$NO3_mg_kg),
+		soil_NH4 = as_num(r4$NH4_mg_kg),
+		soil_position_ = trimws(as.character(r4$Location))
 	)
 
 	bind_rows <- function(lst) {
@@ -219,19 +223,19 @@ A tropical cyclone occurring in September 2022 affected the experiment, resultin
 	}
 	dlong <- bind_rows(list(growth, cover, soil))
 
-	cl <- carobiner::read.excel(pick(ff, "1.Climate.xlsx"), sheet="NCT_2021_2022")
-	names(cl) <- trimws(names(cl))
+	r5 <- carobiner::read.excel(pick(ff, "1.Climate.xlsx"), sheet="NCT_2021_2022")
+	names(r5) <- trimws(names(r5))
 	wth <- data.frame(
 		station_id = "Neufchateau",
 		station_name = "Neufchateau",
 		country = "Guadeloupe",
-		date = as_day(cl$Date),
-		prec = as_num(cl$Rain),
-		tmin = as_num(cl$Min_Temp),
-		tmax = as_num(cl$Max_Temp),
-		wspd = as_num(cl$Wind),
+		date = as_day(r5$Date),
+		prec = as_num(r5$Rain),
+		tmin = as_num(r5$Min_Temp),
+		tmax = as_num(r5$Max_Temp),
+		wspd = as_num(r5$Wind),
 		# READ_ME: MJ/m2. Weather srad is kJ/m2.
-		srad = as_num(cl$Global_Radiation) * 1000
+		srad = as_num(r5$Global_Radiation) * 1000
 	)
 
 	carobiner::write_files(path, meta, d, long=dlong, wth=wth)

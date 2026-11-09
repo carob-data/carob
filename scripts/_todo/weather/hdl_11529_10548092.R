@@ -19,6 +19,10 @@
 # Hourly workbooks for 2012-2015. Daily files cover those years.
 # Rad_rate_Max: maximum radiation rate (kW/m2), not mean irradiance.
 # Metadata sheets.
+# Toluca hourly data 2012.xlsx: not read. sheet RowDataToluca2012 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Toluca hourly data 2013.xlsx: not read. sheet RowDataToluca2013 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Toluca hourly data 2014.xlsx: not read. sheet RowdataToluca2014 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Toluca hourly data 2015.xlsx: not read. sheet RowData_Toluca2015 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -82,8 +86,24 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		)
 	}
 
-	ff <- ff[grepl("daily|1975|2010", basename(ff), ignore.case=TRUE)]
-	ff <- ff[!grepl("hourly", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Toluca daily data 1975_2009.xlsx",
+		"Toluca daily data 2010_2012.xlsx",
+		"Toluca daily data 2012.xlsx",
+		"Toluca daily data 2013.xlsx",
+		"Toluca daily data 2014.xlsx",
+		"Toluca daily data 2015.xlsx",
+		"Toluca daily data 2016.xlsx"
+	)]
+	ff <- ff[basename(ff) %in% c(
+		"Toluca daily data 1975_2009.xlsx",
+		"Toluca daily data 2010_2012.xlsx",
+		"Toluca daily data 2012.xlsx",
+		"Toluca daily data 2013.xlsx",
+		"Toluca daily data 2014.xlsx",
+		"Toluca daily data 2015.xlsx",
+		"Toluca daily data 2016.xlsx"
+	)]
 	ff <- ff[order(basename(ff))]
 	wth <- do.call(carobiner::bindr, lapply(ff, read_one))
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]

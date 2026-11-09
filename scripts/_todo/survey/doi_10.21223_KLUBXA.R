@@ -41,12 +41,12 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("^Encuesta", basename(ff))]
-	fd <- ff[grepl("^Diccionario", basename(ff))]
+	f <- ff[basename(ff) == "Encuesta Productores - La Libertad - Junin - Huancavelica - COVID-19.xlsx"]
+	f1 <- ff[basename(ff) == "Diccionario Encuesta Productores.xlsx"]
 	r <- carobiner::read.excel(f)
-	dict <- carobiner::read.excel(fd)
-	desc <- tolower(as.character(dict$Description))
-	vname <- trimws(as.character(dict[["Variable name"]]))
+	r1 <- carobiner::read.excel(f1)
+	desc <- tolower(as.character(r1$Description))
+	vname <- trimws(as.character(r1[["Variable name"]]))
 	col_for <- function(pattern) {
 		i <- grep(pattern, desc)[1]
 		if (is.na(i)) return(NA_character_)

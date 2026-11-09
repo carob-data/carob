@@ -52,7 +52,8 @@ This data was collected under a project called “Sustainable Intensification of
 		carob_effort = 0.4
 	)
 
-	r <- read.csv(ff[basename(ff) == "simleza.csv"])
+	f <- ff[basename(ff) == "simleza.csv"]
+	r <- read.csv(f)
 
 	slots <- data.frame(
 		crop = c("CROP_01", "CROP_02", "CROP_03", "CROP_04", "CROP_05", "CROP_06", "CROP_07", "CROP_08", "CROP_09", "CROP_10"),

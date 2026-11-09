@@ -20,6 +20,11 @@
 # Hourly workbooks for 2012-2016. Daily files cover those years.
 # Wet-bulb temperature, environment minimum temperature, vapor tension (mm), insolation (hr.min), and sea-level pressure.
 # Radiation in watt-hours, when a daily MJ column is also present.
+# CENEB hourly data 2012.xlsx: not read. sheet RowDataCENEB2012 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# CENEB hourly data 2013.xlsx: not read. sheet RowDataCENEB2013 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# CENEB hourly data 2014.xlsx: not read. sheet RowDataCENEB2014 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# CENEB hourly data 2015.xlsx: not read. sheet RowData_CENEB2015 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# CENEB hourly data 2016.xlsx: not read. sheet RowData_CENEB2016 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -150,9 +155,9 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		"CENEB daily data 2017.xlsx" = "Ceneb2017"
 	)
 	parts <- list()
-	old <- ff[basename(ff) == "Obregon  daily data 1992-1986.xls"]
+	f1 <- ff[basename(ff) == "Obregon  daily data 1992-1986.xls"]
 	for (yr in as.character(1992:1986)) {
-		parts[[length(parts) + 1]] <- read_position(old, yr)
+		parts[[length(parts) + 1]] <- read_position(f1, yr)
 	}
 	for (i in seq_along(named)) {
 		f <- ff[basename(ff) == names(named)[i]]

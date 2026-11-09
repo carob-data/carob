@@ -21,6 +21,30 @@
 # Labour, costs, tenure, soil classes, and stress scores.
 # Trees and fruit trees, and rows coded none.
 # The other questionnaire modules.
+# Module 10 PART A CREDIT NEED AND SOURCES.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 Part B saving.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 Part C ACCESS TO EXTENSION SERVICES.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 10 Part D PRODUCTION EQUIPMENT AND MAJOR HOUSEHOLD FURNITURE..dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 11 PART A LIVESTOCK OWNERSHIP, MARKETING AND PRODUCTION.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 12 HOUSEHOLD INCOME FOR THE LAST 12 MONTHS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 13 PART A RISK, LIVELIHOOD SHOCKS, AND COPPING STRATEGIES IN THE LAST 10 YEARS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 13 PART B RISK, LIVELIHOOD SHOCKS, AND COPPING STRATEGIES IN THE LAST 10 YEARS.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 14 PART A ROLE IN HOUSEHOLD DECISION-MAKING on PRODUCTION, EXPENDITURE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 15 TIME ALLOCATION..dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 2 Part A Current Household Composition and Characteristics - BLURRED 1.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 2 Part A Current Household Composition and Characteristics - BLURRED 2.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 2 Part B Housing conditions.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 2 Part C Infrastracure.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 3 Part B Utilization of crops harvested - BLURRED.sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Module 3 Part B,C,D  Utilization of crops harvested.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 4 Constraints in Accessing Key Inputs and Crop Production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 5 Crop Variety Knowledge, Sources of Information and Seed, Adoption and Disadoption.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 6 Part A Food consumption.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 6 Part B Expenditure on Non-food Items in the Last 12 Months.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 Part A Social capital networks, Institiution.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Module 7 Part B Social capital networks,Social network.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 8 HOUSEHOLD DIETARY DIVERSITY SCORE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MODULE 9  HOUSEHOLD FOOD INSECURITY ACCESS SCALE.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -49,7 +73,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		carob_effort = 0.6
 	)
 
-	f <- ff[grepl("Plot level", basename(ff)) & grepl("\\.sav$", basename(ff))]
+	f <- ff[basename(ff) == "Module 3 Part A1,A2,A3,A4,A5,A6,A7 merged_Plot level (2) - BLURRED.sav"]
 	r <- haven::read_sav(f)
 
 	txt <- function(x) {

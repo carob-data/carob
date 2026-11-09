@@ -16,6 +16,10 @@
 # Irrigation prices, pump ownership, and the reasons farmers give for choosing a provider.
 # Service-provider interviews.
 # landpha and landserha, which describe the pump owner's command area rather than the farmer's boro field.
+# 07052019all.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# 07052019serviceprovider.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# descriptivetables.do: not read. .do file. Observation records are missing from d until this file is standardized.
+# serviceprovider.do: not read. .do file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

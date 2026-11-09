@@ -26,6 +26,10 @@
 # establishment_method_: rice establishment code (WSR = wet seeded, DSR = dry seeded; "DSR-dibbled" = seeds in holes dug with a tool)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, CPWF-IFAD landscape management in Laos. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

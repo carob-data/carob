@@ -19,6 +19,7 @@
 # Energy and Transport sheets: fuel, storage, and freight for the carbon-footprint tool.
 # Soil texture Sandy, soil moisture "Moist", and drainage "Poor": tool classes, not texture or a drainage rate.
 # Fertiliser application method and emissions inhibitors.
+# Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -49,10 +50,10 @@ This dataset has been specially created to estimate carbon footprint in potato f
 	)
 
 	f <- ff[basename(ff) == "CFT_PNIA 2017-2018.xlsx"]
-	crop <- carobiner::read.excel(f, sheet="Crop-details")
-	soil <- carobiner::read.excel(f, sheet="Soil-characteristics")
-	fert <- carobiner::read.excel(f, sheet="Fertiliser inputs")
-	water <- carobiner::read.excel(f, sheet="Water")
+	r1 <- carobiner::read.excel(f, sheet="Crop-details")
+	r2 <- carobiner::read.excel(f, sheet="Soil-characteristics")
+	r3 <- carobiner::read.excel(f, sheet="Fertiliser inputs")
+	r4 <- carobiner::read.excel(f, sheet="Water")
 
 	as_date <- function(x) {
 		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
@@ -89,28 +90,28 @@ This dataset has been specially created to estimate carbon footprint in potato f
 		out
 	}
 
-	rates <- t(mapply(npk_one, fert$Name, num(fert[["Application rate"]]), as.character(fert[["Fertiliser weight, or units?"]])))
-	fert$N <- rates[, "N"]
-	fert$P <- rates[, "P"]
-	fert$K <- rates[, "K"]
-	fert$OM <- rates[, "OM"]
-	fert_sum <- aggregate(cbind(N, P, K, OM) ~ `Assessment name`, data=fert, FUN=sum)
+	rates <- t(mapply(npk_one, r3$Name, num(r3[["Application rate"]]), as.character(r3[["Fertiliser weight, or units?"]])))
+	r3$N <- rates[, "N"]
+	r3$P <- rates[, "P"]
+	r3$K <- rates[, "K"]
+	r3$OM <- rates[, "OM"]
+	fert_sum <- aggregate(cbind(N, P, K, OM) ~ `Assessment name`, data=r3, FUN=sum)
 
-	tw <- water[, grepl("^TW_Week", names(water))]
+	tw <- r4[, grepl("^TW_Week", names(r4))]
 	twm <- as.matrix(as.data.frame(lapply(tw, num)))
 	litres <- rowSums(twm, na.rm=TRUE)
 	litres[rowSums(!is.na(twm)) == 0] <- NA_real_
-	method <- trimws(as.character(water$Method))
+	method <- trimws(as.character(r4$Method))
 	water_sum <- data.frame(
-		`Assessment name` = water[["Assessment name"]],
+		`Assessment name` = r4[["Assessment name"]],
 		litres = litres,
 		irrigation_method = ifelse(method == "Drip irrigation", "drip", method),
 		check.names = FALSE
 	)
 
-	area <- num(crop[["Crop area"]])
-	assess <- trimws(as.character(crop[["Assessment name"]]))
-	experiment <- trimws(as.character(crop[["Experiment  name"]]))
+	area <- num(r1[["Crop area"]])
+	assess <- trimws(as.character(r1[["Assessment name"]]))
+	experiment <- trimws(as.character(r1[["Experiment  name"]]))
 	loc <- ifelse(grepl("^UNALM", experiment), "National Agrarian University La Molina", "CIP La Molina")
 	treat <- sub("^E[0-9]+_(DI|FI)_", "", assess)
 
@@ -119,18 +120,18 @@ This dataset has been specially created to estimate carbon footprint in potato f
 		plot_id = assess,
 		treatment = treat,
 		crop = "potato",
-		variety = trimws(as.character(crop$Variety)),
+		variety = trimws(as.character(r1$Variety)),
 		country = "Peru",
 		adm1 = "Lima",
 		location = loc,
-		planting_date = as_date(crop[["Planting / sowing date"]]),
-		harvest_date = as_date(crop[["Harvest date"]]),
+		planting_date = as_date(r1[["Planting / sowing date"]]),
+		harvest_date = as_date(r1[["Harvest date"]]),
 		plot_area = area,
-		yield = num(crop[["Harvested amount"]]) / area * 10000,
-		yield_marketable = num(crop[["Farm-gate ready amount"]]) / area * 10000,
+		yield = num(r1[["Harvested amount"]]) / area * 10000,
+		yield_marketable = num(r1[["Farm-gate ready amount"]]) / area * 10000,
 		yield_part = "tubers",
-		seed_rate = num(crop[["Seed amount"]]) / area * 10000,
-		dmy_residue = num(crop[["Residue amount"]]) * 1000,
+		seed_rate = num(r1[["Seed amount"]]) / area * 10000,
+		dmy_residue = num(r1[["Residue amount"]]) * 1000,
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE,
@@ -149,9 +150,9 @@ This dataset has been specially created to estimate carbon footprint in potato f
 	d$litres <- NULL
 
 	soil_key <- data.frame(
-		plot_id = trimws(as.character(soil[["Assessment name"]])),
-		soil_pH = num(soil[["Soil pH"]]),
-		soil_SOM = num(soil[["Soil organic matter"]])
+		plot_id = trimws(as.character(r2[["Assessment name"]])),
+		soil_pH = num(r2[["Soil pH"]]),
+		soil_SOM = num(r2[["Soil organic matter"]])
 	)
 	d <- merge(d, soil_key, by="plot_id", all.x=TRUE, sort=FALSE)
 

@@ -102,32 +102,32 @@ The intensive, irrigated rice-wheat systems of the northwestern Indo-Gangetic Pl
 		out
 	}
 
-	f1 <- ff[grepl("2021", basename(ff)) & grepl("xlsx$", basename(ff))]
-	a <- carobiner::read.excel(f1, sheet="Main sheet")
-	names(a) <- trimws(names(a))
-	lat1 <- num(a$Plot_GPS_centre_gps_Lat)
-	lon1 <- num(a$Plot_GPS_center_gps_Long)
+	f1 <- ff[basename(ff) == "Punjab_plot_owner_2021 No PII.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Main sheet")
+	names(r1) <- trimws(names(r1))
+	lat1 <- num(r1$Plot_GPS_centre_gps_Lat)
+	lon1 <- num(r1$Plot_GPS_center_gps_Long)
 	lat1[lat1 == 0] <- NA_real_
 	lon1[lon1 == 0] <- NA_real_
 	soil <- c("1"="sand", "2"="loam", "3"="clay")
-	st <- soil[as.character(as.integer(num(a$Soil_type)))]
+	st <- soil[as.character(as.integer(num(r1$Soil_type)))]
 	d1 <- data.frame(
 		country = "India",
 		adm1 = "Punjab",
-		adm2 = place(a$District_name),
-		location = place(a$Village_name),
-		hhid = chr(a$Farmer_id),
-		trial_id = paste0("2021-", chr(a$Farmer_id)),
+		adm2 = place(r1$District_name),
+		location = place(r1$Village_name),
+		hhid = chr(r1$Farmer_id),
+		trial_id = paste0("2021-", chr(r1$Farmer_id)),
 		crop = "wheat",
-		variety = chr(a$Wheat_var_name),
-		planting_date = as_date(a$Wheat_sowing_date),
-		interview_date_ = as_date(a$Interview_date),
-		field_size = num(a$Large_wheat_Plot) * acre,
-		previous_crop = kharif(a$Kha_crop_name),
-		previous_crop_burnt = yesno(a$Burnt_kha_resi_in_Plot),
-		residue_prevcrop_used = yesno(a$Plot_crop_residue_mulching),
-		used_happy_seeder_ = yesno(a$Plot_used_hs),
-		irrigation_number = as.integer(num(a$Num_irri_wheat)),
+		variety = chr(r1$Wheat_var_name),
+		planting_date = as_date(r1$Wheat_sowing_date),
+		interview_date_ = as_date(r1$Interview_date),
+		field_size = num(r1$Large_wheat_Plot) * acre,
+		previous_crop = kharif(r1$Kha_crop_name),
+		previous_crop_burnt = yesno(r1$Burnt_kha_resi_in_Plot),
+		residue_prevcrop_used = yesno(r1$Plot_crop_residue_mulching),
+		used_happy_seeder_ = yesno(r1$Plot_used_hs),
+		irrigation_number = as.integer(num(r1$Num_irri_wheat)),
 		irrigated = TRUE,
 		soil_texture = unname(st),
 		latitude = lat1,
@@ -137,20 +137,20 @@ The intensive, irrigated rice-wheat systems of the northwestern Indo-Gangetic Pl
 		is_survey = TRUE
 	)
 
-	f2 <- ff[grepl("2022", basename(ff)) & grepl("xlsx$", basename(ff))]
-	b <- carobiner::read.excel(f2, sheet="Main_data")
-	names(b) <- trimws(names(b))
-	lat2 <- num(b$Inside_plot_GPS_Lat)
-	lon2 <- num(b$Inside_plot_GPS_Long)
+	f2 <- ff[basename(ff) == "Punjab_Plot_Owner_2022 No PII.xlsx"]
+	r2 <- carobiner::read.excel(f2, sheet="Main_data")
+	names(r2) <- trimws(names(r2))
+	lat2 <- num(r2$Inside_plot_GPS_Lat)
+	lon2 <- num(r2$Inside_plot_GPS_Long)
 	lat2[lat2 == 0] <- NA_real_
 	lon2[lon2 == 0] <- NA_real_
-	day <- as.integer(num(b[["Wheat _Sowing_ Date"]]))
+	day <- as.integer(num(r2[["Wheat _Sowing_ Date"]]))
 	mon <- c(Oct=10, Nov=11)
-	mm <- mon[chr(b[["Wheat _Sowing_ Month"]])]
-	when <- rep(NA_character_, nrow(b))
+	mm <- mon[chr(r2[["Wheat _Sowing_ Month"]])]
+	when <- rep(NA_character_, nrow(r2))
 	ok <- !is.na(day) & !is.na(mm) & day >= 1 & day <= 31
 	when[ok] <- as.character(as.Date(sprintf("2022-%02d-%02d", mm[ok], day[ok])))
-	till <- chr(b[["Till_ Category _Wheat _2022"]])
+	till <- chr(r2[["Till_ Category _Wheat _2022"]])
 	pref <- sub("_.*$", "", till)
 	lp <- rep(NA_character_, length(till))
 	lp[pref %in% "CT"] <- "conventional"
@@ -163,18 +163,18 @@ The intensive, irrigated rice-wheat systems of the northwestern Indo-Gangetic Pl
 	d2 <- data.frame(
 		country = "India",
 		adm1 = "Punjab",
-		adm2 = place(b$District_name),
-		location = place(b$Village_name),
-		trial_id = paste0("2022-", chr(b$Interview_id_new)),
+		adm2 = place(r2$District_name),
+		location = place(r2$Village_name),
+		trial_id = paste0("2022-", chr(r2$Interview_id_new)),
 		crop = "wheat",
 		planting_date = when,
-		interview_date_ = as_date(b$Date_interview),
-		field_size = num(b[["Plot_ size"]]) * acre,
-		previous_crop = kharif(b[["Kharif_ Crop"]]),
+		interview_date_ = as_date(r2$Date_interview),
+		field_size = num(r2[["Plot_ size"]]) * acre,
+		previous_crop = kharif(r2[["Kharif_ Crop"]]),
 		land_prep_method = lp,
 		tillage_category_ = gsub("_", " ", till),
-		tillage_number_ = num(b[["Num_ of _tillage_ 2022"]]),
-		previous_crop_residue_management = unname(resi[chr(b[["Resi_ percentag_ Rabi _2022"]])]),
+		tillage_number_ = num(r2[["Num_ of _tillage_ 2022"]]),
+		previous_crop_residue_management = unname(resi[chr(r2[["Resi_ percentag_ Rabi _2022"]])]),
 		latitude = lat2,
 		longitude = lon2,
 		geo_from_source = !is.na(lat2) & !is.na(lon2),

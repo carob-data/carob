@@ -28,8 +28,10 @@ Group B1, cycle B1C5 of Population B (fifth cycle of recombination of the pure n
   f <- ff[!grepl("Dictionary_Lateblight.xls", basename(ff))]
   f <- f[grep("^0._|_Data_dictionary|_processed", basename(f), invert=TRUE)]
   d <- lapply(f, process, addvars="TTWP")
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
   
+  d$on_farm <- NA
+
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 

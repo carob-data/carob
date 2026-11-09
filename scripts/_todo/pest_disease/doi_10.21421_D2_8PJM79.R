@@ -61,9 +61,9 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 	)
 
 	f <- ff[basename(ff) == "FMBN-3 Angrau Viziainagram.xlsx"]
-	r0 <- carobiner::read.excel(f, skip = 6, col_names = FALSE)
-	r0 <- r0[!is.na(r0[[5]]), ]
-	colnames(r0) <- c("obs_id", "entry_type", "gid", "designation", "plot_no", "entry_no", "rep_no",
+	r <- carobiner::read.excel(f, skip = 6, col_names = FALSE)
+	r <- r[!is.na(r[[5]]), ]
+	colnames(r) <- c("obs_id", "entry_type", "gid", "designation", "plot_no", "entry_no", "rep_no",
 		"lb30", "lb_soft", "neck_panicles", "neck_infected", "neck_pct",
 		"finger_n", "finger_infected", "finger_pct")
 
@@ -72,24 +72,24 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 		adm1 = "Andhra Pradesh",
 		location = "ARS Vizianagaram",
 		crop = "finger millet",
-		variety = trimws(r0$designation),
-		variety_code = trimws(r0$gid),
-		treatment = trimws(r0$designation),
-		rep = as.integer(r0$rep_no),
-		plot_id = as.character(r0$plot_no),
-		leaf_blast_30_das_ = as.numeric(r0$lb30),
-		leaf_blast_soft_dough_ = as.numeric(r0$lb_soft),
-		neck_blast_panicles_ = as.numeric(r0$neck_panicles),
-		neck_blast_infected_panicles_ = as.numeric(r0$neck_infected),
-		neck_blast_incidence_ = as.numeric(r0$neck_pct),
-		finger_blast_fingers_ = as.numeric(r0$finger_n),
-		finger_blast_infected_fingers_ = as.numeric(r0$finger_infected),
-		finger_blast_incidence_ = as.numeric(r0$finger_pct),
+		variety = trimws(r$designation),
+		variety_code = trimws(r$gid),
+		treatment = trimws(r$designation),
+		rep = as.integer(r$rep_no),
+		plot_id = as.character(r$plot_no),
+		leaf_blast_30_das_ = as.numeric(r$lb30),
+		leaf_blast_soft_dough_ = as.numeric(r$lb_soft),
+		neck_blast_panicles_ = as.numeric(r$neck_panicles),
+		neck_blast_infected_panicles_ = as.numeric(r$neck_infected),
+		neck_blast_incidence_ = as.numeric(r$neck_pct),
+		finger_blast_fingers_ = as.numeric(r$finger_n),
+		finger_blast_infected_fingers_ = as.numeric(r$finger_infected),
+		finger_blast_incidence_ = as.numeric(r$finger_pct),
 		stress = "disease",
 		season = "kharif",
 		planting_date = "2020-07-29",
 		trial_id = "1",
-		record_id = as.integer(seq_len(nrow(r0))),
+		record_id = as.integer(seq_len(nrow(r))),
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE

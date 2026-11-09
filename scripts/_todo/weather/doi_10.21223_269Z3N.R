@@ -13,6 +13,7 @@
 
 ## NOT PROCESSED
 # 03_Photo_San Ramon CIP Station.jpg.
+# 02_Data_dictionary Meteorology data_San Ramon CIP station.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

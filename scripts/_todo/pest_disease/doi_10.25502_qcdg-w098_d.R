@@ -21,6 +21,7 @@
 # aphid-around-field.csv: Percent alates. Entirely empty.
 # aphid-within-field.csv: percent_alates. Repeats alate_aphids / total_aphids.
 # All three files: ID. Row number.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # host_plant_: name as recorded, including wild hosts.

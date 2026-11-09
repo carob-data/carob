@@ -22,6 +22,7 @@
 # The "yld kg /ha" column. It is not the dry yield computed from total weight, area, and subsample moisture.
 # Field-book columns STAND, DFLR, DMAT, PTHT, YLD, and BYLD are empty.
 # Subsample fresh and dry weights, except as used for moisture. Width and length, except as the area already provides.
+# FB-Grasspea 2016.xls: not read. sheet IGYT-LO: NURSERY INFORMATION. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

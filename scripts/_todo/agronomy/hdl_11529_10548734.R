@@ -76,12 +76,12 @@ This experiments were established with different rates of nitrogen in order to g
 	wide <- list()
 	long <- list()
 	for (s in sheets) {
-		raw <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
-		h1 <- trimws(as.character(unlist(raw[1, ])))
-		h2 <- trimws(as.character(unlist(raw[2, ])))
+		r <- carobiner::read.excel(f, sheet=s, col_names=FALSE)
+		h1 <- trimws(as.character(unlist(r[1, ])))
+		h2 <- trimws(as.character(unlist(r[2, ])))
 		h1[is.na(h1)] <- ""
 		h2[is.na(h2)] <- ""
-		body <- raw[-(1:2), ]
+		body <- r[-(1:2), ]
 		col <- function(label) {
 			j <- which(h1 == label)
 			if (length(j) == 0) return(rep(NA, nrow(body)))

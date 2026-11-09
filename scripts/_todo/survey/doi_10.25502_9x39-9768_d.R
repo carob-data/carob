@@ -36,6 +36,40 @@
 # input_short_rainy_season.csv: short-rains input module, not processed (same reason as the utilisation file: separate season table, needs a decision on stacking).
 # platform_type.csv, warrantage_use.csv, market_access metadata only.
 # input_use.csv columns not used: Percent_area, seed quantities and cost, Dec_maker, persn_wrkn_plot, pesticide and herbicide quantities, hired labour, pest/disease stress, crop-residue use.
+# agricultural_activities_metadata.csv: documentation or a codebook, not an observation table.
+# asset_roaster_metadata.csv: documentation or a codebook, not an observation table.
+# asset_roaster2_metadata.csv: documentation or a codebook, not an observation table.
+# comments_metadata.csv: documentation or a codebook, not an observation table.
+# communal_property_resources_metadata.csv: documentation or a codebook, not an observation table.
+# credit_source_metadata.csv: documentation or a codebook, not an observation table.
+# crop_harvestd_utilizatn_metadata.csv: documentation or a codebook, not an observation table.
+# fruit_beverages_metadata.csv: documentation or a codebook, not an observation table.
+# hh_compostion_characteristic_b_burundi_metadata.csv: documentation or a codebook, not an observation table.
+# hh_compostion_characteristic_metadata.csv: documentation or a codebook, not an observation table.
+# household_diseases_metadata.csv: documentation or a codebook, not an observation table.
+# improved_crop_management_metadata.csv: documentation or a codebook, not an observation table.
+# improved_crop_varieties_metadata.csv: documentation or a codebook, not an observation table.
+# input_short_rainy_season_metadata.csv: documentation or a codebook, not an observation table.
+# input_use_metadata.csv: documentation or a codebook, not an observation table.
+# ipm_metadata.csv: documentation or a codebook, not an observation table.
+# land_use_management_metadata.csv: documentation or a codebook, not an observation table.
+# livestock_ownership_metadata.csv: documentation or a codebook, not an observation table.
+# livestock_products_metadata.csv: documentation or a codebook, not an observation table.
+# market_access_metadata.csv: documentation or a codebook, not an observation table.
+# meat_animalproducts_metadata.csv: documentation or a codebook, not an observation table.
+# month_food_scarcity_metadata.csv: documentation or a codebook, not an observation table.
+# nonfood_items1.csv: not read. columns: ID, Country, District_Cefferie_Commune, Sector_Groupment_Zone, Village_Sun_colline, Nonfood_items_id, Applicable, Freq_purchs, Total_Purchsd_value. Observation records are missing from d until this file is standardized.
+# nonfood_items1_metadata.csv: documentation or a codebook, not an observation table.
+# nonfood_items2.csv: not read. columns: ID, Country, District_Cefferie_Commune, Sector_Groupment_Zone, Village_Sun_colline, Nonfood_item_id, Aplicable, Freq_purchses, Total_value_purcshd. Observation records are missing from d until this file is standardized.
+# nonfood_items2_metadata.csv: documentation or a codebook, not an observation table.
+# other_income_metadata.csv: documentation or a codebook, not an observation table.
+# other_livestock_metadata.csv: documentation or a codebook, not an observation table.
+# others_metadata.csv: documentation or a codebook, not an observation table.
+# platform_type_metadata.csv: documentation or a codebook, not an observation table.
+# staple_food_metadata.csv: documentation or a codebook, not an observation table.
+# utilzationshortrainyseason_metadata.csv: documentation or a codebook, not an observation table.
+# vegetable_fat_others_metadata.csv: documentation or a codebook, not an observation table.
+# warrantage_use_metadata.csv: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -66,7 +100,8 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		carob_effort = 0.6
 	)
 
-	r <- read.csv(ff[basename(ff) == "input_use.csv"])
+	f3 <- ff[basename(ff) == "input_use.csv"]
+	r <- read.csv(f3)
 
 	z <- tolower(trimws(r$crops_grown))
 	crop <- z

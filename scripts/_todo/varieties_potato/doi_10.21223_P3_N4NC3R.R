@@ -16,6 +16,7 @@
 ## NOT PROCESSED
 # Prices, expected and historical harvests, and seed quantities. The mapped harvest is the measured total kilograms.
 # The rest of the 163 columns.
+# 02_Data_dictionary_costs.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # harvest_kg_improved_: measured improved-potato harvest, kg
@@ -51,7 +52,7 @@ This dataset comes from an exploratory field study with 21 farmers in the distri
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("profitability", basename(ff))]
+	f <- ff[basename(ff) == "01_Data_ economic profitability.xlsx"]
 	r <- carobiner::read.excel(f)
 	num <- function(x) as.numeric(as.character(x))
 	d <- data.frame(

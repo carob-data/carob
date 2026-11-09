@@ -23,6 +23,7 @@
 # Both phenotype files, ENV: environment number. Location and year already define the trial.
 # Both phenotype files, STRC0_1 and STRC0_2: transformed Striga counts. CO1 and CO2 were used.
 # Optimum file, RAT1, RAT2, CO1, CO2, STGR: empty in that file.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # breeding_period_: period in which the hybrid was developed (Period, values 1-3). Unit: none.

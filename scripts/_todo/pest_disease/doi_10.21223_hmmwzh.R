@@ -14,6 +14,16 @@
 
 
 
+
+## NOT PROCESSED
+# 02_LateBlight_Evaluation_date.xls: not read. sheet Sheet1: Abbreviation, Evaluation_date, Variable name, Id ontology. Observation records are missing from d until this file is standardized.
+# 03_Data_Canopy_cover_Oxapampa.xls: not read. sheet Oxapampa: id, Variety, Nitrogen_rate, Fungicide_rate, Treatment, Repetition, CC_G_Et_%_1, CC_G_Et_%_2, CC_G_Et_%_3, CC_G_Et_%_4, CC_G_Et_%_5, CC_G_Et_%_6, .... Observation records are missing from d until this file is standardized.
+# 04_canopy_evaluation_days.xls: not read. sheet Sheet2: Numeration, Abbreviation, Variable_name, Evaluation_date_CCG, ID Ontology. Observation records are missing from d until this file is standardized.
+# 06_Evaluation_date_Total biomass dry matter content.xls: not read. sheet Sheet3: Numeration, Abbreviation, Evaluation_date_TBDMC, Variable_name, Id ontology. Observation records are missing from d until this file is standardized.
+# 07_SpraysOfFungicides_Oxapampa.xls: not read. sheet Sheet1: Fechas de Aplicación. Observation records are missing from d until this file is standardized.
+# 08_DailyWeatherData_Oxapampa.xls: not read. sheet Resumen: ANEXO  4., Datos ambientales. Oxapampa, 2000.. Observation records are missing from d until this file is standardized.
+# 09_HourlyWeatherData_Oxapampa.xlsx: not read. sheet BASE DE DATOS METEREOLOGIA: MEDIO AMBIENTE OXAPAMPA, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

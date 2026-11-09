@@ -30,6 +30,7 @@
 # Mean and standard-error columns.
 # 02_Analysis_average and 04 average sheets. They repeat the raw means.
 # Maize in one station treatment. The code for that treatment is not given.
+# 03_data_dictionary_pest_population.xlsx: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -65,10 +66,14 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 		carob_effort = 0.8
 	)
 
-	fd <- carobiner::read.excel(ff[basename(ff) == "01_PZTM_Disease_Dynamics_2025.xlsx"], sheet="Disease field data_raw")
-	fi <- carobiner::read.excel(ff[basename(ff) == "02_PZTM_Disease_Dynamics_2026.xlsx"], sheet="Insect farmers field data_raw")
-	sd <- carobiner::read.excel(ff[basename(ff) == "02_Analysis_average_PZTM_Disease_Dynamics_2025.xlsx"], sheet="Agronomic trial_CPRS")
-	si <- carobiner::read.excel(ff[basename(ff) == "04_Analysis_and_average_PZTM_Insect-Pest_2026.xlsx"], sheet="Agronomic trial_CPRS")
+	f1 <- ff[basename(ff) == "01_PZTM_Disease_Dynamics_2025.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Disease field data_raw")
+	f2 <- ff[basename(ff) == "02_PZTM_Disease_Dynamics_2026.xlsx"]
+	r2 <- carobiner::read.excel(f2, sheet="Insect farmers field data_raw")
+	f3 <- ff[basename(ff) == "02_Analysis_average_PZTM_Disease_Dynamics_2025.xlsx"]
+	r3 <- carobiner::read.excel(f3, sheet="Agronomic trial_CPRS")
+	f4 <- ff[basename(ff) == "04_Analysis_and_average_PZTM_Insect-Pest_2026.xlsx"]
+	r4 <- carobiner::read.excel(f4, sheet="Agronomic trial_CPRS")
 
 	place <- function(site) {
 		s <- trimws(as.character(site))
@@ -94,34 +99,34 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 		!is.na(y) & y != "Pooled (3 years)"
 	}
 
-	fd <- fd[keep_year(fd$years), ]
-	fi <- fi[keep_year(fi$years), ]
-	sd <- sd[keep_year(sd$years) & !is.na(sd$Treatment), ]
-	pf <- place(fd$site)
-	pi <- place(fi$site)
+	r1 <- r1[keep_year(r1$years), ]
+	r2 <- r2[keep_year(r2$years), ]
+	r3 <- r3[keep_year(r3$years) & !is.na(r3$Treatment), ]
+	pf <- place(r1$site)
+	pi <- place(r2$site)
 	fkeys <- unique(data.frame(
 		location = c(pf$location, pi$location),
 		adm2 = c(pf$adm2, pi$adm2),
-		treatment = c(as.character(fd$Treatment), as.character(fi$Treatment)),
-		season_ = c(as.character(fd$years), as.character(fi$years)),
+		treatment = c(as.character(r1$Treatment), as.character(r2$Treatment)),
+		season_ = c(as.character(r1$years), as.character(r2$years)),
 		stringsAsFactors = FALSE
 	))
 	fkeys <- fkeys[!duplicated(paste(fkeys$location, fkeys$treatment, fkeys$season_, sep="|")), ]
 
-	hdr <- names(si)
-	sub <- trimws(as.character(unlist(si[1, ])))
+	hdr <- names(r4)
+	sub <- trimws(as.character(unlist(r4[1, ])))
 	pestn <- hdr
 	for (i in 2:length(pestn)) {
 		if (grepl("^\\.\\.\\.", pestn[i])) pestn[i] <- pestn[i - 1]
 	}
-	xi <- si[-1, ]
+	xi <- r4[-1, ]
 	names(xi) <- make.unique(ifelse(is.na(sub) | !nzchar(sub), paste0("blank", seq_along(sub)), sub))
 	xi <- xi[keep_year(xi$years) & !is.na(xi$Treatment), ]
 	skeys <- rbind(
 		data.frame(
-			treatment = rep(as.character(sd$Treatment), times=3),
-			season_ = rep(as.character(sd$years), times=3),
-			rep = rep(1:3, each=nrow(sd)),
+			treatment = rep(as.character(r3$Treatment), times=3),
+			season_ = rep(as.character(r3$years), times=3),
+			rep = rep(1:3, each=nrow(r3)),
 			stringsAsFactors = FALSE
 		),
 		data.frame(
@@ -173,8 +178,8 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 	skey <- paste(d$treatment, d$season_, d$rep, sep="|")
 	skey[d$on_farm == TRUE] <- NA_character_
 
-	fid <- match(paste(pf$location, fd$Treatment, fd$years, sep="|"), fkey)
-	iid <- match(paste(pi$location, fi$Treatment, fi$years, sep="|"), fkey)
+	fid <- match(paste(pf$location, r1$Treatment, r1$years, sep="|"), fkey)
+	iid <- match(paste(pi$location, r2$Treatment, r2$years, sep="|"), fkey)
 
 	blank_row <- function(id, n) {
 		data.frame(
@@ -226,14 +231,14 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 	for (p in names(diseases)) {
 		for (i in 1:10) {
 			k <- k + 1
-			parts[[k]] <- add_sev(fid, fd[[paste0(p, i)]], i, NA_character_, diseases[[p]])
+			parts[[k]] <- add_sev(fid, r1[[paste0(p, i)]], i, NA_character_, diseases[[p]])
 		}
 	}
 	pests <- c(ap="aphid", wf="whitefly", lm="leafminer", ptm="potato tuber moth", cp="cutworm", lbp="lady beetle", pbp="pentatomid bug", sp="spider")
 	for (p in names(pests)) {
 		for (i in 1:10) {
 			k <- k + 1
-			parts[[k]] <- add_pest(iid, fi[[paste0(p, i)]], i, as.character(fi$Stage), pests[[p]])
+			parts[[k]] <- add_pest(iid, r2[[paste0(p, i)]], i, as.character(r2$Stage), pests[[p]])
 		}
 	}
 
@@ -244,9 +249,9 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 	)
 	for (b in sblocks) {
 		for (r in 1:3) {
-			sid <- match(paste(sd$Treatment, sd$years, r, sep="|"), skey)
+			sid <- match(paste(r3$Treatment, r3$years, r, sep="|"), skey)
 			k <- k + 1
-			parts[[k]] <- add_sev(sid, sd[[b[[2]][r]]], NA_integer_, as.character(sd$Stage), b[[1]])
+			parts[[k]] <- add_sev(sid, r3[[b[[2]][r]]], NA_integer_, as.character(r3$Stage), b[[1]])
 		}
 	}
 

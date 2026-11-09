@@ -61,10 +61,10 @@ This dataset describes how different tree species (monospecific vs. mixed) influ
 		carob_effort = 0.8
 	)
 
-	readme <- ff[basename(ff) == "README.txt"]
+	f1 <- ff[basename(ff) == "README.txt"]
 	dest <- file.path(tempdir(), "PD3KQB")
 	dir.create(dest, FALSE, TRUE)
-	untar(file.path(dirname(readme), "agroforestry_data.tar"), exdir=dest)
+	untar(file.path(dirname(f1), "agroforestry_data.tar"), exdir=dest)
 	root <- file.path(dest, "agroforestry_data", "data_raw")
 
 	# site_description.csv, degrees and minutes, no seconds.
@@ -75,26 +75,26 @@ This dataset describes how different tree species (monospecific vs. mixed) influ
 		longitude = c(13 + 6/60, 13 + 39/60, 13 + 35/60),
 		elevation = c(190, 190, 252)
 	)
-	skey <- function(x) chartr("é", "e", tolower(trimws(as.character(x))))
+	skey <- function(x) chartr("é", "e", tolower(trimws(as.character(r1))))
 	to_date <- function(x) {
-		if (is.null(x)) return(NA_character_)
-		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(as.character(as.Date(x)))
-		x <- trimws(as.character(x))
-		x[x %in% c("", "NA")] <- NA_character_
-		out <- rep(NA_character_, length(x))
-		dash <- !is.na(x) & grepl("-", x, fixed=TRUE)
-		slash <- !is.na(x) & grepl("/", x, fixed=TRUE)
-		if (any(dash)) out[dash] <- as.character(as.Date(x[dash]))
-		if (any(slash)) out[slash] <- as.character(as.Date(x[slash], "%d/%m/%Y"))
+		if (is.null(r1)) return(NA_character_)
+		if (inherits(r1, "POSIXt") || inherits(r1, "Date")) return(as.character(as.Date(r1)))
+		r1 <- trimws(as.character(r1))
+		r1[r1 %in% c("", "NA")] <- NA_character_
+		out <- rep(NA_character_, length(r1))
+		dash <- !is.na(r1) & grepl("-", r1, fixed=TRUE)
+		slash <- !is.na(r1) & grepl("/", r1, fixed=TRUE)
+		if (any(dash)) out[dash] <- as.character(as.Date(r1[dash]))
+		if (any(slash)) out[slash] <- as.character(as.Date(r1[slash], "%d/%m/%Y"))
 		# Mixed-parkland cotton stores flowering and maturity as Excel serials.
-		serial <- !is.na(x) & !dash & !slash
-		if (any(serial)) out[serial] <- as.character(as.Date(as.numeric(x[serial]), origin="1899-12-30"))
+		serial <- !is.na(r1) & !dash & !slash
+		if (any(serial)) out[serial] <- as.character(as.Date(as.numeric(r1[serial]), origin="1899-12-30"))
 		out
 	}
 	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[tolower(x) %in% c("", "na", "#n/a")] <- NA_character_
-		as.numeric(x)
+		r1 <- trimws(as.character(r1))
+		r1[tolower(r1) %in% c("", "na", "#n/a")] <- NA_character_
+		as.numeric(r1)
 	}
 
 	read_crop <- function(f, crop, part) {
@@ -175,24 +175,24 @@ This dataset describes how different tree species (monospecific vs. mixed) influ
 	clims <- list.files(root, pattern="microclimate.xlsx", recursive=TRUE, full.names=TRUE)
 	wth <- NULL
 	for (f in clims) {
-		x <- carobiner::read.excel(f, sheet="temperature_and_humidity")
-		names(x) <- trimws(names(x))
+		r1 <- carobiner::read.excel(f, sheet="temperature_and_humidity")
+		names(r1) <- trimws(names(r1))
 		# Mixed parkland sheet has no locality column. README places that site at Bamé.
-		loc <- if ("locality" %in% names(x)) trimws(as.character(x$locality)) else rep("Bame", nrow(x))
+		loc <- if ("locality" %in% names(r1)) trimws(as.character(r1$locality)) else rep("Bame", nrow(r1))
 		station <- skey(loc)
 		for (nm in c("tree_number", "plot_position", "orientation", "repetition")) {
-			if (nm %in% names(x)) station <- paste(station, trimws(as.character(x[[nm]])), sep="_")
+			if (nm %in% names(r1)) station <- paste(station, trimws(as.character(r1[[nm]])), sep="_")
 		}
 		w <- data.frame(
 			station_id = station,
 			loc_key = skey(loc),
-			date = as.character(as.Date(x$date)),
-			tmin = num(x$t_min),
-			tmax = num(x$t_max),
-			temp = num(x$t_mean),
-			rhmn = num(x$h_min),
-			rhmx = num(x$h_max),
-			rhum = num(x$h_mean)
+			date = as.character(as.Date(r1$date)),
+			tmin = num(r1$t_min),
+			tmax = num(r1$t_max),
+			temp = num(r1$t_mean),
+			rhmn = num(r1$h_min),
+			rhmx = num(r1$h_max),
+			rhum = num(r1$h_mean)
 		)
 		wth <- rbind(wth, w)
 	}

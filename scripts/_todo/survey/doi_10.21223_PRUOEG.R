@@ -12,6 +12,7 @@
 
 ## NOT PROCESSED
 # 03_Cuestionario_Encuesta_EvaluacionPPH_20 Jul_2021.docx: the questionnaire, not the answers.
+# 02_Datadictionary_PPH La Libertad_2021.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # The p07_ to p40_ columns are the questionnaire answers as recorded. seed_quantity_ and seed_unit_ are the planned seed amount and its unit.
@@ -44,7 +45,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("01_DataSet", basename(ff))]
+	f <- ff[basename(ff) == "01_DataSet_Papas Puño de Hierro La Libertad_2021.xlsx"]
 	r <- carobiner::read.excel(f, sheet="DataBase")
 	chr <- function(x) {
 		x <- trimws(as.character(x))

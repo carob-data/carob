@@ -173,7 +173,19 @@ On-farm long-term wheat trials at Madhubani, Bihar, rabi seasons 2014-15, 2015-1
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Wheat 2014-15-LT-All nodes-Madhubani.xlsx",
+		"Wheat 2015-16-LT-Khairi-Madhubani.xlsx",
+		"Wheat 2015-16-LT-Korahiya-Madhubani.xlsx",
+		"Wheat 2015-16-LT-Mahuwai-Madhubani.xlsx",
+		"Wheat 2015-16-LT-Shukhet-Madhubani.xlsx",
+		"Wheat 2015-164-LT-Nanaur-Madhubani.xlsx",
+		"Wheat 2016-17-LT-Khairi-Madhubani.xlsx",
+		"Wheat 2016-17-LT-Korahiya-Madhubani.xlsx",
+		"Wheat 2016-17-LT-Mahuwai-Madhubani.xlsx",
+		"Wheat 2016-17-LT-Nanaur-Madhubani.xlsx",
+		"Wheat 2016-17-LT-Shukhet-Madhubani.xlsx"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d <- d[!is.na(d$crop) & d$crop != "na" & nzchar(d$crop), ]
 	d <- d[!is.na(d$treatment) & nzchar(d$treatment), ]

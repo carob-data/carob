@@ -70,7 +70,7 @@ Biological invasion is a global concern with species deployed out of native rang
 		carob_effort = 0.6
 	)
 
-	f <- ff[grepl("\\.csv$", ff, ignore.case = TRUE)]
+	f <- ff[basename(ff) %in% c("metadata.csv", "spatio-temporal-partitioning-dataset140720201.csv")]
 	f <- f[!grepl("metadata", basename(f), ignore.case = TRUE)]
 	r <- read.csv(f, check.names = FALSE)
 

@@ -61,14 +61,14 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 	)
 
 	f <- ff[basename(ff) == "Tubuan_1976.xls"]
-	rW <- carobiner::read.excel(f, sheet="ProdnWs76", skip=4, na=".")
-	rD <- carobiner::read.excel(f, sheet="ProdnDs76", skip=4, na=".", col_types="text")
+	r1 <- carobiner::read.excel(f, sheet="ProdnWs76", skip=4, na=".")
+	r2 <- carobiner::read.excel(f, sheet="ProdnDs76", skip=4, na=".", col_types="text")
 	# two header rows
-	rI <- carobiner::read.excel(f, sheet="CurrWs76", skip=6, na=".", col_names=FALSE)
-	names(rI) <- c("Hhcode", "FNO", "YEAR", "SEASON", "FERTKD", "FERTKG", "INSTKD", "INSTML", "INSTKG", "HERBKD", "HERBML", "HERBKG", "SEEDKG", "GASL")
+	r3 <- carobiner::read.excel(f, sheet="CurrWs76", skip=6, na=".", col_names=FALSE)
+	names(r3) <- c("Hhcode", "FNO", "YEAR", "SEASON", "FERTKD", "FERTKG", "INSTKD", "INSTML", "INSTKG", "HERBKD", "HERBML", "HERBKG", "SEEDKG", "GASL")
 
 	# "no dry" (no dry season crop) in AREA
-	rD <- rD[!(rD$AREA %in% "no dry"), ]
+	r2 <- r2[!(r2$AREA %in% "no dry"), ]
 
 	prod <- function(r, seas) {
 		data.frame(
@@ -84,7 +84,7 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 			damage_ = r$DAMAGE
 		)
 	}
-	d <- rbind(prod(rW, "wet"), prod(rD, "dry"))
+	d <- rbind(prod(r1, "wet"), prod(r2, "dry"))
 	d <- d[!is.na(d$hhid) & !is.na(d$field_size), ]
 
 	dm <- tolower(d$damage_)
@@ -97,18 +97,18 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 	d$stress <- apply(st, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
 
 	# household-level wet season inputs
-	rI <- rI[!is.na(rI$Hhcode), ]
-	rI$hhid <- as.character(rI$Hhcode)
+	r3 <- r3[!is.na(r3$Hhcode), ]
+	r3$hhid <- as.character(r3$Hhcode)
 	area <- tapply(d$field_size[d$season == "wet"], d$hhid[d$season == "wet"], sum)
 
 	ftype <- c(UREA="urea", SULP="DAS", COMP="NPK", T162="16-20-0")
-	rI$fert <- ftype[rI$FERTKD]
-	rI$fkg <- as.numeric(rI$FERTKG)
+	r3$fert <- ftype[r3$FERTKD]
+	r3$fkg <- as.numeric(r3$FERTKG)
 	# hh 261: 3500 kg urea for 633.5 pesos (CRetWs76 FERTC), ten times cheaper per kg than other households
-	rI$fkg[rI$hhid == "261" & rI$FERTKD %in% "UREA"] <- NA
+	r3$fkg[r3$hhid == "261" & r3$FERTKD %in% "UREA"] <- NA
 	# NA for products with unknown grade, so that the household N total becomes NA
-	rI$Nkg <- rI$fkg * c(urea=0.46, DAS=0.21, NPK=NA, "16-20-0"=NA)[rI$fert]
-	inorg <- rI[!is.na(rI$fert), ]
+	r3$Nkg <- r3$fkg * c(urea=0.46, DAS=0.21, NPK=NA, "16-20-0"=NA)[r3$fert]
+	inorg <- r3[!is.na(r3$fert), ]
 	paste_u <- function(x) {
 		x <- unique(x[!is.na(x)])
 		if (length(x) == 0) NA else paste(x, collapse="; ")
@@ -117,17 +117,17 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 		if (all(is.na(x))) NA else sum(x, na.rm=TRUE)
 	}
 
-	hh <- data.frame(hhid = unique(rI$hhid))
+	hh <- data.frame(hhid = unique(r3$hhid))
 	agg <- function(x, by, fun) {
 		as.vector(tapply(x, by, fun)[hh$hhid])
 	}
-	hh$fertilizer_type <- agg(rI$fert, rI$hhid, paste_u)
-	hh$fertilizer_codes_ <- agg(rI$FERTKD, rI$hhid, paste_u)
+	hh$fertilizer_type <- agg(r3$fert, r3$hhid, paste_u)
+	hh$fertilizer_codes_ <- agg(r3$FERTKD, r3$hhid, paste_u)
 	hh$fkg <- agg(inorg$fkg, inorg$hhid, sum)
 	hh$Nkg <- agg(inorg$Nkg, inorg$hhid, sum)
-	hh$seed <- agg(as.numeric(rI$SEEDKG), rI$hhid, sum_na)
-	hh$insecticide_codes_ <- agg(rI$INSTKD, rI$hhid, paste_u)
-	hh$herbicide_codes_ <- agg(rI$HERBKD, rI$hhid, paste_u)
+	hh$seed <- agg(as.numeric(r3$SEEDKG), r3$hhid, sum_na)
+	hh$insecticide_codes_ <- agg(r3$INSTKD, r3$hhid, paste_u)
+	hh$herbicide_codes_ <- agg(r3$HERBKD, r3$hhid, paste_u)
 	hh$area <- as.vector(area[hh$hhid])
 
 	i <- match(d$hhid, hh$hhid)

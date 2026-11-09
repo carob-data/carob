@@ -25,6 +25,7 @@
 # DATA_calculated_collection_trials trait columns (Cov_mean, Cov_rate, H_rate, Leaf_rate, and the averaged weather)
 # DATA_calculated_weed_control_trials trait columns (Cov_end_*, Cov_rate_*, WCE_*)
 # Thermal time (Emerg_SDD, Flo_SDD, Fru_SDD)
+# Readme.txt: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 
@@ -134,26 +135,26 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 		out
 	}
 
-	info_f <- ff[basename(ff) == "Trial and species description.xlsx"]
-	info <- read.delim(info_f, skip=1, check.names=FALSE, quote="\"", fileEncoding="latin1")
-	idcol <- names(info)[names(info) == "Trial ID"]
-	info <- info[!is.na(info[[idcol]]) & info[[idcol]] != "", ]
+	f1 <- ff[basename(ff) == "Trial and species description.xlsx"]
+	r1 <- read.delim(f1, skip=1, check.names=FALSE, quote="\"", fileEncoding="latin1")
+	idcol <- names(r1)[names(r1) == "Trial ID"]
+	r1 <- r1[!is.na(r1[[idcol]]) & r1[[idcol]] != "", ]
 	for (col in c("Site", "Latitude", "Longitude", "Altitude", "Soil type")) {
-		for (i in seq_len(nrow(info))[-1]) {
-			if (is.na(info[[col]][i]) || info[[col]][i] == "") info[[col]][i] <- info[[col]][i - 1]
+		for (i in seq_len(nrow(r1))[-1]) {
+			if (is.na(r1[[col]][i]) || r1[[col]][i] == "") r1[[col]][i] <- r1[[col]][i - 1]
 		}
 	}
-	info$Site <- as.character(info$Site)
-	info$Site[grepl("Colima", info$Site)] <- "Colimaçons"
+	r1$Site <- as.character(r1$Site)
+	r1$Site[grepl("Colima", r1$Site)] <- "Colimaçons"
 	site <- data.frame(
-		trial_id = as.character(info[[idcol]]),
-		location = info$Site,
-		latitude = num(info$Latitude),
-		longitude = num(info$Longitude),
-		elevation = num(sub(" m", "", info$Altitude)),
-		soil_type = info[["Soil type"]],
-		planting_date = as.character(as.Date(num(info[["Sowing date (dd/mm/yy)"]]), origin="1899-12-30")),
-		fert_raw = as.character(info$Fertilization)
+		trial_id = as.character(r1[[idcol]]),
+		location = r1$Site,
+		latitude = num(r1$Latitude),
+		longitude = num(r1$Longitude),
+		elevation = num(sub(" m", "", r1$Altitude)),
+		soil_type = r1[["Soil type"]],
+		planting_date = as.character(as.Date(num(r1[["Sowing date (dd/mm/yy)"]]), origin="1899-12-30")),
+		fert_raw = as.character(r1$Fertilization)
 	)
 	site$fert_raw[site$fert_raw %in% c("", "NA")] <- NA
 	npk <- regmatches(site$fert_raw, regexec("([0-9]+)-([0-9]+)-([0-9]+)", site$fert_raw))
@@ -172,8 +173,8 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 		}
 	}
 
-	fb <- ff[basename(ff) == "DATARAW_aboveground_biomass.xlsx"]
-	b <- readx(fb, sheet="Weed control trial data")
+	f2 <- ff[basename(ff) == "DATARAW_aboveground_biomass.xlsx"]
+	b <- readx(f2, sheet="Weed control trial data")
 	d1 <- data.frame(
 		trial_id = as.character(b[["Trial ID"]]),
 		rep = as.integer(b$Repetition),
@@ -191,8 +192,8 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 	d1$weed_biomass <- ifelse(d1$treatment == "Weed", d1$yield, NA_real_)
 	d1$flowering_days <- NA_real_
 
-	fp <- ff[basename(ff) == "DATARAW_phenology.xlsx"]
-	p <- readx(fp, sheet="Collection trial data")
+	f3 <- ff[basename(ff) == "DATARAW_phenology.xlsx"]
+	p <- readx(f3, sheet="Collection trial data")
 	d2 <- data.frame(
 		trial_id = as.character(p[["Trial ID"]]),
 		rep = NA_integer_,
@@ -220,9 +221,9 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 	d$date <- NULL
 	# country from geographicCoverage. irrigated from the readme (all sites except Colimaçons).
 
-	fc <- ff[basename(ff) == "DATARAW_plant_cover.xlsx"]
-	c1 <- readx(fc, sheet="Collection trial data")
-	c2 <- readx(fc, sheet="Weed control trial data")
+	f4 <- ff[basename(ff) == "DATARAW_plant_cover.xlsx"]
+	c1 <- readx(f4, sheet="Collection trial data")
+	c2 <- readx(f4, sheet="Weed control trial data")
 	long_c <- rbind(
 		data.frame(
 			trial_id = as.character(c1[["Trial ID"]]),
@@ -244,9 +245,9 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 		)
 	)
 
-	fh <- ff[basename(ff) == "DATARAW_height_number_of_leaves.xlsx"]
-	h1 <- readx(fh, sheet="Collection trials data")
-	h2 <- readx(fh, sheet="Weed control trials data")
+	f5 <- ff[basename(ff) == "DATARAW_height_number_of_leaves.xlsx"]
+	h1 <- readx(f5, sheet="Collection trials data")
+	h2 <- readx(f5, sheet="Weed control trials data")
 	long_h <- rbind(
 		data.frame(
 			trial_id = as.character(h1[["Trial ID"]]),
@@ -272,8 +273,8 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 	# Keep only trials that also have a biomass or phenology row, so trial_id matches.
 	long <- long[long$trial_id %in% d$trial_id, ]
 
-	fw <- ff[basename(ff) == "Meteorological_data.xlsx"]
-	mw <- readx(fw, sheet="Meteorological_data")
+	f6 <- ff[basename(ff) == "Meteorological_data.xlsx"]
+	mw <- readx(f6, sheet="Meteorological_data")
 	wth <- data.frame(
 		station_name = as.character(mw$Station),
 		date = as_day(mw$Date),

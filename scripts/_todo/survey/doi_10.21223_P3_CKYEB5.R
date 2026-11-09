@@ -13,6 +13,7 @@
 ## NOT PROCESSED
 # Parts 2 to 20 of the household tar (composition, land, inputs, production, credit, seed quality) and the gender subsample.
 # The village tar Part A. General_anonymized.tar and both data dictionaries.
+# Data_Dictionary_Village_v2.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -40,8 +41,8 @@ This dataset contains primary survey data collected as part of a study on the im
 		carob_effort = 0.45
 	)
 
-	dict <- ff[basename(ff) == "Data_Dictionary_Kisima_Household-v1.xlsx"]
-	tarf <- file.path(dirname(dict), "kisima_data.tar-1.gz")
+	f <- ff[basename(ff) == "Data_Dictionary_Kisima_Household-v1.xlsx"]
+	tarf <- file.path(dirname(f), "kisima_data.tar-1.gz")
 	ex <- file.path(tempdir(), "doi_10.21223_P3_CKYEB5")
 	dir.create(ex, FALSE, TRUE)
 	utils::untar(tarf, exdir = ex)
@@ -49,15 +50,15 @@ This dataset contains primary survey data collected as part of a study on the im
 	f1 <- got[basename(got) == "Part 1.0 Farmer and site identification_anonymized.xlsx"]
 	f0 <- got[basename(got) == "Part 0 Interview and Farmer Identification.xlsx"]
 	r1 <- carobiner::read.excel(f1)
-	r0 <- carobiner::read.excel(f0)
-	r0 <- r0[match(r1$qnno, r0$qnno), ]
+	r2 <- carobiner::read.excel(f0)
+	r2 <- r2[match(r1$qnno, r2$qnno), ]
 	trt <- as.character(as.integer(r1$Treatment))
 	trt <- c("0" = "Non-treated", "1" = "Treated")[trt]
 	# dateintr is an SPSS datetime: seconds since 1582-10-14
-	when <- as.POSIXct(as.numeric(r0$dateintr), origin = "1582-10-14", tz = "UTC")
+	when <- as.POSIXct(as.numeric(r2$dateintr), origin = "1582-10-14", tz = "UTC")
 	village <- as.character(r1$village)
 	village[is.na(village)] <- ""
-	district <- as.character(r0$district)
+	district <- as.character(r2$district)
 	district[is.na(district)] <- ""
 
 	d <- data.frame(

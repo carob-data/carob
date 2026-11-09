@@ -127,20 +127,20 @@ This data set contains replicated observations of selected bacterial isolates (V
 	)
 	d <- carobiner::bindr(d, dplant)
 
-	fs <- ff[basename(ff) == "Effect of the selected isolates on soil minerals.xlsx"]
-	rs <- carobiner::read.excel(fs, na="NA")
+	f1 <- ff[basename(ff) == "Effect of the selected isolates on soil minerals.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
 	dsoil <- data.frame(
 		trial_id = "Patancheru_2013",
-		seed_treatment = trimws(rs$Treatment),
-		rep = as.integer(rs$`Replication number`),
-		DAP = as.integer(rs$`Days after sowing`),
+		seed_treatment = trimws(r1$Treatment),
+		rep = as.integer(r1$`Replication number`),
+		DAP = as.integer(r1$`Days after sowing`),
 		depth_top = 0,
 		depth_bottom = 15,
-		soil_SOC = as.numeric(rs$`Organic Carbon`),
-		soil_N_total = as.numeric(rs$Nitrogen),
-		soil_P = as.numeric(rs$Phosphorus),
-		dehydrogenase_ = as.numeric(rs$`Dehydogen activity`),
-		soil_MBC = as.numeric(rs$`Microbial Biological Carbon`)
+		soil_SOC = as.numeric(r1$`Organic Carbon`),
+		soil_N_total = as.numeric(r1$Nitrogen),
+		soil_P = as.numeric(r1$Phosphorus),
+		dehydrogenase_ = as.numeric(r1$`Dehydogen activity`),
+		soil_MBC = as.numeric(r1$`Microbial Biological Carbon`)
 	)
 
 	carobiner::write_files(path, meta, d, long=dsoil)

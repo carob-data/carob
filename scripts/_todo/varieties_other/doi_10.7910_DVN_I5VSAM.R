@@ -94,13 +94,13 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		x
 	}
 
-	fy <- ff[basename(ff) == "BLUP-Yield-2018-Rainfed-Lowland.xls"]
-	ffl <- ff[basename(ff) == "BLUP-Flowering-2018-Rainfed-Lowland.xls"]
-	fh <- ff[basename(ff) == "BLUP-Height-2018-Rainfed-Lowland.xls"]
+	f1 <- ff[basename(ff) == "BLUP-Yield-2018-Rainfed-Lowland.xls"]
+	f2 <- ff[basename(ff) == "BLUP-Flowering-2018-Rainfed-Lowland.xls"]
+	f3 <- ff[basename(ff) == "BLUP-Height-2018-Rainfed-Lowland.xls"]
 
-	d <- blup_long(fy, "yield")
-	d <- merge(d, blup_long(ffl, "flowering_days"), by=c("variety", "loc_key"), all=TRUE)
-	d <- merge(d, blup_long(fh, "plant_height"), by=c("variety", "loc_key"), all=TRUE)
+	d <- blup_long(f1, "yield")
+	d <- merge(d, blup_long(f2, "flowering_days"), by=c("variety", "loc_key"), all=TRUE)
+	d <- merge(d, blup_long(f3, "plant_height"), by=c("variety", "loc_key"), all=TRUE)
 
 	sites <- data.frame(
 		loc_key = c(

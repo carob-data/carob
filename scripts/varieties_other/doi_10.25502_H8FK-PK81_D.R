@@ -13,7 +13,7 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 "
 
 	uri <- "doi:10.25502/H8FK-PK81/D"
-	group <- "agronomy"
+	group <- "varieties_other"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,

@@ -19,6 +19,7 @@
 # Area, pest, gender-role, and training questions.
 # Q26 product rates other than the N, P, NPK, and urea items named above are not in the file.
 # 02_CA3561 dictionary: the definitions used above.
+# 02_CA3561_datadictionary_of_farmer_agroecological_knowledge.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -46,7 +47,7 @@ This dataset included information on 83 farmers' agroecological knowledge in  Ph
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("^01_CA3561", basename(ff))]
+	f <- ff[basename(ff) == "01_CA3561_database_of_farmer_agroecological_knowledge.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 	num <- function(x) {
 		x <- trimws(as.character(x))

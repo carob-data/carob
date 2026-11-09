@@ -19,6 +19,7 @@
 ## NOT PROCESSED
 # The monthly workbook. It repeats the daily series as November-April means and is the only source for November 1959 to April 1967.
 # Frost days, January-March averages, and the text columns that name the weather source.
+# 2. Mean monthly wheat weather 1960 to 2019 Yaqui Valley.xlsx: not read. sheet Sheet1:   2. Mean monthly wheat weather 1960 to 2019 Yaqui Valley (Tony Fischer 14 Aug 2021), ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -57,7 +58,7 @@ The wheat area and yield data were collated by the Cajeme District grain receiva
 		as.numeric(z)
 	}
 
-	f1 <- ff[grepl("^1\\.", basename(ff))]
+	f1 <- ff[basename(ff) == "1. Annual wheat average yield and harvest area 1960 to 2019 Yaqui Valley.xlsx"]
 	r <- carobiner::read.excel(f1, sheet="Sheet1", col_names=FALSE)
 	year <- num(r[[4]])
 	keep <- !is.na(year) & year >= 1900 & year <= 2100
@@ -77,18 +78,18 @@ The wheat area and yield data were collated by the Cajeme District grain receiva
 		geo_from_source = FALSE
 	)
 
-	f3 <- ff[grepl("^3\\.", basename(ff))]
-	w <- carobiner::read.excel(f3, sheet="Sheet1", col_names=FALSE)
-	yr <- num(w[[6]])
-	day <- num(w[[7]])
+	f3 <- ff[basename(ff) == "3. Daily Rs, Tmax and Tmin wheat cycle 1968 to 2019 Yaqui Valley.xlsx"]
+	r1 <- carobiner::read.excel(f3, sheet="Sheet1", col_names=FALSE)
+	yr <- num(r1[[6]])
+	day <- num(r1[[7]])
 	ok <- !is.na(yr) & !is.na(day)
 	when <- as.Date(sprintf("%d %d", yr[ok], day[ok]), format="%Y %j")
 	wth <- data.frame(
 		station_name = "CENEB",
 		date = as.character(when),
-		tmax = num(w[[9]])[ok],
-		tmin = num(w[[10]])[ok],
-		srad = num(w[[8]])[ok] * 1000
+		tmax = num(r1[[9]])[ok],
+		tmin = num(r1[[10]])[ok],
+		srad = num(r1[[8]])[ok] * 1000
 	)
 	wth <- wth[!is.na(wth$date), ]
 

@@ -102,28 +102,28 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	}
 
 	one <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		ph <- ph[!is.na(ph$Site.No) & !is.na(ph$Node), ]
-		gh <- gh[!is.na(gh$Site.No) & !is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Site.No) & !is.na(ft$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r1 <- r1[!is.na(r1$Site.No) & !is.na(r1$Node), ]
+		r2 <- r2[!is.na(r2$Site.No) & !is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Site.No) & !is.na(r3$Tmnt), ]
 		# Sinojoda phenology has no treatment name. Within a site, row order matches the harvest sheet.
 		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, FUN=seq_along)
-		ph$seq <- add_seq(ph)
-		gh$seq <- add_seq(gh)
-		ft$seq <- add_seq(ft)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
 		key <- function(x) paste(x$Site.No, x$seq)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
 
-		tmnt <- trimws(as.character(gh$Tmnt[ig]))
+		tmnt <- trimws(as.character(r2$Tmnt[ig]))
 		tmnt[tmnt == "Rice-potato"] <- "Rice-Potato"
 		tmnt[tmnt == "Rice-CTMustard"] <- "Rice-CT Mustard"
 
-		crop <- crop_of(ph$Crop)
-		if ("Crops" %in% names(ph)) {
-			alt <- crop_of(ph$Crops)
+		crop <- crop_of(r1$Crop)
+		if ("Crops" %in% names(r1)) {
+			alt <- crop_of(r1$Crops)
 			crop[is.na(crop)] <- alt[is.na(crop)]
 		}
 		crop[is.na(crop) & grepl("mustard", tolower(tmnt))] <- "mustard"
@@ -141,25 +141,25 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		inter[grepl("Bean", tmnt) & !grepl("mung", tmnt, ignore.case=TRUE)] <- "bean"
 		inter[grepl("Spinach", tmnt)] <- "spinach"
 
-		seed_nm <- grep("^Date.of.seeding", names(ph), value=TRUE)
-		harv_nm <- grep("harvest", names(ph), value=TRUE, ignore.case=TRUE)
+		seed_nm <- grep("^Date.of.seeding", names(r1), value=TRUE)
+		harv_nm <- grep("harvest", names(r1), value=TRUE, ignore.case=TRUE)
 		harv_nm <- harv_nm[!grepl("DAS", harv_nm)]
-		planting <- if (length(seed_nm)) to_date(ph[[seed_nm[1]]]) else rep(NA_character_, nrow(ph))
-		harvest <- if (length(harv_nm)) to_date(ph[[harv_nm[1]]]) else rep(NA_character_, nrow(ph))
+		planting <- if (length(seed_nm)) to_date(r1[[seed_nm[1]]]) else rep(NA_character_, nrow(r1))
+		harvest <- if (length(harv_nm)) to_date(r1[[harv_nm[1]]]) else rep(NA_character_, nrow(r1))
 
-		spacing <- as.numeric(ph$Row.spacing.cm)
+		spacing <- as.numeric(r1$Row.spacing.cm)
 		spacing[spacing == 0] <- NA
 
-		tgw <- pick_num(gh, ig, "TGW.g")
+		tgw <- pick_num(r2, ig, "TGW.g")
 		tgw[tgw == 0] <- NA
 
-		prod_nm <- grep("Product.used", names(ft), value=TRUE)
-		fert <- rep(NA_character_, nrow(ph))
+		prod_nm <- grep("Product.used", names(r3), value=TRUE)
+		fert <- rep(NA_character_, nrow(r1))
 		if (length(prod_nm) > 0) {
-			for (i in seq_len(nrow(ph))) {
+			for (i in seq_len(nrow(r1))) {
 				j <- ifr[i]
 				if (is.na(j)) next
-				p <- trimws(as.character(unlist(ft[j, prod_nm])))
+				p <- trimws(as.character(unlist(r3[j, prod_nm])))
 				p[p %in% c("", "-", "NA", "0", "na")] <- NA
 				p <- p[!is.na(p)]
 				p[grepl("^DAP", p)] <- "DAP"
@@ -169,19 +169,19 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 			}
 		}
 
-		N <- pick_num(ft, ifr, c("N.kg.ha", "Kg.ha_N.kg.ha"))
-		P <- pick_num(ft, ifr, "P2O5.kg.ha") / 2.29
-		K <- pick_num(ft, ifr, "K2O.kg.ha") / 1.2051
+		N <- pick_num(r3, ifr, c("N.kg.ha", "Kg.ha_N.kg.ha"))
+		P <- pick_num(r3, ifr, "P2O5.kg.ha") / 2.29
+		K <- pick_num(r3, ifr, "K2O.kg.ha") / 1.2051
 		fert[is.na(fert) & !is.na(N) & N == 0 & !is.na(P) & P == 0 & !is.na(K) & K == 0] <- "none"
 
-		variety <- trimws(as.character(ph$Variety))
+		variety <- trimws(as.character(r1$Variety))
 		variety[variety %in% c("", "-", "NA", "0")] <- NA
 
 		data.frame(
-			location = carobiner::fix_name(ph$Node, "title"),
+			location = carobiner::fix_name(r1$Node, "title"),
 			season = "rabi",
-			trial_id = paste(ph$Node, ph$Year),
-			plot_id = paste(ph$Site.No, tmnt, ph$seq),
+			trial_id = paste(r1$Node, r1$Year),
+			plot_id = paste(r1$Site.No, tmnt, r1$seq),
 			treatment = tmnt,
 			land_prep_method = prep,
 			crop = crop,
@@ -193,16 +193,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 			planting_date = planting,
 			harvest_date = harvest,
 			row_spacing = spacing,
-			plot_area = as.numeric(ph$Plot.size.m2),
-			seed_rate = pick_num(ph, seq_len(nrow(ph)), c("Seed.rate.kg.ha", "Seedrate.kg.ha")),
-			yield = pick_num(gh, ig, "Calculation_Grain.yield.t.ha") * 1000,
+			plot_area = as.numeric(r1$Plot.size.m2),
+			seed_rate = pick_num(r1, seq_len(nrow(r1)), c("Seed.rate.kg.ha", "Seedrate.kg.ha")),
+			yield = pick_num(r2, ig, "Calculation_Grain.yield.t.ha") * 1000,
 			seed_weight = tgw,
 			harvest_index = {
-				hi <- pick_num(gh, ig, "HI")
+				hi <- pick_num(r2, ig, "HI")
 				ifelse(!is.na(hi) & hi <= 1, hi * 100, hi)
 			},
-			biomass_kg_ha_ = pick_num(gh, ig, "Biomass.t.ha") * 1000,
-			straw_kg_ha_ = pick_num(gh, ig, "Straw.yield.t.ha") * 1000,
+			biomass_kg_ha_ = pick_num(r2, ig, "Biomass.t.ha") * 1000,
+			straw_kg_ha_ = pick_num(r2, ig, "Straw.yield.t.ha") * 1000,
 			N_fertilizer = N,
 			P_fertilizer = P,
 			K_fertilizer = K,
@@ -213,7 +213,13 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Rabi 2015-16-AC-Lalgadh-Dhanusha.xlsx",
+		"Rabi 2015-16-ACS-Giddha-Dhanusha.xlsx",
+		"Rabi 2015-16-ACS-Phulgama-Dhanusha.xlsx",
+		"Rabi 2015-16-ACS-Ragunathpur-Dhanusha.xlsx",
+		"Rabi 2015-16-ACS-Sinojoda-Dhanusha.xlsx"
+	)]
 	d <- lapply(ff, one)
 	d <- do.call(rbind, d)
 	carobiner::write_files(path, meta, d)

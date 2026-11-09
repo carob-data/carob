@@ -22,6 +22,11 @@
 # none
 
 
+
+## NOT PROCESSED
+# Baseline_survey__data_16_May_2022.r1.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# README_Baseline_16_May_2022.r1.txt: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "InnovAfrica project baseline survey data for Ethiopia, Kenya, Malawi, Rwanda, South Africa and Tanzania
@@ -47,7 +52,7 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("Baseline survey", basename(ff)) & grepl("xlsx$", basename(ff))]
+	f <- ff[basename(ff) == "Baseline survey  data_16 May 2022.r1.xlsx"]
 	# col_types=text avoids readxl type-guess warnings on unused livestock/fodder columns
 	r <- carobiner::read.excel(f, sheet="Baseline data", skip=1, na=c("n/a", "N/A", "missing"), col_types="text")
 

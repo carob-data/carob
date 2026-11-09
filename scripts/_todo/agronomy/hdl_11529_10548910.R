@@ -47,7 +47,7 @@ A field study in northern Bangladesh compared three tillage options and six rice
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff))]
+	f <- ff[basename(ff) == "20201227_Figure-CA Arshadul-Dataverse.xlsx"]
 	r <- carobiner::read.excel(f, sheet="System Yield", col_names=FALSE, col_types="text")
 	r <- r[2:nrow(r), ]
 	# A pooled table sits to the right of column 7. Columns 1 to 7 are the plot table.

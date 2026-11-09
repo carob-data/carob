@@ -23,6 +23,7 @@
 ## NOT PROCESSED
 # ANOVA, means, and regression sheets.
 # Root counts, root length, root diameter, vine weight in kg per plot, and senescence. Plot area is absent, and length and diameter have no unit in the dictionary row.
+# Continuous_Storage_Root_Bulking_Data_Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -52,12 +53,12 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 		carob_effort = 0.45
 	)
 
-	f <- ff[grepl("Data and Analysis", basename(ff))]
+	f <- ff[basename(ff) == "Continuous_Storage_Root_Bulking_Data and Analysis.xlsx"]
 	# "*" is the missing marker. Reading the sheet as text avoids a warning on every one of those cells.
 	r <- readxl::read_excel(f, sheet="8_Combined harvests", col_types="text")
-	mf <- ff[grepl("Material_list", basename(ff))]
-	mat <- carobiner::read.excel(mf)
-	names(mat) <- trimws(names(mat))
+	f1 <- ff[basename(ff) == "Continuous_Storage_Root_Bulking_Material_list.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	names(r1) <- trimws(names(r1))
 	num <- function(x) {
 		z <- trimws(as.character(x))
 		z[!nzchar(z) | z == "*" | z == "NA"] <- NA_character_
@@ -70,8 +71,8 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 	loc <- as.integer(num(r$Loc))
 	seas <- as.integer(num(r$Seas))
 	code <- trimws(as.character(r$ENTRY))
-	name <- trimws(as.character(mat$Names))
-	names(name) <- trimws(as.character(mat$Code))
+	name <- trimws(as.character(r1$Names))
+	names(name) <- trimws(as.character(r1$Code))
 	variety <- name[code]
 	variety <- ifelse(is.na(variety), code, as.character(variety))
 

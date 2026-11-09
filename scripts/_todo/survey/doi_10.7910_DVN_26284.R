@@ -26,6 +26,10 @@
 # fallow_: fallow or improved fallow (for crop = "none")
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Study report: Benchmark survey of upland rice farmers in Pak Ou district, Luang Prabang, Laos. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

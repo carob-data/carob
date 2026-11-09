@@ -15,6 +15,7 @@
 
 ## NOT PROCESSED
 # The other columns of the 753-column endline file (modules on women, crops, and assets beyond household size and the upland farm-size field).
+# Data dictionary-VISTA-Mozambique-HHsurvey_2018.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # farm_size_upland_: sizefarmupl as recorded

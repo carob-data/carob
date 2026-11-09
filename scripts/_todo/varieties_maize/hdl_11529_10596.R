@@ -59,28 +59,28 @@ Summary results and individual trial results from the International Intermediate
 		as.numeric(x)
 	}
 
-	floc <- ff[basename(ff) == "05CHTHIW-Locations.xls"]
-	loc0 <- carobiner::read.excel(floc, col_names=FALSE, na=c("", "- - -"))
-	c2 <- trimws(as.character(loc0[[2]]))
+	f1 <- ff[basename(ff) == "05CHTHIW-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE, na=c("", "- - -"))
+	c2 <- trimws(as.character(r1[[2]]))
 	keep <- !is.na(c2) & !c2 %in% c("Country", "País", "Pais") & nzchar(c2)
-	loc0 <- loc0[keep, ]
-	lat <- num_piece(loc0[[5]]) + num_piece(loc0[[6]]) / 60
-	lon <- num_piece(loc0[[8]]) + num_piece(loc0[[9]]) / 60
-	ns <- toupper(trimws(as.character(loc0[[7]])))
-	we <- toupper(trimws(as.character(loc0[[10]])))
+	r1 <- r1[keep, ]
+	lat <- num_piece(r1[[5]]) + num_piece(r1[[6]]) / 60
+	lon <- num_piece(r1[[8]]) + num_piece(r1[[9]]) / 60
+	ns <- toupper(trimws(as.character(r1[[7]])))
+	we <- toupper(trimws(as.character(r1[[10]])))
 	i <- which(ns == "S")
 	lat[i] <- -abs(lat[i])
 	i <- which(we == "W")
 	lon[i] <- -abs(lon[i])
 	locs <- data.frame(
-		set_no = as.integer(loc0[[4]]),
-		country = carobiner::fix_name(trimws(as.character(loc0[[2]])), "title"),
-		location = carobiner::fix_name(trimws(as.character(loc0[[3]])), "title"),
+		set_no = as.integer(r1[[4]]),
+		country = carobiner::fix_name(trimws(as.character(r1[[2]])), "title"),
+		location = carobiner::fix_name(trimws(as.character(r1[[3]])), "title"),
 		latitude = lat,
 		longitude = lon,
-		elevation = as.numeric(loc0[[11]]),
-		planting_date = excel_date(loc0[[12]]),
-		harvest_date = excel_date(loc0[[13]])
+		elevation = as.numeric(r1[[11]]),
+		planting_date = excel_date(r1[[12]]),
+		harvest_date = excel_date(r1[[13]])
 	)
 	locs$country[locs$country == "México"] <- "Mexico"
 
@@ -141,8 +141,22 @@ Summary results and individual trial results from the International Intermediate
 		)
 	}
 
-	trials <- ff[grepl("^05CHTHIW[0-9]", basename(ff)) & grepl("\\.xls$", basename(ff), ignore.case=TRUE)]
-	d <- do.call(rbind, lapply(trials, read_trial))
+	f2 <- ff[basename(ff) %in% c(
+		"05CHTHIW1.xls",
+		"05CHTHIW10.xls",
+		"05CHTHIW15.xls",
+		"05CHTHIW16.xls",
+		"05CHTHIW17.xls",
+		"05CHTHIW20-1.xls",
+		"05CHTHIW22.xls",
+		"05CHTHIW23.xls",
+		"05CHTHIW24.xls",
+		"05CHTHIW27.xls",
+		"05CHTHIW31.xls",
+		"05CHTHIW32.xls",
+		"05CHTHIW8.xls"
+	)]
+	d <- do.call(rbind, lapply(f2, read_trial))
 	d <- merge(d, locs, by="set_no", all.x=TRUE)
 	d$crop <- "maize"
 	d$treatment <- d$variety

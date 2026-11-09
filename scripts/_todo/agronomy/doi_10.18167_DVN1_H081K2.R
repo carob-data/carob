@@ -17,6 +17,7 @@
 # First-leaf length and width, observer, SPAD, leaf size at harvest, and finger grade, girth, and length.
 # Ridge number.
 # Villardebo count of new galleries only. The full index is pest_severity.
+# INoVar_Dataverse_data meanings.csv: not read. columns: Unique ID per banana tree;Unique ID per banana tree. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES

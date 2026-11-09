@@ -25,6 +25,25 @@
 # land_quality_: land quality class of the Revenue Department (very good to very poor)
 
 
+
+## NOT PROCESSED
+# Access.XLS: not read. sheet Market (of 2): File: Access, ACCESS, Worksheet: Market. Observation records are missing from d until this file is standardized.
+# Asset.XLS: not read. sheet Asset (of 3): File: Asset, ...2, Worksheet: Asset. Observation records are missing from d until this file is standardized.
+# Changes.XLS: not read. sheet Landhold (of 4): File: Changes, ...2, Worksheet: Landhold. Observation records are missing from d until this file is standardized.
+# Constraints-2000.xls: not read. sheet Rice (of 2): File: Rice, ...2, Worksheet:Constraints. Observation records are missing from d until this file is standardized.
+# Credit.XLS: not read. sheet Credit: File: Credit, ...2, Worksheet: Credit. Observation records are missing from d until this file is standardized.
+# CropChange.xls: not read. sheet CropChange: File: CropChange, ...2, Worksheet:  CropChange. Observation records are missing from d until this file is standardized.
+# Demog.xls: not read. sheet HHInfo (of 3): File: Demog, ...2, ...3, ...4, Worksheet: HHInfo. Observation records are missing from d until this file is standardized.
+# Disposal.XLS: not read. sheet Disposal (of 2): File:Disposal, ...2, Worksheet: Disposal, ...4, ...5, ...6, ...7, ...8, ...9, No data for Kalahandi 1999 on Qty stored for the year's consumption. Observation records are missing from d until this file is standardized.
+# Employment.xls: not read. sheet Employment: ...1, ...2, ...3, ...4, File: Employment, ...6, Worksheet: Employment. Observation records are missing from d until this file is standardized.
+# Feeds-2000.xls: not read. sheet Feeds: File: Feeds, ...2, ...3, Worksheet: Feeds. Observation records are missing from d until this file is standardized.
+# Income.XLS: not read. sheet Income (of 3): File: Income, ...2, Worksheet: Income. Observation records are missing from d until this file is standardized.
+# Migration.xls: not read. sheet Migration: File: Migration, ...2, Worksheet: Migration. Observation records are missing from d until this file is standardized.
+# NonRiceInp.xls: not read. sheet Material (of 2): File: NonriceInp, ...2, Worksheet: Material. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Socio-economic Dynamics of Changes in Rice Production System in inland areas of Orissa-NATP. Observation records are missing from d until this file is standardized.
+# RiceFeature-2000.xls: not read. sheet Variety (of 4): File: RiceFeature, ...2, ...3, ...4, Worksheet: Variety. Observation records are missing from d until this file is standardized.
+# RiceProd.xls: not read. sheet Variety (of 4): File: RiceProd, ...2, Worksheet: Variety. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

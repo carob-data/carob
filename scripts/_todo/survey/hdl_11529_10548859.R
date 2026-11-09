@@ -20,6 +20,7 @@
 ## NOT PROCESSED
 # Sales, stocks, consumption, prices, and the regression dummy columns.
 # Total crop area and insurance expenditure.
+# prodlossfinal.do: not read. .do file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

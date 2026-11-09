@@ -33,6 +33,40 @@
 # topography_: parcel topography class
 
 
+
+## NOT PROCESSED
+# ASSETS_96.xls: not read. sheet TASSETS: Filename:  ASSETS_96, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# ASSETS_first version.xls: not read. sheet ASSETS: FILENAME:  ASSETS_96, ...2, ...3, ...4, ...5, ...6, ...7. Observation records are missing from d until this file is standardized.
+# BASIC_96.xls: not read. sheet basic96: Filename =BASIC96. Observation records are missing from d until this file is standardized.
+# BASIC_first version.xls: not read. sheet BASIC: Filename: BASIC_96, ...2, ...3, ...4, ...5, NOTE:   This file version was taken from Fe's file.. Observation records are missing from d until this file is standardized.
+# CAPR_96.xls: not read. sheet CAPR96 (of 2): Filename: CAPR_96. Observation records are missing from d until this file is standardized.
+# EMPINC_96.xls: not read. sheet EMPINC: Filename:   EMPINC_96. Observation records are missing from d until this file is standardized.
+# HHCOMP_96.xls: not read. sheet Sheet1: Filename: HHCOMP_96. Observation records are missing from d until this file is standardized.
+# HHINFO_96.xls: not read. sheet HHINFO96: Filename: HHINFO_96. Observation records are missing from d until this file is standardized.
+# HHLOUT_96.xls: not read. sheet HHLOUT: Filename:        HHLOUT_96. Observation records are missing from d until this file is standardized.
+# INDEBT_96.xls: not read. sheet INDEBT96: Filename: INDEBT_96. Observation records are missing from d until this file is standardized.
+# LABOR1_96.xls: not read. sheet LABOR1: Filename: LABOR1_96. Observation records are missing from d until this file is standardized.
+# LABOR2_96.xls: not read. sheet LABOR2: Filename: LABOR2. Observation records are missing from d until this file is standardized.
+# LABOR3_96.xls: not read. sheet LABOR3: Filename:  LABOR3. Observation records are missing from d until this file is standardized.
+# LABOR4_96.xls: not read. sheet LABOR3: Filename: LABOR4. Observation records are missing from d until this file is standardized.
+# LABOR5_96.xls: not read. sheet LABOR5: Filename:LABOR5. Observation records are missing from d until this file is standardized.
+# LABOR6_96.xls: not read. sheet LABOR6: Filename: LABOR6_96. Observation records are missing from d until this file is standardized.
+# LABOR7_96.xls: not read. sheet LABOR5A: Filename:LABOR7. Observation records are missing from d until this file is standardized.
+# LABOR8_96.xls: not read. sheet LABOR8: Filename:  LABOR8. Observation records are missing from d until this file is standardized.
+# LABOR9_96.xls: not read. sheet LABOR9: Filename:  LABOR9. Observation records are missing from d until this file is standardized.
+# LEND_96.xls: not read. sheet LEND: FILENAME: LEND_96, ...2, ...3, ...4, ...5, *Note = INTEND1.. 5 are interest for 6 months., ...7. Observation records are missing from d until this file is standardized.
+# List of file_96.xls: not read. sheet Sheet1 (of 3): TIDP96 match with coding manual. Observation records are missing from d until this file is standardized.
+# MARKET_96.xls: not read. sheet MARKET: Filename: MARKET_96. Observation records are missing from d until this file is standardized.
+# NRice1_96.xls: not read. sheet nrice1: Filename: NRice1_96. Observation records are missing from d until this file is standardized.
+# NRice2_96.xls: not read. sheet nrice2: Filename: NRice2_96. Observation records are missing from d until this file is standardized.
+# NRice3_96.xls: not read. sheet NRICE3: Filename: NRice3_96. Observation records are missing from d until this file is standardized.
+# NRice4_96.xls: not read. sheet GBHOONR2: Filename: NRice5_96. Observation records are missing from d until this file is standardized.
+# NRice5_96.xls: not read. sheet REPNR97: Filename: NRice5_96. Observation records are missing from d until this file is standardized.
+# OPNION_96.xls: not read. sheet Sheet1: FILENAME:  OPNION_96, ...2, ...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, ...11, ...12, .... Observation records are missing from d until this file is standardized.
+# OTINC_96.xls: not read. sheet Sheet1 (of 2): Filename:  REMIT, ...2, ...3, ...4, ...5, ...6, ...7, Filename: OTINC_96. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Technology, Income Distribution and Poverty in the Philippines. Observation records are missing from d until this file is standardized.
+# RENTPAR_96.xls: not read. sheet RENTPAR-96: FILENAME:  RENTPAR_96. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -62,32 +96,33 @@ The study is based on village full enumeration field surveys.  The main purpose 
 
 	# header row is the row starting with HHNO; strip the year suffix; negative values are missing
 	rd <- function(fname, sheet, sfx) {
-		x <- carobiner::read.excel(ff[basename(ff) == fname], sheet=sheet, col_names=FALSE, .name_repair="minimal")
-		h <- which(grepl("^HHNO", x[[1]]))[1]
-		nms <- sub(paste0(sfx, "$"), "", as.character(unlist(x[h, ])))
-		x <- x[-(1:h), ]
-		names(x) <- nms
-		x <- x[, !is.na(names(x))]
-		x <- x[grepl("^[0-9]+$", x$HHNO), ]
-		x
+		f <- ff[basename(ff) == fname]
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, .name_repair="minimal")
+		h <- which(grepl("^HHNO", r[[1]]))[1]
+		nms <- sub(paste0(sfx, "$"), "", as.character(unlist(r[h, ])))
+		r <- r[-(1:h), ]
+		names(r) <- nms
+		r <- r[, !is.na(names(r))]
+		r <- r[grepl("^[0-9]+$", r$HHNO), ]
+		r
 	}
 	num <- function(x) {
-		if (is.null(x)) return(NULL)
-		x <- trimws(as.character(x))
-		x[!grepl("^-?[0-9]*\\.?[0-9]+$", x)] <- NA
-		x <- as.numeric(x)
-		x[x < 0] <- NA
-		x
+		if (is.null(r)) return(NULL)
+		r <- trimws(as.character(r))
+		r[!grepl("^-?[0-9]*\\.?[0-9]+$", r)] <- NA
+		r <- as.numeric(r)
+		r[r < 0] <- NA
+		r
 	}
 	# fertilizer product quantity; 0 if not recorded in the file at all
 	qty <- function(x, v) {
-		q <- num(x[[v]])
-		if (is.null(q) || all(is.na(q))) q <- rep(0, nrow(x))
+		q <- num(r[[v]])
+		if (is.null(q) || all(is.na(q))) q <- rep(0, nrow(r))
 		q
 	}
 	key <- function(x, season=TRUE) {
-		k <- paste(num(x$HHNO), num(x$VIL), num(x$PNO))
-		if (season) k <- paste(k, num(x$SEASON))
+		k <- paste(num(r$HHNO), num(r$VIL), num(r$PNO))
+		if (season) k <- paste(k, num(r$SEASON))
 		k
 	}
 
@@ -129,7 +164,7 @@ The study is based on village full enumeration field surveys.  The main purpose 
 	cp <- qty(ci, "COMP")
 	dap <- qty(ci, "18460")
 	ft <- cbind(ifelse(urea > 0, "urea", NA), ifelse(as > 0, "DAS", NA), ifelse(ap > 0, "16-20-0", NA), ifelse(cp > 0, "NPK", NA), ifelse(dap > 0, "DAP", NA))
-	ftype <- apply(ft, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
+	ftype <- apply(ft, 1, function(x) if (all(is.na(r))) NA else paste(r[!is.na(r)], collapse="; "))
 	ftype[!is.na(urea + as + ap + cp + dap) & (urea + as + ap + cp + dap) == 0] <- "none"
 	ftype[is.na(ic)] <- NA
 	org <- num(ci$ORGANIC)

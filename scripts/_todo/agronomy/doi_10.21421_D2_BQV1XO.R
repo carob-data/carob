@@ -98,23 +98,23 @@ Yield and agronomic trait assessment
 	}
 
 	read_left <- function(sheet) {
-		raw <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
-		raw[] <- lapply(raw, as.character)
-		score <- apply(raw, 1, function(row) {
+		r <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
+		r[] <- lapply(r, as.character)
+		score <- apply(r, 1, function(row) {
 			x <- norm(row)
 			sum(x %in% c("plot", "plot no.", "plotno", "rep", "entryname", "entry name", "entry", "genotype", "geno name", "genoid"))
 		})
 		h <- which(score >= 2)[1]
-		hdr <- trimws(raw[h, ])
+		hdr <- trimws(r[h, ])
 		hdr[is.na(hdr)] <- ""
-		super <- rep("", ncol(raw))
+		super <- rep("", ncol(r))
 		if (h > 1) {
-			super <- trimws(raw[h - 1, ])
+			super <- trimws(r[h - 1, ])
 			super[is.na(super)] <- ""
 		}
-		split_at <- ncol(raw) + 1
-		if (ncol(raw) >= 5) {
-			for (i in 5:ncol(raw)) {
+		split_at <- ncol(r) + 1
+		if (ncol(r) >= 5) {
+			for (i in 5:ncol(r)) {
 				if (hdr[i] == "" && any(hdr[i:length(hdr)] != "")) {
 					split_at <- i
 					break
@@ -123,8 +123,8 @@ Yield and agronomic trait assessment
 		}
 		idx <- seq_len(split_at - 1)
 		while (length(idx) && hdr[idx[length(idx)]] == "") idx <- idx[-length(idx)]
-		banner <- paste(as.character(unlist(raw[seq_len(min(3, nrow(raw))), ])), collapse=" ")
-		list(hdr=hdr[idx], super=super[idx], dat=raw[(h + 1):nrow(raw), idx, drop=FALSE], banner=banner)
+		banner <- paste(as.character(unlist(r[seq_len(min(3, nrow(r))), ])), collapse=" ")
+		list(hdr=hdr[idx], super=super[idx], dat=r[(h + 1):nrow(r), idx, drop=FALSE], banner=banner)
 	}
 
 	one_sheet <- function(sheet) {

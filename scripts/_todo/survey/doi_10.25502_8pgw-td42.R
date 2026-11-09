@@ -32,6 +32,13 @@
 # e_changes_*.csv, e_legumes_produced_4_years_ago.csv: recall of area and use four years earlier, haulm and grain processing.
 # f_nutrition_1.csv to f_nutrition_4.csv: nutrition module.
 # variable_definitions.csv: dictionary (units column is empty for harvest and fertiliser).
+# e_changes_area_in_last_4_years.csv: not read. columns: SN, id, farm_id, area, crop, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_legume_grain_process.csv: not read. columns: SN, id, farm_id, number, legume_type, legume_processing_now, legume_processing_past, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_legume_haulm_process.csv: not read. columns: SN, id, farm_id, number, legume_haulm_type, haulm_use_now, haulm_use_past, instanceid. Observation records are missing from d until this file is standardized.
+# e_changes_production_use.csv: not read. columns: SN, id, farm_id, cultivated_land_change_last_4_years, size_4_years_ago, size_now, size_unit, why_changed, cultivated_legumes_before_contact_n2africa, describe_change_last_4_years, process_legume_grain_at_home, use_legume_haulms, .... Observation records are missing from d until this file is standardized.
+# e_changes_production_use_2.csv: not read. columns: SN, id, farm_id, crop, yield_changed_last_4_years, yield_amount_4_years_ago, yield_unit_4_years_ago, yield_amount_now, yield_unit_now, legume_area_changed, legume_area_4_years_ago_acre, legume_area_4_years_ago_ha, .... Observation records are missing from d until this file is standardized.
+# f_nutrition_2.csv: not read. columns: SN, id, farm_id, legume_part, legume_type, peak_season_per_week, low_season_per_week, dish_type, instanceid. Observation records are missing from d until this file is standardized.
+# f_nutrition_3.csv: not read. columns: SN, id, farm_id, dish_type, dish, ingredients, instanceid. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -191,7 +198,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	f <- ff[basename(ff) == "c_land_holding_management_2.csv"]
 	r <- read.csv(f)
-	g <- read.csv(ff[basename(ff) == "a_general_1.csv"])
+	f1 <- ff[basename(ff) == "a_general_1.csv"]
+	r1 <- read.csv(f1)
 
 	# Plain numbers are kg. "20/70" is the harvest of each crop in a mixture, summed.
 	# A piece >= 1900 is a date typed into the harvest field and is left NA.
@@ -236,24 +244,24 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	is_kg <- unit == "kg"
 	yield <- ifelse(is_kg & !is.na(size) & size > 0, harvest / size, NA_real_)
 
-	country <- trimws(g$country)
+	country <- trimws(r1$country)
 	country[country == "D.R. Congo"] <- "Democratic Republic of the Congo"
 	country[country == ""] <- NA
 
-	lat <- g$gps_latitude_dec
-	lon <- g$gps_longitude_dec
+	lat <- r1$gps_latitude_dec
+	lon <- r1$gps_longitude_dec
 	lon[lon == 0] <- NA
 	# positive values are the unsigned South Kivu latitudes (see NOTES)
 	flip <- !is.na(lat) & lat > 0 & lat < 5 & !is.na(lon) & lon > 27 & lon < 31
 	lat[flip] <- -lat[flip]
 
-	adm1 <- tolower(trimws(g$sector_state))
+	adm1 <- tolower(trimws(r1$sector_state))
 	adm1 <- ifelse(grepl("kivu", adm1), "South Kivu", NA_character_)
 
-	date <- rep(NA_character_, nrow(g))
-	yy <- trimws(as.character(g$date_interview_yyyy))
-	mm <- trimws(as.character(g$date_interview_mm))
-	dd <- trimws(as.character(g$date_interview_dd))
+	date <- rep(NA_character_, nrow(r1))
+	yy <- trimws(as.character(r1$date_interview_yyyy))
+	mm <- trimws(as.character(r1$date_interview_mm))
+	dd <- trimws(as.character(r1$date_interview_dd))
 	okd <- grepl("^[0-9]{4}$", yy) & grepl("^[0-9]{1,2}$", mm) & grepl("^[0-9]{1,2}$", dd)
 	if (any(okd)) {
 		yy_n <- as.integer(yy[okd])
@@ -265,14 +273,14 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	}
 
 	loc <- data.frame(
-		farm_id = g$farm_id,
+		farm_id = r1$farm_id,
 		country = country,
 		adm1 = adm1,
-		location = carobiner::fix_name(g$village, "title"),
-		action_site_ = carobiner::fix_name(g$action_site, "title"),
+		location = carobiner::fix_name(r1$village, "title"),
+		action_site_ = carobiner::fix_name(r1$action_site, "title"),
 		longitude = lon,
 		latitude = lat,
-		elevation = g$gps_altitude_dec,
+		elevation = r1$gps_altitude_dec,
 		date = date
 	)
 	loc <- loc[!duplicated(loc$farm_id), ]

@@ -82,7 +82,12 @@ Wheat head blast index (%) data for four CIMMYT nurseries (15HLBSN, 15HZAN, 41SA
 		do.call(rbind, parts)
 	}
 
-	ff <- ff[grepl("_WB\\.csv$", basename(ff))]
+	ff <- ff[basename(ff) %in% c(
+		"15HLBSN_WB.csv",
+		"15HZAN_WB.csv",
+		"41SAWSN_WB.csv",
+		"56IBWSN_WB.csv"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d$variety[is.na(d$variety) | !nzchar(d$variety)] <- NA_character_
 	d$variety_pedigree[is.na(d$variety_pedigree) | !nzchar(d$variety_pedigree)] <- NA_character_

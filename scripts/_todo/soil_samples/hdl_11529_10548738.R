@@ -22,6 +22,24 @@
 # Conductividad Hidráulica. The metadata says it is calculated from organic matter, saturation, and sodium.
 # Milliequivalents, cation saturation percentages, and CIC. The metadata says they are calculated.
 # Map images.
+# Azufre_Jantetelco.png: image, not a data table.
+# Boro_Jantetelco.png: image, not a data table.
+# Calcio_Jantetelco.png: image, not a data table.
+# CIC_Jantetelco.png: image, not a data table.
+# Cobre_Jantetelco.png: image, not a data table.
+# Cond Hid_Jantetelco.png: image, not a data table.
+# Fosforo Bray Olsen_Jantetelco.png: image, not a data table.
+# Hierro_Jantetelco.png: image, not a data table.
+# Magnesio_Jantetelco.png: image, not a data table.
+# Manganeso_Jantetelco.png: image, not a data table.
+# Materia Organica_Jantetelco.png: image, not a data table.
+# Nitratos_Jantetelco.png: image, not a data table.
+# pH 12 agua_Jantetelco.png: image, not a data table.
+# Potasio_Jantetelco.png: image, not a data table.
+# Punto de Saturacion_Jantetelco.png: image, not a data table.
+# Salinidad CE Ext_Jantetelco.png: image, not a data table.
+# Sodio Porcentaje Sat_Jantetelco.png: image, not a data table.
+# Zinc_Jantetelco.png: image, not a data table.
 
 
 carob_script <- function(path) {

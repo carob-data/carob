@@ -32,6 +32,7 @@
 # Var List: overlaps the material list.
 # Soil soluble ions (calcium, magnesium, potassium, sodium, chloride, carbonate, bicarbonate, nitrate, sulfate): unit cells are blank.
 # Soil requester, operator, laboratory code, and field code.
+# 07_Data_dictionary_Stability_phenolic.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -74,92 +75,92 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		trimws(as.character(x))
 	}
 	soil_val <- function(soil, abbrev) {
-		hit <- soil$Data1[trimws(as.character(soil$Abbreviture)) == abbrev]
+		hit <- r5$Data1[trimws(as.character(r5$Abbreviture)) == abbrev]
 		if (length(hit) == 0) return(NA_real_)
 		num(hit[1])
 	}
 
-	files <- ff[grepl("Stability_Field.xls$", basename(ff))]
-	parts <- lapply(files, function(f) {
-		mini <- carobiner::read.excel(f, sheet="Minimal")
-		inst <- carobiner::read.excel(f, sheet="Installation")
-		mat <- carobiner::read.excel(f, sheet="Material List")
-		fb <- carobiner::read.excel(f, sheet="Fieldbook")
-		soil <- carobiner::read.excel(f, sheet="Soil_analysis")
+	f1 <- ff[basename(ff) %in% c("TPHE200911_MRSCAC_Stability_Field.xls", "TPHE200912_SOTOP_Stability_Field.xls")]
+	parts <- lapply(f1, function(f) {
+		r1 <- carobiner::read.excel(f, sheet="Minimal")
+		r2 <- carobiner::read.excel(f, sheet="Installation")
+		r3 <- carobiner::read.excel(f, sheet="Material List")
+		r4 <- carobiner::read.excel(f, sheet="Fieldbook")
+		r5 <- carobiner::read.excel(f, sheet="Soil_analysis")
 
-		code <- trimws(as.character(mat[["Institutional number"]]))
-		vname <- gsub("\u00a0", " ", as.character(mat[["Clone or variety name"]]), fixed=TRUE)
+		code <- trimws(as.character(r3[["Institutional number"]]))
+		vname <- gsub("\u00a0", " ", as.character(r3[["Clone or variety name"]]), fixed=TRUE)
 		vname <- trimws(vname)
 		vname[!nzchar(vname)] <- NA_character_
 		alias <- data.frame(variety_code=code, variety=vname)
 		alias <- alias[!duplicated(alias$variety_code), ]
 
-		fb$variety_code <- trimws(as.character(fb$INSTN))
-		fb <- merge(fb, alias, by="variety_code", all.x=TRUE)
-		fb$variety[is.na(fb$variety)] <- fb$variety_code[is.na(fb$variety)]
+		r4$variety_code <- trimws(as.character(r4$INSTN))
+		r4 <- merge(r4, alias, by="variety_code", all.x=TRUE)
+		r4$variety[is.na(r4$variety)] <- r4$variety_code[is.na(r4$variety)]
 
-		tex <- trimws(as.character(soil$Data1[trimws(as.character(soil$Abbreviture)) == "STEX"]))
+		tex <- trimws(as.character(r5$Data1[trimws(as.character(r5$Abbreviture)) == "STEX"]))
 		texture <- c("Franco arenoso"="sandy loam", "Franco"="loam")
 		if (!tex %in% names(texture)) stop("unexpected soil texture: ", tex)
 
 		data.frame(
-			variety_code = fb$variety_code,
-			variety = fb$variety,
-			treatment = fb$variety,
-			rep = as.integer(fb$REP),
-			plot_id = as.character(fb$PLOT),
-			lab_sample_ = as.integer(fb$Sample),
-			country = one(mini, "Country"),
-			adm1 = one(mini, "Admin1"),
-			adm2 = one(mini, "Admin2"),
-			adm3 = one(mini, "Admin3"),
-			location = one(mini, "Locality"),
-			elevation = num(one(mini, "Elevation")),
-			latitude = num(one(mini, "Latitude")),
-			longitude = num(one(mini, "Longitude")),
-			planting_date = one(mini, "Begin date"),
-			harvest_date = one(mini, "End date"),
-			trial_id = paste(one(mini, "Site short name"), substr(one(mini, "Begin date"), 1, 4), sep="_"),
-			plot_area = num(one(inst, "Plot size (m2)")),
-			plant_spacing = num(one(inst, "Distance between plants (m)")) * 100,
-			row_spacing = num(one(inst, "Distance between rows (m)")) * 100,
-			seed_density = num(one(inst, "Planting density (plants/Ha)")),
-			yield_moisture = 100 - num(fb$DM),
-			tuber_TP_dw_ = num(fb$TP_DW),
-			tuber_TP_fw_ = num(fb$TP_FW),
-			tuber_TA_dw_ = num(fb$TA_DW),
-			tuber_TA_fw_ = num(fb$TA_FW),
-			tuber_chlorogenic_dw_ = num(fb$CH_DW),
-			tuber_chlorogenic_fw_ = num(fb$CH_FW),
-			tuber_tryptophan_dw_ = num(fb$Trip_DW),
-			tuber_tryptophan_fw_ = num(fb$Trip_FW),
-			tuber_caffeic_dw_ = num(fb$CafAc_DW),
-			tuber_caffeic_fw_ = num(fb$CafAc_FW),
-			antcap_dw_ = num(fb$AntCap_DW),
-			antcap_fw_ = num(fb$AntCap_FW),
-			soil_pH = soil_val(soil, "SOILPH"),
-			soil_EC = soil_val(soil, "SOILEC"),
-			soil_CaCO3 = soil_val(soil, "CACO3") * 10,
-			soil_SOM = soil_val(soil, "ORGM"),
-			soil_N_total_ = soil_val(soil, "NITR"),
-			soil_P = soil_val(soil, "PHOS"),
-			soil_K = soil_val(soil, "POT"),
-			soil_sand = soil_val(soil, "SAND"),
-			soil_silt = soil_val(soil, "LIME"),
-			soil_clay = soil_val(soil, "CLAY"),
+			variety_code = r4$variety_code,
+			variety = r4$variety,
+			treatment = r4$variety,
+			rep = as.integer(r4$REP),
+			plot_id = as.character(r4$PLOT),
+			lab_sample_ = as.integer(r4$Sample),
+			country = one(r1, "Country"),
+			adm1 = one(r1, "Admin1"),
+			adm2 = one(r1, "Admin2"),
+			adm3 = one(r1, "Admin3"),
+			location = one(r1, "Locality"),
+			elevation = num(one(r1, "Elevation")),
+			latitude = num(one(r1, "Latitude")),
+			longitude = num(one(r1, "Longitude")),
+			planting_date = one(r1, "Begin date"),
+			harvest_date = one(r1, "End date"),
+			trial_id = paste(one(r1, "Site short name"), substr(one(r1, "Begin date"), 1, 4), sep="_"),
+			plot_area = num(one(r2, "Plot size (m2)")),
+			plant_spacing = num(one(r2, "Distance between plants (m)")) * 100,
+			row_spacing = num(one(r2, "Distance between rows (m)")) * 100,
+			seed_density = num(one(r2, "Planting density (plants/Ha)")),
+			yield_moisture = 100 - num(r4$DM),
+			tuber_TP_dw_ = num(r4$TP_DW),
+			tuber_TP_fw_ = num(r4$TP_FW),
+			tuber_TA_dw_ = num(r4$TA_DW),
+			tuber_TA_fw_ = num(r4$TA_FW),
+			tuber_chlorogenic_dw_ = num(r4$CH_DW),
+			tuber_chlorogenic_fw_ = num(r4$CH_FW),
+			tuber_tryptophan_dw_ = num(r4$Trip_DW),
+			tuber_tryptophan_fw_ = num(r4$Trip_FW),
+			tuber_caffeic_dw_ = num(r4$CafAc_DW),
+			tuber_caffeic_fw_ = num(r4$CafAc_FW),
+			antcap_dw_ = num(r4$AntCap_DW),
+			antcap_fw_ = num(r4$AntCap_FW),
+			soil_pH = soil_val(r5, "SOILPH"),
+			soil_EC = soil_val(r5, "SOILEC"),
+			soil_CaCO3 = soil_val(r5, "CACO3") * 10,
+			soil_SOM = soil_val(r5, "ORGM"),
+			soil_N_total_ = soil_val(r5, "NITR"),
+			soil_P = soil_val(r5, "PHOS"),
+			soil_K = soil_val(r5, "POT"),
+			soil_sand = soil_val(r5, "SAND"),
+			soil_silt = soil_val(r5, "LIME"),
+			soil_clay = soil_val(r5, "CLAY"),
 			soil_texture = unname(texture[tex]),
-			soil_CEC = soil_val(soil, "SCEC"),
-			soil_Ca_exch = soil_val(soil, "EXCA2"),
-			soil_Mg_exch = soil_val(soil, "EXMG2"),
-			soil_K_exch = soil_val(soil, "EXK"),
-			soil_Na_exch = soil_val(soil, "EXNA"),
-			soil_ex_acidity = soil_val(soil, "AL3H"),
-			soil_BS = soil_val(soil, "BSAT"),
-			soil_Fe = soil_val(soil, "SOILFE"),
-			soil_Cu = soil_val(soil, "SOILCU"),
-			soil_Zn = soil_val(soil, "SOILZN"),
-			soil_B = soil_val(soil, "SOILB"),
-			soil_Mn = soil_val(soil, "SOILMN")
+			soil_CEC = soil_val(r5, "SCEC"),
+			soil_Ca_exch = soil_val(r5, "EXCA2"),
+			soil_Mg_exch = soil_val(r5, "EXMG2"),
+			soil_K_exch = soil_val(r5, "EXK"),
+			soil_Na_exch = soil_val(r5, "EXNA"),
+			soil_ex_acidity = soil_val(r5, "AL3H"),
+			soil_BS = soil_val(r5, "BSAT"),
+			soil_Fe = soil_val(r5, "SOILFE"),
+			soil_Cu = soil_val(r5, "SOILCU"),
+			soil_Zn = soil_val(r5, "SOILZN"),
+			soil_B = soil_val(r5, "SOILB"),
+			soil_Mn = soil_val(r5, "SOILMN")
 		)
 	})
 

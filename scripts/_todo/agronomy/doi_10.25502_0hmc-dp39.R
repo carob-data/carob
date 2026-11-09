@@ -11,6 +11,22 @@
 # write_files: missing longitude/latitude/yield_moisture; NA yield when area unknown; NA variety/inoculated/fertilizer_type.
 
 
+
+## NOT PROCESSED
+# a_family_composition.csv: not read. columns: SN, id, farm_id, no_females_0_16_years, no_males_0_16_years, no_females_17_60_years, no_males_17_60_years, no_females_over_60_years, no_males_over_60_years, instanceid. Observation records are missing from d until this file is standardized.
+# a_inputs.csv: not read. columns: SN, id, farm_id, input, quantity, instanceid. Observation records are missing from d until this file is standardized.
+# a_livestock.csv: not read. columns: SN, id, farm_id, livestock, no, instanceid. Observation records are missing from d until this file is standardized.
+# a_technician.csv: not read. columns: SN, SN, id, farm_id, date, name, position, instanceid. Observation records are missing from d until this file is standardized.
+# b_conservation_structure.csv: not read. columns: SN, id, farm_id, conservation_method, instanceid. Observation records are missing from d until this file is standardized.
+# b_info_site_1.csv: not read. columns: SN, id, farm_id, owner_trial_plot, perception_soil_fertility_farmer, fertility_n2africa_plot, soil_drainage, signs_of_soil_erosion_plot, soil_conservation_structures, instanceid. Observation records are missing from d until this file is standardized.
+# c_use_of_package_2.csv: not read. columns: SN, id, farm_id, which_chemicals, brand_chemicals, file_name_plot_scan, active_ingredient, inoculated_legume_on_n2africa_plot, source_inoculant, inoculant_stored_at_farm, way_of_storage, storage_period, .... Observation records are missing from d until this file is standardized.
+# f_farmer_assessment.csv: not read. columns: SN, id, farm_id, plot_no, labour, weediness, pests_diseases, yield, overall, additional_remarks, instanceid. Observation records are missing from d until this file is standardized.
+# g_treatments_1.csv: not read. columns: id, farm_id, information_received_on, how_received. Observation records are missing from d until this file is standardized.
+# g_treatments_2.csv: not read. columns: id, farm_id, most_useful_information, not_so_useful, comments. Observation records are missing from d until this file is standardized.
+# g_treatments_lead_farmer.csv: not read. columns: id, farm_id, new_or_existing_farmer_group, no_farmers_in_group, no_men, no_women, received_training_within_n2africa, why_no_training, trained_other_farmers_in, why_no_farmers_trained, trained_topics, training_methods, .... Observation records are missing from d until this file is standardized.
+# g_treatments_n2africa_plot.csv: not read. columns: SN, id, farm_id, n2africa_plot_like, n2africa_plot_not_like, in_future, apply_n2africa_technologies_in_future, which_n2africa_technologies, other_comments, instanceid. Observation records are missing from d until this file is standardized.
+# variable_definitions.csv: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "
@@ -39,14 +55,14 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_effort = 0.9
 	)
 
-	f0 <- ff[basename(ff) == "a_general.csv"]
+	f6 <- ff[basename(ff) == "a_general.csv"]
 	f1 <- ff[basename(ff) == "c_use_of_package_1.csv"]
 	f2 <- ff[basename(ff) == "c_use_of_package_3.csv"]
 	f3 <- ff[basename(ff) == "d_cropping_calendar.csv"]
 	f4 <- ff[basename(ff) == "e_harvest.csv"]
 	f5 <- ff[basename(ff) == "b_info_site_2.csv"]
 
-	r0 <- read.csv(f0, na.strings = c("", "NA"))
+	r6 <- read.csv(f6, na.strings = c("", "NA"))
 	r1 <- read.csv(f1, na.strings = c("", "NA"))
 	r2 <- read.csv(f2, na.strings = c("", "NA"))
 	r3 <- read.csv(f3, na.strings = c("", "NA"))
@@ -89,12 +105,12 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	}
 
 	d0 <- data.frame(
-		trial_id = r0$farm_id,
+		trial_id = r6$farm_id,
 		country = "Tanzania",
-		adm2 = carobiner::fix_name(r0$district, "title"),
-		location = carobiner::fix_name(r0$vilage, "title"),
-		elevation = as.numeric(gsub(" meter", "", r0$gps_altitude)),
-		farmer_gender = tolower(r0$gender_of_farmer)
+		adm2 = carobiner::fix_name(r6$district, "title"),
+		location = carobiner::fix_name(r6$vilage, "title"),
+		elevation = as.numeric(gsub(" meter", "", r6$gps_altitude)),
+		farmer_gender = tolower(r6$gender_of_farmer)
 	)
 	d0$adm2[d0$adm2 == ""] <- NA
 	d0$location[d0$location == ""] <- NA

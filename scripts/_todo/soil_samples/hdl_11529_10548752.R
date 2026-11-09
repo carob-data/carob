@@ -63,19 +63,19 @@ Soil enzyme activities measured after seven years of the same management practic
 	)
 
 	one <- function(sheet) {
-		f <- ff[grepl("\\.xlsx$", basename(ff))][1]
-		a <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
+		f <- ff[basename(ff) == "11-Ashim Enzyme_skk.xlsx"]
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
 		hdr <- NULL
-		for (i in seq_len(min(8, nrow(a)))) {
-			cells <- as.character(unlist(a[i, ]))
+		for (i in seq_len(min(8, nrow(r)))) {
+			cells <- as.character(unlist(r[i, ]))
 			if ("rep" %in% cells && "sc" %in% cells) {
 				hdr <- i
 				break
 			}
 		}
-		cells <- as.character(unlist(a[hdr, ]))
+		cells <- as.character(unlist(r[hdr, ]))
 		crep <- which(cells == "rep")[1]
-		body <- a[(hdr + 1):nrow(a), ]
+		body <- r[(hdr + 1):nrow(r), ]
 		rep <- as.character(body[[crep]])
 		ok <- !is.na(rep) & nzchar(rep)
 		body <- body[ok, ]

@@ -101,13 +101,13 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	}
 
 	f1 <- ff[basename(ff) == "Rabi crops  2015-16-ACST-All node -Malda.xlsx"]
-	ph <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-	gh <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="14 - Grain Harvest ", skip=4, hdr=2))
-	ft <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-	ir <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="7 - Irrigation ", skip=4, hdr=2))
-	ph <- ph[!is.na(ph$Year) & !is.na(ph$Crop), ]
-	gh <- gh[!is.na(gh$Year), ]
-	ft <- ft[!is.na(ft$Year), ]
+	r1 <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+	r2 <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="14 - Grain Harvest ", skip=4, hdr=2))
+	r3 <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+	r4 <- as.data.frame(carobiner::read.excel.hdr(f1, sheet="7 - Irrigation ", skip=4, hdr=2))
+	r1 <- r1[!is.na(r1$Year) & !is.na(r1$Crop), ]
+	r2 <- r2[!is.na(r2$Year), ]
+	r3 <- r3[!is.na(r3$Year), ]
 
 	key <- function(x) {
 		paste(
@@ -118,8 +118,8 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 			trimws(toupper(as.character(x$Tmnt)))
 		)
 	}
-	ig <- match(key(ph), key(gh))
-	ifr <- match(key(ph), key(ft))
+	ig <- match(key(r1), key(r2))
+	ifr <- match(key(r1), key(r3))
 
 	prod <- function(x) {
 		x <- trimws(as.character(x))
@@ -130,90 +130,90 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		x[toupper(x) == "ZINC SULPHATE"] <- "ZnSO4"
 		x
 	}
-	p1 <- prod(ft$Rabi_Fertilizer.1.Application_Product.used)[ifr]
-	p2 <- prod(ft$Fertilizer.2.Application_Product.used)[ifr]
-	p3 <- prod(ft$Fertilizer.3.Application_Product.used)[ifr]
-	p4 <- prod(ft$Fertilizer.4.Application_Product.used)[ifr]
-	p5 <- prod(ft$Fertilizer.5.Application_Product.used)[ifr]
+	p1 <- prod(r3$Rabi_Fertilizer.1.Application_Product.used)[ifr]
+	p2 <- prod(r3$Fertilizer.2.Application_Product.used)[ifr]
+	p3 <- prod(r3$Fertilizer.3.Application_Product.used)[ifr]
+	p4 <- prod(r3$Fertilizer.4.Application_Product.used)[ifr]
+	p5 <- prod(r3$Fertilizer.5.Application_Product.used)[ifr]
 	fertilizer_type <- apply(cbind(p1, p2, p3, p4, p5), 1, function(z) {
 		z <- unique(z[!is.na(z)])
 		if (length(z) == 0) NA_character_ else paste(z, collapse=";")
 	})
 
-	yn <- grep("Year$", names(ir), value=TRUE)[1]
-	ir <- ir[!is.na(ir[[yn]]), ]
-	ir$Year <- ir[[yn]]
-	datecols <- grep("Date.of.irrigation", names(ir), value=TRUE)
-	ir$irrigated <- FALSE
+	yn <- grep("Year$", names(r4), value=TRUE)[1]
+	r4 <- r4[!is.na(r4[[yn]]), ]
+	r4$Year <- r4[[yn]]
+	datecols <- grep("Date.of.irrigation", names(r4), value=TRUE)
+	r4$irrigated <- FALSE
 	for (dc in datecols) {
-		ir$irrigated <- ir$irrigated | !is.na(ir[[dc]])
+		r4$irrigated <- r4$irrigated | !is.na(r4[[dc]])
 	}
-	ii <- match(key(ph), key(ir))
+	ii <- match(key(r1), key(r4))
 
-	variety <- trimws(as.character(ph$Variety))
+	variety <- trimws(as.character(r1$Variety))
 	variety[toupper(variety) == "LOCAL"] <- "local"
 
 	d1 <- data.frame(
-		crop = crop_name(ph$Crop),
+		crop = crop_name(r1$Crop),
 		variety = variety,
-		treatment = trimws(as.character(ph$Cropping.System)),
-		crop_rotation = rotation(ph$Cropping.System),
-		location = carobiner::fix_name(ph$Node, "title"),
-		plot_id = trimws(as.character(ph$Site.No)),
-		rep = as.integer(as.numeric(ph$Site.No)),
-		planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
-		harvest_date = as_date(ph$Datw.of.harvest.dd.mm.yy),
-		yield = as.numeric(gh$GY.ton.ha[ig]) * 1000,
-		seed_weight = as.numeric(gh$TGW[ig]),
-		N_fertilizer = as.numeric(ft$N.kg.ha[ifr]),
-		P_fertilizer = as.numeric(ft$P.kg.ha[ifr]) / 2.29,
-		K_fertilizer = as.numeric(ft$K.kg.ha[ifr]) / 1.2051,
+		treatment = trimws(as.character(r1$Cropping.System)),
+		crop_rotation = rotation(r1$Cropping.System),
+		location = carobiner::fix_name(r1$Node, "title"),
+		plot_id = trimws(as.character(r1$Site.No)),
+		rep = as.integer(as.numeric(r1$Site.No)),
+		planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
+		harvest_date = as_date(r1$Datw.of.harvest.dd.mm.yy),
+		yield = as.numeric(r2$GY.ton.ha[ig]) * 1000,
+		seed_weight = as.numeric(r2$TGW[ig]),
+		N_fertilizer = as.numeric(r3$N.kg.ha[ifr]),
+		P_fertilizer = as.numeric(r3$P.kg.ha[ifr]) / 2.29,
+		K_fertilizer = as.numeric(r3$K.kg.ha[ifr]) / 1.2051,
 		fertilizer_type = fertilizer_type,
-		irrigated = ir$irrigated[ii],
-		season_label = trimws(as.character(ph$Year))
+		irrigated = r4$irrigated[ii],
+		season_label = trimws(as.character(r1$Year))
 	)
 
 	f2 <- ff[basename(ff) == "Rabi crops ACST 2016-17-All node-Malda.xlsx"]
-	cp <- carobiner::read.excel(f2, sheet="Crop Parameter", fix_names=TRUE)
-	cp <- cp[!is.na(cp$Crop), ]
-	cm <- carobiner::read.excel(f2, sheet="Crop Management", fix_names=TRUE)
-	cm <- cm[!is.na(cm$Crop), ]
-	st <- carobiner::read.excel(f2, sheet="stat", fix_names=TRUE)
-	st <- st[!is.na(st$year), ]
-	k2 <- paste(trimws(toupper(as.character(cp$Farmer.s.name))), trimws(toupper(as.character(cp$Tmnt))), trimws(as.character(cp$Year)))
-	ks <- paste(trimws(toupper(as.character(st$far))), trimws(toupper(as.character(st$sys))), trimws(as.character(st$year)))
+	r5 <- carobiner::read.excel(f2, sheet="Crop Parameter", fix_names=TRUE)
+	r5 <- r5[!is.na(r5$Crop), ]
+	r6 <- carobiner::read.excel(f2, sheet="Crop Management", fix_names=TRUE)
+	r6 <- r6[!is.na(r6$Crop), ]
+	r7 <- carobiner::read.excel(f2, sheet="stat", fix_names=TRUE)
+	r7 <- r7[!is.na(r7$year), ]
+	k2 <- paste(trimws(toupper(as.character(r5$Farmer.s.name))), trimws(toupper(as.character(r5$Tmnt))), trimws(as.character(r5$Year)))
+	ks <- paste(trimws(toupper(as.character(r7$far))), trimws(toupper(as.character(r7$sys))), trimws(as.character(r7$year)))
 	isn <- match(k2, ks)
-	kcm <- paste(trimws(toupper(as.character(cm$Farmer.s.name))), trimws(toupper(as.character(cm$Tmnt))), trimws(as.character(cm$Year)), tolower(trimws(as.character(cm$Crop))))
-	kcp <- paste(k2, tolower(trimws(as.character(cp$Crop))))
+	kcm <- paste(trimws(toupper(as.character(r6$Farmer.s.name))), trimws(toupper(as.character(r6$Tmnt))), trimws(as.character(r6$Year)), tolower(trimws(as.character(r6$Crop))))
+	kcp <- paste(k2, tolower(trimws(as.character(r5$Crop))))
 	icm <- match(kcp, kcm)
 
 	# Crop Management stores harvest day as an Excel serial in a text column.
 	# 29-02-2017 is not a real date.
-	doh <- trimws(as.character(cm$DOH))
+	doh <- trimws(as.character(r6$DOH))
 	doh[doh == "29-02-2017"] <- NA_character_
-	variety2 <- trimws(as.character(cp$Variety))
+	variety2 <- trimws(as.character(r5$Variety))
 	variety2[toupper(variety2) == "LOCAL"] <- "local"
 
 	d2 <- data.frame(
-		crop = crop_name(cp$Crop),
+		crop = crop_name(r5$Crop),
 		variety = variety2,
-		treatment = trimws(as.character(cp$Tmnt)),
-		crop_rotation = rotation(cp$Tmnt),
-		location = carobiner::fix_name(st$Node[isn], "title"),
-		plot_id = trimws(as.character(cp$Site.No)),
-		rep = as.integer(as.numeric(cp$Site.No)),
-		planting_date = as_date(cp$DOS),
+		treatment = trimws(as.character(r5$Tmnt)),
+		crop_rotation = rotation(r5$Tmnt),
+		location = carobiner::fix_name(r7$Node[isn], "title"),
+		plot_id = trimws(as.character(r5$Site.No)),
+		rep = as.integer(as.numeric(r5$Site.No)),
+		planting_date = as_date(r5$DOS),
 		harvest_date = as_date(as.numeric(doh[icm])),
-		yield = as.numeric(cp$Yield.q.ha) * 100,
+		yield = as.numeric(r5$Yield.q.ha) * 100,
 		seed_weight = as.numeric(NA),
 		N_fertilizer = as.numeric(NA),
 		P_fertilizer = as.numeric(NA),
 		K_fertilizer = as.numeric(NA),
 		fertilizer_type = as.character(NA),
 		irrigated = as.logical(NA),
-		season_label = trimws(as.character(cp$Year)),
-		row_spacing = as.numeric(cp$Spacing.m) * 100,
-		plot_area = as.numeric(cm$Plot.size.m2[icm])
+		season_label = trimws(as.character(r5$Year)),
+		row_spacing = as.numeric(r5$Spacing.m) * 100,
+		plot_area = as.numeric(r6$Plot.size.m2[icm])
 	)
 
 	d <- carobiner::bindr(d1, d2)

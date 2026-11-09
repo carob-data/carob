@@ -43,7 +43,7 @@ The study of women's involvement and responsibilities within seed systems in Nep
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("Seed Security Nepal", basename(ff))]
+	f <- ff[basename(ff) == "Seed Security Nepal.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Main Data", na=c("", "NA", "n/a"))
 	num <- function(x) {
 		if (is.null(x)) return(NA_real_)

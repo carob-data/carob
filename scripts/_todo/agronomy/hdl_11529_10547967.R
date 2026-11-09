@@ -94,11 +94,11 @@ Farmers' participatory researcher-managed long-term trials of wheat and lentil i
 
 	one <- function(f) {
 		bn <- basename(f)
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(bn), skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		si <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
-		cells <- trimws(as.character(unlist(si[1, ])))
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(bn), skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r4 <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
+		cells <- trimws(as.character(unlist(r4[1, ])))
 		cells[is.na(cells)] <- ""
 		raw_c <- header_value(cells, "Country:")
 		adm2 <- header_value(cells, "District:")
@@ -111,25 +111,25 @@ Farmers' participatory researcher-managed long-term trials of wheat and lentil i
 		if (!is.na(raw_c) && toupper(raw_c) == "NEPAL") country <- "Nepal"
 		if (!is.na(raw_c) && toupper(raw_c) == "BANGLADESH") country <- "Bangladesh"
 		if (!is.na(raw_c) && toupper(raw_c) == "INDIA") country <- "India"
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Node), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt.No), ]
-		if (!"Site.No" %in% names(ph) && "Unique.Farmer.s.code" %in% names(ph)) ph$Site.No <- ph$Unique.Farmer.s.code
-		if (!"Site.No" %in% names(gh) && "Unique.Farmer.s.code" %in% names(gh)) gh$Site.No <- gh$Unique.Farmer.s.code
-		if (!"Site.No" %in% names(ft) && "Unique.Farmer.s.code" %in% names(ft)) ft$Site.No <- ft$Unique.Farmer.s.code
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Node), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt.No), ]
+		if (!"Site.No" %in% names(r1) && "Unique.Farmer.s.code" %in% names(r1)) r1$Site.No <- r1$Unique.Farmer.s.code
+		if (!"Site.No" %in% names(r2) && "Unique.Farmer.s.code" %in% names(r2)) r2$Site.No <- r2$Unique.Farmer.s.code
+		if (!"Site.No" %in% names(r3) && "Unique.Farmer.s.code" %in% names(r3)) r3$Site.No <- r3$Unique.Farmer.s.code
 		add_seq <- function(x, tm) ave(seq_len(nrow(x)), x$Site.No, x[[tm]], FUN=seq_along)
-		ph$seq <- add_seq(ph, "Tmnt")
-		gh$seq <- add_seq(gh, "Tmnt")
-		ft$seq <- add_seq(ft, "Tmnt.No")
-		keyp <- paste(ph$Site.No, ph$Tmnt.No, ph$seq)
-		ig <- match(keyp, paste(gh$Site.No, gh$Tmnt, gh$seq))
-		ifr <- match(keyp, paste(ft$Site.No, ft$Tmnt.No, ft$seq))
-		y <- take(gh, ig, c("Grain.yield.t.ha", "Calculation_Grain.yield.t.ha", "Calculation_Grain.Yield.t.ha", "Calulation_Grain.Yield.t.ha"))
-		sp <- num(ph$Row.spacing.cm)
+		r1$seq <- add_seq(r1, "Tmnt")
+		r2$seq <- add_seq(r2, "Tmnt")
+		r3$seq <- add_seq(r3, "Tmnt.No")
+		keyp <- paste(r1$Site.No, r1$Tmnt.No, r1$seq)
+		ig <- match(keyp, paste(r2$Site.No, r2$Tmnt, r2$seq))
+		ifr <- match(keyp, paste(r3$Site.No, r3$Tmnt.No, r3$seq))
+		y <- take(r2, ig, c("Grain.yield.t.ha", "Calculation_Grain.yield.t.ha", "Calculation_Grain.Yield.t.ha", "Calulation_Grain.Yield.t.ha"))
+		sp <- num(r1$Row.spacing.cm)
 		sp[!is.na(sp) & sp < 1] <- NA_real_
-		hd <- as_date(ph$Datw.of.harvest.dd.mm.yy)
+		hd <- as_date(r1$Datw.of.harvest.dd.mm.yy)
 		hd[!is.na(hd) & hd > "2018-06-05"] <- NA_character_
-		crop <- tolower(trimws(as.character(ph$Crop)))
+		crop <- tolower(trimws(as.character(r1$Crop)))
 		crop[grepl("rice", crop)] <- "rice"
 		crop[grepl("wheat", crop)] <- "wheat"
 		crop[grepl("lentil", crop)] <- "lentil"
@@ -140,45 +140,57 @@ Farmers' participatory researcher-managed long-term trials of wheat and lentil i
 		part <- rep("grain", length(crop))
 		part[crop %in% c("lentil", "chickpea", "wheat")] <- "seed"
 		part[crop == "potato"] <- "tubers"
-		hi <- take(gh, ig, "HI")
+		hi <- take(r2, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
-		ad <- num(ph$X50pct.anthesis.DAS)
-		md <- num(ph$X80pct.physiological.maturity.DAS)
+		ad <- num(r1$X50pct.anthesis.DAS)
+		md <- num(r1$X80pct.physiological.maturity.DAS)
 		ad[!is.na(ad) & ad < 0] <- NA_real_
 		md[!is.na(md) & md < 0] <- NA_real_
 		data.frame(
 			country = country,
 			adm1 = adm1,
 			adm2 = carobiner::fix_name(adm2, "title"),
-			location = carobiner::fix_name(ph$Node, "title"),
-			trial_id = paste(ph$Year, ph$Node, ph$Trial.Code),
-			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
-			treatment = ph$Tmnt,
+			location = carobiner::fix_name(r1$Node, "title"),
+			trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
+			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
+			treatment = r1$Tmnt,
 			crop = crop,
-			variety = ph$Variety,
+			variety = r1$Variety,
 			yield_part = part,
-			planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
+			planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
 			harvest_date = hd,
 			row_spacing = sp,
-			seed_rate = num(ph$Seedrate.kg.ha),
-			plot_area = num(ph$Plot.size.m2),
+			seed_rate = num(r1$Seedrate.kg.ha),
+			plot_area = num(r1$Plot.size.m2),
 			yield = y * 1000,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = take(gh, ig, "Biomass.t.ha") * 1000,
+			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
 			anthesis_days = ad,
 			maturity_days = md,
-			N_fertilizer = take(ft, ifr, "N.kg.ha"),
-			P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
-			K_fertilizer = take(ft, ifr, "K2O.kg.ha") / 1.2051,
-			gypsum = take(ft, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
+			N_fertilizer = take(r3, ifr, "N.kg.ha"),
+			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
+			K_fertilizer = take(r3, ifr, "K2O.kg.ha") / 1.2051,
+			gypsum = take(r3, ifr, c("Gypsum.kg.ha", "Gypsum.Kg.ha")),
 			on_farm = TRUE,
 			is_survey = FALSE,
 			geo_from_source = FALSE
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"Wheat & Lentil-2014-15-LT-all nodes-Dhanusha.xlsx",
+		"Wheat & Lentil 2015-16-LT-Giddha-Dhanusha.xlsx",
+		"Wheat & lentil 2015-16-LT-Laldadh-Dhanush.xlsx",
+		"Wheat & lentil 2015-16-LT-Phulgama-Dhanusha.xlsx",
+		"Wheat & lentil 2015-16-LT-Ragunathpur-Dhanusha.xlsx",
+		"Wheat & lentil 2015-16-LT-Sinurjoda-Dhanusha.xlsx",
+		"Wheat & Lentil 2016-17-Giddha-Dhanusha.xlsx",
+		"Wheat & Lentil 2016-17-Lalgadh-Dhanusha-Nepal.xlsx",
+		"Wheat & Lentil 2016-17-Phulgama-Dhanusha-Nepal.xlsx",
+		"Wheat & Lentil 2016-17-Raghunathpur-Dhanusha-Nepal.xlsx",
+		"Wheat & Lentil 2016-17-Sinurjoda-Dhanuasha-Nepal.xlsx"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d <- d[!is.na(d$crop), ]
 	carobiner::write_files(path, meta, d)

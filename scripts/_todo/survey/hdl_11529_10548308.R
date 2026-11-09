@@ -20,6 +20,11 @@
 # Uncorrected 2016 and 2017 crop-cut workbooks, the 2017 maize metadata v2 extract (same maximum yield and row count as the 2016 crop cut), and the first PP biomass workbook.
 # Farmer-estimated area, cob subsample weights, shelling factor, and the raw moisture column. Yield is already adjusted to 12.5%, and some raw moisture values are above 100.
 # Zone.
+# TAMASA_TZ_APS_2017_CC_MaizeYield (Blurred).xlsx and TAMASA_TZ_APS_CC_2016 (Blurred).xlsx: uncorrected crop-cut workbooks. The corrected metadata sheets are the ones used.
+# TAMASA_TZ_APS_CS_2016 (Blurred).xlsx: community survey. It has no crop cuts.
+# TAMASA_TZ_APS_HH_2016 (Blurred).xlsx: household roster. It has no crop cuts.
+# TZ_TAMASA_APS_2017_Maize_Yield_MetaData_v2 (Blurred).xlsx: same maximum yield and row count as the 2016 crop cut, so it is not a separate table.
+# TZ_TAMASA_APS_2017_PP_Biomass_Yield_MetaData  (Blurred).xlsx: first biomass workbook. The V2 workbook is the one joined to the 2017 quadrats.
 
 
 carob_script <- function(path) {
@@ -48,7 +53,12 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		carob_effort = 0.8
 	)
 
-	pickf <- function(pat) ff[grepl(pat, basename(ff))][1]
+	f1 <- ff[basename(ff) == "TZ_TAMASA_APS_2016_Yield_MetaData_11July17 (Blurred).xlsx"]
+	f2 <- ff[basename(ff) == "TZ_TAMASA_APS_2017_Yield_MetaData_12-03-18  (Blurred).xlsx"]
+	f3 <- ff[basename(ff) == "TZ_TAMASA_BYS_Yield_2015_22June17 (Blurred).xlsx"]
+	f4 <- ff[basename(ff) == "TZ_TAMASA_APS_2017_PP_Biomass_Yield_MetaData_V2 (Blurred).xlsx"]
+	f5 <- ff[basename(ff) == "TAMASA_TZ_APS_Soil_2016 (Blurred).xlsx"]
+	f6 <- ff[basename(ff) == "TAMASA_BYS_Soil_Data_JUN7 (Blurred).xlsx"]
 	num <- function(x) {
 		if (is.null(x)) return(NA_real_)
 		if (is.numeric(x)) return(x)
@@ -71,8 +81,8 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		y[!is.na(y) & nchar(y) < 2] <- NA_character_
 		y
 	}
-	read1 <- function(pat, sheet) {
-		r <- carobiner::read.excel(pickf(pat), sheet=sheet, na=c("", "NA", "n/a", "N/A"), col_types="text")
+	read1 <- function(f, sheet) {
+		r <- carobiner::read.excel(f, sheet=sheet, na=c("", "NA", "n/a", "N/A"), col_types="text")
 		names(r) <- trimws(names(r))
 		r
 	}
@@ -135,25 +145,25 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		)
 	}
 
-	r16 <- read1("2016_Yield_MetaData", "Corrected-Raw-Data")
-	r17 <- read1("2017_Yield_MetaData_12-03-18", "Corrected-Raw-Data")
-	rb <- read1("BYS_Yield", "Yield Data")
-	d16 <- cuts(r16, "APS2016", "HHID", "QID", 12.5)
-	d17 <- cuts(r17, "APS2017", "HHID", "QID", 12.5)
-	db <- cuts(rb, "BYS2015", "Farm_ID", "Quadrant", NA)
+	r1 <- read1(f1, "Corrected-Raw-Data")
+	r2 <- read1(f2, "Corrected-Raw-Data")
+	r3 <- read1(f3, "Yield Data")
+	d16 <- cuts(r1, "APS2016", "HHID", "QID", 12.5)
+	d17 <- cuts(r2, "APS2017", "HHID", "QID", 12.5)
+	db <- cuts(r3, "BYS2015", "Farm_ID", "Quadrant", NA)
 
-	bio <- read1("PP_Biomass_Yield_MetaData_V2", "Corrected-Raw-Data")
-	bio <- bio[!is.na(bio$Country) & bio$Country == "Tanzania", ]
-	bkey <- paste(trimws(as.character(bio$HHID)), trimws(as.character(bio$QID)))
+	r4 <- read1(f4, "Corrected-Raw-Data")
+	r4 <- r4[!is.na(r4$Country) & r4$Country == "Tanzania", ]
+	bkey <- paste(trimws(as.character(r4$HHID)), trimws(as.character(r4$QID)))
 	gkey <- paste(d17$hhid, d17$plot_id)
 	ib <- match(gkey, bkey)
-	d17$dmy_residue <- num(bio[["Biomass dry weight (kg/ha)"]])[ib]
+	d17$dmy_residue <- num(r4[["Biomass dry weight (kg/ha)"]])[ib]
 	miss <- !bkey %in% gkey
 	if (any(miss)) {
-		extra <- cuts(bio[miss, ], "APS2017bio", "HHID", "QID", NA)
+		extra <- cuts(r4[miss, ], "APS2017bio", "HHID", "QID", NA)
 		extra$yield <- NA_real_
 		extra$yield_moisture <- NA_real_
-		extra$dmy_residue <- num(bio[["Biomass dry weight (kg/ha)"]])[miss]
+		extra$dmy_residue <- num(r4[["Biomass dry weight (kg/ha)"]])[miss]
 		d17 <- carobiner::bindr(d17, extra)
 	}
 
@@ -200,9 +210,10 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 			is_survey = TRUE
 		)
 	}
-	s16 <- soils(read1("TAMASA_TZ_APS_Soil_2016", "Data"), "soil2016", "HHID")
-	sb <- read1("BYS_Soil", "Revised_Data")
-	ss <- soils(sb, "soilBYS", "SSID")
+	r5 <- read1(f5, "Data")
+	s16 <- soils(r5, "soil2016", "HHID")
+	r6 <- read1(f6, "Revised_Data")
+	ss <- soils(r6, "soilBYS", "SSID")
 	ss$hhid <- NA_character_
 
 	d <- carobiner::bindr(d16, d17, db, s16, ss)

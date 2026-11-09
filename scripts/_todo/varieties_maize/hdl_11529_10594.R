@@ -87,11 +87,11 @@ Summary results and individual trial results from the International Intermediate
 		trimws(x)
 	}
 
-	floc <- ff[basename(ff) == "05CHTSY-Locations.xls"]
-	loc <- carobiner::read.excel(floc, col_names=FALSE, col_types="text")
-	c2 <- blank(loc[[2]])
+	f1 <- ff[basename(ff) == "05CHTSY-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE, col_types="text")
+	c2 <- blank(r1[[2]])
 	hdr <- which(c2 == "Country")[1]
-	sites <- loc[seq_len(nrow(loc)) > hdr, ]
+	sites <- r1[seq_len(nrow(r1)) > hdr, ]
 	set_no <- num(sites[[4]])
 	sites <- sites[!is.na(set_no), ]
 	set_no <- set_no[!is.na(set_no)]
@@ -245,8 +245,17 @@ Summary results and individual trial results from the International Intermediate
 		list(d=d, long=long)
 	}
 
-	files <- ff[grepl("CHTSY[0-9]+\\.xls$", basename(ff))]
-	parts <- lapply(files, one)
+	f2 <- ff[basename(ff) %in% c(
+		"05CHTSY11.xls",
+		"05CHTSY14.xls",
+		"05CHTSY17.xls",
+		"05CHTSY18.xls",
+		"05CHTSY20.xls",
+		"05CHTSY23.xls",
+		"05CHTSY26.xls",
+		"05CHTSY27.xls"
+	)]
+	parts <- lapply(f2, one)
 	d <- do.call(rbind, lapply(parts, function(x) x$d))
 	long <- do.call(rbind, lapply(parts, function(x) x$long))
 	d <- merge(d, sites, by="set_no", all.x=TRUE)

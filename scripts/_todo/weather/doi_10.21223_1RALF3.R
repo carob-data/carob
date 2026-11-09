@@ -16,6 +16,7 @@
 ## NOT PROCESSED
 # Month, Day, Year: the same day as Date.
 # WeatherType, Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Hi Solar Rad, UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Leaf Wet, Wind Samp, ISS Recept, Arc. Int.
+# data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # hi_dir_: direction at maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name.

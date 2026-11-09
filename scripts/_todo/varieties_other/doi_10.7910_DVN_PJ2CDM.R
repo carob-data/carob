@@ -24,6 +24,8 @@
 # Year is 2016 on every row and is not a planting date.
 # 2016-M-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
 # Plant height, tillers, biomass, and spikelet fertility are not in these workbooks.
+# 2016-M-MET-Gambia-Kaiaf.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-M-MET-Guinea-Koba.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, YIELD. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # panicle_length_: panicle length (cm), from PNL

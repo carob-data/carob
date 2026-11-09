@@ -24,6 +24,7 @@
 # optimal.csv, FWT: field weight of ears, unit not stated.
 # optimal.csv, LOC: values 1, 2, 3, paired 1:1 with ENV but not a location name.
 # combined-heat-and-drought.csv and low-nitrogen.csv, ENV: numeric environment index, redundant with location and year.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # set_: mating-design set (A-F). Unit: none.

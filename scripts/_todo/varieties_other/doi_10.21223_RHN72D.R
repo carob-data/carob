@@ -25,6 +25,7 @@
 # Qualitative descriptor codes (flower color, stem, seed color, and the rest of the 40 descriptors). They are category codes without the category labels joined.
 # sos, eos, los, mgs: NDVI season metrics.
 # Cluster.
+# 03_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

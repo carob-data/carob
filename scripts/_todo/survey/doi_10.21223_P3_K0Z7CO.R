@@ -16,6 +16,7 @@
 # Plot tenure, irrigation codes, crop names, production, and area. Area is recorded in cuadras and solares as well as hectares, in a wide block of up to eight plots.
 # Livestock counts, costs, and the remaining opinion questions.
 # Dictionary, the Word questionnaire, and the Word report.
+# 02_Data dictionary_Caso Papa Nativa - EPCP - ECUADOR.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

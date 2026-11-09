@@ -23,6 +23,11 @@
 # Specific leaf area, C:N, leaf and stem dry-matter fractions
 # Seed_sowing_density_kgha (varies by seed lot)
 # NEARPLOT.csv (spatial neighbours)
+# Readme.xlsx: documentation or a codebook, not an observation table.
+# Summer_design.csv: design, layout, or protocol sheet, not plot or survey records.
+# Summer_seedlot.csv: not read. columns: unit_code;lot_code;Description. Observation records are missing from d until this file is standardized.
+# Winter_design.csv: design, layout, or protocol sheet, not plot or survey records.
+# Winter_seedlot.csv: not read. columns: unit_code;lot_code;Description. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 
@@ -86,16 +91,19 @@ Weed pressure is a main biotic constraint in tropical agriculture. Cover crop mi
 	sum_known <- function(z) if (all(is.na(z))) NA_real_ else sum(z, na.rm=TRUE)
 
 	build <- function(season, treat_bn, obs_bn, itk_bn) {
-		tr <- read.csv(ff[basename(ff) == treat_bn], sep=";", check.names=FALSE)
-		ob <- read.csv(ff[basename(ff) == obs_bn], sep=";", check.names=FALSE)
-		itk <- carobiner::read.excel(ff[basename(ff) == itk_bn])
-		n_rate <- as.numeric(itk$Value[itk$Variable == "Fertilizer_N_amount_kg_ha" & itk$unit_code == "Trial"][1])
-		sow <- as.character(itk$date[itk$Variable == "Seed_sowing_method" & itk$unit_code == "Trial"][1])
-		har <- as.character(itk$date[itk$Variable == "Harvest_method" & itk$unit_code == "Trial"][1])
+		f1 <- ff[basename(ff) == treat_bn]
+		r1 <- read.csv(f1, sep=";", check.names=FALSE)
+		f2 <- ff[basename(ff) == obs_bn]
+		r2 <- read.csv(f2, sep=";", check.names=FALSE)
+		f3 <- ff[basename(ff) == itk_bn]
+		r3 <- carobiner::read.excel(f3)
+		n_rate <- as.numeric(r3$Value[r3$Variable == "Fertilizer_N_amount_kg_ha" & r3$unit_code == "Trial"][1])
+		sow <- as.character(r3$date[r3$Variable == "Seed_sowing_method" & r3$unit_code == "Trial"][1])
+		har <- as.character(r3$date[r3$Variable == "Harvest_method" & r3$unit_code == "Trial"][1])
 
 		# Fresh mass is on species units (GUIAB, PHSAU, CNAEN, PESGL) and on _weed units. There is no _Cover_crop unit.
-		mass <- ob[ob$Variable == "Aboveground_fresh_mass_kg_m2", ]
-		dm <- ob[ob$Variable == "Aboveground_sample_dry_matter_content_%", ]
+		mass <- r2[r2$Variable == "Aboveground_fresh_mass_kg_m2", ]
+		dm <- r2[r2$Variable == "Aboveground_sample_dry_matter_content_%", ]
 		u <- data.frame(
 			unit = mass$UNIT_CODE,
 			plot = plot_of(mass$UNIT_CODE),
@@ -117,8 +125,8 @@ Weed pressure is a main biotic constraint in tropical agriculture. Cover crop mi
 		d <- merge(d, cover, by.x="plot_id", by.y="plot", all.x=TRUE)
 		d <- merge(d, weed, by.x="plot_id", by.y="plot", all.x=TRUE)
 
-		mix <- tr[tr$factor == "cc_mixture", c("unit_code", "factor_level")]
-		nsp <- tr[tr$factor == "nb_cc_species", c("unit_code", "factor_level")]
+		mix <- r1[r1$factor == "cc_mixture", c("unit_code", "factor_level")]
+		nsp <- r1[r1$factor == "nb_cc_species", c("unit_code", "factor_level")]
 		names(mix) <- c("plot_id", "mixture")
 		names(nsp) <- c("plot_id", "nsp")
 		d <- merge(d, mix, by="plot_id", all.x=TRUE)
@@ -135,7 +143,7 @@ Weed pressure is a main biotic constraint in tropical agriculture. Cover crop mi
 		d$harvest_date <- har
 		d$block_id <- sub("_.*", "", d$plot_id)
 
-		ht <- ob[ob$Variable %in% c("Plant_height_cm", "Plant_coverage_%"), ]
+		ht <- r2[r2$Variable %in% c("Plant_height_cm", "Plant_coverage_%"), ]
 		long <- data.frame(
 			trial_id = season,
 			plot_id = plot_of(ht$UNIT_CODE),
@@ -162,18 +170,19 @@ Weed pressure is a main biotic constraint in tropical agriculture. Cover crop mi
 	d$land_prep_method <- "rotovating"
 	# itk lists rototiller and rotovator. Both are rotary tillage.
 
-	met <- read.csv(ff[basename(ff) == "Meteo.csv"], sep=";", check.names=FALSE)
-	pos <- gsub("[()]", "", met$Position)
+	f4 <- ff[basename(ff) == "Meteo.csv"]
+	r4 <- read.csv(f4, sep=";", check.names=FALSE)
+	pos <- gsub("[()]", "", r4$Position)
 	sp <- strsplit(pos, ",")
 	wth <- data.frame(
 		station_name = "Saint-Pierre",
-		date = as.character(as.Date(met$Date, "%d/%m/%Y")),
-		prec = as.numeric(met$PPT),
-		srad = as.numeric(met$RAD),
-		tmin = as.numeric(met$Tmin),
-		temp = as.numeric(met$Tmean),
-		tmax = as.numeric(met$Tmax),
-		ETP = as.numeric(met$ETP),
+		date = as.character(as.Date(r4$Date, "%d/%m/%Y")),
+		prec = as.numeric(r4$PPT),
+		srad = as.numeric(r4$RAD),
+		tmin = as.numeric(r4$Tmin),
+		temp = as.numeric(r4$Tmean),
+		tmax = as.numeric(r4$Tmax),
+		ETP = as.numeric(r4$ETP),
 		longitude = as.numeric(vapply(sp, `[`, character(1), 1)),
 		latitude = as.numeric(vapply(sp, `[`, character(1), 2)),
 		elevation = as.numeric(vapply(sp, `[`, character(1), 3))

@@ -16,6 +16,24 @@
 ## NOT PROCESSED
 # Percent saturation of Ca, Mg, K, Na, Al, and H.
 # Hydrogen in ppm, map images, and the METADATA dictionary sheet.
+# Azufre_YECAPIXTLA.png: image, not a data table.
+# Boro_YECAPIXTLA.png: image, not a data table.
+# Calcio_YECAPIXTLA.png: image, not a data table.
+# Cap de Int Cat_YECAPIXTLA.png: image, not a data table.
+# Cobre_YECAPIXTLA.png: image, not a data table.
+# Cond Hidraulica_YECAPIXTLA.png: image, not a data table.
+# Fosforo Bray Olsen_YECAPIXTLA.png: image, not a data table.
+# Hierro_YECAPIXTLA.png: image, not a data table.
+# Magnesio_YECAPIXTLA.png: image, not a data table.
+# Manganeso_YECAPIXTLA.png: image, not a data table.
+# Materia organica_YECAPIXTLA.png: image, not a data table.
+# Nitratos_YECAPIXTLA.png: image, not a data table.
+# pH 12 agua_YECAPIXTLA.png: image, not a data table.
+# Potasio_YECAPIXTLA.png: image, not a data table.
+# Punto de saturacion_YECAPIXTLA.png: image, not a data table.
+# Salinidad CE Ext_YECAPIXTLA.png: image, not a data table.
+# Sodio Porc Sat_YECAPIXTLA.png: image, not a data table.
+# Zinc_YECAPIXTLA.png: image, not a data table.
 
 carob_script <- function(path) {
 

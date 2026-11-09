@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # Soil sheet (STICS-style parameters). Residue and tillage columns. Standard-deviation columns. Stem and leaf dry-matter components. Crop N concentrations.
 # Global radiation, wind, and vapour pressure (units not confirmed).
+# readme.txt: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # grain_biomass_: mafruit time series, kg/ha.
@@ -46,30 +47,30 @@ The dataset contains experimental data on cereal-legume intercropping from four 
 	)
 
 	f <- ff[basename(ff) == "Database_DeFreitas_et_al_2026.xlsx"]
-	eu <- carobiner::read.excel(f, sheet = "Experimental_unit")
-	loc <- carobiner::read.excel(f, sheet = "Site_location")
-	cm <- carobiner::read.excel(f, sheet = "Crop management")
-	meas <- carobiner::read.excel(f, sheet = "Crop_and_soil_measurements")
-	w <- carobiner::read.excel(f, sheet = "Weather")
+	r1 <- carobiner::read.excel(f, sheet = "Experimental_unit")
+	r2 <- carobiner::read.excel(f, sheet = "Site_location")
+	r3 <- carobiner::read.excel(f, sheet = "Crop management")
+	r4 <- carobiner::read.excel(f, sheet = "Crop_and_soil_measurements")
+	r5 <- carobiner::read.excel(f, sheet = "Weather")
 
-	eu$crop <- sub("_.*", "", eu$crop_cultivar)
-	eu$variety <- sub("^[^_]+_", "", eu$crop_cultivar)
-	eu$plant <- ifelse(eu$System == "Intercropping" & eu$crop == "cowpea", "plant_2", "plant_1")
-	eu$year <- as.integer(sub(".*_", "", eu$weather))
-	eu$trial_id <- paste(eu$site, eu$year, sep = "_")
-	eu$plot_id <- paste(eu$Experimental_unit, eu$crop, sep = "_")
+	r1$crop <- sub("_.*", "", r1$crop_cultivar)
+	r1$variety <- sub("^[^_]+_", "", r1$crop_cultivar)
+	r1$plant <- ifelse(r1$System == "Intercropping" & r1$crop == "cowpea", "plant_2", "plant_1")
+	r1$year <- as.integer(sub(".*_", "", r1$weather))
+	r1$trial_id <- paste(r1$site, r1$year, sep = "_")
+	r1$plot_id <- paste(r1$Experimental_unit, r1$crop, sep = "_")
 
-	partners <- split(eu$crop, eu$Experimental_unit)
-	eu$intercrops <- mapply(function(id, crop) {
+	partners <- split(r1$crop, r1$Experimental_unit)
+	r1$intercrops <- mapply(function(id, crop) {
 		x <- unique(partners[[as.character(id)]])
 		x <- x[x != crop]
 		if (length(x) == 0) "none" else paste(x, collapse = ";")
-	}, eu$Experimental_unit, eu$crop, USE.NAMES = FALSE)
-	eu$intercropped <- eu$System == "Intercropping"
+	}, r1$Experimental_unit, r1$crop, USE.NAMES = FALSE)
+	r1$intercropped <- r1$System == "Intercropping"
 
-	n_col <- grep("^absolute_value", names(cm), value = TRUE)[1]
-	cm$Nrate <- as.numeric(cm[[n_col]])
-	n_by <- aggregate(Nrate ~ crop_management, cm, function(x) {
+	n_col <- grep("^absolute_value", names(r3), value = TRUE)[1]
+	r3$Nrate <- as.numeric(r3[[n_col]])
+	n_by <- aggregate(Nrate ~ crop_management, r3, function(x) {
 		if (all(is.na(x))) NA else sum(x, na.rm = TRUE)
 	})
 	one_num <- function(x) {
@@ -77,101 +78,101 @@ The dataset contains experimental data on cereal-legume intercropping from four 
 		x <- unique(x[!is.na(x)])
 		if (length(x) == 1) x else NA
 	}
-	den <- aggregate(densitesem ~ crop_management, cm, one_num)
+	den <- aggregate(densitesem ~ crop_management, r3, one_num)
 	names(den)[2] <- "plant_density"
 	den$plant_density <- den$plant_density * 10000
-	spc <- aggregate(interrang ~ crop_management, cm, one_num)
+	spc <- aggregate(interrang ~ crop_management, r3, one_num)
 	names(spc)[2] <- "row_spacing"
 	spc$row_spacing <- spc$row_spacing * 100
-	plt <- aggregate(iplt0 ~ crop_management, cm, one_num)
+	plt <- aggregate(iplt0 ~ crop_management, r3, one_num)
 	# Sheet comment: 1 AN, 2 UAN, 3 urea, 4 anhydrous ammonia, 5 ammonium sulfate, 6 ammonium phosphate, 7 calcium nitrate, 8 fixed efficiency.
 	eng_map <- c("1" = "AN", "2" = "UAN", "3" = "urea", "4" = "anhydrous ammonia",
 		"5" = "ammonium sulfate", "6" = "ammonium phosphate", "7" = "calcium nitrate", "8" = "fixed efficiency")
-	cm$ftype <- unname(eng_map[as.character(cm$engrais)])
-	ft <- aggregate(ftype ~ crop_management, cm, function(x) {
+	r3$ftype <- unname(eng_map[as.character(r3$engrais)])
+	ft <- aggregate(ftype ~ crop_management, r3, function(x) {
 		x <- unique(x[!is.na(x) & x != ""])
 		if (length(x) == 0) NA else paste(x, collapse = ";")
 	})
 	names(ft)[2] <- "fertilizer_type"
-	irr <- aggregate(amount ~ crop_management, cm, function(x) any(!is.na(x) & as.numeric(x) > 0))
+	irr <- aggregate(amount ~ crop_management, r3, function(x) any(!is.na(x) & as.numeric(x) > 0))
 	names(irr)[2] <- "irrigated"
 
-	eu <- merge(eu, n_by, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, den, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, spc, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, plt, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, ft, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, irr, by = "crop_management", all.x = TRUE)
-	eu <- merge(eu, loc, by = "site", all.x = TRUE)
+	r1 <- merge(r1, n_by, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, den, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, spc, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, plt, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, ft, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, irr, by = "crop_management", all.x = TRUE)
+	r1 <- merge(r1, r2, by = "site", all.x = TRUE)
 
-	meas$mafruit <- as.numeric(meas$mafruit)
-	meas$masec_n <- as.numeric(meas$masec_n)
-	meas$Date <- as.Date(meas$Date)
-	eu$yield <- NA
-	eu$dmy_total <- NA
-	eu$keep <- FALSE
-	for (i in seq_len(nrow(eu))) {
-		m <- meas[meas$Experimental_unit == eu$Experimental_unit[i] & meas$Plant == eu$plant[i], ]
+	r4$mafruit <- as.numeric(r4$mafruit)
+	r4$masec_n <- as.numeric(r4$masec_n)
+	r4$Date <- as.Date(r4$Date)
+	r1$yield <- NA
+	r1$dmy_total <- NA
+	r1$keep <- FALSE
+	for (i in seq_len(nrow(r1))) {
+		m <- r4[r4$Experimental_unit == r1$Experimental_unit[i] & r4$Plant == r1$plant[i], ]
 		if (nrow(m) == 0) next
-		eu$keep[i] <- TRUE
+		r1$keep[i] <- TRUE
 		ok <- which(!is.na(m$mafruit))
 		if (length(ok) == 0) next
 		best <- ok[m$mafruit[ok] == max(m$mafruit[ok])]
 		best <- best[which.max(m$Date[best])]
-		eu$yield[i] <- m$mafruit[best] * 1000
-		eu$dmy_total[i] <- m$masec_n[best] * 1000
+		r1$yield[i] <- m$mafruit[best] * 1000
+		r1$dmy_total[i] <- m$masec_n[best] * 1000
 	}
-	eu <- eu[eu$keep, ]
+	r1 <- r1[r1$keep, ]
 
-	cty <- ifelse(grepl("^Burkina", eu$site), "Burkina Faso",
-		ifelse(grepl("^Mali", eu$site), "Mali",
-		ifelse(grepl("^Senegal", eu$site), "Senegal", NA)))
+	cty <- ifelse(grepl("^Burkina", r1$site), "Burkina Faso",
+		ifelse(grepl("^Mali", r1$site), "Mali",
+		ifelse(grepl("^Senegal", r1$site), "Senegal", NA)))
 
 	d <- data.frame(
-		trial_id = eu$trial_id,
-		plot_id = eu$plot_id,
-		crop = eu$crop,
-		variety = eu$variety,
-		treatment = eu$variety,
+		trial_id = r1$trial_id,
+		plot_id = r1$plot_id,
+		crop = r1$crop,
+		variety = r1$variety,
+		treatment = r1$variety,
 		country = cty,
-		location = sub("^[^_]+_", "", eu$site),
-		latitude = eu$latitude,
-		longitude = eu$longitude,
+		location = sub("^[^_]+_", "", r1$site),
+		latitude = r1$latitude,
+		longitude = r1$longitude,
 		geo_from_source = TRUE,
-		station_id = eu$site,
-		planting_date = as.character(as.Date(paste(eu$year, eu$iplt0), format = "%Y %j")),
-		plant_density = eu$plant_density,
-		row_spacing = eu$row_spacing,
-		yield = eu$yield,
-		yield_part = ifelse(eu$crop == "cowpea", "seed", "grain"),
-		dmy_total = eu$dmy_total,
-		N_fertilizer = eu$Nrate,
-		fertilizer_type = eu$fertilizer_type,
-		intercrops = eu$intercrops,
-		intercropped = eu$intercropped,
-		irrigated = eu$irrigated,
+		station_id = r1$site,
+		planting_date = as.character(as.Date(paste(r1$year, r1$iplt0), format = "%Y %j")),
+		plant_density = r1$plant_density,
+		row_spacing = r1$row_spacing,
+		yield = r1$yield,
+		yield_part = ifelse(r1$crop == "cowpea", "seed", "grain"),
+		dmy_total = r1$dmy_total,
+		N_fertilizer = r1$Nrate,
+		fertilizer_type = r1$fertilizer_type,
+		intercrops = r1$intercrops,
+		intercropped = r1$intercropped,
+		irrigated = r1$irrigated,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
 
-	key <- eu[, c("Experimental_unit", "plant", "plot_id")]
-	meas <- merge(meas, key, by.x = c("Experimental_unit", "Plant"), by.y = c("Experimental_unit", "plant"))
+	key <- r1[, c("Experimental_unit", "plant", "plot_id")]
+	r4 <- merge(r4, key, by.x = c("Experimental_unit", "Plant"), by.y = c("Experimental_unit", "plant"))
 	long <- data.frame(
-		plot_id = meas$plot_id,
-		date = as.character(meas$Date),
-		plant_height = as.numeric(meas$hauteur) * 100,
-		LAI = as.numeric(meas$lai_n),
-		grain_biomass_ = meas$mafruit * 1000,
-		aboveground_biomass_ = meas$masec_n * 1000
+		plot_id = r4$plot_id,
+		date = as.character(r4$Date),
+		plant_height = as.numeric(r4$hauteur) * 100,
+		LAI = as.numeric(r4$lai_n),
+		grain_biomass_ = r4$mafruit * 1000,
+		aboveground_biomass_ = r4$masec_n * 1000
 	)
 	long <- long[long$plot_id %in% d$plot_id & !is.na(long$date), ]
 
 	wth <- data.frame(
-		station_id = w$site,
-		date = as.character(as.Date(paste(w$year, w$month, w$day, sep = "-"))),
-		tmin = as.numeric(w$minimum_temperature),
-		tmax = as.numeric(w$maximum_temperature),
-		prec = as.numeric(w$rainfall)
+		station_id = r5$site,
+		date = as.character(as.Date(paste(r5$year, r5$month, r5$day, sep = "-"))),
+		tmin = as.numeric(r5$minimum_temperature),
+		tmax = as.numeric(r5$maximum_temperature),
+		prec = as.numeric(r5$rainfall)
 	)
 	wth <- wth[wth$station_id %in% d$station_id & !is.na(wth$date), ]
 

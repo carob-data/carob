@@ -38,6 +38,10 @@
 # pest_species_: labelled insect/pest causing damage
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Livelihood Systems in Bangladesh --for each year of study and the panel households created for all the years of study. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Livelihood Systems in Bangladesh (2008)
@@ -118,17 +122,17 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		as.data.frame(out, check.names=FALSE)
 	}
 
-	fdoc <- ff[basename(ff) == "Documentation of 2008_Bangladesh.xls"]
+	f1 <- ff[basename(ff) == "Documentation of 2008_Bangladesh.xls"]
 	# value labels from the codebook: variable name (filled down), code, label
 	codes <- function(sheet, var) {
-		x <- carobiner::read.excel(fdoc, sheet=sheet, col_names=FALSE)
-		nm <- x[[1]]
+		r1 <- carobiner::read.excel(f1, sheet=sheet, col_names=FALSE)
+		nm <- r1[[1]]
 		nm <- nm[!is.na(nm)][cumsum(!is.na(nm))]
-		k <- nm %in% var & !is.na(x[[4]])
-		data.frame(code=as.numeric(x[[2]][k]), label=trimws(x[[4]][k]))
+		k <- nm %in% var & !is.na(r1[[4]])
+		data.frame(code=as.numeric(r1[[2]][k]), label=trimws(r1[[4]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(x, cds$code)]
+		cds$label[match(r1, cds$code)]
 	}
 
 	r <- read_biff2(ff[basename(ff) == "Cost&Return08.xls"])
@@ -193,7 +197,7 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 	d$pest_species_ <- ifelse(is.na(p2), d$pest_species_, ifelse(is.na(d$pest_species_), p2, paste(d$pest_species_, p2, sep="; ")))
 
 	ftype <- cbind(ifelse(is.na(r$urq), NA, "urea"), ifelse(is.na(r$phq), NA, "TSP"), ifelse(is.na(r$mopq), NA, "KCl"))
-	d$fertilizer_type <- apply(ftype, 1, function(x) paste(x[!is.na(x)], collapse="; "))
+	d$fertilizer_type <- apply(ftype, 1, function(x) paste(r1[!is.na(r1)], collapse="; "))
 	d$fertilizer_type[d$fertilizer_type == ""] <- NA
 
 	d$irrigated <- d$irrigation_source != "No irrigation"

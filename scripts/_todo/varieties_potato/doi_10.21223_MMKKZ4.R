@@ -19,6 +19,7 @@
 
 ## NOT PROCESSED
 # Plano_La Soledad.png and Plano_San Salvador.png: field sketches.
+# 03_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -48,14 +49,16 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		carob_effort = 0.35
 	)
 
-	y <- carobiner::read.excel(ff[basename(ff) == "01_yield.xlsx"])
-	s <- carobiner::read.excel(ff[basename(ff) == "02_spad.xlsx"])
+	f1 <- ff[basename(ff) == "01_yield.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	f2 <- ff[basename(ff) == "02_spad.xlsx"]
+	r2 <- carobiner::read.excel(f2)
 
-	y$ID_QGIS <- as.integer(y$ID_QGIS)
-	s$ID_QGIS <- as.integer(s$ID_QGIS)
-	ids <- sort(unique(c(y$ID_QGIS, s$ID_QGIS)))
-	loc_y <- y[!duplicated(y$ID_QGIS), c("ID_QGIS", "Trial")]
-	loc_s <- s[!duplicated(s$ID_QGIS), c("ID_QGIS", "Trial")]
+	r1$ID_QGIS <- as.integer(r1$ID_QGIS)
+	r2$ID_QGIS <- as.integer(r2$ID_QGIS)
+	ids <- sort(unique(c(r1$ID_QGIS, r2$ID_QGIS)))
+	loc_y <- r1[!duplicated(r1$ID_QGIS), c("ID_QGIS", "Trial")]
+	loc_s <- r2[!duplicated(r2$ID_QGIS), c("ID_QGIS", "Trial")]
 	loc <- rbind(loc_y, loc_s)
 	loc <- loc[!duplicated(loc$ID_QGIS), ]
 	names(loc)[2] <- "location"
@@ -74,25 +77,25 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		is_survey = FALSE
 	)
 
-	spad <- trimws(as.character(s$SPAD))
+	spad <- trimws(as.character(r2$SPAD))
 	spad[grepl("^NR$", spad, ignore.case=TRUE)] <- NA_character_
 	spaced <- !is.na(spad) & grepl(" ", spad, fixed=TRUE)
 	collapsed <- gsub(" ", "", spad, fixed=TRUE)
 	keep <- spaced & grepl("^[0-9]+(\\.[0-9]+)?$", collapsed)
 	spad[keep] <- collapsed[keep]
 	long_s <- data.frame(
-		record_id = s$ID_QGIS,
-		DAP = as.integer(s$DAP),
+		record_id = r2$ID_QGIS,
+		DAP = as.integer(r2$DAP),
 		SPAD = as.numeric(spad),
 		row_yield_kg_ = NA_real_,
 		plants_per_row_ = NA_real_
 	)
 	long_y <- data.frame(
-		record_id = y$ID_QGIS,
-		DAP = as.integer(y$DAP),
+		record_id = r1$ID_QGIS,
+		DAP = as.integer(r1$DAP),
 		SPAD = NA_real_,
-		row_yield_kg_ = as.numeric(y[["Yield (Kg/Row)"]]),
-		plants_per_row_ = as.numeric(y[["Number plants"]])
+		row_yield_kg_ = as.numeric(r1[["Yield (Kg/Row)"]]),
+		plants_per_row_ = as.numeric(r1[["Number plants"]])
 	)
 	dlong <- rbind(long_s, long_y)
 	rownames(dlong) <- NULL

@@ -80,8 +80,8 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		gsub("&amp;", "&", hit, fixed=TRUE)
 	}
 	read_block <- function(f, sheet) {
-		top <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE)
-		first <- trimws(as.character(top[[1]]))
+		r1 <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE)
+		first <- trimws(as.character(r1[[1]]))
 		i <- which(first == "Year")[1]
 		if (length(i) == 0 || is.na(i)) i <- 5
 		sk <- i - 1
@@ -173,8 +173,8 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		ph <- read_block(f, ps[1])
 		ft <- NULL
 		if (length(fs)) ft <- read_block(f, fs[1])
-		si <- carobiner::read.excel(f, sheet=sh[grepl("Site information", sh)][1], col_names=FALSE)
-		cells <- trimws(as.character(unlist(si[1, ])))
+		r2 <- carobiner::read.excel(f, sheet=sh[grepl("Site information", sh)][1], col_names=FALSE)
+		cells <- trimws(as.character(unlist(r2[1, ])))
 		cells[is.na(cells)] <- ""
 		raw_country <- header_value(cells, "Country:")
 		country <- raw_country
@@ -256,7 +256,25 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		)
 	}
 
-	parts <- lapply(ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)], one)
+	parts <- lapply(ff[basename(ff) %in% c(
+		"Aman rice 2014-LT-Dogachi-Purnea .xlsx",
+		"Aman rice 2014-LT-Katheli-Purnea.xlsx",
+		"Aman rice 2015-LT-Dogachi-Purnea.xlsx",
+		"Aman rice 2015-LT-Katheli-Purnea.xlsx",
+		"Aman rice 2015-LT-Puranigarel-Purnea.xlsx",
+		"Aman rice 2015-LT-Tikapatti-Purnea.xlsx",
+		"Aman rice 2015-LT-Udaynagar-Purnea.xlsx",
+		"Aman rice 2016-LT-Dogachi-Purnea.xlsx",
+		"Aman rice 2016-LT-Tikapatti-Purnea.xlsx",
+		"Aman rice 2016-LT-Udaynagar-Purnea.xlsx",
+		"Aman rice 2016 -LT-Katheli-Purnea.xlsx",
+		"Aman rice 2016 -LT-Puranigarel-Purnea.xlsx",
+		"Aman rice 2017-LT-Dogachi-Purnea.xlsx",
+		"Aman rice 2017-LT-Katheli-Purnea.xlsx",
+		"Aman rice 2017-LT-Puranigarel-Purnea.xlsx",
+		"Aman rice 2017-LT-Tikapatti-Purnea.xlsx",
+		"Aman rice 2017-Udaynagar-Purnea.xlsx"
+	)], one)
 	parts <- parts[!vapply(parts, is.null, logical(1))]
 	d <- do.call(rbind, parts)
 	d <- d[!is.na(d$treatment) & nzchar(d$treatment) & !is.na(d$crop), ]

@@ -50,17 +50,17 @@ Summary results and individual trial results from the International Intermediate
 		y <- gsub("°", "", y)
 		y <- gsub("º", "", y)
 		y <- gsub("'", "", y)
-		m <- gsub("'", "", as.character(minute))
-		x <- as.numeric(y) + as.numeric(m) / 60
+		r1 <- gsub("'", "", as.character(minute))
+		x <- as.numeric(y) + as.numeric(r1) / 60
 		h <- toupper(trimws(as.character(hemi)))
 		x[h %in% c("S", "W", "O")] <- -x[h %in% c("S", "W", "O")]
 		x
 	}
 
-	floc <- ff[grepl("Locations", basename(ff))]
-	m <- carobiner::read.excel(floc, col_names=FALSE)
-	hdr <- which(apply(m, 1, function(x) any(x == "Country")))[1]
-	labs <- as.character(unlist(m[hdr, ]))
+	f1 <- ff[basename(ff) == "06CHTHIWY-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE)
+	hdr <- which(apply(r1, 1, function(x) any(x == "Country")))[1]
+	labs <- as.character(unlist(r1[hdr, ]))
 	icountry <- which(labs == "Country")[1]
 	iloc <- which(labs == "Location")[1]
 	iset <- which(labs == "Set no.")[1]
@@ -70,9 +70,9 @@ Summary results and individual trial results from the International Intermediate
 	dates <- which(labs == "Date")
 	iplant <- dates[1]
 	iharv <- dates[2]
-	setno <- trimws(as.character(m[[iset]]))
-	ok <- seq_len(nrow(m)) > hdr & !is.na(setno) & setno != "" & setno != "Set no."
-	mm <- m[ok, ]
+	setno <- trimws(as.character(r1[[iset]]))
+	ok <- seq_len(nrow(r1)) > hdr & !is.na(setno) & setno != "" & setno != "Set no."
+	mm <- r1[ok, ]
 	country <- as.character(mm[[icountry]])
 	country[country == "México"] <- "Mexico"
 	blank_num <- function(x) {
@@ -91,11 +91,21 @@ Summary results and individual trial results from the International Intermediate
 		harvest_date = as.character(as.Date(blank_num(mm[[iharv]]), origin="1899-12-30"))
 	)
 
-	xls <- ff[grepl("(?i)\\.xls$", basename(ff))]
-	xls <- xls[!grepl("Combined|Grain Yield|Locations", basename(xls))]
-	dash <- grepl("-1\\.xls$", basename(xls))
-	stem <- sub("-1\\.xls$", ".xls", basename(xls))
-	xls <- xls[!(stem %in% stem[dash] & !dash)]
+	f2 <- ff[basename(ff) %in% c(
+		"06CHTHIWY-Combined.xls",
+		"06CHTHIWY-Grain Yield.xls",
+		"06CHTHIWY-Locations.xls",
+		"06CHTHIWY20-1.xls",
+		"06CHTHIWY20.xls",
+		"06CHTHIWY21-1.xls",
+		"06CHTHIWY21.xls",
+		"06CHTHIWY8-1.xls",
+		"06CHTHIWY8.xls"
+	)]
+	f2 <- f2[!grepl("Combined|Grain Yield|Locations", basename(f2))]
+	dash <- grepl("-1\\.xls$", basename(f2))
+	stem <- sub("-1\\.xls$", ".xls", basename(f2))
+	f2 <- f2[!(stem %in% stem[dash] & !dash)]
 
 	one <- function(f) {
 		r <- carobiner::read.excel(f)
@@ -123,7 +133,7 @@ Summary results and individual trial results from the International Intermediate
 		)
 	}
 
-	d <- do.call(rbind, lapply(xls, one))
+	d <- do.call(rbind, lapply(f2, one))
 	d <- merge(d, loc, by="site", all.x=TRUE)
 	d$trial_id <- d$site
 	d$crop <- "maize"

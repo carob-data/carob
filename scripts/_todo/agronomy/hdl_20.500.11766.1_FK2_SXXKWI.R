@@ -18,6 +18,9 @@
 
 ## NOT PROCESSED
 # Head weight and head length are per-head measurements, not a per-hectare yield.
+# DataDictionary_ElementDescription.csv: documentation or a codebook, not an observation table.
+# DataDictionary_Introduction.csv: documentation or a codebook, not an observation table.
+# DataDictionary_UniqueIdentifier.csv: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -44,54 +47,54 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		carob_effort = 0.45
 	)
 
-	fs <- ff[basename(ff) == "Sorghum_Data.csv"]
-	fv <- ff[basename(ff) == "Vetch_Data.csv"]
-	ft <- ff[basename(ff) == "Treatment.csv"]
-	s <- read.csv(fs, sep=";", check.names=FALSE)
-	v <- read.csv(fv, sep=";", check.names=FALSE)
-	tr <- read.csv(ft, sep=";", check.names=FALSE)
-	names(s) <- trimws(names(s))
-	names(v) <- trimws(names(v))
-	names(tr) <- trimws(names(tr))
-	lab <- tr$Treatment_Detail
-	names(lab) <- tr$Treatment
+	f1 <- ff[basename(ff) == "Sorghum_Data.csv"]
+	f2 <- ff[basename(ff) == "Vetch_Data.csv"]
+	f3 <- ff[basename(ff) == "Treatment.csv"]
+	r1 <- read.csv(f1, sep=";", check.names=FALSE)
+	r2 <- read.csv(f2, sep=";", check.names=FALSE)
+	r3 <- read.csv(f3, sep=";", check.names=FALSE)
+	names(r1) <- trimws(names(r1))
+	names(r2) <- trimws(names(r2))
+	names(r3) <- trimws(names(r3))
+	lab <- r3$Treatment_Detail
+	names(lab) <- r3$Treatment
 	space <- c("2"=75, "3"=75, "4"=75, "5"=150, "6"=150, "7"=150)
 
 	d1 <- data.frame(
-		trial_id = paste0("year", s$Year),
+		trial_id = paste0("year", r1$Year),
 		country = "Ethiopia",
-		plot_id = paste(s$Year, s$Treatment, s$Replication, sep="_"),
-		rep = s$Replication,
+		plot_id = paste(r1$Year, r1$Treatment, r1$Replication, sep="_"),
+		rep = r1$Replication,
 		crop = "sorghum",
-		treatment = unname(lab[as.character(s$Treatment)]),
-		row_spacing = unname(space[as.character(s$Treatment)]),
-		intercropped = s$Treatment != 1,
-		intercrops = ifelse(s$Treatment == 1, NA_character_, "vetch"),
-		yield = as.numeric(s$Grain_yield),
+		treatment = unname(lab[as.character(r1$Treatment)]),
+		row_spacing = unname(space[as.character(r1$Treatment)]),
+		intercropped = r1$Treatment != 1,
+		intercrops = ifelse(r1$Treatment == 1, NA_character_, "vetch"),
+		yield = as.numeric(r1$Grain_yield),
 		yield_moisture = NA_real_,
 		yield_part = "grain",
-		stover_yield_kg_ha_ = as.numeric(s$Stover_yield) * 1000,
-		plant_height = as.numeric(s$Plant_height),
-		seed_weight = as.numeric(s[["1000sw"]]),
+		stover_yield_kg_ha_ = as.numeric(r1$Stover_yield) * 1000,
+		plant_height = as.numeric(r1$Plant_height),
+		seed_weight = as.numeric(r1[["1000sw"]]),
 		geo_from_source = FALSE,
 		is_survey = FALSE
 	)
 
 	d2 <- data.frame(
-		trial_id = paste0("year", v$Year),
+		trial_id = paste0("year", r2$Year),
 		country = "Ethiopia",
-		plot_id = paste(v$Year, v$Treatment, v$Replication, sep="_"),
-		rep = v$Replication,
+		plot_id = paste(r2$Year, r2$Treatment, r2$Replication, sep="_"),
+		rep = r2$Replication,
 		crop = "vetch",
-		treatment = unname(lab[as.character(v$Treatment)]),
-		row_spacing = unname(space[as.character(v$Treatment)]),
+		treatment = unname(lab[as.character(r2$Treatment)]),
+		row_spacing = unname(space[as.character(r2$Treatment)]),
 		intercropped = TRUE,
 		intercrops = "sorghum",
-		yield = as.numeric(v$Dry_matter_forage_yield) * 1000,
-		yield_moisture = 100 - as.numeric(v$Dry_matter_percentage),
+		yield = as.numeric(r2$Dry_matter_forage_yield) * 1000,
+		yield_moisture = 100 - as.numeric(r2$Dry_matter_percentage),
 		yield_part = "aboveground biomass",
 		stover_yield_kg_ha_ = NA_real_,
-		plant_height = as.numeric(v$Plant_height),
+		plant_height = as.numeric(r2$Plant_height),
 		seed_weight = NA_real_,
 		geo_from_source = FALSE,
 		is_survey = FALSE

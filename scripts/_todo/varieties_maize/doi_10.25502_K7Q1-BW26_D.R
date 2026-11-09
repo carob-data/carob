@@ -39,7 +39,8 @@ Availability of multiple-stress tolerant maize is critical for improvement in ma
 		
 	)
 
-	r <- read.csv(ff[basename(ff) == "BA15188 ACROSS.csv"])
+	f <- ff[basename(ff) == "BA15188 ACROSS.csv"]
+	r <- read.csv(f)
 
 	d <- data.frame(
 		location = r$LOC,

@@ -20,6 +20,24 @@
 ## NOT PROCESSED
 # Carbonates. Exchangeable cations in meq/100g and the saturation percentages.
 # Hydrogen in ppm. Map images.
+# Azufre_TEMOAC.png: image, not a data table.
+# Boro_TEMOAC.png: image, not a data table.
+# Calcio_TEMOAC.png: image, not a data table.
+# CIC_TEMOAC.png: image, not a data table.
+# Cobre_TEMOAC.png: image, not a data table.
+# Cond Hid_TEMOAC.png: image, not a data table.
+# Fosforo Bray Olsen_TEMOAC.png: image, not a data table.
+# Hierro_TEMOAC.png: image, not a data table.
+# Magnesio_TEMOAC.png: image, not a data table.
+# Manganeso_TEMOAC.png: image, not a data table.
+# Materia organica_TEMOAC.png: image, not a data table.
+# Nitratos_TEMOAC.png: image, not a data table.
+# pH 12 agua_TEMOAC.png: image, not a data table.
+# Potasio_TEMOAC.png: image, not a data table.
+# Punto de saturacion_TEMOAC.png: image, not a data table.
+# Salinidad CE Ext_TEMOAC.png: image, not a data table.
+# Sodio porc Sat_TEMOAC.png: image, not a data table.
+# Zinc_TEMOAC.png: image, not a data table.
 
 
 carob_script <- function(path) {

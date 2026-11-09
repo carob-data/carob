@@ -15,6 +15,7 @@
 # Meteorology Data - Kiboko. Daily temperature and solar radiation, not joined to the plots.
 # Leaf Traits Data - La Molina and Light Curves Data - La Molina. Potted plants in Peru, including a light-response curve, not the Kiboko field trial.
 # Material_list.xls parentage. Jewel is the only row with parents.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

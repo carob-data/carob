@@ -20,6 +20,7 @@
 # 02_Material_list and the fieldbook Material List: the names do not match the four varieties in the data file.
 # 03_Data_dictionary.xlsx, Lists, Notes, Summary by clone, Minerals, data ok: definitions or a layout that is not one row per observation.
 # Numeration and laboratory code.
+# 02_Material_list_Puno_Fresh_Bitter_2007.xlsx: not read. sheet Sheet1: Numeration, Accession name. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

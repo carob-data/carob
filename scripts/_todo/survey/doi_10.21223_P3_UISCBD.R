@@ -17,6 +17,7 @@
 
 ## NOT PROCESSED
 # Respondent names, the rest of the attitude and market questions, and crop area, because the area unit is not in the column name.
+# 02_Data dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -46,7 +47,7 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("^01_Encuesta", basename(ff))]
+	f <- ff[basename(ff) == "01_Encuesta Datos - Estudio de Mercado para variedades resistentes, baculovirus y feromonas.xlsx"]
 	r <- carobiner::read.excel(f)
 	txt <- function(x) {
 		z <- trimws(as.character(x))

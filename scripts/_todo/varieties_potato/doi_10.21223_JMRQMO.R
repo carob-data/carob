@@ -18,6 +18,9 @@
 ## NOT PROCESSED
 # TVIT, TPHEN, and TMORP workbooks.
 # Morphology scores in the fieldbook. Those codes are not mapped to a scale here.
+# TMORP200605_COMAS_Phureja_Collection.xls: not read. sheet Minimal (of 11): Factor, Value. Observation records are missing from d until this file is standardized.
+# TPHEN200605_COMAS_Phureja_Collection_Field.xls: not read. sheet Minimal (of 12): Factor, Value, ID, ID2. Observation records are missing from d until this file is standardized.
+# TVIT200605_COMAS_Phureja_Collection_Field.xls: not read. sheet Minimal (of 11): Factor, Value. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -47,11 +50,11 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("^TMIN", basename(ff))]
-	raw <- as.data.frame(carobiner::read.excel(f, sheet="Minerals", col_names=FALSE))
-	hdr <- trimws(as.character(unlist(raw[6, ])))
+	f <- ff[basename(ff) == "TMIN200605_COMAS_Phureja_Collection_Field.xls"]
+	r <- as.data.frame(carobiner::read.excel(f, sheet="Minerals", col_names=FALSE))
+	hdr <- trimws(as.character(unlist(r[6, ])))
 	hdr[!nzchar(hdr) | is.na(hdr)] <- paste0("blank_", seq_along(hdr))[!nzchar(hdr) | is.na(hdr)]
-	body <- raw[7:nrow(raw), ]
+	body <- r[7:nrow(r), ]
 	names(body) <- make.unique(hdr)
 	txt <- function(x) {
 		z <- trimws(as.character(x))

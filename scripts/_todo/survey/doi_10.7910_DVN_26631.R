@@ -39,6 +39,10 @@
 # production_status_: "on or above average yield" or "below average yield"
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Survey for Assessment of Rural Socio-Economic Conditions in China. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -68,29 +72,29 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 
 	f <- ff[basename(ff) == "CHINA95(060624).xls"]
 	rd <- function(sheet, sfx) {
-		x <- carobiner::read.excel(f, sheet=sheet, skip=5, .name_repair="minimal")
-		x <- x[, names(x) != "" & !is.na(names(x))]
-		names(x) <- sub(paste0(sfx, "$"), "", names(x))
-		x
+		r2 <- carobiner::read.excel(f, sheet=sheet, skip=5, .name_repair="minimal")
+		r2 <- r2[, names(r2) != "" & !is.na(names(r2))]
+		names(r2) <- sub(paste0(sfx, "$"), "", names(r2))
+		r2
 	}
 	# numbers stored as text, with some free text entries
 	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[!grepl("^[0-9]*\\.?[0-9]+$", x)] <- NA
-		as.numeric(x)
+		r2 <- trimws(as.character(r2))
+		r2[!grepl("^[0-9]*\\.?[0-9]+$", r2)] <- NA
+		as.numeric(r2)
 	}
 	join <- function(x, y) {
-		if (nrow(x) == nrow(y) && all(x$HHNO == y$HHNO)) {
-			cbind(x, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
+		if (nrow(r2) == nrow(y) && all(r2$HHNO == y$HHNO)) {
+			cbind(r2, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
 		} else {
 			y <- y[!duplicated(paste(y$VLAGE, y$HHNO)), ]
-			merge(x, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
+			merge(r2, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
 		}
 	}
 	prefix <- function(x, p) {
-		i <- !(names(x) %in% c("HHNO", "VLAGE"))
-		names(x)[i] <- paste0(p, names(x)[i])
-		x
+		i <- !(names(r2) %in% c("HHNO", "VLAGE"))
+		names(r2)[i] <- paste0(p, names(r2)[i])
+		r2
 	}
 
 	mu <- 1/15
@@ -119,37 +123,37 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	## household x season
 	d2 <- lapply(1:3, function(i) {
 		s <- seasons[i, ]
-		x <- join(join(join(prefix(rd(s$agprac, s$sfx), "a_"), prefix(rd(s$labA, s$sfx), "l1_")), prefix(rd(s$labB, s$sfx), "l2_")), prefix(rd(s$prod, s$sfx), "p_"))
-		ha <- num(x$a_AR) * mu
-		code <- num(x$a_CR)
+		r2 <- join(join(join(prefix(rd(s$agprac, s$sfx), "a_"), prefix(rd(s$labA, s$sfx), "l1_")), prefix(rd(s$labB, s$sfx), "l2_")), prefix(rd(s$prod, s$sfx), "p_"))
+		ha <- num(r2$a_AR) * mu
+		code <- num(r2$a_CR)
 		data.frame(
-			hhid = paste(x$VLAGE, x$HHNO, sep="_"),
-			village = num(x$VLAGE),
+			hhid = paste(r2$VLAGE, r2$HHNO, sep="_"),
+			village = num(r2$VLAGE),
 			season_label_ = s$label,
 			harvest_date = s$year,
 			crop_code = code,
 			field_size = ha,
-			planting_method = c("direct seeding", "transplanting")[match(num(x$l1_CE), 1:2)],
-			land_prep_times = as.integer(num(x$l1_NP)),
-			weeding_times = as.integer(num(x$l1_NW)),
-			irrigation_number = as.integer(num(x$l2_NI)),
-			fertilizer_times_ = num(x$l2_NF),
-			pesticide_times_ = num(x$l2_NP),
-			seed_quantity_ = num(x$l1_QS) / ha,
-			fertilizer_product_ = num(x$l2_QF) / ha,
-			N_fertilizer_product_ = num(x$l2_QNF) / ha,
-			P_fertilizer_product_ = num(x$l2_QPF) / ha,
-			K_fertilizer_product_ = num(x$l2_QKF) / ha,
-			seed_cost = num(x$l1_VS) / ha,
-			land_prep_cost = rowSums(cbind(num(x$l1_TRC), num(x$l1_ANC)), na.rm=TRUE) / ha,
-			herbicide_cost = num(x$l1_VH) / ha,
-			irrigation_cost = num(x$l2_VI) / ha,
-			fertilizer_cost = num(x$l2_VF) / ha,
-			pesticide_cost = num(x$l2_VP) / ha,
-			yield = num(x$p_CR) / ha,
-			crop_price = num(x$p_PRIC),
-			production_status_ = c("on or above average yield", "below average yield")[match(num(x$p_PSTUS), 1:2)],
-			loss_code = num(x$p_RLOS),
+			planting_method = c("direct seeding", "transplanting")[match(num(r2$l1_CE), 1:2)],
+			land_prep_times = as.integer(num(r2$l1_NP)),
+			weeding_times = as.integer(num(r2$l1_NW)),
+			irrigation_number = as.integer(num(r2$l2_NI)),
+			fertilizer_times_ = num(r2$l2_NF),
+			pesticide_times_ = num(r2$l2_NP),
+			seed_quantity_ = num(r2$l1_QS) / ha,
+			fertilizer_product_ = num(r2$l2_QF) / ha,
+			N_fertilizer_product_ = num(r2$l2_QNF) / ha,
+			P_fertilizer_product_ = num(r2$l2_QPF) / ha,
+			K_fertilizer_product_ = num(r2$l2_QKF) / ha,
+			seed_cost = num(r2$l1_VS) / ha,
+			land_prep_cost = rowSums(cbind(num(r2$l1_TRC), num(r2$l1_ANC)), na.rm=TRUE) / ha,
+			herbicide_cost = num(r2$l1_VH) / ha,
+			irrigation_cost = num(r2$l2_VI) / ha,
+			fertilizer_cost = num(r2$l2_VF) / ha,
+			pesticide_cost = num(r2$l2_VP) / ha,
+			yield = num(r2$p_CR) / ha,
+			crop_price = num(r2$p_PRIC),
+			production_status_ = c("on or above average yield", "below average yield")[match(num(r2$p_PSTUS), 1:2)],
+			loss_code = num(r2$p_RLOS),
 			currency = "CNY"
 		)
 	})

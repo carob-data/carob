@@ -14,6 +14,9 @@
 ## NOT PROCESSED
 # Data S3 SNP marker set and Data S4 fumarate-associated genes: marker tables, not plot phenotypes.
 # Data S6 is the trait glossary. Repeated canopy and NDVI evaluations stay in the plot table because the glossary gives a DAP range rather than one day.
+# Data S3. Metabolite single nucleotide polymorphism marker set_tpj14892-sup-0009-datas3.xlsx: not read. sheet Sheet1: Trait, Threshold, Marker, Chromosome, Position, Ref, Alt, Score. Observation records are missing from d until this file is standardized.
+# Data S4. Fumarate single nucleotide polymorphism‐associated genes_tpj14892-sup-0010-datas4.xlsx: not read. sheet fumarate_protein_genes.csv: Chromosome, Start position, End position, Protein Id, Gene Id. Observation records are missing from d until this file is standardized.
+# Data S6. Morphological trait definitions_tpj14892-sup-0012-datas6.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # water_regime_: NI or REC.
@@ -71,33 +74,33 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 		make.unique(paste0(x, "_"), sep="")
 	}
 
-	f1 <- ff[grepl("datas1", basename(ff))]
-	f2 <- ff[grepl("datas2", basename(ff))]
-	f5 <- ff[grepl("datas5", basename(ff))]
-	s1 <- carobiner::read.excel(f1)
-	s2 <- carobiner::read.excel(f2)
-	s5 <- carobiner::read.excel(f5)
+	f1 <- ff[basename(ff) == "Data S1. Morphological trait profiles_tpj14892-sup-0007-datas1.xlsx"]
+	f2 <- ff[basename(ff) == "Data S2. Metabolite profiles_tpj14892-sup-0008-datas2.xlsx"]
+	f5 <- ff[basename(ff) == "Data S5. Potato association panel._tpj14892-sup-0011-datas5.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	r2 <- carobiner::read.excel(f2)
+	r3 <- carobiner::read.excel(f5)
 
 	d1 <- data.frame(
-		variety = chr(s1$INSTN),
-		water_regime_ = chr(s1$Treatment),
-		yield = num(s1$TTYA),
-		ttwp_ = num(s1$TTWP)
+		variety = chr(r1$INSTN),
+		water_regime_ = chr(r1$Treatment),
+		yield = num(r1$TTYA),
+		ttwp_ = num(r1$TTWP)
 	)
 	ped <- data.frame(
-		variety = chr(s5[["CIP.code"]]),
-		female_parent = chr(s5[["female.parent"]]),
-		male_parent = chr(s5[["male.parent"]])
+		variety = chr(r3[["CIP.code"]]),
+		female_parent = chr(r3[["female.parent"]]),
+		male_parent = chr(r3[["male.parent"]])
 	)
 	ped <- ped[!is.na(ped$variety) & !duplicated(ped$variety), ]
 	d1 <- merge(d1, ped, by="variety", all.x=TRUE)
 
-	mets <- setdiff(names(s2), c("Genotype", "Treatment"))
+	mets <- setdiff(names(r2), c("Genotype", "Treatment"))
 	d2 <- data.frame(
-		variety = chr(s2$Genotype),
-		water_regime_ = chr(s2$Treatment)
+		variety = chr(r2$Genotype),
+		water_regime_ = chr(r2$Treatment)
 	)
-	for (k in mets) d2[[slug(k)]] <- num(s2[[k]])
+	for (k in mets) d2[[slug(k)]] <- num(r2[[k]])
 
 	d <- carobiner::bindr(d1, d2)
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]

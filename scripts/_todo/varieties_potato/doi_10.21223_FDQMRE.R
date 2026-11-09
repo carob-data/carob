@@ -21,6 +21,8 @@
 # Insects_Fungi.csv and Nematodes.csv.
 # DataDictionary files: the definitions used above.
 # Index and Other_Name.
+# DataDictionary_ElementDescription.csv: documentation or a codebook, not an observation table.
+# DataDictionary_Introduction.csv: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -50,33 +52,35 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 		carob_effort = 0.4
 	)
 
-	id <- read.csv(ff[basename(ff) == "ID_Information.csv"], sep=";", na.strings=c("NA", ""))
-	v <- read.csv(ff[basename(ff) == "Virus.csv"], sep=";", na.strings=c("NA", ""))
+	f1 <- ff[basename(ff) == "ID_Information.csv"]
+	r1 <- read.csv(f1, sep=";", na.strings=c("NA", ""))
+	f2 <- ff[basename(ff) == "Virus.csv"]
+	r2 <- read.csv(f2, sep=";", na.strings=c("NA", ""))
 	key <- function(a, b) paste(trimws(as.character(a)), trimws(as.character(b)))
-	ik <- key(id$ID, id$Variety)
-	vk <- key(v$ID, v$Variety)
+	ik <- key(r1$ID, r1$Variety)
+	vk <- key(r2$ID, r2$Variety)
 	m <- match(vk, ik)
-	variety <- trimws(as.character(v$Variety))
+	variety <- trimws(as.character(r2$Variety))
 
 	d <- data.frame(
 		trial_id = "Cotopaxi_seed_2018",
 		country = "Ecuador",
 		adm1 = "Cotopaxi",
-		adm2 = trimws(as.character(id$Location[m])),
-		location = trimws(as.character(id$Location[m])),
-		elevation = as.numeric(id$Altitude[m]),
+		adm2 = trimws(as.character(r1$Location[m])),
+		location = trimws(as.character(r1$Location[m])),
+		elevation = as.numeric(r1$Altitude[m]),
 		crop = "potato",
 		variety = variety,
 		treatment = variety,
-		record_id = seq_len(nrow(v)),
-		sample_id_ = trimws(as.character(v$ID)),
-		obs_ = as.integer(v$Obs),
-		virus_pvx_ = as.integer(v$Presence_PVX),
-		virus_pvs_ = as.integer(v$Presence_PVS),
-		virus_pvy_ = as.integer(v$Presence_PVY),
-		virus_plrv_ = as.integer(v$Presence_PLRV),
-		virus_aplv_ = as.integer(v$Presence_APLV),
-		virus_apmov_ = as.integer(v$Presence_APMoV),
+		record_id = seq_len(nrow(r2)),
+		sample_id_ = trimws(as.character(r2$ID)),
+		obs_ = as.integer(r2$Obs),
+		virus_pvx_ = as.integer(r2$Presence_PVX),
+		virus_pvs_ = as.integer(r2$Presence_PVS),
+		virus_pvy_ = as.integer(r2$Presence_PVY),
+		virus_plrv_ = as.integer(r2$Presence_PLRV),
+		virus_aplv_ = as.integer(r2$Presence_APLV),
+		virus_apmov_ = as.integer(r2$Presence_APMoV),
 		stress = "disease",
 		on_farm = TRUE,
 		is_survey = TRUE,
