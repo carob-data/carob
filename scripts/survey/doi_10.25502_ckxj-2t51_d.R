@@ -11,6 +11,9 @@
 # homestead_latitude/homestead_longitude are swapped and sign-flipped in the source corrected in the script, with
 # 25 records fall outside Liberia
 # one pepper record has a high yield (~5.9 t/ha) from a small (0.05 ha) plot.
+# Karpie and Kpakamin source coordinates (0.1 degree rounding) fall across the border; set to Foya town
+# homestead_latitude/homestead_longitude are swapped and sign-flipped in the source; corrected in the script
+# Dukorta longitude recorded as 1.3 (truncated); set to -10.3, consistent with the other Foya sites
 
 carob_script <- function(path) {
 
@@ -121,7 +124,21 @@ tropics agroecological zone."
 		longitude = -as.numeric(r1$homestead_latitude),
 		latitude = -as.numeric(r1$homestead_longitude)
 	)
-
+  
+	d1$latitude[d1$location %in% c("Karpie", "Kpakamin")]  <- 8.35 # https://en.wikipedia.org/wiki/Foya
+	d1$longitude[d1$location %in% c("Karpie", "Kpakamin")] <- -10.21 # https://en.wikipedia.org/wiki/Foya
+	
+	## Dukorta: raw longitude "1.3" is a truncated "10.3" (Foya district)
+	d1$longitude[d1$location == "Dukorta"] <- -10.3
+	## one coordinate per location: use each location's most common value
+	## (fixes stray Borkeza/Raymond/Kalama-Ta rows and fills Loma-Ta NAs)
+	ok <- !is.na(d1$latitude) & !is.na(d1$longitude)
+	m  <- tapply(paste(d1$latitude, d1$longitude)[ok], d1$location[ok], \(x) names(which.max(table(x))))
+	i  <- d1$location %in% names(m)
+	xy <- do.call(rbind, strsplit(m[d1$location[i]], " "))
+	d1$latitude[i]  <- as.numeric(xy[, 1])
+	d1$longitude[i] <- as.numeric(xy[, 2])
+	
 ## a_demographic.csv - one row per household
 	d2 <- data.frame(
 		hhid = as.character(r2$farm_id),
@@ -379,7 +396,7 @@ tropics agroecological zone."
 	d$yield_moisture <- NA
 	perennial <- c("cocoa", "coffee", "oil palm", "rubber", "banana", "plantain", "orange", "pineapple", "sugarcane")
 	d$planting_date <- ifelse(d$crop %in% perennial, NA, "2012")
-
+	
 	char_cols <- sapply(d, is.character)
 	d[char_cols] <- lapply(d[char_cols], trimws)
 
