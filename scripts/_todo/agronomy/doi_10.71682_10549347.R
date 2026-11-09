@@ -1,15 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
-# Soybean clean table has no mineral N/P/K columns; omitted (do not assume 0).
+## NOTES
 # Weather and SoilGrids columns in the clean tables are secondary/modelled; omitted.
 # Planting/harvest stored as day-of-year; mapped to 2022/2023 (season 2022-2023).
-# Variety names only in raw survey; merged by uuid.
-# plot_geotraced_area_m2 is field-sized (114–33000 m2), outside plot_area bounds; omitted.
-# Two soybean uuids not in raw survey so GPS/variety missing (write_files: NA lat/lon).
-
-
+# Two soybean uuids not in raw survey so GPS/variety missing (used means for the location).
 
 ## NOT PROCESSED
 # EiA_2022_survey_2025-09-26_v0.rds: same table as the file of this name that is read.
@@ -73,6 +68,7 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 		adm2 = carobiner::fix_name(r1$district, "title"),
 		location = r1$epa,
 		crop = "maize",
+		field_size = r1$plot_geotraced_area_m2,
 		yield = r1$maize_yield_kgha,
 		plant_density = r1$maize_plantpop_plha,
 		seed_rate = r1$seed_kgha,
@@ -137,18 +133,32 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 	  # Reported as fresh-matter yield in Chiduwa et al. (2026).
 	  yield_isfresh = TRUE
 	)
-
 	
 	d <- carobiner::bindr(d1, d2)
 	d <- merge(d, geo, by.x = "record_id", by.y = "X_uuid", all.x = TRUE)
-
+    d$location <- carobiner::fix_name(d$location, "title")
+	## this reveals a lot of location spelling variants that ought to be fixed:
+    g <- aggregate(d[, c("longitude", "latitude")], d[, c("country", "adm2", "location")], mean, na.rm=TRUE)
+#For example, this is all probably the same location name:
+#50 Mozambique  Angonia         Mangan  34.36000 -14.58000
+#51 Mozambique  Angonia        Mangane  34.30905 -14.59381
+#52 Mozambique  Angonia        Mangâne  34.28000 -14.60000
+#53 Mozambique  Angonia        Mangani  34.28609 -14.57522
+#54 Mozambique  Angonia        Mangano  34.36000 -14.58000
+#55 Mozambique  Angonia        Mangany  34.36233 -14.61867
+    i <- which(is.na(d$longitude))
+    j <- match (d$location[i], g$location)
+    d$longitude[i] <- g$longitude[j]
+    d$latitude[i] <- g$latitude[j]
+	d$geo_from_source <- TRUE
+    d$geo_from_source[i] <- FALSE
+	
 	d$trial_id <- d$record_id
+	d$record_id <- NULL
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$crop_cut <- TRUE
-	d$irrigated <- FALSE
-	d$geo_from_source <- TRUE
-	d$record_id <- NULL
+	d$irrigated <- NA
 	d$variety[d$variety == ""] <- NA
 	d$adm1[d$adm1 == ""] <- NA
 
