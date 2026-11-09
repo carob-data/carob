@@ -7,14 +7,11 @@
 #   NPK (3 g per hill, 6 g per hill, recommended rate, or none) and genotype.
 # The manure level (hill or broadcast) is only in "treatment"; the NPK level is in N_fert_level.
 # ICSV 1049, Kapelga and Sariaso 11 are sorghum varieties, so crop is "sorghum".
-# Coordinates are the centre of the research field map given in the dataset description.
 # Plant height converted from m to cm. Harvest index converted from fraction to %.
 # Stover yield is taken as dry matter (dmy_residue). Yields are in kg/ha.
-# striga_infected is TRUE when at least one hill had striga (sheet "Productivity rainy season").
-# 11 plots with no grain yield are removed.
 
 ## ISSUES
-# NPK formula, recommended rate, plant density, manure type and dates are not given.
+# if we knew how many hills there were per ha, we could compute fertilizer dosage, and striga density. 
 
 
 carob_script <- function(path) {
@@ -46,6 +43,8 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 	r <- carobiner::read.excel(f, sheet="Managment options", na=c("", "NA"))
 	r2 <- carobiner::read.excel(f, sheet="Productivity rainy season", na=c("", "NA"))
 	names(r) <- trimws(names(r))
+
+	fert <- trimws(r[["Minerals l"]])
 
 	d <- data.frame(
 		trial_id = "Maradi_2015",
