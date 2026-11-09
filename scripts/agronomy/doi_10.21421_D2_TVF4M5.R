@@ -34,7 +34,7 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 		design = "factorial RCBD with 3 replications",
 		data_type = "experiment",
 		treatment_vars = "seed_treatment;OM_used;fertilizer_used;N_fert_level;variety",
-		response_vars = "yield;dmy_residue;dmy_total;harvest_index;plant_height;emergence_days;heading_days;flowering_days;maturity_days;striga_infected",
+		response_vars = "yield;dmy_residue",
 		notes = NA,
 		carob_date = "2026-11-08",
 		carob_contributor = "Ajith S",
@@ -46,12 +46,6 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 	r <- carobiner::read.excel(f, sheet="Managment options", na=c("", "NA"))
 	r2 <- carobiner::read.excel(f, sheet="Productivity rainy season", na=c("", "NA"))
 	names(r) <- trimws(names(r))
-
-	seed <- trimws(r[["Seed treatment l"]])
-	om <- trimws(r[["Organic amend l"]])
-	fert <- trimws(r[["Minerals l"]])
-	variety <- trimws(r[["Millet_genotype l"]])
-	striga <- r2[["No of hills with striga"]][match(r$PlotNo, r2$PlotNo)]
 
 	d <- data.frame(
 		trial_id = "Maradi_2015",
@@ -69,11 +63,10 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 		irrigated = FALSE,
 		rep = as.integer(r$Block),
 		plot_id = as.character(r$PlotNo),
-		treatment = paste(seed, om, fert, variety, sep="; "),
-		variety = variety,
-		seed_treatment = ifelse(seed == "No Apron", "none", "Apron"),
-		OM_used = om != "No Org Man",
-		fertilizer_used = fert != "No Min fert",
+		variety = trimws(r[["Millet_genotype l"]]),
+		seed_treatment = ifelse(trimws(r[["Seed treatment l"]]) == "No Apron", "none", "Apron"),
+		OM_used = trimws(r[["Organic amend l"]]) != "No Org Man",
+		fertilizer_used = trimws(r[["Minerals l"]]) != "No Min fert",
 		N_fert_level = fert,
 		N_fertilizer = as.numeric(NA),
 		P_fertilizer = as.numeric(NA),
@@ -83,7 +76,7 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 		flowering_days = as.numeric(r$DF_50),
 		maturity_days = as.numeric(r$DM_50),
 		plant_height = as.numeric(r[["Hauteur moyenne plants"]]) * 100,
-		striga_infected = striga > 0,
+		striga_count = r2[["No of hills with striga"]][match(r$PlotNo, r2$PlotNo)],
 		dmy_residue = as.numeric(r$StoHvYld_M_gPlot),
 		dmy_total = as.numeric(r[["Biomass total"]]),
 		yield = as.numeric(r$GYld_E_1to5),
@@ -92,8 +85,6 @@ Management options to improve millet and sorghum productivity, rainy season 2015
 		yield_isfresh = NA,
 		harvest_index = as.numeric(r$HI_C_pct) * 100
 	)
-
-	d <- d[!is.na(d$yield), ]
 
 	carobiner::write_files(path, meta, d)
 }
