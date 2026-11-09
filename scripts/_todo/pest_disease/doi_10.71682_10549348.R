@@ -49,7 +49,7 @@ The database contains data on arthropods caught using Malaise traps in maize and
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "Mexico Arthropod Biodiversity Dataset (2021-2024).xlsx"]
 	r <- carobiner::read.excel(f, sheet="Data")
 	num <- function(x) {
 		x <- trimws(as.character(x))

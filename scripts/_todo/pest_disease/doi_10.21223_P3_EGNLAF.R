@@ -26,6 +26,7 @@
 ## NOT PROCESSED
 # Plot-sample weights (P-First quality, P-Second quality, P-Total). The per-hectare columns are the yield.
 # 2007 and 2008 insecticide concentration is not a rate in kg/ha.
+# 3.1_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -61,14 +62,14 @@ In the years 2005, 2007 and 2008, three trials were carried out in the Cañete v
 		carob_effort = 0.8
 	)
 
-	f05 <- ff[basename(ff) == "subchapter 3.1_2005 crop loss trial.xls"]
-	f07 <- ff[basename(ff) == "subchapter 3.1_2007crop loss trial.xls"]
-	f08 <- ff[basename(ff) == "subchapter 3.1_2008 crop loss trial.xls"]
+	f1 <- ff[basename(ff) == "subchapter 3.1_2005 crop loss trial.xls"]
+	f2 <- ff[basename(ff) == "subchapter 3.1_2007crop loss trial.xls"]
+	f3 <- ff[basename(ff) == "subchapter 3.1_2008 crop loss trial.xls"]
 
 	read_headered <- function(f, sheet) {
-		raw <- carobiner::read.excel(f, sheet=sheet)
-		hdr <- trimws(as.character(unlist(raw[1, ])))
-		dat <- raw[-1, , drop=FALSE]
+		r <- carobiner::read.excel(f, sheet=sheet)
+		hdr <- trimws(as.character(unlist(r[1, ])))
+		dat <- r[-1, , drop=FALSE]
 		blank <- is.na(hdr) | !nzchar(hdr)
 		hdr[blank] <- paste0("blank", seq_along(hdr))[blank]
 		names(dat) <- make.unique(hdr)
@@ -149,9 +150,9 @@ In the years 2005, 2007 and 2008, three trials were carried out in the Cañete v
 	}
 
 	d <- rbind(
-		one_yield(f05, "2005 yield data", 2005),
-		one_yield(f07, "2007 yield data", 2007),
-		one_yield(f08, "2008_YieldData", 2008)
+		one_yield(f1, "2005 yield data", 2005),
+		one_yield(f2, "2007 yield data", 2007),
+		one_yield(f3, "2008_YieldData", 2008)
 	)
 	d$record_id <- seq_len(nrow(d))
 	key <- paste(d$year, tolower(d$variety), d$code, d$rep, sep="|")
@@ -188,9 +189,9 @@ In the years 2005, 2007 and 2008, three trials were carried out in the Cañete v
 	sheets07 <- c("2007Revolucion damage data", "2007Canchan damage data", "2007 Tomasa damage data", "2007_CapiroDamageData")
 	sheets08 <- c("2008_DesireeDamageData", "2008_RevolucionDamageData", "2008_CanchanDamageData", "2008_TambeñaDamageData", "2008_TomasaDamageData", "2008_YungayDamageData")
 	z <- rbind(
-		damage_long(f05, "2005 damage data", 2005),
-		do.call(rbind, lapply(sheets07, function(s) damage_long(f07, s, 2007))),
-		do.call(rbind, lapply(sheets08, function(s) damage_long(f08, s, 2008)))
+		damage_long(f1, "2005 damage data", 2005),
+		do.call(rbind, lapply(sheets07, function(s) damage_long(f2, s, 2007))),
+		do.call(rbind, lapply(sheets08, function(s) damage_long(f3, s, 2008)))
 	)
 	zkey <- paste(z$year, tolower(z$variety), z$code, z$rep, sep="|")
 	x <- data.frame(

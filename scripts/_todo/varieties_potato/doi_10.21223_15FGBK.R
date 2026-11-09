@@ -23,6 +23,9 @@
 # ATW, average tuber weight, unit not stated.
 # Crop_management rows are the dates of the measurements already in the fieldbook. No product or dose is filled in.
 # Charts and Ranks by Clone sheets, and Summary by clone. Summaries of the fieldbook.
+# 01_Fieldbook_PTYL200807_TASHKENT_heat.txt: not read. columns: PLOT, REP, INSTN, NTP, NPE, NPH, NMTCI, NMTCII, NNoMTP, TNTP, TNTPL, NMTP, .... Observation records are missing from d until this file is standardized.
+# 02_Material_list_PTYL200807_TASHKENT_heat.txt: not read. columns: Numeration, Control, Institutional number, Clone or variety name, Code of clone, Family Institutional number, Female Institutional number, Female code, Male Institutional number, Male code, Seed source1, References to silmultaneous trials, .... Observation records are missing from d until this file is standardized.
+# 03_Data_dictionary.txt: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -54,15 +57,15 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 
 	f <- ff[basename(ff) == "PTYL200807_TASHKENT_HEAT.xls"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	m <- carobiner::read.excel(f, sheet="Material List")
+	r1 <- carobiner::read.excel(f, sheet="Material List")
 
-	name <- trimws(as.character(m[["Clone or variety name"]]))
-	code <- trimws(as.character(m[["Institutional number"]]))
+	name <- trimws(as.character(r1[["Clone or variety name"]]))
+	code <- trimws(as.character(r1[["Institutional number"]]))
 	name[!nzchar(name)] <- NA_character_
 	variety <- name
 	variety[is.na(variety)] <- code[is.na(variety)]
-	fem <- trimws(as.character(m[["Female code"]]))
-	mal <- trimws(as.character(m[["Male code"]]))
+	fem <- trimws(as.character(r1[["Female code"]]))
+	mal <- trimws(as.character(r1[["Male code"]]))
 	fem[!nzchar(fem)] <- NA_character_
 	mal[!nzchar(mal)] <- NA_character_
 	ped <- paste(fem, "x", mal)

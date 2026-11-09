@@ -19,6 +19,7 @@
 
 ## NOT PROCESSED
 # Sections other than A (location and altitude) and D1 (crop plot). Chemicals, irrigation, labor, assets, food security, and child feeding are not crop measurements with a stated rate.
+# DataDictionary_Salt Tolerant Bangladesh.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -48,9 +49,9 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("^Database_Salt", basename(ff))]
+	f <- ff[basename(ff) == "Database_Salt Tolerant Bangladesh.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Section D1")
-	a <- carobiner::read.excel(f, sheet="Section A-F-G-K-L-N-O-P")
+	r1 <- carobiner::read.excel(f, sheet="Section A-F-G-K-L-N-O-P")
 	txt <- function(x) {
 		z <- trimws(as.character(x))
 		z[!nzchar(z) | z == "NA"] <- NA_character_
@@ -84,7 +85,7 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 			sugarcane="sugarcane", sugurcan="sugarcane", turmeric="turmeric")[key]
 	}
 	col <- function(nm) names(r)[grepl(nm, names(r), fixed=TRUE)][1]
-	alt <- data.frame(hhid=txt(a[["Household ID"]]), elevation=num(a[["GPS Altitude"]]))
+	alt <- data.frame(hhid=txt(r1[["Household ID"]]), elevation=num(r1[["GPS Altitude"]]))
 	alt <- alt[!duplicated(alt$hhid), ]
 
 	d <- data.frame(

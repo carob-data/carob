@@ -45,15 +45,15 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		carob_effort = 0.35
 	)
 
-	fd <- ff[grepl("data.xlsx", basename(ff))]
-	fg <- ff[grepl("genotypes.xlsx", basename(ff))]
-	r <- carobiner::read.excel(fd, na=c("", "NA"))
-	g <- carobiner::read.excel(fg, na=c("", "NA"))
+	f1 <- ff[basename(ff) == "Dataset Sensory Analysis - data.xlsx"]
+	f2 <- ff[basename(ff) == "Dataset Sensory Analysis - genotypes.xlsx"]
+	r <- carobiner::read.excel(f1, na=c("", "NA"))
+	r1 <- carobiner::read.excel(f2, na=c("", "NA"))
 	names(r) <- trimws(names(r))
-	names(g) <- trimws(names(g))
+	names(r1) <- trimws(names(r1))
 	sample <- trimws(as.character(r$sample))
-	code <- trimws(as.character(g[["Sample code"]]))
-	gen <- trimws(as.character(g$Genotype))
+	code <- trimws(as.character(r1[["Sample code"]]))
+	gen <- trimws(as.character(r1$Genotype))
 	variety <- gen[match(sample, code)]
 	variety[is.na(variety)] <- sample[is.na(variety)]
 	storage <- trimws(as.character(r$post_harvest))

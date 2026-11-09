@@ -121,33 +121,33 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	}
 
 	fieldbook <- function(f) {
-		ph <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		gh <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
-		ft <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		si <- as.data.frame(carobiner::read.excel.hdr(f, sheet="2 - Site information", skip=5, hdr=3))
-		ph <- ph[!is.na(ph$Tmnt) & !is.na(ph$Crop), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
+		r1 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
+		r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="2 - Site information", skip=5, hdr=3))
+		r1 <- r1[!is.na(r1$Tmnt) & !is.na(r1$Crop), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
 		key <- function(x) paste(x$Site.No, x$Tmnt)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
-		sk <- paste(si$Site.No.Unique.farmer.ID, si$Tmnt.Short.abbreviation.as.mentioned.in.protocol)
-		isite <- match(key(ph), sk)
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
+		sk <- paste(r4$Site.No.Unique.farmer.ID, r4$Tmnt.Short.abbreviation.as.mentioned.in.protocol)
+		isite <- match(key(r1), sk)
 
-		K <- take(ft, ifr, "K2O.kg.ha")
-		k_named <- take(ft, ifr, "K.kg.ha")
+		K <- take(r3, ifr, "K2O.kg.ha")
+		k_named <- take(r3, ifr, "K.kg.ha")
 		K <- ifelse(is.na(K), k_named, K) / 1.2051
-		sp <- as.character(ph$Row.spacing.cm)
+		sp <- as.character(r1$Row.spacing.cm)
 		sp[sp %in% c("0")] <- NA
-		hi <- take(gh, ig, "HI")
+		hi <- take(r2, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
-		loc <- place(ph$Node)
-		crop <- tolower(trimws(ph$Crop))
-		prep <- prep_from(ph$Tmnt)
-		hd <- rep(NA_character_, nrow(ph))
-		if ("Datw.of.harvest.dd.mm.yy" %in% names(ph)) hd <- as_date(ph$Datw.of.harvest.dd.mm.yy)
-		if ("Date.of.harvest.dd.mm.yy" %in% names(ph)) {
-			alt <- as_date(ph$Date.of.harvest.dd.mm.yy)
+		loc <- place(r1$Node)
+		crop <- tolower(trimws(r1$Crop))
+		prep <- prep_from(r1$Tmnt)
+		hd <- rep(NA_character_, nrow(r1))
+		if ("Datw.of.harvest.dd.mm.yy" %in% names(r1)) hd <- as_date(r1$Datw.of.harvest.dd.mm.yy)
+		if ("Date.of.harvest.dd.mm.yy" %in% names(r1)) {
+			alt <- as_date(r1$Date.of.harvest.dd.mm.yy)
 			hd <- ifelse(is.na(hd), alt, hd)
 		}
 
@@ -158,37 +158,37 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			latitude = NA_real_,
 			longitude = NA_real_,
 			geo_from_source = FALSE,
-			trial_id = paste(ph$Year, loc, crop),
-			plot_id = paste(ph$Year, loc, ph$Site.No, ph$Tmnt),
+			trial_id = paste(r1$Year, loc, crop),
+			plot_id = paste(r1$Year, loc, r1$Site.No, r1$Tmnt),
 			treatment = prep,
 			land_prep_method = prep,
 			crop = crop,
-			variety = trimws(as.character(ph$Variety)),
+			variety = trimws(as.character(r1$Variety)),
 			intercrops = NA_character_,
 			intercropped = FALSE,
-			crop_rotation = unname(rotation(ph$Cropping.System)),
+			crop_rotation = unname(rotation(r1$Cropping.System)),
 			season = "rabi",
 			yield_part = "grain",
-			planting_date = as_date(ph$Date.of.seeding.dd.mm.yy),
+			planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
 			harvest_date = hd,
-			yield = take(gh, ig, c("Calculation_Grain.yield.t.ha", "Grain.yield.t.ha")) * 1000,
+			yield = take(r2, ig, c("Calculation_Grain.yield.t.ha", "Grain.yield.t.ha")) * 1000,
 			yield_moisture = NA_real_,
-			seed_weight = take(gh, ig, "TGW.g"),
+			seed_weight = take(r2, ig, "TGW.g"),
 			dmy_residue = NA_real_,
 			dmy_total = NA_real_,
 			dmy_stems = NA_real_,
-			biomass_kg_ha_ = take(gh, ig, "Biomass.t.ha") * 1000,
+			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
-			N_fertilizer = take(ft, ifr, "N.kg.ha"),
-			P_fertilizer = take(ft, ifr, "P2O5.kg.ha") / 2.29,
+			N_fertilizer = take(r3, ifr, "N.kg.ha"),
+			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
 			K_fertilizer = K,
-			S_fertilizer = take(ft, ifr, "S.kg.ha"),
-			Zn_fertilizer = take(ft, ifr, "Zn.kg.ha"),
-			gypsum = take(ft, ifr, c("Gypsum.Kg.ha", "Gypsum.kg.ha")),
+			S_fertilizer = take(r3, ifr, "S.kg.ha"),
+			Zn_fertilizer = take(r3, ifr, "Zn.kg.ha"),
+			gypsum = take(r3, ifr, c("Gypsum.Kg.ha", "Gypsum.kg.ha")),
 			row_spacing = as.numeric(sp),
-			seed_rate = take(ph, seq_len(nrow(ph)), c("Seedrate.kg.ha", "Seed.rate")),
-			plot_area = as.numeric(ph$Plot.size.m2),
-			soil_type = as.character(si$Soil.texture.sand.silt.clay.etc[isite]),
+			seed_rate = take(r1, seq_len(nrow(r1)), c("Seedrate.kg.ha", "Seed.rate")),
+			plot_area = as.numeric(r1$Plot.size.m2),
+			soil_type = as.character(r4$Soil.texture.sand.silt.clay.etc[isite]),
 			irrigation_number = NA_integer_,
 			irrigated = NA,
 			on_farm = TRUE,
@@ -299,11 +299,17 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		do.call(rbind, lapply(sheets, one))
 	}
 
-	books <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
-	val <- books[grepl("validation", basename(books), ignore.case=TRUE)]
-	books <- books[!grepl("validation", basename(books), ignore.case=TRUE)]
+	f1 <- ff[basename(ff) %in% c(
+		"Rabi 2016-17-validation trials-all nodes-Rangpur.xlsx",
+		"Rabi maize 2015-16-DS&BP-all nodes-Rangpur.xlsx",
+		"Rabi maize 2016-17-DS&BP-all nodes-Rangpur.xlsx",
+		"Wheat 2014-15-DS&BP-all nodes Rangpur.xlsx",
+		"Wheat 2015-16-DS&BP-all nodes-Rangpur.xlsx"
+	)]
+	val <- f1[grepl("validation", basename(f1), ignore.case=TRUE)]
+	f1 <- f1[!grepl("validation", basename(f1), ignore.case=TRUE)]
 
-	d <- lapply(books, fieldbook)
+	d <- lapply(f1, fieldbook)
 	d <- lapply(d, drop_gypsum_if_s)
 	d <- do.call(rbind, c(d, list(validation(val))))
 	d$record_id <- as.integer(seq_len(nrow(d)))

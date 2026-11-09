@@ -56,9 +56,9 @@ To describe the major socio-economic characteristics of a typical rice village i
 	)
 
 	f <- ff[basename(ff) == "Tubuan_1974.xls"]
-	rW <- carobiner::read.excel(f, sheet="ProdnWS", skip=4, na=".")
-	rD <- carobiner::read.excel(f, sheet="ProdnDS", skip=4, na=".")
-	rI <- carobiner::read.excel(f, sheet="CURRWs", skip=4, na=".")
+	r1 <- carobiner::read.excel(f, sheet="ProdnWS", skip=4, na=".")
+	r2 <- carobiner::read.excel(f, sheet="ProdnDS", skip=4, na=".")
+	r3 <- carobiner::read.excel(f, sheet="CURRWs", skip=4, na=".")
 
 	prod <- function(r, seas) {
 		data.frame(
@@ -72,20 +72,20 @@ To describe the major socio-economic characteristics of a typical rice village i
 			crop_price_cavan_ = as.numeric(r$PRICE)
 		)
 	}
-	d <- rbind(prod(rW, "wet"), prod(rD, "dry"))
+	d <- rbind(prod(r1, "wet"), prod(r2, "dry"))
 	d <- d[!is.na(d$hhid), ]
 
 	# household-level wet season inputs
-	rI <- rI[!is.na(rI$Hhcode), ]
-	rI$hhid <- as.character(rI$Hhcode)
+	r3 <- r3[!is.na(r3$Hhcode), ]
+	r3$hhid <- as.character(r3$Hhcode)
 	area <- tapply(d$field_size[d$season == "wet"], d$hhid[d$season == "wet"], sum)
 
 	ftype <- c(UREA="urea", SULP="DAS", COMP="NPK", T162="16-20-0")
-	rI$fert <- ftype[rI$FERTKD]
-	rI$fkg <- as.numeric(rI$FERTKG)
+	r3$fert <- ftype[r3$FERTKD]
+	r3$fkg <- as.numeric(r3$FERTKG)
 	# NA for products with unknown grade, so that the household N total becomes NA
-	rI$Nkg <- rI$fkg * c(urea=0.46, DAS=0.21, NPK=NA, "16-20-0"=NA)[rI$fert]
-	inorg <- rI[!is.na(rI$fert), ]
+	r3$Nkg <- r3$fkg * c(urea=0.46, DAS=0.21, NPK=NA, "16-20-0"=NA)[r3$fert]
+	inorg <- r3[!is.na(r3$fert), ]
 	paste_u <- function(x) {
 		x <- unique(x[!is.na(x)])
 		if (length(x) == 0) NA else paste(x, collapse="; ")
@@ -94,19 +94,19 @@ To describe the major socio-economic characteristics of a typical rice village i
 		if (all(is.na(x))) NA else sum(x, na.rm=TRUE)
 	}
 
-	hh <- data.frame(hhid = unique(rI$hhid))
+	hh <- data.frame(hhid = unique(r3$hhid))
 	agg <- function(x, by, fun) {
 		as.vector(tapply(x, by, fun)[hh$hhid])
 	}
-	om <- rI$FERTKD %in% "GUANO"
-	hh$fertilizer_type <- agg(rI$fert, rI$hhid, paste_u)
-	hh$fertilizer_codes_ <- agg(rI$FERTKD, rI$hhid, paste_u)
+	om <- r3$FERTKD %in% "GUANO"
+	hh$fertilizer_type <- agg(r3$fert, r3$hhid, paste_u)
+	hh$fertilizer_codes_ <- agg(r3$FERTKD, r3$hhid, paste_u)
 	hh$fkg <- agg(inorg$fkg, inorg$hhid, sum)
 	hh$Nkg <- agg(inorg$Nkg, inorg$hhid, sum)
-	hh$OMkg <- agg(rI$fkg[om], rI$hhid[om], sum)
-	hh$seed <- agg(as.numeric(rI$SEEDKG), rI$hhid, sum_na)
-	hh$insecticide_codes_ <- agg(rI$INSTKD, rI$hhid, paste_u)
-	hh$herbicide_codes_ <- agg(rI$HERBKD, rI$hhid, paste_u)
+	hh$OMkg <- agg(r3$fkg[om], r3$hhid[om], sum)
+	hh$seed <- agg(as.numeric(r3$SEEDKG), r3$hhid, sum_na)
+	hh$insecticide_codes_ <- agg(r3$INSTKD, r3$hhid, paste_u)
+	hh$herbicide_codes_ <- agg(r3$HERBKD, r3$hhid, paste_u)
 	hh$area <- as.vector(area[hh$hhid])
 
 	i <- match(d$hhid, hh$hhid)

@@ -24,6 +24,16 @@
 # Rank, percent of the best check, selection index, and the seed-lot origin code.
 # Ear and plant aspect scores, senescence, and columns that are empty in the entry rows.
 # Collaborator names and the management label Optimal.
+# 09CHTHLY-Combined.xls: not read. sheet 09CHTHLY-Combined: International Maize Report 2009 for CHTHLY. Observation records are missing from d until this file is standardized.
+# 09CHTHLY-Grain Yield.xls: not read. sheet 09CHTHLY-Grain Yield: International Maize Report 2009 for CHTHLY. Observation records are missing from d until this file is standardized.
+# 09CHTHLY10.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY11.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY16.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY33.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY34.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY7.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY8.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
+# 09CHTHLY9.xls: not read. sheet hDefs (of 7): RowID, Rep, Block, Plot, Entry, StockID, Name, BreedersPedigree1, BreedersPedigree2, Parent1_Num, Parent2_Num, Origin, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -83,30 +93,30 @@ Summary results and individual trial results from the International Late Yellow 
 		out
 	}
 
-	floc <- ff[grepl("Locations\\.xls$", basename(ff))]
-	loc0 <- carobiner::read.excel(floc, col_names=FALSE, na=c("", "- - -"))
-	c2 <- trimws(as.character(loc0[[2]]))
+	f1 <- ff[basename(ff) == "09CHTHLY-Locations.xls"]
+	r1 <- carobiner::read.excel(f1, col_names=FALSE, na=c("", "- - -"))
+	c2 <- trimws(as.character(r1[[2]]))
 	keep <- !is.na(c2) & !c2 %in% c("Country", "País", "Pais") & nzchar(c2)
-	loc0 <- loc0[keep, ]
-	lat <- num_piece(loc0[[5]]) + num_piece(loc0[[6]]) / 60
-	lon <- num_piece(loc0[[8]]) + num_piece(loc0[[9]]) / 60
-	ns <- toupper(trimws(as.character(loc0[[7]])))
-	we <- toupper(trimws(as.character(loc0[[10]])))
+	r1 <- r1[keep, ]
+	lat <- num_piece(r1[[5]]) + num_piece(r1[[6]]) / 60
+	lon <- num_piece(r1[[8]]) + num_piece(r1[[9]]) / 60
+	ns <- toupper(trimws(as.character(r1[[7]])))
+	we <- toupper(trimws(as.character(r1[[10]])))
 	i <- which(ns == "S")
 	lat[i] <- -abs(lat[i])
 	i <- which(we == "W")
 	lon[i] <- -abs(lon[i])
 	locs <- data.frame(
-		set_no = as.integer(num(loc0[[4]])),
+		set_no = as.integer(num(r1[[4]])),
 		latitude = lat,
 		longitude = lon,
-		elevation = num(loc0[[11]])
+		elevation = num(r1[[11]])
 	)
 	locs <- locs[!is.na(locs$set_no), ]
 
 	read_trial <- function(f) {
-		raw <- carobiner::read.excel(f, sheet="Results", col_names=FALSE)
-		hdr <- trimws(as.character(unlist(raw[1, ])))
+		r2 <- carobiner::read.excel(f, sheet="Results", col_names=FALSE)
+		hdr <- trimws(as.character(unlist(r2[1, ])))
 		col <- function(nm) {
 			i <- which(hdr == nm)
 			if (length(i) == 0) return(NA_integer_)
@@ -114,13 +124,13 @@ Summary results and individual trial results from the International Late Yellow 
 		}
 		pull <- function(nm) {
 			i <- col(nm)
-			if (is.na(i)) return(rep(NA_real_, nrow(raw)))
-			num(raw[[i]])
+			if (is.na(i)) return(rep(NA_real_, nrow(r2)))
+			num(r2[[i]])
 		}
 		text <- function(nm) {
 			i <- col(nm)
-			if (is.na(i)) return(rep(NA_character_, nrow(raw)))
-			v <- trimws(gsub("\\s+", " ", as.character(raw[[i]])))
+			if (is.na(i)) return(rep(NA_character_, nrow(r2)))
+			v <- trimws(gsub("\\s+", " ", as.character(r2[[i]])))
 			v[v %in% c("", "NA")] <- NA_character_
 			v
 		}
@@ -176,8 +186,17 @@ Summary results and individual trial results from the International Late Yellow 
 		)
 	}
 
-	files <- ff[grepl("-1\\.xls$", basename(ff))]
-	parts <- lapply(files, read_trial)
+	f2 <- ff[basename(ff) %in% c(
+		"09CHTHLY10-1.xls",
+		"09CHTHLY11-1.xls",
+		"09CHTHLY16-1.xls",
+		"09CHTHLY33-1.xls",
+		"09CHTHLY34-1.xls",
+		"09CHTHLY7-1.xls",
+		"09CHTHLY8-1.xls",
+		"09CHTHLY9-1.xls"
+	)]
+	parts <- lapply(f2, read_trial)
 	parts <- parts[!vapply(parts, is.null, TRUE)]
 	d <- do.call(rbind, parts)
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]

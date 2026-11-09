@@ -16,6 +16,33 @@
 ## NOT PROCESSED
 # RotationRatio_Huancavelica.xlsx and the shapefile.
 # Livestock counts and labor columns on the household sheet.
+# CommunityBoundaries_Huancavelica_Castillapata.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Castillapata.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Huachhua.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.CPG: not read. .cpg file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.dbf: not read. .dbf file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.prj: not read. .prj file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.rar: not read. .rar file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.sbn: not read. .sbn file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.sbx: not read. .sbx file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.shp: not read. .shp file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.shp.xml: not read. .xml file. Observation records are missing from d until this file is standardized.
+# CommunityBoundaries_Huancavelica_Pumaranra.shx: not read. .shx file. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 

@@ -93,7 +93,7 @@ Rainfed maize production in southern Mexico is constrained by climate variabilit
 		n
 	}
 
-	f <- ff[grepl("xlsx$", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "DAT-SMTlacamamaExperiments.xlsx"]
 	r <- carobiner::read.excel(f, sheet="San Miguel Tlacamama_OAX")
 	crop <- rep(NA_character_, nrow(r))
 	crop[r$Crop == "Maize"] <- "maize"

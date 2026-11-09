@@ -21,6 +21,7 @@
 # 05CHTHTZIY21.xls (Dhaulakuan, India). That sheet has flowering, height, and lodging, and no grain-yield column.
 # Percent of the best check, and the number of plants harvested, because plot area is not given.
 # Summary rows (mean, maximum, minimum, LSD, CV).
+# 05CHTHTZIY-Combined.xls: not read. sheet 05CHTHTZIY-Combined: Mean for different traits across environments, 05CHTHTZIY-ACDATA.xls. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -61,9 +62,9 @@ Summary results and individual trial results from the International Intermediate
 	}
 
 	f <- ff[basename(ff) == "05CHTHTZIY-Location.xls"]
-	loc <- as.data.frame(carobiner::read.excel(f, col_types="text"))
+	r1 <- as.data.frame(carobiner::read.excel(f, col_types="text"))
 	# Header row is Country, Location, Set No., Latitude, Longitude, Masl, planting date, harvest date.
-	sites <- loc[10:nrow(loc), ]
+	sites <- r1[10:nrow(r1), ]
 	sites <- data.frame(
 		set_no = num(sites[[4]]),
 		country = trimws(as.character(sites[[2]])),
@@ -83,23 +84,23 @@ Summary results and individual trial results from the International Intermediate
 	sites$geo_from_source <- !is.na(sites$latitude) & !is.na(sites$longitude)
 
 	one <- function(f) {
-		raw <- as.data.frame(carobiner::read.excel(f, sheet="Results", col_types="text"))
-		location <- trimws(sub(".*Location:\\s*", "", as.character(raw[1, 1])))
-		country <- trimws(sub(".*Country:\\s*", "", as.character(raw[1, 3])))
-		lab <- apply(raw[1:8, ], 2, function(z) paste(z, collapse=" "))
+		r2 <- as.data.frame(carobiner::read.excel(f, sheet="Results", col_types="text"))
+		location <- trimws(sub(".*Location:\\s*", "", as.character(r2[1, 1])))
+		country <- trimws(sub(".*Country:\\s*", "", as.character(r2[1, 3])))
+		lab <- apply(r2[1:8, ], 2, function(z) paste(z, collapse=" "))
 		ycol <- grep("Yield|Rend", lab)[1]
 		if (is.na(ycol)) return(NULL)
 		acol <- grep("Pollen|Flor", lab)[1]
 		hcol <- grep("Plnt|Altur", lab)[1]
 		mcol <- grep("Moist|Hum", lab)[1]
-		hdr <- grep("Kg/ha|t/ha|Kg / ha", as.character(raw[[ycol]]))
+		hdr <- grep("Kg/ha|t/ha|Kg / ha", as.character(r2[[ycol]]))
 		start <- if (length(hdr)) max(hdr) + 1 else 1
-		raw <- raw[start:nrow(raw), ]
-		ent <- trimws(as.character(raw[[1]]))
+		r2 <- r2[start:nrow(r2), ]
+		ent <- trimws(as.character(r2[[1]]))
 		ent[grepl("Location:|Agroecological|^Ent\\.$|^No\\.$", ent)] <- NA_character_
 		ent_n <- num(ent)
-		ped <- trimws(as.character(raw[[2]]))
-		keep <- !is.na(ent_n) & !is.na(num(raw[[ycol]]))
+		ped <- trimws(as.character(r2[[2]]))
+		keep <- !is.na(ent_n) & !is.na(num(r2[[ycol]]))
 		if (!any(keep)) return(NULL)
 		variety <- ped[keep]
 		miss <- is.na(variety) | variety %in% c("", "NA")
@@ -112,15 +113,24 @@ Summary results and individual trial results from the International Intermediate
 			location = rep(location, n),
 			variety = variety,
 			treatment = variety,
-			yield = num(raw[[ycol]][keep]),
-			anthesis_days = if (!is.na(acol)) num(raw[[acol]][keep]) else rep(NA_real_, n),
-			plant_height = if (!is.na(hcol)) num(raw[[hcol]][keep]) else rep(NA_real_, n),
-			yield_moisture = if (!is.na(mcol)) num(raw[[mcol]][keep]) else rep(NA_real_, n)
+			yield = num(r2[[ycol]][keep]),
+			anthesis_days = if (!is.na(acol)) num(r2[[acol]][keep]) else rep(NA_real_, n),
+			plant_height = if (!is.na(hcol)) num(r2[[hcol]][keep]) else rep(NA_real_, n),
+			yield_moisture = if (!is.na(mcol)) num(r2[[mcol]][keep]) else rep(NA_real_, n)
 		)
 	}
 
-	files <- ff[grepl("CHTHTZIY[0-9]+\\.xls$", basename(ff))]
-	blocks <- lapply(files, one)
+	f1 <- ff[basename(ff) %in% c(
+		"05CHTHTZIY1.xls",
+		"05CHTHTZIY16.xls",
+		"05CHTHTZIY17.xls",
+		"05CHTHTZIY18.xls",
+		"05CHTHTZIY21.xls",
+		"05CHTHTZIY4.xls",
+		"05CHTHTZIY5.xls",
+		"05CHTHTZIY7.xls"
+	)]
+	blocks <- lapply(f1, one)
 	blocks <- blocks[!vapply(blocks, is.null, TRUE)]
 	d <- do.call(carobiner::bindr, blocks)
 	d$country[d$country %in% c("", "NA")] <- NA_character_

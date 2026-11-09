@@ -20,6 +20,7 @@
 # AVDM: not defined in the dictionary sheet.
 # Soil_analysis, Hobo_data, Weather_data, Weather_Original, Weather_monthly, Summary by clone, Charts, Ranks by Clone, TTYA, MTWP, MTYA summary sheets.
 # Weather_daily n_sample and TSD.
+# 02_Material_list.xlsx: not read. sheet Sheet1: Numeration, Institutional number, Clone or variety name, Code of clone, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 
@@ -49,14 +50,14 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 	)
 
 	f <- ff[basename(ff) == "PTYL200507_MUG.xls"]
-	info <- carobiner::read.excel(f, sheet="Minimal")
-	kv <- stats::setNames(as.character(info$Value), trimws(as.character(info$Factor)))
-	inst <- carobiner::read.excel(f, sheet="Installation")
-	ik <- stats::setNames(as.character(inst$Value), trimws(as.character(inst$Factor)))
+	r1 <- carobiner::read.excel(f, sheet="Minimal")
+	kv <- stats::setNames(as.character(r1$Value), trimws(as.character(r1$Factor)))
+	r2 <- carobiner::read.excel(f, sheet="Installation")
+	ik <- stats::setNames(as.character(r2$Value), trimws(as.character(r2$Factor)))
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	ml <- carobiner::read.excel(f, sheet="Material List")
-	name <- trimws(as.character(ml[["Clone or variety name"]]))
-	code <- trimws(as.character(ml[["Institutional number"]]))
+	r3 <- carobiner::read.excel(f, sheet="Material List")
+	name <- trimws(as.character(r3[["Clone or variety name"]]))
+	code <- trimws(as.character(r3[["Institutional number"]]))
 	name[!nzchar(name)] <- NA_character_
 	m <- match(trimws(as.character(r$INSTN)), code)
 	variety <- trimws(as.character(r$INSTN))
@@ -93,15 +94,15 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 		geo_source = "HIDAP Minimal sheet"
 	)
 
-	w <- carobiner::read.excel(f, sheet="Weather_daily")
+	r4 <- carobiner::read.excel(f, sheet="Weather_daily")
 	wth <- data.frame(
-		country = as.character(w$Country),
-		adm1 = as.character(w$Department),
-		location = as.character(w$Locality),
-		date = sprintf("%04d-%02d-%02d", as.integer(w$Year), as.integer(w$Month), as.integer(w$Day)),
-		tmin = as.numeric(w$TMIN),
-		tmax = as.numeric(w$TMAX),
-		temp = as.numeric(w$TMEAN),
+		country = as.character(r4$Country),
+		adm1 = as.character(r4$Department),
+		location = as.character(r4$Locality),
+		date = sprintf("%04d-%02d-%02d", as.integer(r4$Year), as.integer(r4$Month), as.integer(r4$Day)),
+		tmin = as.numeric(r4$TMIN),
+		tmax = as.numeric(r4$TMAX),
+		temp = as.numeric(r4$TMEAN),
 		latitude = d$latitude[1],
 		longitude = d$longitude[1],
 		geo_from_source = TRUE

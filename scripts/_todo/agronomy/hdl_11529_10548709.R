@@ -171,23 +171,23 @@ This experiments were established with different rates of nitrogen in order to g
 	read_blocks <- function(f, sheets) {
 		s <- sheets[grepl("^Variable Description", sheets)]
 		if (!length(s)) return(list())
-		info <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r1 <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
 		lab_cols <- c()
-		for (j in seq_len(ncol(info))) {
-			col <- trimws(as.character(info[[j]]))
+		for (j in seq_len(ncol(r1))) {
+			col <- trimws(as.character(r1[[j]]))
 			if (any(col == "Planting Date", na.rm=TRUE)) lab_cols <- c(lab_cols, j)
 		}
 		out <- list()
 		for (j in lab_cols) {
-			lab <- trimws(as.character(info[[j]]))
-			val <- trimws(as.character(info[[j + 1]]))
+			lab <- trimws(as.character(r1[[j]]))
+			val <- trimws(as.character(r1[[j + 1]]))
 			pick <- function(pat) {
 				i <- grep(pat, lab, ignore.case=TRUE)
 				if (!length(i)) NA_character_ else val[i[1]]
 			}
 			site <- NA_character_
 			if (j > 1) {
-				site <- trimws(as.character(info[[j - 1]][1]))
+				site <- trimws(as.character(r1[[j - 1]][1]))
 				if (is.na(site) || !nzchar(site) || grepl("^cycle$|^variable$", site, ignore.case=TRUE)) site <- NA_character_
 			}
 			till <- tolower(pick("^Tillage$"))
@@ -252,10 +252,10 @@ This experiments were established with different rates of nitrogen in order to g
 	read_wth <- function(f, sheets) {
 		s <- sheets[trimws(tolower(sheets)) %in% c("wheather", "weather")]
 		if (!length(s)) return(NULL)
-		raw <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
 		w <- NULL
-		for (i in seq_len(nrow(raw))) {
-			cells <- tolower(trimws(as.character(unlist(raw[i, ]))))
+		for (i in seq_len(nrow(r))) {
+			cells <- tolower(trimws(as.character(unlist(r[i, ]))))
 			cells[is.na(cells)] <- ""
 			at <- which(cells %in% c("fecha", "date") | grepl("^temp", cells))
 			if (!length(at)) next
@@ -266,14 +266,14 @@ This experiments were established with different rates of nitrogen in order to g
 				ix <- id - 1 + which(grepl("max", right))[1]
 				in_ <- id - 1 + which(grepl("min", right))[1]
 				if (is.na(ix) || is.na(in_)) next
-				if (i == nrow(raw)) next
-				body <- raw[(i + 1):nrow(raw), ]
+				if (i == nrow(r)) next
+				body <- r[(i + 1):nrow(r), ]
 				date <- to_date(body[[id]])
 				ok <- !is.na(date)
 				if (!any(ok)) next
 				station <- NA_character_
 				if (i > 1) {
-					above <- trimws(as.character(raw[[id]][seq_len(i - 1)]))
+					above <- trimws(as.character(r[[id]][seq_len(i - 1)]))
 					above <- above[!is.na(above) & nzchar(above)]
 					if (length(above)) station <- above[length(above)]
 				}
@@ -291,11 +291,11 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	read_sheet <- function(f, sheet, blocks, year) {
-		raw <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
-		hdr <- trimws(as.character(unlist(raw[1, ])))
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
+		hdr <- trimws(as.character(unlist(r[1, ])))
 		hdr[is.na(hdr)] <- ""
-		unit <- as.character(unlist(raw[2, ]))
-		body <- raw[-(1:2), ]
+		unit <- as.character(unlist(r[2, ]))
+		body <- r[-(1:2), ]
 		find <- function(pat) {
 			i <- grep(pat, hdr, ignore.case=TRUE)
 			if (!length(i)) NA_integer_ else i[1]
@@ -325,10 +325,10 @@ This experiments were established with different rates of nitrogen in order to g
 		loc <- trimws(sub("^Data[- ]*", "", trimws(sheet)))
 		if (!nzchar(loc)) loc <- state
 		loc <- carobiner::fix_name(loc, "title")
-		info <- match_block(loc, blocks)
-		use <- !is.null(info)
-		lat <- if (use) info$latitude else NA_real_
-		lon <- if (use) info$longitude else NA_real_
+		r1 <- match_block(loc, blocks)
+		use <- !is.null(r1)
+		lat <- if (use) r1$latitude else NA_real_
+		lon <- if (use) r1$longitude else NA_real_
 		if (length(lat) != 1) lat <- NA_real_
 		if (length(lon) != 1) lon <- NA_real_
 		d <- data.frame(
@@ -341,19 +341,19 @@ This experiments were established with different rates of nitrogen in order to g
 			crop = "maize",
 			treatment = as.character(nrate),
 			N_fertilizer = nrate,
-			P_fertilizer = if (use) info$P_fertilizer else NA_real_,
-			K_fertilizer = if (use) info$K_fertilizer else NA_real_,
-			fertilizer_type = if (use) info$fertilizer_type else NA_character_,
+			P_fertilizer = if (use) r1$P_fertilizer else NA_real_,
+			K_fertilizer = if (use) r1$K_fertilizer else NA_real_,
+			fertilizer_type = if (use) r1$fertilizer_type else NA_character_,
 			plot_area = if (is.na(i_area)) NA_real_ else num(body[[i_area]]),
 			plant_density = pop,
 			yield = yield,
 			yield_moisture = 14,
 			yield_part = "grain",
-			variety = if (use) info$variety else NA_character_,
-			planting_date = if (use) info$planting_date else NA_character_,
-			land_prep_method = if (use) info$land_prep_method else NA_character_,
-			irrigation_dates = if (use) info$irrigation_dates else NA_character_,
-			irrigated = if (use) info$irrigated else NA,
+			variety = if (use) r1$variety else NA_character_,
+			planting_date = if (use) r1$planting_date else NA_character_,
+			land_prep_method = if (use) r1$land_prep_method else NA_character_,
+			irrigation_dates = if (use) r1$irrigation_dates else NA_character_,
+			irrigated = if (use) r1$irrigated else NA,
 			latitude = lat,
 			longitude = lon,
 			on_farm = NA,
@@ -374,7 +374,7 @@ This experiments were established with different rates of nitrogen in order to g
 		list(d=d, long=long)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) == "GreenSeeker SLP 2012-2013.xlsx"]
 	d <- NULL
 	long <- NULL
 	wth <- NULL

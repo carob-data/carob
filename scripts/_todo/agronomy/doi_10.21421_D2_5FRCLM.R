@@ -99,15 +99,15 @@ Five most promising FOC antagonistic isolates (CAI-24, CAI-121, CAI-127, KAI-32 
 	longf$id <- NULL
 	longf$d17 <- longf$d21 <- longf$d24 <- longf$d28 <- NULL
 
-	fp <- ff[basename(ff) == "Population of the actinomycetes at the end of the field.xlsx"]
-	rp <- carobiner::read.excel(fp, na="NA")
-	pop_name <- gsub(" ", "-", trimws(rp$Treatment))
+	f1 <- ff[basename(ff) == "Population of the actinomycetes at the end of the field.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
+	pop_name <- gsub(" ", "-", trimws(r1$Treatment))
 	dp <- data.frame(
 		trial_id = "BIL2C",
 		seed_treatment = pop_name,
-		inoculation_method_ = trimws(rp$Method),
-		rep = as.integer(rp$`Replication number`),
-		actinomycete_log10_ = as.numeric(rp$Log)
+		inoculation_method_ = trimws(r1$Method),
+		rep = as.integer(r1$`Replication number`),
+		actinomycete_log10_ = as.numeric(r1$Log)
 	)
 	dfield <- merge(df, dp, by=c("trial_id", "seed_treatment", "inoculation_method_", "rep"), all=TRUE)
 	dfield$country[is.na(dfield$country)] <- "India"
@@ -126,14 +126,14 @@ Five most promising FOC antagonistic isolates (CAI-24, CAI-121, CAI-127, KAI-32 
 	dfield$inoculant <- ifelse(dfield$seed_treatment == "Control", NA_character_, dfield$seed_treatment)
 	dfield$treatment[is.na(dfield$treatment)] <- dfield$seed_treatment[is.na(dfield$treatment)]
 
-	fg <- ff[basename(ff) == "Evaluation of five most potential antagonistic.xlsx"]
-	rg <- carobiner::read.excel(fg, na="NA")
+	f2 <- ff[basename(ff) == "Evaluation of five most potential antagonistic.xlsx"]
+	r2 <- carobiner::read.excel(f2, na="NA")
 	gg <- data.frame(
 		trial_id = "glasshouse",
-		seed_treatment = trimws(rg$Isolate),
-		rep = as.integer(rg$Treatment),
-		DAP = as.integer(rg$Days),
-		wilt_percent = as.numeric(rg$DAS)
+		seed_treatment = trimws(r2$Isolate),
+		rep = as.integer(r2$Treatment),
+		DAP = as.integer(r2$Days),
+		wilt_percent = as.numeric(r2$DAS)
 	)
 	dg <- gg[gg$DAP == 29, ]
 	dg$disease_incidence <- as.character(dg$wilt_percent)
@@ -162,14 +162,14 @@ Five most promising FOC antagonistic isolates (CAI-24, CAI-121, CAI-127, KAI-32 
 		disease_incidence = as.character(gg$wilt_percent)
 	)
 
-	fgp <- ff[basename(ff) == "Population of the actinomycetes at the end of greenhouse.xlsx"]
-	rgp <- carobiner::read.excel(fgp, na="NA")
+	f3 <- ff[basename(ff) == "Population of the actinomycetes at the end of greenhouse.xlsx"]
+	r3 <- carobiner::read.excel(f3, na="NA")
 	longp <- data.frame(
 		trial_id = "glasshouse",
-		seed_treatment = gsub(" ", "-", trimws(rgp$Treatment)),
-		rep = as.integer(rgp$Replication),
-		foc_code_ = as.integer(rgp$FOC),
-		actinomycete_log10_ = as.numeric(rgp$Log)
+		seed_treatment = gsub(" ", "-", trimws(r3$Treatment)),
+		rep = as.integer(r3$Replication),
+		foc_code_ = as.integer(r3$FOC),
+		actinomycete_log10_ = as.numeric(r3$Log)
 	)
 
 	d <- carobiner::bindr(dfield, dg)

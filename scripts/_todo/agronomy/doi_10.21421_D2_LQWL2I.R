@@ -99,9 +99,9 @@ This dataset shows the seven most promising isolates of Streptomyces (BCA-546,BC
 		geo_from_source = FALSE
 	)
 
-	fg <- ff[basename(ff) == "Biological control and plant growth-promotion traits of glasshouse.xlsx"]
-	rg <- carobiner::read.excel(fg, na="NA")
-	tg <- trimws(rg$Treatment)
+	f1 <- ff[basename(ff) == "Biological control and plant growth-promotion traits of glasshouse.xlsx"]
+	r1 <- carobiner::read.excel(f1, na="NA")
+	tg <- trimws(r1$Treatment)
 	dg <- data.frame(
 		trial_id = "glasshouse_2012",
 		country = "India",
@@ -113,18 +113,18 @@ This dataset shows the seven most promising isolates of Streptomyces (BCA-546,BC
 		seed_treatment = tg,
 		inoculant = ifelse(tg == "Control", NA_character_, tg),
 		inoculated = tg != "Control",
-		rep = as.integer(rg$`Replication number`),
+		rep = as.integer(r1$`Replication number`),
 		planting_date = "2012",
-		DAP = as.integer(sub(" days", "", rg$Time)),
-		root_length_cm_ = as.numeric(rg$`Root length`),
-		root_volume_cm2_ = as.numeric(rg$`Root volume`),
-		leaf_area_cm2_ = as.numeric(rg$`Leaf area`),
-		leaf_weight_g_ = as.numeric(rg$`Leaf weight`),
-		root_weight_g_plant_ = as.numeric(rg$`Root weight`),
-		shoot_weight_g_plant_ = as.numeric(rg$`Shoot weight`),
-		nodule_plant = as.numeric(rg$`Nodule no plant`),
-		pod_number_plant_ = as.numeric(rg$`Pod number`),
-		pod_weight_g_plant_ = as.numeric(rg$`Pod weight`),
+		DAP = as.integer(sub(" days", "", r1$Time)),
+		root_length_cm_ = as.numeric(r1$`Root length`),
+		root_volume_cm2_ = as.numeric(r1$`Root volume`),
+		leaf_area_cm2_ = as.numeric(r1$`Leaf area`),
+		leaf_weight_g_ = as.numeric(r1$`Leaf weight`),
+		root_weight_g_plant_ = as.numeric(r1$`Root weight`),
+		shoot_weight_g_plant_ = as.numeric(r1$`Shoot weight`),
+		nodule_plant = as.numeric(r1$`Nodule no plant`),
+		pod_number_plant_ = as.numeric(r1$`Pod number`),
+		pod_weight_g_plant_ = as.numeric(r1$`Pod weight`),
 		yield_part = "seed",
 		yield_isfresh = FALSE,
 		on_farm = FALSE,
@@ -133,18 +133,18 @@ This dataset shows the seven most promising isolates of Streptomyces (BCA-546,BC
 	)
 	d <- carobiner::bindr(d, dg)
 
-	fs <- ff[basename(ff) == "Effect of the seven actinomycetes on the rhizosphere.xlsx"]
-	rs <- carobiner::read.excel(fs, na="NA")
+	f2 <- ff[basename(ff) == "Effect of the seven actinomycetes on the rhizosphere.xlsx"]
+	r2 <- carobiner::read.excel(f2, na="NA")
 	dsoil <- data.frame(
 		trial_id = "Patancheru_2012",
-		seed_treatment = trimws(rs$Treatment),
-		rep = as.integer(rs$`Replication number`),
-		DAP = as.integer(rs$Days),
+		seed_treatment = trimws(r2$Treatment),
+		rep = as.integer(r2$`Replication number`),
+		DAP = as.integer(r2$Days),
 		depth_top = 0,
 		depth_bottom = 15,
-		soil_SOC = as.numeric(rs$`Organic Carbon`),
-		soil_N_total = as.numeric(rs$Nitrogen),
-		soil_P = as.numeric(rs$Phosphorus)
+		soil_SOC = as.numeric(r2$`Organic Carbon`),
+		soil_N_total = as.numeric(r2$Nitrogen),
+		soil_P = as.numeric(r2$Phosphorus)
 	)
 
 	carobiner::write_files(path, meta, d, long=dsoil)

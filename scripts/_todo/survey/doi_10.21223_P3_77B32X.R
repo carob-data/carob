@@ -20,6 +20,57 @@
 # Parts 2 to 8 (demographics, crops, practices, marketing, food security) for both countries.
 # Distances to market, road, and office. The unit column mixes kilometres, miles, and metres.
 # The Excel dictionary. Person names.
+# JS Data Dictionary.xlsx: documentation or a codebook, not an observation table.
+# Part 2.1 - Household Demographics (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 2.1 - Household Demographics (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 2.2 - Dietary Diversity (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 2.2 - Dietary Diversity (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 2.3 - Frequency of Consumption of Vitamin A Rich Foods (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 2.3 - Frequency of Consumption of Vitamin A Rich Foods (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 3 - Farmer's membership to Farmers Associations (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 3 - Farmer's membership to Farmers Associations (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.1A - Trends in Using SP (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.1A - Trends in Using SP (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.1B - Land Assets in ACRES (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.1B - Land Assets in ACRES (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.2 - Crops Produced (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.2 - Crops Produced (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.2.6 - Other Crops Produced (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.2.6 - Other Crops Produced (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.3 - Agricultural Practices (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.3 - Agricultural Practices (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.1 - SP Attributes (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.1 - SP Attributes (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.2 - SP Production Practices (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.2 - SP Production Practices (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.3  Sources , Access to, and Quality of SP Vines (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.3  Sources , Access to, and Quality of SP Vines (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4 - SP Vine Dissemination Practices (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4 - SP Vine Dissemination Practices (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4.1 Non-Labour Input use in SP (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4.1 Non-Labour Input use in SP (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4.2 Labour Input use in SP (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.4.2 Labour Input use in SP (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.5A - SP Production and Sales (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.5A - SP Production and Sales (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.5B - SP Production and Sales (Roster) (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 4.4.5B - SP Production and Sales (Roster) (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 5 - OFSP Marketing & Market Information Sources (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 5 - OFSP Marketing & Market Information Sources (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 6 - Attitude, Perception, Practice & Knowledge (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 6 - Attitude, Perception, Practice & Knowledge (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 7.1 - Livestock Assets (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 7.1 - Livestock Assets (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 7.2 - Financial Assets (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 7.2 - Financial Assets (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8 - Household Food Security (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8 - Household Food Security (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.2 - Knowledge, Attitude, & Perceptions of Vitamin A (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.2 - Knowledge, Attitude, & Perceptions of Vitamin A (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.3 - OFSP Production Constraints (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.3 - OFSP Production Constraints (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.4 - SP Marketing Constraints (Ghana).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
+# Part 8.4 - SP Marketing Constraints (Nigeria).sav: not read. SPSS .sav table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

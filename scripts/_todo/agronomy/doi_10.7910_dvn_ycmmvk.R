@@ -108,8 +108,8 @@ This study contains data from different cereal legume rotation systems in northe
 	}
 
 	# --- Malawi hosting-farmer forms (file 001) ---
-	raw <- carobiner::read.excel(f("001_legumeMaizeSequentingYieldData2013_2015.xls"), sheet="Sheet1", col_names=FALSE)
-	x <- raw[, 1:12]
+	r1 <- carobiner::read.excel(f("001_legumeMaizeSequentingYieldData2013_2015.xls"), sheet="Sheet1", col_names=FALSE)
+	x <- r1[, 1:12]
 	crop_of <- function(z) {
 		z <- tolower(gsub("\\s+", " ", trimws(z)))
 		z[z %in% c("", "na")] <- NA

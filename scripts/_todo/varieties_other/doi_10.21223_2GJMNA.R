@@ -53,7 +53,8 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 	f <- ff[basename(ff) == "Umbeluzi_2019_Moz2.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 	r <- r[-1, ]
-	img <- carobiner::read.excel(ff[grepl("^Image_description", basename(ff))], na=c("", "NA"))
+	f1 <- ff[basename(ff) == "Image_description_Moz2.xlsx"]
+	r1 <- carobiner::read.excel(f1, na=c("", "NA"))
 	variety <- trimws(as.character(r[[5]]))
 	regime <- trimws(as.character(r[[6]]))
 
@@ -64,8 +65,8 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		adm2 = "Boane",
 		location = "Umbeluzi",
 		# Image_description_Moz2.xlsx, and the same point in the dataset geographic coverage
-		latitude = as.numeric(img$Lat[1]),
-		longitude = as.numeric(img$Lon[1]),
+		latitude = as.numeric(r1$Lat[1]),
+		longitude = as.numeric(r1$Lon[1]),
 		geo_from_source = TRUE,
 		variety = variety,
 		variety_code = variety,
@@ -78,7 +79,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		plot_area = 25,
 		plant_spacing = 0.3 * 100,
 		row_spacing = 0.9 * 100,
-		DAP = as.integer(img$DAP[1]),
+		DAP = as.integer(r1$DAP[1]),
 		canopy_temp_c_ = as.numeric(r[["Canopy Temperature (°C)"]]),
 		NDVI = as.numeric(r$NDVI),
 		ndvi_green_ = as.numeric(r$NDVIgreen),

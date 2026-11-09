@@ -38,6 +38,10 @@
 # pesticide_cost_kyat_: PESTCOST as reported (Kyat; per acre or per parcel is unclear)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Survey for assessing changes in agriculture and livelihood in Ayeyarwardy division, Myanmar. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -120,17 +124,17 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		as.data.frame(out, check.names=FALSE)
 	}
 
-	fdoc <- ff[basename(ff) == "Documentation of 2004 survey.xls"]
+	f1 <- ff[basename(ff) == "Documentation of 2004 survey.xls"]
 	# value labels from the codebook: variable name (filled down), code, label (last column)
 	codes <- function(sheet, var) {
-		x <- carobiner::read.excel(fdoc, sheet=sheet, col_names=FALSE)
-		nm <- x[[1]]
+		r <- carobiner::read.excel(f1, sheet=sheet, col_names=FALSE)
+		nm <- r[[1]]
 		nm <- nm[!is.na(nm)][cumsum(!is.na(nm))]
-		k <- nm %in% var & !is.na(x[[ncol(x)]])
-		data.frame(code=as.numeric(x[[2]][k]), label=trimws(x[[ncol(x)]][k]))
+		k <- nm %in% var & !is.na(r[[ncol(r)]])
+		data.frame(code=as.numeric(r[[2]][k]), label=trimws(r[[ncol(r)]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(x, cds$code)]
+		cds$label[match(r, cds$code)]
 	}
 
 	acre <- 0.4046863
@@ -213,7 +217,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		currency = "MMK"
 	)
 	ft <- cbind(ifelse(r2$UREA > 0, "urea", NA), ifelse(r2$TSP > 0, "TSP", NA), ifelse(r2$MOP > 0, "KCl", NA), ifelse(r2$OTHERF > 0, "unknown", NA))
-	d2$fertilizer_type <- apply(ft, 1, function(x) paste(x[!is.na(x)], collapse="; "))
+	d2$fertilizer_type <- apply(ft, 1, function(x) paste(r[!is.na(r)], collapse="; "))
 	d2$fertilizer_type[d2$fertilizer_type == ""] <- "none"
 	d2$OM_used <- r2$FYM > 0
 	d2$OM_type <- ifelse(r2$FYM > 0, "farmyard manure", NA)

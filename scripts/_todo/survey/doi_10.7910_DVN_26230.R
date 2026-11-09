@@ -28,6 +28,10 @@
 # rodenticide_amount_: rodenticide active ingredient (kg/ha)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Reaching Toward Optimal Productivity (RTOP) with Socio-economic component. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

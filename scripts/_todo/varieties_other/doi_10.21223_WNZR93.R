@@ -15,6 +15,7 @@
 ## NOT PROCESSED
 # Foliar area, Gravimetric hum, Leaf temp, Stomatal cond, Spad, and Isotopes sheets: repeated leaf measurements, not joined to the harvest rows here.
 # Weather_data_CRW_Sweepotato2018.xlsx and Material_list_Sweetpotato2018.xlsx.
+# Data_dictionary_CWR_Sweetpotato.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # dat_: value in the dat column

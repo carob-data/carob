@@ -43,7 +43,7 @@ Evaluation of different varieties of barley, triticale and wheat in Valles Altos
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("Resultados", basename(ff))]
+	f <- ff[basename(ff) == "Resultados validación PV2017 VA.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Datos", col_names=FALSE)
 	x <- r[-1, ]
 	variety <- trimws(as.character(x[[2]]))

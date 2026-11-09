@@ -58,12 +58,13 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		T2 = "gs_max 0.15",
 		T3 = "gs_max 0.05"
 	)
-	h <- carobiner::read.excel(ff[basename(ff) == "Harvest.xlsx"], na=c("", "NA"))
-	names(h) <- trimws(names(h))
-	trat <- trimws(as.character(h$trat))
+	f1 <- ff[basename(ff) == "Harvest.xlsx"]
+	r1 <- carobiner::read.excel(f1, na=c("", "NA"))
+	names(r1) <- trimws(names(r1))
+	trat <- trimws(as.character(r1$trat))
 	regime <- lab[trat]
 	regime[is.na(regime)] <- trat[is.na(regime)]
-	plots <- unique(data.frame(plot = h$plot, regime = regime))
+	plots <- unique(data.frame(plot = r1$plot, regime = regime))
 
 	d <- data.frame(
 		trial_id = "LaMolina_CWSI",
@@ -87,35 +88,36 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		is_survey = FALSE
 	)
 
-	cw <- carobiner::read.excel(ff[basename(ff) == "CWSI.xlsx"], na=c("", "NA"))
-	names(cw) <- trimws(names(cw))
-	hh <- cw$hour
+	f2 <- ff[basename(ff) == "CWSI.xlsx"]
+	r2 <- carobiner::read.excel(f2, na=c("", "NA"))
+	names(r2) <- trimws(names(r2))
+	hh <- r2$hour
 	if (inherits(hh, "POSIXt")) {
 		hh <- format(hh, "%H:%M", tz = "UTC")
 	} else {
 		hh <- sub(".* ([0-9]{2}:[0-9]{2}).*", "\\1", as.character(hh))
 	}
 	plants <- data.frame(
-		plot_id = as.character(h$plot),
-		order = as.integer(h$plant),
+		plot_id = as.character(r1$plot),
+		order = as.integer(r1$plant),
 		DAP = NA_integer_,
 		hour_ = NA_character_,
-		tuber_fresh_g_plant_ = as.numeric(h$PF),
-		n_tubers_ = as.numeric(h$nT),
+		tuber_fresh_g_plant_ = as.numeric(r1$PF),
+		n_tubers_ = as.numeric(r1$nT),
 		cwsi_ = NA_real_,
 		canopy_temp_c_ = NA_real_,
 		air_temp_c_ = NA_real_
 	)
 	stress <- data.frame(
-		plot_id = as.character(cw$pot),
+		plot_id = as.character(r2$pot),
 		order = NA_integer_,
-		DAP = as.integer(cw$dap),
+		DAP = as.integer(r2$dap),
 		hour_ = hh,
 		tuber_fresh_g_plant_ = NA_real_,
 		n_tubers_ = NA_real_,
-		cwsi_ = as.numeric(cw$CWSI),
-		canopy_temp_c_ = as.numeric(cw$Tf),
-		air_temp_c_ = as.numeric(cw$Ta)
+		cwsi_ = as.numeric(r2$CWSI),
+		canopy_temp_c_ = as.numeric(r2$Tf),
+		air_temp_c_ = as.numeric(r2$Ta)
 	)
 	dlong <- rbind(plants, stress)
 	dlong$trial_id <- "LaMolina_CWSI"

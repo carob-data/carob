@@ -70,21 +70,21 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	}
 
 	one <- function(f) {
-		ph <- carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2)
-		gh <- carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2)
-		ft <- carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2)
-		si <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
-		cells <- trimws(as.character(unlist(si[1, ])))
+		r1 <- carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2)
+		r2 <- carobiner::read.excel.hdr(f, sheet="14 - Grain Harvest ", skip=4, hdr=2)
+		r3 <- carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2)
+		r4 <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
+		cells <- trimws(as.character(unlist(r4[1, ])))
 		cells[is.na(cells)] <- ""
 		country <- header_value(cells, "Country:")
 		adm2 <- header_value(cells, "District:")
-		ph <- ph[!is.na(ph$Crop) & !is.na(ph$Tmnt), ]
-		gh <- gh[!is.na(gh$Tmnt), ]
-		ft <- ft[!is.na(ft$Tmnt), ]
+		r1 <- r1[!is.na(r1$Crop) & !is.na(r1$Tmnt), ]
+		r2 <- r2[!is.na(r2$Tmnt), ]
+		r3 <- r3[!is.na(r3$Tmnt), ]
 		key <- function(x) paste(x$Site.No, x$Tmnt)
-		ig <- match(key(ph), key(gh))
-		ifr <- match(key(ph), key(ft))
-		crop <- tolower(trimws(ph$Crop))
+		ig <- match(key(r1), key(r2))
+		ifr <- match(key(r1), key(r3))
+		crop <- tolower(trimws(r1$Crop))
 		crop[crop == "chick pea"] <- "chickpea"
 		part <- rep("seed", length(crop))
 		part[crop == "maize"] <- "grain"
@@ -93,33 +93,38 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		data.frame(
 			country = country,
 			adm2 = adm2,
-			location = ph$Node,
-			trial_code = as.character(ph$Trial.Code),
-			season = ifelse(grepl("rabi", ph$Season, ignore.case=TRUE), "rabi", tolower(trimws(ph$Season))),
-			year = as.character(ph$Year),
-			site_no = as.character(ph$Site.No),
-			treatment = ph$Tmnt,
+			location = r1$Node,
+			trial_code = as.character(r1$Trial.Code),
+			season = ifelse(grepl("rabi", r1$Season, ignore.case=TRUE), "rabi", tolower(trimws(r1$Season))),
+			year = as.character(r1$Year),
+			site_no = as.character(r1$Site.No),
+			treatment = r1$Tmnt,
 			crop = crop,
-			variety = ph$Variety,
-			plot_area = num(ph$Plot.size.m2),
-			row_spacing = num(ph$Row.spacing.cm),
-			seed_rate = num(ph$Seed.rate.kg.ha),
-			planting_date = as_date(ph$Date.of.seeding),
-			harvest_date = as_date(ph$Datw.of.harvest.mm.dd.yy),
-			anthesis_days = num(ph$X50pct.anthesis.DAS),
-			maturity_days = num(ph$X80pct.physiological.maturity.DAS),
-			yield = num(gh$Calculation_Grain.yield.t.ha[ig]) * 1000,
+			variety = r1$Variety,
+			plot_area = num(r1$Plot.size.m2),
+			row_spacing = num(r1$Row.spacing.cm),
+			seed_rate = num(r1$Seed.rate.kg.ha),
+			planting_date = as_date(r1$Date.of.seeding),
+			harvest_date = as_date(r1$Datw.of.harvest.mm.dd.yy),
+			anthesis_days = num(r1$X50pct.anthesis.DAS),
+			maturity_days = num(r1$X80pct.physiological.maturity.DAS),
+			yield = num(r2$Calculation_Grain.yield.t.ha[ig]) * 1000,
 			yield_part = part,
-			N_fertilizer = num(ft$N.kg.ha[ifr]),
-			P_fertilizer = num(ft$P2O5.kg.ha[ifr]) / 2.29,
-			K_fertilizer = num(ft$K.kg.ha[ifr]),
-			S_fertilizer = num(ft$S.kg.ha[ifr]),
-			Zn_fertilizer = num(ft$Zn.kg.ha[ifr]),
-			B_fertilizer = num(ft$B.kg.ha[ifr])
+			N_fertilizer = num(r3$N.kg.ha[ifr]),
+			P_fertilizer = num(r3$P2O5.kg.ha[ifr]) / 2.29,
+			K_fertilizer = num(r3$K.kg.ha[ifr]),
+			S_fertilizer = num(r3$S.kg.ha[ifr]),
+			Zn_fertilizer = num(r3$Zn.kg.ha[ifr]),
+			B_fertilizer = num(r3$B.kg.ha[ifr])
 		)
 	}
 
-	d <- do.call(rbind, lapply(ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)], one))
+	d <- do.call(rbind, lapply(ff[basename(ff) %in% c(
+		"Chickpea-Lentil-Wheat 2014-15-ACST-Laxipur.xlsx",
+		"Mustard-Lentil-Chickpea 2014-15-ACST-Nabinagar.xlsx",
+		"Potato 2014-15-ACST-Baduria.xlsx",
+		"Potato 2014-15-ACST-Dharampur.xlsx"
+	)], one))
 	d$trial_id <- paste(d$location, d$year, d$trial_code, sep="_")
 	d$plot_id <- d$site_no
 	d$trial_code <- NULL

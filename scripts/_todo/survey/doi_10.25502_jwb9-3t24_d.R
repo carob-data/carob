@@ -61,13 +61,13 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 	)
 
 	f <- ff[basename(ff) == "eraal-annual-outcome-survey_2022.csv"]
-	fd <- ff[basename(ff) == "data_dictionary_eraal-annual-outcome-survey.csv"]
+	f1 <- ff[basename(ff) == "data_dictionary_eraal-annual-outcome-survey.csv"]
 	r <- read.csv(f, check.names=FALSE)
-	dict <- read.csv(fd, check.names=FALSE)
-	dict <- dict[nzchar(dict$Column), ]
+	r1 <- read.csv(f1, check.names=FALSE)
+	r1 <- r1[nzchar(r1$Column), ]
 
 	g <- function(desc) {
-		i <- which(dict$description_abstract == desc)
+		i <- which(r1$description_abstract == desc)
 		if (length(i) != 1) stop("description matched ", length(i), ": ", desc)
 		r[[i]]
 	}

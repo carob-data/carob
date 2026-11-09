@@ -19,6 +19,7 @@
 # Carbonates. The dictionary calls it a presence dummy and gives no unit.
 # 15N of total N, the TOC:N ratio, 15N of roots, aggregate stability, and above-ground, below-ground, and total biomass.
 # Slope, cover, bulk-density method notes, and how long the land use has been in place.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES

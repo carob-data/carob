@@ -19,6 +19,9 @@
 # parcelle, village codes, karal codes, Wsol, position, diguettes, an.culture,
 # code date, and the long inondation notes (Irrigation is used instead).
 # Donnée originales, Méta Données, FLO, FAC, and PA repeat the workbook or the DOC.
+# CAM-MAR-1999-MSK-AD-FLO.txt: not read. columns: "CAM-MAR-01" "CAM-MAR-02" "CAM-MAR-03" "CAM-MAR-04" "CAM-MAR-05" "CAM-MAR-06" "CAM-MAR-07" "CAM-MAR-08" "CAM-MAR-09" "CAM-MAR-10" "CAM-MAR-11" "CAM-MAR-12" "CAM-MAR-13" "CAM-MAR-14" "CAM-MAR-15" "CAM-MAR-16" "CAM-MAR-17" "CAM-MAR-18" "CAM-MAR-19" "CAM-MAR-20" "CAM-MAR-21" "CAM-MAR-22" "CAM-MAR-23" "CAM-MAR-24" "CAM-MAR-25" "CAM-MAR-26" "CAM-MAR-27" "CAM-MAR-28" "CAM-MAR-29" "CAM-MAR-30" "CAM-MAR-31" "CAM-MAR-32" "CAM-MAR-33" "CAM-MAR-34" "CAM-MAR-35" "CAM-MAR-36" "CAM-MAR-37" "CAM-MAR-38" "CAM-MAR-39" "CAM-MAR-40" "CAM-MAR-41" "CAM-MAR-42" "CAM-MAR-43" "CAM-MAR-44" "CAM-MAR-45" "CAM-MAR-46" "CAM-MAR-47" "CAM-MAR-48" "CAM-MAR-49" "CAM-MAR-50" "CAM-MAR-51" "CAM-MAR-52". Observation records are missing from d until this file is standardized.
+# CAM-MAR-1999-MSK-FAC.txt: not read. columns: "CAM-MAR-01" "CAM-MAR-02" "CAM-MAR-03" "CAM-MAR-04" "CAM-MAR-05" "CAM-MAR-06" "CAM-MAR-07" "CAM-MAR-08" "CAM-MAR-09" "CAM-MAR-10" "CAM-MAR-11" "CAM-MAR-12" "CAM-MAR-13" "CAM-MAR-14" "CAM-MAR-15" "CAM-MAR-16" "CAM-MAR-17" "CAM-MAR-18" "CAM-MAR-19" "CAM-MAR-20" "CAM-MAR-21" "CAM-MAR-22" "CAM-MAR-23" "CAM-MAR-24" "CAM-MAR-25" "CAM-MAR-26" "CAM-MAR-27" "CAM-MAR-28" "CAM-MAR-29" "CAM-MAR-30" "CAM-MAR-31" "CAM-MAR-32" "CAM-MAR-33" "CAM-MAR-34" "CAM-MAR-35" "CAM-MAR-36" "CAM-MAR-37" "CAM-MAR-38" "CAM-MAR-39" "CAM-MAR-40" "CAM-MAR-41" "CAM-MAR-42" "CAM-MAR-43" "CAM-MAR-44" "CAM-MAR-45" "CAM-MAR-46" "CAM-MAR-47" "CAM-MAR-48" "CAM-MAR-49" "CAM-MAR-50" "CAM-MAR-51" "CAM-MAR-52". Observation records are missing from d until this file is standardized.
+# CAM-MAR-1999-MSK-PA-FLO.txt: not read. columns: "CAM-MAR-01" "CAM-MAR-02" "CAM-MAR-03" "CAM-MAR-04" "CAM-MAR-05" "CAM-MAR-06" "CAM-MAR-07" "CAM-MAR-08" "CAM-MAR-09" "CAM-MAR-10" "CAM-MAR-11" "CAM-MAR-12" "CAM-MAR-13" "CAM-MAR-14" "CAM-MAR-15" "CAM-MAR-16" "CAM-MAR-17" "CAM-MAR-18" "CAM-MAR-19" "CAM-MAR-20" "CAM-MAR-21" "CAM-MAR-22" "CAM-MAR-23" "CAM-MAR-24" "CAM-MAR-25" "CAM-MAR-26" "CAM-MAR-27" "CAM-MAR-28" "CAM-MAR-29" "CAM-MAR-30" "CAM-MAR-31" "CAM-MAR-32" "CAM-MAR-33" "CAM-MAR-34" "CAM-MAR-35" "CAM-MAR-36" "CAM-MAR-37" "CAM-MAR-38" "CAM-MAR-39" "CAM-MAR-40" "CAM-MAR-41" "CAM-MAR-42" "CAM-MAR-43" "CAM-MAR-44" "CAM-MAR-45" "CAM-MAR-46" "CAM-MAR-47" "CAM-MAR-48" "CAM-MAR-49" "CAM-MAR-50" "CAM-MAR-51" "CAM-MAR-52". Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -49,10 +52,10 @@ Study of the weed flora of flood sorghum (Muskwari) in the karal soil areas in N
 	)
 
 	f <- ff[basename(ff) == "CAM-MAR-1999-MSK-AD.xlsx"]
-	r1b <- carobiner::read.excel(f, sheet="Facteurs")
-	r1c <- carobiner::read.excel(f, sheet="Floristique")
+	r1 <- carobiner::read.excel(f, sheet="Facteurs")
+	r2 <- carobiner::read.excel(f, sheet="Floristique")
 
-	get_row <- function(label) unname(unlist(r1b[r1b[[1]] == label, -1]))
+	get_row <- function(label) unname(unlist(r1[r1[[1]] == label, -1]))
 
 	# CAM-MAR-1999-MSK-AD-DOC.txt: 1-9 note to % cover, same table as Benin 2013.
 	rating_to_cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
@@ -64,7 +67,7 @@ Study of the weed flora of flood sorghum (Muskwari) in the karal soil areas in N
 	# date is an Excel serial. Annee is not used (it is a 1999-2050 fill).
 	obs <- as.numeric(get_row("date"))
 	d1b <- data.frame(
-		trial_id = names(r1b)[-1],
+		trial_id = names(r1)[-1],
 		crop = unname(crop_map[tolower(trimws(as.character(get_row("Culture_origine"))))]),
 		date = as.character(as.Date(obs, origin="1899-12-30")),
 		country = "Cameroon", # geographicCoverage
@@ -78,11 +81,11 @@ Study of the weed flora of flood sorghum (Muskwari) in the karal soil areas in N
 	d1b$is_survey <- TRUE
 	d1b$geo_from_source <- FALSE
 
-	present <- which(!is.na(r1c[, -1]) & r1c[, -1] > 0, arr.ind=TRUE)
-	scores <- as.integer(as.numeric(r1c[, -1][present]))
+	present <- which(!is.na(r2[, -1]) & r2[, -1] > 0, arr.ind=TRUE)
+	scores <- as.integer(as.numeric(r2[, -1][present]))
 	d <- data.frame(
-		trial_id = names(r1c)[-1][present[, "col"]],
-		weed_species = trimws(as.character(r1c[[1]][present[, "row"]])),
+		trial_id = names(r2)[-1][present[, "col"]],
+		weed_species = trimws(as.character(r2[[1]][present[, "row"]])),
 		ground_cover = rating_to_cover[match(scores, 1:9)]
 	)
 	d <- merge(d, d1b, by="trial_id", all.x=TRUE)

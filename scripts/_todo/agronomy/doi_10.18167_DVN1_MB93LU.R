@@ -18,6 +18,10 @@
 ## NOT PROCESSED
 # Carnet and PMG workbooks are not in the open download.
 # Shrub coppice dates and the calculated daily mean temperature.
+# Crop-Shrub-Operations_2018-2022.txt: same table as the file of this name that is read.
+# Rendement-Niebe_2018-2023.txt: not read. columns: Le fichier "Rendement-Niebe_2018-2022.xlsx" rapporte sur la production et le rendement du niébé de 2018 à 2022. Pour chacune des 24 parcelles élémentaires des blocs et pour la parcelle 26 hors blocs. Le fichier donne le poids (kg),  après séchage au soleil,  des gousses et des grains produits sur la parcelle élémentaire et,  les rendements correspondant en kg/ha (séchage soleil). Ces résultats sont donnés en face de la densité des arbustes (NS=pas d'arbustes; LSD=faible densité d'arbustes; MSD=densité moyenne d'arbustes et; HSD=haute densité d'arbustes) et du travail du sol (Z=zaï et Nt=sans travail du sol) par parcelle et par bloc.. Observation records are missing from d until this file is standardized.
+# Rendement-Sorgho_2018-2023.txt: not read. columns: Le fichier "Rendement-Sorgho_2018-2022.xlsx" rapporte les rendements grain et paille du sorgho obtenus annuellement,  de 2018 à 2022,  dans chacune des parcelles élémentaires du dispositif et dans la parcelle 26. . Observation records are missing from d until this file is standardized.
+# Shrub-Aboveground-Biomass_2018-2022.txt: same table as the file of this name that is read.
 
 
 carob_script <- function(path) {
@@ -66,9 +70,9 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 		as.data.frame(readxl::read_excel(f, sheet=sheet, col_names=FALSE, .name_repair="minimal"))
 	}
 
-	fop <- ff[basename(ff) == "Crop-Shrub-Operations_2018-2022.xlsx"]
-	sorg_op <- read_sheet(fop, "Sorghum")
-	cow_op <- read_sheet(fop, "Cowpea")
+	f1 <- ff[basename(ff) == "Crop-Shrub-Operations_2018-2022.xlsx"]
+	sorg_op <- read_sheet(f1, "Sorghum")
+	cow_op <- read_sheet(f1, "Cowpea")
 	sow_s <- excel_date(sorg_op[3:nrow(sorg_op), 4])
 	harv_s <- excel_date(sorg_op[3:nrow(sorg_op), 12])
 	names(sow_s) <- as.character(sorg_op[3:nrow(sorg_op), 1])
@@ -78,8 +82,8 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 	names(sow_c) <- as.character(cow_op[3:nrow(cow_op), 1])
 	names(harv_c) <- names(sow_c)
 
-	fs <- ff[basename(ff) == "Rendement-Sorgho_2018-2022.xlsx"]
-	rs <- read_sheet(fs, "yield_2018-2022")
+	f2 <- ff[basename(ff) == "Rendement-Sorgho_2018-2022.xlsx"]
+	rs <- read_sheet(f2, "yield_2018-2022")
 	id <- rs[3:nrow(rs), 1:4]
 	names(id) <- c("block", "plot", "tillage", "shrub")
 	gy <- apply(rs[3:nrow(rs), 5:9], 2, as.numeric)
@@ -110,8 +114,8 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 		ds <- rbind(ds, one)
 	}
 
-	fc <- ff[basename(ff) == "Rendement-niebe_2018-2022.xlsx"]
-	rc <- read_sheet(fc, "2018-22")
+	f3 <- ff[basename(ff) == "Rendement-niebe_2018-2022.xlsx"]
+	rc <- read_sheet(f3, "2018-22")
 	idc <- rc[3:nrow(rc), 1:4]
 	names(idc) <- c("block", "plot", "tillage", "shrub")
 	# Four measures per year: pod mass, pod yield, grain mass, grain yield. Years start at column 5.
@@ -139,8 +143,8 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 		dc <- rbind(dc, one)
 	}
 
-	fb <- ff[basename(ff) == "Shrub-Aboveground-Biomass_2018-2022.xlsx"]
-	rb <- read_sheet(fb, "Annual_Aboveground_Dry-Biomass")
+	f4 <- ff[basename(ff) == "Shrub-Aboveground-Biomass_2018-2022.xlsx"]
+	rb <- read_sheet(f4, "Annual_Aboveground_Dry-Biomass")
 	idb <- rb[3:nrow(rb), 1:4]
 	names(idb) <- c("block", "plot", "tillage", "shrub")
 	bm <- apply(rb[3:nrow(rb), 5:9], 2, as.numeric)
@@ -177,18 +181,18 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 
-	fw <- ff[basename(ff) == "Climat_Daily_2018-2022.xlsx"]
-	w <- carobiner::read.excel(fw, sheet="donn jour", na=c("na", "NA"))
+	f5 <- ff[basename(ff) == "Climat_Daily_2018-2022.xlsx"]
+	r <- carobiner::read.excel(f5, sheet="donn jour", na=c("na", "NA"))
 	wth <- data.frame(
 		station_id = "Kamboinse",
 		station_name = "Kamboinse",
 		country = "Burkina Faso",
-		date = as.character(as.Date(w[[1]], tz="UTC")),
-		tmin = as.numeric(w$TMin),
-		tmax = as.numeric(w$Tmax),
-		rhmn = as.numeric(w[["Hum Min"]]),
-		rhmx = as.numeric(w[["Hum max"]]),
-		prec = as.numeric(w[["pluie (mm)"]])
+		date = as.character(as.Date(r[[1]], tz="UTC")),
+		tmin = as.numeric(r$TMin),
+		tmax = as.numeric(r$Tmax),
+		rhmn = as.numeric(r[["Hum Min"]]),
+		rhmx = as.numeric(r[["Hum max"]]),
+		prec = as.numeric(r[["pluie (mm)"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 

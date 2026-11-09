@@ -16,6 +16,9 @@
 # Customer interviews. Customer number plus village is not unique.
 # Product, price, credit, and practice questions on the trader file.
 # Data dictionaries and the pdf tools.
+# Customers Data Dictionary: documentation or a codebook, not an observation table.
+# Market Survey - Customers.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# Traders & Distributors Data Dictionary: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

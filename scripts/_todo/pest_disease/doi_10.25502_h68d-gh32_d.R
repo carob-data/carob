@@ -21,6 +21,7 @@
 ## NOT PROCESSED
 # cassava-root-rot-data.csv: ID. Row number.
 # cassava-root-rot-data.csv: Rotting_presence. 0/1 flag repeated by Rotten_root.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # field_area_: Surf_area as recorded; unit not stated.

@@ -18,6 +18,7 @@
 ## NOT PROCESSED
 # ff-counts-on-resting-plants.csv: Rain, Weather, Wind. Qualitative conditions on the count day, not weather records.
 # Both count files: ID. Row number.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # fruit_class_: fruit class code (1 or 2); meaning not in the dictionary.

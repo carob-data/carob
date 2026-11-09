@@ -65,7 +65,8 @@ The data sets reveal grain Zn biofortfication performance of Zn-efficient and Zn
 
 	# some raw sheets have a second (re-sorted, analysis) block below the first; only the first block is used
 	rd <- function(fname, sheet, skip=0) {
-		r <- carobiner::read.excel(ff[basename(ff) == fname], sheet=sheet, col_names=FALSE, skip=skip)
+		f <- ff[basename(ff) == fname]
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, skip=skip)
 		blank <- which(is.na(r[[2]]))
 		if (length(blank) > 0) r <- r[seq_len(blank[1] - 1), ]
 		r[!duplicated(r), ]

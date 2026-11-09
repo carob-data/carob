@@ -45,7 +45,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("^Encuesta Autoridades.*\\.xlsx$", basename(ff))]
+	f <- ff[basename(ff) == "Encuesta Autoridades - La Libertad - Junin - Huancavelica - COVID-19.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Autoridades")
 
 	parse_dmy <- function(x) {

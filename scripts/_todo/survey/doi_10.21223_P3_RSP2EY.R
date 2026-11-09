@@ -12,6 +12,7 @@
 ## NOT PROCESSED
 # Household member names, ages, and occupations.
 # Input, price, and production modules. Their units are not applied in this table.
+# 02_Data dictionary_SEP_Colombia.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -41,7 +42,7 @@ La metodología SEP, es una herramienta de gestión de proyectos que se aplica c
 		carob_effort = 0.25
 	)
 
-	f <- ff[grepl("^01_DataBase", basename(ff))]
+	f <- ff[basename(ff) == "01_DataBase  SEP Colombia - Papa Criolla.xlsx"]
 	r <- carobiner::read.excel(f, sheet="All")
 	txt <- function(x) {
 		z <- trimws(as.character(x))

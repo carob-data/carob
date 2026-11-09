@@ -36,6 +36,64 @@
 # water_management_: flooded / aerobic as described by the authors
 
 
+
+## NOT PROCESSED
+# Annotated_C11_DS2011_1.csv: not read. columns: Date, DAS, SumT, Variety, Watering, Tiller_NO, _FREQ_, Minitiated, Mappeared, Mligulated, Msenesced, Mlive_tiller, .... Observation records are missing from d until this file is standardized.
+# Annotated_C11_DS2012.csv: not read. columns: Date, DAS, SumT, Variety, Tiller_NO, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Mculm_length, .... Observation records are missing from d until this file is standardized.
+# Biomasses_mean_C11_DS2011.csv: not read. columns: Variety, Watering, DAS, SumT, _FREQ_, MLAI, MTiller_density, MDead_leaves_gm2, MDead_tiller_gm2, MDead_mat_gm2, MCulm_gm2, MSheath_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomasses_mean_C11_DS2012.csv: not read. columns: Variety, DAS, SumT, SumGR, _FREQ_, MLAI, Mtiller_density, Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomasses_mean_UE_DS2012.csv: not read. columns: DAS, SumT, SumGR, MLAI, Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, Mpanicle_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomasses_mean_UJ_DS2011.csv: not read. columns: Field, Date, SumT, SumGR, MLAI, Mdead_leaves_gm2, MDead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, .... Observation records are missing from d until this file is standardized.
+# Conventional_area_UE_DS2012.csv: not read. columns: Date, SN, Plot_NO, Leaf_area. Observation records are missing from d until this file is standardized.
+# Culm_panicle_C11_DS2012.csv: not read. columns: Date, SN, Plot_NO, Variety, Plant_NO, Tiller_NO, Culm_length, Culm_length_n1, Culm_length_n2, Culm_length_n3, Culm_length_n4, Culm_length_n5, .... Observation records are missing from d until this file is standardized.
+# Culm_panicle_UE_DS2012.csv: not read. columns: Date, SN, Plot_NO, Plant_NO, Tiller_NO, Organ, Length. Observation records are missing from d until this file is standardized.
+# Development_C11_DS2011.csv: not read. columns: Date, Rep_NO, Plot_NO, Plant_NO, Live_tiller, Tiller_NO, Appeared, Ligulated, Senesced, Plant_height, Sheath_length_n, Sheath_length_n1, .... Observation records are missing from d until this file is standardized.
+# Development_C11_DS2012.csv: not read. columns: Date, SN, Plot_NO, Variety, Plant_NO, Tiller_NO, Live_tiller, Appeared, Ligulated, Senesced, Plant_height, SumT, .... Observation records are missing from d until this file is standardized.
+# Development_mean_C11_DS2011.csv: not read. columns: Date, DAS, SumT, Variety, Watering, Tiller_NO, _FREQ_, Minitiated, Mappeared, Mligulated, Msenesced, Mlive_tiller, .... Observation records are missing from d until this file is standardized.
+# Development_mean_C11_DS2012.csv: not read. columns: Date, DAS, SumT, Variety, Tiller_NO, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Mculm_length, .... Observation records are missing from d until this file is standardized.
+# Development_mean_UE_DS2012.csv: not read. columns: Date, DAS, SumT, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Msampling_length, Mtiller_density, Mplant_density, Mapp_sen, .... Observation records are missing from d until this file is standardized.
+# Development_mean_UJ_DS2011.csv: not read. columns: Field, Date, SumT, Mappeared, Mligulated, Msenesced, Mlive_tiller, Msheath_length_n, Mculm_length, Mtiller_density, Mplant_density, Msampling_length, .... Observation records are missing from d until this file is standardized.
+# Development_UE_DS2012.csv: not read. columns: Date, SN, Plot_NO, Plant_NO, Tiller_NO, Sampling_length, Live_tiller, Appeared, Ligulated, Senesced, Plant_height. Observation records are missing from d until this file is standardized.
+# Development_UJ_DS2011.csv: not read. columns: Date, Subsample, Plot_NO, Sampling_length, Plant_NO, Dead_tiller, Live_tiller, Tiller_NO, Appeared, Ligulated, Senesced, Plant_height, .... Observation records are missing from d until this file is standardized.
+# Dissections_C11_DS2011.csv: not read. columns: Date, Plot_NO, Plant_NO, Appeared, Ligulated, Live_tiller, Plant_height, Initiated, Tip_length, Leaf_length_n1, Sheath_length_n1, Stem_length, .... Observation records are missing from d until this file is standardized.
+# Harvest_C11_DS2012.csv: not read. columns: Plot_NO, Variety, Sowing_date, Harvest_date, Hill_count, Panicle_count, FiGr_DW, UnFiGr_DW, KFiGr_DW, MC_PC, Sampling_area, Panicle_per_plant, .... Observation records are missing from d until this file is standardized.
+# Harvest_mean_C11_DS2011.csv: not read. columns: Variety, Watering, _FREQ_, Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, Mpanicle_gm2, Mgrain14_gm2, .... Observation records are missing from d until this file is standardized.
+# Harvest_mean_C11_DS2012.csv: not read. columns: Variety, _FREQ_, Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, Mpanicle_gm2, Mgrain14_gm2, Mlive_mat_gm2, .... Observation records are missing from d until this file is standardized.
+# Harvest_mean_UE_DS2012.csv: not read. columns: Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, Mpanicle_gm2, Mgrain14_gm2, Mlive_mat_gm2, Mshoot_gm2, Mvegetative_mat_gm2, .... Observation records are missing from d until this file is standardized.
+# Harvest_mean_UJ_DS2011.csv: not read. columns: Field, Mdead_leaves_gm2, MDead_tiller_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, Mleaf_gm2, Mpanicle_gm2, Mgrain14_gm2, Mlive_mat_gm2, Mshoot_gm2, .... Observation records are missing from d until this file is standardized.
+# Internode_C11_DS2011.csv: not read. columns: Date, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Culm_length, Culm_length_n1, Variety, Watering, Internode_length. Observation records are missing from d until this file is standardized.
+# Internode_mean_C11_DS2011.csv: not read. columns: Variety, Watering, Tiller_NO, Leaf_NO, _FREQ_, Minternode_length, Linternode_length, dinternode_length. Observation records are missing from d until this file is standardized.
+# Internode_mean_C11_DS2012.csv: not read. columns: Variety, Tiller_NO, Organ, _FREQ_, Mlength, Llength. Observation records are missing from d until this file is standardized.
+# Internode_mean_UE_DS2012.csv: not read. columns: Organ, Mlength, Llength, dlength. Observation records are missing from d until this file is standardized.
+# Internode_mean_UJ_DS2011.csv: not read. columns: Plot_NO, Mculm_length, Mculm_length_n1, Mculm_length_n2, Mculm_length_n3, Mculm_length_n4, Mculm_length_n5, Mculm_length_rmng, Lculm_length, Lculm_length_n1, Lculm_length_n2, Lculm_length_n3, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_C11_DS2012.csv: not read. columns: Expt, SN, Date, Variety, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Leaf_DW, Leaf_area, Leaf_width, Leaf_length, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_C11_DS2011.csv: not read. columns: Variety, Watering, Tiller_NO, Leaf_NO, _FREQ_, Mleaf_area, Mleaf_length, Mleaf_width, Lleaf_area, Lleaf_length, Lleaf_width, dleaf_area, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_C11_DS2012.csv: not read. columns: Variety, Tiller_NO, Leaf_NO, _FREQ_, Mleaf_area, Mleaf_length, Mleaf_width, Lleaf_area, Lleaf_length, Lleaf_width, dleaf_area, dleaf_length, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_UE_DS2012.csv: not read. columns: Leaf_NO, Mleaf_area, Mleaf_length, Mleaf_width, Lleaf_area, Lleaf_length, Lleaf_width, dleaf_area, dleaf_length, dleaf_width, Msheath_length, Msheath_length_2. Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_UJ_DS2011.csv: not read. columns: Field, Leaf_NO, Mleaf_area, Mleaf_width, Mleaf_length, Lleaf_area, Lleaf_width, Lleaf_length, dleaf_area, dleaf_width, dleaf_length, Leaf_area_sum. Observation records are missing from d until this file is standardized.
+# Leaf_area_UE_DS2012.csv: not read. columns: Expt, SN, Date, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Code, Leaf_DW, Plot_plant, Tiller_leaf, Leaf_area, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_UJ_DS2011.csv: not read. columns: Date, Plot_NO, Plant_NO, Leaf_NO, Leaf_area, Leaf_width, Mleaf_width, Leaf_length, Field, Rep_NO, SumT, SumGR. Observation records are missing from d until this file is standardized.
+# Leaf_C11_DS2011.csv: not read. columns: Date, Plot_NO, Plant_NO, Leaf_area, Leaf_width, Leaf_length, Tiller_NO, Leaf_NO, Variety, Watering. Observation records are missing from d until this file is standardized.
+# Meteo_C11_DS2011.csv: not read. columns: Date, GR, AirT, RH, SoilT, SumT_air, SumT_dry, SumT_soil, SumT. Observation records are missing from d until this file is standardized.
+# Meteo_C11_DS2012.csv: not read. columns: Date, N, GR, RH, AirT, T2, T3, T4, T5, T6, SoilT, SumGR, .... Observation records are missing from d until this file is standardized.
+# Meteo_UE_DS2012.csv: not read. columns: Date, AirT, SoilT, GR, SumGR, SumT. Observation records are missing from d until this file is standardized.
+# Meteo_UJ_DS2011.csv: not read. columns: Date, JD, AirT, SoilT, SumT_air, SumT_soil, GR, RH, SumGR, SumT. Observation records are missing from d until this file is standardized.
+# Nanalysis_C11_DS2012.csv: not read. columns: Field, Date, SN, Plot_NO, Variety, Watering, Organ, N_PC, DAS. Observation records are missing from d until this file is standardized.
+# Nanalysis_mean_C11_DS2012.csv: not read. columns: Variety, DAS, _FREQ_, MN_PC. Observation records are missing from d until this file is standardized.
+# Nanalysis_UE_DS2012.csv: not read. columns: Field, Date, SN, Plot_NO, Variety, Code, N_PC. Observation records are missing from d until this file is standardized.
+# Sheath_C11_DS2012.csv: not read. columns: Date, SN, Plot_NO, Variety, Plant_NO, Tiller_NO, Leaf_NO, Sheath_length. Observation records are missing from d until this file is standardized.
+# Sheath_mean_C11_DS2011.csv: not read. columns: Variety, Watering, Tiller_NO, Leaf_NO, _FREQ_, Msheath_length_n, Lsheath_length_n, dsheath_length_n. Observation records are missing from d until this file is standardized.
+# Sheath_mean_C11_DS2012.csv: not read. columns: Variety, Tiller_NO, Leaf_NO, _FREQ_, Msheath_length, Lsheath_length, dsheath_length. Observation records are missing from d until this file is standardized.
+# Sheath_mean_UE_DS2012.csv: not read. columns: Leaf_NO, Msheath_length, Lsheath_length, dsheath_length. Observation records are missing from d until this file is standardized.
+# Sheath_mean_UJ_DS2011.csv: not read. columns: Field, Ligulated, Msheath_length, Lsheath_length. Observation records are missing from d until this file is standardized.
+# Sheath_UE_DS2012.csv: not read. columns: Date, SN, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Sheath_length. Observation records are missing from d until this file is standardized.
+# Table descriptions_for upload.xlsx: not read. sheet Sheet1 (of 3): field, year, season, experiment, table, classification, description. Observation records are missing from d until this file is standardized.
+# Tensiometer_C11_DS2011.csv: not read. columns: Date, DAS, Variety, Tensio_NO, Water_potential, SumT. Observation records are missing from d until this file is standardized.
+# Tensiometer_mean_C11_DS2011.csv: not read. columns: Variety, DAS, SumT, _FREQ_, Mwater_potential, Lwater_potential. Observation records are missing from d until this file is standardized.
+# Tiller_C11_DS2012.csv: not read. columns: Date, SN, Plot_NO, Variety, Plant_NO, Tiller_NO, Organ, Length, Dry_weight, SumT. Observation records are missing from d until this file is standardized.
+# Tiller_length_UE_DS2012.csv: not read. columns: Date, Plot_NO, Organ, Length. Observation records are missing from d until this file is standardized.
+# Tiller_mean_C11_DS2012.csv: not read. columns: Variety, Tiller_NO, Date, SumT, Organ, _FREQ_, Mdry_weight, Ldry_weight. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

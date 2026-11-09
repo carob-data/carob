@@ -33,6 +33,22 @@
 # g_legume_utilisation_*.csv: use of the legume grain and haulms.
 # h_labour_saving_tools_*.csv, i_information_access_*.csv, j_nutrition_*.csv.
 # variable_definitions.csv: units column empty for harvest and area.
+# a_b_general_3.csv: not read. columns: SN, id, farm_id, importance_agriculture_hh, main_source_income_hh, proportion_of_total_income, instanceid. Observation records are missing from d until this file is standardized.
+# c_livestock_composition.csv: not read. columns: SN, id, farm_id, livestock_type, livestock_number, instanceid. Observation records are missing from d until this file is standardized.
+# c_livestock_feed_avail_score.csv: not read. columns: SN, id, farm_id, jan, feb, mar, apr, may, jun, jul, aug, sep, .... Observation records are missing from d until this file is standardized.
+# c_livestock_last_year.csv: not read. columns: SN, id, farm_id, last_year, instanceid. Observation records are missing from d until this file is standardized.
+# c_livestock_nutrition_score.csv: not read. columns: SN, id, farm_id, fodder_type_contribution_to_diet, crop, jan, feb, mar, apr, may, jun, jul, .... Observation records are missing from d until this file is standardized.
+# g_legume_utilisation_1.csv: not read. columns: SN, id, farm_id, crop, total_production_farm, weight_unit, amount_for_sale, amount_for_hh, amount_for_payment_food_hired_lab, amount_kept_seed_planting, instanceid. Observation records are missing from d until this file is standardized.
+# g_legume_utilisation_2.csv: not read. columns: SN, id, farm_id, processed_legume_before_selling, legume_processed, how_processed, involved_in_collective_marketing, legume_marketed, explain_marketing_system, instanceid. Observation records are missing from d until this file is standardized.
+# g_legume_utilisation_3.csv: not read. columns: sn, id, farm_id, residue_used, legume, perc_fed_to_livestock, perc_mulched, perc_burnt, perc_sold, perc_other, specify_other, instanceid. Observation records are missing from d until this file is standardized.
+# h_labour_saving_tools_1.csv: not read. columns: SN, id, farm_id, tools_used, instanceid. Observation records are missing from d until this file is standardized.
+# h_labour_saving_tools_2.csv: not read. columns: SN, id, farm_id, tool, activity, used_by, instanceid. Observation records are missing from d until this file is standardized.
+# i_information_access_1.csv: not read. columns: SN, id, farm_id, information_source, rank, instanceid. Observation records are missing from d until this file is standardized.
+# i_information_access_2.csv: not read. columns: SN, id, farm_id, information_looked_for, instanceid. Observation records are missing from d until this file is standardized.
+# i_information_access_3.csv: not read. columns: SN, id, farm_id, learn_about_legumes, challenges_legume_cultivation, instanceid. Observation records are missing from d until this file is standardized.
+# j_nutrition_1.csv: not read. columns: SN, id, farm_id, food_struggle_normal_year, eat_legumes, questions_comments, instanceid. Observation records are missing from d until this file is standardized.
+# j_nutrition_2.csv: not read. columns: SN, id, farm_id, item, jan, feb, mar, apr, may, jun, jul, aug, .... Observation records are missing from d until this file is standardized.
+# j_nutrition_3.csv: not read. columns: SN , id, farm_id, legume_part, legume_type, peak_season_per_week, low_season_per_week, dish_type, instanceid. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -148,7 +164,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	f <- ff[basename(ff) == "f_crop_production_1.csv"]
 	r <- read.csv(f)
-	g <- read.csv(ff[basename(ff) == "a_b_general_1.csv"])
+	f1 <- ff[basename(ff) == "a_b_general_1.csv"]
+	r1 <- read.csv(f1)
 
 	c1 <- map_one(r$crop_1)
 	c2 <- map_one(r$crop_2)
@@ -159,32 +176,32 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	harv[!is.na(harv) & harv >= 99999] <- NA
 	yield <- ifelse(!is.na(size) & size > 0, harv / size, NA_real_)
 
-	country <- trimws(g$country)
+	country <- trimws(r1$country)
 	country[is.na(country) | country == ""] <- "Ethiopia"
 
-	adm <- tolower(trimws(g$sector_state))
+	adm <- tolower(trimws(r1$sector_state))
 	adm1 <- rep(NA_character_, length(adm))
 	adm1[grepl("oromia", adm)] <- "Oromia"
 	adm1[grepl("amh|amah", adm)] <- "Amhara"
 	adm1[grepl("bin|benish|binsh", adm)] <- "Benishangul-Gumuz"
 	adm1[grepl("snn|snp", adm)] <- "Southern Nations, Nationalities and Peoples"
 
-	site <- sub("\\s*\\(.*", "", trimws(g$action_site))
-	date <- rep(NA_character_, nrow(g))
-	okd <- !is.na(g$date_interview_yyyy) & g$date_interview_yyyy >= 2000 &
-		!is.na(g$date_interview_mm) & g$date_interview_mm >= 1 & g$date_interview_mm <= 12 &
-		!is.na(g$date_interview_dd) & g$date_interview_dd >= 1 & g$date_interview_dd <= 31
-	date[okd] <- sprintf("%04d-%02d-%02d", g$date_interview_yyyy[okd], g$date_interview_mm[okd], g$date_interview_dd[okd])
+	site <- sub("\\s*\\(.*", "", trimws(r1$action_site))
+	date <- rep(NA_character_, nrow(r1))
+	okd <- !is.na(r1$date_interview_yyyy) & r1$date_interview_yyyy >= 2000 &
+		!is.na(r1$date_interview_mm) & r1$date_interview_mm >= 1 & r1$date_interview_mm <= 12 &
+		!is.na(r1$date_interview_dd) & r1$date_interview_dd >= 1 & r1$date_interview_dd <= 31
+	date[okd] <- sprintf("%04d-%02d-%02d", r1$date_interview_yyyy[okd], r1$date_interview_mm[okd], r1$date_interview_dd[okd])
 
 	loc <- data.frame(
-		farm_id = g$farm_id,
+		farm_id = r1$farm_id,
 		country = country,
 		adm1 = adm1,
 		adm2 = carobiner::fix_name(site, "title"),
-		location = carobiner::fix_name(g$village, "title"),
-		longitude = g$gps_longitude_dec,
-		latitude = g$gps_latitude_dec,
-		elevation = g$gps_altitude_dec,
+		location = carobiner::fix_name(r1$village, "title"),
+		longitude = r1$gps_longitude_dec,
+		latitude = r1$gps_latitude_dec,
+		elevation = r1$gps_altitude_dec,
 		date = date
 	)
 	loc <- loc[!duplicated(loc$farm_id), ]

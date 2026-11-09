@@ -14,6 +14,8 @@
 
 ## NOT PROCESSED
 # HAUT1 (a second height with no date). Weed scores, fertility judgments, fallow age, operation delays, and the weather and protocol files. Restricted soil files.
+# météo_station_synoptique_Garoua_2013.xlsx: not read. sheet Sang 2013 horaires: Station météo Station IRAD de Bocklé (Sanguéré), Garoua, ...2, ...3, ...4, ...5, ...6, données horaires. Observation records are missing from d until this file is standardized.
+# pluviometrie_cameroun_2013_gashiga_djalingo.xls: not read. sheet Ngong 2013 (of 2): Département, ...2, ...3, ...4, ...5, ...6, Cumul annuel (mm), ...8, ...9, 691. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # npk_product_: Dose NPK, kg/ha of product, grade unknown. 0 means none applied.
@@ -48,15 +50,15 @@ Essais mis en place chez des producteurs dans deux grappes de villages du Nord C
 		carob_effort = 0.7
 	)
 
-	f <- ff[grepl("operations culturales", basename(ff))][1]
-	ng <- carobiner::read.excel(f, sheet = "donini_Ngong")
-	ga <- carobiner::read.excel(f, sheet = "donini_gashiga")
-	ng$cluster <- "Ngong"
-	ga$cluster <- "Gashiga"
+	f <- ff[basename(ff) == "operations culturales ensemble parcelles.xlsx"]
+	r1 <- carobiner::read.excel(f, sheet = "donini_Ngong")
+	r2 <- carobiner::read.excel(f, sheet = "donini_gashiga")
+	r1$cluster <- "Ngong"
+	r2$cluster <- "Gashiga"
 	keep <- c("cluster", "code parcelle", "village", "BLOCS", "Modalités", "labour ?",
 		"Date semis", "Herbicidage ?", "Apports organiques", "Date récolte",
 		"Dose NPK", "Dose urée", "HAUT2", "DENL", "DENR", "NBEPI", "BIOM", "RDEPI", "RDGRA", "PCGBI")
-	r <- rbind(ng[, keep], ga[, keep])
+	r <- rbind(r1[, keep], r2[, keep])
 
 	npk <- as.numeric(r[["Dose NPK"]])
 	urea <- as.numeric(r[["Dose urée"]])

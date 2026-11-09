@@ -1,8 +1,16 @@
 # R script for "carob"
 
-# NOTES 
-# rAUDPC needs to be fixed
-# https://github.com/reagro/carob/pull/609
+## NOTES
+# 1. In the late blight fieldbook, the "rAUDPC" column holds the absolute AUDPC
+#    (%.days) computed over all six LB evaluations, and the "AUDPC" column the same
+#    computation over the first five evaluations only. Both are exact trapezoid sums
+#    with 7 days between evaluations (e.g. LB = 0,5,10,75,90,100 gives
+#    "AUDPC" = 135*7 = 945 and "rAUDPC" = 230*7 = 1610), so the evaluation interval
+#    is known even though evaluation dates are not reported.
+#    AUDPC and rAUDPC are recomputed from the six-evaluation values accordingly.
+#    See https://github.com/reagro/carob/pull/609
+# 2. Trials were conducted at CIP experimental stations (San Ramon CIPSRM-1;
+#    Oxapampa OXAPMP), so on_farm is FALSE.
 
 carob_script <- function(path) {
   
@@ -18,11 +26,12 @@ carob_script <- function(path) {
       project = NA,
       data_type = "experiment",
       treatment_vars = "variety",
-      response_vars = "yield;yield_marketable", 
+      response_vars = "yield;yield_marketable;AUDPC;rAUDPC", 
       carob_contributor = "Henry Juarez",
+      carob_LLM = "Claude Fable 5",
       carob_effort = NA,
       carob_date = "2024-09-24",
-      notes = "rAUDPC needs to be fixed"
+      notes = NA
   )
     
   process <- carobiner::get_function("process_cip_lbvars", path, group)
@@ -31,7 +40,17 @@ carob_script <- function(path) {
   f <- f[grep("0._", basename(f), invert=TRUE)]
   
   d <- lapply(f, process, addvars=c("AUDPC","rAUDPC"))
-  d <- do.call(rbind, d)
+  d <- do.call(carobiner::bindr, d)
+
+  ## recompute AUDPC and rAUDPC (NOTES 1). After process_cip_lbvars, d$rAUDPC
+  ## holds the raw fieldbook "rAUDPC" column: the absolute AUDPC in %.days over
+  ## all six evaluations (5 intervals of 7 days = 35 days).
+  audpc <- d$rAUDPC
+  d$AUDPC <- audpc / 100           # fraction.days
+  d$rAUDPC <- audpc / (100 * 35)   # fraction of the maximum possible AUDPC
+
+  ## CIP experimental stations (NOTES 2)
+  d$on_farm <- FALSE
 
   carobiner::write_files(path = path, metadata = meta, wide=d)
 }

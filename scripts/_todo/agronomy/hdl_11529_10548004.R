@@ -47,14 +47,14 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)][1]
+	f <- ff[basename(ff) == "Inter-cropping 2015-16-LT-all nodes-Purnea.xlsx"]
 	r <- as.data.frame(carobiner::read.excel(f, sheet="intercropping"))
 	r <- r[!is.na(r$crop) & !is.na(r$gy), ]
-	raw <- carobiner::read.excel(f, sheet="Cost", col_names=FALSE)
-	hdr <- which(apply(raw, 1, function(z) any(trimws(as.character(z)) == "Lat")))[1]
-	cnms <- trimws(as.character(unlist(raw[hdr, ])))
+	r1 <- carobiner::read.excel(f, sheet="Cost", col_names=FALSE)
+	hdr <- which(apply(r1, 1, function(z) any(trimws(as.character(z)) == "Lat")))[1]
+	cnms <- trimws(as.character(unlist(r1[hdr, ])))
 	cnms[!nzchar(cnms)] <- paste0("blank", seq_along(cnms))[!nzchar(cnms)]
-	cost <- as.data.frame(raw[(hdr + 1):nrow(raw), , drop=FALSE])
+	cost <- as.data.frame(r1[(hdr + 1):nrow(r1), , drop=FALSE])
 	names(cost) <- make.names(cnms, unique=TRUE)
 	latn <- grep("^Lat$", names(cost), value=TRUE)[1]
 	lonn <- grep("^Long$", names(cost), value=TRUE)[1]

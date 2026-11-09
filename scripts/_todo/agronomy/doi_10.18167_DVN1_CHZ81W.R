@@ -24,6 +24,7 @@
 # Carrot and lettuce dry-weight samples, except carrot and lettuce root/leaf moisture joined at plot level
 # Tomato dry-weight samples (several harvests per plot)
 # Pest and disease presence scores on sample plants
+# 1_DATA_SOIL_SOERE-PRO_SENEGAL.xlsx: not read. sheet README (of 2): Column names, Description, Values / unit. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 
@@ -67,10 +68,10 @@ Recycling the growing stock of organic waste products (OWP) from cities, factori
 		as.character(as.Date(as.numeric(x), origin="1899-12-30"))
 	}
 
-	f_amt <- ff[basename(ff) == "2_DATA_FERTILIZATION_SOERE-PRO_SENEGAL.xlsx"]
-	amt <- carobiner::read.excel(f_amt, sheet="data_AMOUNT")
-	f_man <- ff[basename(ff) == "3_DATA_MANAGEMENT_SOERE-PRO_SENEGAL.xlsx"]
-	man <- carobiner::read.excel(f_man, sheet="data_MANAGEMENT")
+	f1 <- ff[basename(ff) == "2_DATA_FERTILIZATION_SOERE-PRO_SENEGAL.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="data_AMOUNT")
+	f2 <- ff[basename(ff) == "3_DATA_MANAGEMENT_SOERE-PRO_SENEGAL.xlsx"]
+	r2 <- carobiner::read.excel(f2, sheet="data_MANAGEMENT")
 
 	# File names Sewage_sludge and Poultry_litter. digestate is not in the OM vocabulary.
 	om_name <- c(
@@ -79,57 +80,57 @@ Recycling the growing stock of organic waste products (OWP) from cities, factori
 		Digestate = "digestate",
 		Synthetic_fertilizer = "none"
 	)
-	amt$OM_type <- om_name[as.character(amt$Fertilizer_type)]
-	amt$OM_amount <- ifelse(amt$OM_type == "none", 0, num(amt$Amount_applied_OWP) * 1000)
-	amt$OM_used <- amt$OM_amount > 0
-	amt$OM_type[amt$OM_type == "none" | !amt$OM_used] <- "none"
-	npk <- num(amt$Amount_applied_chem_10_10_20)
-	urea <- num(amt$Amount_applied_chem_urea)
-	sop <- num(amt$Amount_applied_chem_K2SO4)
-	amt$N_fertilizer <- npk * 0.10 + urea * 0.46
-	amt$P_fertilizer <- npk * 0.10 / 2.29
-	amt$K_fertilizer <- npk * 0.20 / 1.2051 + sop * 0.415
-	ft <- rep("none", nrow(amt))
+	r1$OM_type <- om_name[as.character(r1$Fertilizer_type)]
+	r1$OM_amount <- ifelse(r1$OM_type == "none", 0, num(r1$Amount_applied_OWP) * 1000)
+	r1$OM_used <- r1$OM_amount > 0
+	r1$OM_type[r1$OM_type == "none" | !r1$OM_used] <- "none"
+	npk <- num(r1$Amount_applied_chem_10_10_20)
+	urea <- num(r1$Amount_applied_chem_urea)
+	sop <- num(r1$Amount_applied_chem_K2SO4)
+	r1$N_fertilizer <- npk * 0.10 + urea * 0.46
+	r1$P_fertilizer <- npk * 0.10 / 2.29
+	r1$K_fertilizer <- npk * 0.20 / 1.2051 + sop * 0.415
+	ft <- rep("none", nrow(r1))
 	ft[npk > 0] <- "NPK"
 	ft[urea > 0 & ft == "none"] <- "urea"
 	ft[urea > 0 & ft != "none"] <- paste(ft[urea > 0 & ft != "none"], "urea", sep="; ")
 	ft[sop > 0 & ft == "none"] <- "SOP"
 	ft[sop > 0 & ft != "none"] <- paste(ft[sop > 0 & ft != "none"], "SOP", sep="; ")
-	amt$fertilizer_type <- ft
+	r1$fertilizer_type <- ft
 
-	man$planting_date <- ifelse(man$Crop == "Carrot",
-		as_iso(man$Date_sowing),
-		as_iso(man$Date_transplanting_or_thinning))
-	man$harvest_date <- as_iso(man$Harvest_date)
+	r2$planting_date <- ifelse(r2$Crop == "Carrot",
+		as_iso(r2$Date_sowing),
+		as_iso(r2$Date_transplanting_or_thinning))
+	r2$harvest_date <- as_iso(r2$Harvest_date)
 	# Carrot is sown in the plot. Lettuce and tomato planting_date is the transplant date (sown in a nursery).
 	# Cultivars from the management readme: tomato Mongal, lettuce Eden, carrot Pamela +.
-	man$variety <- c(Tomato="Mongal", Lettuce="Eden", Carrot="Pamela +")[as.character(man$Crop)]
+	r2$variety <- c(Tomato="Mongal", Lettuce="Eden", Carrot="Pamela +")[as.character(r2$Crop)]
 
-	f_car <- ff[basename(ff) == "4_DATA_CROP_CARROT_SOERE-PRO_SENEGAL.xlsx"]
-	rc <- carobiner::read.excel(f_car, sheet="data_CARROT_harvest")
+	f3 <- ff[basename(ff) == "4_DATA_CROP_CARROT_SOERE-PRO_SENEGAL.xlsx"]
+	r3 <- carobiner::read.excel(f3, sheet="data_CARROT_harvest")
 	d_car <- data.frame(
-		Year = rc$Year,
-		Cycle = rc$Cycle,
+		Year = r3$Year,
+		Cycle = r3$Cycle,
 		Crop = "Carrot",
-		Treatment = rc$Treatment,
-		Plot = rc$Plot,
-		bed = as.character(rc$Cropping_bed),
+		Treatment = r3$Treatment,
+		Plot = r3$Plot,
+		bed = as.character(r3$Cropping_bed),
 		crop = "carrot",
-		yield = num(rc$Tot_weight_carrots) / 8 * 10000,
+		yield = num(r3$Tot_weight_carrots) / 8 * 10000,
 		yield_part = "roots",
-		yield_marketable = num(rc$Weight_diam_sup_2cm) / 8 * 10000,
-		fwy_residue = num(rc$Total_weight_leaves) / 8 * 10000
+		yield_marketable = num(r3$Weight_diam_sup_2cm) / 8 * 10000,
+		fwy_residue = num(r3$Total_weight_leaves) / 8 * 10000
 	)
-	rdc <- carobiner::read.excel(f_car, sheet="data_CARROT_dry_weight")
+	r4 <- carobiner::read.excel(f3, sheet="data_CARROT_dry_weight")
 	mc <- data.frame(
-		Year = rdc$Year, Cycle = rdc$Cycle, Plot = rdc$Plot,
-		yield_moisture = num(rdc$Perc_hum_carrot_root)
+		Year = r4$Year, Cycle = r4$Cycle, Plot = r4$Plot,
+		yield_moisture = num(r4$Perc_hum_carrot_root)
 	)
 	d_car <- merge(d_car, mc, by=c("Year", "Cycle", "Plot"), all.x=TRUE)
 
-	f_let <- ff[basename(ff) == "5_DATA_CROP_LETTUCE_SOERE-PRO_SENEGAL.xlsx"]
-	rl <- carobiner::read.excel(f_let, sheet="data_LETTUCE_harvest ")
-	if (nrow(rl) == 0) rl <- carobiner::read.excel(f_let, sheet="data_LETTUCE_harvest")
+	f4 <- ff[basename(ff) == "5_DATA_CROP_LETTUCE_SOERE-PRO_SENEGAL.xlsx"]
+	rl <- carobiner::read.excel(f4, sheet="data_LETTUCE_harvest ")
+	if (nrow(rl) == 0) rl <- carobiner::read.excel(f4, sheet="data_LETTUCE_harvest")
 	d_let <- data.frame(
 		Year = rl$Year,
 		Cycle = rl$Cycle,
@@ -143,31 +144,31 @@ Recycling the growing stock of organic waste products (OWP) from cities, factori
 		yield_marketable = num(rl$Weight_headed) / 8 * 10000,
 		fwy_residue = NA_real_
 	)
-	rdl <- carobiner::read.excel(f_let, sheet="data_LETTUCE_dry_weight")
+	r5 <- carobiner::read.excel(f4, sheet="data_LETTUCE_dry_weight")
 	ml <- data.frame(
-		Year = rdl$Year, Cycle = rdl$Cycle, Plot = rdl$Plot,
-		yield_moisture = num(rdl$Perc_hum_lettuce_leaves)
+		Year = r5$Year, Cycle = r5$Cycle, Plot = r5$Plot,
+		yield_moisture = num(r5$Perc_hum_lettuce_leaves)
 	)
 	d_let <- merge(d_let, ml, by=c("Year", "Cycle", "Plot"), all.x=TRUE)
 
-	f_tom <- ff[basename(ff) == "6_DATA_CROP_TOMATO_SOERE-PRO_SENEGAL.xlsx"]
-	rt <- carobiner::read.excel(f_tom, sheet="data_TOMATO_harvest")
-	tom_kg <- num(rt$Cat1_tot_weight) + num(rt$Cat2_weight) + num(rt$Cat3_weight) + num(rt$Cat4_weight) + num(rt$Cat5_weight)
+	f5 <- ff[basename(ff) == "6_DATA_CROP_TOMATO_SOERE-PRO_SENEGAL.xlsx"]
+	r6 <- carobiner::read.excel(f5, sheet="data_TOMATO_harvest")
+	tom_kg <- num(r6$Cat1_tot_weight) + num(r6$Cat2_weight) + num(r6$Cat3_weight) + num(r6$Cat4_weight) + num(r6$Cat5_weight)
 	d_tom <- data.frame(
-		Year = rt$Year,
-		Cycle = rt$Cycle,
+		Year = r6$Year,
+		Cycle = r6$Cycle,
 		Crop = "Tomato",
-		Treatment = rt$Treatment,
-		Plot = rt$Plot,
-		bed = as.character(rt$Harvest_nb),
+		Treatment = r6$Treatment,
+		Plot = r6$Plot,
+		bed = as.character(r6$Harvest_nb),
 		crop = "tomato",
 		yield = tom_kg / 48 * 10000,
 		yield_part = "fruit",
-		yield_marketable = num(rt$Cat1_tot_weight) / 48 * 10000,
+		yield_marketable = num(r6$Cat1_tot_weight) / 48 * 10000,
 		fwy_residue = NA_real_,
 		yield_moisture = NA_real_,
-		plant_density = num(rt$Nb_plants) / 48 * 10000,
-		harvest_date_obs = as_iso(rt$Date_harvest)
+		plant_density = num(r6$Nb_plants) / 48 * 10000,
+		harvest_date_obs = as_iso(r6$Date_harvest)
 	)
 
 	d <- rbind(
@@ -176,9 +177,9 @@ Recycling the growing stock of organic waste products (OWP) from cities, factori
 		d_tom
 	)
 
-	fert <- amt[, c("Year", "Cycle", "Crop", "Treatment", "OM_type", "OM_amount", "OM_used", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type")]
+	fert <- r1[, c("Year", "Cycle", "Crop", "Treatment", "OM_type", "OM_amount", "OM_used", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type")]
 	d <- merge(d, fert, by=c("Year", "Cycle", "Crop", "Treatment"), all.x=TRUE)
-	mgmt <- man[, c("Year", "Cycle", "Crop", "planting_date", "harvest_date", "variety")]
+	mgmt <- r2[, c("Year", "Cycle", "Crop", "planting_date", "harvest_date", "variety")]
 	d <- merge(d, mgmt, by=c("Year", "Cycle", "Crop"), all.x=TRUE)
 	d$harvest_date[!is.na(d$harvest_date_obs)] <- d$harvest_date_obs[!is.na(d$harvest_date_obs)]
 	d$harvest_date_obs <- NULL

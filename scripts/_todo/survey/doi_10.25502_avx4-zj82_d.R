@@ -38,6 +38,40 @@
 # hh_compostion_characteristic.csv: housing, food security, credit, extension, livestock costs, labour counts, crops-grown codes for season A/B. Farmsize is total farm size, not the plot area in the input files.
 # household_identifies.csv: rows whose district text is a code, "RWANDA", or a person's name were not used as adm2.
 # crop_harvestd_utilizatn.csv: sales, consumption, and storage of the harvest. Not joined, because it is household-by-crop rather than plot-level and would double count input_use harvests. Prices have no currency.
+# agricultural_activities_metadata.csv: documentation or a codebook, not an observation table.
+# asset_roaster_metadata.csv: documentation or a codebook, not an observation table.
+# asset_roaster2_metadata.csv: documentation or a codebook, not an observation table.
+# comments_metadata.csv: documentation or a codebook, not an observation table.
+# communal_property_resources_metadata.csv: documentation or a codebook, not an observation table.
+# credit_source_metadata.csv: documentation or a codebook, not an observation table.
+# crop_harvestd_utilizatn_metadata.csv: documentation or a codebook, not an observation table.
+# fruit_beverages_metadata.csv: documentation or a codebook, not an observation table.
+# hh_compostion_characteristic_b.csv: not read. columns: ID, HHID, Country, District_Cefferie_Commune, Sector_Groupment_Zone, Village_Sun_colline, HH_compositnID, sex, HH_age, Relation_HHhead, HH_education_years, Years_farming_experience, .... Observation records are missing from d until this file is standardized.
+# hh_compostion_characteristic_b_metadata.csv: documentation or a codebook, not an observation table.
+# hh_compostion_characteristic_metadata.csv: documentation or a codebook, not an observation table.
+# household_diseases_metadata.csv: documentation or a codebook, not an observation table.
+# household_identifies_metadata.csv: documentation or a codebook, not an observation table.
+# improved_crop_management_metadata.csv: documentation or a codebook, not an observation table.
+# improved_crop_varieties_metadata.csv: documentation or a codebook, not an observation table.
+# input_short_rainy_season_metadata.csv: documentation or a codebook, not an observation table.
+# input_use_metadata.csv: documentation or a codebook, not an observation table.
+# ipm_metadata.csv: documentation or a codebook, not an observation table.
+# land_use_management_metadata.csv: documentation or a codebook, not an observation table.
+# land_use_mgt_short_rainy_metadata.csv: documentation or a codebook, not an observation table.
+# livestock_products_metadata.csv: documentation or a codebook, not an observation table.
+# market_access_metadata.csv: documentation or a codebook, not an observation table.
+# meat_animalproducts_metadata.csv: documentation or a codebook, not an observation table.
+# month_food_scarcity_metadata.csv: documentation or a codebook, not an observation table.
+# nonfood_items1_metadata.csv: documentation or a codebook, not an observation table.
+# nonfood_items2_metadata.csv: documentation or a codebook, not an observation table.
+# other_income_metadata.csv: documentation or a codebook, not an observation table.
+# other_livestock_metadata.csv: documentation or a codebook, not an observation table.
+# others_metadata.csv: documentation or a codebook, not an observation table.
+# platform_type_metadata.csv: documentation or a codebook, not an observation table.
+# staple_food_metadata.csv: documentation or a codebook, not an observation table.
+# utilzationshortrainyseason_metadata.csv: documentation or a codebook, not an observation table.
+# vegetable_fat_others_metadata.csv: documentation or a codebook, not an observation table.
+# warrantage_use_metadata.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # harvest_dry_kg_: total dry harvest on the plot (kg), from T_harvst_dry / T_harvt_dry.
@@ -81,14 +115,14 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	)
 
 	na_str <- c("", "NA", "N/A")
-	fu <- ff[basename(ff) == "input_use.csv"]
-	fs <- ff[basename(ff) == "input_short_rainy_season.csv"]
-	fi <- ff[basename(ff) == "household_identifies.csv"]
-	fh <- ff[basename(ff) == "hh_compostion_characteristic.csv"]
-	ru <- read.csv(fu, na.strings = na_str, fileEncoding = "latin1")
-	rs <- read.csv(fs, na.strings = na_str, fileEncoding = "latin1")
-	ri <- read.csv(fi, na.strings = na_str, fileEncoding = "latin1")
-	rh <- read.csv(fh, na.strings = na_str, fileEncoding = "latin1")
+	f1 <- ff[basename(ff) == "input_use.csv"]
+	f2 <- ff[basename(ff) == "input_short_rainy_season.csv"]
+	f3 <- ff[basename(ff) == "household_identifies.csv"]
+	f4 <- ff[basename(ff) == "hh_compostion_characteristic.csv"]
+	r1 <- read.csv(f1, na.strings = na_str, fileEncoding = "latin1")
+	r2 <- read.csv(f2, na.strings = na_str, fileEncoding = "latin1")
+	r3 <- read.csv(f3, na.strings = na_str, fileEncoding = "latin1")
+	r4 <- read.csv(f4, na.strings = na_str, fileEncoding = "latin1")
 
 	pos <- function(x) {
 		x <- as.numeric(x)
@@ -99,56 +133,56 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	}
 
 	u <- data.frame(
-		hhid = as.character(ru$HHID),
-		vcode = as.character(ru$Village_Sun_colline),
-		parcel = as.character(ru$Parcl_id),
-		plt = as.character(ru$Plt_id),
-		crop_raw = ru$crops_grown,
-		area = as.numeric(ru$crop_area_ha),
-		system = ru$Cropping_system,
-		variety_raw = ru$Crop_variety,
-		pct = as.numeric(ru$Percent_area),
-		seed_own = as.numeric(ru$Qty_seed_own_kg),
-		seed_buy = as.numeric(ru$Qty_seed_purchs_kg),
-		fert1 = ru$Inorg_fert1_used,
-		q1 = as.numeric(ru$Qty_fert_kg),
-		fert2 = ru$Inorg_fert2_used,
-		q2 = as.numeric(ru$Qty_fert2_used),
-		om = ru$organic_input_type,
-		omq = as.numeric(ru$Qty_organic_input_used_kg),
-		pest = as.numeric(ru$Qty_pesticdes),
-		herb = as.numeric(ru$Qty_herb),
-		stress_raw = ru$Strs_pest_disease,
-		residue = ru$Use_crop_residue,
-		dry = as.numeric(ru$T_harvst_dry),
-		fresh = as.numeric(ru$T_harvst_fresh),
+		hhid = as.character(r1$HHID),
+		vcode = as.character(r1$Village_Sun_colline),
+		parcel = as.character(r1$Parcl_id),
+		plt = as.character(r1$Plt_id),
+		crop_raw = r1$crops_grown,
+		area = as.numeric(r1$crop_area_ha),
+		system = r1$Cropping_system,
+		variety_raw = r1$Crop_variety,
+		pct = as.numeric(r1$Percent_area),
+		seed_own = as.numeric(r1$Qty_seed_own_kg),
+		seed_buy = as.numeric(r1$Qty_seed_purchs_kg),
+		fert1 = r1$Inorg_fert1_used,
+		q1 = as.numeric(r1$Qty_fert_kg),
+		fert2 = r1$Inorg_fert2_used,
+		q2 = as.numeric(r1$Qty_fert2_used),
+		om = r1$organic_input_type,
+		omq = as.numeric(r1$Qty_organic_input_used_kg),
+		pest = as.numeric(r1$Qty_pesticdes),
+		herb = as.numeric(r1$Qty_herb),
+		stress_raw = r1$Strs_pest_disease,
+		residue = r1$Use_crop_residue,
+		dry = as.numeric(r1$T_harvst_dry),
+		fresh = as.numeric(r1$T_harvst_fresh),
 		season = NA_character_,
 		season_module_ = "input_use"
 	)
 	s <- data.frame(
-		hhid = as.character(rs$HHID),
-		vcode = as.character(rs$Village_Sun_colline),
-		parcel = as.character(rs$parcell_id),
-		plt = as.character(rs$plott_id),
-		crop_raw = rs$crops_grwn,
-		area = as.numeric(rs$Crops_area),
-		system = rs$Cropn_systm,
-		variety_raw = rs$Crop_varieties,
-		pct = as.numeric(rs$percent_areas),
-		seed_own = as.numeric(rs$Qty_seed_ownd),
-		seed_buy = as.numeric(rs$Qty_seed_purchsd),
-		fert1 = rs$inorganc_fert1_type,
-		q1 = as.numeric(rs$Qty_fert1_use),
-		fert2 = rs$inorganic_fert2_typ,
-		q2 = as.numeric(rs$Qty_fert2_use),
-		om = rs$organic_inpt_type,
-		omq = as.numeric(rs$Qty_organic_inpt_use),
-		pest = as.numeric(rs$Qty_pestcde),
-		herb = as.numeric(rs$Qty_herbcdes),
-		stress_raw = rs$stres_pest_disease,
-		residue = rs$crop_residue,
-		dry = as.numeric(rs$T_harvt_dry),
-		fresh = as.numeric(rs$T_harvt_fresh),
+		hhid = as.character(r2$HHID),
+		vcode = as.character(r2$Village_Sun_colline),
+		parcel = as.character(r2$parcell_id),
+		plt = as.character(r2$plott_id),
+		crop_raw = r2$crops_grwn,
+		area = as.numeric(r2$Crops_area),
+		system = r2$Cropn_systm,
+		variety_raw = r2$Crop_varieties,
+		pct = as.numeric(r2$percent_areas),
+		seed_own = as.numeric(r2$Qty_seed_ownd),
+		seed_buy = as.numeric(r2$Qty_seed_purchsd),
+		fert1 = r2$inorganc_fert1_type,
+		q1 = as.numeric(r2$Qty_fert1_use),
+		fert2 = r2$inorganic_fert2_typ,
+		q2 = as.numeric(r2$Qty_fert2_use),
+		om = r2$organic_inpt_type,
+		omq = as.numeric(r2$Qty_organic_inpt_use),
+		pest = as.numeric(r2$Qty_pestcde),
+		herb = as.numeric(r2$Qty_herbcdes),
+		stress_raw = r2$stres_pest_disease,
+		residue = r2$crop_residue,
+		dry = as.numeric(r2$T_harvt_dry),
+		fresh = as.numeric(r2$T_harvt_fresh),
 		season = "short rains",
 		season_module_ = "short rains"
 	)
@@ -177,14 +211,14 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		tab <- sort(table(x), decreasing = TRUE)
 		names(tab)[1]
 	}
-	place <- trimws(ri$SectorGroupmentZone)
+	place <- trimws(r3$SectorGroupmentZone)
 	place[grepl("^[0-9]+$", place)] <- NA
 	place[is.na(place)] <- NA
-	vill <- trimws(ri$VillageSun_colline)
+	vill <- trimws(r3$VillageSun_colline)
 	vill[grepl("^[0-9]+$", vill)] <- NA
 	id <- data.frame(
-		vcode = as.character(ri$Village_Sun_colline),
-		adm2 = canon_dist(ri$DistrictCefferieCommune),
+		vcode = as.character(r3$Village_Sun_colline),
+		adm2 = canon_dist(r3$DistrictCefferieCommune),
 		adm3 = carobiner::fix_name(place, "title"),
 		location = carobiner::fix_name(vill, "title")
 	)
@@ -404,11 +438,11 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	d$adm1[d$adm2 %in% east] <- "Eastern Province"
 	d$adm1[d$adm2 %in% west] <- "Western Province"
 
-	hh_type <- tolower(trimws(rh$HH_type))
+	hh_type <- tolower(trimws(r4$HH_type))
 	gend <- rep(NA_character_, length(hh_type))
 	gend[grepl("female", hh_type)] <- "female"
 	gend[grepl("male headed", hh_type) & !grepl("female", hh_type)] <- "male"
-	hg <- data.frame(hhid = as.character(rh$HHID), farmer_gender = gend)
+	hg <- data.frame(hhid = as.character(r4$HHID), farmer_gender = gend)
 	hg <- hg[!duplicated(hg$hhid), ]
 	d <- merge(d, hg, by = "hhid", all.x = TRUE)
 

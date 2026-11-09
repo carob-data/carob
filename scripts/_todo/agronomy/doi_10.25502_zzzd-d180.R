@@ -84,7 +84,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_effort = 1
 	)
 
-	f0 <- ff[basename(ff) == "a_general.csv"]
+	f2 <- ff[basename(ff) == "a_general.csv"]
 	f1 <- ff[basename(ff) == "c_use_of_package_1.csv"]
 	f3 <- ff[basename(ff) == "c_use_of_package_3.csv"]
 	f4 <- ff[basename(ff) == "d_cropping_calendar.csv"]
@@ -93,7 +93,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	f7 <- ff[basename(ff) == "b_info_site_1.csv"]
 	f8 <- ff[basename(ff) == "f_farmer_assessment.csv"]
 
-	r0 <- read.csv(f0, na.strings = c("", "NA"))
+	r2 <- read.csv(f2, na.strings = c("", "NA"))
 	r1 <- read.csv(f1, na.strings = c("", "NA"))
 	r3 <- read.csv(f3, na.strings = c("", "NA"))
 	r4 <- read.csv(f4, na.strings = c("", "NA"))
@@ -102,23 +102,23 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	r7 <- read.csv(f7, na.strings = c("", "NA"))
 	r8 <- read.csv(f8, na.strings = c("", "NA"))
 
-	loc <- gsub("['\"]", "", trimws(r0$vilage))
+	loc <- gsub("['\"]", "", trimws(r2$vilage))
 	loc <- gsub("\\s+", " ", loc)
 	loc[loc == ""] <- NA
 
-	adm3 <- trimws(r0$sector_ward)
+	adm3 <- trimws(r2$sector_ward)
 	adm3 <- gsub("(?i)\\s*parish$", "", adm3, perl = TRUE)
 	adm3[adm3 == ""] <- NA
 
 	d0 <- data.frame(
-		trial_id = r0$farm_id,
+		trial_id = r2$farm_id,
 		country = "Uganda",
 		adm2 = "Oyam",
 		adm3 = carobiner::fix_name(adm3, "title"),
 		location = carobiner::fix_name(loc, "title"),
 		season = "second",
-		farmer_gender = tolower(trimws(r0$gender_of_farmer)),
-		farm_area_ha_ = as.numeric(r0$farm_size_acre) * 0.4046863
+		farmer_gender = tolower(trimws(r2$gender_of_farmer)),
+		farm_area_ha_ = as.numeric(r2$farm_size_acre) * 0.4046863
 	)
 	d0$adm3[is.na(adm3)] <- NA
 	d0$location[is.na(loc)] <- NA

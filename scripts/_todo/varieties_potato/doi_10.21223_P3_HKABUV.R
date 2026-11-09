@@ -20,6 +20,7 @@
 ## NOT PROCESSED
 # The second Experiment column duplicates the first.
 # Material-list taxon code, family, and genus. The full taxon name is variety_type.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -51,12 +52,12 @@ This data set includes information of late blight severity readings at 3 and 5 d
 
 	f <- ff[basename(ff) == "Fieldbook.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	ml <- carobiner::read.excel(f, sheet="Material_list")
+	r1 <- carobiner::read.excel(f, sheet="Material_list")
 
 	variety <- trimws(as.character(r$INSTN))
 	alias <- data.frame(
-		variety = trimws(as.character(ml$Accession)),
-		variety_type = trimws(as.character(ml[["Taxon full name"]]))
+		variety = trimws(as.character(r1$Accession)),
+		variety_type = trimws(as.character(r1[["Taxon full name"]]))
 	)
 	alias <- alias[!duplicated(alias$variety) & nzchar(alias$variety), ]
 

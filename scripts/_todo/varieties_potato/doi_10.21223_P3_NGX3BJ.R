@@ -44,7 +44,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("Fieldbook", basename(ff))]
+	f <- ff[basename(ff) == "Fieldbook _V1.xlsx"]
 	r <- carobiner::read.excel(f, sheet="datos", na=c("", "NA"))
 	names(r) <- trimws(names(r))
 	variety <- trimws(as.character(r$INSTN))

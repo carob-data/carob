@@ -18,6 +18,7 @@
 
 ## NOT PROCESSED
 # cgm-data.csv: ID. Row number.
+# data-dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # months_after_planting_: 3, 6, or 9 (column MAP).

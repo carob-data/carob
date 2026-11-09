@@ -13,6 +13,15 @@
 # Questionnaire files on adoption and field-day opinions not processed.
 
 
+
+## NOT PROCESSED
+# Dictionary.xls: documentation or a codebook, not an observation table.
+# Questionnaire2_2013.xls: design, layout, or protocol sheet, not plot or survey records.
+# Questionnaire3_2014.xls: design, layout, or protocol sheet, not plot or survey records.
+# Questionnaire4_2014.xls: design, layout, or protocol sheet, not plot or survey records.
+# Questionnaire5_2014.xls: design, layout, or protocol sheet, not plot or survey records.
+# Questionnaire6_2013-2014.xls: design, layout, or protocol sheet, not plot or survey records.
+
 carob_script <- function(path) {
 
 "
@@ -41,18 +50,18 @@ Rice is an increasingly important commodity in sub-Saharan Africa. In Tanzania, 
 
 	f1 <- ff[basename(ff) == "Trial1_2013.xls"]
 	f2 <- ff[basename(ff) == "Trial2_2014.xls"]
-	fq <- ff[basename(ff) == "Questionnaire1_2013.xls"]
+	f3 <- ff[basename(ff) == "Questionnaire1_2013.xls"]
 
 	r1 <- carobiner::read.excel(f1)
 	r2 <- carobiner::read.excel(f2)
-	rq <- carobiner::read.excel(fq)
+	r3 <- carobiner::read.excel(f3)
 
 	# Farmer, ward, village, production system from 2013 questionnaire
 	loc <- data.frame(
-		farmer = rq$q_3,
-		adm3 = carobiner::fix_name(rq$q_1, "title"),
-		location = carobiner::fix_name(rq$q_2, "title"),
-		irrigated = rq$q_4 == "IL"
+		farmer = r3$q_3,
+		adm3 = carobiner::fix_name(r3$q_1, "title"),
+		location = carobiner::fix_name(r3$q_2, "title"),
+		irrigated = r3$q_4 == "IL"
 	)
 
 	# Paper Methods: GAP N:P2O5 = 80:40 kg/ha as urea and DAP; K not recommended.

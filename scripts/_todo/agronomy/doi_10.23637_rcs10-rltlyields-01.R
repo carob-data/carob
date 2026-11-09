@@ -20,6 +20,14 @@
 ## NOT PROCESSED
 # notes_data.csv, the factor description tables, and the cumulative lime and P columns.
 # The Excel workbook repeats the csv files.
+# 01-RothLTliming-yield.xlsx: not read. sheet README (of 11): README, 10.23637/rcs10-rltlyields-01. Observation records are missing from d until this file is standardized.
+# crop_types_data.csv: not read. columns: crop_name, latin_name, crop_name_rdftype. Observation records are missing from d until this file is standardized.
+# k_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
+# liming_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
+# mg_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
+# mn_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
+# p_factor_data.csv: not read. columns: description, treatment_factor_group, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, .... Observation records are missing from d until this file is standardized.
+# s_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

@@ -21,6 +21,7 @@
 # Early blight, Andean potato weevil, flea beetle, leaf beetle, Rhizoctonia, virus columns, and tuber-rot proportions. The dictionary says visual estimation and does not give a unit.
 # Fields_Geographic_locations coordinates, because they cannot be matched to the incidence codes.
 # Total plot area in square metres on that sheet, for the same reason.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -50,9 +51,9 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("incidence.xls$", basename(ff))]
+	f <- ff[basename(ff) == "Data_pests_and_diseases_incidence.xls"]
 	sh <- readxl::excel_sheets(f)
-	raw <- as.data.frame(carobiner::read.excel(f, sheet=sh[3], col_names=FALSE))
+	r1 <- as.data.frame(carobiner::read.excel(f, sheet=sh[3], col_names=FALSE))
 	txt <- function(x) {
 		z <- trimws(as.character(x))
 		z[!nzchar(z) | z == "NA"] <- NA_character_
@@ -65,16 +66,16 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		as.numeric(z)
 	}
 
-	lab <- txt(unlist(raw[2, ]))
+	lab <- txt(unlist(r1[2, ]))
 	ev <- which(grepl("^[0-9]+ Ev$", lab))
-	dap <- as.integer(num(unlist(raw[4, ev])))
-	when <- as.Date(num(unlist(raw[3, ev])), origin="1899-12-30")
+	dap <- as.integer(num(unlist(r1[4, ev])))
+	when <- as.Date(num(unlist(r1[3, ev])), origin="1899-12-30")
 	plant <- format(when - dap, "%Y-%m-%d")
 	planting <- if (length(unique(plant)) == 1) plant[1] else NA_character_
 	audpc_col <- which(lab == "AUDPC")[1]
 	raudpc_col <- which(lab == "rAUDPC")[1]
 
-	body <- raw[6:nrow(raw), ]
+	body <- r1[6:nrow(r1), ]
 	variety <- txt(body[[2]])
 	keep <- !is.na(variety)
 	body <- body[keep, ]
@@ -110,12 +111,12 @@ The major pests and diseases were identified and quantified on thirteen potato l
 	dlong$record_id <- as.integer(dlong$record_id)
 	dlong$DAP <- as.integer(dlong$DAP)
 
-	inc <- as.data.frame(carobiner::read.excel(f, sheet=sh[2]))
-	affected <- num(inc[["IFLate Blight"]])
+	r2 <- as.data.frame(carobiner::read.excel(f, sheet=sh[2]))
+	affected <- num(r2[["IFLate Blight"]])
 	d2 <- data.frame(
-		variety = txt(inc$Variety),
+		variety = txt(r2$Variety),
 		rep = NA_integer_,
-		treatment = txt(inc$Variety),
+		treatment = txt(r2$Variety),
 		trial_id = "field_incidence",
 		planting_date = NA_character_,
 		AUDPC = NA_real_,
@@ -126,10 +127,10 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		geo_from_source = FALSE,
 		on_farm = TRUE,
 		is_survey = FALSE,
-		place_code_ = txt(inc[["Place code"]]),
-		foliage_late_blight_severity_ = num(inc[["SFLate Blight"]]),
+		place_code_ = txt(r2[["Place code"]]),
+		foliage_late_blight_severity_ = num(r2[["SFLate Blight"]]),
 		late_blight_affected_ = ifelse(affected == 1, TRUE, ifelse(affected == 0, FALSE, NA)),
-		tuber_number_ = num(inc[["Tuber number harvested"]])
+		tuber_number_ = num(r2[["Tuber number harvested"]])
 	)
 	d2 <- d2[!is.na(d2$variety), ]
 	d1$place_code_ <- NA_character_

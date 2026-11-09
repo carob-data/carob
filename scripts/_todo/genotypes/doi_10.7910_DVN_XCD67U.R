@@ -36,7 +36,8 @@ These datasets contain phenotypic and genotypic data of a panel of elite Andean 
 		
 	)
 
-	r <- read.csv(ff[basename(ff) == "VEF_raw_phenotypic_data.csv"])
+	f1 <- ff[basename(ff) == "VEF_raw_phenotypic_data.csv"]
+	r <- read.csv(f1)
 
 	# The year token is in the trial name (13 = 2013 through 18 = 2018).
 	year <- ifelse(grepl("13", r$Trial), "2013",
@@ -63,16 +64,17 @@ These datasets contain phenotypic and genotypic data of a panel of elite Andean 
 		yield_part = "seed"
 	)
 
-	w <- read.csv(ff[basename(ff) == "VEF_meteoro.csv"])
+	f2 <- ff[basename(ff) == "VEF_meteoro.csv"]
+	r1 <- read.csv(f2)
 	wh <- data.frame(
-		date = as.character(as.Date(carobiner::eng_months_to_nr(w$Date), "%d-%m-%y")),
-		station_name = ifelse(grepl("Pal", w$Season), "Palmira", "Darien"),
-		tmax = w$Maximum.temperature,
-		tmin = w$Minimum.temperature,
-		rhum = rowMeans(w[, c("Relative.humidity.07.H", "Relative.humidity.13.H", "Relative.humidity.19.H")]),
-		prec = w$Total.precipitation,
-		rhmn = w$Minimum.relative.humidity,
-		vapr = w$Total.evaporation
+		date = as.character(as.Date(carobiner::eng_months_to_nr(r1$Date), "%d-%m-%y")),
+		station_name = ifelse(grepl("Pal", r1$Season), "Palmira", "Darien"),
+		tmax = r1$Maximum.temperature,
+		tmin = r1$Minimum.temperature,
+		rhum = rowMeans(r1[, c("Relative.humidity.07.H", "Relative.humidity.13.H", "Relative.humidity.19.H")]),
+		prec = r1$Total.precipitation,
+		rhmn = r1$Minimum.relative.humidity,
+		vapr = r1$Total.evaporation
 	)
 
 	carobiner::write_files(path, meta, d, wth = wh)

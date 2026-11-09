@@ -17,6 +17,7 @@
 # Livestock, milk, silage-perception, price, and residue-use columns. They are not a crop measurement.
 # Land quantities other than the sweetpotato area (owned, pasture, fodder, food, cash, fallow).
 # resp_educ, marital status, and relationship codes.
+# 02_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

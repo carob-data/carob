@@ -56,22 +56,23 @@ We compared six inter-row management techniques: four treatments combined the tw
 		carob_effort = 0.6
 	)
 
-	y <- read.csv(ff[basename(ff) == "yield.csv"], sep=";", check.names=FALSE)
-	cyc <- strsplit(y$crop_cycle, "_")
+	f1 <- ff[basename(ff) == "yield.csv"]
+	r1 <- read.csv(f1, sep=";", check.names=FALSE)
+	cyc <- strsplit(r1$crop_cycle, "_")
 	start_y <- paste0("20", sapply(cyc, function(z) z[1]))
 	end_y <- paste0("20", sapply(cyc, function(z) z[2]))
 
 	d <- data.frame(
 		country = "Réunion",
-		location = y$locality,
+		location = r1$locality,
 		crop = "sugarcane",
-		treatment = y$treatment,
-		plot_id = as.character(y$plot),
-		rep = as.integer(y$bloc),
-		trial_id = paste(y$locality, y$crop_cycle, sep="_"),
+		treatment = r1$treatment,
+		plot_id = as.character(r1$plot),
+		rep = as.integer(r1$bloc),
+		trial_id = paste(r1$locality, r1$crop_cycle, sep="_"),
 		planting_date = start_y,
 		harvest_date = end_y,
-		yield = as.numeric(y$yield) * 1000,
+		yield = as.numeric(r1$yield) * 1000,
 		yield_part = "stems",
 		borer_trial = TRUE,
 		on_farm = FALSE,
@@ -79,43 +80,46 @@ We compared six inter-row management techniques: four treatments combined the tw
 	)
 	# country from geographicCoverage. planting_date and harvest_date are the two years in crop_cycle (readme).
 
-	tfi <- read.csv(ff[basename(ff) == "TFI and manual weeding.csv"], sep=";", check.names=FALSE)
-	tfi$trial_id <- paste(tfi$locality, tfi$crop_cycle, sep="_")
-	tfi <- data.frame(
-		trial_id = tfi$trial_id,
-		treatment = tfi$treatment,
-		TFI_ = as.numeric(tfi$TFI),
-		weeding_times = as.integer(tfi$manual_weeding)
+	f2 <- ff[basename(ff) == "TFI and manual weeding.csv"]
+	r2 <- read.csv(f2, sep=";", check.names=FALSE)
+	r2$trial_id <- paste(r2$locality, r2$crop_cycle, sep="_")
+	r2 <- data.frame(
+		trial_id = r2$trial_id,
+		treatment = r2$treatment,
+		TFI_ = as.numeric(r2$TFI),
+		weeding_times = as.integer(r2$manual_weeding)
 	)
-	d <- merge(d, tfi, by=c("trial_id", "treatment"), all.x=TRUE)
+	d <- merge(d, r2, by=c("trial_id", "treatment"), all.x=TRUE)
 	d$weeding_done <- d$weeding_times > 0
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
-	g <- read.csv(ff[basename(ff) == "global ground cover.csv"], check.names=FALSE)
-	g$trial_id <- paste(g$locality, g$crop_cycle, sep="_")
+	f3 <- ff[basename(ff) == "global ground cover.csv"]
+	r3 <- read.csv(f3, check.names=FALSE)
+	r3$trial_id <- paste(r3$locality, r3$crop_cycle, sep="_")
 	# notation_date is d/m/yyyy (day 24 cannot be a month)
-	gdate <- as.character(as.Date(g$notation_date, "%d/%m/%Y"))
+	gdate <- as.character(as.Date(r3$notation_date, "%d/%m/%Y"))
 	long_g <- data.frame(
-		trial_id = g$trial_id,
-		treatment = g$treatment,
-		rep = as.integer(g$bloc),
+		trial_id = r3$trial_id,
+		treatment = r3$treatment,
+		rep = as.integer(r3$bloc),
 		date = gdate,
-		ground_cover = as.numeric(g$global_score_WP),
-		weed_cover = as.numeric(g$weed_score_WP),
-		canavalia_cover_ = as.numeric(g$canavalia_score_IR)
+		ground_cover = as.numeric(r3$global_score_WP),
+		weed_cover = as.numeric(r3$weed_score_WP),
+		canavalia_cover_ = as.numeric(r3$canavalia_score_IR)
 	)
 
-	b <- read.csv(ff[basename(ff) == "borer damage.csv"], sep=";", check.names=FALSE)
-	b$trial_id <- paste(b$locality, b$crop_cycle, sep="_")
+	f4 <- ff[basename(ff) == "borer damage.csv"]
+	r4 <- read.csv(f4, sep=";", check.names=FALSE)
+	r4$trial_id <- paste(r4$locality, r4$crop_cycle, sep="_")
 	long_b <- data.frame(
-		trial_id = b$trial_id,
-		treatment = b$treatment,
-		plot_id = as.character(b$plot),
-		rep = as.integer(b$bloc),
-		stalk_id_ = as.character(b$stalk),
-		internode_number_ = as.numeric(b$ENT),
-		bored_internodes_ = as.numeric(b$ENA),
-		stalk_damaged_ = as.numeric(b$ta)
+		trial_id = r4$trial_id,
+		treatment = r4$treatment,
+		plot_id = as.character(r4$plot),
+		rep = as.integer(r4$bloc),
+		stalk_id_ = as.character(r4$stalk),
+		internode_number_ = as.numeric(r4$ENT),
+		bored_internodes_ = as.numeric(r4$ENA),
+		stalk_damaged_ = as.numeric(r4$ta)
 	)
 
 	# Cover scores are by block, and several plots share a block, so they are not given a plot_id.

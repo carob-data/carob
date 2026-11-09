@@ -19,6 +19,8 @@
 # 02 and 03 material lists: the same accessions summarized.
 # Dictionary category labels. The fieldbook codes are kept.
 # Days and size descriptors are included under their names. They are not converted to dates.
+# 02_Material_list_Morphological characterization of wild potato_ECU.xlsx: not read. sheet Material_List: Ord, Code, AccNumber, ID, Seed_Source, Genus, Species. Observation records are missing from d until this file is standardized.
+# 03_Material_List_summary_Morphological characterization of wild potato_ECU.xlsx: not read. sheet Material_List_summary: ord, genus, specie, number of accesions. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -55,12 +57,12 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 		paste0(x, "_")
 	}
 
-	fd <- ff[grepl("^04_Data_dictionary", basename(ff))]
-	fb <- ff[grepl("^01_Fieldbook", basename(ff))]
-	dic <- carobiner::read.excel(fd)
-	r <- carobiner::read.excel(fb, na=c("", "NA"))
+	f1 <- ff[basename(ff) == "04_Data_dictionary_Morphological characterization of wild potato_ECU.xlsx"]
+	f2 <- ff[basename(ff) == "01_Fieldbook_data_Morphological characterization of wild potato_ECU.xlsx"]
+	r1 <- carobiner::read.excel(f1)
+	r <- carobiner::read.excel(f2, na=c("", "NA"))
 	names(r) <- trimws(names(r))
-	vname <- trimws(as.character(dic[["Variable name"]]))
+	vname <- trimws(as.character(r1[["Variable name"]]))
 	vname[39] <- "flower_size"
 	# Average tuber weight is in grams in the abbreviation AvTbWg_Cp_g
 	vname[vname == "Average of tuber weight"] <- "tuber_weight_g"

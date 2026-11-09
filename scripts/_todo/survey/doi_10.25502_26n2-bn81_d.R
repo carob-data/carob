@@ -55,7 +55,8 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 		carob_effort = 0.5
 	)
 
-	r <- read.csv(ff[basename(ff) == "batn-baseline-needs-assess-data-all-excel.csv"])
+	f <- ff[basename(ff) == "batn-baseline-needs-assess-data-all-excel.csv"]
+	r <- read.csv(f)
 	r[] <- lapply(r, function(col) {
 		if (!is.character(col)) return(col)
 		bad <- !is.na(col) & is.na(iconv(col, from="UTF-8", to="UTF-8"))

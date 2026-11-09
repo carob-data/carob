@@ -29,6 +29,10 @@
 # planting_month_, planting_week_, harvest_month_, harvest_week_: month (1-12) and week (1-4) of planting and harvest
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Rice technology adoption in Orissa. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

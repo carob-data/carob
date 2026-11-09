@@ -16,6 +16,12 @@
 # DVM names, phone, age band, other crops, irrigation equipment, and net-tunnel measurements.
 # Acreage in active production. The column is not clearly cropland rather than all land in use.
 # Codebooks.
+# VST1 - SP Distribution.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# VST2 - Farmer Group Assessment and Registration.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# VST3 - Monitoring of Agricultural Activities.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# VST4 - Training Event Register.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# VST8A - CHW Group Profile.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# VST8B - CHW Club Attendance.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

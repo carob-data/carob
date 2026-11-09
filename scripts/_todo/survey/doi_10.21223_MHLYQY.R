@@ -65,10 +65,15 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 		z
 	}
 
-	files <- ff[grepl("^biding_sheet_[0-9]", basename(ff))]
+	f1 <- ff[basename(ff) %in% c(
+		"biding_sheet_1.xls",
+		"biding_sheet_2.xls",
+		"biding_sheet_3.xls",
+		"biding_sheet_4.xls"
+	)]
 	wide <- list()
 	long <- list()
-	for (f in files) {
+	for (f in f1) {
 		r <- carobiner::read.excel(f)
 		round <- as.integer(gsub("\\D", "", basename(f)))
 		id <- txt(r$farmer_id)

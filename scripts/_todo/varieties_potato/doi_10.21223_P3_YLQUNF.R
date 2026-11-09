@@ -24,6 +24,10 @@
 # tuber_Zn_fw_: zinc, mg/100FW as labeled
 # eval_label_: locality and year text
 
+
+## NOT PROCESSED
+# Standard Evaluation Trial for micronutrient content Dictionary.xls: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "
@@ -53,8 +57,8 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for micronutrient content Data.xls"]
 	one <- function(sheet) {
-		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
-		y <- x[3:nrow(x), ]
+		r <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
+		y <- r[3:nrow(r), ]
 		num <- function(v) {
 			y <- trimws(as.character(v))
 			y[y %in% c("", "NA", ".", "-")] <- NA_character_

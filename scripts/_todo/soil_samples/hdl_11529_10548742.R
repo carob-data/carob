@@ -20,6 +20,24 @@
 ## NOT PROCESSED
 # Carbonates. Exchangeable cations in meq/100g and the saturation percentages.
 # Hydrogen in ppm. Map images.
+# Azufre_ZACUALPAN.png: image, not a data table.
+# Boro_ZACUALPAN.png: image, not a data table.
+# Calcio_ZACUALPAN.png: image, not a data table.
+# CIC_ZACUALPAN.png: image, not a data table.
+# Cobre_ZACUALPAN.png: image, not a data table.
+# Cond Hid_ZACUALPAN.png: image, not a data table.
+# Fosforo Bray Olsen_ZACUALPAN.png: image, not a data table.
+# Hierro_ZACUALPAN.png: image, not a data table.
+# Magnesio_ZACUALPAN.png: image, not a data table.
+# Manganeso_ZACUALPAN.png: image, not a data table.
+# Materia organica_ZACUALPAN.png: image, not a data table.
+# Nitratos_ZACUALPAN.png: image, not a data table.
+# pH 12 agua_ZACUALPAN.png: image, not a data table.
+# Potasio_ZACUALPAN.png: image, not a data table.
+# Punto saturacion_ZACUALPAN.png: image, not a data table.
+# Salinidad CE Ext_ZACUALPAN.png: image, not a data table.
+# Sodio porc Sat_ZACUALPAN.png: image, not a data table.
+# Zinc_ZACUALPAN.png: image, not a data table.
 
 
 carob_script <- function(path) {

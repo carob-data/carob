@@ -28,6 +28,9 @@ carob_script <- function(path) {
     d <- lapply(f, process, addvars=c("AUDPC", "rAUDPC"))
     d <- do.call(rbind, d)
  
+  ## Santa Ana is the CIP experimental station at Huancayo; unknown for San Ramon
+  d$on_farm <- ifelse(d$location == "Santa Ana", FALSE, NA)
+
     carobiner::write_files(path = path, metad = meta, wide=d)
     
 }

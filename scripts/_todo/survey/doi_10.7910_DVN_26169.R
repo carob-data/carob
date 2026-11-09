@@ -28,6 +28,10 @@
 # establishment_method_: rice establishment method code (TPR, WSR = wet seeded, DSR = dry seeded)
 
 
+
+## NOT PROCESSED
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, Dry Seeding Rice: The Emerging Trend in Fully Irrigated Area. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -55,11 +59,11 @@ The objective of the study is to document the changes in rice establishment meth
 		carob_effort = 0.5
 	)
 
-	fA <- ff[basename(ff) == "Form A.xls"]
-	fB <- ff[basename(ff) == "Form B.xls"]
-	r1 <- carobiner::read.excel(fA, sheet="LInvent-Landuse-Riceland", skip=5)
-	r2 <- carobiner::read.excel(fA, sheet="HHInfo", skip=4)
-	r3 <- carobiner::read.excel(fB, sheet="Fert", skip=8)
+	f1 <- ff[basename(ff) == "Form A.xls"]
+	f2 <- ff[basename(ff) == "Form B.xls"]
+	r1 <- carobiner::read.excel(f1, sheet="LInvent-Landuse-Riceland", skip=5)
+	r2 <- carobiner::read.excel(f1, sheet="HHInfo", skip=4)
+	r3 <- carobiner::read.excel(f2, sheet="Fert", skip=8)
 
 	brgy <- c("Bantug", "Sapang Kawayan", "Maragol", "Tondod", "Homestead 2", "Homestead 1", "Minabuyok", "Bagong Sikat",
 		"Pula Buliran", "Pula Cabanatuan", "Betes Aliaga", "Bantug Talavera", "Hilera / Pakul", "Calabasa", "Papaya", "Luwang Kupang")

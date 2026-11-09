@@ -39,6 +39,11 @@
 # share_output_: Farmchar SHARE OUTPUT (crop share arrangement, e.g. 50:50)
 
 
+
+## NOT PROCESSED
+# Read Me.txt: not read. columns: These publications are compiled publications of Laguna Luzon Loop Survey conducted on the following time series:. Observation records are missing from d until this file is standardized.
+# Laguna Loop Survey_ Coding Manual.xlsx: not read. sheet HH Info (of 9): SEASON, Season. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Laguna Loop Survey (1981-1982)

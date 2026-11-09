@@ -16,6 +16,9 @@
 # Virus absorbance and infected-plant counts: the resistance class and the infection proportion are kept.
 # SLOPE and the early-bulking label: derived from the three tuber weights.
 # Material list pedigree.
+# 13394_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 13394_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
+# 13394_Material_List.xlsx: not read. sheet Material_List: Numeration, Accession_Number, Accession_Name, Accession_Code, Scale_audpc, Family_AcceNumb, Female_AcceNumb, Male_AcceNumb, Population, Cycle, Is_control, Seed_source, .... Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # pvx_class_, pvy_class_, plrv_class_, pvs_class_: resistance class as recorded.
@@ -51,9 +54,9 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 	)
 
 	f <- ff[basename(ff) == "13394_Data.xlsx"]
-	v <- carobiner::read.excel(f, sheet="virus resistance")
-	lb <- carobiner::read.excel(f, sheet="Late blight resistance")
-	bk <- carobiner::read.excel(f, sheet="MTW at 80-100-120 d")
+	r1 <- carobiner::read.excel(f, sheet="virus resistance")
+	r2 <- carobiner::read.excel(f, sheet="Late blight resistance")
+	r3 <- carobiner::read.excel(f, sheet="MTW at 80-100-120 d")
 
 	num <- function(x) {
 		x <- trimws(as.character(x))
@@ -62,38 +65,38 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		as.numeric(x)
 	}
 	d1 <- data.frame(
-		record_id = as.integer(seq_len(nrow(v))),
-		variety = trimws(as.character(v$ACCENUMB)),
-		treatment = trimws(as.character(v$ACCENUMB)),
-		pvx_class_ = trimws(as.character(v$PVX)),
-		pvy_class_ = trimws(as.character(v$PVY)),
-		plrv_class_ = trimws(as.character(v$PLRV)),
-		pvs_class_ = trimws(as.character(v$PVS)),
-		pvx_infection_ = num(v[["Percentage of PVX infection"]]),
-		pvy_infection_ = num(v[["Percentage of PVY infection"]]),
-		plrv_infection_ = num(v[["Percentage of PLRV infection"]]),
-		pvs_infection_ = num(v[["Percentage of PVS infection"]]),
+		record_id = as.integer(seq_len(nrow(r1))),
+		variety = trimws(as.character(r1$ACCENUMB)),
+		treatment = trimws(as.character(r1$ACCENUMB)),
+		pvx_class_ = trimws(as.character(r1$PVX)),
+		pvy_class_ = trimws(as.character(r1$PVY)),
+		plrv_class_ = trimws(as.character(r1$PLRV)),
+		pvs_class_ = trimws(as.character(r1$PVS)),
+		pvx_infection_ = num(r1[["Percentage of PVX infection"]]),
+		pvy_infection_ = num(r1[["Percentage of PVY infection"]]),
+		plrv_infection_ = num(r1[["Percentage of PLRV infection"]]),
+		pvs_infection_ = num(r1[["Percentage of PVS infection"]]),
 		trial_id = "virus"
 	)
 
 	d2 <- data.frame(
-		record_id = as.integer(seq_len(nrow(lb)) + nrow(v)),
-		variety = trimws(as.character(lb$ACCENUMB)),
-		treatment = trimws(as.character(lb$ACCENUMB)),
-		rAUDPC = num(lb$rAUDPC_Yunnan2015),
+		record_id = as.integer(seq_len(nrow(r2)) + nrow(r1)),
+		variety = trimws(as.character(r2$ACCENUMB)),
+		treatment = trimws(as.character(r2$ACCENUMB)),
+		rAUDPC = num(r2$rAUDPC_Yunnan2015),
 		location = "Yunnan",
 		trial_id = "late_blight_2015"
 	)
 	d2b <- d2
-	d2b$record_id <- as.integer(seq_len(nrow(lb)) + nrow(v) + nrow(lb))
-	d2b$rAUDPC <- num(lb$rAUDPC_Yunnan2016)
+	d2b$record_id <- as.integer(seq_len(nrow(r2)) + nrow(r1) + nrow(r2))
+	d2b$rAUDPC <- num(r2$rAUDPC_Yunnan2016)
 	d2b$trial_id <- "late_blight_2016"
 
-	id <- as.integer(seq_len(nrow(bk)) + nrow(v) + 2L * nrow(lb))
+	id <- as.integer(seq_len(nrow(r3)) + nrow(r1) + 2L * nrow(r2))
 	d3 <- data.frame(
 		record_id = id,
-		variety = trimws(as.character(bk$ACCENUMB)),
-		treatment = trimws(as.character(bk$ACCENUMB)),
+		variety = trimws(as.character(r3$ACCENUMB)),
+		treatment = trimws(as.character(r3$ACCENUMB)),
 		trial_id = "early_bulking"
 	)
 	wts <- c("MTWP 80 days after planting", "MTWP 100 days after planting", "MTWP 120 days after planting")
@@ -102,7 +105,7 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		data.frame(
 			record_id = id,
 			DAP = days[i],
-			mtwp_ = num(bk[[wts[i]]])
+			mtwp_ = num(r3[[wts[i]]])
 		)
 	})
 	dlong <- do.call(rbind, pieces)

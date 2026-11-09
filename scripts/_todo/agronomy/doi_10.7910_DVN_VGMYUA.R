@@ -11,6 +11,10 @@
 # write_files: missing yield_moisture, N/P/K, harvest_date; NA yield.
 
 
+
+## NOT PROCESSED
+# Drought Donors disease scores compiled 01192024.xlsx: not read. sheet compiled (of 2): Experiment, Designation, IRGC Acc. No., Hazaribag blast nursery SES rating, IRRI blast nursery SES Rating, PXO61, PXO86, PXO79, PXO340, PXO71, PXO112, PXO99, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

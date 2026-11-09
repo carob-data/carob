@@ -18,6 +18,13 @@
 ## NEW VARIABLES
 # CO2_concentration_: daytime canopy CO2 (µmol/mol) in FACE treatments
 
+
+## NOT PROCESSED
+# AgIIS+Cotton+Reflectance+SoilMoisture+ET.ods: not read. .ods file. Observation records are missing from d until this file is standardized.
+# FACE+Cotton+Carbon+Isotopes+and+Tracing.ods: not read. .ods file. Observation records are missing from d until this file is standardized.
+# FISE+Cotton+Midday+Canopy+Temperatures.ods: not read. .ods file. Observation records are missing from d until this file is standardized.
+# FISE+Cotton+Reflectance+Factors+and+Multispectral+Vegetation+Indices.ods: not read. .ods file. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -45,32 +52,32 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	)
 
 	bn <- basename(ff)
-	fface <- ff[grepl("FACE\\+Cotton\\+Growth", bn)]
-	fagiis <- ff[grepl("AgIIS\\+Cotton\\+Growth", bn)]
-	ffise <- ff[grepl("FISE\\+Cotton\\+Growth", bn)]
+	f1 <- ff[basename(ff) == "FACE+Cotton+Growth+Management+Soil+ET.ods"]
+	f2 <- ff[basename(ff) == "AgIIS+Cotton+Growth+Management+Soil.ods"]
+	f3 <- ff[basename(ff) == "FISE+Cotton+Growth+Management+Soil+ET.ods"]
 
 	read_ods <- function(f, sheet, skip) {
 		as.data.frame(readODS::read_ods(f, sheet=sheet, skip=skip, col_names=TRUE))
 	}
 
 	# FACE yield (skip description rows; header is TRNO, R#, ...)
-	yf <- read_ods(fface, "Plant_summary", 2)
-	yf <- yf[!is.na(yf$TRNO) & yf[["R#"]] != 0, ]
-	tf <- read_ods(fface, "Treatment_Metadata", 2)
-	tf <- tf[!is.na(tf$TRNO), ]
-	pf <- read_ods(fface, "Plantings", 2)
-	pf <- pf[!is.na(pf$TRNO), ]
-	nf <- read_ods(fface, "Fertilizations", 2)
-	nf <- nf[!is.na(nf$TRNO), ]
-	nface <- aggregate(list(N_fertilizer=as.numeric(nf$FEAMN)), list(TRNO=nf$TRNO), sum, na.rm=TRUE)
+	r1 <- read_ods(f1, "Plant_summary", 2)
+	r1 <- r1[!is.na(r1$TRNO) & r1[["R#"]] != 0, ]
+	r2 <- read_ods(f1, "Treatment_Metadata", 2)
+	r2 <- r2[!is.na(r2$TRNO), ]
+	r3 <- read_ods(f1, "Plantings", 2)
+	r3 <- r3[!is.na(r3$TRNO), ]
+	r4 <- read_ods(f1, "Fertilizations", 2)
+	r4 <- r4[!is.na(r4$TRNO), ]
+	nface <- aggregate(list(N_fertilizer=as.numeric(r4$FEAMN)), list(TRNO=r4$TRNO), sum, na.rm=TRUE)
 
-	t1 <- tf[match(yf$TRNO, tf$TRNO), ]
-	p1 <- pf[match(yf$TRNO, pf$TRNO), ]
-	n1 <- nface$N_fertilizer[match(yf$TRNO, nface$TRNO)]
+	t1 <- r2[match(r1$TRNO, r2$TRNO), ]
+	p1 <- r3[match(r1$TRNO, r3$TRNO), ]
+	n1 <- nface$N_fertilizer[match(r1$TRNO, nface$TRNO)]
 
 	d1 <- data.frame(
-		trial_id = paste0("FACE_", yf$DAYR),
-		rep = as.integer(yf[["R#"]]),
+		trial_id = paste0("FACE_", r1$DAYR),
+		rep = as.integer(r1[["R#"]]),
 		treatment = t1$Trt_name,
 		CO2_concentration_ = as.numeric(t1$CO2_day),
 		irrigated = TRUE,
@@ -83,9 +90,9 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		seed_density = as.numeric(p1$PLPOP) * 10000,
 		plant_density = as.numeric(p1$PLPOE) * 10000,
 		row_spacing = as.numeric(p1$PLRS),
-		yield = as.numeric(yf$LIWAH),
-		dmy_total = as.numeric(yf$CWAH),
-		LAI = as.numeric(yf$LAIX),
+		yield = as.numeric(r1$LIWAH),
+		dmy_total = as.numeric(r1$CWAH),
+		LAI = as.numeric(r1$LAIX),
 		latitude = as.numeric(t1$fl_lat),
 		longitude = as.numeric(t1$fl_long),
 		elevation = as.numeric(t1$flele),
@@ -101,29 +108,29 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	)
 
 	# AgIIS 1999 (header is on row 4)
-	ya <- read_ods(fagiis, "Plant_summary", 3)
+	r5 <- read_ods(f2, "Plant_summary", 3)
 	# drop means if R# present
-	if ("R#" %in% names(ya)) ya <- ya[!is.na(ya$TRNO) & ya[["R#"]] != 0, ] else ya <- ya[!is.na(ya$TRNO), ]
-	ta <- read_ods(fagiis, "Treatment_Metadata", 2)
-	ta <- ta[!is.na(ta$TRNO), ]
-	pa <- read_ods(fagiis, "Plantings", 2)
-	pa <- pa[!is.na(pa$TRNO), ]
-	na <- read_ods(fagiis, "Fertilizations", 2)
-	na <- na[!is.na(na$TRNO), ]
-	if ("R#" %in% names(na)) na <- na[na[["R#"]] != 0, ]
-	nagi <- aggregate(list(N_fertilizer=as.numeric(na$FEAMN)),
-		list(TRNO=na$TRNO, R=na[["R#"]]), sum, na.rm=TRUE)
+	if ("R#" %in% names(r5)) r5 <- r5[!is.na(r5$TRNO) & r5[["R#"]] != 0, ] else r5 <- r5[!is.na(r5$TRNO), ]
+	r6 <- read_ods(f2, "Treatment_Metadata", 2)
+	r6 <- r6[!is.na(r6$TRNO), ]
+	r7 <- read_ods(f2, "Plantings", 2)
+	r7 <- r7[!is.na(r7$TRNO), ]
+	r8 <- read_ods(f2, "Fertilizations", 2)
+	r8 <- r8[!is.na(r8$TRNO), ]
+	if ("R#" %in% names(r8)) r8 <- r8[r8[["R#"]] != 0, ]
+	nagi <- aggregate(list(N_fertilizer=as.numeric(r8$FEAMN)),
+		list(TRNO=r8$TRNO, R=r8[["R#"]]), sum, na.rm=TRUE)
 
-	t2 <- ta[match(ya$TRNO, ta$TRNO), ]
-	p2 <- pa[match(ya$TRNO, pa$TRNO), ]
-	n2 <- nagi$N_fertilizer[match(paste(ya$TRNO, ya[["R#"]]), paste(nagi$TRNO, nagi$R))]
-	lintcol <- intersect(c("LIWAH", "lint"), names(ya))
-	if (length(lintcol) == 0) lintcol <- names(ya)[grepl("LIWAH|Lint", names(ya))][1]
+	t2 <- r6[match(r5$TRNO, r6$TRNO), ]
+	p2 <- r7[match(r5$TRNO, r7$TRNO), ]
+	n2 <- nagi$N_fertilizer[match(paste(r5$TRNO, r5[["R#"]]), paste(nagi$TRNO, nagi$R))]
+	lintcol <- intersect(c("LIWAH", "lint"), names(r5))
+	if (length(lintcol) == 0) lintcol <- names(r5)[grepl("LIWAH|Lint", names(r5))][1]
 
 	d2 <- data.frame(
 		trial_id = "AgIIS_1999",
-		rep = if ("R#" %in% names(ya)) as.integer(ya[["R#"]]) else 1L,
-		treatment = if ("Trt_name" %in% names(t2)) t2$Trt_name else as.character(ya$TRNO),
+		rep = if ("R#" %in% names(r5)) as.integer(r5[["R#"]]) else 1L,
+		treatment = if ("Trt_name" %in% names(t2)) t2$Trt_name else as.character(r5$TRNO),
 		CO2_concentration_ = as.numeric(NA),
 		irrigated = TRUE,
 		N_fertilizer = n2,
@@ -135,9 +142,9 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		seed_density = as.numeric(p2$PLPOP) * 10000,
 		plant_density = as.numeric(p2$PLPOE) * 10000,
 		row_spacing = as.numeric(p2$PLRS),
-		yield = as.numeric(ya[[lintcol[1]]]),
-		dmy_total = if ("CWAH" %in% names(ya)) as.numeric(ya$CWAH) else as.numeric(NA),
-		LAI = if ("LAIX" %in% names(ya)) as.numeric(ya$LAIX) else as.numeric(NA),
+		yield = as.numeric(r5[[lintcol[1]]]),
+		dmy_total = if ("CWAH" %in% names(r5)) as.numeric(r5$CWAH) else as.numeric(NA),
+		LAI = if ("LAIX" %in% names(r5)) as.numeric(r5$LAIX) else as.numeric(NA),
 		latitude = 33.0628,
 		longitude = -111.9826,
 		elevation = 361,
@@ -155,33 +162,33 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	d1$harvest_date <- NA_character_
 
 	# FISE
-	ys <- read_ods(ffise, "Plant_Summary", 3)
-	ys <- ys[!is.na(ys$TRNO), ]
-	ts <- read_ods(ffise, "Treatment_Metadata", 2)
-	ts <- ts[!is.na(ts$TRNO), ]
-	ps <- read_ods(ffise, "Plantings", 2)
-	ps <- ps[!is.na(ps$TRNO), ]
-	ns <- read_ods(ffise, "Fertilizations", 2)
-	ns <- ns[!is.na(ns$TRNO), ]
+	r9 <- read_ods(f3, "Plant_Summary", 3)
+	r9 <- r9[!is.na(r9$TRNO), ]
+	r10 <- read_ods(f3, "Treatment_Metadata", 2)
+	r10 <- r10[!is.na(r10$TRNO), ]
+	r11 <- read_ods(f3, "Plantings", 2)
+	r11 <- r11[!is.na(r11$TRNO), ]
+	r12 <- read_ods(f3, "Fertilizations", 2)
+	r12 <- r12[!is.na(r12$TRNO), ]
 	# one row per irrigation/fert event x plot; sum by treatment and plot
 	nfise <- aggregate(
-		list(N_fertilizer=as.numeric(ns$FEAMN), P_fertilizer=as.numeric(ns$FEAMP)),
-		list(TRNO=ns$TRNO, plot=ns[[3]]),
+		list(N_fertilizer=as.numeric(r12$FEAMN), P_fertilizer=as.numeric(r12$FEAMP)),
+		list(TRNO=r12$TRNO, plot=r12[[3]]),
 		sum, na.rm=TRUE
 	)
 
 	# unique treatments (drop plot-level duplicates in plantings/metadata)
-	ts <- ts[!duplicated(ts$TRNO), ]
-	ps <- ps[!duplicated(ps$TRNO), ]
+	r10 <- r10[!duplicated(r10$TRNO), ]
+	r11 <- r11[!duplicated(r11$TRNO), ]
 
-	t3 <- ts[match(ys$TRNO, ts$TRNO), ]
-	p3 <- ps[match(ys$TRNO, ps$TRNO), ]
-	n3 <- nfise[match(paste(ys$TRNO, ys[[3]]), paste(nfise$TRNO, nfise$plot)), ]
+	t3 <- r10[match(r9$TRNO, r10$TRNO), ]
+	p3 <- r11[match(r9$TRNO, r11$TRNO), ]
+	n3 <- nfise[match(paste(r9$TRNO, r9[[3]]), paste(nfise$TRNO, nfise$plot)), ]
 
-	trtname <- if ("Trt_name" %in% names(t3)) t3$Trt_name else ys[[2]]
+	trtname <- if ("Trt_name" %in% names(t3)) t3$Trt_name else r9[[2]]
 	d3 <- data.frame(
-		trial_id = paste0("FISE_", substr(as.character(ys$DATE), 1, 4)),
-		rep = as.integer(ys[[3]]),
+		trial_id = paste0("FISE_", substr(as.character(r9$DATE), 1, 4)),
+		rep = as.integer(r9[[3]]),
 		treatment = as.character(trtname),
 		CO2_concentration_ = as.numeric(NA),
 		irrigated = TRUE,
@@ -194,7 +201,7 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		seed_density = as.numeric(p3$PLPOP) * 10000,
 		plant_density = as.numeric(p3$PLPOE) * 10000,
 		row_spacing = as.numeric(p3$PLRS),
-		yield = as.numeric(ys$LIWAH),
+		yield = as.numeric(r9$LIWAH),
 		dmy_total = as.numeric(NA),
 		LAI = as.numeric(NA),
 		latitude = 33.0628,
@@ -209,7 +216,7 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		geo_from_source = TRUE,
 		on_farm = FALSE,
 		is_survey = FALSE,
-		harvest_date = as.character(ys$DATE)
+		harvest_date = as.character(r9$DATE)
 	)
 
 	d <- rbind(d1, d2, d3)

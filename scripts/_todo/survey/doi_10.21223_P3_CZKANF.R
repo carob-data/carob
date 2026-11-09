@@ -13,6 +13,18 @@
 ## NOT PROCESSED
 # A2 home visits, A3 and A4 agricultural monitoring, A5 knowledge, A6 food frequency, H1 to H8 community-health and clinic files, the monitoring-forms workbook, and the docx dictionaries.
 # Voucher counts for Kabode and Vita, vine multiplier, and health-facility columns on the A1 file.
+# A2 - Monthly Home Visits.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# A3 - Monitoring Agricultural Activities.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# A4 - Monitoring Agricultural Activities by CIP agronomist.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# A5 - Knowledge Assessment.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# A6 - Food Frequency.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H1 - CHW Group Profile.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H2 - CHW Pregnant Woman Club Attendance.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H3 - CHW Monthly Summary.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H5 - ANC Delivery.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H6 - PNC Delivery.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# H8 - ANC Nurses Monthly Report.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# MAMA SASHA MONITORING FORMS.xls: not read. sheet Summary actors & forms (of 26): Monitoring forms, ...2, Main activities...3, ...4, ...5, ...6, ...7, ...8, ...9, ...10, Main activities...11, ...12, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

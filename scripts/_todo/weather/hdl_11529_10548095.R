@@ -43,7 +43,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		x[x %in% c("", "NA", "na", "-99", "-999", "-9999", "-9999.0")] <- NA_character_
 		as.numeric(x)
 	}
-	f <- ff[grepl("CEVAMEX", basename(ff))][1]
+	f <- ff[basename(ff) == "CEVAMEX hourly data 2015.xlsx"]
 	r <- carobiner::read.excel(f, sheet=1)
 	year <- as.integer(num(r$Year))
 	month <- as.integer(num(r$Month))

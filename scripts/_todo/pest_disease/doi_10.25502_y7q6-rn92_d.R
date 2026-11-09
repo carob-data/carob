@@ -28,6 +28,7 @@
 # SN: row number.
 # Remarks: empty.
 # fruit-fly dictionary: definitions used above.
+# fruit-fly-incidnce-n-abundanc-on-cucmb_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # fruit_number_: fruits in the sample

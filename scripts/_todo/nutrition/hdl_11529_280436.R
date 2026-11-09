@@ -43,9 +43,9 @@ This dataset consists of Result of Grain Analysis for the 95 on-farm field trial
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("xlsx$", basename(ff), ignore.case=TRUE)]
-	s <- carobiner::read.excel(f, sheet="SITE_INFORMATION")
-	g <- carobiner::read.excel(f, sheet="DATA")
+	f <- ff[basename(ff) == "NG_NOT_GRAIN_2015 (2).xlsx"]
+	r1 <- carobiner::read.excel(f, sheet="SITE_INFORMATION")
+	r2 <- carobiner::read.excel(f, sheet="DATA")
 
 	coord <- function(x, negative_letter) {
 		x <- trimws(as.character(x))
@@ -66,31 +66,31 @@ This dataset consists of Result of Grain Analysis for the 95 on-farm field trial
 	ppm <- function(x) as.numeric(x) / 1000
 
 	site <- data.frame(
-		site_code = trimws(as.character(s[["SITE CODE"]])),
-		country = trimws(as.character(s$COUNTRY)),
-		adm1 = carobiner::fix_name(trimws(as.character(s$STATE)), "title"),
-		adm2 = carobiner::fix_name(trimws(as.character(s$LGA)), "title"),
-		location = carobiner::fix_name(trimws(as.character(s$COMMUNITY)), "title"),
-		latitude = coord(s$Latitude, "S"),
-		longitude = coord(s$Longitude, "W"),
-		elevation = elev(s$Altitude)
+		site_code = trimws(as.character(r1[["SITE CODE"]])),
+		country = trimws(as.character(r1$COUNTRY)),
+		adm1 = carobiner::fix_name(trimws(as.character(r1$STATE)), "title"),
+		adm2 = carobiner::fix_name(trimws(as.character(r1$LGA)), "title"),
+		location = carobiner::fix_name(trimws(as.character(r1$COMMUNITY)), "title"),
+		latitude = coord(r1$Latitude, "S"),
+		longitude = coord(r1$Longitude, "W"),
+		elevation = elev(r1$Altitude)
 	)
 
 	d <- data.frame(
-		site_code = trimws(as.character(g$SiteCode)),
-		sample_id = trimws(as.character(g[["Sample ID"]])),
-		treatment = trimws(as.character(g$Treatment)),
-		variety = trimws(as.character(g$Variety)),
-		grain_N = pct(g$N),
-		grain_P = pct(g$P),
-		grain_K = pct(g[["% K"]]),
-		grain_Ca = pct(g$Ca),
-		grain_Mg = pct(g$Mg),
-		grain_Na = ppm(g$Na),
-		grain_Mn = ppm(g$Mn),
-		grain_Fe = ppm(g$Fe),
-		grain_Cu = ppm(g$Cu),
-		grain_Zn = ppm(g$Zn)
+		site_code = trimws(as.character(r2$SiteCode)),
+		sample_id = trimws(as.character(r2[["Sample ID"]])),
+		treatment = trimws(as.character(r2$Treatment)),
+		variety = trimws(as.character(r2$Variety)),
+		grain_N = pct(r2$N),
+		grain_P = pct(r2$P),
+		grain_K = pct(r2[["% K"]]),
+		grain_Ca = pct(r2$Ca),
+		grain_Mg = pct(r2$Mg),
+		grain_Na = ppm(r2$Na),
+		grain_Mn = ppm(r2$Mn),
+		grain_Fe = ppm(r2$Fe),
+		grain_Cu = ppm(r2$Cu),
+		grain_Zn = ppm(r2$Zn)
 	)
 	d <- merge(d, site, by="site_code", all.x=TRUE)
 	d$site_code <- NULL

@@ -13,6 +13,7 @@
 ## NOT PROCESSED
 # Household-member blocks 8Nombre_01 through 8Educacion_13, the later crop columns 10Cultivo02 to 10Cultivo06, variety sale blocks, and the association and housing modules in 01_Database SEP CONPAPA Ecuador.xlsx.
 # The questionnaire document and PDF.
+# 02_Data_dictionary SEP CONPAPA Ecuador.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # crop_name_, area_total_, crop_area_, crop_harvest_: first-crop fields, units not stated.

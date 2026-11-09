@@ -15,6 +15,43 @@
 # Adult and child rosters, housing, assets, crops, sweetpotato production, diet, nutrition knowledge, and food security.
 # The questionnaire workbook and the dictionary.
 # A13A is a GPS correction factor, not a coordinate.
+# haconver.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg10_gave_vines.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg10_vine_diffusion.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg11_received_vines.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg12_attitude.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg13_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg15_sp_preference.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg16_vitA_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg16_woman_VitA_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg17_Vit_A_consumption.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg18_man_VitA_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg18_men_nutrition_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg19_food_security.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg2_adult_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg20_shocks.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg21_assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg22_housing.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg3_child_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg3_dietdiversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg4_activities.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg4_agric_land.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg4_enterprise.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg4_group_membership.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg4_networks.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg5_crop_production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg5_information.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg5_trade_relation.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg6_sp_production_01.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg6_sp_production_02.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg6_sp_production_03.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg7_other_crop_production.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg8_crop_sales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg9_credit.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_b_pg9_labor.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# RW_sf_base_dictionary.do: documentation or a codebook, not an observation table.
+# RW_sf_base_questionnaire.xlsx: design, layout, or protocol sheet, not plot or survey records.
+# sp_conv.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

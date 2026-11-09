@@ -13,6 +13,7 @@
 ## NOT PROCESSED
 # 02_Assessment_availability_fertilizers.xlsx columns "Availability of fertilizer1" to "Availability of fertilizer24": the sheet does not name which product each flag is.
 # 04_Assessment_fertilizers_ODK survey tool.xlsx: the form, not the responses.
+# 03_DataDictionary_Template_AssessmentFertilizers.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # fertilizer_type_, product_name_, composition_, manufacturer_, origin_country_, package_quantity_, package_unit_, price_per_kg_, subsidized_price_per_kg_: product label and shop price. hhid is the agrodealer index.
@@ -45,15 +46,15 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 		carob_effort = 0.3
 	)
 
-	fd <- ff[basename(ff) == "01_Assessment_fertilizers_details.xlsx"]
-	fa <- ff[basename(ff) == "02_Assessment_availability_fertilizers.xlsx"]
-	p <- carobiner::read.excel(fd, sheet="Fertilizer details")
-	a <- carobiner::read.excel(fa, sheet="Availability of fertilizers")
+	f1 <- ff[basename(ff) == "01_Assessment_fertilizers_details.xlsx"]
+	f2 <- ff[basename(ff) == "02_Assessment_availability_fertilizers.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Fertilizer details")
+	r2 <- carobiner::read.excel(f2, sheet="Availability of fertilizers")
 	loc <- data.frame(
-		Agrodealer_index = a$Agrodealer_index,
-		adm2 = trimws(as.character(a$District)),
-		location = trimws(as.character(a$Sector)),
-		date = as.character(as.Date(a$Date))
+		Agrodealer_index = r2$Agrodealer_index,
+		adm2 = trimws(as.character(r2$District)),
+		location = trimws(as.character(r2$Sector)),
+		date = as.character(as.Date(r2$Date))
 	)
 	loc <- loc[!duplicated(loc$Agrodealer_index), ]
 
@@ -64,16 +65,16 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 		as.numeric(x)
 	}
 	d <- data.frame(
-		shop_id_ = as.character(p$Agrodealer_index),
-		fertilizer_type_ = trimws(as.character(p$Fertilizer)),
-		product_name_ = trimws(as.character(p$Commercial_name)),
-		composition_ = trimws(as.character(p$Composition)),
-		manufacturer_ = trimws(as.character(p$Manufacturer)),
-		origin_country_ = trimws(as.character(p$Country_of_origin)),
-		package_quantity_ = num(p$Quantity_per_package),
-		package_unit_ = trimws(as.character(p$Quantity_unit)),
-		price_per_kg_ = num(p$Original_price_per_kg),
-		subsidized_price_per_kg_ = num(p$Subsidized_price_per_kg)
+		shop_id_ = as.character(r1$Agrodealer_index),
+		fertilizer_type_ = trimws(as.character(r1$Fertilizer)),
+		product_name_ = trimws(as.character(r1$Commercial_name)),
+		composition_ = trimws(as.character(r1$Composition)),
+		manufacturer_ = trimws(as.character(r1$Manufacturer)),
+		origin_country_ = trimws(as.character(r1$Country_of_origin)),
+		package_quantity_ = num(r1$Quantity_per_package),
+		package_unit_ = trimws(as.character(r1$Quantity_unit)),
+		price_per_kg_ = num(r1$Original_price_per_kg),
+		subsidized_price_per_kg_ = num(r1$Subsidized_price_per_kg)
 	)
 	d <- merge(d, loc, by.x="shop_id_", by.y="Agrodealer_index", all.x=TRUE)
 	d$hhid <- d$shop_id_

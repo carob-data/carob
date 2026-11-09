@@ -13,6 +13,7 @@
 # Plot area, scacos, and kilos. The area unit is not in the column name, so kilos are not a yield in kg/ha.
 # Household roster, including 6_1Sexo, pests, and the rest of the questionnaire.
 # Data dictionary and the pdf questionnaires.
+# 02_Data Dictionary.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -40,7 +41,7 @@ El proyecto tuvo como objetivo general 'Mejorar la calidad de vida de pequeños 
 		carob_effort = 0.3
 	)
 
-	f <- ff[grepl("^01_Encuesta", basename(ff))]
+	f <- ff[basename(ff) == "01_Encuesta Datos -Proyecto Innovaciones Tecnologicas y Mercados Diferenciados para Productores de Papa Nativas.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 	fecha <- r[["1_3Fecha"]]
 	if (inherits(fecha, "Date") || inherits(fecha, "POSIXt")) {

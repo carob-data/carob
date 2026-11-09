@@ -33,6 +33,13 @@
 # altitude_class_: altitude category of the village (Bhutan: High/Mid/Low)
 
 
+
+## NOT PROCESSED
+# Community survey-Data.xlsx: not read. sheet Form 1 (of 2): Community-level survey, ...2, ...3, ...4, ...5, ...6, ...7, ...8. Observation records are missing from d until this file is standardized.
+# Expert estimates-Data.xlsx: not read. sheet Expert estimates: Expert estimates of varietal adoption. Observation records are missing from d until this file is standardized.
+# Researchers' survey-Data.xlsx: not read. sheet Data by Discipline (of 3): Data by discipline, ...2, ...3, ...4, ...5, ...6, ...7, ...8. Observation records are missing from d until this file is standardized.
+# Varietal releases-Data.xlsx: not read. sheet Compiled by NARES (of 2): Varietal releases compiled by NARES collaborators. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -66,7 +73,8 @@ To devise practical means for the regular monitoring of variety diffusion and fo
 		"Landtype", "Irrig", "Season", "Variety", "RelYear", "RelComment", "MVTV", "Area", "CEMethod", "YrsGrown",
 		"SeedSrc", "Comment", "Variety_orig")
 	r2 <- carobiner::read.excel(f, sheet="Basic-Land profile", skip=4, guess_max=100000)
-	r3 <- carobiner::read.excel(ff[basename(ff) == "Bhutan HH survey-Data.xlsx"], sheet="Landhold&MVs", skip=4, guess_max=100000)
+	f1 <- ff[basename(ff) == "Bhutan HH survey-Data.xlsx"]
+	r3 <- carobiner::read.excel(f1, sheet="Landhold&MVs", skip=4, guess_max=100000)
 
 	country <- c("Bangladesh"="Bangladesh", "Nepal (Eastern)"="Nepal", "Nepal (Western)"="Nepal",
 		"West Bengal"="India", "Orissa"="India", "Chhattisgarh"="India")

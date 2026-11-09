@@ -65,10 +65,10 @@ To analyze the effects of genetic diversity on rice blast management and to dete
 	)
 
 	f <- ff[basename(ff) == "Dataset.xlsx"]
-	rb <- carobiner::read.excel(f, sheet="Before", skip=2)
-	ra <- carobiner::read.excel(f, sheet="After", skip=2)
-	rh <- carobiner::read.excel(f, sheet="demo char & income", skip=1)
-	rb <- rb[rb$RESCODE %in% c("1", "2", "3"), ]
+	r1 <- carobiner::read.excel(f, sheet="Before", skip=2)
+	r2 <- carobiner::read.excel(f, sheet="After", skip=2)
+	r3 <- carobiner::read.excel(f, sheet="demo char & income", skip=1)
+	r1 <- r1[r1$RESCODE %in% c("1", "2", "3"), ]
 
 	mu <- 15
 
@@ -95,24 +95,24 @@ To analyze the effects of genetic diversity on rice blast management and to dete
 		)
 	}
 	d <- rbind(
-		rice(rb, "glutinous", "before"), rice(rb, "hybrid", "before"),
-		rice(ra, "glutinous", "after"), rice(ra, "hybrid", "after")
+		rice(r1, "glutinous", "before"), rice(r1, "hybrid", "before"),
+		rice(r2, "glutinous", "after"), rice(r2, "hybrid", "after")
 	)
 	d <- d[!(is.na(d$variety) & is.na(d$yield)), ]
 	d$variety <- trimws(d$variety)
 	d$insecticide_used <- d$insecticide_times > 0
 	d$fungicide_used <- d$fungicide_times > 0
 
-	j <- match(d$hhid, rh$RESPNO)
-	d$adopter_ <- c("old adopter", "new adopter", "non-adopter")[rh$RESCODE[j]]
-	d$village_code_ <- rh$VILLAGE[j]
-	d$county_code_ <- rh$COUNTY[j]
-	d$sex <- c("male", "female")[rh$OPSEX[j]]
-	d$age <- rh$OPAGE[j]
-	d$education_years_ <- rh$OPEDU[j]
-	d$hh_size <- rh$HHSIZE[j]
+	j <- match(d$hhid, r3$RESPNO)
+	d$adopter_ <- c("old adopter", "new adopter", "non-adopter")[r3$RESCODE[j]]
+	d$village_code_ <- r3$VILLAGE[j]
+	d$county_code_ <- r3$COUNTY[j]
+	d$sex <- c("male", "female")[r3$OPSEX[j]]
+	d$age <- r3$OPAGE[j]
+	d$education_years_ <- r3$OPEDU[j]
+	d$hh_size <- r3$HHSIZE[j]
 	d$currency <- "CNY"
-	d$farmland <- rb$FSIZE[match(d$hhid, rb$RESPNO)] / mu
+	d$farmland <- r1$FSIZE[match(d$hhid, r1$RESPNO)] / mu
 
 	d$country <- "China"
 	d$adm1 <- "Yunnan"

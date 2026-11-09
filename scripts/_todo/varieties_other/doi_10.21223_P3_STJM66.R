@@ -19,6 +19,7 @@
 
 ## NOT PROCESSED
 # Dictionary reference rows.
+# 02_Data_dictionary_Agro-morphological.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -48,7 +49,7 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("^01_Data", basename(ff))]
+	f <- ff[basename(ff) == "01_Data_Agro-morphological.xlsx"]
 	r <- carobiner::read.excel(f)
 	num <- function(x) as.numeric(as.character(x))
 

@@ -33,6 +33,7 @@
 ## NOT PROCESSED
 # Final sample weight, flake color, accession identifiers other than the accession number, collection date, donor numbers, and grain-color and grain-type lists.
 # The phenotyping video.
+# Popcorn_Phenotyping_Video_720.mp4: not read. .mp4 file. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {

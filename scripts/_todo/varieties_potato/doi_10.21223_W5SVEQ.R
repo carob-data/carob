@@ -14,6 +14,8 @@
 ## NOT PROCESSED
 # TYPE, SOURCE, TEST STATUS, NPT YRS, DUS YRS, percent above checks, CONTRAST, NMTP, TNTP, THINN, HARV: trial administration or counts without a plot area.
 # Disease columns PRLV, PVX, PVY, BLT and BWLT: the scale is not stated.
+# 4415_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
+# 4415_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -43,8 +45,10 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 		carob_effort = 0.3
 	)
 
-	r <- carobiner::read.excel(ff[basename(ff) == "4415_Data.xlsx"])
-	ml <- carobiner::read.excel(ff[basename(ff) == "4415_Material_List.xlsx"])
+	f1 <- ff[basename(ff) == "4415_Data.xlsx"]
+	r <- carobiner::read.excel(f1)
+	f2 <- ff[basename(ff) == "4415_Material_List.xlsx"]
+	r1 <- carobiner::read.excel(f2)
 	variety <- trimws(as.character(r$ACCENUMB))
 	miss <- is.na(variety) | !nzchar(variety)
 	variety[miss] <- paste("unlabeled candidate", seq_len(sum(miss)))
@@ -55,8 +59,8 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 		yield_marketable = as.numeric(r$MTWP)
 	)
 	alias <- data.frame(
-		variety = trimws(as.character(ml$Accession_Number)),
-		variety_alt = trimws(as.character(ml$Accession_Name))
+		variety = trimws(as.character(r1$Accession_Number)),
+		variety_alt = trimws(as.character(r1$Accession_Name))
 	)
 	alias$variety_alt[!nzchar(alias$variety_alt)] <- NA_character_
 	alias <- alias[!duplicated(alias$variety), ]

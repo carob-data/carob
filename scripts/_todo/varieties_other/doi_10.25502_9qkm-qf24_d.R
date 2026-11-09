@@ -21,6 +21,7 @@
 # Num, Dam, Num.1, Dam.1: unlabeled number and damage columns.
 # ID: row number.
 # data dictionary: column definitions used above, not a data table.
+# data_dictionary_okra_performance_and_effect_of_agroecology.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # stratum_: bottom, middle, top or apex of the plant for insect counts and leaf size.

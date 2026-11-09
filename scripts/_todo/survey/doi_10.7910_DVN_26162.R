@@ -64,7 +64,7 @@ The benchmark survey was used to develop a systematic understanding of target en
 	f <- ff[basename(ff) == "CPWF Final Baseline Survey - DTA MGT.xls"]
 	r <- carobiner::read.excel(f, sheet="OWNLAND", skip=2)
 	r <- r[!is.na(r$IDNO), ]
-	rh <- carobiner::read.excel(f, sheet="HHHead_Info + HHInc")
+	r2 <- carobiner::read.excel(f, sheet="HHHead_Info + HHInc")
 
 	crops <- c("1"="rice", "2"="wheat", "3"="sugarcane", "4"="oilseed", "5"="pigeon pea", "6"="potato", "7"="onion", "8"="spices",
 		"9"="vegetable", "10"="pea_mustard", "11"="wheat_mustard", "12"="berseem clover", "13"="maize", "14"="other", "15"="pea",
@@ -130,9 +130,9 @@ The benchmark survey was used to develop a systematic understanding of target en
 	d$yield_part[d$crop %in% c("berseem clover", "forage crop")] <- "aboveground biomass"
 
 	## household head
-	j <- match(d$hhid, rh$IDNO)
-	d$sex <- c("male", "female")[rh$SEX[j]]
-	d$age <- rh$AGE[j]
+	j <- match(d$hhid, r2$IDNO)
+	d$sex <- c("male", "female")[r2$SEX[j]]
+	d$age <- r2$AGE[j]
 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

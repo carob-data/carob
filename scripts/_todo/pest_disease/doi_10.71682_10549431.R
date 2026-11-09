@@ -14,6 +14,7 @@
 
 ## NOT PROCESSED
 # The data-dictionary template. It describes the columns and has no plot records.
+# Data Dictionary_Template_XHe.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -72,7 +73,12 @@ Wheat head blast index (%) data for four CIMMYT nurseries (16HLBSN, 16HZAN, 42SA
 		do.call(rbind, parts)
 	}
 
-	ff <- ff[grepl("\\.csv$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"16HLBSN_WB.csv",
+		"16HZAN_WB.csv",
+		"42SAWSN_WB.csv",
+		"57IBWSN_WB.csv"
+	)]
 	d <- do.call(rbind, lapply(ff, one))
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
 	d <- d[!duplicated(d), ]

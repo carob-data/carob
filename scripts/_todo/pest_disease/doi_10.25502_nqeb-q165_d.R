@@ -23,6 +23,7 @@
 
 ## NOT PROCESSED
 # All three data files: ID. Row number.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plant_number_: plant number within the farmer or block.

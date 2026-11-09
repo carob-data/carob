@@ -16,6 +16,7 @@
 # Image_description_Moz1.xlsx: image file names, altitude, sensor and pixel size. Coordinates were taken from it.
 # Standard-deviation columns on both dates.
 # Soil analysis is mentioned in the description and is not in these files.
+# Data_Dictionary_Moz1.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # canopy_temperature_: mean canopy temperature (C).

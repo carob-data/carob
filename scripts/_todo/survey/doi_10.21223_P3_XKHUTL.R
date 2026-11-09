@@ -19,6 +19,7 @@
 ## NOT PROCESSED
 # stakeholder_csv, IPM_Advice_Stakeholders_csv, and IPM_Advice_relationships_csv: network and advice tables, not plot yields.
 # PriceMin and PriceMax have no currency in the sheet.
+# Data_Dictionary.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # seed_or_product_: Seed or Product, as recorded

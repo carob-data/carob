@@ -135,11 +135,11 @@ Effectiveness of 14 herbicides were compared during 2017 in El Batan, Mexico. Th
 		as.numeric(x)
 	}
 
-	fc <- ff[basename(ff) == "DAT-BV101-17-WeedCounts_Wheat.xlsx"]
+	f1 <- ff[basename(ff) == "DAT-BV101-17-WeedCounts_Wheat.xlsx"]
 	sh <- c("20-Jun-17", "03-Jul-17", "07-Ago-17")
 	counts <- list()
 	for (s in sh) {
-		w <- carobiner::read.excel(fc, sheet=s, col_names=FALSE, na=c(".", ""))
+		w <- carobiner::read.excel(f1, sheet=s, col_names=FALSE, na=c(".", ""))
 		hdr <- which(apply(w, 1, function(z) any(toupper(trimws(as.character(z))) == "PARC")))[1]
 		nms <- trimws(as.character(unlist(w[hdr, ])))
 		body <- w[(hdr + 1):nrow(w), ]
@@ -179,8 +179,8 @@ Effectiveness of 14 herbicides were compared during 2017 in El Batan, Mexico. Th
 		as.character(as.Date(v, origin="1899-12-30"))
 	}
 
-	fd <- ff[basename(ff) == "DAT-BV101-17-WeedDryWeight_Wheat.xlsx"]
-	w <- carobiner::read.excel(fd, sheet="WeedDryWeight", col_names=FALSE, na=c(".", ""))
+	f2 <- ff[basename(ff) == "DAT-BV101-17-WeedDryWeight_Wheat.xlsx"]
+	w <- carobiner::read.excel(f2, sheet="WeedDryWeight", col_names=FALSE, na=c(".", ""))
 	hdrs <- which(apply(w, 1, function(z) any(toupper(trimws(as.character(z))) == "PARC")))
 	for (h in hdrs) {
 		nms <- trimws(as.character(unlist(w[h, ])))

@@ -14,6 +14,56 @@
 # Project exposure, vine dissemination, consent, and interview clock times on the cover file.
 # Sweetpotato production, other crops, sales, labour, groups, credit, food security, shocks, assets, housing, nutrition, and demography files. Several of those are split into part 1 and part 2.
 # haconver.dta, sp_conv.dta, the questionnaire workbook, and the dictionary.
+# mbend_dictionary_20173001.xls: documentation or a codebook, not an observation table.
+# mbend_pg10_differences_of_MB_vines_from_others.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg10_received_vines_elsewhere.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg10_received_vines_marandobora.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg11_pg13_sp_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg14_genderbased_labour_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg14_genderbased_labour_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_farmer_group_part 2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_farmer_group_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_genderbased_group_activities_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_genderbased_group_activities_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_genderbased_social networks_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg15_genderbased_social networks_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg16_genderbased_information_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg16_genderbased_information_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg16_genderbased_trading relationships_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg16_genderbased_trading relationships_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg17_genderbased_nutritional knowledge_dietary habits_radio_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg17_genderbased_nutritional knowledge_dietary habits_radio_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg17_genderbased_women knowledge of vit A_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg17_genderbased_women knowledge of vit A_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg18_genderbased_frequency of consumption of vit A foods_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg18_genderbased_frequency of consumption of vit A foods_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg19_genderbased_attitude and perception_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg19_genderbased_attitude and perception_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg2_adult_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg20_genderbased_sp varietal preferences and practice_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg20_genderbased_sp varietal preferences and practice_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg21_genderbased_credit_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg21_genderbased_credit_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg21_genderbased_food security_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg21_genderbased_food security_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg22_genderbased_shocks_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg22_genderbased_shocks_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg23_genderbased_Household assets_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg23_genderbased_Household assets_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg24_genderbased_Housing_part1.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg24_genderbased_Housing_part2.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg3_child_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg3_dietary_diversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg4_agricultural_land.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg4_project_exposure.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg5_HH_sp_production_J00_J07B.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg5_sweetpotato_production_table.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg6_sp_production_cont.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg7_production_other_crops.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg8_crop_sales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg9_HH_gaveout_sold_vines.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_pg9_vine_diffusion.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbend_questionnaire.xlsx: design, layout, or protocol sheet, not plot or survey records.
 
 
 carob_script <- function(path) {

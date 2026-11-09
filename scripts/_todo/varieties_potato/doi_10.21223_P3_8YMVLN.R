@@ -18,6 +18,8 @@
 
 ## NOT PROCESSED
 # none beyond the dictionary workbooks, which were used for units.
+# Data_Dictionary_Harvest_isotopes.xlsx: documentation or a codebook, not an observation table.
+# Data_Dictionary_Photosynthesis_isotopes.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # tio_days_: days after tuber initiation onset
@@ -65,29 +67,31 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 	}
 	num <- function(x) as.numeric(blank(x))
 
-	h <- read.csv(ff[basename(ff) == "Harvest_isotopes.csv"], check.names=FALSE)
-	p <- read.csv(ff[basename(ff) == "Photosynthesis_isototes.csv"], check.names=FALSE)
+	f1 <- ff[basename(ff) == "Harvest_isotopes.csv"]
+	r1 <- read.csv(f1, check.names=FALSE)
+	f2 <- ff[basename(ff) == "Photosynthesis_isototes.csv"]
+	r2 <- read.csv(f2, check.names=FALSE)
 
 	dh <- data.frame(
-		plot_id = paste("H", blank(h$ID), sep="_"),
-		variety = blank(h$Genotype),
-		treatment = blank(h$Treatment),
-		tio_days_ = num(h[["Days after TIO"]]),
-		harvest_number_ = num(h$Harvest),
-		narea_ = num(h$Narea),
-		agb_g_ = num(h$AGB),
-		tb_g_ = num(h$TB),
-		leaflet_d13c_ = num(h$DeltaLeaflet),
-		tuber_d13c_ = num(h$DeltaT)
+		plot_id = paste("H", blank(r1$ID), sep="_"),
+		variety = blank(r1$Genotype),
+		treatment = blank(r1$Treatment),
+		tio_days_ = num(r1[["Days after TIO"]]),
+		harvest_number_ = num(r1$Harvest),
+		narea_ = num(r1$Narea),
+		agb_g_ = num(r1$AGB),
+		tb_g_ = num(r1$TB),
+		leaflet_d13c_ = num(r1$DeltaLeaflet),
+		tuber_d13c_ = num(r1$DeltaT)
 	)
 	dp <- data.frame(
-		plot_id = paste("P", blank(p$ID), sep="_"),
-		variety = blank(p$Genotype),
-		treatment = blank(p$Treatment),
-		tio_days_ = num(p[["Days after TIO"]]),
-		gs_ = num(p$gs),
-		A_ = num(p$A),
-		ags_ = num(p[["A/gs"]])
+		plot_id = paste("P", blank(r2$ID), sep="_"),
+		variety = blank(r2$Genotype),
+		treatment = blank(r2$Treatment),
+		tio_days_ = num(r2[["Days after TIO"]]),
+		gs_ = num(r2$gs),
+		A_ = num(r2$A),
+		ags_ = num(r2[["A/gs"]])
 	)
 	d <- carobiner::bindr(dh, dp)
 	d$crop <- "potato"

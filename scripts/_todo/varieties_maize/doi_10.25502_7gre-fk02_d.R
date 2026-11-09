@@ -28,6 +28,7 @@
 # maize-evaluation-in-sao-tome.csv, AVG_N_GRAINS_PER_ROW: mean of the longest and shortest grain counts.
 # maize-evaluation-in-sao-tome.csv, N_GRAIN_PER_COB: kernel rows times average grains per row.
 # maize-evaluation-in-sao-tome.csv, trailing blank columns: empty.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plants_harvested_: plants per plot at harvest (PL_HARV). Unit: plants/plot.

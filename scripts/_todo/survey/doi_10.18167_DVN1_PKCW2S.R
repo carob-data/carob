@@ -15,6 +15,8 @@
 # ML_97_Struc.xlsx: farm population, equipment, and farm-level mean yields. Plot yield is already on the plot sheet.
 # Previous crops, individual weeding and spray dates, manure application units, and harvest plant density (no unit in the variable list).
 # Quantité urée, super-simple, and the complex-fertilizer quantities. The per-hectare FM Coton, FM Céréale, and F.O columns are the ones with a stated kg/ha unit.
+# List_variables.xlsx: not read. sheet Feuil1: Variables, Signification, précision, Meaning. Observation records are missing from d until this file is standardized.
+# Readme.txt: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {

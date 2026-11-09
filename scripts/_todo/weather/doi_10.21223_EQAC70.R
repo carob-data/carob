@@ -13,6 +13,7 @@
 
 ## NOT PROCESSED
 # Year, Month, Day: used only to confirm measure_date.
+# 02_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
 
 carob_script <- function(path) {
 

@@ -35,6 +35,10 @@
 # DAS_: days after sowing (long table; for PTR not equal to days after transplanting)
 
 
+
+## NOT PROCESSED
+# BG02 16WS DSR Lines_LowN.xlsx: not read. sheet Propocol (of 13): BG02 DSR Lines Lysimeter Study -2016WS. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

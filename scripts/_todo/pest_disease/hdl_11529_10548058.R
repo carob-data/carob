@@ -96,45 +96,50 @@ Dry direct-seeded rice in no-till or tilled soil is an alternate option for tran
 		as.numeric(num) / 1000
 	}
 	one <- function(f) {
-		si <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
-		cells <- trimws(as.character(unlist(si[1, ])))
+		r1 <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
+		cells <- trimws(as.character(unlist(r1[1, ])))
 		cells[is.na(cells)] <- ""
-		gh <- carobiner::read.excel.hdr(f, sheet="16.WeedBio & cropData (harvest)", skip=4, hdr=2)
-		gh <- gh[!is.na(gh$Treatment.No), ]
-		pre <- blank_herb(gh$Pre.emergence.herbicide)
-		post <- blank_herb(gh$Post.emergence.herbicide)
+		r2 <- carobiner::read.excel.hdr(f, sheet="16.WeedBio & cropData (harvest)", skip=4, hdr=2)
+		r2 <- r2[!is.na(r2$Treatment.No), ]
+		pre <- blank_herb(r2$Pre.emergence.herbicide)
+		post <- blank_herb(r2$Post.emergence.herbicide)
 		prod <- products(pre, post)
-		rate_pre <- one_rate_kg(gh$Dose.g.a.i.ha.1.and.application.time)
-		rate_post <- one_rate_kg(gh$Dose.g.a.i.ha.1.and.application.time.1)
+		rate_pre <- one_rate_kg(r2$Dose.g.a.i.ha.1.and.application.time)
+		rate_post <- one_rate_kg(r2$Dose.g.a.i.ha.1.and.application.time.1)
 		rate <- ifelse(!is.na(rate_pre) & is.na(rate_post), rate_pre, ifelse(is.na(rate_pre) & !is.na(rate_post), rate_post, NA_real_))
 		rate[prod == "none"] <- 0
 		ylab <- ifelse(pre == "" & post == "", "no herbicide", trimws(paste(pre, post)))
 		ylab[ylab == ""] <- "no herbicide"
-		dry <- num(gh$Oven.dry.weed.biomass.at.harvest.g.m2) * 10
+		dry <- num(r2$Oven.dry.weed.biomass.at.harvest.g.m2) * 10
 		data.frame(
 			country = header_value(cells, "Country:"),
 			adm2 = header_value(cells, "District:"),
 			location = header_value(cells, "Community/Node:"),
-			year = as.character(gh$Year),
-			season = ifelse(grepl("rabi|winter", gh$Season, ignore.case=TRUE), "rabi", ifelse(grepl("kharif|monsoon", gh$Season, ignore.case=TRUE), "kharif", tolower(trimws(as.character(gh$Season))))),
-			trial_code = as.character(gh$Trial.Code),
-			plot_id = as.character(gh$Plot.Id),
+			year = as.character(r2$Year),
+			season = ifelse(grepl("rabi|winter", r2$Season, ignore.case=TRUE), "rabi", ifelse(grepl("kharif|monsoon", r2$Season, ignore.case=TRUE), "kharif", tolower(trimws(as.character(r2$Season))))),
+			trial_code = as.character(r2$Trial.Code),
+			plot_id = as.character(r2$Plot.Id),
 			treatment = ylab,
 			herbicide_product = prod,
 			herbicide_used = prod != "none",
 			herbicide_amount = rate,
 			crop = "rice",
 			yield_part = "grain",
-			yield = num(gh$Grain.yield.t.ha) * 1000,
-			plant_height = num(gh$Plant.height.cm),
-			seed_weight = num(gh$TGW),
-			plot_area = num(gh$Plot.size.m2.each.plot),
+			yield = num(r2$Grain.yield.t.ha) * 1000,
+			plant_height = num(r2$Plant.height.cm),
+			seed_weight = num(r2$TGW),
+			plot_area = num(r2$Plot.size.m2.each.plot),
 			dry_weed_biomass_kg_ha_ = dry,
 			stress = "weeds"
 		)
 	}
 
-	d <- do.call(rbind, lapply(ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)], one))
+	d <- do.call(rbind, lapply(ff[basename(ff) %in% c(
+		"harif rice 2015-Weed management module-Rangpur.xlsx",
+		"Kharif rice 2015-weed management module-Dhanusha.xlsx",
+		"Kharif rice 2015-weed management module-Rajshahi.xlsx",
+		"Kharif rice 2015-weed management module-Sunsari.xlsx"
+	)], one))
 	d$location <- carobiner::fix_name(d$location, "title")
 	d$adm2 <- carobiner::fix_name(d$adm2, "title")
 	d$trial_id <- paste(d$location, d$year, d$trial_code, sep="_")

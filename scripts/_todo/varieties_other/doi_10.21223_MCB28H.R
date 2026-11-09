@@ -18,6 +18,12 @@
 # elisa_1_: first result token
 # elisa_2_: second result token
 
+
+## NOT PROCESSED
+# DataDictionary_ElementDescription.csv: documentation or a codebook, not an observation table.
+# DataDictionary_Introduction.csv: documentation or a codebook, not an observation table.
+# DataDictionary_UniqueIdentifier.csv: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "

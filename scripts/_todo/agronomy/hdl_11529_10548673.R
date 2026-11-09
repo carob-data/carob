@@ -14,6 +14,7 @@
 ## NOT PROCESSED
 # ADT_VA workbook: entry list and kilograms of seed, with no area.
 # Observations (rust notes). The sheets do not give a rust score.
+# ADT_VA_wheat_triticale_Barley_OI_2016.xlsx: not read. sheet Details (of 2): Adaptive Trials on Wheat, Triticale  and Barley_OI_2016. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -80,7 +81,7 @@ Different varieties of barley (4 varieties), triticale (4 varieties) and wheat (
 		)
 	}
 
-	f <- ff[grepl("Resultados", basename(ff))]
+	f <- ff[basename(ff) == "Resultados Multiplicación VA OI16-17.xlsx"]
 	d <- rbind(
 		read_crop(f, "Cebada - Barley", "barley"),
 		read_crop(f, "Triticale", "triticale"),

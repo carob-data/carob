@@ -38,6 +38,10 @@
 # stem_starch_flowering_, stem_starch_maturity_: stem starch (mg/g), IRRI
 
 
+
+## NOT PROCESSED
+# Patna gs ME.csv: not read. columns: Expt, Expt2, Site, Season, Plot, Ent#, Genotype, Pair, HI.class, selected, selected2, stableHI, .... Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -102,9 +106,9 @@ Harvest index is an important component of grain yield and is typically reduced 
 	d1$plot[i] <- NA
 	d1$plot <- as.integer(d1$plot)
 
-	k4 <- read.csv(f4)
-	k3 <- read.csv(f3)
-	k <- rbind(k4[, c("Season", "Plot", "Genotype", "Rep", "Trt")], k3[, c("Season", "Plot", "Genotype", "Rep", "Trt")])
+	r3 <- read.csv(f4)
+	r4 <- read.csv(f3)
+	k <- rbind(r3[, c("Season", "Plot", "Genotype", "Rep", "Trt")], r4[, c("Season", "Plot", "Genotype", "Rep", "Trt")])
 	k$Trt <- trt(k$Trt)
 	k <- unique(k)
 	colnames(k) <- c("year_season", "plot", "variety", "rep", "treatment")
@@ -114,9 +118,9 @@ Harvest index is an important component of grain yield and is typically reduced 
 	d1$variety[!is.na(d1$variety_)] <- d1$variety_[!is.na(d1$variety_)]
 	d1$variety_ <- NULL
 
-	k3$treatment <- trt(k3$Trt)
-	ps <- data.frame(year_season = k3$Season, plot = k3$Plot, treatment = k3$treatment,
-		photosynthesis_ = k3[["Photosynthesis...flowering"]], gs_ = k3[["stomatal.conductance...flowering"]])
+	r4$treatment <- trt(r4$Trt)
+	ps <- data.frame(year_season = r4$Season, plot = r4$Plot, treatment = r4$treatment,
+		photosynthesis_ = r4[["Photosynthesis...flowering"]], gs_ = r4[["stomatal.conductance...flowering"]])
 	d1 <- merge(d1, ps, by=c("year_season", "plot", "treatment"), all.x=TRUE)
 
 	## Patna

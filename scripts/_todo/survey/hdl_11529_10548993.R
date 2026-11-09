@@ -17,6 +17,9 @@
 # Sales, income, labor, and the gender modules.
 # Jute and gourds.
 # The separate North, South, and West workbooks.
+# BD North-Bangladesh Houshold processed survey 2023 CIMMYT.xlsx: not read. sheet metadata (of 3): Institution:, CIMMYT, https://www.cgiar.org/initiative/mixed-farming-systems/. Observation records are missing from d until this file is standardized.
+# BD South-Bangladesh Houshold processed survey 2023 CIMMYT.xlsx: not read. sheet metadata (of 3): Institution:, CIMMYT, https://www.cgiar.org/initiative/mixed-farming-systems/. Observation records are missing from d until this file is standardized.
+# BD West-Bangladesh Houshold processed survey 2023 CIMMYT.xlsx: not read. sheet metadata (of 3): Institution:, CIMMYT, https://www.cgiar.org/initiative/mixed-farming-systems/. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -45,7 +48,7 @@ Household crop area and production for aman, boro, and aus.
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("^BD Bangladesh Houshold", basename(ff))]
+	f <- ff[basename(ff) == "BD Bangladesh Houshold processed survey 2023 CIMMYT.xlsx"]
 	r <- as.data.frame(carobiner::read.excel(f, sheet="DB", col_types="text"))
 
 	num <- function(x) {

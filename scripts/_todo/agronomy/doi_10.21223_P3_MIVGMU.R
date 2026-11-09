@@ -62,19 +62,19 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 
 	# Physiology sheets repeat the header for the second timing, with different DAT columns.
 	sheet_blocks <- function(sheet) {
-		x <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
-		lab <- trimws(as.character(x[[1]]))
+		r1 <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
+		lab <- trimws(as.character(r1[[1]]))
 		heads <- which(lab == "T")
 		if (length(heads) == 0) stop("no header in ", sheet)
 		parts <- list()
 		for (k in seq_along(heads)) {
 			i <- heads[k]
-			end <- if (k < length(heads)) heads[k + 1] - 1 else nrow(x)
-			hdr <- trimws(as.character(unlist(x[i, ])))
+			end <- if (k < length(heads)) heads[k + 1] - 1 else nrow(r1)
+			hdr <- trimws(as.character(unlist(r1[i, ])))
 			empty <- is.na(hdr) | !nzchar(hdr)
 			hdr[empty] <- paste0("c", which(empty))
 			if (i == end) next
-			y <- x[(i + 1):end, , drop=FALSE]
+			y <- r1[(i + 1):end, , drop=FALSE]
 			names(y) <- hdr
 			keep <- !is.na(y$T) & nzchar(trimws(as.character(y$T)))
 			y <- y[keep, ]
@@ -124,16 +124,16 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 
 	phys_long <- function(sheet, value_name) {
 		out <- list()
-		for (x in sheet_blocks(sheet)) {
+		for (r1 in sheet_blocks(sheet)) {
 			id <- c("T", "B", "TRT")
-			dats <- setdiff(names(x), id)
+			dats <- setdiff(names(r1), id)
 			dats <- dats[grepl("DAT$", dats, ignore.case=TRUE)]
 			for (j in dats) {
 				piece <- data.frame(
-					plot_id = paste(trimws(as.character(x$T)), trimws(as.character(x$TRT)), trimws(as.character(x$B)), sep="_"),
+					plot_id = paste(trimws(as.character(r1$T)), trimws(as.character(r1$TRT)), trimws(as.character(r1$B)), sep="_"),
 					dat_ = as.integer(sub("DAT$", "", j, ignore.case=TRUE))
 				)
-				piece[[value_name]] <- as.numeric(x[[j]])
+				piece[[value_name]] <- as.numeric(r1[[j]])
 				out[[length(out) + 1]] <- piece
 			}
 		}
@@ -150,14 +150,14 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 	dlong <- dlong[order(dlong$plot_id, dlong$order), ]
 	rownames(dlong) <- NULL
 
-	wx <- carobiner::read.excel(f, sheet="Weather data")
+	r2 <- carobiner::read.excel(f, sheet="Weather data")
 	wth <- data.frame(
-		date = as.character(as.Date(wx$Date)),
-		tmax = as.numeric(wx[["T max(°C)"]]),
-		tmin = as.numeric(wx[["T min (°C)"]]),
-		srad = as.numeric(wx[["GRad (MJ*m2)"]]) * 1000,
-		prec = as.numeric(wx[["PP (mm)"]]),
-		rhum = as.numeric(wx[["RH (%)"]]),
+		date = as.character(as.Date(r2$Date)),
+		tmax = as.numeric(r2[["T max(°C)"]]),
+		tmin = as.numeric(r2[["T min (°C)"]]),
+		srad = as.numeric(r2[["GRad (MJ*m2)"]]) * 1000,
+		prec = as.numeric(r2[["PP (mm)"]]),
+		rhum = as.numeric(r2[["RH (%)"]]),
 		country = "Peru",
 		location = "La Molina",
 		latitude = -12.076289,

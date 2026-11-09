@@ -39,6 +39,10 @@
 # share_output_: Farmchar SHARE OUTPUT (crop share arrangement, e.g. 50:50)
 
 
+
+## NOT PROCESSED
+# Laguna Loop Survey_ Coding Manual.xlsx: not read. sheet HH Info (of 9): SEASON, Season. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "Laguna Loop Survey (1965 - 1966)

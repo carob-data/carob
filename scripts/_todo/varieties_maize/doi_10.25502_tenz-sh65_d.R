@@ -24,6 +24,7 @@
 # optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, SL: lodging count; percent is in SLPERC.
 # optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, RLSTAT, SLSTAT, EROTSTAT: transformed lodging and ear-rot values.
 # optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, FWT: field weight of ears per plot; unit not stated, plot area not stated, so not converted to kg/ha.
+# column_metadata.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # set_: mating-design set (1-6). Unit: none.

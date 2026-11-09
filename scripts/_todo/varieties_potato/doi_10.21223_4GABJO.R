@@ -87,17 +87,17 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 		E <- as.numeric(E)
 		N <- as.numeric(N)
 		zone <- as.integer(zone)
-		a <- 6378137.0
+		r1 <- 6378137.0
 		f <- 1/298.257223563
-		b <- a * (1 - f)
+		b <- r1 * (1 - f)
 		k0 <- 0.9996
-		e2 <- 1 - (b/a)^2
+		e2 <- 1 - (b/r1)^2
 		ep2 <- e2 / (1 - e2)
 		x <- E - 500000
 		y <- ifelse(south, N - 10000000, N)
 		lon0 <- ((zone - 1) * 6 - 180 + 3) * pi/180
 		M <- y / k0
-		mu <- M / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256))
+		mu <- M / (r1 * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256))
 		e1 <- (1 - sqrt(1 - e2)) / (1 + sqrt(1 - e2))
 		phi1 <- mu +
 			(3*e1/2 - 27*e1^3/32) * sin(2*mu) +
@@ -106,8 +106,8 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 			(1097*e1^4/512) * sin(8*mu)
 		C1 <- ep2 * cos(phi1)^2
 		T1 <- tan(phi1)^2
-		N1 <- a / sqrt(1 - e2 * sin(phi1)^2)
-		R1 <- a * (1 - e2) / (1 - e2 * sin(phi1)^2)^1.5
+		N1 <- r1 / sqrt(1 - e2 * sin(phi1)^2)
+		R1 <- r1 * (1 - e2) / (1 - e2 * sin(phi1)^2)^1.5
 		D <- x / (N1 * k0)
 		lat <- phi1 - (N1 * tan(phi1) / R1) * (
 			D^2/2 -
@@ -123,15 +123,15 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 
 	fix <- function(x) carobiner::fix_name(trimws(as.character(x)), "title")
 
-	fa <- ff[basename(ff) == "All_Databases_t.xlsx"]
-	a <- carobiner::read.excel(fa)
+	f1 <- ff[basename(ff) == "All_Databases_t.xlsx"]
+	r1 <- carobiner::read.excel(f1)
 	temp <- data.frame(
-		key = paste(trimws(as.character(a$provincia)), trimws(as.character(a$id)), parse_dmy(a$fevaluacion), sep = "|"),
-		interval_tmean_ = as.numeric(a$tme),
-		interval_tmin_ = as.numeric(a$tmin),
-		interval_tmax_ = as.numeric(a$tmax),
-		days_below_5c_ = as.numeric(a$dbe5),
-		days_above_25c_ = as.numeric(a$dab25)
+		key = paste(trimws(as.character(r1$provincia)), trimws(as.character(r1$id)), parse_dmy(r1$fevaluacion), sep = "|"),
+		interval_tmean_ = as.numeric(r1$tme),
+		interval_tmin_ = as.numeric(r1$tmin),
+		interval_tmax_ = as.numeric(r1$tmax),
+		days_below_5c_ = as.numeric(r1$dbe5),
+		days_above_25c_ = as.numeric(r1$dab25)
 	)
 	temp <- temp[!duplicated(temp$key), ]
 
@@ -212,8 +212,15 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 		list(site = site, long = long)
 	}
 
-	fs <- ff[grepl("moth_evaluation", basename(ff))]
-	parts <- lapply(fs, one)
+	f2 <- ff[basename(ff) %in% c(
+		"Bolívar_moth_evaluation2018.xlsx",
+		"Chimborazo_moth_evaluation2018.xlsx",
+		"Cotopaxi_moth_evaluation2018.xlsx",
+		"Cotopaxi_moth_evaluation2019.xlsx",
+		"Imbabura_moth_evaluation2019.xlsx",
+		"Tungurahua_moth_evaluation2018.xlsx"
+	)]
+	parts <- lapply(f2, one)
 	d <- do.call(rbind, lapply(parts, function(z) z$site))
 	long <- do.call(rbind, lapply(parts, function(z) z$long))
 	rownames(d) <- NULL

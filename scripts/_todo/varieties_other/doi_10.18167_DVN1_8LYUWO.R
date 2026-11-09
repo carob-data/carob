@@ -56,33 +56,33 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 		"LGo_2020", "lGo_2020", "Cons_2020", "Bec_2020")
 	cc <- rep("NULL", length(hdr))
 	cc[hdr %in% use] <- "character"
-	ph <- read.csv(f, sep = ";", na.strings = c("", "-", "NA"), check.names = FALSE, colClasses = cc)
-	names(ph) <- trimws(names(ph))
+	r <- read.csv(f, sep = ";", na.strings = c("", "-", "NA"), check.names = FALSE, colClasses = cc)
+	names(r) <- trimws(names(r))
 	# Row 1 is the chromosome, row 2 is the position in cM.
-	ph <- ph[-(1:2), ]
-	ph <- ph[!is.na(ph$Genotype) & ph$Genotype != "", ]
+	r <- r[-(1:2), ]
+	r <- r[!is.na(r$Genotype) & r$Genotype != "", ]
 
 	num <- function(x) as.numeric(gsub(",", ".", as.character(x), fixed = TRUE))
 
 	one_year <- function(yr) {
 		suf <- paste0("_", yr)
 		out <- data.frame(
-			variety = ph$Genotype,
+			variety = r$Genotype,
 			trial_id = paste("Nioro", yr),
-			flowering_days = num(ph[[paste0("D50F", suf)]]),
-			audpc_ = num(ph[[paste0("AUDPC", suf)]]),
-			biomass_plant_ = num(ph[[paste0("BT", suf)]]),
-			pod_weight_ = num(ph[[paste0("PGo", suf)]]),
-			haulm_weight_ = num(ph[[paste0("PF", suf)]]),
-			pod100_weight_ = num(ph[[paste0("P100Go", suf)]]),
-			seed_weight = num(ph[[paste0("P100Gr", suf)]]) * 10
+			flowering_days = num(r[[paste0("D50F", suf)]]),
+			audpc_ = num(r[[paste0("AUDPC", suf)]]),
+			biomass_plant_ = num(r[[paste0("BT", suf)]]),
+			pod_weight_ = num(r[[paste0("PGo", suf)]]),
+			haulm_weight_ = num(r[[paste0("PF", suf)]]),
+			pod100_weight_ = num(r[[paste0("P100Go", suf)]]),
+			seed_weight = num(r[[paste0("P100Gr", suf)]]) * 10
 		)
-		if (yr == 2021) out$plant_height <- num(ph$HP_2021)
+		if (yr == 2021) out$plant_height <- num(r$HP_2021)
 		if (yr == 2020) {
-			out$pod_length_ <- num(ph$LGo_2020)
-			out$pod_width_ <- num(ph$lGo_2020)
-			out$pod_constriction_ <- num(ph$Cons_2020)
-			out$pod_beak_ <- num(ph$Bec_2020)
+			out$pod_length_ <- num(r$LGo_2020)
+			out$pod_width_ <- num(r$lGo_2020)
+			out$pod_constriction_ <- num(r$Cons_2020)
+			out$pod_beak_ <- num(r$Bec_2020)
 		}
 		out
 	}

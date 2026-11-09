@@ -24,6 +24,65 @@
 # dmy_panicle_: panicle dry matter (kg/ha), long table
 
 
+
+## NOT PROCESSED
+# 2011 BG10 Meteo.csv: not read. columns: Date, Day, GR, AirT, T1, T2, T3, T4, SoilT. Observation records are missing from d until this file is standardized.
+# 2011 BG10 Phenology.csv: not read. columns: Date, Pot, Variety, Treatment, Live Tiller, App, Lig, Sen, LG App Blade, Plant HT. Observation records are missing from d until this file is standardized.
+# 2011 BG10 Phenology_SumT.csv: not read. columns: Date, Pot, Live_Tiller, Appeared, Ligulated, Senesced, LG_App_Blade, Plant_Height, Variety, Treatment, Plot, Size, .... Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Biomass.csv: not read. columns: Date, Plot_NO, Plant_distance, KFiGr_DW, KUnFiGr_DW, Culm_DW, DMatA_DW, DMatB_DW, DMatC_DW, FiGr_DW, Leaf_DW, Panicle_DW, .... Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Harvest Area.csv: not read. columns: Plot_NO, Plant_distance, Sowing_date, Harvest_date, Hill_count, Panicle_count, FiGr_DW, UnFiGr_DW, KFiGr_DW, KUnFiGr_DW, MC_PC, Sampling_area. Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Harvest Weekly.csv: not read. columns: Year, Date, DAS, Plant_distance, Plot_NO, SumT, Sample_plant_count, Culm_DW, Dead_mat_DW, DMatA_DW, DMatB_DW, DMatC_DW, .... Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Leaf Area.csv: not read. columns: Expt, SN, Date, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Code, Leaf_DW, Leaf_area, Leaf_width, Mleaf_width, .... Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Meteo.csv: not read. columns: Date, Day, GR, AirT, RH, T10, T11, T12, T13, T14, T15, T16, .... Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Phenology.csv: not read. columns: Date, SN, Plant_distance, Plot_NO, Plant_NO, Tiller_NO, Live_tiller, Appeared, Ligulated, Senesced, Plant_height. Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Random.csv: not read. columns: Plot_NO, Plant_distance. Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Sheath.csv: not read. columns: Date, SN, Plant_distance, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Sheath_length. Observation records are missing from d until this file is standardized.
+# 2012DS UZ1density Tiller.csv: not read. columns: Date, Plot_NO, Plant_distance, Plant_NO, Culm_DW, CuN1, CuN2, CuN3, CuN4, CuN5, CuNR, Panicle_DW, .... Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Area Weight.csv: not read. columns: SN, Date, Plot_NO, Leaf_area, Leaf_DW. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Culm Panicle.csv: not read. columns: Date, Expt, SN, Plot_NO, Plant_NO, Tiller_NO, Organ, Culm_length, PI, PI_date, Panicle_length, FL_PC_pan. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Harvest Area.csv: not read. columns: Plot_NO, Rep_NO, Plant_distance, Sampling_area, Date, Hill_NO, Panicle_count, FiGr_DW, UnFiGr_rachis_DW, UnFiGr_DW, Rachis_DW, MC_PC, .... Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Harvest Weekly.csv: not read. columns: Year, Date, DAS, Plant_distance, Plot_NO, SumT, Sample_plant_count, Culm_DW, Dead_mat_DW, DMatA_DW, DMatB_DW, DMatC_DW, .... Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Leaf Area.csv: not read. columns: Expt, SN, Date, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Leaf_width, Mleaf_width, Leaf_length, Leaf_area, Leaf_DW. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Meteo.csv: not read. columns: Date, GR, AirT, SoilT. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Nitrogen.csv: not read. columns: Expt, SN, Date, Plot, Organ, Plant_distance, N, , . Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Other Tiller.csv: not read. columns: SN, Date, Plot_NO, Culm_DW, DMatA_DW, DMatB_DW, DMatC_DW, Leaf_DW, Panicle_DW, Sheath_DW. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Others Area Complement.csv: not read. columns: Date, Plot_NO, Leaf_area_B, Leaf_area_others. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Others Area.csv: not read. columns: SN, Date, Plot_NO, Leaf_area_B, Leaf_area_others, Leaf_area_rmng. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Phenology.csv: not read. columns: Date, Expt, SN, DAS, Rep_NO, Plot_NO, Plant_NO, Tiller_NO, Live_tiller, Appeared, Ligulated, Senesced, .... Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Random.csv: not read. columns: Plot_NO, Variety, Plant_distance. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Sheath.csv: not read. columns: Date, Expt, SN, Plot_NO, Plant_NO, Tiller_NO, Leaf_NO, Sheath_length. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Tiller.csv: not read. columns: SN, Date, Plot_NO, Culm_DW, Leaf_DW, Panicle_DW, Sheath_DW. Observation records are missing from d until this file is standardized.
+# 2013DS UZ1density Yield Components.csv: not read. columns: Plot_NO, Panicle_count_T0, Panicle_count, FiGr_DW_T0, FiGr_DW, UnFiGr_DW_T0, UnFiGr_DW, actual_KFiGr, KFiGr_DW, actual_KUnFiGr, KUnFiGr_DW, Rachis_DW_T0, .... Observation records are missing from d until this file is standardized.
+# Biomass_mean_plot_UZ1density_DS2012.csv: not read. columns: Plot_NO, Plant_distance, DAS, SumT, _TYPE_, _FREQ_, MSLA, MLAI, Mdead_leaves_gm2, Mdead_tillers_gm2, Mdead_mat_gm2, Mculm_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomass_mean_plot_UZ1density_DS2013.csv: not read. columns: Plot_NO, Plant_distance, SN, _TYPE_, _FREQ_, DAS, SumT, MSLA, MLeaf_Area, MLAI, Mdead_leaves_gm2, Mdead_tiller_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomass_mean_UZ1density_DS2012.csv: not read. columns: Plant_distance, SN, _TYPE_, _FREQ_, MSLA, MLAI, Mdead_leaves_gm2, Mdead_tillers_gm2, Mdead_mat_gm2, Mculm_gm2, Msheath_gm2, Mstem_gm2, .... Observation records are missing from d until this file is standardized.
+# Biomass_mean_UZ1density_DS2013.csv: not read. columns: Plant_distance, SN, _TYPE_, _FREQ_, DAS, SumT, MSLA, MLeaf_Area, MLAI, Mdead_leaves_gm2, Mdead_tiller_gm2, Mdead_mat_gm2, .... Observation records are missing from d until this file is standardized.
+# Development_C11_DS2011.csv: not read. columns: Date, Rep_NO, Plot_NO, Plant_NO, Live_tiller, Tiller_NO, Appeared, Ligulated, Senesced, Plant_height, Sheath_length_n, Sheath_length_n1, .... Observation records are missing from d until this file is standardized.
+# Development_C11_DS2012.csv: not read. columns: Date, SN, Plot_NO, Variety, Plant_NO, Tiller_NO, Live_tiller, Appeared, Ligulated, Senesced, Plant_height, SumT, .... Observation records are missing from d until this file is standardized.
+# Development_mean_C11_DS2011.csv: not read. columns: Date, DAS, SumT, Variety, Watering, Tiller_NO, _FREQ_, Minitiated, Mappeared, Mligulated, Msenesced, Mlive_tiller, .... Observation records are missing from d until this file is standardized.
+# Development_mean_C11_DS2012.csv: not read. columns: Date, DAS, SumT, Variety, Tiller_NO, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Mculm_length, .... Observation records are missing from d until this file is standardized.
+# Development_mean_UE_DS2012.csv: not read. columns: Date, DAS, SumT, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Msampling_length, Mtiller_density, Mplant_density, Mapp_sen, .... Observation records are missing from d until this file is standardized.
+# Development_mean_UJ_DS2011.csv: not read. columns: Field, Date, SumT, Mappeared, Mligulated, Msenesced, Mlive_tiller, Msheath_length_n, Mculm_length, Mtiller_density, Mplant_density, Msampling_length, .... Observation records are missing from d until this file is standardized.
+# Development_UE_DS2012.csv: not read. columns: Date, SN, Plot_NO, Plant_NO, Tiller_NO, Sampling_length, Live_tiller, Appeared, Ligulated, Senesced, Plant_height. Observation records are missing from d until this file is standardized.
+# Development_UJ_DS2011.csv: not read. columns: Date, Subsample, Plot_NO, Sampling_length, Plant_NO, Dead_tiller, Live_tiller, Tiller_NO, Appeared, Ligulated, Senesced, Plant_height, .... Observation records are missing from d until this file is standardized.
+# Harvest_area_UZ1density_DS2012.csv: not read. columns: Plot_NO, Plant_distance, Sowing_date, Harvest_date, Hill_count, Panicle_count, FiGr_DW, UnFiGr_DW, KFiGr_DW, KUnFiGr_DW, MC_PC, Sampling_area, .... Observation records are missing from d until this file is standardized.
+# Harvest_area_UZ1density_DS2013.csv: not read. columns: Plot_NO, Rep_NO, Plant_distance, Sampling_area, Date, Hill_NO, Panicle_count, FiGr_DW, UnFiGr_rachis_DW, UnFiGr_DW, Rachis_DW, MC_PC, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_UZ1density_DS2012.csv: not read. columns: Plant_distance, Leaf_NO, _TYPE_, _FREQ_, Mleaf_area, Mleaf_length, Mleaf_width, MSLA, Lleaf_area, Lleaf_length, Lleaf_width, LSLA, .... Observation records are missing from d until this file is standardized.
+# Leaf_area_mean_UZ1density_DS2013.csv: not read. columns: Plant_distance, Leaf_NO, _TYPE_, _FREQ_, Mleaf_area, Mleaf_length, Mleaf_width, MSLA, Lleaf_area, Lleaf_length, Lleaf_width, LSLA, .... Observation records are missing from d until this file is standardized.
+# Meteo_C11_DS2011.csv: not read. columns: Date, GR, AirT, RH, SoilT, SumT_air, SumT_dry, SumT_soil, SumT. Observation records are missing from d until this file is standardized.
+# Meteo_C11_DS2012.csv: not read. columns: Date, N, GR, RH, AirT, T2, T3, T4, T5, T6, SoilT, SumGR, .... Observation records are missing from d until this file is standardized.
+# Meteo_UE_DS2012.csv: not read. columns: Date, AirT, SoilT, GR, SumGR, SumT. Observation records are missing from d until this file is standardized.
+# Meteo_UJ_DS2011.csv: not read. columns: Date, JD, AirT, SoilT, SumT_air, SumT_soil, GR, RH, SumGR, SumT. Observation records are missing from d until this file is standardized.
+# Phenology_mean_plot_UZ1density_DS2012.csv: not read. columns: Plot_NO, Plant_distance, DAS, _TYPE_, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Lappeared, Lligulated, .... Observation records are missing from d until this file is standardized.
+# Phenology_mean_plot_UZ1density_DS2013.csv: not read. columns: Plot_NO, Plant_distance, SN, _TYPE_, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Date, DAS, .... Observation records are missing from d until this file is standardized.
+# Phenology_mean_UZ1density_DS2012.csv: not read. columns: SN, Plant_distance, _TYPE_, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Date, DAS, SumT, .... Observation records are missing from d until this file is standardized.
+# Phenology_mean_UZ1density_DS2013.csv: not read. columns: SN, Plant_distance, _TYPE_, _FREQ_, Mappeared, Mligulated, Msenesced, Mlive_tiller, Mplant_height, Date, DAS, SumT, .... Observation records are missing from d until this file is standardized.
+# Sheath_mean_UZ1density_DS2012.csv: not read. columns: Plant_distance, Leaf_NO, _TYPE_, _FREQ_, Msheath_length, Lsheath_length, dsheath_length. Observation records are missing from d until this file is standardized.
+# Sheath_mean_UZ1density_DS2013.csv: not read. columns: Plant_distance, Leaf_NO, _TYPE_, _FREQ_, Msheath_length, Lsheath_length, dsheath_length. Observation records are missing from d until this file is standardized.
+# SLA_mean_UZ1density_DS2012.csv: not read. columns: Plant_distance, Leaf_NO, Date, SumT, _TYPE_, _FREQ_, MSLA, LSLA, dSLA. Observation records are missing from d until this file is standardized.
+# SLA_mean_UZ1density_DS2013.csv: not read. columns: Plant_distance, Leaf_NO, SN, _TYPE_, _FREQ_, MSLA, Date, SumT, LSLA, dSLA. Observation records are missing from d until this file is standardized.
+# Variable Dictionary.xlsx: documentation or a codebook, not an observation table.
+
 carob_script <- function(path) {
 
 "
@@ -51,7 +110,8 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 	)
 
 	harv <- function(year) {
-		r <- read.csv(ff[basename(ff) == paste0("Harvest_area_UZ1density_DS", year, ".csv")])
+		f1 <- ff[basename(ff) == paste0("Harvest_area_UZ1density_DS", year, ".csv")]
+		r <- read.csv(f1)
 		hd <- if (year == "2012") r$Harvest_date else r$Date
 		data.frame(
 			plot_id = as.character(r$Plot_NO),
@@ -97,7 +157,8 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 	d$geo_from_source <- NA
 
 	bio <- function(year) {
-		r <- read.csv(ff[basename(ff) == paste0("Biomass_mean_plot_UZ1density_DS", year, ".csv")])
+		f2 <- ff[basename(ff) == paste0("Biomass_mean_plot_UZ1density_DS", year, ".csv")]
+		r <- read.csv(f2)
 		data.frame(
 			trial_id = paste0("UZ1density_DS", year),
 			plot_id = as.character(r$Plot_NO),

@@ -213,8 +213,8 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 		r <- try(carobiner::read.excel(f, sheet="Stat"), silent=TRUE)
 		if (inherits(r, "try-error")) return(NULL)
 		if (!("gy" %in% names(r))) return(NULL)
-		g <- carobiner::read.excel(f, sheet="General", col_names=FALSE)
-		txt <- paste(as.character(unlist(g)), collapse=" ")
+		r1 <- carobiner::read.excel(f, sheet="General", col_names=FALSE)
+		txt <- paste(as.character(unlist(r1)), collapse=" ")
 		country <- NA_character_
 		if (grepl("BANGLADESH", txt)) country <- "Bangladesh"
 		keep <- !is.na(r$Year) & !is.na(r$gy)
@@ -259,7 +259,20 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 		)
 	}
 
-	ff <- ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)]
+	ff <- ff[basename(ff) %in% c(
+		"1-Rabi maize 2015-16-herbicde trial-OFRFD-Rangpur.xlsx",
+		"1-Rabi maize 2016-17-herbicide trial-SRFSI-OFRD-Rangpur.xlsx",
+		"2-Rabi maize 2015-16-herbicide trial-RWRC-Rajshahi.xlsx",
+		"2-Rabi maize 2016-17-herbicide trial-SRFSI-RWRC-Rajshahi.xlsx",
+		"3-Rabi maize 2015-16-herbicide trial-WRC-Dinajpur.xlsx",
+		"3-Rabi maize 2016-17-herbicide trial-SRFSI-WRC-Dinajpur.xlsx",
+		"4-Rabi maize 2015-16-herbicide trial-UBKV-C'Behar.xlsx",
+		"4-Rabi maize 2016-17-herbicide trial-SRFSI-UBKV-C'behar.xlsx",
+		"5-Rabi maize 2015-16-herbicide trial-SRFSI-BAU-Bihar.xlsx",
+		"5-Rabi maize 2016-17-herbicide trial-SRFSI-BAU-Bihar.xlsx",
+		"6-Rabi maize 2015-16-herbicide trial-RARS-Sunsari.xlsx",
+		"6-Rabi maize 2016-17-herbicide trial-SRFSI-RARST-Sunsari.xlsx"
+	)]
 	parts <- list()
 	for (f in ff) {
 		hv <- fieldbook(f)

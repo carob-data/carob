@@ -19,6 +19,7 @@
 ## NOT PROCESSED
 # All four trial files, ID: row number.
 # All four trial files, Entry: field entry number, one per Name within a file. Name is stored as variety_code.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant (EPP). Unit: ears/plant.

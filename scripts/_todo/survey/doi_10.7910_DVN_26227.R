@@ -31,6 +31,35 @@
 # pesticide_times_: number of sprays
 
 
+
+## NOT PROCESSED
+# ANEQUIP.xls: not read. sheet All: Filename : ANEQUIP. Observation records are missing from d until this file is standardized.
+# BNEEDS.xls: not read. sheet ALL: Filename :BNEEDS. Observation records are missing from d until this file is standardized.
+# CAL-AC-M.xls: not read. sheet All: Filename:  CAL-AC-M. Observation records are missing from d until this file is standardized.
+# CONSDRBL-M.xls: not read. sheet TUBUAN (of 4): Filename:  CONSDRBL-M. Observation records are missing from d until this file is standardized.
+# CURRENT-M.xls: not read. sheet All: Filename: CURRENT-M. Observation records are missing from d until this file is standardized.
+# DECISION-M.xls: not read. sheet All: Filename:  DECISION-M. Observation records are missing from d until this file is standardized.
+# EMPINC1-M.xls: not read. sheet All: Filename : EMPINC1-M. Observation records are missing from d until this file is standardized.
+# EMPINC2-M.xls: not read. sheet All: Filename : EMPINC2-M. Observation records are missing from d until this file is standardized.
+# EMPINC3-M.xls: not read. sheet All: Filename : EMPINC3-M. Observation records are missing from d until this file is standardized.
+# EMPINC4-M.xls: not read. sheet All: Filename: EMPINC4. Observation records are missing from d until this file is standardized.
+# EMPLOY4D-M.xls: not read. sheet All: Filename : EMPLOY4D-M. Observation records are missing from d until this file is standardized.
+# HHESTB.xls: not read. sheet All: Filename : HHESTB. Observation records are missing from d until this file is standardized.
+# HHESTBSN.xls: not read. sheet Sheet1 (of 3): Filename : HHESTBSN. Observation records are missing from d until this file is standardized.
+# HLTPROB.xls: not read. sheet All: Filename:  HLTPROB. Observation records are missing from d until this file is standardized.
+# INFLUENCE.xls: not read. sheet all: Filename : INFLUENCE. Observation records are missing from d until this file is standardized.
+# LANDOWN.xls: not read. sheet LANDOWN: Filename:  LANDOWN. Observation records are missing from d until this file is standardized.
+# MEMOUT.xls: not read. sheet All: Filename:  MEMOUT. Observation records are missing from d until this file is standardized.
+# MISECON.xls: not read. sheet All: Filename :MISCECON. Observation records are missing from d until this file is standardized.
+# OTHERBUS-M.xls: not read. sheet All: Filename:  OTHERBUS. Observation records are missing from d until this file is standardized.
+# PAWNIN.xls: not read. sheet All: Filename:    PAWNIN. Observation records are missing from d until this file is standardized.
+# PORFARM.xls: not read. sheet All: Filename:    PORFARM. Observation records are missing from d until this file is standardized.
+# Project details.xlsx: not read. sheet PROJECT: Title of the Study, ...2, A Survey on Livelihood System of Rural Household in the Philippines. Observation records are missing from d until this file is standardized.
+# RENTOPOR.xls: not read. sheet All: Filename:    RENTOPOR. Observation records are missing from d until this file is standardized.
+# RENTOUT.xls: not read. sheet All: Filename:    RENTOUT. Observation records are missing from d until this file is standardized.
+# ROLES.xls: not read. sheet All: Filename:  ROLES. Observation records are missing from d until this file is standardized.
+# STRUCTR.xls: not read. sheet All: Filename : STRUCTR. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "
@@ -60,29 +89,30 @@ The study examines the changes in the livelihood of the rural household that com
 
 	# header row is the row starting with HHNO
 	rd <- function(fname) {
-		x <- carobiner::read.excel(ff[basename(ff) == fname], sheet="All", col_names=FALSE, .name_repair="minimal")
-		h <- which(grepl("^HHNO", x[[1]]))[1]
-		nms <- make.unique(as.character(unlist(x[h, ])))
-		x <- x[-(1:h), ]
-		names(x) <- nms
-		x <- x[grepl("^[0-9]+$", x$HHNO), ]
-		x[!duplicated(paste(x$HHNO, x$VIL, x$SSN)), ]
+		f <- ff[basename(ff) == fname]
+		r <- carobiner::read.excel(f, sheet="All", col_names=FALSE, .name_repair="minimal")
+		h <- which(grepl("^HHNO", r[[1]]))[1]
+		nms <- make.unique(as.character(unlist(r[h, ])))
+		r <- r[-(1:h), ]
+		names(r) <- nms
+		r <- r[grepl("^[0-9]+$", r$HHNO), ]
+		r[!duplicated(paste(r$HHNO, r$VIL, r$SSN)), ]
 	}
 	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[!grepl("^-?[0-9]*\\.?[0-9]+$", x)] <- NA
-		x <- as.numeric(x)
-		x[x < 0] <- NA
-		x
+		r <- trimws(as.character(r))
+		r[!grepl("^-?[0-9]*\\.?[0-9]+$", r)] <- NA
+		r <- as.numeric(r)
+		r[r < 0] <- NA
+		r
 	}
 	sumNA <- function(x) {
-		x <- sapply(x, num)
-		ifelse(rowSums(!is.na(x)) > 0, rowSums(x, na.rm=TRUE), NA)
+		r <- sapply(r, num)
+		ifelse(rowSums(!is.na(r)) > 0, rowSums(r, na.rm=TRUE), NA)
 	}
 
 	r4 <- rd("COSRET4-M.xls")
 	k <- paste(r4$HHNO, r4$VIL, r4$SSN)
-	m <- function(x) x[match(k, paste(x$HHNO, x$VIL, x$SSN)), ]
+	m <- function(x) r[match(k, paste(r$HHNO, r$VIL, r$SSN)), ]
 	r1 <- m(rd("COSRET1-M.xls"))
 	r2 <- m(rd("COSRET2-M.xls"))
 	r3 <- m(rd("COSRET3-M.xls"))

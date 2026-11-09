@@ -80,8 +80,8 @@ Farmers’ participatory researchers managed long-term trails aimed at improving
 		gsub("&amp;", "&", hit, fixed=TRUE)
 	}
 	read_block <- function(f, sheet) {
-		top <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE)
-		first <- trimws(as.character(top[[1]]))
+		r1 <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE)
+		first <- trimws(as.character(r1[[1]]))
 		i <- which(first == "Year")[1]
 		if (length(i) == 0 || is.na(i)) i <- 5
 		sk <- i - 1
@@ -173,8 +173,8 @@ Farmers’ participatory researchers managed long-term trails aimed at improving
 		ph <- read_block(f, ps[1])
 		ft <- NULL
 		if (length(fs)) ft <- read_block(f, fs[1])
-		si <- carobiner::read.excel(f, sheet=sh[grepl("Site information", sh)][1], col_names=FALSE)
-		cells <- trimws(as.character(unlist(si[1, ])))
+		r2 <- carobiner::read.excel(f, sheet=sh[grepl("Site information", sh)][1], col_names=FALSE)
+		cells <- trimws(as.character(unlist(r2[1, ])))
 		cells[is.na(cells)] <- ""
 		raw_country <- header_value(cells, "Country:")
 		country <- raw_country
@@ -256,7 +256,29 @@ Farmers’ participatory researchers managed long-term trails aimed at improving
 		)
 	}
 
-	parts <- lapply(ff[grepl("\\.xlsx$", basename(ff), ignore.case=TRUE)], one)
+	parts <- lapply(ff[basename(ff) %in% c(
+		"Kidneybean 2015-16-LT-Saalbani-Sunsari.xlsx",
+		"Kidneybean 2016-17-LT-Saalbani-Sunsari.xlsx",
+		"Lentil 2014-15-LT-Simariya-Sunsari.xlsx",
+		"Lentil 2015-16-LT-Bhaluwa-Sunsari.xlsx",
+		"Maize 2014-15-LT-Bhokraha-Sunsari.xlsx",
+		"Maize 2014-15-LT-Saalbani-Sunsari.xlsx",
+		"Maize 2015-16-LT-Bhokraha-Sunsari.xlsx",
+		"Maize 2015-16-LT-Saalbani-Sunsari.xlsx",
+		"Maize 2016-17-LT-Bhokraha-Sunsari.xlsx",
+		"Wheat 2014-15-LT-Bhaluwa-Sunsari.xlsx",
+		"Wheat 2014-15-LT-Bhokraha-Sunsari.xlsx",
+		"Wheat 2014-15-LT-Kaptanganj-Sunsari.xlsx",
+		"Wheat 2014-15-LT-Simariya-Sunsari.xlsx",
+		"Wheat 2015-16-Bhokraha-Sunsari.xlsx",
+		"Wheat 2015-16-LT-Bhaluwa-Sunsari.xlsx",
+		"Wheat 2015-16-LT-Kaptanganj-Sunsari.xlsx",
+		"Wheat 2015-16-LT-Simariya-Sunsari.xlsx",
+		"Wheat 2016-17-LT-Bhaluwa-Sunsari.xlsx",
+		"Wheat 2016-17-LT-Bhokraha-Sunsaril.xlsx",
+		"Wheat 2016-17-LT-Kaptanganj-Sunsari.xlsx",
+		"Wheat 2016-17-LT-Simaria-Sunsari.xlsx"
+	)], one)
 	parts <- parts[!vapply(parts, is.null, logical(1))]
 	d <- do.call(rbind, parts)
 	d <- d[!is.na(d$treatment) & nzchar(d$treatment) & !is.na(d$crop), ]

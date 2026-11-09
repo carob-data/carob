@@ -60,9 +60,9 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		carob_effort = 0.4
 	)
 
-	xl <- ff[grepl("\\.xlsx$", basename(ff))]
-	xl <- xl[order(basename(xl))]
-	d <- lapply(xl, function(f) {
+	f1 <- ff[basename(ff) %in% c("2015-M-PET-Gambia-Kaiaf.xlsx", "2015-M-PET-Gambia-Lamin Abuko.xlsx")]
+	f1 <- f1[order(basename(f1))]
+	d <- lapply(f1, function(f) {
 		r <- carobiner::read.excel(f)
 		variety <- trimws(as.character(r$Genotype))
 		data.frame(

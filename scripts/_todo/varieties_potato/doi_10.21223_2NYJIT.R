@@ -22,6 +22,8 @@
 ## NOT PROCESSED
 # 02_Material_list and 03_Data_dictionary: definitions and passport fields not joined, because the accession number is already the variety key.
 # Taxon code, family, and genus. The full taxon name is variety_type.
+# 02_Material_list_Screening for resistance to late blight in Peruvian wild potato species  2019.xlsx: not read. sheet Material_list: Accession number, Collecting number/Breeder code/Biosafety code, Accession name, Population Group, Crop Name CIP, Genus, Taxon full name, Biological Status CIP, Parent Female, Parent Male. Observation records are missing from d until this file is standardized.
+# 03_Data_dictionary_Screening for resistance to late blight in Peruvian wild potato species 2019.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -51,7 +53,7 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("01_Data_Screening", basename(ff))]
+	f <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in Peruvian wild potato species  2019.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
 
 	variety <- trimws(as.character(r[["Accesion number"]]))

@@ -39,7 +39,7 @@ The present study examined for the first time the environmental and economic imp
 		carob_effort = 0.6
 	)
 
-	f <- ff[grepl("MILLET", basename(ff), ignore.case=TRUE)]
+	f <- ff[basename(ff) == "DATASET%20_%20MILLET_SORGHUM_MAIZE.xlsx"]
 	r <- carobiner::read.excel(f)
 
 	# Yield column name has two spaces before (

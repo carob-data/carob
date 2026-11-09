@@ -13,6 +13,16 @@
 
 ## NOT PROCESSED
 # Cover-page and long and short report workbooks, questionnaires, the SAS file, and visit dictionaries. They were not used as the household location table.
+# COHORT STUDY VISIT 1 DATA DICTIONARY.txt: documentation or a codebook, not an observation table.
+# COHORT STUDY VISIT 2 DATA DICTIONARY.txt: documentation or a codebook, not an observation table.
+# COHORT STUDY VISIT 3 DATA DICTIONARY.txt: documentation or a codebook, not an observation table.
+# COHORT STUDY VISIT 4 DATA DICTIONARY.txt: documentation or a codebook, not an observation table.
+# COVA_FC_COVERPAGE_CHILD_MR_RR_22FEB14_FINAl.xlsx: not read. sheet Data (of 2): DI_ROUND, FACILITY, HHID, MATERNAL_ID, MR2, CFNAME, CR02, CR03, CR04, VITA_MNTHS, LATEST1, LATEST2, .... Observation records are missing from d until this file is standardized.
+# COVA_FC_COVERPAGE_MOTHER_MR_RR_22FEB14_FINAL.xlsx: not read. sheet Data (of 2): DI_ROUND, FAC_ID2, HHID, MATERNAL_ID, MFNAME, MR2, MR3, MR4, VITA_MNTHS, LATEST1, LATEST2, LATEST3, .... Observation records are missing from d until this file is standardized.
+# COVA_FC_LONGREPORT_MR_RR_VERSION1_22FEB14_FINAL.xlsx: not read. sheet DATA (of 2): DROUND, FAC_ID2, HHID, PID, PNAME, SEX, AGEY, AGEM, PERIOD, PERIOD_DESCR, FOODTYPE, FOODTYPE_DESCR, .... Observation records are missing from d until this file is standardized.
+# COVA_FC_LONGREPORT_MR_RR_VERSION2_22FEB14_FINAL.xlsx: not read. sheet Data (of 2): DROUND, SN, FAC_ID2, HHID, PID, FOODTYPE, PERIOD, RECNUM, RECIPE_CODE, RECIPE_DESCR, GCODE, GDESCR, .... Observation records are missing from d until this file is standardized.
+# COVA_FC_SHORTREPORT_MR_RR_22FEB14_FINAL.xlsx: not read. sheet Data (of 2): DROUND, FAC_ID1, FAC_NAME, INTVGP, INTVGPNAME, FAC_ID2, HHID, PID, PNAME, SEX, AGEY, AGEM, .... Observation records are missing from d until this file is standardized.
+# fc_merge_ea.sas7bdat: not read. .sas7bdat file. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # facility_, intervention_, sublocation_.
@@ -52,7 +62,7 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 		x[!nzchar(x) | x == "NA"] <- NA_character_
 		x
 	}
-	f <- ff[grepl("SURVEY LOCATION", basename(ff))]
+	f <- ff[basename(ff) == "COVA_FC_SURVEY LOCATION FILE_22FEB14_FINAL.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Data")
 	d <- data.frame(
 		hhid = chr(r$HHID),

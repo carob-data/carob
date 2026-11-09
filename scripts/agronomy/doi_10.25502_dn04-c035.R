@@ -149,6 +149,26 @@ carob_script <- function(path){
 	d$crop <- carobiner::fix_name(d$crop, "lower")
 	d$crop[grepl("soybean", d$crop)] <- "soybean"
 	
+	## Fixing incorrect coordinate 
+	d$geo_source <-  NA
+	i <- which(grepl("Angonia", d$adm2) & (d$longitude %in% c(34.2, 34.3, 34.1, 34.6, 34.8, 34.7)| d$latitude %in% c(-14.4, -14.6, -14.3, -14.8, -14.1)))
+	d$longitude[i] <- 34.1603	
+	d$latitude[i] <- -14.6728
+	d$geo_from_source[i] <- FALSE
+	d$geo_source[i] <- "GADM 4.1, adm2"
+	  
+	i <- which(grepl("Macanga", d$adm2) & (d$longitude %in% c(34.2, 34.3, 34.1, 34.6, 34.8, 34.7)| d$latitude %in% c(-14.4, -14.6, -14.3, -14.8, -14.1)))
+	d$longitude[i] <- 33.5349		
+	d$latitude[i] <- -14.8015
+	d$geo_from_source[i] <-  FALSE
+	d$geo_source[i] <- "GADM 4.1, adm2"
+	  
+	i <- which(grepl("Tsangano", d$adm2) & (d$longitude %in% c(34.2, 34.3, 34.1, 34.6, 34.8, 34.7)| d$latitude %in% c(-14.4, -14.6, -14.3, -14.8, -14.1)))
+	d$longitude[i] <- 34.3433	
+	d$latitude[i] <- -15.1250
+	d$geo_from_source[i] <- FALSE
+	d$geo_source[i] <- "GADM 4.1, adm2"
+	  
 	#standardizing the varieties
 	v <- d$variety
 	v <- carobiner::fix_name(v, "first")

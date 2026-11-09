@@ -56,7 +56,7 @@ The study was conducted during the winter cropping season (from July to November
 		carob_effort = 0.45
 	)
 
-	f <- ff[grepl("Arthropod community", basename(ff))]
+	f <- ff[basename(ff) == "subchapter 2.1_Arthropod community dataset.xls"]
 	r <- carobiner::read.excel(f)
 	genus <- trimws(as.character(r[[4]]))
 	species <- trimws(as.character(r[[5]]))

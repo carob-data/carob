@@ -16,6 +16,7 @@
 # Consent, parent and child descriptors, and the anemia knowledge and attitude questions. Those are not crop measurements. Child birth dates and caregiver descriptors are not copied.
 # Seed amount columns and the tonne columns for sale, consumption, and seed of each variety. Harvest tonnes are the yield.
 # The total cropped-area question, because the column mixes a quantity and a unit.
+# 02_DataDictionary_CAP Anemia - La Libertad 2021 - Linea de Base v3.xlsx: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -45,7 +46,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		carob_effort = 0.4
 	)
 
-	f <- ff[grepl("^01_DataSet_CAP", basename(ff))]
+	f <- ff[basename(ff) == "01_DataSet_CAP Anemia - La Libertad 2021 - Linea de Base v3.xlsx"]
 	r <- carobiner::read.excel(f)
 	num <- function(x) {
 		z <- trimws(as.character(x))

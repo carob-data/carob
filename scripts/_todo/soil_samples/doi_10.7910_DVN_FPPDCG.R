@@ -20,6 +20,7 @@
 ## NOT PROCESSED
 # Wkiemp site characteristics.csv. Land use, field texture, slope, elevation, Northing, and Easting. No shared sample id.
 # Acidified nitrogen, the sum of exchangeable bases, the exchangeable sodium ratio, the exchangeable sodium percentage, and the Ca:Mg ratio.
+# Wkiemp site chracteristics.csv: not read. columns: Key, ID, Alternative Block, Site, Cluster, Plot, Date, Photo ID, Northing, Easting, Elevation, Pos error, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -79,9 +80,9 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 	)
 	d$soil_P_method[is.na(d$soil_P)] <- NA_character_
 
-	fmir <- ff[basename(ff) == "Infrared MIR.csv"]
-	mir <- read.csv(fmir, check.names=FALSE, na.strings=c("", "NA"))
-	ssn <- as.character(mir$SSN)
+	f1 <- ff[basename(ff) == "Infrared MIR.csv"]
+	r1 <- read.csv(f1, check.names=FALSE, na.strings=c("", "NA"))
+	ssn <- as.character(r1$SSN)
 	miss <- ssn[!ssn %in% d$sample_id]
 	if (length(miss)) {
 		add <- d[seq_along(miss), ]
@@ -96,9 +97,9 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 	}
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
-	wave <- as.numeric(sub("^w", "", names(mir)[-1]))
-	absb <- as.vector(as.matrix(mir[, -1]))
-	n <- nrow(mir)
+	wave <- as.numeric(sub("^w", "", names(r1)[-1]))
+	absb <- as.vector(as.matrix(r1[, -1]))
+	n <- nrow(r1)
 	long <- data.frame(
 		record_id = d$record_id[match(rep(ssn, times=length(wave)), d$sample_id)],
 		sample_id = rep(ssn, times=length(wave)),

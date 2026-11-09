@@ -15,6 +15,32 @@
 # mbbase_pg5_crop production.dta and mbbase_pg7_sweetpotato_production.dta. Harvest quantities use a unit code, and the crop is a crop code.
 # Vine transactions, nutrition knowledge, dietary diversity, food security, shocks, assets, housing, demography, groups, sales, labour, and credit files.
 # haconver.dta, sp_conv.dta, the questionnaire workbook, and the dictionary.
+# mbase_questionnaire_20173001.xlsx: design, layout, or protocol sheet, not plot or survey records.
+# mbbase_dictionary_20173001.xls: documentation or a codebook, not an observation table.
+# mbbase_pg10_sold_gave_out_vines.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg10_vines_transaction.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg11_received_vines.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg13_sweetpotato_knowledge_and_practice.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg14_sp_varietal_preferences.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg15_vit A knowledge_nutritional knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg16_food_consumption_frequency.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg17_man's knowledge of vit A.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg18_food_security.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg19_shocks.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg2_adult_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg20_economic activities.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg20_livestock and fishery.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg21_assets.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg22_main housing.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg3_child_demog.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg3_dietary_diversity.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg4_farmer_group.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg4_group_activities.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg6_crop_sales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg6_road_access.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg7_sp_cassava_sales.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg8_labour_and_credit.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
+# mbbase_pg9_attitude_practice_knowledge.dta: not read. Stata .dta table. Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -52,10 +78,10 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 
 	f <- ff[basename(ff) == "mbbase_pg1_cover_page.dta"]
 	r <- haven::read_dta(f)
-	fl <- ff[basename(ff) == "mbbase_pg4_agricultural land.dta"]
-	land <- haven::read_dta(fl)
+	f1 <- ff[basename(ff) == "mbbase_pg4_agricultural land.dta"]
+	r1 <- haven::read_dta(f1)
 	hid <- trimws(as.character(r$hhid))
-	i <- match(hid, trimws(as.character(land$hhid)))
+	i <- match(hid, trimws(as.character(r1$hhid)))
 	yr <- as.integer(r$A16C)
 	yr <- ifelse(yr < 100L, yr + 2000L, yr)
 
@@ -68,8 +94,8 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 		location = carobiner::fix_name(from_labels(r$A04), "title"),
 		elevation = as.numeric(r$A15G),
 		hh_size = as.numeric(r$A08B1),
-		farmland_owned = as.numeric(land$L01)[i],
-		farmland = as.numeric(land$L02)[i],
+		farmland_owned = as.numeric(r1$L01)[i],
+		farmland = as.numeric(r1$L02)[i],
 		date = sprintf("%04d-%02d-%02d", yr, as.integer(r$A16B), as.integer(r$A16A)),
 		trial_id = hid,
 		geo_from_source = FALSE,

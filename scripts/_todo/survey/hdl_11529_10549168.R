@@ -49,26 +49,26 @@ Household survey of wheat plots in Ethiopia, with grain quantity recorded in kil
 	)
 
 	f <- ff[basename(ff) == "AGG_HH_Wheat_Survey_2021_Ethiopia.xlsx"]
-	p <- carobiner::read.excel(f, sheet="2.2.a")
-	h <- carobiner::read.excel(f, sheet="1")
-	key <- match(as.character(p$HH_Id), as.character(h$HH_Id))
-	variety <- trimws(as.character(p$Plot_Wheat_Var))
+	r1 <- carobiner::read.excel(f, sheet="2.2.a")
+	r2 <- carobiner::read.excel(f, sheet="1")
+	key <- match(as.character(r1$HH_Id), as.character(r2$HH_Id))
+	variety <- trimws(as.character(r1$Plot_Wheat_Var))
 	variety[!nzchar(variety)] <- NA_character_
 	variety <- carobiner::fix_name(variety, "title")
 
 	d <- data.frame(
 		country = "Ethiopia",
-		adm1 = carobiner::fix_name(as.character(h$Region)[key], "title"),
-		adm2 = carobiner::fix_name(as.character(h$Zone)[key], "title"),
-		location = carobiner::fix_name(as.character(h$Village)[key], "title"),
-		trial_id = as.character(p$HH_Id),
-		hhid = as.character(p$HH_Id),
-		plot_id = as.character(p$Plot_Id),
+		adm1 = carobiner::fix_name(as.character(r2$Region)[key], "title"),
+		adm2 = carobiner::fix_name(as.character(r2$Zone)[key], "title"),
+		location = carobiner::fix_name(as.character(r2$Village)[key], "title"),
+		trial_id = as.character(r1$HH_Id),
+		hhid = as.character(r1$HH_Id),
+		plot_id = as.character(r1$Plot_Id),
 		crop = "wheat",
 		variety = variety,
 		treatment = variety,
 		yield_part = "seed",
-		grain_yield_kg_ = as.numeric(p$Plot_GrainYield_Qnt),
+		grain_yield_kg_ = as.numeric(r1$Plot_GrainYield_Qnt),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE

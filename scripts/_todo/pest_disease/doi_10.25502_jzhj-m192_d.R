@@ -34,6 +34,7 @@
 # Conver_sample_area_to_ha: constant 500; the hectare factor is not explained.
 # Kernel_size: 90000 or 110000; meaning not defined.
 # ID: row number.
+# data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # season_label_: original season text (Rainy 1, Rainy 2, Dry 1, Dry 2)

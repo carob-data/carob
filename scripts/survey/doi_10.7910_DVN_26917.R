@@ -59,6 +59,7 @@ This study in general aims to look at the impacts of drought on rice production,
 		response_vars = NA,
 		notes = NA,
 		carob_date = "2026-10-29",
+		carob_contributor = "Preeti Bharti",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 40,
 		carob_effort = 0.8
@@ -66,7 +67,7 @@ This study in general aims to look at the impacts of drought on rice production,
 
 	f <- ff[basename(ff) == "A Baseline Study of Autonomous Adaptation Against Drought Among Filipino Rice Farmers_Dataset_DManzanilla et al.xlsx"]
 
-	r0 <- carobiner::read.excel(f, sheet="Section 0. Cover sheet")
+	r3 <- carobiner::read.excel(f, sheet="Section 0. Cover sheet")
 	r1 <- carobiner::read.excel(f, sheet="Section 1.1. Demographic inform")
 	r2 <- carobiner::read.excel(f, sheet="Section 2. Landholdings")
 	r4 <- carobiner::read.excel(f, sheet="Section 4. Rice crops")
@@ -105,13 +106,13 @@ This study in general aims to look at the impacts of drought on rice production,
 	d$is_survey <- TRUE
 
 	## location
-	r0$village_name <- ifelse(r0$village == 23 & r0$commune == 17, "San Jacinto",
-		ifelse(r0$village == 23 & r0$commune == 36, "Salpad",
-		c("7"="Maungib", "8"="Cabuluan", "31"="San Roque")[as.character(r0$village)]))
-	h <- match(r4$hhid, r0$hhid)
-	d$adm1 <- c("55"="Pangasinan", "69"="Tarlac")[as.character(r0$province[h])]
-	d$adm2 <- c("11"="Pura", "17"="Victoria", "36"="San Nicolas")[as.character(r0$commune[h])]
-	d$location <- r0$village_name[h]
+	r3$village_name <- ifelse(r3$village == 23 & r3$commune == 17, "San Jacinto",
+		ifelse(r3$village == 23 & r3$commune == 36, "Salpad",
+		c("7"="Maungib", "8"="Cabuluan", "31"="San Roque")[as.character(r3$village)]))
+	h <- match(r4$hhid, r3$hhid)
+	d$adm1 <- c("55"="Pangasinan", "69"="Tarlac")[as.character(r3$province[h])]
+	d$adm2 <- c("11"="Pura", "17"="Victoria", "36"="San Nicolas")[as.character(r3$commune[h])]
+	d$location <- r3$village_name[h]
 
 	## household head
 	hd <- r1[r1$relationship == 1, ]
@@ -189,6 +190,13 @@ This study in general aims to look at the impacts of drought on rice production,
 	d$K_fertilizer[nof] <- 0
 	d$S_fertilizer[nof] <- 0
 	d$fertilizer_type[nof] <- "none"
+
+	## georeferencing: approximate municipality-centre coordinates (to be refined to village level)
+	lon <- c("San Nicolas"=120.765, "Pura"=120.648, "Victoria"=120.682)
+	lat <- c("San Nicolas"=16.070, "Pura"=15.625, "Victoria"=15.578)
+	d$longitude <- as.vector(lon[d$adm2])
+	d$latitude <- as.vector(lat[d$adm2])
+	d$geo_from_source <- FALSE
 
 	d$trial_id <- paste(d$hhid, d$season, d$field_id, sep="_")
 

@@ -13,6 +13,8 @@
 
 ## NOT PROCESSED
 # ID: row number.
+# 02_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
+# 03_Photo MS Santa Fe-Chugay.jpg: image, not a data table.
 
 carob_script <- function(path) {
 

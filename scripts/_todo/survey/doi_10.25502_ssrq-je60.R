@@ -107,8 +107,10 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		ifelse(x == "Y", TRUE, ifelse(x == "N", FALSE, NA))
 	}
 
-	r <- read.csv(ff[basename(ff) == "legumes_area_and_management.csv"])
-	g <- read.csv(ff[basename(ff) == "general.csv"])
+	f1 <- ff[basename(ff) == "legumes_area_and_management.csv"]
+	r <- read.csv(f1)
+	f2 <- ff[basename(ff) == "general.csv"]
+	r1 <- read.csv(f2)
 
 	leg <- tolower(trimws(r$type_legume_variety))
 	crop <- map_legume(r$type_legume_variety)
@@ -162,7 +164,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		inoculated = yn(r$inoculant_applied)
 	)
 
-	dist <- trimws(g$district_lga)
+	dist <- trimws(r1$district_lga)
 	dl <- tolower(dist)
 	dist[dl %in% c("wa east", "wast east")] <- "Wa East"
 	dist[dl %in% c("bawku west", "b/w")] <- "Bawku West"
@@ -171,16 +173,16 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	dist[dl == "nadowli"] <- "Nadowli"
 	dist[dl == "dowa"] <- "Dowa"
 
-	season <- trimws(as.character(g$season))
+	season <- trimws(as.character(r1$season))
 	plant <- ifelse(season %in% c("2010", "2011"), season, NA_character_)
-	date <- ifelse(!is.na(g$date_survey_yyyy) & g$date_survey_yyyy >= 2000, as.character(g$date_survey_yyyy), NA_character_)
+	date <- ifelse(!is.na(r1$date_survey_yyyy) & r1$date_survey_yyyy >= 2000, as.character(r1$date_survey_yyyy), NA_character_)
 
 	loc <- data.frame(
-		farm_id = g$farm_id,
-		country = trimws(g$country),
+		farm_id = r1$farm_id,
+		country = trimws(r1$country),
 		adm2 = carobiner::fix_name(dist, "title"),
-		location = carobiner::fix_name(g$village, "title"),
-		ward_ = trimws(g$sector_ward),
+		location = carobiner::fix_name(r1$village, "title"),
+		ward_ = trimws(r1$sector_ward),
 		planting_date = plant,
 		date = date
 	)

@@ -22,6 +22,7 @@
 # low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, SL: stalk-lodging count; percent is SLPERC.
 # low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, RLSTAT, SLSTAT, EROTSTAT: transformed values.
 # low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, trailing blank column.
+# column_metadata.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # set_: mating-design set. Unit: none.

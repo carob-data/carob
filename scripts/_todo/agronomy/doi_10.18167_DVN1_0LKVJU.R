@@ -52,16 +52,16 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 		carob_effort = 0.8
 	)
 
-	fd <- ff[basename(ff) == "Experimental_design.xlsx"]
-	fu <- carobiner::read.excel(fd, sheet="Factor_Unit")
-	ft <- carobiner::read.excel(fd, sheet="Factor_Trial")
-	desc <- ft$description[match(fu$factor_level, ft$factor_level)]
-	trt <- data.frame(plot = fu$unit_code, weeding_method = desc, level = fu$factor_level)
+	f1 <- ff[basename(ff) == "Experimental_design.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="Factor_Unit")
+	r2 <- carobiner::read.excel(f1, sheet="Factor_Trial")
+	desc <- r2$description[match(r1$factor_level, r2$factor_level)]
+	trt <- data.frame(plot = r1$unit_code, weeding_method = desc, level = r1$factor_level)
 
-	fi <- ff[basename(ff) == "ITK.xlsx"]
-	itk <- carobiner::read.excel(fi, sheet="Itk")
+	f2 <- ff[basename(ff) == "ITK.xlsx"]
+	r3 <- carobiner::read.excel(f2, sheet="Itk")
 	fert_vars <- c("ferti_N_app_rate_kg.ha-1", "ferti_P_app_rate_kg.ha-1", "ferti_K_app_rate_kg.ha-1")
-	fv <- itk[itk$itk_variable %in% fert_vars, ]
+	fv <- r3[r3$itk_variable %in% fert_vars, ]
 	fv$rate <- as.numeric(fv$itk_value)
 	fv$plot <- sub("_R$", "", fv$unit_code)
 	fv <- fv[fv$plot %in% paste0("P", 1:6), ]
@@ -72,9 +72,9 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 	names(fp)[2] <- "P_fertilizer"
 	names(fk)[2] <- "K_fertilizer"
 
-	fo <- ff[basename(ff) == "Observation.xlsx"]
-	ob <- carobiner::read.excel(fo, sheet="PlotPlant_data")
-	y <- ob[ob$OBS_VARIABLE == "Yield_CAS_tha", ]
+	f3 <- ff[basename(ff) == "Observation.xlsx"]
+	r4 <- carobiner::read.excel(f3, sheet="PlotPlant_data")
+	y <- r4[r4$OBS_VARIABLE == "Yield_CAS_tha", ]
 	y$plot <- sub("_Cane$", "", y$UNIT_CODE)
 
 	d <- data.frame(
@@ -105,7 +105,7 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 	# M2 is "Vigna unguiculata black sown in the inter-row" in Factor_Trial.
 	# irrigated from the dataset description. coordinates from Experimental_design.
 
-	gc <- ob[ob$OBS_VARIABLE == "plant_ground_cover_%", ]
+	gc <- r4[r4$OBS_VARIABLE == "plant_ground_cover_%", ]
 	long <- data.frame(
 		trial_id = "P12_2018_2019",
 		unit_code_ = gc$UNIT_CODE,
@@ -114,17 +114,17 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 	)
 	long <- long[!is.na(long$ground_cover), ]
 
-	fw <- ff[basename(ff) == "Weather.xlsx"]
-	w <- carobiner::read.excel(fw, sheet="Weather_day")
+	f4 <- ff[basename(ff) == "Weather.xlsx"]
+	r5 <- carobiner::read.excel(f4, sheet="Weather_day")
 	wth <- data.frame(
-		station_name = w$nom_station,
-		date = as.character(as.Date(w$date, "%d/%m/%Y")),
-		prec = as.numeric(w$rain_day_interpol),
-		srad = as.numeric(w$global_radiation_interpol) * 1000,
-		tmin = as.numeric(w$air_temp_min_day_interpol),
-		temp = as.numeric(w$air_temp_mean_day_interpol),
-		tmax = as.numeric(w$air_temp_max_day_interpol),
-		ETP = as.numeric(w$etp_interpol),
+		station_name = r5$nom_station,
+		date = as.character(as.Date(r5$date, "%d/%m/%Y")),
+		prec = as.numeric(r5$rain_day_interpol),
+		srad = as.numeric(r5$global_radiation_interpol) * 1000,
+		tmin = as.numeric(r5$air_temp_min_day_interpol),
+		temp = as.numeric(r5$air_temp_mean_day_interpol),
+		tmax = as.numeric(r5$air_temp_max_day_interpol),
+		ETP = as.numeric(r5$etp_interpol),
 		longitude = 55.53255556,
 		latitude = -20.9036528,
 		elevation = 70

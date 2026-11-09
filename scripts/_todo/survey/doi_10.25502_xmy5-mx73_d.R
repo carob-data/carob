@@ -17,6 +17,7 @@
 ## NOT PROCESSED
 # Seasonal areas mon_*, sum_*, win_*. su_other. Land shares s_*.
 # Homestead, fodder, livestock, TAPE, food security, labor, and the seasons diversity index.
+# data_dictionary2.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # irrigation_pct_: percent of the crop reported as irrigated

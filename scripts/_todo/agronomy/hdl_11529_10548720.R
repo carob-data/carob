@@ -43,15 +43,15 @@ This experiments were established with different rates of nitrogen in order to g
 	)
 
 	f <- ff[basename(ff) == "GreenSeeker Yucatan 2012-2013.xlsx"]
-	raw <- carobiner::read.excel(f, sheet="Data-Muna", col_names=FALSE)
-	hdr <- as.character(unlist(raw[1, ]))
-	unit <- as.character(unlist(raw[2, ]))
-	r <- raw[-(1:2), ]
+	r1 <- carobiner::read.excel(f, sheet="Data-Muna", col_names=FALSE)
+	hdr <- as.character(unlist(r1[1, ]))
+	unit <- as.character(unlist(r1[2, ]))
+	r <- r1[-(1:2), ]
 	r <- r[!is.na(r[[1]]), ]
 
-	info <- carobiner::read.excel(f, sheet="Variable Description", col_names=FALSE)
-	lab <- trimws(as.character(info[[2]]))
-	val <- trimws(as.character(info[[3]]))
+	r2 <- carobiner::read.excel(f, sheet="Variable Description", col_names=FALSE)
+	lab <- trimws(as.character(r2[[2]]))
+	val <- trimws(as.character(r2[[3]]))
 	pick <- function(label) {
 		i <- which(lab == label)
 		if (length(i) == 0) NA_character_ else val[i[1]]

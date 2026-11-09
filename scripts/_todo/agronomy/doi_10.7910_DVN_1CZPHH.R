@@ -33,6 +33,11 @@
 
 
 
+
+## NOT PROCESSED
+# RDM-Data Documentation Template-2016DS.xlsx: not read. sheet Documentation (of 4): Experiment Name, Effect of N management on grain filling & yield performance and NUE in DSR in the tropics. Observation records are missing from d until this file is standardized.
+# RDM-Data Documentation Template-2016WS.xlsx: not read. sheet Documentation (of 4): Experiment Name, Effect of N management on grain filling & yield performance and NUE in DSR in the tropics. Observation records are missing from d until this file is standardized.
+
 carob_script <- function(path) {
 
 "

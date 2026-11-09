@@ -19,6 +19,8 @@
 ## NOT PROCESSED
 # Observer, additional comments, marked-leaf rank, leaf emission rate, and the other stage indexes (Ylst, Ylmst, InstL, InmstL, AsexLP).
 # Conidia and perithecia counts and the derived lesion surfaces.
+# df_field_dictionary.csv: documentation or a codebook, not an observation table.
+# README.txt: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES

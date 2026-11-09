@@ -28,6 +28,7 @@
 # Soil nutrients other than pH, organic matter, texture fractions, and available P and K. The guano sample is not field soil.
 # CODE_LAB, the Summary sheet, and the Aco Original_laboratory worksheet. The fieldbook already has the ascorbic acid values.
 # Planting density on the installation sheet. plant_density is emerged plants, and this fieldbook has no stand count.
+# Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 
 ## NEW VARIABLES
@@ -65,13 +66,13 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 
 	one <- function(f) {
 		r <- carobiner::read.excel(f, sheet="Fieldbook")
-		ml <- carobiner::read.excel(f, sheet="Material_List")
-		mn <- carobiner::read.excel(f, sheet="Minimal")
-		so <- carobiner::read.excel(f, sheet="Soil_analysis")
-		cm <- carobiner::read.excel(f, sheet="Crop_management")
-		ins <- carobiner::read.excel(f, sheet="Installation")
-		v <- setNames(trimws(as.character(mn$Value)), trimws(mn$Factor))
-		iv <- setNames(trimws(as.character(ins$Value)), trimws(ins$Factor))
+		r1 <- carobiner::read.excel(f, sheet="Material_List")
+		r2 <- carobiner::read.excel(f, sheet="Minimal")
+		r3 <- carobiner::read.excel(f, sheet="Soil_analysis")
+		r4 <- carobiner::read.excel(f, sheet="Crop_management")
+		r5 <- carobiner::read.excel(f, sheet="Installation")
+		v <- setNames(trimws(as.character(r2$Value)), trimws(r2$Factor))
+		iv <- setNames(trimws(as.character(r5$Value)), trimws(r5$Factor))
 		blank <- function(x) {
 			x <- trimws(as.character(x))
 			x[!nzchar(x)] <- NA_character_
@@ -100,17 +101,17 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 			)
 			unname(known[x])
 		}
-		grab <- function(col, name) as.numeric(so[[col]][so$Abbreviature == name][1])
-		grab_tex <- function(col) so[[col]][so$Abbreviature == "Soil texture"][1]
-		key <- trimws(as.character(ml$Accession_Number))
-		nm <- blank(ml$Accession_Name)
-		code <- blank(ml$Accession_Code)
+		grab <- function(col, name) as.numeric(r3[[col]][r3$Abbreviature == name][1])
+		grab_tex <- function(col) r3[[col]][r3$Abbreviature == "Soil texture"][1]
+		key <- trimws(as.character(r1$Accession_Number))
+		nm <- blank(r1$Accession_Name)
+		code <- blank(r1$Accession_Code)
 		instn <- trimws(as.character(r$INSTN))
 		i <- match(instn, key)
 		variety <- nm[i]
 		variety[is.na(variety)] <- code[i][is.na(variety)]
 		variety[is.na(variety)] <- instn[is.na(variety)]
-		cycle <- blank(ml$Cycle[i])
+		cycle <- blank(r1$Cycle[i])
 		obs <- blank(r$OBS)
 		cycle[is.na(cycle)] <- obs[is.na(cycle)]
 		d <- data.frame(
@@ -120,8 +121,8 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 			variety_code = instn,
 			treatment = variety,
 			selection_cycle_ = cycle,
-			female_parent = blank(ml$Female_AcceNumb[i]),
-			male_parent = blank(ml$Male_AcceNumb[i]),
+			female_parent = blank(r1$Female_AcceNumb[i]),
+			male_parent = blank(r1$Male_AcceNumb[i]),
 			rep = as.integer(r$REP),
 			plot_id = as.character(r$PLOT),
 			yield_moisture = 100 - as.numeric(r$AVDM),
@@ -138,8 +139,8 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 			elevation = as.numeric(v[["Elevation"]]),
 			latitude = as.numeric(v[["Latitude"]]),
 			longitude = as.numeric(v[["Longitude"]]),
-			planting_date = as_date(cm$Date[cm$Intervention_type == "Planting"][1]),
-			harvest_date = as_date(cm$Date[cm$Intervention_type == "Harvest"][1]),
+			planting_date = as_date(r4$Date[r4$Intervention_type == "Planting"][1]),
+			harvest_date = as_date(r4$Date[r4$Intervention_type == "Harvest"][1]),
 			on_farm = FALSE,
 			is_survey = FALSE,
 			geo_from_source = TRUE

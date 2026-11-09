@@ -21,6 +21,7 @@
 ## NOT PROCESSED
 # Crown widths and projected area, leaf-blade and petiole fractions, SLA, LDMC, LNC, root diameter, specific root length, root length and weight density, and root-impact counts.
 # Nodule score. The code is categorical and the scale is not defined in the variables file.
+# data_CC_indiv_plant_variables.txt: not read. columns: Abbreviations, Variable names, Units, Organs, Calculation. Observation records are missing from d until this file is standardized.
 
 
 ## NEW VARIABLES

@@ -12,6 +12,7 @@
 
 ## NOT PROCESSED
 # Comparison 2020 - 2021 consumer surveys (key indicators) (4).docx: a summary note, not the microdata.
+# 02_Diccionario_Encuesta_sobre_demanda_Miskipapa_2022.xlsx: not read. sheet Diccionario: Grupo, Nro., Pregunta, Categorias. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # birth_country_, birth_city_, age_range_, occupation_, occupation_detail_, household_size_, heard_from_, customer_since_, bought_before_, uses_delivery_, pickup_place_, nearby_pickup_, pickup_district_2023_, pickup_reference_2023_, purchase_frequency_, purchase_for_, buys_elsewhere_, elsewhere_place_, purchase_kg_, motivation_, mixture_conserves_, mixture_preference_, mixture_why_, wants_variety_names_, wants_origin_, wants_recipes_, news_channel_, offer_frequency_, willingness_to_pay_, would_buy_sprouted_, sprouted_why_, suggestion_, would_recommend_.

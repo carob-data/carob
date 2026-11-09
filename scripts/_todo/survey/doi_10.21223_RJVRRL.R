@@ -13,6 +13,8 @@
 
 ## NOT PROCESSED
 # matooke and potato quality, preparation, and storage sheets in Data V2.xlsx, and Data_V1.xlsx. Preference answers, not a field table.
+# xlsForm_V1.xlsx: not read. sheet survey (of 3): type, name, label, required, relevant, appearance, choice_filter, constraint, constraint_message, repeat_count, calculation. Observation records are missing from d until this file is standardized.
+# xlsForm_V2.xlsx: not read. sheet survey (of 3): type, name, label, hint, required, relevant, appearance, choice_filter, constraint, constraint_message, repeat_count, calculation. Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 

@@ -21,6 +21,13 @@
 # Maximum radiation rate on the 1999-2011 sheets. The 1999 header says W/m2 and the 2011 header says kW/m2, and it is a maximum rate rather than mean irradiance.
 # Radiation on the 1997-1998 sheets, which has no unit.
 # Wet-bulb and dry-bulb temperature, vapour-pressure deficit, the unused wind-run height, and sun hours.
+# Batan Campbell hourly data 2011.xlsx: not read. sheet Batan_Campbell_2011 (of 2): Year, Month, Day, Hour, Max. Temp., Min. Temp., Rhmax, Rhmin, RadRate_Max, TotRad, Rain. Observation records are missing from d until this file is standardized.
+# Batan Campbell hourly data 2012.xlsx: not read. sheet Batan_Campbell_2012 (of 2): Year, Month, Day, Hour, Max. Temp., Min. Temp., Rhmax, Rhmin, RadRate_Max, TotRad, Rain. Observation records are missing from d until this file is standardized.
+# Batan hourly data 2012.xlsx: not read. sheet RowDataBatan2012 (of 3): Year, Month, Day, Hour, Minutes, Minutos, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, .... Observation records are missing from d until this file is standardized.
+# Batan hourly data 2013.xlsx: not read. sheet RowDataBatan2013 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Batan hourly data 2014.xlsx: not read. sheet RowDataBatan2014 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Batan hourly data 2015.xlsx: not read. sheet RowData_Batan2015 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
+# Batan hourly data 2016.xlsx: not read. sheet RowData_Batan2016 (of 2): Year, Month, Day, Hour, Minutes, AM_PM, TempOut, HiTemp, LowTemp, OutHum, DewPt, WindSpeed, .... Observation records are missing from d until this file is standardized.
 
 
 carob_script <- function(path) {
@@ -192,10 +199,22 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		do.call(carobiner::bindr, parts)
 	}
 
-	daily <- ff[grepl("daily", basename(ff), ignore.case=TRUE)]
-	daily <- daily[!grepl("hourly", basename(daily), ignore.case=TRUE)]
-	daily <- daily[order(basename(daily))]
-	parts <- lapply(daily, function(f) {
+	f1 <- ff[basename(ff) %in% c(
+		"Batan  daily data 1976 - 1973.xls",
+		"Batan  daily data 1986 - 1977.xls",
+		"Batan  daily data 1996 - 1987.xls",
+		"Batan  daily data 1998 - 1997.xls",
+		"Batan  daily data 2011 - 1999.xls",
+		"Batan  daily data 2012.xlsx",
+		"Batan  daily data 2013.xlsx",
+		"Batan  daily data 2014.xlsx",
+		"Batan  daily data 2015.xlsx",
+		"Batan  daily data 2016.xlsx",
+		"Batan daily data  2017.xlsx"
+	)]
+	f1 <- f1[!grepl("hourly", basename(f1), ignore.case=TRUE)]
+	f1 <- f1[order(basename(f1))]
+	parts <- lapply(f1, function(f) {
 		if (grepl("\\.xlsx$", basename(f), ignore.case=TRUE)) read_new(f) else read_old(f)
 	})
 	parts <- parts[!vapply(parts, is.null, logical(1))]

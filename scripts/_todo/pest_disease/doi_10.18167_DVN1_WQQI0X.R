@@ -84,8 +84,8 @@ The aim of this study was to determine the efficiency of using Erianthus arundin
 		)
 	}
 
-	fleaf <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_leaf_damage.csv"]
-	r <- read.csv(fleaf, check.names=FALSE)
+	f1 <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_leaf_damage.csv"]
+	r <- read.csv(f1, check.names=FALSE)
 	d1 <- blank(nrow(r))
 	d1$trial_id <- "leaf_damage"
 	d1$treatment <- trimws(r$modality)
@@ -98,8 +98,8 @@ The aim of this study was to determine the efficiency of using Erianthus arundin
 	d1$damaged_stalks_ <- as.numeric(r$FA)
 	d1$stalks_observed_ <- as.numeric(r$nb_stalks)
 
-	fstalk <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_stalk_damage.csv"]
-	r <- read.csv(fstalk, check.names=FALSE)
+	f2 <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_stalk_damage.csv"]
+	r <- read.csv(f2, check.names=FALSE)
 	d2 <- blank(nrow(r))
 	d2$trial_id <- "stalk_damage"
 	d2$treatment <- trimws(r$modality)
@@ -135,10 +135,10 @@ The aim of this study was to determine the efficiency of using Erianthus arundin
 		d
 	}
 
-	fgum <- ff[basename(ff) == "Raw_data_for_Nibouche_et al._2019_Crop_Protection_gumming.csv"]
-	fscald <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_leaf_scald.csv"]
-	fsmut <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_smut.csv"]
-	d <- rbind(d1, d2, disease(fgum, "gumming"), disease(fscald, "leaf_scald"), disease(fsmut, "smut"))
+	f3 <- ff[basename(ff) == "Raw_data_for_Nibouche_et al._2019_Crop_Protection_gumming.csv"]
+	f4 <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_leaf_scald.csv"]
+	f5 <- ff[basename(ff) == "Raw_data_for_Nibouche_et_al._2019_Crop_Protection_smut.csv"]
+	d <- rbind(d1, d2, disease(f3, "gumming"), disease(f4, "leaf_scald"), disease(f5, "smut"))
 	d$country <- "France"
 	d$is_survey <- FALSE
 

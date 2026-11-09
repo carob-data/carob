@@ -26,6 +26,7 @@
 ## NOT PROCESSED
 # SN: row number.
 # Dictionary columns L6, D6, P6: not present in the data file (only fruits 1-5).
+# yield-data_effects-of-neem-seed-oil-against_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
 # plants_: number of plants (NbrePlante)

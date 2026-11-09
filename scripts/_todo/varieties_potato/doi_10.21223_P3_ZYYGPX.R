@@ -21,6 +21,7 @@
 ## NOT PROCESSED
 # Reaction columns and ENV 1 / ENV 2 averages. They summarize the same site trials.
 # The YEAR columns beside each AUDPC are kept as planting_date only when the cell is a four-digit year. Otherwise the year is not a date.
+# Standard Evaluation Trial for Late Blight Resistance_Dictionary.xls: documentation or a codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -50,10 +51,10 @@ One of the most notorious and economically devastating  disease of potatoes is l
 		carob_effort = 0.5
 	)
 
-	f <- ff[grepl("Resistance_Data", basename(ff))]
-	raw <- as.data.frame(carobiner::read.excel(f, sheet="Late Blight", col_names=FALSE))
-	lab1 <- trimws(as.character(unlist(raw[1, ])))
-	lab3 <- trimws(as.character(unlist(raw[3, ])))
+	f <- ff[basename(ff) == "Standard Evaluation Trial for Late Blight Resistance_Data.xls"]
+	r <- as.data.frame(carobiner::read.excel(f, sheet="Late Blight", col_names=FALSE))
+	lab1 <- trimws(as.character(unlist(r[1, ])))
+	lab3 <- trimws(as.character(unlist(r[3, ])))
 	lab1[lab1 == "NA" | !nzchar(lab1)] <- NA_character_
 	lab3[lab3 == "NA" | !nzchar(lab3)] <- NA_character_
 	for (i in seq_along(lab1)[-1]) if (is.na(lab1[i])) lab1[i] <- lab1[i - 1]
@@ -74,7 +75,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 	}
 	trial_of <- function(block) as.integer(sub(".*-", "", block))
 
-	body <- raw[5:nrow(raw), ]
+	body <- r[5:nrow(r), ]
 	clone <- trimws(as.character(body[[2]]))
 	# A dash is a blank label, not a clone.
 	keep <- !is.na(clone) & nzchar(clone) & !clone %in% c("NA", "-")

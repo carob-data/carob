@@ -49,7 +49,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		carob_effort = 0.35
 	)
 
-	f <- ff[grepl("QUISCH", basename(ff))]
+	f <- ff[basename(ff) == "TVIT200711_QUISCH_Ayacucho_Gon_Stn_Field.xls"]
 	num <- function(x) as.numeric(as.character(x))
 	one <- function(sheet, name) {
 		hit <- sheet$Value[trimws(as.character(sheet$Factor)) == name]
@@ -59,25 +59,25 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		trimws(as.character(x))
 	}
 
-	mini <- carobiner::read.excel(f, sheet="Minimal")
-	inst <- carobiner::read.excel(f, sheet="Installation")
-	mat <- carobiner::read.excel(f, sheet="Material List")
-	fb <- carobiner::read.excel(f, sheet="Fieldbook")
-	cm <- carobiner::read.excel(f, sheet="Crop_management")
+	r1 <- carobiner::read.excel(f, sheet="Minimal")
+	r2 <- carobiner::read.excel(f, sheet="Installation")
+	r3 <- carobiner::read.excel(f, sheet="Material List")
+	r4 <- carobiner::read.excel(f, sheet="Fieldbook")
+	r5 <- carobiner::read.excel(f, sheet="Crop_management")
 
-	code <- trimws(as.character(mat[["Institutional number"]]))
-	vname <- gsub("\u00a0", " ", as.character(mat[["Clone or variety name"]]), fixed=TRUE)
+	code <- trimws(as.character(r3[["Institutional number"]]))
+	vname <- gsub("\u00a0", " ", as.character(r3[["Clone or variety name"]]), fixed=TRUE)
 	vname <- trimws(vname)
 	vname[!nzchar(vname)] <- NA_character_
-	species <- trimws(as.character(mat[["Species acronym"]]))
+	species <- trimws(as.character(r3[["Species acronym"]]))
 	alias <- data.frame(variety_code=code, variety=vname, variety_type=species)
 	alias <- alias[!duplicated(alias$variety_code), ]
 
-	fb$variety_code <- trimws(as.character(fb$INSTN))
-	fb <- merge(fb, alias, by="variety_code", all.x=TRUE)
-	fb$variety[is.na(fb$variety) | !nzchar(fb$variety)] <- fb$variety_code[is.na(fb$variety) | !nzchar(fb$variety)]
+	r4$variety_code <- trimws(as.character(r4$INSTN))
+	r4 <- merge(r4, alias, by="variety_code", all.x=TRUE)
+	r4$variety[is.na(r4$variety) | !nzchar(r4$variety)] <- r4$variety_code[is.na(r4$variety) | !nzchar(r4$variety)]
 
-	harvest_row <- cm$Date[trimws(as.character(cm[["Intervention type"]])) == "Harvest"]
+	harvest_row <- r5$Date[trimws(as.character(r5[["Intervention type"]])) == "Harvest"]
 	harvest_date <- harvest_row[1]
 	if (inherits(harvest_date, "POSIXt") || inherits(harvest_date, "Date")) {
 		harvest_date <- format(harvest_date, "%Y-%m-%d")
@@ -86,31 +86,31 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 	}
 
 	d <- data.frame(
-		variety_code = fb$variety_code,
-		variety = fb$variety,
-		variety_type = fb$variety_type,
-		treatment = fb$variety,
-		rep = as.integer(fb$REP),
-		plot_id = as.character(fb$PLOT),
-		country = one(mini, "Country"),
-		adm1 = one(mini, "Admin1"),
-		adm2 = one(mini, "Admin2"),
-		adm3 = one(mini, "Admin3"),
-		location = one(mini, "Locality"),
-		elevation = num(one(mini, "Elevation")),
-		latitude = num(one(mini, "Latitude")),
-		longitude = num(one(mini, "Longitude")),
+		variety_code = r4$variety_code,
+		variety = r4$variety,
+		variety_type = r4$variety_type,
+		treatment = r4$variety,
+		rep = as.integer(r4$REP),
+		plot_id = as.character(r4$PLOT),
+		country = one(r1, "Country"),
+		adm1 = one(r1, "Admin1"),
+		adm2 = one(r1, "Admin2"),
+		adm3 = one(r1, "Admin3"),
+		location = one(r1, "Locality"),
+		elevation = num(one(r1, "Elevation")),
+		latitude = num(one(r1, "Latitude")),
+		longitude = num(one(r1, "Longitude")),
 		geo_from_source = TRUE,
-		planting_date = one(mini, "Begin date"),
+		planting_date = one(r1, "Begin date"),
 		harvest_date = harvest_date,
 		trial_id = "Quishuarcancha_2007",
-		plot_area = num(one(inst, "Plot size (m2)")),
-		plant_spacing = num(one(inst, "Distance between plants (m)")) * 100,
-		row_spacing = num(one(inst, "Distance between rows (m)")) * 100,
-		seed_density = num(one(inst, "Planting density (plants/Ha)")),
-		tuber_ascorbate_dw_ = num(fb$ASC_DW),
-		tuber_ascorbate_fw_ = num(fb$ASC_FW),
-		yield_moisture = 100 - num(fb$DM),
+		plot_area = num(one(r2, "Plot size (m2)")),
+		plant_spacing = num(one(r2, "Distance between plants (m)")) * 100,
+		row_spacing = num(one(r2, "Distance between rows (m)")) * 100,
+		seed_density = num(one(r2, "Planting density (plants/Ha)")),
+		tuber_ascorbate_dw_ = num(r4$ASC_DW),
+		tuber_ascorbate_fw_ = num(r4$ASC_FW),
+		yield_moisture = 100 - num(r4$DM),
 		crop = "potato",
 		on_farm = NA,
 		is_survey = FALSE

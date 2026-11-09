@@ -20,6 +20,29 @@
 ## NOT PROCESSED
 # Conductividad Hidráulica, milliequivalents, cation saturation, and CIC.
 # Map images.
+# Azufre-Ayala.png: image, not a data table.
+# Boro-Ayala.png: image, not a data table.
+# Calcio-Ayala.png: image, not a data table.
+# Carbonatos-Ayala.png: image, not a data table.
+# CIC-Ayala.png: image, not a data table.
+# Cobre-Ayala.png: image, not a data table.
+# Cond Hidraulica-Ayala.png: image, not a data table.
+# Hierro-Ayala.png: image, not a data table.
+# Magnesio-Ayala.png: image, not a data table.
+# Manganeso-Ayala.png: image, not a data table.
+# Materia Organica-Ayala.png: image, not a data table.
+# Muestreo_Puntos_1km-Ayala.jpg: image, not a data table.
+# Nitratos-Ayala.png: image, not a data table.
+# PBray1-Ayala.png: image, not a data table.
+# PBray1-POlsen-Ayala.png: image, not a data table.
+# pH 12 agua-Ayala.png: image, not a data table.
+# POlsen-Ayala.png: image, not a data table.
+# Potasio-Ayala.png: image, not a data table.
+# Punto de Saturacion-Ayala.png: image, not a data table.
+# Puntos fuera municipio_Sitios_Suelo_Ayala.png: image, not a data table.
+# Salinidad CE Extracto-Ayala.png: image, not a data table.
+# Sodio Porc Saturacion-Ayala.png: image, not a data table.
+# Zinc-Ayala.png: image, not a data table.
 
 
 carob_script <- function(path) {

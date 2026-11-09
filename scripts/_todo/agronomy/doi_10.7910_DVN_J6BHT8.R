@@ -17,6 +17,13 @@
 # FODDER and TBMSS. The codebook says kg/ha and does not say whether the weight is fresh or dry.
 # PLNTHSD, NCOB, NPAN, and COBPAWT. Stand, cob, and panicle counts are per plot, and the plot area is not given. The panicle column has no label.
 # Maize-Gia.csv and the other community files. They repeat the same trials without units, and one fodder value is the text 3.O4. Data.csv is the table with a codebook.
+# Codebook.csv: documentation or a codebook, not an observation table.
+# Maize-Nyangua.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, GRAIN WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
+# Maize-Samboligo.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, GRAIN WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
+# Millet-Gia.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, PANICCLE WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
+# Millet-Samboligo.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, PANICLE WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
+# Sorghum-Gia.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, PANICCLE WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
+# Sorghum-Samboligo.csv: not read. columns: PLOT-, TRT, Crop, Community, PLT STAND @ 14 DAYS, PLT HEIGHT @BOOTING, DAYS TO PHYSIOLOGICAL MATURITY, NO OF COBS/PANICCLE AT HARVEST, PANICLE WEIGHT, FODDER WEIGHT , FIELD WEIGHT, TOTAL YIELD, .... Observation records are missing from d until this file is standardized.
 
 carob_script <- function(path) {
 
@@ -39,7 +46,8 @@ carob_script <- function(path) {
 		notes = "No coordinates or planting date. Fodder and total biomass were not used because fresh and dry weight are not distinguished. Maturity is 48 to 68 days."
 	)
 
-	r <- read.csv(ff[basename(ff) == "Data.csv"])
+	f <- ff[basename(ff) == "Data.csv"]
+	r <- read.csv(f)
 	dist <- c("1" = "Kassena Nankana", "2" = "Bongo")
 	comm <- c("1" = "Nyangua", "2" = "Gia", "3" = "Samboligo")
 	crop <- c("1" = "maize", "2" = "millet", "3" = "sorghum")

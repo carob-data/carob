@@ -56,39 +56,39 @@ The R code used for data processing, analysis, and visualization is available in
 		as.character(as.Date(x, "%m/%d/%Y"))
 	}
 
-	fdata <- ff[basename(ff) == "data.csv"]
-	fcov <- ff[basename(ff) == "cov.csv"]
-	feval <- ff[basename(ff) == "eval.csv"]
-	fped <- ff[basename(ff) == "pedigree.csv"]
+	f1 <- ff[basename(ff) == "data.csv"]
+	f2 <- ff[basename(ff) == "cov.csv"]
+	f3 <- ff[basename(ff) == "eval.csv"]
+	f4 <- ff[basename(ff) == "pedigree.csv"]
 
-	r <- read.csv(fdata)
-	cv <- read.csv(fcov)
-	ev <- read.csv(feval)
-	ped <- read.csv(fped)
+	r <- read.csv(f1)
+	r1 <- read.csv(f2)
+	r2 <- read.csv(f3)
+	r3 <- read.csv(f4)
 
-	ev <- ev[ev$TRAIT == "General", c("ENV_ID", "GEN", "RANK")]
-	ev <- ev[!duplicated(ev[c("ENV_ID", "GEN")]), ]
-	names(ev)[names(ev) == "RANK"] <- "rank_score"
+	r2 <- r2[r2$TRAIT == "General", c("ENV_ID", "GEN", "RANK")]
+	r2 <- r2[!duplicated(r2[c("ENV_ID", "GEN")]), ]
+	names(r2)[names(r2) == "RANK"] <- "rank_score"
 
-	ped$variety <- trimws(ped$long_name)
-	blank <- is.na(ped$variety) | ped$variety == ""
-	ped$variety[blank] <- ped$name[blank]
-	dame <- trimws(ped$dame)
-	sire <- trimws(ped$sire)
+	r3$variety <- trimws(r3$long_name)
+	blank <- is.na(r3$variety) | r3$variety == ""
+	r3$variety[blank] <- r3$name[blank]
+	dame <- trimws(r3$dame)
+	sire <- trimws(r3$sire)
 	dame[is.na(dame)] <- ""
 	sire[is.na(sire)] <- ""
-	ped$variety_pedigree <- ifelse(dame != "" & sire != "", paste(dame, "x", sire), NA)
-	yr <- trimws(as.character(ped$year_of_registration))
+	r3$variety_pedigree <- ifelse(dame != "" & sire != "", paste(dame, "x", sire), NA)
+	yr <- trimws(as.character(r3$year_of_registration))
 	yr[yr == ""] <- NA
-	ped$variety_release_year <- as.integer(yr)
-	ped <- ped[, c("name", "variety", "variety_pedigree", "variety_release_year")]
+	r3$variety_release_year <- as.integer(yr)
+	r3 <- r3[, c("name", "variety", "variety_pedigree", "variety_release_year")]
 
 	keep <- c("ENV_ID", "REGION", "COMMUNE", "LONG", "LAT", "ELE", "SOWING_DATE",
 		"PRECEDENT_CATEGORY", "FERT_ORG_DOSE", "FERT_MIN_DOSE", "FIELD_TYPE", "GENDER", "PLOT_SIZE")
-	cv <- cv[, keep]
-	r <- merge(r, cv, by = "ENV_ID", all.x = TRUE)
-	r <- merge(r, ev, by = c("ENV_ID", "GEN"), all.x = TRUE)
-	r <- merge(r, ped, by.x = "GEN", by.y = "name", all.x = TRUE)
+	r1 <- r1[, keep]
+	r <- merge(r, r1, by = "ENV_ID", all.x = TRUE)
+	r <- merge(r, r2, by = c("ENV_ID", "GEN"), all.x = TRUE)
+	r <- merge(r, r3, by.x = "GEN", by.y = "name", all.x = TRUE)
 	r$variety[is.na(r$variety)] <- r$GEN[is.na(r$variety)]
 
 	pc <- c(
