@@ -10,13 +10,22 @@
 #    (NPH is at most 5). TTWP, MTWP and TTWPL (= TTWP / NPH) refer to these plants, and
 #    TTYNA in the fieldbook (TTWP / 5.25 m2) does not match a sample of 5 plants.
 #    Yield is TTWP / (5 x 0.25 m x 0.7 m), the area of the harvested plants (approach
-#    confirmed by V. Hualla, CIP). TTYA (adjusted) is not used.
+#    confirmed by V. Hualla, CIP). TTYA is not used.
 # 2. Daily weather from the "Weather_data" sheet (the same site). Solar radiation (PAR, uE) is not processed.
 # 3. Kok Saroy is in Tashkent region; the Minimal sheet gives "Tashkent" for Admin1-3, so only adm1 is kept.
 # 4. No fertilizer or irrigation information (summer crop in an arid region; probably irrigated, not stated).
 #    Soil_analysis and Crop_management sheets are empty templates (dates only).
-# 5. PH (plant height, cm), NS (stems per plant) and PC (canopy cover, %) were recorded on 2008-09-30; only PH is processed.
-#    Units of PH and PC are not in the data dictionary (values 42-79 and 60-100).
+# 5. PH (plant height, cm), NS (stems per plant) and PC (canopy cover, %) were recorded on 2008-09-30 (Crop_management).
+#    Units of PH and PC are not in the data dictionary (values 42-79 and 60-100). stem_density = NS x plant_density.
+
+## NEW VARIABLES
+# (no yield_adj_: the number of plants harvested is the same in all plots, so it equals yield)
+# yield_marketable_c1_, yield_marketable_c2_: fresh weight of marketable tubers of size category I
+#   and II (kg/ha); MTWCI and MTWCII. The size limits of the categories are not documented.
+# tuber_density_marketable_: number of marketable tubers per ha (NMTP)
+# tuber_density_c1_, tuber_density_c2_: number of marketable tubers of size category I and II per ha
+# Not included because they can be computed from the variables above: per-plant values (TTWPL,
+#   MTWPL, TNTPL, NMTPL), non-marketable weight and number, average tuber weight (ATW), TTYNA, MTYNA, MTYA.
 
 carob_script <- function(path) {
 
@@ -67,6 +76,17 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	d$tuber_density <- as.numeric(r$TNTP) * 10000 / harvest_area
 	## plant height (cm) measured during the season
 	d$plant_height <- as.numeric(r$PH)
+
+	## other plot measurements (NEW VARIABLES); per-plot values per ha of harvested area
+	d$yield_marketable_c1_ <- as.numeric(r$MTWCI) * 10000 / harvest_area
+	d$yield_marketable_c2_ <- as.numeric(r$MTWCII) * 10000 / harvest_area
+	d$tuber_density_marketable_ <- as.numeric(r$NMTP) * 10000 / harvest_area
+	d$tuber_density_c1_ <- as.numeric(r$NMTCI) * 10000 / harvest_area
+	d$tuber_density_c2_ <- as.numeric(r$NMTCII) * 10000 / harvest_area
+	## NS: mean number of stems per plant
+	d$stem_density <- as.numeric(r$NS) * d$plant_density
+	## PC: plant canopy cover (%)
+	d$ground_cover <- as.numeric(r$PC)
 
 	## variety names in upper case in the material list
 	d$variety[d$variety == "REICHE"] <- "Reiche"
