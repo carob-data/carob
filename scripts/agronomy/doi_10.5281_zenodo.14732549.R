@@ -4,15 +4,12 @@
 # Organic rainfed trial at Villa Masini (Ravenna, Emilia-Romagna). Fifteen species-year means (not plot-level).
 # Yield is t/ha; converted to kg/ha. No synthetic fertilizer: N/P/K inorganic = 0. Green manure used (amount not in file).
 # Coordinates converted from 44°15'59.5"N, 12°07'46.5"E in the associated paper.
-
-## ISSUES
 # Records are treatment means over 3 RCBD replicates, not plot data.
 # Sowing and harvest dates are in paper Table 2, not in the spreadsheet; planting_date is year only.
+
+## ISSUES
 # Green-manure amount/type not in the file.
 # Weed/pest scores and panicle traits not fully mapped (weed_cover and plant_height are).
-# Millet typed as proso millet from the paper (Panicum miliaceum).
-# write_files: harvest_date and yield_moisture not in file; UNIBO may not be in org vocab.
-# University of Bologna not found on data_organization
 
 carob_script <- function(path) {
 
@@ -44,9 +41,6 @@ The present study examined for the first time the environmental and economic imp
 	f <- ff[grepl("MILLET", basename(ff), ignore.case=TRUE)]
 	r <- carobiner::read.excel(f)
 
-	# Yield column name has two spaces before (
-	yc <- grep("^Yield", names(r), value=TRUE)
-
 	crop <- ifelse(grepl("Millet", r$Species), "proso millet",
 		ifelse(grepl("Sorghum", r$Species), "sorghum", "maize"))
 	variety_type <- ifelse(grepl("hybrid", r$Species), "hybrid",
@@ -61,7 +55,7 @@ The present study examined for the first time the environmental and economic imp
 		plant_height = r$`Plant Height (cm)`,
 		weed_cover = r$`Weed Incidence (%)`,
 		# yield t/ha to kg/ha
-		yield = r[[yc]] * 1000,
+		yield = r[["Yield  (t/ha)"]] * 1000,
 		planting_date = as.character(r$Year),
 		country = "Italy",
 		adm1 = "Emilia-Romagna",
