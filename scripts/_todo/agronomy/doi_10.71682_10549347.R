@@ -27,6 +27,7 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	 carob_contributor = "Royette Santos",
 		data_organization = "CIMMYT;IITA;ICRAF;ZARI;IIAM",
 		publication = "doi:10.1016/j.agsy.2026.104740",
 		project = "Excellence in Agronomy",
@@ -61,6 +62,11 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 	)
 	geo <- geo[!duplicated(geo$X_uuid), ]
 
+	# Crop-cut protocol: Chiduwa et al. (2026), Section 2.2.
+	# Three quadrats were sampled per field.
+	# Maize quadrat size: 3 m x 2 m (6 m2 each).
+	# Maize grain yield was expressed on a dry-matter basis.
+	
 	d1 <- data.frame(
 		record_id = r1$X_uuid,
 		country = r1$country,
@@ -82,25 +88,57 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 		yield_part = "grain",
 		yield_moisture = 0
 	)
+	
+	# Publication: Chiduwa et al. (2026), Section 3.2, Table 1.
+# No fertilizer application was reported for soybean.
+# N, P, and K are provisionally coded as zero.
+# Raw survey contains a few possible fertilizer inputs
+# that require verification before submission.
+	
+	# Crop-cut protocol: Chiduwa et al. (2026), Section 2.2.
+	# Three quadrats were sampled per field.
+	# Soybean quadrat size: 2 m x 2 m (4 m2 each).
+	# Soybean grain yield was based on air-dried grain weight,
+	# without further moisture adjustment.
 
+	# Chiduwa et al. (2026), Section 3.2, Table 1.
+	# No fertilizer application was reported for soybean.
+	# N, P, and K are provisionally coded as zero.
+	# Some raw survey entries indicate possible fertilizer inputs
+	# that require verification before submission.
+	#
+	# Crop-cut protocol: Three quadrats of 2 m x 2 m per field.
+	# Soybean yield was based on air-dried grain without
+	# further moisture adjustment.
+	
 	d2 <- data.frame(
-		record_id = r2$X_uuid,
-		country = r2$country,
-		adm2 = carobiner::fix_name(r2$district, "title"),
-		location = r2$epa,
-		crop = "soybean",
-		yield = r2$soy_yield_kgha,
-		dmy_total = r2$soy_biomass_kgha,
-		seed_rate = r2$seed_kgha,
-		variety_type = r2$seed_type,
-		OM_used = r2$orgfert_yn == "y",
-		planting_date = doy_date(r2$date_planting),
-		harvest_date = doy_date(r2$date_harvest),
-		weeding_times = as.integer(rowSums(!is.na(cbind(r2$weeding_1st_das, r2$weeding_2nd_das)))),
-		yield_part = "seed",
-		yield_moisture = 0
+	  record_id = r2$X_uuid,
+	  country = r2$country,
+	  adm2 = carobiner::fix_name(r2$district, "title"),
+	  location = r2$epa,
+	  crop = "soybean",
+	  yield = r2$soy_yield_kgha,
+	  dmy_total = r2$soy_biomass_kgha,
+	  seed_rate = r2$seed_kgha,
+	  variety_type = r2$seed_type,
+	  N_fertilizer = 0,
+	  P_fertilizer = 0,
+	  K_fertilizer = 0,
+	  OM_used = r2$orgfert_yn == "y",
+	  planting_date = doy_date(r2$date_planting),
+	  harvest_date = doy_date(r2$date_harvest),
+	  weeding_times = as.integer(rowSums(!is.na(cbind(
+	    r2$weeding_1st_das,
+	    r2$weeding_2nd_das
+	  )))),
+	  yield_part = "seed",
+	  yield_moisture = NA_real_, # Soybean yield based on air-dried grain weight.
+	  # No further moisture adjustment was applied.
+	  # Reported as fresh-matter yield in Chiduwa et al. (2026).
+	  yield_isfresh = TRUE
 	)
 
+	
 	d <- carobiner::bindr(d1, d2)
 	d <- merge(d, geo, by.x = "record_id", by.y = "X_uuid", all.x = TRUE)
 
