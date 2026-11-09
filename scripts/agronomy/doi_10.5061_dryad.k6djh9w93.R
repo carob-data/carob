@@ -7,7 +7,9 @@
 # germination rate had out of bounds values
 # 1 record with harvest_date within 45 days of planting_date 
 # The harvest date for one record was recorded as 137 days from 1900, resulting in a date warning
-
+# Basal NPS  (19-38-7) rate for maize was not reported
+# For common bean: no fertilizer information given
+# The dataset contains 5 ADM4 locations (kebeles/villages) within three ADM3 locations. However, coordinates are available only at ADM3 level, resulting in duplicate coordinates for villages within the same district. This results in warning: "duplicate coordinates: fewer coordinates than locations".
 
 carob_script <- function(path) {
 
@@ -21,6 +23,7 @@ This data set is a biological data generated through field experimentation on ce
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
+
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=NA,
 		data_organization = "HARAU",
 		publication = NA,
@@ -32,8 +35,10 @@ This data set is a biological data generated through field experimentation on ce
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-09-18",
 		carob_completion = 90,	
-		carob_effort = 14)
+		carob_effort = 14
+	)
 	
+
 	f1 <- ff[basename(ff) == "Field_Experiment_data.xlsx"]
 	f2 <- ff[basename(ff) == "README.txt"]
 
@@ -54,9 +59,11 @@ This data set is a biological data generated through field experimentation on ce
 	  land_prep_method = r1a$`Tillage method (no tillage, conventional plough, manual hoe tillage)`,
 	  planting_date = as.character(r1a$`Date of sowing`),
 	  harvest_date = as.character(r1a$`Date of harvesting`),
+	  fertilizer_date = as.character(as.Date(r1a$`Date of basal application (year-month-date)`)),
 	  germination_rate = as.numeric(r1a$`Estimated germination (%)`),
 	  yield_moisture = as.numeric(r1a$`Grain moisture content (%)`),
-	  crop = "maize")
+	  crop = "maize"
+	)
 	
 	d1$land_prep_method[d1$land_prep_method == "Manual hoe tillage"] <- "hoeing"
 	
@@ -80,7 +87,9 @@ This data set is a biological data generated through field experimentation on ce
 	  yield_moisture = as.numeric(r1b$`Moisture of Beans grain (%)`),
 	  maturity_date = r1b$`Date 90% maturity`,
 	  harvest_date = r1b$`Date of harvesting`,
-	  crop = "common bean")
+	  intercrops = "maize_common bean",
+	  crop = "common bean"
+	)
 
 	d2$planting_date[d2$planting_date == "null"] <- NA
 	d2$maturity_date[d2$maturity_date == "null"] <- NA
@@ -98,27 +107,27 @@ This data set is a biological data generated through field experimentation on ce
 	  latitude = c(9.5059, 9.3549, 9.3425),
 	  longitude = c(42.1788, 41.5954, 41.9971),
 	  geo_uncertainty = c(18345, 25393, 24619 ),
-	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3"))
-	
+	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3")
+	)
     
   d <- merge(d, location, by = "adm3", all.x = TRUE)
   d$geo_from_source <- FALSE
 	
 	d$trial_id <- "1"
+	
 	d$country <- "Ethiopia"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-   
-  d$N_fertilizer <- ifelse(d$crop == "maize", 65, 0)
-  d$P_fertilizer <- ifelse(d$crop == "maize", 16.6, 0)
-  d$K_fertilizer <- 0
-  d$S_fertilizer <- ifelse(d$crop == "maize", 7, 0)
-  d$fertilizer_type <- ifelse(d$crop == "maize", "NPS; urea", "none")
-   
+
+	maize <- d$crop == "maize"
+	d$N_fertilizer <- ifelse(maize, 46, NA)
+	d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- NA
+	d$fertilizer_type <- ifelse(maize, "NPS; urea", NA)
+ 
   d$inoculated <- NA
   d$inoculant <- NA
-
+   
 	d$yield <- NA
 	d$yield_part <- "grain"
 
