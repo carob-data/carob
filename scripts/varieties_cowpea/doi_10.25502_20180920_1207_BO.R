@@ -1,6 +1,8 @@
 # R script for "carob"
 # license: GPLv3
 
+#raw data specifies the coverage as Ethiopia
+
 carob_script <- function(path) {
   
 "The Cowpea Breeding Unit develops improved cowpea lines with high grain yield potential and resistance/tolerance to biotic and abiotic stresses and possessing farmers and consumers preferences. Data generated from multi-year evaluation trials carried out on different sets of materials developed within several projects conducted by the cowpea breeding unit are contained in the database."
@@ -25,6 +27,10 @@ carob_script <- function(path) {
 	process_cowpea <- carobiner::get_function("process_cowpea", path, group)
 	d <- process_cowpea(ff)
 	d$location <- "Melkassa"
+	d$country <- "Ethiopia"      #from raw data file melkassa_metadata.xlsx
+	d$longitude <- 39.3333       #https://www.geonames.org/ui-search?q=Melkassa
+	d$latitude <- 8.4            #https://www.geonames.org/ui-search?q=Melkassa
+	  
 	carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 
