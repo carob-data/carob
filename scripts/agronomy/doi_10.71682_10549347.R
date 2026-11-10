@@ -156,5 +156,4 @@ carob_script <- function(path) {
   
   ## Test in a clean R session:
   # carob_script(path = "path/to/carob/data")
-carob_script(path = "/Users/jeff/Documents/2026/IWMI/Workshop/carob")
 
