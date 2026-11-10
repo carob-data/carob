@@ -124,13 +124,14 @@ carob_script <- function(path) {
 	d$fertilizer_type <- gsub("Zinc sulphate", "ZnSO4", d$fertilizer_type)
 	d$fertilizer_type <- gsub("\\+", ";", d$fertilizer_type)
 	d$crop <- gsub("rabi maize", "maize", d$crop)
-	d$location <- gsub("Takapati","Tikapatti", d$location)
+	#d$location <- gsub("Takapati","Tikapatti", d$location)
+	d$location <- gsub("^(Takapati|Tikapati)$", "Tikapatti", d$location)
 	d$location <- gsub("Dogachi","Dogachhi", d$location)
   
 	geo <- data.frame(
 		location=c("Puranigarel", "Dogachhi", "Katheli" , "Tikapatti", "Udaynagar"), 
-        latitude=c(25.7711, 24.6722, 23.9759, 26.0944, 22.4917), 
-        longitude=c(87.4822, 88.4500, 78.3306, 86.2764, 76.2655)
+        latitude=c(25.7711, 26.2906, 23.9759, 26.0946, 22.4917), 
+        longitude=c(87.4822, 87.7704, 78.3306, 86.2765, 76.2655)
 	)
 	d$geo_from_source <- FALSE
   
