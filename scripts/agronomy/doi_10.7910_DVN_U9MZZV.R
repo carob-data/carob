@@ -96,8 +96,10 @@ carob_script <- function(path) {
    d$inoculated <- FALSE
    d$irrigated <- TRUE
    d$yield_part <- "fruit"
-   d$latitude <- NA_real_
-   d$longitude <- NA_real_
+   # Community-level coordinates (Nyangua / Tekuru area, Upper East Region, Ghana)
+   # Approximate; not field-level.
+   d$latitude <- 10.938
+   d$longitude <- -1.068
    d$geo_from_source <- FALSE
    
    
