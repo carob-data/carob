@@ -236,7 +236,10 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 		lat = c(-10.12329, -10.35783, -3.73951, -5.8778, -6.20674, -6.25996, -7.98188, -5.9343, -4.39552, -5.21351, -7.34365, -5.73598, -5.26141, -5.71602, -8.77838, -6.6662, -8.98297, -5.89437),
 		geo_uncertainty = c(175208, 171849, 182360, 56720, 76418, 35136, 95965, 24024, 34137, 57311, 61959, 58073, 267645, 111630, 174353, 94827, 200687, 59906)
 	)
-
+  
+	geo$lat[geo$adm2 == "Alotau"] <- -10.29    # https://www.geonames.org/search.html?q=Alotau&country=PG
+	geo$lon[geo$adm2 == "Alotau"] <- 150.43    # https://www.geonames.org/search.html?q=Alotau&country=PG
+	
 	d <- merge(d, geo, by= "adm2", all.x = TRUE)
 	i <- is.na(d$longitude) | is.na(d$latitude)
 	d$longitude[i] <- d$lon[i]
@@ -259,6 +262,7 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 	d$yield_isfresh <- TRUE
 	d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
 	d$com_id <- NULL
+	
 	
 	carobiner::write_files(path, meta, d)
 }
