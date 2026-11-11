@@ -35,7 +35,7 @@
 # 5. "chinese spinach", "african eggplant" and "black pepper" are not in the crop vocabulary. I added the first two. The thrid one is (true) "pepper"
 # "green pepper" and "red pepper" were mapped to pepper.  -> should be "chili pepper"
 
-It seems to me that much more can be processed. Including plot size, soil fertility, slope, erosion and tenure (012), seed quantities and input costs (014), irrigation frequency and duration (015), pumps (016), crop sales (017), labour (018, 019), the livestock, nutrition, health, WASH, income, expenditure, shocks and WEAI modules, and the community survey.
+# It seems to me that much more can be processed. Including plot size, seed quantities and input costs, irrigation frequency and duration (015), pumps (016), crop sales (017), labour (018, 019), the livestock, nutrition?
 
 carob_script <- function(path) {
 
