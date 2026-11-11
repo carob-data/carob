@@ -23,7 +23,7 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 	 carob_contributor = "Royette Santos",
-		data_organization = "CIMMYT;IITA;ICRAF;ZARI;IIAM",
+		data_organization = "CIMMYT;IITA;ICRAF;DARS;ZARI;IIAM",
 		publication = "doi:10.1016/j.agsy.2026.104740",
 		project = "Excellence in Agronomy",
 		design = NA,
@@ -33,7 +33,8 @@ This dataset describes farming practices in soybean and maize monocrop fields in
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 75,
-		carob_effort = 0.7
+		carob_effort = 0.7,
+		carob_contributor = "Royette Santos"
 	)
 
 	f <- ff[basename(ff) == "EiA_2022_survey_2025-09-26_v0.xlsx"]
