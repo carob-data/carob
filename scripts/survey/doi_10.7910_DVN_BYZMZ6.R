@@ -232,14 +232,11 @@ The survey encompasses 2,699 households in 270 communities, spanning five agroec
 
 	geo <- data.frame(
 		adm2 = c("Abau", "Alotau", "Ambunti-Dreikikir", "Anglimp-South Waghi", "Central Bougainville", "Kainantu", "Kerema", "Kerowagi", "Kokopo", "Madang", "Menyamya", "Mul-Baiyer", "North Bougainville", "North Fly", "Sohe", "South Bougainville", "South Fly", "Tambul-Nebilyer"),
-		lon = c(148.07582, 150.40361, 142.74709, 144.62268, 155.51076, 145.88004, 145.83809, 144.87791, 152.31496, 145.69676, 146.26359, 144.1875, 154.67765, 141.18226, 148.3833, 155.59891, 142.25708, 144.00914),
-		lat = c(-10.12329, -10.35783, -3.73951, -5.8778, -6.20674, -6.25996, -7.98188, -5.9343, -4.39552, -5.21351, -7.34365, -5.73598, -5.26141, -5.71602, -8.77838, -6.6662, -8.98297, -5.89437),
+		lon = c(148.07582, 150.43, 142.74709, 144.62268, 155.51076, 145.88004, 145.83809, 144.87791, 152.31496, 145.69676, 146.26359, 144.1875, 154.67765, 141.18226, 148.3833, 155.59891, 142.25708, 144.00914),
+		lat = c(-10.12329, -10.29, -3.73951, -5.8778, -6.20674, -6.25996, -7.98188, -5.9343, -4.39552, -5.21351, -7.34365, -5.73598, -5.26141, -5.71602, -8.77838, -6.6662, -8.98297, -5.89437),
 		geo_uncertainty = c(175208, 171849, 182360, 56720, 76418, 35136, 95965, 24024, 34137, 57311, 61959, 58073, 267645, 111630, 174353, 94827, 200687, 59906)
 	)
-  
-	geo$lat[geo$adm2 == "Alotau"] <- -10.29    # https://www.geonames.org/search.html?q=Alotau&country=PG
-	geo$lon[geo$adm2 == "Alotau"] <- 150.43    # https://www.geonames.org/search.html?q=Alotau&country=PG
-	
+  	
 	d <- merge(d, geo, by= "adm2", all.x = TRUE)
 	i <- is.na(d$longitude) | is.na(d$latitude)
 	d$longitude[i] <- d$lon[i]
