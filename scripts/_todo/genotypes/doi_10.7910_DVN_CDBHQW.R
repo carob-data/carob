@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## REJECTED 
+## only crosses are reported
+
 ## NOTES
 # Bean experimental lines. The title names the crop. The file is a line and pedigree list, not the trial results named in the description.
 # linea is the line name. cruza is the cross code, shared by sister lines. The long pedigree column includes the cross and the selection history, and that is variety_pedigree.
