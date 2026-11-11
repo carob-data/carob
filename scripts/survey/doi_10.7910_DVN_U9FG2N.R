@@ -11,26 +11,31 @@
 # Nutrient contents used: urea 46% N; DAP 18% N and 46% P2O5 (20.1% P); CAN 26% N.
 # The region is not in the data files. Kilosa and Mvomero are districts of Morogoro Region.
 
+# No coordinates in the source. Village coordinates were looked up with carobiner::geocode (Nominatim) and still need to be verified on a map. "Chanzulu" was found as "Chanzuru". "Zombolumbo" was not found and has the coordinates of Zombo ward.
+# The irrigation module (015) covers 444 plot x season combinations. irrigated is NA for the other crop records.
+# Seven plot x season combinations have more than one crop record. The plot-level inputs are repeated for each crop.
+
+
 ## ISSUES
-# 1. No coordinates in the source. Village coordinates were looked up with carobiner::geocode (Nominatim) and still need to be verified on a map. "Chanzulu" was found as "Chanzuru". "Zombolumbo" was not found and has the coordinates of Zombo ward.
 # 2. About half of the harvests are reported in volume or count units (20 L tins, bags, bushels, bunches, pieces) without a weight. yield is NA for these. The reported quantity and unit are kept in harvest_quantity_ and harvest_unit_.
-# 3. Fertilizer types written under "other" (buster/booster, Minjingu, YaraMila, kani, ...) are set to "unknown" and their nutrient amounts are NA. Amounts in litres were not converted.
-# 4. Seven plot x season combinations have more than one crop record. The plot-level inputs are repeated for each crop.
-# 5. "chinese spinach", "african eggplant" and "black pepper" are not in the crop vocabulary. "green pepper" and "red pepper" were mapped to pepper. "beans" written under "other crop" was mapped to common bean.
 # 6. Household altitude (alt) has implausible values (-613 to 2803 m; village medians are 349 to 774 m). Values below 200 m or above 1000 m were set to NA.
-# 7. "Bucket/hose/watering can" has no term in the irrigation vocabulary; "manual" is used.
-# 8. yield_part is not set for onion, and is assumed to be "pod" for groundnut.
-# 9. The irrigation module (015) covers 444 plot x season combinations. irrigated is NA for the other crop records.
 # 10. Some values are implausible and were not changed: yields up to 17 t/ha for maize and 24 t/ha for rice, and two fertilizer amounts above 1000 kg/ha (large amounts reported for very small areas).
 
 ## NEW VARIABLES
 # harvest_quantity_: harvested amount as reported, in the unit given by harvest_unit_
 # harvest_unit_: unit of the reported harvest
-# irrigation_lifting_: how the irrigation water was obtained (gravity, pump, by hand)
 
 ## NOT PROCESSED
 # Plot size, soil fertility, slope, erosion and tenure (012), seed quantities and input costs (014), irrigation frequency and duration (015), pumps (016), crop sales (017), labour (018, 019), the livestock, nutrition, health, WASH, income, expenditure, shocks and WEAI modules, and the community survey.
 
+## FIX
+# 3. Fertilizer types written under "other" (buster/booster, Minjingu, YaraMila, kani, ...) are set to "unknown" and their nutrient amounts are NA. Amounts in litres were not converted.
+# keep the origina names, even if unknown.
+# 8. yield_part is not set for onion. Should be "bulbs"
+# 5. "chinese spinach", "african eggplant" and "black pepper" are not in the crop vocabulary. I added the first two. The thrid one is (true) "pepper"
+# "green pepper" and "red pepper" were mapped to pepper.  -> should be "chili pepper"
+
+It seems to me that much more can be processed. Including plot size, soil fertility, slope, erosion and tenure (012), seed quantities and input costs (014), irrigation frequency and duration (015), pumps (016), crop sales (017), labour (018, 019), the livestock, nutrition, health, WASH, income, expenditure, shocks and WEAI modules, and the community survey.
 
 carob_script <- function(path) {
 
