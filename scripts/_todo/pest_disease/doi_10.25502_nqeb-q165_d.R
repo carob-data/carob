@@ -4,7 +4,7 @@
 ## NOTES
 # Farmer participatory cassava cutting treatments in Tanzania, 10 farmers (codes BL-1 to MS-10).
 # pest-and-disease-data.csv is the long table: whitefly adults and nymphs, CMD, CBSD, and cassava green mite severity at 1, 3, 6, and 10 months after planting.
-# yield-data.csv is one row per plant (grams of roots, dictionary unit g). It is not converted to kg/ha because area and plant density are absent.
+# yield-data.csv is grams of roots per plant (dictionary unit g), averaged to the farmer and treatment. It is not converted to kg/ha because area and plant density are absent. Pest counts are averaged at the same month.
 # Stem height is cm (dictionary). CBSD_Incidence_infected is the percent of roots infected and is stored as root_infection.
 # parasitism-data.csv is kept separate. It has block 1-10 and abbreviated treatments (MandiLeca, ImidaLeca) and no farmer code.
 # Yield file "Imidacloprid+ Lecatech" is aligned to "Imidacloprid + Lecatech".
@@ -14,7 +14,7 @@
 ## ISSUES
 # Root weight is grams per plant, not kg/ha. One Stem_Height is 2 cm (below the usual minimum). One Total_Infected_Roots is 180, which is larger than Total_Root_Number on that row.
 # CMD severity is 1 on every pest-file row. Severity scales are not defined in this dictionary (the companion oil trial uses 1-5, 1 = no symptoms; that scale is not copied here).
-# Parasitism treatments MandiLeca and ImidaLeca are probably Mandiplus + Lecatech and Imidacloprid + Lecatech. They are not renamed, and they are not joined to farmer codes. Their hhid is block_plant, not a farmer code.
+# Parasitism treatments MandiLeca and ImidaLeca are probably Mandiplus + Lecatech and Imidacloprid + Lecatech. They are not renamed, and they are not joined to farmer codes. Their hhid is the block. Plants in a block are averaged within the sample month.
 # Parasitism Month is the constant 3. It is not a calendar date.
 # Mandiplus and Lecatech are not mapped to an active ingredient. No product rates.
 # 10 months after planting does not fit inside the CKAN window 2024-01-01 to 2024-09-01. Planting date is not set.
@@ -26,10 +26,9 @@
 # data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# plant_number_: plant number within the farmer or block.
 # months_after_planting_: 1, 3, 6, or 10 from the Period code (pest file only).
 # stage_: adult or nymph for whitefly counts in the long table.
-# root_weight_g_: fresh root weight per plant, grams.
+# root_weight_g_: mean fresh root weight per plant, grams.
 # root_number_: total roots per plant.
 # root_healthy_: roots classed as healthy.
 # root_infected_: roots classed as CBSD infected. Includes the value 180.
@@ -162,8 +161,103 @@ RTB crops are of strategic importance to the future food security of Africa unde
 		sample_month_ = as.integer(r3$Month)
 	)
 
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	# The long table is linked by record_id. After plants are averaged, that link is rebuilt.
+	# long_by keeps species, date, and stage apart. It does not identify the plant.
+	collapse_plants <- function(d, by, long, long_by) {
+		key_of <- function(x) {
+			do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		}
+		long$plot_key <- key_of(d)[match(long$record_id, d$record_id)]
+		d <- mean_by(d, by)
+		d$plot_key <- key_of(d)
+		d$record_id <- seq_len(nrow(d))
+		long <- mean_by(long, c("plot_key", long_by))
+		long$record_id <- d$record_id[match(long$plot_key, d$plot_key)]
+		stopifnot(!any(is.na(long$record_id)))
+		long$plot_key <- NULL
+		d$plot_key <- NULL
+		list(d = d, long = long)
+	}
+
+	d1$key <- NULL
+	cl <- collapse_plants(
+		d1,
+		c("hhid", "treatment", "trial_id", "crop"),
+		dd,
+		c("months_after_planting_", "pest_species", "stage_", "disease")
+	)
+	d1 <- cl$d
+	dd <- cl$long
+	d3$hhid <- as.character(d3$block_id)
+	d3 <- mean_by(d3, c("hhid", "block_id", "treatment", "trial_id", "sample_month_", "pest_species", "crop"))
+	d3$record_id <- seq_len(nrow(d3)) + nrow(d1)
 	d <- carobiner::bindr(d1, d3)
-	d$key <- NULL
 	d$country <- "Tanzania"
 	d$latitude <- -6.52471
 	d$longitude <- 35.78784

@@ -3,6 +3,7 @@
 
 ## NOTES
 # cassava-root-rot-data.csv: 45 cassava fields, 5 plants each, South, Centre, and Littoral, Cameroon, October 2022.
+# The five plants in a field are averaged. Presence flags stay yes/no when the plants agree, and become the proportion of plants when they do not. Necrosis type and color keep each distinct value.
 # Latitude and longitude are the Lat and Long columns (degrees). root_infection is rotting_incidence (percent of roots).
 # Necrosis severity is the dictionary 1-5 scale. Weediness is 2 on every row (dictionary: 25% weedy). Soil moisture code is 2 (humid) on every row.
 # Field age is months after planting. Dates mix d/m/yyyy (4/10/2022 = 4 Oct) and m/d/yyyy once the day exceeds 12 (10/13/2022 = 13 Oct). Rows that start with 10/ are read as October.
@@ -26,7 +27,6 @@
 ## NEW VARIABLES
 # field_area_: Surf_area as recorded; unit not stated.
 # crop_age_months_: field age in months after planting.
-# plant_number_: plant in the field (1-5).
 # root_number_: total roots on the plant.
 # root_rotten_: rotten roots on the plant.
 # bud_necrosis_: bud necrosis present (1) or absent (0).
@@ -125,6 +125,74 @@ Diagnostic and surveillance network established for characterization, monitoring
 	d$trial_id <- d$hhid
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	d <- mean_by(d, c("plot_id", "location", "date", "variety", "hhid", "trial_id", "country", "adm1", "crop", "disease"))
 
 	carobiner::write_files(path, meta, d)
 }

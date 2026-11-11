@@ -78,11 +78,11 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	d$plant_height <- as.numeric(r$PH)
 
 	## other plot measurements (NEW VARIABLES); per-plot values per ha of harvested area
-	d$yield_marketable_c1_ <- as.numeric(r$MTWCI) * 10000 / harvest_area
-	d$yield_marketable_c2_ <- as.numeric(r$MTWCII) * 10000 / harvest_area
-	d$tuber_density_marketable_ <- as.numeric(r$NMTP) * 10000 / harvest_area
-	d$tuber_density_c1_ <- as.numeric(r$NMTCI) * 10000 / harvest_area
-	d$tuber_density_c2_ <- as.numeric(r$NMTCII) * 10000 / harvest_area
+	#d$yield_marketable_c1_ <- as.numeric(r$MTWCI) * 10000 / harvest_area
+	#d$yield_marketable_c2_ <- as.numeric(r$MTWCII) * 10000 / harvest_area
+	d$tuber_density_marketable <- as.numeric(r$NMTP) * 10000 / harvest_area
+	#d$tuber_density_c1_ <- as.numeric(r$NMTCI) * 10000 / harvest_area
+	#d$tuber_density_c2_ <- as.numeric(r$NMTCII) * 10000 / harvest_area
 	## NS: mean number of stems per plant
 	d$stem_density <- as.numeric(r$NS) * d$plant_density
 	## PC: plant canopy cover (%)

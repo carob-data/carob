@@ -7,7 +7,7 @@
 # 2024-whitefly-virus.csv: those roles are swapped. Block holds the product name, Treatment holds the block number 1-4, Rep is still the plant, Month is 1MAP-6MAP.
 # 2023 product names are aligned to the yield file: control, TopNeem -> TopNeem Ultra, EthaNeem -> EthanolNeem.
 # 2024 names are aligned to the yield file: Ethanol-Neem -> Ethanol Neem, Mandiplus+Ethanol-Neem -> Mandiplus & Ethanol Neem.
-# Root_weight is grams per plant (dictionary). Not converted to kg/ha. CMD and CBSD scores are the dictionary 1-5 scale (1 = no symptoms).
+# Root_weight is grams per plant (dictionary), averaged to year, block, and treatment. Not converted to kg/ha. CMD and CBSD scores are the dictionary 1-5 scale (1 = no symptoms), averaged at the same month.
 # Keele University is an author affiliation. The draft organization "Yale" is not in the metadata.
 # CKAN coverage_x/y are the same point as the other Tanzania whitefly dataset and are not used, because the dictionary places this trial at Dar es Salaam.
 
@@ -24,11 +24,10 @@
 # data_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# plant_number_: plant 1-12 (Rep in the whitefly files, Plant in the yield files).
 # months_after_planting_: 2024 whitefly file only (1-6).
 # observation_month_: 2023 whitefly file, month index 1-6, not labeled MAP.
 # stage_: adult or nymph.
-# root_weight_g_: fresh root weight per plant, grams.
+# root_weight_g_: mean fresh root weight per plant, grams.
 # root_number_: roots harvested per plant.
 # trial_year_: 2023 or 2024.
 
@@ -180,7 +179,99 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 	}
 	dd <- rbind(piece(r1), piece(r3))
 	dd$severity_scale <- ifelse(is.na(dd$disease), NA_character_, "1-5")
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	# The long table is linked by record_id. After plants are averaged, that link is rebuilt.
+	# long_by keeps species, date, and stage apart. It does not identify the plant.
+	collapse_plants <- function(d, by, long, long_by) {
+		key_of <- function(x) {
+			do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		}
+		long$plot_key <- key_of(d)[match(long$record_id, d$record_id)]
+		d <- mean_by(d, by)
+		d$plot_key <- key_of(d)
+		d$record_id <- seq_len(nrow(d))
+		long <- mean_by(long, c("plot_key", long_by))
+		long$record_id <- d$record_id[match(long$plot_key, d$plot_key)]
+		stopifnot(!any(is.na(long$record_id)))
+		long$plot_key <- NULL
+		d$plot_key <- NULL
+		list(d = d, long = long)
+	}
+
 	d$key <- NULL
+	cl <- collapse_plants(
+		d,
+		c("trial_year_", "block_id", "treatment", "trial_id"),
+		dd,
+		c("months_after_planting_", "observation_month_", "pest_species", "stage_", "disease")
+	)
+	d <- cl$d
+	dd <- cl$long
 
 	carobiner::write_files(path, meta, d, dd)
 }
