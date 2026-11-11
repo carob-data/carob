@@ -2,34 +2,23 @@
 # license: GPL (>=3)
 
 ## NOTES
-# 2016 mangrove MET. Each country workbook is one row per genotype at one site.
-# Trait values are continuous. There is no replicate column, so these are not single-plot records.
-# Dictionnary.txt: YIELD is paddy at 14% humidity (t/ha); FLWR is days to 50% flowering;
-# GW1000 is g per 1000 grains; PNL is panicle length (cm).
+# 2016 mangrove MET. Each country workbook has one row per genotype at one site (Kaiaf, Gambia; Koba, Guinea), wet season.
+# Trait values have decimals and there is no replicate column: these are genotype means over the three replicates, not plot records.
+# Dictionnary.txt: YIELD is paddy at 14% humidity (t/ha); FLWR is days to 50% flowering; GW1000 is g per 1000 grains; PNL is panicle length (cm).
+# Coordinates are not in the data. Kaiaf: village in Lower River Region, Gambia (geodatos.net). Koba: Koba-Tatema sub-prefecture, Boffa, Guinea (Wikipedia); the IRAG mangrove rice station is at Koba.
+# Year (2016) is used as planting_date.
 
 ## ISSUES
-# No coordinates, fertilizer rates, or planting/harvest dates in the files. Do not invent them.
-# Sites still need georeferencing: Kaiaf, Koba.
-# The description says three replicates and allows station or hot-spot sites. Files do not mark either.
-# Guinea Koba has 11 genotypes with no yield. One of them, ARS1188-NFL-73-15D-B, has flowering_days about 4.4, below the terminag minimum of 15. Left as recorded. The message also prints 141.553, which is the column maximum and is inside 15-250 days.
-# Checks are not identified.
-# No linked publication in the Dataverse record.
-# write_files: missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# write_files: unknown variables: panicle_length_
-# write_files: out of bounds: flowering_days (4.377, 141.553)
-# write_files: NA detected: yield
+# Guinea Koba: 10 genotypes have no observations and are dropped. ARS1188-NFL-73-15D-B has only FLWR = 4.4 days, which is impossible, and is dropped.
+# Koba FLWR of 135-142 days for four lines (median 105) is left as recorded.
+# Checks are not identified. No fertilizer rates or management data. No linked publication.
 
 ## NOT PROCESSED
 # PS and Trial are M and MET on every row.
-# Year is 2016 on every row and is not a planting date.
-# 2016-M-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
-# Plant height, tillers, biomass, and spikelet fertility are not in these workbooks.
-# 2016-M-MET-Gambia-Kaiaf.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-M-MET-Guinea-Koba.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, YIELD. Observation records are missing from d until this file is standardized.
+# 2016-M-MET-Supplementary information.pdf: LSD, heritability and p-values (ANOVA summary, not records).
 
 ## NEW VARIABLES
 # panicle_length_: panicle length (cm), from PNL
-
 
 carob_script <- function(path) {
 
@@ -57,10 +46,11 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;seed_weight;panicle_length_",
-		carob_date = "2026-10-30",
+		carob_contributor = "Zolo Kiala",
+		carob_date = "2026-11-11",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.5
+		carob_completion = 90,
+		carob_effort = 1
 	)
 
 	xlfiles <- grep("\\.xlsx$", ff, value=TRUE)
@@ -81,16 +71,33 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 	}
 	d <- do.call(rbind, d)
 
-	d$trial_id <- as.character(as.integer(as.factor(paste(d$country, d$location, d$season))))
+	# impossible value (4.4 days); this genotype has no other observations at Koba
+	d$flowering_days[d$flowering_days < 15] <- NA
+	# genotypes not observed at a site
+	d <- d[!is.na(d$yield), ]
+
+	geo <- data.frame(
+		location = c("Kaiaf", "Koba"),
+		adm1 = c("Lower River", "Boké"),
+		adm2 = c(NA, "Boffa"),
+		longitude = c(-15.6167, -13.9),
+		latitude = c(13.4, 9.95),
+		geo_from_source = FALSE
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+
+	d$trial_id <- paste0(d$location, "_2016")
 	d$treatment <- d$variety
 	d$crop <- "rice"
 	d$yield_part <- "grain"
-	# Dictionnary.txt: paddy yield at 14% humidity
 	d$yield_moisture <- 14
+	d$planting_date <- "2016"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	# Dictionnary.txt: M = mangrove, not irrigated
+	# mangrove rice, not irrigated
 	d$irrigated <- FALSE
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
 	carobiner::write_files(path, meta, d)
 }
+
