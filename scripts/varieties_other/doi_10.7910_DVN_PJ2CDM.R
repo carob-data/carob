@@ -46,7 +46,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;seed_weight;panicle_length_",
-		carob_contributor = Zolo Kiala; Perpetue Kouame",
+		carob_contributor = "Zolo Kiala; Perpetue Kouame",
 		carob_date = "2026-11-11",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 90,
