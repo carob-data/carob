@@ -14,7 +14,6 @@
 # write_files: missing variables: yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: country, latitude, longitude.
 
 ## NOT PROCESSED
-# Pedigrí. The short cross formula. It is the start of the long pedigree column.
 # Año Línea. 2019 on every row.
 
 
