@@ -9,44 +9,34 @@
 # Planting and harvest dates in the cleaned sheets are Julian day numbers.
 # They are converted to calendar dates using the 2022/2023 growing season.
 
+
+## NOTES
+# Farm-level survey and crop-cut data for maize and soybean during the 2022-2023 growing season in Malawi, Mozambique and Zambia. The cleaned maize and soybean tables were used for standardized, agronomic observations. 
+# Coordinates and province names were joined, from the raw survey table using X_uuid. Two soybean records had no, matching raw survey record and consequently have missing coordinates. 
+# Planting and harvest dates in the cleaned tables are Julian day numbers. Days 300 to 365 are assigned to 2022, and days 1 to 299 to 2023. Yield is reported as grain dry matter yield in kg/ha. 
+# The source codebook identifies pfert_kgha as P2O5 and kfert_kgha, as K2O. These are converted to elemental P and K, respectively.
+
 carob_script <- function(path) {
   
-  "
-  Maize and soybean farming practices and yields during the 2022-2023 season in Malawi, Mozambique and Zambia
+"
+Maize and soybean farming practices and yields during the 2022-2023 season in Malawi, Mozambique and Zambia
   
-  This dataset describes farming practices in soybean and maize monocrop fields in Malawi, Mozambique and Zambia for the 2022-2023 growing season. Crop cuts were carried out on the fields of farmers participating in the EiA use case, as well as neighbouring farms and farms in non-implementing communities for representativeness. Data are provided as Excel spreadsheets and an .rds file (compatible with R 4.4.1). There is one table with the raw data (as recorded through KoboCollect) and one with the cleaned data used for the related manuscript. Survey data are reproduced as closely as possible to how they were recorded. Secondary data were used as indicated in the codebook.
+This dataset describes farming practices in soybean and maize monocrop fields in Malawi, Mozambique and Zambia for the 2022-2023 growing season. Crop cuts were carried out on the fields of farmers participating in the EiA use case, as well as neighbouring farms and farms in non-implementing communities for representativeness. Data are provided as Excel spreadsheets and an .rds file (compatible with R 4.4.1). There is one table with the raw data (as recorded through KoboCollect) and one with the cleaned data used for the related manuscript. Survey data are reproduced as closely as possible to how they were recorded. Secondary data were used as indicated in the codebook.
   "
       
   uri <- "doi:10.71682/10549347"
   group <- "agronomy"
   ff <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(
-    uri, path, group, major = 1, minor = 0,
-    data_organization = paste(
-      "CIMMYT; IITA; CIFOR-ICRAF; ZARI;",
-      "Department of Agricultural Research Services (DARS), Chitedze, Malawi;",
-      "IIAM"
-    ),
-    publication = "doi.org/10.1016/j.agsy.2026.104740",
+  meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 0,
+    data_organization = "CIMMYT; IITA; CIFOR-ICRAF; ZARI; DARS, IIAM",
+    publication = "doi:10.1016/j.agsy.2026.104740",
     project = NA,
     design = "unitOfAnalysis: Field; timeMethod: Cross-sectional; responseRate: 100%",
     data_type = "survey",
     treatment_vars = "",
     response_vars = "yield",
-    notes = paste(
-      "Farm-level survey and crop-cut data for maize and soybean during the",
-      "2022-2023 growing season in Malawi, Mozambique and Zambia.",
-      "The cleaned maize and soybean tables were used for standardized",
-      "agronomic observations. Coordinates and province names were joined",
-      "from the raw survey table using X_uuid. Two soybean records had no",
-      "matching raw survey record and consequently have missing coordinates.",
-      "Planting and harvest dates in the cleaned tables are Julian day numbers.",
-      "Days 300 to 365 are assigned to 2022, and days 1 to 299 to 2023.",
-      "Yield is reported as grain dry matter yield in kg/ha.",
-      "The source codebook identifies pfert_kgha as P2O5 and kfert_kgha",
-      "as K2O. These are converted to elemental P and K, respectively."
-    ),
+    notes = "",
     carob_contributor = "Emmanuel Ayodele Jolaiya",
     carob_date = "2026-11-10",
     carob_completion = 85,
