@@ -1,6 +1,9 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## REJECTED 
+## only crosses are reported
+
 ## NOTES
 # Bean experimental lines. The title names the crop. The file is a line and pedigree list, not the trial results named in the description.
 # linea is the line name. cruza is the cross code, shared by sister lines. The long pedigree column includes the cross and the selection history, and that is variety_pedigree.
@@ -10,8 +13,10 @@
 ## ISSUES
 # write_files: missing variables: yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA detected: country, latitude, longitude.
 
+## NEW VARIABLES
+# variety_cross_year_, the year the variety was created. No unit.
+
 ## NOT PROCESSED
-# Pedigrí. The short cross formula. It is the start of the long pedigree column.
 # Año Línea. 2019 on every row.
 
 
@@ -62,6 +67,7 @@ Bean experimental lines selected for tolerance to Drought, high temperatures, lo
 		variety_pedigree = squash(r[["Pedigrí + genealogia - opcion1"]]),
 		variety_traits = squash(r$comentario),
 		crop = "common bean",
+		variety_cross_year_ = r[["Año Línea"]],
 		on_farm = NA,
 		is_survey = FALSE,
 		irrigated = NA
