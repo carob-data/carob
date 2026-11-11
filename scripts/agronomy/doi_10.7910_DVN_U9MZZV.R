@@ -1,7 +1,8 @@
 # R script for "carob"
 
 ## ISSUES
-# The yield file has no coordinates; the hard-coded 6.74 N point is outside Ghana's Upper East Region.
+# The data files have no coordinates and no community column, so records cannot be assigned to Nyangua or Tekuru.
+# Coordinates were read from the map in Figure 1 of the paper (doi:10.1002/ird.2454; UTM zone 30N grid): Nyangua 10.9398, -1.0664 and Tekuru 10.9065, -1.0353. All records have the midpoint of the two communities, which are 5 km apart.
 # Nyangua and Tekuru are not columns in the yield file, so trial_id is the planting year only.
 
 ## NEW VARIABLES
@@ -22,7 +23,7 @@ carob_script <- function(path) {
       data_type= "experiment", 
       response_vars= "yield", 
       treatment_vars = "irrigation_scheduling_;irrigation_amount;N_fertilizer;P_fertilizer;K_fertilizer", 
-      carob_contributor= "Cedric Ngakou", 
+      carob_contributor= "Cedric Ngakou;Kiala Zolo", 
       carob_effort = NA,
       carob_date="2024-11-04",
       notes = NA
@@ -96,11 +97,21 @@ carob_script <- function(path) {
    d$inoculated <- FALSE
    d$irrigated <- TRUE
    d$yield_part <- "fruit"
-   # Community-level coordinates (Nyangua / Tekuru area, Upper East Region, Ghana)
-   # Approximate; not field-level.
-   d$latitude <- 10.938
-   d$longitude <- -1.068
-   d$geo_from_source <- FALSE
+#<<<<<<< main
+#   # Community-level coordinates (Nyangua / Tekuru area, Upper East Region, Ghana)
+#   # Approximate; not field-level.
+#   d$latitude <- 10.938
+#   d$longitude <- -1.068
+#   d$geo_from_source <- FALSE
+#=======
+   # results are pooled over the two communities; midpoint of Nyangua and Tekuru, read from Figure 1 of the paper (see ISSUES)
+   d$location <- "Nyangua; Tekuru"
+   d$latitude <- 10.9232
+   d$longitude <- -1.0508
+   d$geo_from_source <- TRUE
+   # half the distance between the communities plus the error of reading the map (m)
+   d$geo_uncertainty <- 3000
+#>>>>>>> main
    
    
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

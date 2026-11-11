@@ -1,5 +1,8 @@
 # R script for "carob"
 
+#ISSUE
+#changes made to latitude for Mahenge – Gounguza (Korogwe), GPS points have identical latitude decimals,
+#but the whole-number part goes up by one each row: −5.085, −4.085, −3.085.
 
 carob_script <- function(path) {
   
@@ -45,11 +48,14 @@ carob_script <- function(path) {
 
 	d$trial_id= as.character(1:nrow(d))
 	
+	d$geo_from_source <- TRUE
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 	d$yield_part <- "grain"
 	d$plant_density <- d$plant_density*400
+	# Mahenge - Gounguza: latitude incremented by Excel fill-down (-5.085, -4.085, -3.085)
+	d$latitude[d$adm3 == "Mahenge - Gounguza"] <- -5.085
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
