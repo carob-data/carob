@@ -34,6 +34,7 @@ carob_script <- function(path) {
   f4 <- ff[basename(ff) == "bdd_kenya_muhaka_lab_climate.csv"]
   f5 <- ff[basename(ff) == "bdd_kenya_muhaka_rpi_climate.csv"]
   f6 <- ff[basename(ff) == "bdd_kenya_muhaka_sf.csv"]
+  
   r1 <- read.csv(f1)
   r2 <- read.csv(f2)
   r3 <- read.csv(f3)
@@ -45,6 +46,7 @@ carob_script <- function(path) {
     location = r1$site,
     date = r1$date,
     pest_species = r1$species,
+    pheromone_change = r1$pheromoneChange,
     pest_incidence = r1$numberOfIndividuals 
   )
   
@@ -52,6 +54,7 @@ carob_script <- function(path) {
     location = r2$site,
     date = r2$date,
     pest_species = r2$species,
+    pheromone_change = r2$pheromoneChange,
     pest_incidence = r2$numberOfIndividuals
   )
   
@@ -107,11 +110,21 @@ carob_script <- function(path) {
     location = r6$site,
     date = r6$date,
     pest_species = r6$species,
+    pheromone_change = r6$pheromoneChange,
     pest_incidence = r6$numberOfIndividuals
   )
   
   d <- carobiner::bindr(d1, d2, d7)
   d <- unique(d)
+  
+  ## pheromone lure: each catch gets the date its lure was installed, per trap (species)
+  ## first survey day counts as installation ("Old blends installed", 2021-11-04)
+  d$date <- as.character(as.Date(d$date))
+  d <- d[order(d$pest_species, d$date), ]
+  d$chg <- d$pheromone_change | !duplicated(d$pest_species)
+  lure <- ave(as.integer(d$chg), d$pest_species, FUN = cumsum)
+  d$pheromone_date <- ave(ifelse(d$chg, d$date, NA), paste(d$pest_species, lure), FUN = function(x) x[1])
+  d$pheromone_change <- d$chg <- NULL
   
   wth <- carobiner::bindr(d3, d4, d5, d6)
   wth$location <- "Muhaka"
@@ -119,7 +132,6 @@ carob_script <- function(path) {
   wth$latitude <- -4.34389
   wth$geo_from_source <- FALSE
   wth$temp[wth$temp > 60] <- NA
-  
   
   d$country <- "Kenya"
   d$adm1 <- "Kwale"
@@ -141,5 +153,5 @@ carob_script <- function(path) {
   
   d$P_fertilizer <- d$K_fertilizer <-d$N_fertilizer <- NA
   
-  carobiner::write_files(path, meta, d, wth = climate_data)
+  carobiner::write_files(path, meta, d, wth = wth)
 }
