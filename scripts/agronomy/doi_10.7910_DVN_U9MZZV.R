@@ -23,7 +23,7 @@ carob_script <- function(path) {
       data_type= "experiment", 
       response_vars= "yield", 
       treatment_vars = "irrigation_scheduling_;irrigation_amount;N_fertilizer;P_fertilizer;K_fertilizer", 
-      carob_contributor= "Cedric Ngakou", 
+      carob_contributor= "Cedric Ngakou;Kiala Zolo", 
       carob_effort = NA,
       carob_date="2024-11-04",
       notes = NA
