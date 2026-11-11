@@ -17,7 +17,6 @@
 # variety_cross_year_, the year the variety was created. No unit.
 
 ## NOT PROCESSED
-# Pedigrí. The short cross formula. It is the start of the long pedigree column.
 # Año Línea. 2019 on every row.
 
 
