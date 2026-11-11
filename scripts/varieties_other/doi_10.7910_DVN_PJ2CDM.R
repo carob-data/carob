@@ -45,7 +45,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;seed_weight;panicle_length_",
+		response_vars = "yield;flowering_days;seed_weight;panicle_length",
 		carob_contributor = "Zolo Kiala; Perpetue Kouame",
 		carob_date = "2026-11-11",
 		carob_LLM = "Cursor Grok 4.7",
@@ -65,7 +65,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 			variety = trimws(r$genotype),
 			flowering_days = if ("flwr" %in% names(r)) as.numeric(r$flwr) else NA_real_,
 			seed_weight = if ("gw1000" %in% names(r)) as.numeric(r$gw1000) else NA_real_,
-			panicle_length_ = if ("pnl" %in% names(r)) as.numeric(r$pnl) else NA_real_,
+			panicle_length = if ("pnl" %in% names(r)) as.numeric(r$pnl) else NA_real_,
 			yield = as.numeric(r$yield) * 1000
 		)
 	}
@@ -87,7 +87,6 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 	d <- merge(d, geo, by = "location", all.x = TRUE)
 
 	d$trial_id <- paste0(d$location, "_2016")
-	d$treatment <- d$variety
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$yield_moisture <- 14
@@ -97,7 +96,8 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 	# mangrove rice, not irrigated
 	d$irrigated <- FALSE
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
-
+    d$trial_id <- d$location
+			
 	carobiner::write_files(path, meta, d)
 }
 
