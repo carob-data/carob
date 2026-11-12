@@ -8,14 +8,15 @@
 # BNI_Nepal_2025.xlsx duplicates Bhairahawa yield components and is not used.
 # Pakistan BNI data_Final agronomic sheet is the same trial as the Islamabad
 # file; Islamabad "Agronomic data" is used for that site.
+# Bhairahawa NDVI header dates cause readxl type warnings. 
+# Site coordinates estimated (not in files). 
+# missing yield_moisture, P_fertilizer, K_fertilizer, harvest_date.
+# Ludhiana sowing date not in the agronomic table. 
 
 ## ISSUES
-# Bhairahawa NDVI header dates cause readxl type warnings. Ludhiana sowing
-# date not in the agronomic table. Soil N batch sheets and canopy NDVI/CT/SPAD
-# not mapped. Site coordinates estimated (not in files). Yellow rust scores
-# not mapped (scale not documented). Ludhiana BIOMASS t/ha omitted (fresh vs dry
-# not stated). write_files: missing yield_moisture, P_fertilizer, K_fertilizer,
-# harvest_date.
+# Soil N batch sheets and canopy NDVI/CT/SPAD not mapped. 
+# Yellow rust scores not mapped (scale not documented). 
+# Ludhiana BIOMASS t/ha omitted (fresh vs dry not stated). 
 
 
 carob_script <- function(path) {
