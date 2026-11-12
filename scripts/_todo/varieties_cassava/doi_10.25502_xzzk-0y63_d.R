@@ -2,11 +2,11 @@
 # license: GPL (>=3)
 
 ## NOTES
-# On-farm cassava clone evaluation at Babessi, Northwest Cameroon. One row per plant per sampling date (9 dates, 1 Sep 2010 through 20 Jul 2011). There is no yield.
+# On-farm cassava clone evaluation at Babessi, Northwest Cameroon. Plants in a variety and replicate are averaged on each sampling date (9 dates, 1 Sep 2010 through 20 Jul 2011). plot_id is variety and replicate. There is no yield.
 # Dates are month/day/year: 10/19/2010 cannot be day-first.
 # Coordinates are degrees and decimal minutes (05°58.831, 010°32.542) converted to decimal degrees. Elevation 1175 m is from the file.
 # Tot_Nym equals NN_WF + YN_WF + BN_WF and does not include Adult_WF, so the nymph total follows the column names. The dictionary text for Adult_WF ("normal nymphs") and NN_WF ("adult whitefly") is the opposite and was not followed.
-# Disease scores are in the long table. CMD severity reaches 10 (a 1-5 scale is the usual IITA score; values were left as recorded).
+# Disease scores are in the long table, as the mean of the plants on that date. CMD severity reaches 10 (a 1-5 scale is the usual IITA score; values were left as recorded).
 
 ## ISSUES
 # No root or shoot yield in this file.
@@ -33,7 +33,6 @@
 # typhlodromalus_aripo_: T_aripo count (0 or 1).
 # wf_damage_score_: whitefly damage score.
 # cmd_infection_type_: CMD_Inf code.
-# plant_number_: plant within replicate.
 
 
 carob_script <- function(path) {
@@ -89,7 +88,7 @@ RTB is a partnership collaboration of five research centers, led by the Internat
 		treatment = r$Variety,
 		rep = as.integer(r$Repetition),
 		plant_number_ = as.integer(r$Plant),
-		plot_id = paste(r$Variety, r$Repetition, r$Plant, sep="_"),
+		plot_id = paste(r$Variety, r$Repetition, sep="_"),
 		adult_wf_ = r$Adult_WF,
 		nn_wf_ = r$NN_WF,
 		yn_wf_ = r$YN_WF,
@@ -120,6 +119,99 @@ RTB is a partnership collaboration of five research centers, led by the Internat
 	long$id <- NULL
 	long <- long[!is.na(long$disease_severity), ]
 	long$date <- d$date[match(long$record_id, d$record_id)]
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	# The long table is linked by record_id. After plants are averaged, that link is rebuilt.
+	# long_by keeps species, date, and stage apart. It does not identify the plant.
+	collapse_plants <- function(d, by, long, long_by) {
+		key_of <- function(x) {
+			do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		}
+		long$plot_key <- key_of(d)[match(long$record_id, d$record_id)]
+		d <- mean_by(d, by)
+		d$plot_key <- key_of(d)
+		d$record_id <- seq_len(nrow(d))
+		long <- mean_by(long, c("plot_key", long_by))
+		long$record_id <- d$record_id[match(long$plot_key, d$plot_key)]
+		stopifnot(!any(is.na(long$record_id)))
+		long$plot_key <- NULL
+		d$plot_key <- NULL
+		list(d = d, long = long)
+	}
+
+	cl <- collapse_plants(
+		d,
+		c("trial_id", "variety", "treatment", "rep", "plot_id", "date", "location"),
+		long,
+		c("disease", "date")
+	)
+	d <- cl$d
+	long <- cl$long
 
 	carobiner::write_files(path, meta, d, long=long)
 }

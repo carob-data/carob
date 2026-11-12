@@ -3,7 +3,7 @@
 
 ## NOTES
 # Okra germplasm evaluated for aphids and other insects at Buea, Evodoula, Foumbot and Maroua, Cameroon.
-# One row is one plant on one observation date. There is no yield.
+# Plants in a plot on one observation date are averaged. There is no yield. The two Camponotus columns stay separate.
 # Observation dates are day/month/year (14/05/2014 is unambiguous). Many ObsDate values are missing; ObsDay (1-7) is kept separately.
 # Season 1/2 mapped to terminag first/second. Country is Cameroon from the dictionary.
 # Aphid columns are described as counts. The values only reach 0-6, so they may be a score rather than a raw count. Stored as pest_incidence because the dictionary says "number".
@@ -27,7 +27,6 @@
 # stratum_: bottom, middle, top or apex of the plant for insect counts and leaf size.
 # obs_day_: ObsDay, 1-7, not a calendar date.
 # bot_leaf_length_, bot_leaf_width_, mid_leaf_length_, mid_leaf_width_, top_leaf_length_, top_leaf_width_: leaf size, unit not stated.
-# plant_number_: plant within the plot.
 
 
 carob_script <- function(path) {
@@ -86,13 +85,14 @@ IPM of aphid pests of vegetables
 		record_id = seq_len(nrow(r))
 	)
 
-	add_pest <- function(value, species, stratum, severity=NULL) {
+	add_pest <- function(value, species, stratum, severity=NULL, tag=1L) {
 		out <- data.frame(
 			record_id = d$record_id,
 			pest_species = species,
 			stratum_ = stratum,
 			pest_incidence = as.integer(round(value)),
-			pest_severity = if (is.null(severity)) NA_character_ else as.character(severity)
+			pest_severity = if (is.null(severity)) NA_character_ else as.character(severity),
+			tag_ = tag
 		)
 		out[!is.na(value), ]
 	}
@@ -113,7 +113,7 @@ IPM of aphid pests of vegetables
 		add_pest(r$Mil, "mealybug", NA),
 		add_pest(r$Ph, "Pheidole", NA),
 		add_pest(r$Camp1, "Camponotus", NA),
-		add_pest(r$Camp2, "Camponotus", NA),
+		add_pest(r$Camp2, "Camponotus", NA, tag=2L),
 		add_pest(r$Myr, "Myrmicaria", NA),
 		add_pest(r$SmallRed, "small red ant", NA)
 	)
@@ -123,11 +123,106 @@ IPM of aphid pests of vegetables
 		pest_species = "aphid",
 		stratum_ = NA_character_,
 		pest_incidence = NA_integer_,
-		pest_severity = as.character(r$AphidDamSev)
+		pest_severity = as.character(r$AphidDamSev),
+		tag_ = 1L
 	)
 	aph <- aph[!is.na(r$AphidDamSev), ]
 	long <- rbind(long, aph)
 	long$date <- d$date[match(long$record_id, d$record_id)]
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	# The long table is linked by record_id. After plants are averaged, that link is rebuilt.
+	# long_by keeps species, date, and stage apart. It does not identify the plant.
+	collapse_plants <- function(d, by, long, long_by) {
+		key_of <- function(x) {
+			do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		}
+		long$plot_key <- key_of(d)[match(long$record_id, d$record_id)]
+		d <- mean_by(d, by)
+		d$plot_key <- key_of(d)
+		d$record_id <- seq_len(nrow(d))
+		long <- mean_by(long, c("plot_key", long_by))
+		long$record_id <- d$record_id[match(long$plot_key, d$plot_key)]
+		stopifnot(!any(is.na(long$record_id)))
+		long$plot_key <- NULL
+		d$plot_key <- NULL
+		list(d = d, long = long)
+	}
+
+	cl <- collapse_plants(
+		d,
+		c("location", "trial_id", "season", "date", "obs_day_", "rep", "plot_id", "variety", "treatment"),
+		long,
+		c("pest_species", "stratum_", "date", "tag_")
+	)
+	d <- cl$d
+	long <- cl$long
+	long$tag_ <- NULL
 
 	carobiner::write_files(path, meta, d, long=long)
 }

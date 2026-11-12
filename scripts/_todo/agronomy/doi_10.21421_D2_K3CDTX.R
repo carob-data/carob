@@ -2,8 +2,8 @@
 # license: GPL (>=3)
 
 ## NOTES
-# ICRISAT station trial of rabi sorghum at Patancheru. Each wide-table row is one destructively sampled plant. plant_number_ is the sample index within the plot, not one plant followed through the season.
-# The wide table is the experiment sheet, with final-harvest total-crop measurements joined on plot and plant. The long table is every growth sample. Weather is passed separately.
+# ICRISAT station trial of rabi sorghum at Patancheru. Destructively sampled plants are averaged to the plot. The long table is averaged within the plot and DAP, so sampling dates stay separate.
+# The wide table is the experiment sheet, with final-harvest total-crop measurements joined on plot and plant and then averaged to the plot. Weather is passed separately.
 # Plant density in the sheet is plants/m2 and is stored as plants/ha. Row spacing stays in cm.
 # A fertilizer grade in the sheet is N-P2O5-K2O. Elemental P is P2O5/2.29 and K is K2O/1.2051. Product amounts are kg/ha. Urea with no grade uses 46% N. DAP with no grade uses the terminag composition (18% N, 20.1% P). Ammonium phosphate with no grade is stored as MAP at the terminag composition (11% N, 26.9% P). K_fertilizer is 0 when only those products were applied.
 # Dates are Excel serials (origin 1899-12-30), a rabi day-of-year (1-366: day >= 180 is the season start year, otherwise the next year), or d-m-yyyy.
@@ -22,7 +22,7 @@
 # Radiation is assumed to be MJ/m2 before converting to kJ/m2. Confirm for the years whose weather sheet does not name the unit.
 # adm1 and adm2 are not in the files.
 # carob_contributor is unset until someone has read this script.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude; unknown panicle_yield_, plant_number_, tiller_number_, sla_; flowering_days (79, 385); harvest_index up to 218; NA yield; site BM8-A flagged as all uppercase; harvest columns are also on the long table.
+# write_files: missing carob_contributor, yield_moisture, latitude, longitude; unknown panicle_yield_, tiller_number_, sla_; flowering_days (79, 385); harvest_index up to 218; NA yield; site BM8-A flagged as all uppercase; harvest columns are also on the long table.
 # Plants with no grain weight are kept. Flowering dates outside the terminag range are kept as recorded.
 # No latitude or longitude in this dataset. Do not copy them from another year.
 # The workbook comments that the ammonium phosphate NPK grade is uncertain. The grade written on the sheet, 11-52-0, was used as N-P2O5-K2O.
@@ -42,7 +42,6 @@
 # Rabi Sorghum 2013-14 complete dataset.xls: not read. sheet Dataverse (of 11): Title, Patancheru_multifactorial treatments_rabi_sorghum_2013-2014, sequential observations of agronomicaly important traits during cropping season. Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
-# plant_number_: destructive sample index within the plot
 # grain_number_: grains per plant, total crop
 # sla_: specific leaf area (cm2/g)
 # panicle_yield_: panicle weight (kg/ha)
@@ -748,7 +747,7 @@ Sequential observations of agronomicaly important traits during cropping season 
 		g$crop <- "sorghum"
 		g$yield_part <- "grain"
 		# Keep the time series even when grain is still absent.
-		long_vars <- c("trial_id", "plot_id", "plant_number_", "variety", "treatment", "DAP", "growth_stage",
+		long_vars <- c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage",
 			"yield", "dmy_residue", "dmy_total", "dmy_leaves", "dmy_stems", "panicle_yield_", "LAI",
 			"harvest_index", "seed_weight", "grain_number_", "sla_", "tiller_number_")
 		long <- g[, intersect(long_vars, names(g))]
@@ -776,6 +775,75 @@ Sequential observations of agronomicaly important traits during cropping season 
 			}
 			if ("site" %in% names(d)) wth$site <- d$site[1]
 		}
+		# Average one row per plant to one row per group in `by`.
+		# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+		# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+		mean_by <- function(x, by) {
+			if (!nrow(x)) return(x)
+			if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+			if ("record_id" %in% names(x)) x$record_id <- NULL
+			by <- intersect(by, names(x))
+			key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+			mean_na <- function(z) {
+				z <- as.numeric(z)
+				if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+			}
+			keep <- !duplicated(key)
+			out <- x[keep, , drop = FALSE]
+			num <- vapply(x, is.numeric, TRUE)
+			logi <- vapply(x, is.logical, TRUE)
+			num[names(num) %in% by] <- FALSE
+			logi[names(logi) %in% by] <- FALSE
+			for (v in names(x)[num]) {
+				m <- tapply(x[[v]], key, mean_na)
+				m <- unname(m[key[keep]])
+				if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+					m <- as.integer(round(m))
+				}
+				out[[v]] <- m
+			}
+			for (v in names(x)[logi]) {
+				same <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					!length(z) || all(z == z[1])
+				})
+				if (isTRUE(all(same))) {
+					m <- tapply(x[[v]], key, function(z) {
+						z <- z[!is.na(z)]
+						if (!length(z)) NA else z[1]
+					})
+					out[[v]] <- unname(m[key[keep]])
+				} else {
+					m <- tapply(as.numeric(x[[v]]), key, mean_na)
+					out[[v]] <- unname(m[key[keep]])
+				}
+			}
+			for (v in names(x)) {
+				if (v %in% by || num[v] || logi[v]) next
+				u <- tapply(as.character(x[[v]]), key, function(z) {
+					z <- z[!is.na(z)]
+					z <- trimws(z)
+					z <- z[nzchar(z)]
+					if (!length(z)) return(NA_character_)
+					if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+						return(as.character(mean(as.Date(z))))
+					}
+					isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+					parts <- character()
+					if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+					codes <- unique(z[!isn])
+					parts <- c(parts, codes)
+					if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+				})
+				out[[v]] <- unname(u[key[keep]])
+			}
+			rownames(out) <- NULL
+			out
+		}
+
+		d <- mean_by(d, "plot_id")
+		long <- mean_by(long, c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage", "crop", "yield_part"))
+
 		list(d = d, long = long, wth = wth, info = ex)
 	}
 
@@ -799,7 +867,7 @@ Sequential observations of agronomicaly important traits during cropping season 
 	if ("site" %in% names(d) && all(is.na(d$site))) d$site <- NULL
 	if ("rep" %in% names(d) && all(is.na(d$rep))) d$rep <- NULL
 	if (!is.null(wth) && "site" %in% names(wth) && all(is.na(wth$site))) wth$site <- NULL
-	id_cols <- c("trial_id", "plot_id", "plant_number_", "variety", "treatment", "DAP", "growth_stage", "crop", "yield_part")
+	id_cols <- c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage", "crop", "yield_part")
 	for (v in setdiff(names(long), id_cols)) {
 		if (all(is.na(long[[v]]))) long[[v]] <- NULL
 	}

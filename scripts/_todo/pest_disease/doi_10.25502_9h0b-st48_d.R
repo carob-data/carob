@@ -3,6 +3,7 @@
 
 ## NOTES
 # effect-of-neem-seed-oil csv, read as Latin-1. Weekly counts on cabbage (chou) and kale, Cameroon, 22 Nov 2016 to 18 Feb 2017, 4 blocks, 5 plants.
+# The five plants in a block are averaged on each week. Long-table counts are the mean for that block, week, leaf position, and stage.
 # Treatments in the file are dose 1, dose 2, dose 3, and témoin (stored as control). The dose amounts are not in the table.
 # engrais is fiente on every row, stored as poultry manure. No rate, so no N/P/K.
 # Outer-leaf and inner-leaf counts are in the long table. Damage scores (dégats_*) are pest_severity in that same table.
@@ -26,8 +27,7 @@
 # effect-of-neem-seed-oil-at-different-dos_dictionary.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# plant_number_: plant 1-5 in the block.
-# leaf_number_: leaves on the plant (nbre_de_feuilles).
+# leaf_number_: mean leaves on the sampled plants (nbre_de_feuilles).
 # leaf_position_: outer or inner leaves.
 # insect_stage_: apterous, alate, larva, pupa, or damage.
 # organism_role_: pest, predator, or pathogen.
@@ -146,6 +146,99 @@ Prelinimary testing of plant extracts as insecticides in organic cultivation
 		piece(39, "entomopathogen", "inner", NA, "pathogen", "count")
 	)
 	dd <- dd[!(is.na(dd$pest_incidence) & is.na(dd$pest_severity)), ]
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	# The long table is linked by record_id. After plants are averaged, that link is rebuilt.
+	# long_by keeps species, date, and stage apart. It does not identify the plant.
+	collapse_plants <- function(d, by, long, long_by) {
+		key_of <- function(x) {
+			do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		}
+		long$plot_key <- key_of(d)[match(long$record_id, d$record_id)]
+		d <- mean_by(d, by)
+		d$plot_key <- key_of(d)
+		d$record_id <- seq_len(nrow(d))
+		long <- mean_by(long, c("plot_key", long_by))
+		long$record_id <- d$record_id[match(long$plot_key, d$plot_key)]
+		stopifnot(!any(is.na(long$record_id)))
+		long$plot_key <- NULL
+		d$plot_key <- NULL
+		list(d = d, long = long)
+	}
+
+	cl <- collapse_plants(
+		d,
+		c("date", "order", "crop", "growth_stage", "treatment", "block_id", "trial_id"),
+		dd,
+		c("pest_species", "leaf_position_", "insect_stage_", "organism_role_")
+	)
+	d <- cl$d
+	dd <- cl$long
 
 	carobiner::write_files(path, meta, d, dd)
 }

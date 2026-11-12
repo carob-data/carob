@@ -3,12 +3,13 @@
 
 ## NOTES
 # Field trials and farmer plots of seed degeneration in Ecuador. Tuber weight in the harvest file is g per plant (dictionary), so it is not stored as yield in kg/ha.
+# Harvest plants are averaged. Tuber counts and weight are means per plant, and the 0/1 symptom columns are the proportion of plants. ELISA and aphid rows are not plant records.
 # Coordinates, altitude, and planting and harvest dates come from Locations_Data. Virus columns are DAS-ELISA incidence coded 0 or 1.
 # Weather Temp is degrees C. The dictionary describes rain as cubic millimeters per hour and also labels the unit m3. The number is kept as recorded and is not stored as precipitation in mm. HR has no unit in the dictionary.
 
 ## ISSUES
 # No fertilizer rates. Plot area in the description is 49 m2, and plants per plot are not in the harvest file, so g/plant was not converted to kg/ha.
-# write_files: missing carob_contributor, hhid. unknown variables: seed_management_, cycle_, plot_manager_, plant_number_, tuber_number_, tuber_weight_g_, the tuber-symptom columns, the virus columns, aphid_count_, humidity_, rain_recorded_.
+# write_files: missing carob_contributor, hhid. unknown variables: seed_management_, cycle_, plot_manager_, tuber_number_, tuber_weight_g_, the tuber-symptom columns, the virus columns, aphid_count_, humidity_, rain_recorded_.
 
 ## NOT PROCESSED
 # None of the measurement sheets were dropped. The dictionary workbook is documentation.
@@ -16,8 +17,8 @@
 
 ## NEW VARIABLES
 # seed_management_: positive selection, roguing, or random selection.
-# tuber_weight_g_, tuber_number_: grams and tubers per plant.
-# Virus incidence columns and tuber-symptom columns: proportion or 0/1 as recorded.
+# tuber_weight_g_, tuber_number_: mean grams and tubers per plant.
+# Harvest symptom columns are the proportion of plants. Virus columns stay 0/1 as recorded.
 # aphid_count_: aphids in the trap.
 # humidity_, rain_recorded_: weather columns whose units are not stated as percent and mm.
 
@@ -97,6 +98,74 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		planting_date = as.character(as.Date(r1[["Planting date"]][ih])),
 		harvest_date = as.character(as.Date(r1[["Harvest date"]][ih]))
 	)
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	d1 <- mean_by(d1, c("variety", "seed_management_", "location", "cycle_", "plot_manager_", "planting_date", "harvest_date"))
 
 	r3 <- carobiner::read.excel(f("ELISA_Data_Potato_seed_degeneration_in_Ecuador.xls"), sheet="ELISA Data")
 	ie <- match(paste(r3$Cycle, r3$Control, r3$Location), r1$key)

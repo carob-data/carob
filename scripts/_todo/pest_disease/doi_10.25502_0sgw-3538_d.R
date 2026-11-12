@@ -3,7 +3,7 @@
 
 ## NOTES
 # On-station CRBD at IITA-Benin (2008-11-18 to 2009-01-19): GF-120 bait vs untreated, 3 blocks.
-# ff-counts-on-resting-plants.csv: fruit-fly and aphid counts on border roosts (sorghum, castor bean).
+# ff-counts-on-resting-plants.csv: fruit-fly and aphid counts on border roosts (sorghum, castor bean). The two roost plants are averaged. Fruit incubation rows are not.
 # fruits-incubation-data.csv: zucchini and watermelon samples (10 fruits), infestation, fruit weight, emerged adults.
 # pest_incidence on each row is the sum of the species counts in the long table (males and females kept separate there).
 # CKAN coverage_x 6.4428 and coverage_y 2.55 are used as latitude and longitude (that pair is in southern Benin).
@@ -27,8 +27,7 @@
 # fruits_infested_: number of those fruits infested.
 # fruit_infestation_: 100 * fruits_infested / fruits_sampled.
 # pupae_: total pupae from the incubated sample.
-# petiole_exudate_: number of petioles with exudate on the roost plant.
-# plant_number_: roost plant number (1 or 2).
+# petiole_exudate_: mean number of petioles with exudate on the roost plants.
 # sex_: male or female for a fruit-fly count in the long table.
 
 
@@ -161,6 +160,83 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 	dd <- carobiner::bindr(dd, aph)
 	dd <- dd[!is.na(dd$pest_incidence), ]
 	dd$date <- d$date[match(dd$record_id, d$record_id)]
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	plant <- !is.na(d$plant_number_)
+	d$plot_key <- ifelse(plant, paste(d$date, d$treatment, d$block_id, d$crop, d$growth_stage, sep = "\r"), paste0("row", d$record_id))
+	dd$plot_key <- d$plot_key[match(dd$record_id, d$record_id)]
+	d <- mean_by(d, "plot_key")
+	d$record_id <- seq_len(nrow(d))
+	dd <- mean_by(dd, c("plot_key", "pest_species", "sex_", "date"))
+	dd$record_id <- d$record_id[match(dd$plot_key, d$plot_key)]
+	stopifnot(!any(is.na(dd$record_id)))
+	dd$plot_key <- NULL
+	d$plot_key <- NULL
 
 	carobiner::write_files(path, meta, d, dd)
 }

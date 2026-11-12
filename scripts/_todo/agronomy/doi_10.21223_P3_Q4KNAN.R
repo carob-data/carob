@@ -4,16 +4,15 @@
 ## NOTES
 # UNICA potato irrigation experiment. Geographic coverage is Peru, Lima, La Molina. The published bounding box gives only the south and west corner, so that single corner is used for this one site with geo_uncertainty 2000.
 # The dictionary expands DR to drip irrigation and FU to furrow irrigation. Treatment 1 is full irrigation, 2 is a stomatal-conductance threshold of 0.15, and 3 is a threshold of 0.05. Those thresholds are not a fertilizer rate.
-# Harvest workbook weights are fresh and dry mass of one plant (leaf, stem, root, tuber). The dictionary shipped with the files does not state the unit, so they are not converted to kg/ha.
+# Harvest workbook weights are fresh and dry mass of one plant (leaf, stem, root, tuber), averaged across plants harvested on the same day. Sequential harvests stay separate. The dictionary shipped with the files does not state the unit, so they are not converted to kg/ha.
 
 ## ISSUES
 # Plant mass has no stated unit, so there is no yield.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: plant_number_, fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_, dry_leaf_, dry_stem_, dry_root_, dry_tuber_.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_, dry_leaf_, dry_stem_, dry_root_, dry_tuber_.
 
 ## NEW VARIABLES
-# fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_: fresh mass of one plant, unit not stated.
-# dry_leaf_, dry_stem_, dry_root_, dry_tuber_: dry mass of one plant, unit not stated.
-# plant_number_: plant index within the plot.
+# fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_: mean fresh mass of the plants harvested that day, unit not stated.
+# dry_leaf_, dry_stem_, dry_root_, dry_tuber_: mean dry mass of the plants harvested that day, unit not stated.
 
 ## NOT PROCESSED
 # Canopy cover, photosynthesis, isotopes, irrigation volume, and PRI workbooks. Irrigation volume is not joined because this table is the sequential harvest, and the volume unit is not applied here.
@@ -96,6 +95,74 @@ Field experiment to compare physiological performance and crop yield among diffe
 		is_survey = FALSE
 	)
 	rownames(d) <- NULL
+
+	# Average one row per plant to one row per group in `by`.
+	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
+	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+	mean_by <- function(x, by) {
+		if (!nrow(x)) return(x)
+		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
+		if ("record_id" %in% names(x)) x$record_id <- NULL
+		by <- intersect(by, names(x))
+		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
+		mean_na <- function(z) {
+			z <- as.numeric(z)
+			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
+		}
+		keep <- !duplicated(key)
+		out <- x[keep, , drop = FALSE]
+		num <- vapply(x, is.numeric, TRUE)
+		logi <- vapply(x, is.logical, TRUE)
+		num[names(num) %in% by] <- FALSE
+		logi[names(logi) %in% by] <- FALSE
+		for (v in names(x)[num]) {
+			m <- tapply(x[[v]], key, mean_na)
+			m <- unname(m[key[keep]])
+			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
+				m <- as.integer(round(m))
+			}
+			out[[v]] <- m
+		}
+		for (v in names(x)[logi]) {
+			same <- tapply(x[[v]], key, function(z) {
+				z <- z[!is.na(z)]
+				!length(z) || all(z == z[1])
+			})
+			if (isTRUE(all(same))) {
+				m <- tapply(x[[v]], key, function(z) {
+					z <- z[!is.na(z)]
+					if (!length(z)) NA else z[1]
+				})
+				out[[v]] <- unname(m[key[keep]])
+			} else {
+				m <- tapply(as.numeric(x[[v]]), key, mean_na)
+				out[[v]] <- unname(m[key[keep]])
+			}
+		}
+		for (v in names(x)) {
+			if (v %in% by || num[v] || logi[v]) next
+			u <- tapply(as.character(x[[v]]), key, function(z) {
+				z <- z[!is.na(z)]
+				z <- trimws(z)
+				z <- z[nzchar(z)]
+				if (!length(z)) return(NA_character_)
+				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
+					return(as.character(mean(as.Date(z))))
+				}
+				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+				parts <- character()
+				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
+				codes <- unique(z[!isn])
+				parts <- c(parts, codes)
+				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
+			})
+			out[[v]] <- unname(u[key[keep]])
+		}
+		rownames(out) <- NULL
+		out
+	}
+
+	d <- mean_by(d, c("plot_id", "DAP", "treatment", "irrigation_method", "trial_id", "variety", "crop", "location"))
 
 	carobiner::write_files(path, meta, d)
 }
