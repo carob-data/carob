@@ -1,0 +1,1336 @@
+variable,action,variable,scripts,description
+ears_per_plant_,include,,20,ears per plant (EPP). Unit: ears/plant
+plant_number_,remove (use for computation),,18,destructive sample index within the plot
+cavan_weight_,remove (use for computation),,12,"kilograms per cavan at harvest (KGCAV), used by the data providers to convert cavans to kg"
+harvest_month_,,harvest_date,12,month (3-letter abbreviation) of planting and harvest
+harvest_week_,,harvest_date,12,week of the month (1st-4th) of planting and harvest
+seedbed_method_,include,,12,"Seeds METHOD as recorded (dapog, wetbed, drybed, direct seeding)"
+biomass_kg_ha_,,biomass,11,"above-ground biomass from the grain sheet, t/ha converted to kg/ha. Fresh or dry is not stated on the column"
+land_type_,include,,11,lowland or upland parcel
+planting_month_,,planting_date,11,month (3-letter abbreviation) of planting and harvest
+survey_year_,,date,11,YEAR label of the survey round (for the dry season this is not always the planting year)
+planting_week_,,planting_date,9,week of the month (1st-4th) of planting and harvest
+crop_label_,,variety_type,10,original crop label
+,,,,
+plants_harvested_,,,10,"NPH, plants per plot"
+tiller_number_,,,9,tillers per plant
+grain_number_,,,8,"grains per plant, total crop"
+panicle_length_,,,8,"panicle length, cm"
+panicle_yield_,,,8,panicle weight (kg/ha)
+sla_,,,8,specific leaf area (cm2/g)
+dehydrogenase_,,,7,dehydrogenase (µg TPF g-1 soil 24 h-1)
+season_label_,,,7,season label such as 2013-14
+topography_,,,7,"lowland flat, upland flat, upland sloping, pond"
+canopy_temperature_,,,6,"CT columns, degrees C"
+education_years_,,,6,years of education of the operator
+residue_price_,,,6,price of rice straw (currency/kg)
+season_code_,,,6,season code as printed (LR or LR2)
+survey_module_,,,6,"source table of the record (""rice variety"", ""land use"" or ""largest parcel"")"
+village_stress_,,,6,"stress domain of the sampled village (Submergence, Drought, Saline-affected, Salinity-controlled)"
+area_reported_,,,5,crop area as recorded; unit not stated
+evaporation_mm_,,,5,"Evap column (mm) in the 1975-2009 and 2010-2012 files. The metadata unit cell is blank, and the 2001 Agua Fria sister file labels the same name as evaporation"
+pesticide_times_,,,5,number of pesticide applications
+plant_population_,,,5,"NPLE, plants per plot"
+planting_pattern_,,,5,Farmchar PLANT SPACING (straight-row vs ordinary/random planting)
+record_type_,,,5,"""parcel"" (LANDU) or ""household"" (AGPRAC/LABOR/PROD sheets)"
+sound_mature_kernel_,,,5,SMK as recorded
+stage_,,,5,adult or nymph
+survey_group_,,,5,household category as recorded (intervention or control)
+establishment_method_,,,4,"rice crop establishment code (TPR = transplanted, DSR = dry direct seeded, WSR = wet direct seeded)"
+farm_size_class_,,,4,"sampling stratum (L=large, M=medium, S=small, Mg=marginal)"
+fertilizer_codes_,,,4,raw fertilizer kind codes reported by the household (wet season)
+fertilizer_times_,,,4,number of fertilizer applications
+flowering_dae_,,,4,days from emergence to flowering
+harvest_kg_,,,4,weekly harvest in kg where the column says Kg
+kernel_rows_,,,4,number of kernel rows on the cob
+leaf_area_cm2_,,,4,leaf area (cm2)
+leaf_weight_g_,,,4,leaf weight (g)
+maturity_dae_,,,4,days from emergence to maturity
+pod_number_plant_,,,4,pods per plant
+pod_weight_,,,4,"pod weight at harvest, g/plant"
+post_herbicide_l_ha_,,,4,"post-emergence product rate (L/ha). NA for Paraquat, hoe, and untreated"
+pre_herbicide_l_ha_,,,4,pre-emergence product rate (L/ha)
+production_,,,4,"rice (palay) production of the parcel, cavans"
+selection_cycle_,,,4,"recurrent-selection cycle on the material list (Cycle_0, Cycle_I, Cycle_2, Cycle_3). Cycle_I is the source spelling"
+share_output_,,,4,"Farmchar SHARE OUTPUT (crop share arrangement, e.g. 50:50)"
+sprout_density_,,,4,cassava sprouts (plants/ha) at that DAP
+stay_green_,,,4,stay-green score (STGR). Missing on the optimal file. Unit: score
+subcounty_,,,4,sub-county name
+tuber_,,,4,"tuber mineral, mg/kg dry weight"
+tuber_ascorbate_dw_,,,4,"ascorbic acid, mg/100 g"
+tuber_ascorbate_fw_,,,4,"ascorbic acid, mg/100 g"
+tuber_number_,,,4,tubers per plant
+variety_adoption_year_,,,4,year the household started using the variety
+variety_source_,,,4,information source for the variety
+variety_trait_,,,4,"labelled trait of the improved variety (high yielding, flood-tolerant, …)"
+weed_control_,,,4,"total visual control, treated as percent (see NOTES)"
+weed_control_broadleaf_,,,4,"broadleaf control, same scale"
+weed_control_grass_,,,4,"grass control, same scale"
+weed_control_sedge_,,,4,"sedge control, same scale"
+weed_dmy_broadleaf_,,,4,"broadleaf weed biomass (kg/ha), treated as dry matter"
+weed_dmy_grass_,,,4,grass weed biomass (kg/ha)
+weed_dmy_sedge_,,,4,sedge weed biomass (kg/ha)
+week_,,,4,"0 = initial count, 1-4 = weeks after treatment"
+years_using_variety_,,,4,reported years using the variety (c_year_adoption)
+area_covers_both_seasons_,,,3,"TRUE for coffee, where one area is repeated on both season rows"
+block_,,,3,block number on the cover-score rows
+crop_year_,,,3,YEAR in LANDU
+cropping_system_,,,3,sequence code from the System Yield sheet
+cycle_,,,3,"crop cycle 1, 2, or 3"
+dm_recorded_,,,3,DM as recorded
+ears_harvested_,,,3,ears harvested per plot (E_HARV). Unit: ears/plot
+fertilizer_amount_,,,3,raw min_fert_amount (unit not in the dictionary)
+fertilizer_product_kg_,,,3,sum of Qty_fert_kg and Qty_fert2_used (kg of product on the plot)
+household_size_,,,3,
+interview_date_,,,3,date of interview (A16)
+kernels_per_cob_,,,3,kernels per cob
+land_cultivated_,,,3,"household total land under crops, as recorded"
+land_owned_,,,3,"household total land owned, as recorded"
+late_blight_pct_,,,3,percent of foliage affected at that reading
+late_blight_saudpc_,,,3,SAUDPC column as recorded
+leaf_area_,,,3,"leaf area at 60 DAS, cm2/plant"
+leaf_number_,,,3,number of leaves on the measured plant
+leaf_weight_,,,3,"leaf weight at 60 DAS, g/plant"
+leaf_wet_,,,3,"leaf wetness sensor, 0 to 15"
+local_crop_,,,3,crop name as written when it is not mapped to the crop list
+maize_density_,,,3,maize plants/ha at that DAP
+marketable_root_density_,,,3,marketable cassava roots per ha
+months_after_planting_,,,3,2024 whitefly file only (1-6)
+par_,,,3,"photosynthetically active radiation, as recorded"
+parish_,,,3,parish name
+plant_id_,,,3,plant number within the plot
+plant_stand_,,,3,"final plant stand, plants per plot"
+pod_number_,,,3,filled pods per plant at harvest
+population_,,,3,accession or population name when it is not the clone
+primary_trait_,,,3,"breeding group on the clone row (TPS, LB, BW, and the other sheet labels)"
+reading_,,,3,"which repeated measurement the long row came from (150days, 250days, NDVI1, NDVI2)"
+rice_type_,,,3,"japonica, indica or hybrid rice"
+root_number_,,,3,roots harvested per plant
+saturation_pct_,,,3,"saturation percentage, gravimetric maximum water content, percent"
+seed_mass_,,,3,"seed weight at harvest, g/plant"
+seed_number_,,,3,seeds per plant at harvest
+seed_number_plant_,,,3,seeds per plant
+seed_quantity_,,,3,quantity of seed used per ha (unit not given)
+seeds_per_pod_,,,3,seeds per pod
+set_,,,3,mating-design set (A-F). Unit: none
+shoot_weight_g_plant_,,,3,shoot weight (g/plant)
+soil_moist_,,,3,"soil moisture sensor, percent"
+soil_temp1_,,,3,"soil temperature sensors, C"
+soil_temp2_,,,3,"soil temperature sensors, C"
+soil_temp3_,,,3,"soil temperature sensors, C"
+stem_weight_,,,3,"stem weight at 60 DAS, g/plant"
+taxon_,,,3,insect taxon in the count table
+tillers_plant_,,,3,"number of tillers per plant (TNAU, NOT)"
+tuber_dry_matter_vitamin_,,,3,"dry matter from the vitamin C file, percent"
+tuber_Fe_dw_,,,3,"iron, mg/kg DW"
+tuber_Fe_fw_,,,3,"iron, mg/100g fresh weight"
+tuber_Zn_dw_,,,3,"zinc, mg/kg DW"
+tuber_Zn_fw_,,,3,"zinc, mg/100g fresh weight"
+village_code_,,,3,numeric admin codes
+ward_,,,3,ward number. adm3 is the municipality (Gurbhakot or Halesi Tuwachung)
+weed_dmy_,,,3,total weed biomass (kg/ha)
+wind_dir_max_,,,3,"direction of the maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name"
+yield_reported_,,,3,crop harvest as recorded; unit not stated
+aboveground_biomass_,,,2,"masec_n time series, kg/ha. Wide dmy_total is the value on the yield date"
+agroecosystem_,,,2,forest or transition forest-savannah
+altitude_band_,,,2,R_Alt_100m
+area_m2_,,,2,Area m2 in the frequency workbook
+area_recorded_,,,2,"Area column, unit not stated"
+ascorbic_acid_mg_100g_dw_,,,2,"ascorbic acid, mg/100 g dry weight"
+ascorbic_acid_mg_100g_fw_,,,2,"ascorbic acid, mg/100 g fresh weight"
+awd_score_,,,2,"estimated AWD score over the crop growth period, transplanting to harvest (AWDSCORE, 0-1)"
+blast_index_,,,2,wheat head blast index (%)
+branch_number_,,,2,branches per plant at 60 DAS
+bunch_weight_,,,2,"bunch weight, kg per plant"
+cgm_incidence_,,,2,"cassava green mite score and incidence as recorded (incidence looks like a percent, so it was not stored as pest_incidence)"
+check_role_,,,2,"control class on the check block (Resistant, Susceptible, Resistant2)"
+chemical_fertilizer_k_,,,2,"household chemical fertilizer amount; dictionary unit ""k"""
+cob_length_,,,2,"cob length, unit not stated (values up to 31.5)"
+cob_weight_,,,2,"Cobwt, unit not stated"
+concentration_,,,2,spore concentration text as in the file
+crop_income_thousand_taka_,,,2,"crop sales income; dictionary unit is ""Tk k"" (thousands of taka)"
+crop_loss_,,,2,"crop loss due to damage, kg/ha"
+crop_price_cavan_,,,2,"palay price received, pesos per cavan"
+crop_slot_,,,2,"crop slot in the land use form (1 = wet season, 2 = dry season, 3 = second dry-season crop)"
+crop_sold_kg_,,,2,"kilograms sold, as recorded"
+cwsi_,,,2,crop water stress index
+damage_,,,2,crop damage as reported (text)
+dat_,,,2,days after treatment
+days_after_inoculation_,,,2,days after inoculation for a severity reading
+deadheart_incidence_,,,2,percent deadhearts at 28 days after emergence
+dif_yield_bags_,,,2,70 kg bags
+dm_,,,2,dry-matter column as recorded. Unit is not stated
+dm_pct_,,,2,"average tuber dry matter, percent"
+dose_early_1_,,,2,tablespoons per 20 L
+dose_early_2_,,,2,tablespoons per 20 L
+dose_early_3_,,,2,tablespoons per 20 L
+dose_early_4_,,,2,tablespoons per 20 L
+dose_humid_1_,,,2,tablespoons per 20 L
+dose_humid_2_,,,2,tablespoons per 20 L
+dose_humid_3_,,,2,tablespoons per 20 L
+dose_humid_4_,,,2,tablespoons per 20 L
+dose_humid_5_,,,2,tablespoons per 20 L
+drought_,,,2,crop suffered from drought
+drought_damage_,,,2,% crop damage due to drought
+dry_leaf_,,,2,biomass per plant. Unit is not stated
+dry_root_,,,2,biomass per plant. Unit is not stated
+dry_stem_,,,2,biomass per plant. Unit is not stated
+dry_tuber_,,,2,biomass per plant. Unit is not stated
+education_,,,2,as recorded
+entry_number_,,,2,trial entry number
+environment_,,,2,"lowland winter, lowland spring, highland dry, or highland rain"
+era_,,,2,breeding-period code of the hybrid (integer 1-3)
+farm_area_ha_,,,2,whole-farm area from farm_size_acre (the hectare column is 0)
+farm_no_,,,2,original farm number (FNO) of the household in the survey year
+farm_type_,,,2,farmer typology code
+fertility_plants_,,,2,"plants counted for fertility (Total plants), not the final field stand"
+fertilized_,,,2,from the treatment or variety name; NA when not stated
+fertilizer_note_,,,2,N23cassava as recorded when it was not reduced to a single NPK or urea
+fertilizer_product_,,,2,total fertilizer product applied (kg/ha)
+field_,,,2,IRRI experimental field code
+field_position_,,,2,"location of the farm along the lateral (Upper, Middle, Lower)"
+fingers_,,,2,fingers on the bunch
+formulation_,,,2,water or oil formulation
+fresh_leaf_,,,2,biomass per plant. Unit is not stated
+fresh_root_,,,2,biomass per plant. Unit is not stated
+fresh_stem_,,,2,biomass per plant. Unit is not stated
+fresh_tuber_,,,2,biomass per plant. Unit is not stated
+fruit_number_,,,2,number of fruits (NbreFruit)
+fruit_weight_g_,,,2,"total fruit weight of the harvest, grams"
+fungicide_early_,,,2,"commercial names, in the order given"
+fungicide_humid_,,,2,"commercial names, in the order given"
+FYM_carts_,,,2,"farmyard manure applied, carts per ha"
+genotype_,,,2,genotype index within an accession
+glossiness_score_,,,2,"leaf glossiness, 1 glossy to 5 non-glossy"
+gps_from_,,,2,"where the GPS point was taken (hh, field, other)"
+gs_,,,2,stomatal conductance at flowering (mol/m2/s)
+hands_,,,2,hands on the bunch
+harvest_bunches_,,,2,weekly harvest in bunches where the column says Bunches
+harvest_reported_,,,2,cassv_root_harvest as recorded
+harvest_unit_,,,2,cassv_root_harvstUnit
+herbicide_codes_,,,2,raw herbicide product codes (wet season)
+herbicide_dose_g_or_ml_ha_,,,2,"product dose from the protocol, g or ml per ha. Zero on the unweeded and weed-free plots"
+herbicide_names_,,,2,herbicide (brand) names reported by the household for the season
+insect_count_,,,2,count of that taxon in the sample
+insecticide_codes_,,,2,raw insecticide product codes (wet season)
+irrigated_percent_,,,2,% of the plot area irrigated
+irrigation_hours_,,,2,"total hours of irrigation (IRRGHOUR, h)"
+irrigation_pct_,,,2,percent of the crop reported as irrigated
+isolate_,,,2,"fungal isolate, Control, or INSECTICIDE"
+K_fertilizer_product_,,,2,"nitrogen, phosphate and potash fertilizer product applied (kg/ha)"
+kernels_per_row_,,,2,kernels per row
+larvae_per_leaflet_,,,2,larvae per leaflet
+lb_code_,,,2,numeric codes from the questionnaire
+lb_yield_bags_,,,2,70 kg bags
+leaf_sheath_pigmentation_,,,2,leaf sheath pigmentation score
+living_leaves_,,,2,"living leaves at harvest. The file spells the column ""leaving"""
+loss_reason_,,,2,reason for crop losses as reported (text)
+maturity_group_,,,2,"E (early) or L (late) maturity group, which determined the timing of the drought treatment"
+molluscicide_amount_,,,2,"active ingredient applied (kg/ha), summed over applications"
+mtwp_,,,2,marketable tuber weight. Unit is not stated
+N_fertilizer_product_,,,2,"nitrogen, phosphate and potash fertilizer product applied (kg/ha)"
+n_fungicides_early_,,,2,counts as recorded
+n_fungicides_humid_,,,2,counts as recorded
+n_sprays_early_,,,2,counts as recorded
+n_sprays_humid_,,,2,counts as recorded
+nodule_dry_mg_,,,2,"nodule dry weight at 30 DAS, mg/plant"
+nodule_weight_mg_plant_,,,2,nodule weight (mg/plant)
+observation_month_,,,2,"2023 whitefly file, month index 1-6, not labeled MAP"
+occupation_,,,2,
+other_cultivars_,,,2,names given by the farmer
+P_fertilizer_product_,,,2,"nitrogen, phosphate and potash fertilizer product applied (kg/ha)"
+package_id_,,,2,tricot package code
+panicle_length_cm_,,,2,panicle length (cm)
+panicles_plant_,,,2,panicles per plant
+par_wm2_,,,2,photosynthetically active radiation (W/m2)
+parasitism_percent_,,,2,percent parasitism
+period_,,,2,observation period number
+pest_species_,,,2,labelled insect/pest causing damage
+plants_with_shoot_fly_eggs_,,,2,plants in the plot with at least one shoot fly egg
+plot_size_local_,,,2,plot size in the reported (local) unit
+plot_unit_,,,2,crop_unit_r as recorded
+pod_number_60_,,,2,pods per plant at 60 DAS
+pod_weight_60_,,,2,"pod weight at 60 DAS, g/plant"
+pod_weight_g_,,,2,pod dry weight (g)
+pod_weight_g_plant_,,,2,pod weight (g/plant)
+post_adjuvant_,,,2,TRUE when the post treatment is recorded as Monsoon+Adjuvant (adjuvant product not named)
+pot_yield_bags_,,,2,70 kg bags
+production_status_,,,2,"""on or above average yield"" or ""below average yield"""
+pupae_,,,2,pupae without emerging adults
+purchase_kg_,,,2,
+region_code_,,,2,numeric admin codes
+resistant_cultivars_,,,2,names given by the farmer
+rodenticide_amount_,,,2,"active ingredient applied (kg/ha), summed over applications"
+root_deep_,,,2,% of root length at 0-30 and 30-60 cm
+root_dry_mg_,,,2,"root dry weight at 30 DAS, mg/plant"
+root_length_cm_,,,2,root length as recorded (cm)
+root_volume_cm2_,,,2,root volume as labeled (cm2)
+root_volume_cm3_m2_,,,2,root volume (cm3/m2)
+root_weight_60_,,,2,"root weight at 60 DAS, g/plant"
+root_weight_g_,,,2,"fresh root weight per plant, grams"
+root_weight_g_m2_,,,2,"root weight (g/m2), fresh vs dry not stated"
+root_weight_g_plant_,,,2,root weight (g/plant)
+rotation_code_,,,2,Cultivar_Final
+season_,,,2,"winter or autumn, as recorded"
+season_year_,,,2,the source label 2016-2017
+seed_kg_,,,2,"D2.8a amount of seed, kilograms. This is not a seed rate"
+seed_weight_g_plant_,,,2,"seed weight (g/plant), not 1000-seed weight"
+seedling_type_,,,2,tray seedling (HS) or ground seedling (FP)
+seedling_vigor_,,,2,"seedling vigor, 1 low to 5 high"
+shoot_fly_egg_incidence_,,,2,percent of plants with shoot fly eggs
+shoot_fly_eggs_,,,2,shoot fly eggs per plot
+shoot_fly_eggs_per_plant_,,,2,shoot fly eggs per plant
+shoot_weight_,,,2,"shoot dry weight at 30 DAS, g/plant"
+soil_N_flowering_,,,2,"total N at flowering, mg/kg"
+soil_P_flowering_,,,2,"available P at flowering, mg/kg"
+soil_SOC_flowering_,,,2,"organic carbon at flowering, percent"
+soil_type_,,,2,red soil or others
+spad_,,,2,SPAD reading at the DAP of that long row
+spikelet_density_,,,2,number of spikelets per m2
+spikelet_fertility_,,,2,% filled spikelets
+spikelets_per_panicle_,,,2,number of spikelets per panicle
+spray_interval_early_days_,,,2,days between sprays
+spray_interval_humid_days_,,,2,days between sprays
+stem_diameter_cm_,,,2,"stem diameter; ""-"" set to missing"
+stem_number_,,,2,stems per plant
+stem_weight_g_plant_,,,2,stem weight (g/plant)
+stover_yield_kg_ha_,,,2,stover in kg/ha. The file says ton/ha and does not say fresh or dry
+stratum_,,,2,stratum (1-3) and sampling point (1-8) of the rat injury form
+study_region_,,,2,study region in the file (North)
+submerged_,,,2,crop was submerged during the season
+submergence_damage_,,,2,% crop damage due to submergence
+survey_month_,,,2,month and year of the household interview
+survey_round_,,,2,"survey wave I, II or III"
+susceptible_cultivars_,,,2,names given by the farmer
+tissue_,,,2,tissue sampled
+ttwp_,,,2,total tuber weight per plot. Unit is not stated
+union_,,,2,union name
+variety_generation_,,,2,"release period of the modern variety (""before 1990"", ""1990 and after"")"
+water_management_,,,2,flooded / aerobic as described by the authors
+water_regime_,,,2,"water regime during kharif (e.g. ""Mostly flooded except 1-2 drying"", ""Drought"")"
+weed_count_,,,2,weed count as entered for that species and date
+weed_dry_g_,,,2,weed dry weight (g) on that date. The quadrat area is not applied
+weediness_score_,,,2,"f_farmer_assessment scores (1-3, scale not defined)"
+year_developed_,,,2,year the hybrid was developed
+year_rating_,,,2,code assigned to the year of development (integer 1-8)
+yield_loss_,,,2,"reported crop loss, kg/ha"
+yield_mg_ha_,,,2,the file's yield column where present (Mg/ha); not used as yield
+zone_code_,,,2,numeric location codes
+A_,,,1,"net photosynthesis, mmol CO2 m-2 s-1"
+abiotic_constraint_,,,1,"major abiotic constraint, as written (Drought or Rainfall)"
+abundance_,,,1,individuals in the sample
+achenes_per_head_,,,1,
+actinomycete_log10_,,,1,"rhizosphere actinomycete population (log10), field at 28 DAS and glasshouse at the end of the experiment"
+actinomycetes_log10_,,,1,"actinomycete count at harvest, log10"
+actinomycetes_log10_vegetative_,,,1,"actinomycete count at 60 DAS, log10"
+action_site_,,,1,N2Africa action site name (not a single admin level)
+adopt_3R3G_,,,1,adopter of 3R3G (Adpt3R)
+adopt_fertilizer_,,,1,"adopter of the seed, fertilizer and pesticide reductions"
+adopt_pesticide_,,,1,"adopter of the seed, fertilizer and pesticide reductions"
+adopt_seed_,,,1,"adopter of the seed, fertilizer and pesticide reductions"
+adopter_,,,1,"old adopter, new adopter or non-adopter of rice mixtures"
+adult_trap_count_,,,1,leafminer adults on yellow sticky traps in the potato plot
+adult_wf_,,,1,whitefly counts per plant. See NOTES on the dictionary swap. nn/yn/bn are the three columns that add up to Tot_Nym
+ae_zone_,,,1,"AEZone code (SZ, EZ, WLZ, ELZ). The dictionary expands these only as ""agro-ecological zone"""
+aez_,,,1,"agroecological zone code (AEZ II, III, IV, or V)"
+aflatoxin_aware_,,,1,heard of aflatoxin (yes/no). All no
+aflatoxin_ppb_,,,1,"aflatoxin in the pods, parts per billion"
+agb_g_,,,1,"dry aboveground biomass, g/plant"
+age_range_,,,1,
+ags_,,,1,"intrinsic water-use efficiency, A/gs as recorded"
+altitude_class_,,,1,altitude category of the village (Bhutan: High/Mid/Low)
+antcap_dw_,,,1,AntCap columns. See NOTES for the antheraxanthin conflict
+antcap_fw_,,,1,AntCap columns. See NOTES for the antheraxanthin conflict
+ants_,,,1,ants
+aphid_count_,,,1,aphids in the trap
+aphids_alate_,,,1,winged aphids on the sample
+aphids_apterous_,,,1,wingless aphids on the sample
+aplv_,,,1,1 if that virus was detected on the seed tuber
+apmov_,,,1,1 if that virus was detected on the seed tuber
+area_decimal_,,,1,D2.4 area in decimals
+area_ha_,,,1,"potato area in hectares, column quant_ha_M03_01_3_1"
+area_timad_,,,1,"field area in local timad, unconverted"
+area_total_,,,1,"first-crop fields, units not stated"
+area_unit_,,,1,Unit_Area_cass_pltd
+arthropod_count_,,,1,number of individuals
+arthropod_family_,,,1,"taxonomic family, as written"
+arthropod_guild_,,,1,trophic group
+arthropod_order_,,,1,"taxonomic order, as written"
+arthropod_taxon_,,,1,"genus and species, as written"
+arts_present_,,,1,African root and tuber scale present (1) or absent (0)
+auction_round_,,,1,bidding-sheet round
+audpc_,,,1,"area under the disease progress curve (readme), for early leaf spot"
+awd_group_,,,1,"AWD classification of the parcel (AWD, CF = continuous flooding, COMB = combination)"
+awd_practiced_,,,1,"farmer practices AWD (PRACTAWD, TRUE/FALSE)"
+bags_sold_,,,1,bags of sweetpotato the trader reported selling in 2020. Bag weight is not stated
+banana_cycle_,,,1,"cycle 1, 2, or 3 on the long rows"
+banana_id_,,,1,plant id in the cycle file
+benefit_cost_ratio_,,,1,benefit-cost rate (BCR). The dictionary gives no unit
+best_growing_,,,1,TRUE when that blinded option was the one named in the matching question
+best_overall_,,,1,TRUE when that blinded option was the one named in the matching question
+best_yield_,,,1,TRUE when that blinded option was the one named in the matching question
+bid_,,,1,auction bid as recorded. Currency is not on the sheet
+bid_index_,,,1,"bid number within the round (1, 2, or 3)"
+biomass_,,,1,"2018DS ""Biomass"" (kg/ha), definition unclear"
+biomass_plant_,,,1,"g/plant means (BT, PGo, PF)"
+biomass_tasselling_kg_ha_,,,1,"above-ground biomass without cobs at tasselling, kg/ha"
+birth_city_,,,1,
+birth_country_,,,1,
+birth_place_,,,1,
+blast_affected_,,,1,"1 if the household is in a blast-affected district in that year, else 0"
+bn_wf_,,,1,whitefly counts per plant. See NOTES on the dictionary swap. nn/yn/bn are the three columns that add up to Tot_Nym
+boll_harvest_index_,,,1,seedcotton weight over boll weight (%)
+boll_weight_,,,1,mean boll weight (g/boll)
+border_,,,1,border number (around-field samples)
+bored_internodes_,,,1,internodes bored by Chilo sacchariphagus on one stalk (count)
+borer_plot_,,,1,plot code on the stalk-borer rows
+bot_leaf_length_,,,1,"leaf size, unit not stated"
+bot_leaf_width_,,,1,"leaf size, unit not stated"
+bought_before_,,,1,
+branch_number_30_,,,1,branches per plant at 30 DAS
+breeding_period_,,,1,"period in which the hybrid was developed (Period, values 1-3). Unit: none"
+bud_necrosis_,,,1,bud necrosis present (1) or absent (0)
+bulking_score_,,,1,"continuous storage-root formation score, 1 to 9"
+bunch_fresh_g_,,,1,"bunch fresh weight, g per plant"
+bund_height_,,,1,"average height of the field bunds, cm"
+bundle_price_,,,1,"selling price per big bundle, currency not named in the sheet"
+bundles_sold_,,,1,vine bundles sold
+busseola_fusca_,,,1,Busseola fusca larvae
+buys_elsewhere_,,,1,
+bw_trial_,,,1,"1, 2, or 3"
+camp_location_,,,1,town where the team camped (column Location)
+campaign_,,,1,sampling code in the Date column
+canavalia_cover_,,,1,ground cover by Canavalia ensiformis in the inter-row (%)
+canopy_cover_,,,1,canopy cover as recorded
+canopy_temp_,,,1,"canopy temperature (degrees C), long table"
+carbon_footprint_per_ton_,,,1,"CF_ton, kg CO2 eq per t of fresh tubers"
+carbon_footprint_total_,,,1,"CF, kg CO2 eq for the plot"
+case_study_,,,1,"maca cropping system or cultivated pasture, as named in the dictionary"
+cassava_area_ha_,,,1,"Pcassz where Pcass says ha, including mixed-crop households"
+center_,,,1,
+cercle_code_,,,1,numeric admin codes
+cgm_count_,,,1,cassava green mite count
+cgm_severity_,,,1,"cassava green mite score and incidence as recorded (incidence looks like a percent, so it was not stored as pest_incidence)"
+charops_,,,1,Charops sp. count
+children_under_18_,,,1,
+chipping_color_,,,1,score as recorded
+chromosome_segment_,,,1,"chromosome segment named in the trial (IL, NS.3BL, H, or the recurrent parent)"
+ci_,,,1,the CI column. Unit is not stated
+cluster_,,,1,Buea or Bomboko (dataset: clusters of Mount Cameroon). Not an administrative unit
+cmd_infection_type_,,,1,CMD_Inf code
+CO2_concentration_,,,1,daytime canopy CO2 (µmol/mol) in FACE treatments
+cob_diameter_,,,1,
+cob_length_cm_,,,1,length of cob
+cob_number_,,,1,cobs in the sample (NumCobs)
+cob_width_,,,1,"cob width, unit not stated (values up to 6)"
+cob_yield_kg_ha_,,,1,"cob yield after drying, kg/ha"
+cobs_per_plant_,,,1,
+coccygidium_luteum_,,,1,Coccygidium luteum count
+coinfestation_,,,1,"FAW, SB, both, or none"
+color_,,,1,hedonic scores as recorded
+commune_code_,,,1,numeric admin codes
+component_code_,,,1,one letter of the cropping-system code for this season
+composition_,,,1,product label and shop price. hhid is the agrodealer index
+conservation_strip_,,,1,Galinsoga parviflora or maize
+cooccurrence_,,,1,"both, FAW, SB, or none"
+cooking_class_,,,1,classification text
+cooking_darkening_,,,1,after-cooking darkening text
+cooking_time_,,,1,minutes
+cooking_type_,,,1,cooking type or quality text
+corn_biomass_,,,1,volunteer corn dry biomass at 35 DAP (kg/ha)
+corn_broadcast_,,,1,whether volunteer corn seeds were broadcast in the plot (logical)
+corn_density_,,,1,volunteer corn density at 35 DAP (plants/ha)
+cotesia_icipe_,,,1,Cotesia icipe count
+county_code_,,,1,location codes
+cover_biomass_,,,1,"that fraction, kg/ha"
+cover_part_,,,1,"cover-crop fraction (green, senescent, weeds, roots)"
+cover_percent_,,,1,canopy cover (%)
+crabicide_amount_,,,1,crabicide active ingredient (kg/ha)
+cricket_,,,1,crickets (dictionary: other pest)
+crop_age_months_,,,1,field age in months after planting
+crop_area_,,,1,"first-crop fields, units not stated"
+crop_area_ha_,,,1,"area of the crop, hectares"
+crop_area_recorded_,,,1,"area planted with the crop, unit not stated in the legend"
+crop_damage_,,,1,"""Yes"" if the respondent reported crop damage (type not given)"
+crop_establishment_,,,1,"TPR (transplanted), DSR (dry direct-seeded), WSR (wet direct-seeded)"
+crop_harvest_,,,1,"first-crop fields, units not stated"
+crop_name_,,,1,"first-crop fields, units not stated"
+crop_price_maund_,,,1,"price of the crop, BDT per maund"
+crop_record_,,,1,"main (P09), new_2021 (P31), or current_2021 (P32)"
+crop_rotation_used_,,,1,"crop rotation on the plot (0/1). Not mapped to crop_rotation, which is a list of crop names"
+crop_type_,,,1,
+cropping_pattern_,,,1,"annual cropping pattern as reported (e.g. ""Rice-Mung"")"
+cryptophlebia_leucotreta_,,,1,Cryptophlebia leucotreta larvae (dictionary: Cryptophlebus)
+customer_since_,,,1,
+cuttings_per_ha_,,,1,AvgCutph
+cwd_,,,1,"recorded CWD, m3/ha"
+cwsi_rule_,,,1,"full, or the CWSI level named in the dictionary (0.4, 0.6, 0.7)"
+dai_,,,1,days after inoculation for one late-blight reading
+damage_class_,,,1,"foliar-damage band from the percent classes in the column header (low 1-25%, middle 26-50%, high >50%)"
+damage_years_,,,1,"text for how long the farmer had seen the damage (IncDamDu_yrs): ""2 ans"", ""5 years"", ""NEVER"", ""more than 10 years"""
+damaged_pod_percent_,,,1,%DamagePodPerPlt
+damaged_pods_,,,1,TotDamagedPod
+damaged_root_density_,,,1,damaged cassava roots per ha
+damaged_tubers_,,,1,counts on the harvested area
+dap_amount_,,,1,"quantities as recorded, unit not confirmed"
+DAS_,,,1,days after sowing (long table; for PTR not equal to days after transplanting)
+data_source_,,,1,"""Field Survey"" or ""Farmer's Diary"""
+days_above_25c_,,,1,days above 25 C between evaluations
+days_below_5c_,,,1,days below 5 C between evaluations
+days_to_tassel_,,,1,days from planting to 50 percent tassels
+dead_stemborer_,,,1,Dead_SB
+decomposition_,,,1,ash-free mass loss as a fraction of the initial ash-free mass
+decomposition_rate_,,,1,tea-bag decomposition rate (DR). The dictionary gives no unit
+disliked_,,,1,
+disorder_,,,1,the pest or disease named in the dictionary
+distance_lateral_,,,1,distance of the parcel from the irrigation lateral (m)
+distance_m_,,,1,metres from the field border (around-field samples)
+district_code_,,,1,District_Cefferie_Commune (numeric code)
+district_harvest_area_ha_,,,1,"harvested wheat area of the Cajeme district, in hectares"
+diversity_group_,,,1,diversity group code on the crossing-block sheet
+diversity_used_,,,1,TRUE when the row was flagged for the diversity analysis
+dmy_panicle_,,,1,"panicle dry matter (kg/ha), long table"
+don_ppm_,,,1,"deoxynivalenol in grain, ppm"
+drought_management_,,,1,how the farmer manages drought
+drought_timing_,,,1,growth stage the farmer said was most affected in a drought year
+dry_harvest_kg_,,,1,T_harvst_dry when a fresh harvest was used for yield
+dry_harvest_local_,,,1,"dry harvest of that crop on the subplot, in the unnamed local unit"
+dry_weed_biomass_kg_ha_,,,1,"oven-dry weed biomass at harvest, kg/ha"
+dtw_,,,1,DTW as recorded
+DVS_,,,1,development stage code (10-100) from the abbreviation key; growth_stage has the decoded name
+dw_,,,1,dry weight as recorded
+ear_density_per_ha_,,,1,good ears per hectare
+ear_length_,,,1,"EL, unit not stated"
+ear_yield_,,,1,"RDEPI, ear yield kg/ha"
+earlier_crop_,,,1,crop two seasons before the trial (b_info_site_2 main_crop_before_last_season)
+earthworm_large_m2_,,,1,"earthworms longer than 4 cm, per m2"
+earthworm_m2_,,,1,total earthworms per m2 at that depth. The sheet says the 0.5 m2 count was already doubled
+earthworm_medium_m2_,,,1,"earthworms 2 to 4 cm, per m2"
+earthworm_small_m2_,,,1,"earthworms shorter than 2 cm, per m2"
+earwigs_,,,1,earwigs
+eldana_saccharina_,,,1,Eldana saccharina larvae
+elisa_1_,,,1,first result token
+elisa_2_,,,1,second result token
+elsewhere_place_,,,1,
+emerged_,,,1,1 if the plant had emerged at 45 days
+emerged_density_,,,1,"DENL, plants/ha at emergence. plant_density is DENR at harvest"
+emitted_leaf_area_,,,1,"emitted leaf area, m2"
+emitted_leaves_,,,1,emitted leaves on that date
+endosperm_hardness_,,,1,endosperm hardness score. The unit row is 1-5. No scale is applied to the number
+epa_,,,1,"Malawi extension planning area (Kandeu, Linthipe, Golomoti, Nsipe)"
+eval_,,,1,"1, 2, or 3 within that trial"
+eval_label_,,,1,locality and year text
+evaluation_,,,1,"farmer-field evaluation number, 1 to 10. No date is given"
+exp_plot_,,,1,elementary plot number in the harvest file
+expandability_,,,1,expansion volume divided by the initial grain weight
+expansion_volume_ml_,,,1,"volume of the popped sample, ml. The description says the sample is 30 g"
+expected_harvest_date_,,,1,expected harvest date at the first visit
+facility_,,,1,
+fallow_,,,1,"fallow or improved fallow (for crop = ""none"")"
+farm_size_upland_,,,1,sizefarmupl as recorded
+farmer_area_,,,1,the farmer's estimate of focal-plot area. The unit is not stated
+farmer_code_,,,1,farmer code (codagricultor)
+farmer_group_,,,1,
+farming_,,,1,"organic or conventional, as practiced on the plantation"
+faunal_contribution_,,,1,"large-mesh decomposition minus the plot mean of small-mesh decomposition, as stored"
+faw_eggmass_,,,1,FAW egg masses
+faw_pupae_,,,1,FAW pupae
+fe_dw_,,,1,"mineral sheet columns, unit not stated"
+fe_dw_mean_,,,1,Mean_FEDW as recorded
+fe_recorded_,,,1,FeDw as recorded
+feeding_punctures_,,,1,feeding punctures per potato leaflet
+fertiliser_regime_,,,1,"0, M, or P, as coded in the file"
+fertilization_level_,,,1,"HF or LF (high or low), as coded. Not a nutrient rate"
+fertilizer_applications_,,,1,number of fertilizer applications
+fertilizer_at_planting_,,,1,"TRUE when part4b9 is 1, FALSE when it is 0, NA when it is 88"
+fertilizer_frequency_,,,1,fertilizer timing as written
+fertilizer_grade_,,,1,"fertilizer product text (grades, urea, manure)"
+fertilizer_inorganic_,,,1,answer as recorded
+fertilizer_rate_kg_ha_,,,1,"Qty_fertilizer_per, kg/ha of unnamed fertiliser"
+fertilizer_type_,,,1,product label and shop price. hhid is the agrodealer index
+fhb_index_,,,1,"Fusarium head blight index, percent"
+fiber_elongation_,,,1,fiber elongation (%)
+fiber_length_,,,1,upper-half mean length (mm)
+fiber_maturity_,,,1,fiber maturity (0-1)
+fiber_micronaire_,,,1,fiber micronaire
+fiber_moisture_,,,1,fiber moisture (%)
+fiber_percentage_,,,1,fiber content of seedcotton (%)
+fiber_reflectance_,,,1,fiber reflectance (%)
+fiber_short_,,,1,short fiber (%)
+fiber_strength_,,,1,fiber strength (g/tex)
+fiber_uniformity_,,,1,length uniformity (0-1 in the metadata; values are about 80)
+fiber_yellowness_,,,1,fiber yellowness
+field_area_,,,1,Surf_area as recorded; unit not stated
+field_area_m2_,,,1,cropped area from the P31 and P32 columns whose abbreviation ends in m2
+field_code_,,,1,"CN1, B21 or B23 from Loc"
+filled_grain_,,,1,filled grains per plant
+filled_grain_count_,,,1,"filled grain count, unit not stated"
+filled_grain_weight_,,,1,"filled-grain weight, g/plant"
+filled_grain_weight_g_,,,1,"filled grain weight (g), basis not stated"
+fine_root_0_30_,,,1,"fine roots (%), 0-30 and 30-60 cm"
+fine_root_30_60_,,,1,"fine roots (%), 0-30 and 30-60 cm"
+finger_blast_fingers_,,,1,finger count recorded with finger blast (basis not stated)
+finger_blast_incidence_,,,1,"finger blast incidence, percent"
+finger_blast_infected_fingers_,,,1,infected finger count (basis not stated)
+firmness_,,,1,hedonic scores as recorded
+flake_shape_,,,1,"flake shape score, 1 to 5"
+flesh_color_cooked_,,,1,flesh color after cooking
+flies_mean_,,,1,mean number of adult flies over seven weeks
+flood_depth_,,,1,depth of flooding of the parcel at the height of the monsoon (class)
+flower_strip_distance_,,,1,"distance of the trap from the flower strip, in meters"
+flowering_girth_,,,1,"pseudostem girth at 50 cm at flowering, cm"
+flowering_height_,,,1,"pseudostem height at flowering, cm"
+flowers_,,,1,number of flowers (NbreFleur)
+foc_code_,,,1,glasshouse population file column FOC (1 or 2)
+foliage_air_dt_,,,1,"foliage temperature minus air temperature, degrees C"
+foliage_late_blight_severity_,,,1,SFLate Blight as recorded
+foliage_temperature_,,,1,"foliage temperature, degrees C"
+foliage_yield_,,,1,"FYTHA, kg/ha, from t/ha"
+fragment_id_,,,1,leaf-fragment id. Several fragments can share one plant and date
+fresh_harvest_local_,,,1,"fresh or green harvest of that crop on the subplot, in the unnamed local unit"
+fruit_class_,,,1,fruit class code (1 or 2); meaning not in the dictionary
+fruit_damaged_,,,1,number of damaged fruits (Fruit_attaq)
+fruit_diameter_,,,1,"D, unit not stated"
+fruit_fresh_g_,,,1,"fruit fresh weight, g per plant"
+fruit_index_,,,1,fruit number 1-5 on the plot
+fruit_infestation_,,,1,100 * fruits_infested / fruits_sampled
+fruit_length_,,,1,"L, unit not stated"
+fruit_punctures_,,,1,"P, puncture count on that fruit"
+fruit_weight_,,,1,fruit weight as recorded; unit not stated
+fruits_infested_,,,1,number of those fruits infested
+fruits_sampled_,,,1,number of fruits incubated (10)
+ftw_,,,1,FTW as recorded
+functional_group_,,,1,functional group assigned to the taxon
+fungicide_ai_,,,1,active ingredients (or brand names) as given
+fw_,,,1,fresh weight as recorded
+fwy_cobs_,,,1,"fresh maize cob yield (kg/ha), from FrshCobYld_tha"
+generation_,,,1,breeding generation (e.g. BC3F5) or Donor / RP (recurrent parent)
+genotype_group_,,,1,"genotype group code (ZnT Zn-deficiency tolerant, ZnS susceptible, ZnB biofortified, Check)"
+genotype_role_,,,1,"test, parental, or check"
+geography_,,,1,plain or hill
+germination_class_,,,1,"c_use_of_package_3 crop_1_germination, recorded as a class (50-75%, 75-90%, >90%), not a percent"
+gid_,,,1,CIMMYT germplasm identifier
+ginning_pct_,,,1,"cotton ginning percentage, as stored"
+glyphosate_,,,1,TRUE when the litter was glyphosate-contaminated. G- is FALSE
+grain_biomass_,,,1,"mafruit time series, kg/ha"
+grain_g_ear_,,,1,grain weight of the ear in grams (the Yield column)
+grain_weight_,,,1,"GWT, unit not stated"
+grain_weight_g_plot_,,,1,grain weight as recorded; the docx says grams per plot (see ISSUES on replication 1)
+grain_weight_plot_,,,1,shelled grain harvested from the plot (area unknown)
+grain_yield_kg_,,,1,"grain quantity from the plot, kg, as recorded. This includes expected yield where the plot was not harvested"
+grain_Zn_uptake_,,,1,grain Zn uptake (g/ha)
+grains_longest_row_,,,1,grains on the longest cob row. Unit: grains/row
+grains_per_cob_,,,1,number of grains on the cob
+grains_per_panicle_,,,1,filled grains per panicle
+grains_shortest_row_,,,1,grains on the shortest cob row. Unit: grains/row
+gram_panchayat_,,,1,gram panchayat (village council area)
+green_leaf_area_,,,1,"green leaf area, m2"
+grew_ofsp_,,,1,
+harvest_dry_,,,1,"plot1_dryHrvst, unit not confirmed"
+harvest_dry_kg_,,,1,"total dry harvest on the plot (kg), from T_harvst_dry / T_harvt_dry"
+harvest_fresh_,,,1,"plot1_freshHrvst, unit not confirmed"
+harvest_fresh_kg_,,,1,total fresh harvest on the plot (kg)
+harvest_green_area_,,,1,"green area at harvest, m2"
+harvest_kg_improved_,,,1,"measured improved-potato harvest, kg"
+harvest_kg_native_,,,1,"measured native-potato harvest, kg"
+harvest_leaves_,,,1,living leaves at harvest
+harvest_method_,,,1,"combine harvester, manual or reaper"
+harvest_number_,,,1,harvest 1 to 6 in the biomass file
+harvest_year_,,,1,harvest year of the district wheat record
+haulm_weight_,,,1,"g/plant means (BT, PGo, PF)"
+haulm_yield_,,,1,"haulm yield, kg/ha, moisture basis not stated"
+head_length_cm_,,,1,"head length, cm"
+head_weight_g_,,,1,"head weight, g"
+heard_from_,,,1,
+herbicide_ai_,,,1,active ingredients (or brand names) as given
+herbicide_rates_,,,1,"herbicide rates in order of application (kg ai/ha, "";""-separated)"
+hhid_1987_,,,1,household sample number in the 1987 round
+hhid_2000_,,,1,household sample number in the 2000 round
+hi_dir_,,,1,"direction at maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name"
+hill_,,,1,hill number (1-10) within the plot
+host_plant_,,,1,"name as recorded, including wild hosts"
+humidity_,,,1,weather columns whose units are not stated as percent and mm
+immature_,,,1,1 if the seed tuber was immature
+improved_seed_,,,1,improved seed used (0/1)
+incidence_,,,1,"recorded incidence, percent"
+incubation_,,,1,incubation number
+incubation_days_,,,1,"estimated incubation period, days"
+infected_plants_pct_,,,1,"percent of plants infected in that trial. order is 1, 2, or 3"
+injury_,,,1,"injury name; organ_: injured unit (tiller, leaf, panicle, hill)"
+injury_count_,,,1,"number of injured organs per hill, injured hills per sub-area, or rat-injured tillers per sampling point"
+inoculation_method_,,,1,"field inoculation-method code (M1, M2, M3, M4)"
+inorganic_N_kg_ha_,,,1,"inorganic N stock, kg/ha, from kgNperha"
+input_line_,,,1,line number within a household and season
+insect_loss_percent_,,,1,percentage of losses caused by insects
+insect_stage_,,,1,"apterous, alate, larva, pupa, or damage"
+insecticide_ai_,,,1,active ingredients (or brand names) as given
+insecticide_frequency_,,,1,application timing as written (Freq_month)
+insecticide_names_,,,1,insecticide/molluscicide (brand) names reported by the household for the season
+insecticide_regime_,,,1,"the insecticide or the 2008 application schedule, including no application"
+insl_,,,1,"index of non-spotted leaves, percent"
+install_date_,,,1,date the yellow trap was installed
+intercrop_code_,,,1,raw INTERCROP/SOLE CROP code from PART D/K (1 or 2; codebook missing)
+intercrop_crop_,,,1,"other crops in the legume plot, as recorded"
+intercrop_percent_,,,1,Percent_area for intercrop rows only
+intercropped_,,,1,plot was intercropped (second crop not processed)
+internode_number_,,,1,internodes on that stalk (count)
+interval_tmax_,,,1,"maximum temperature between evaluations, degrees Celsius"
+interval_tmean_,,,1,"mean temperature between evaluations, degrees Celsius"
+interval_tmin_,,,1,"minimum temperature between evaluations, degrees Celsius"
+intervention_,,,1,
+irr_nia_perc_,,,1,"share of water from NIA irrigation, %"
+irr_pump_perc_,,,1,"share of water from pump irrigation, %"
+irr_rain_perc_,,,1,"share of water from rain (dry season: rain/creek), %"
+irrigation_deficit_,,,1,"TRUE if deficit irrigation, FALSE if full (100%) irrigation"
+irrigation_depth_cg_,,,1,"net irrigation depth during crop growth (netdepthcg; unit unclear, cm or mm)"
+irrigation_depth_lp_,,,1,net irrigation depth during land preparation (netdepthlp; unit unclear)
+irrigation_depth_tp_,,,1,net irrigation depth at transplanting (netdepthtp; unit unclear)
+irrigation_event_,,,1,irrigation sequence number on the plot
+irrigation_level_,,,1,fraction of the irrigation treatment (dimensionless)
+irrigation_pricing_,,,1,water pricing category code (pricing)
+irrigation_regime_,,,1,"PRD25, PRD50, DI50, or FI"
+irrigation_timing_,,,1,"water-restriction initiation code (WRIT6w, WRIT8w)"
+irrigation_volume_,,,1,irrigation volume per plot. Unit is not stated
+kcl_g_tree_month_,,,1,"KCl, g per tree per month from the fifth month"
+kebele_code_,,,1,
+kernel_appearance_,,,1,"how those kernels look, as written"
+kernels_in_sample_,,,1,kernels in the initial sample
+kernels_seen_,,,1,farmer has seen contaminated kernels
+kharif_bc_ratio_,,,1,kharif benefit-cost ratio
+kharif_cost_rs_ha_,,,1,"kharif cost of production, as printed under Rs/ha"
+kharif_gross_return_rs_ha_,,,1,"kharif gross return, as printed under Rs/ha"
+kharif_input_water_mm_,,,1,"rainfall plus irrigation in kharif, mm"
+kharif_iwp_kg_m3_,,,1,"kharif irrigation-water productivity, kg/m3"
+kharif_labour_days_,,,1,"kharif labour, mandays"
+kharif_mey_kg_ha_,,,1,"kharif maize-equivalent yield, t/ha times 1000"
+kharif_net_return_rs_ha_,,,1,"kharif net return, as printed under Rs/ha"
+kharif_protein_t_ha_,,,1,"kharif protein, t/ha as printed"
+kharif_rainfall_mm_,,,1,"rainfall received in kharif, mm"
+lab_sample_,,,1,laboratory sample number (1 or 2) for the same plot
+labour_score_,,,1,"f_farmer_assessment scores (1-3, scale not defined)"
+lamp_assay_,,,1,LAMP assay name
+lamp_date_,,,1,date of the LAMP assay. Collection date stays in date
+lamp_result_,,,1,"pos, neg, or doub"
+lamp_ttr_,,,1,"time to result, minutes"
+land_area_recorded_,,,1,"total land area managed, unit not stated in the legend"
+land_elevation_,,,1,"land elevation class of the farm (upland, medium land, lowland or combinations)"
+land_equivalent_ratio_,,,1,LER column in the 2015 northern strip sheet. Repeated on each component row of the plot
+land_prep_date_,,,1,date of plowing (PLDATE)
+land_quality_,,,1,land quality class of the Revenue Department (very good to very poor)
+land_topography_,,,1,"plains, hillside, or mixed, from the plot topography question"
+landscape_,,,1,complex or simple vegetation structure
+late_blight_affected_,,,1,TRUE when IFLate Blight is 1 and FALSE when it is 0
+late_blight_severity_,,,1,screening-sheet severity at one evaluation. Scale is not stated
+lb_severity_,,,1,late blight severity reading. Unit is not stated
+leaf_B_ppm_,,,1,leaf boron (ppm)
+leaf_blast_30_das_,,,1,"leaf blast score at 30 days after sowing, 0–9 scale"
+leaf_blast_soft_dough_,,,1,"leaf blast score at soft dough, 0–9 scale"
+leaf_Cu_ppm_,,,1,leaf copper (ppm)
+leaf_damage_pct_,,,1,Average damage score for the plant (0-100); same number as pest_severity
+leaf_Fe_ppm_,,,1,leaf iron (ppm)
+leaf_firing_,,,1,leaf firing score (LF). Heat-drought file only. Unit: score
+leaf_hairiness_,,,1,Hairiness score
+leaf_length_,,,1,cm
+leaf_Mn_ppm_,,,1,leaf manganese (ppm)
+leaf_Mo_ppm_,,,1,leaf molybdenum (ppm)
+leaf_n_,,,1,leaf nitrogen as stored. The sheet does not give the unit
+leaf_osmotic_potential_,,,1,flag-leaf osmotic potential (MPa)
+leaf_position_,,,1,outer or inner leaves
+leaf_stratum_,,,1,"bottom, medium, or top leaf"
+leaf_wetness_,,,1,leaf wetness. The dictionary says a 0-15 score. The file also has fractional values
+leaf_width_,,,1,cm
+leaf_Zn_ppm_,,,1,leaf zinc (ppm)
+leaffolder_count_,,,1,leaf-folder count
+leaffolder_severity_,,,1,"leaf-folder severity, scale not documented"
+leaflet_,,,1,leaflet number within the plot
+leaflet_d13c_,,,1,"leaflet 13C discrimination, per mil"
+leafminer_adults_,,,1,count of leafminer fly adults
+leaves_tiller_,,,1,number of leaves per tiller
+lepidoptera_pupae_,,,1,Pupae (dictionary: lepidoptera pupa)
+lesion_id_,,,1,lesion id on that fragment
+lesion_length_,,,1,lesion length on a leaf fragment
+lesion_width_,,,1,lesion width on a leaf fragment
+lga_code_,,,1,numeric location codes
+lgb_cob_score_,,,1,"1-5 importance of larger grain borer in stored cobs, as recorded"
+lgb_grain_score_,,,1,"1-5 importance of larger grain borer in stored grain, as recorded"
+liked_,,,1,
+lime_CaCO3_t_ha_,,,1,"annual lime, t CaCO3/ha. lime in the vocabulary is kg/ha and stops at 10000, so a 15 t application does not fit there"
+litter_mass_loss_,,,1,"ash-free litter mass loss, grams per bag"
+loan_amount_,,,1,"value from loan_access. ""None"" is 0. Currency is not stated"
+location_code_,,,1,Village_Sun_colline (numeric code)
+lodging_plants_per_ha_,,,1,lodged plants per hectare
+lowland_fields_,,,1,number of sweetpotato fields on lowlands (G03A)
+maca_yield_,,,1,"approximate maca yield of the previous season, kg/ha. Empty where the plot was not maca"
+main_crop_code_,,,1,Main_crop numeric code
+maize_code_,,,1,raw maize crop code from PART C/J
+manufacturer_,,,1,product label and shop price. hhid is the agrodealer index
+manure_amount_,,,1,"quantities as recorded, unit not confirmed"
+manure_rate_,,,1,"manure applied, Mg/ha/year"
+manure_type_,,,1,"sheep manure, guano, or chicken manure"
+marketable_tubers_,,,1,counts on the harvested area
+mashua_harvest_kg_,,,1,"measured mashua harvest, kg"
+mealiness_,,,1,hedonic scores as recorded
+measure_,,,1,severity (percent of tuber area) or incidence (percent of tubers)
+measured_on_,,,1,"trial, replicate, mixture and species label for a cover or height row"
+mechanical_damage_,,,1,1 if the seed tuber was mechanically damaged
+mesh_,,,1,"litter-bag mesh, small or large"
+mid_leaf_length_,,,1,"leaf size, unit not stated"
+mid_leaf_width_,,,1,"leaf size, unit not stated"
+milling_recovery_,,,1,milling recovery (%)
+mineral_fertilizer_rate_,,,1,"FERT_MIN_DOSE, kg/ha of mineral product, grade unknown. 0 means none applied"
+minimum_tillage_,,,1,zero/minimum tillage (0/1)
+misshapen_,,,1,1 if the seed tuber was misshapen
+mixture_,,,1,TRUE if the record is from a GR/HR mixture (After)
+mixture_conserves_,,,1,
+mixture_preference_,,,1,
+mixture_why_,,,1,
+mobilization_eff_,,,1,"stem carbohydrate mobilization efficiency (ME, %)"
+molluscicide_ai_,,,1,active ingredients (or brand names) as given
+molluscicide_used_,,,1,was a molluscicide / rodenticide used
+motivation_,,,1,
+mulch_thickness_,,,1,oat/barley mulch thickness (cm)
+mussidia_nigrivenella_,,,1,Mussidia nigrivenella larvae
+n_auger_samples_,,,1,number of auger samples composited
+n_cores_,,,1,number of core rings taken
+n_stakes_4m2_,,,1,number of stakes counted on a 2 x 2 m area
+N_straight_,,,1,elemental N from straight N fertilizers (kg/ha)
+narea_,,,1,"leaf N, g/m2"
+nationality_,,,1,
+natural_enemies_,,,1,natural enemies named on the plant
+ndvi_,,,1,mean NDVI
+ndvi_green_,,,1,mean green NDVI
+nearby_pickup_,,,1,
+neck_blast_incidence_,,,1,"neck blast incidence, percent"
+neck_blast_infected_panicles_,,,1,infected panicle count (basis not stated)
+neck_blast_panicles_,,,1,panicle count recorded with neck blast (basis not stated)
+necrosis_aerial_,,,1,necrosis on the aerial part (1/0)
+necrosis_color_,,,1,"Black, Dark brown, or Brown"
+necrosis_id_,,,1,necrosis id on that fragment
+necrosis_type_,,,1,"Wet, Dry, or No necrosis"
+news_channel_,,,1,
+nn_wf_,,,1,whitefly counts per plant. See NOTES on the dictionary swap. nn/yn/bn are the three columns that add up to Tot_Nym
+node_number_,,,1,main-stem node count
+nodule_dry_mg_60_,,,1,"nodule dry weight at 60 DAS, mg/plant"
+nodule_dry_weight_,,,1,"nodule dry weight at 30 DAS, as recorded (see ISSUES)"
+nodule_plant_60_,,,1,nodules per plant at 60 DAS
+nonmarketable_tubers_,,,1,counts on the harvested area
+NP_nutrients_,,,1,N + P2O5 from NP fertilizers (kg/ha)
+NP_treatment_,,,1,"2018DS nutrient treatment (+N+P, +N+0P, 0N+0P)"
+npk_amount_,,,1,"quantities as recorded, unit not confirmed"
+npk_g_tree_month_,,,1,"NPK product, g per tree per month. Code 0 is 0 g"
+NPK_nutrients_,,,1,N + P2O5 + K2O from NPK fertilizers (kg/ha)
+npk_product_,,,1,"Dose NPK, kg/ha of product, grade unknown. 0 means none applied"
+nursery_,,,1,"nursery code (15HLBSN, 15HZAN, 41SAWSN, 56IBWSN)"
+nymphs_healthy_,,,1,whitefly nymphs without parasitoids (parasitism file)
+nymphs_parasitized_,,,1,whitefly nymphs with parasitoids (parasitism file)
+obs_day_,,,1,"ObsDay, 1-7, not a calendar date"
+observation_,,,1,"unnamed repeated row within landscape, system, plot, and repetition"
+occupation_detail_,,,1,
+offer_frequency_,,,1,
+oil_absorption_pct_,,,1,percent
+op_,,,1,"leaflet osmotic potential, MPa"
+organic_input_,,,1,organic input text that is not an accepted OM_type
+organic_kg_,,,1,"organic input on the plot (kg), before the per-ha conversion"
+organism_,,,1,name used for parasitoids and for pupae that are not identified to genus
+organism_count_,,,1,count of organism_ (pest_incidence is used for Bactrocera and Dacus)
+organism_role_,,,1,"pest, predator, or pathogen"
+origin_country_,,,1,product label and shop price. hhid is the agrodealer index
+other_fertilizer_bags_,,,1,"other (unspecified) fertilizer, bags per ha"
+other_insects_,,,1,other insects (column Others)
+other_parasitoids_,,,1,other parasitoids
+overall_score_,,,1,"f_farmer_assessment scores (1-3, scale not defined)"
+p07_,,,1,
+p08_,,,1,
+p09_,,,1,
+p10_,,,1,
+p11_,,,1,
+p12_,,,1,
+p13_,,,1,
+p14_,,,1,
+p15_,,,1,
+p16_,,,1,
+p17_,,,1,
+p18_,,,1,
+p19_,,,1,
+p20_,,,1,
+p21_,,,1,
+p22_,,,1,
+p23_,,,1,
+p24_,,,1,
+p25_,,,1,
+p26_,,,1,
+p27_,,,1,
+p28_,,,1,
+p29_,,,1,
+p30_,,,1,
+p31_,,,1,
+p32_,,,1,
+p33_,,,1,
+p34_,,,1,
+p35_,,,1,
+p36_,,,1,
+p37_,,,1,
+p38_,,,1,
+p39_,,,1,
+p40_,,,1,
+P_product_,,,1,"amount of phosphate fertilizer product (""Phosphet""), kg/ha"
+package_quantity_,,,1,product label and shop price. hhid is the agrodealer index
+package_unit_,,,1,product label and shop price. hhid is the agrodealer index
+pair_,,,1,plot pair named in the file
+panicle_density_,,,1,panicles per m2
+panicle_diameter_,,,1,cm
+panicle_weight_,,,1,"panicle weight, g/plant"
+panicles_hill_,,,1,number of tillers / panicles per hill
+par_umol_,,,1,"photosynthetically active radiation, umol s-1 m-2"
+parasitoid_adults_,,,1,count of parasitoid adults
+parasitoids_mean_,,,1,mean number of parasitoids over seven weeks
+parcel_type_,,,1,"paddy field, dry land, sloping field, water area"
+parental_combination_,,,1,cross group code (A-D) of the csv file
+pathogen_,,,1,"suspected pathogen, as coded"
+pathotype_,,,1,"isolate code from the column header (Pg 45, Pg 53, Pg 56, Pg 118, Pg 119)"
+penetrom_max_,,,1,maximum cone index (kPa); penetrom_max_depth_: depth of maximum cone index (cm); penetrom_30cm_: cone index at 30 cm (kPa)
+percent_,,,1,that percentage
+percent_irrigated_,,,1,"percentage of the plot that is irrigated (birrigated), %"
+pericarp_retention_,,,1,"pericarp retained after popping, score 1 to 5"
+pest_control_,,,1,chemical pesticides or traditional practices
+pest_count_,,,1,arthropod count as recorded. Not an integer and not converted per hectare
+pest_injury_incidence_,,,1,"% of organs (tillers, panicles, leaves) injured by animal pests"
+pest_score_,,,1,"f_farmer_assessment scores (1-3, scale not defined)"
+pest_where_,,,1,field or storage
+pesticide_cost_kyat_,,,1,PESTCOST as reported (Kyat; per acre or per parcel is unclear)
+pesticide_names_,,,1,"insecticide, molluscicide and rodenticide (brand) names reported by the household for the season"
+pesticide_used_,,,1,TRUE when the pesticide quantity is > 0. Product and unit are not known
+petiole_exudate_,,,1,number of petioles with exudate on the roost plant
+petiole_length_,,,1,cm
+photosynthesis_,,,1,leaf photosynthesis at flowering (umol/m2/s)
+pickup_district_2023_,,,1,
+pickup_place_,,,1,
+pickup_reference_2023_,,,1,
+place_code_,,,1,incidence locality code
+plant_,,,1,plant number within the plot
+plant_height_30_,,,1,"plant height at 30 DAS, cm"
+plant_height_flowering_,,,1,"plant height at flowering (cm), IRRI"
+plant_part_faw_,,,1,plant part where FAW was recorded
+plant_part_sb_,,,1,plant part where stemborers were recorded
+plant_position_,,,1,position of the plant in the elementary plot
+plant_role_,,,1,"cover crop, spontaneous, or banana, from Table 1. Missing for code P"
+plant_sample_,,,1,plant measured within the plot (REP)
+plant_survival_,,,1,survival class (for example 75-100%)
+plantain_subgroup_,,,1,"subgroup code in the file (Frh, Fre, Fah, Hyb)"
+planting_method_,,,1,manual or line-sown
+plants_,,,1,number of plants (NbrePlante)
+plants_emerged_pct_,,,1,percent of plants emerged
+plants_in_quadrat_,,,1,plants counted in that quadrat
+plants_per_plot_,,,1,NoPlnts
+plants_per_row_,,,1,number of plants in the row
+plastic_,,,1,"plastic barrier factor, as recorded"
+plot_count_,,,1,total potato plots (Total Plots)
+plot_position_,,,1,"0.5r, 2.5r, or 5r from the trunk"
+plot_size_recorded_,,,1,crop_plot_size_r as recorded
+plot_unit_code_,,,1,code of the plot size unit in the coding manual
+plough_pan_depth_,,,1,"depth of the plough pan at the sampling location, cm (text, one range value)"
+plrv_,,,1,1 if that virus was detected on the seed tuber
+plrv_class_,,,1,resistance class as recorded
+plrv_infection_,,,1,infection proportion as recorded
+pod100_weight_,,,1,"100-pod weight, g (P100Go)"
+pod_clearance_,,,1,"dictionary ""pod clearance"", measured, unit not stated (values 5-20)"
+pod_length_,,,1,"mm, 2020 only (LGo, lGo). pod_constriction_ and pod_beak_: 2020 scores (Cons, Bec)"
+pod_length_cm_,,,1,"units inferred from magnitude, not from the dictionary"
+pod_width_,,,1,"mm, 2020 only (LGo, lGo). pod_constriction_ and pod_beak_: 2020 scores (Cons, Bec)"
+pod_width_cm_,,,1,"units inferred from magnitude, not from the dictionary"
+pod_yield_,,,1,"Pykg_ha, kg/ha, as labeled. Not used as yield"
+point_,,,1,stratum (1-3) and sampling point (1-8) of the rat injury form
+position_,,,1,LEFT/RIGHT position in trial 2 (meaning unclear)
+post_herbicide_,,,1,"post-emergence herbicide, as named in the field book. none means unsprayed"
+potato_area_belg_m2_,,,1,
+potato_area_meher_m2_,,,1,
+potato_rows_,,,1,number of potato rows in the subplot
+pre_herbicide_,,,1,"pre-emergence herbicide, as named in the field book. none means unsprayed"
+predatory_beetle_,,,1,predatory beetles
+predatory_wasps_,,,1,predatory wasps
+presence_,,,1,presence text as recorded
+previous_yield_,,,1,previous year yield as recorded
+price_max_,,,1,maximum price as recorded
+price_min_,,,1,minimum price as recorded
+price_per_kg_,,,1,product label and shop price. hhid is the agrodealer index
+primary_branches_,,,1,number of primary branches
+primary_race_,,,1,primary race name from the passport record
+product_name_,,,1,product label and shop price. hhid is the agrodealer index
+production_baskets_,,,1,reported production of the parcel in baskets (all crops)
+production_kg_,,,1,harvested quantity times the recorded kilograms per unit
+production_quintals_,,,1,"harvested quantity in quintals, column quant_quint_M3a_01A7_1"
+productive_tillers_plant_,,,1,"number of productive tillers per plant (TNAU, NPT)"
+prop_plot_area_,,,1,proportion of the plot under this crop or variety
+pseudostem_circ10_,,,1,Circ10 from the growth sheet
+pseudostem_girth100_,,,1,"girth 100 cm above the corm, cm"
+pseudostem_girth50_,,,1,"girth 50 cm above the corm, cm"
+pseudostem_girth_,,,1,"girth at 50 cm on the 15-day series, cm"
+pupae_mean_,,,1,mean number of pupae over seven weeks
+pupae_record_,,,1,"pupae column as written (0-3, ANT, Bug)"
+purchase_for_,,,1,
+purchase_frequency_,,,1,
+pva_,,,1,1 if that virus was detected on the seed tuber
+pvs_,,,1,1 if that virus was detected on the seed tuber
+pvs_class_,,,1,resistance class as recorded
+pvs_infection_,,,1,infection proportion as recorded
+pvs_pct_,,,1,percent of the seed lot
+pvx_,,,1,1 if that virus was detected on the seed tuber
+pvx_class_,,,1,resistance class as recorded
+pvx_infection_,,,1,infection proportion as recorded
+pvx_test_1_,,,1,"first extreme-resistance observation, as written"
+pvx_test_2_,,,1,"second extreme-resistance observation, as written"
+pvy_,,,1,1 if that virus was detected on the seed tuber
+pvy_class_,,,1,resistance class as recorded
+pvy_infection_,,,1,infection proportion as recorded
+pyvv_,,,1,1 if that virus was detected on the seed tuber
+qpcr_ct_,,,1,qPCR cycle threshold
+qtl_,,,1,"qDTY QTL(s) introgressed in the line (e.g. ""1.1, 2.1, 3.1"")"
+quadrat_,,,1,quadrat number in the host inventory
+rabi_bc_ratio_,,,1,rabi benefit-cost ratio
+rabi_cost_rs_ha_,,,1,"rabi cost of production, as printed under Rs/ha"
+rabi_crop_,,,1,rabi crop of the cropping system (maize or sunflower)
+rabi_gross_return_rs_ha_,,,1,"rabi gross return, as printed under Rs/ha"
+rabi_input_water_mm_,,,1,"rainfall plus irrigation in rabi, mm"
+rabi_iwp_kg_m3_,,,1,"rabi irrigation-water productivity, kg/m3"
+rabi_labour_days_,,,1,"rabi labour, mandays"
+rabi_mey_kg_ha_,,,1,"rabi maize-equivalent yield, t/ha times 1000"
+rabi_net_return_rs_ha_,,,1,"rabi net return, as printed under Rs/ha"
+rabi_protein_t_ha_,,,1,"rabi protein, t/ha as printed"
+rabi_rainfall_mm_,,,1,"rainfall received in rabi, mm"
+rain_60_100DAS_,,,1,rainfall between 60 and 100 days after sowing (mm)
+rain_rate_mm_h_,,,1,rain rate (mm/h)
+rain_recorded_,,,1,weather columns whose units are not stated as percent and mm
+rainfed_area_,,,1,"rain-fed land holding, ha"
+rank_female_,,,1,rank of the variety by the principal male / female farmer (1 = best)
+rank_male_,,,1,rank of the variety by the principal male / female farmer (1 = best)
+recent_damage_note_,,,1,free text on recent change in damage
+reducing_sugar_mg_dl_,,,1,mg/dL
+ref_result_,,,1,reference PCR or qPCR result
+residence_country_,,,1,
+residents_,,,1,
+residue_retention_,,,1,residue retention (0/1)
+residue_use_,,,1,what was done with crop residues after harvest
+respondent_age_,,,1,
+REY_,,,1,rice equivalent yield (kg/ha)
+rh90_,,,1,"relative humidity above 90%, dictionary unit %"
+rhizosphere_,,,1,"r or nr, as coded in the workbook"
+rice_area_,,,1,"total rice area of the household, ha"
+rld_0_15_,,,1,root length density at the given soil depth (cm) (units probably cm/cm3)
+rld_15_30_,,,1,root length density at the given soil depth (cm) (units probably cm/cm3)
+rld_30_45_,,,1,root length density at the given soil depth (cm) (units probably cm/cm3)
+rld_45_60_,,,1,root length density at the given soil depth (cm) (units probably cm/cm3)
+rodent_loss_percent_,,,1,percentage of losses caused by rodents
+rodenticide_ai_,,,1,active ingredients (or brand names) as given
+rodenticide_used_,,,1,was a molluscicide / rodenticide used
+root_dry_yield_,,,1,"DMRY, kg/ha, from t/ha"
+root_dw_,,,1,
+root_dw_0_15_,,,1,root dry weight (g per 4-cm soil core) at that depth (cm)
+root_dw_0_30_,,,1,root dry weight (g per 4-cm soil core) at that depth (cm)
+root_dw_15_30_,,,1,root dry weight (g per 4-cm soil core) at that depth (cm)
+root_healthy_,,,1,roots classed as healthy
+root_infected_,,,1,roots classed as CBSD infected. Includes the value 180
+root_laterals_,,,1,
+root_length_,,,1,"root length as recorded; metadata unit string is ""mm_2"""
+root_length_0_30_,,,1,"root length (cm) per soil core, 0-30 and 30-60 cm"
+root_length_30_60_,,,1,"root length (cm) per soil core, 0-30 and 30-60 cm"
+root_length_density_,,,1,
+root_length_density_0_30_,,,1,root length density (cm/cm3) at 0-30 and 30-60 cm
+root_length_density_30_60_,,,1,root length density (cm/cm3) at 0-30 and 30-60 cm
+root_length_m_m2_,,,1,root length (m/m2)
+root_length_mm_m2_,,,1,root length as recorded; docx unit mm−2 (see ISSUES)
+root_rotten_,,,1,rotten roots on the plant
+root_shallow_,,,1,% of root length at 0-30 and 30-60 cm
+root_volume_,,,1,"root volume, cm3/m2"
+root_weight_30_,,,1,"root dry weight at 30 DAS, g/plant"
+rooting_depth_,,,1,"maximum rooting depth, cm"
+row_yield_kg_,,,1,"harvested weight of the row, kilograms"
+rwc_,,,1,"relative water content, percent"
+sale_month_,,,1,month of sale
+sale_place_,,,1,where the groundnuts are sold
+sale_price_,,,1,
+sale_quantity_,,,1,
+sale_units_,,,1,
+salinity_damage_,,,1,% crop damage due to salinity
+sample_length_m_,,,1,length of the sampled row (8 m in the file)
+sample_month_,,,1,the value 3 from the parasitism file
+sample_where_,,,1,within field or around field
+sampling_method_,,,1,Destructive or Non-destructive
+sb_eggmass_,,,1,stemborer egg masses
+sb_larvae_,,,1,stemborer larvae
+sb_pupae_,,,1,stemborer pupae
+sb_severity_,,,1,"stemborer severity, scale not documented"
+scenario_,,,1,management-scenario code from the workbook
+season_bs_,,,1,Bikram Sambat year of the maize season in the questionnaire (2077)
+season_local_,,,1,"season as recorded in the survey (Wet, Wet 2, Dry, Kharif, Maha, Yala)"
+season_module_,,,1,"""input_use"" or ""short rains"", because the first file has no season name"
+sector_code_,,,1,Sector_Groupment_Zone (numeric code)
+seed_age_,,,1,how long the seed lot was kept without renewal
+seed_amount_plot_,,,1,seed planted in the plot (area unknown)
+seed_management_,,,1,"positive selection, roguing, or random selection"
+seed_or_product_,,,1,"Seed or Product, as recorded"
+seed_tuber_weight_g_,,,1,"seed tuber weight, g"
+seed_unit_,,,1,
+seed_yield_,,,1,"kernel weight, kg/ha, only on the 2012 SC-HT sheets that report seed g/m2. yield itself is pod weight"
+seeding_type_,,,1,"dry seeded, wet seeded or dibbled for direct-seeded plots (dmethod)"
+seedlings_per_hill_,,,1,"number of seedlings per hill (bundle), coded classes ""1"", ""2/3"", ""3/4"", ""4/5"", ""5+"""
+senescence_1_,,,1,first senescence score in the Kadawa file (scale not defined)
+senescence_2_,,,1,second senescence score in the Kadawa file (scale not defined)
+sensor_mulch_cm_,,,1,mulch thickness (cm) at the soil-temperature sensor. 0 is the sensor without mulch
+sesamia_calamistis_,,,1,Sesamia calamistis larvae
+sett_portion_,,,1,"head, middle or bottom of the seed sett"
+sev_yls_,,,1,"severity of the youngest leaf spotted, Gauhl scale"
+sex_,,,1,male or female for a fruit-fly count in the long table
+sex_latent_days_,,,1,"estimated sexual latent period, days"
+shoot_weight_30_,,,1,"shoot dry weight at 30 DAS, g/plant"
+sieving_,,,1,evaluation number (dictionary: N° d'évaluation)
+sigatoka_leaf4_,,,1,"black sigatoka lesions on the fourth leaf, cycle 1"
+sigatoka_leaf5_,,,1,lesions on the fifth leaf
+sigatoka_leaf6_,,,1,lesions on the sixth leaf
+silking_dae_,,,1,days from emergence to silking
+soc_stock_,,,1,"soil organic carbon stock, Mg/ha"
+sodic_percent_,,,1,"percentage of the parcel affected by sodicity (PRCNTSDC), %"
+soil_bd_25_30_,,,1,bulk density at 25-30 cm (g/cm3); soil_bd is at 5-10 cm
+soil_color_dry_,,,1,soil colour after drying in the laboratory (soil_color is the moist colour in the field)
+soil_conservation_,,,1,TRUE/FALSE from soil_conservation_structures Y/N
+soil_d15N_,,,1,nitrogen isotope ratio δ15N of dried soil. Unit is not stated in the dictionary
+soil_drainage_farmer_,,,1,Good/Moderate/Poor as recorded. Not the USDA drainage classes
+soil_fertility_,,,1,"farmer-reported soil fertility (very fertile, fertile, unfertile)"
+soil_fertility_farmer_,,,1,"farmer rating (poor, moderate, fertile). Not a soil test"
+soil_moist_pct_,,,1,soil moisture (%)
+soil_moisture_class_,,,1,humid (dictionary code 2)
+soil_moisture_status_,,,1,"field moisture at sampling (aerobic, anaerobic, both)"
+soil_N_total_,,,1,total nitrogen. The unit cell is blank
+soil_N_vegetative_,,,1,"nitrogen at 60 DAS, mg/kg, after the column swap"
+soil_P_bray_,,,1,"Bray 1 phosphorus, mg/kg, on rows that also have Olsen phosphorus"
+soil_P_CaCl2_,,,1,inorganic P extracted in 0.001 M CaCl2 (mg/kg)
+soil_P_DGT_mg_L_,,,1,DGT inorganic P (mg/L)
+soil_P_Olsen_Dabin_,,,1,inorganic P by the Olsen-Dabin extraction (mg/kg)
+soil_P_vegetative_,,,1,"available P at 60 DAS, mg/kg"
+soil_P_water_mg_L_,,,1,water-extractable inorganic P (mg/L)
+soil_position_,,,1,"row or inter-row, as stored"
+soil_saline_,,,1,"TRUE if soil type is ""saline alkaline"" (STYPE 6)"
+soil_SOC_vegetative_,,,1,"organic carbon at 60 DAS, percent, after the column swap"
+soil_temp_1_,,,1,soil temperature (C)
+soil_temp_2_,,,1,soil temperature (C)
+soil_temp_3_,,,1,soil temperature (C)
+sooty_mould_,,,1,Sooty_Mould as recorded (not only 0/1)
+source_field_m2_,,,1,"area of the farmer field, m2"
+sowing_,,,1,first or second sowing at that location
+sowing_order_,,,1,"first, second, or third planting date at a station"
+sp_gender_,,,1,
+sp_upland_b_,,,1,
+spacing_cassava_,,,1,N21cassava plant spacing text
+spacing_maize_,,,1,N21Maize plant spacing text
+species_cover_,,,1,percent cover of one species on a survey date. Zeros are omitted
+species_number_,,,1,number of cover-crop species in the mixture (0 to 4)
+species_recorded_,,,1,"species text, for example I. leucantha"
+specific_gravity_,,,1,"tuber specific gravity, unitless"
+specific_leaf_weight_,,,1,"SLW, as recorded (documented as g/cm2)"
+spiralling_whitefly_,,,1,"SWF, 0/1 presence"
+sprout_number_,,,1,sprouts on the seed tuber
+sprouted_why_,,,1,
+ssw_anthesis_,,,1,"specific stem weight, Patna"
+ssw_maturity_,,,1,"specific stem weight, Patna"
+staking_method_,,,1,staking method recorded for that plot
+stalk_damaged_,,,1,"1 if the stalk had at least one bored internode, else 0"
+stalk_id_,,,1,stalk counted for borer damage
+state_code_,,,1,numeric location codes
+status_,,,1,"plant status code (V, F, and the other codes in the file)"
+stem_diameter_,,,1,cm
+stem_dw10_flowering_,,,1,"dry weight of 10 stems (g), IRRI"
+stem_dw10_maturity_,,,1,"dry weight of 10 stems (g), IRRI"
+stem_dw_anthesis_,,,1,"stem dry weight (g), Patna"
+stem_dw_maturity_,,,1,"stem dry weight (g), Patna"
+stem_length_anthesis_,,,1,"stem length (cm), Patna"
+stem_length_maturity_,,,1,"stem length (cm), Patna"
+stem_reserve_mob_,,,1,"stem reserve mobilization (SRM, %), Patna"
+stem_starch_flowering_,,,1,"stem starch (mg/g), IRRI"
+stem_starch_maturity_,,,1,"stem starch (mg/g), IRRI"
+stem_sugar_flowering_,,,1,"stem soluble sugar (mg/g), IRRI"
+stem_sugar_maturity_,,,1,"stem soluble sugar (mg/g), IRRI"
+stemborer_count_,,,1,stemborer count on the plant
+stemborer_damage_,,,1,"SB_damage, scale not documented"
+stemborer_total_,,,1,Total_SB
+sterility_group_,,,1,"sterility group, B or R"
+storage_code_,,,1,storage treatment code (T0-T3). Meaning is not in the file
+storage_loss_cob_percent_,,,1,farmer-estimated percent loss of maize stored as cobs
+storage_loss_grain_percent_,,,1,farmer-estimated percent loss of maize stored as grain
+stover_kg_ha_,,,1,"stover yield column, t/ha converted to kg/ha. Fresh or dry is not stated"
+straw_kg_ha_,,,1,Straw.yield.t.ha converted to kg/ha. Fresh or dry is not stated
+straw_management_,,,1,"management of the rice straw at sampling (burnt, removed, incorporated, ...)"
+striga_count_10wap_transformed_,,,1,transformed number of emerged Striga plants at 10 weeks after planting. Transform not stated
+striga_count_8wap_transformed_,,,1,transformed number of emerged Striga plants at 8 weeks after planting. Transform not stated
+study_group_,,,1,
+subarea_,,,1,sub-area of the plot (A-E) used for whole-area injuries and weeds
+sublocation_,,,1,
+subsidized_price_per_kg_,,,1,product label and shop price. hhid is the agrodealer index
+suggestion_,,,1,
+surrounding_vegetation_,,,1,surrounding vegetation
+surrounding_vegetation_2_,,,1,second surrounding-vegetation field
+suspected_disease_,,,1,"disease suspected from symptoms, as coded"
+sweetness_,,,1,hedonic scores as recorded
+system_,,,1,agroforestry or conventional
+system_bc_ratio_,,,1,system benefit-cost ratio
+system_cost_rs_ha_,,,1,"system cost of production, as printed under Rs/ha"
+system_gross_return_rs_ha_,,,1,"system gross return, as printed under Rs/ha"
+system_input_water_mm_,,,1,"rainfall plus irrigation for the system, mm"
+system_iwp_kg_m3_,,,1,"system irrigation-water productivity, kg/m3"
+system_labour_days_,,,1,"system labour, mandays"
+system_mey_kg_ha_,,,1,"system maize-equivalent yield, t/ha times 1000"
+system_net_return_rs_ha_,,,1,"system net return, as printed under Rs/ha"
+system_protein_t_ha_,,,1,"system protein, t/ha as printed"
+system_rainfall_mm_,,,1,"rainfall received by the system, mm"
+system_timing_,,,1,"date level of the system (1-4, = aus sowing date A1-A4 and the subsequent aman/rabi dates)"
+tassel_blast_,,,1,tassel blast score (TB). Heat-drought file only. Unit: score
+tasseling_dae_,,,1,days from emergence to tasseling
+taxon_class_,,,1,class
+taxon_family_,,,1,family
+taxon_order_,,,1,order
+taxon_species_,,,1,"species name, as stored"
+tb_g_,,,1,"dry tuber biomass, g/plant"
+tea_bag_final_,,,1,tea-bag weight (g) before burial and after drying. bag_ is the bag number 1-3
+tea_bag_initial_,,,1,tea-bag weight (g) before burial and after drying. bag_ is the bag number 1-3
+tea_bag_remaining_,,,1,remaining tea-bag biomass (BRT). The dictionary gives no unit
+tensiom_avg_60_100DAS_,,,1,average and maximum soil water potential 60-100 DAS (-kPa)
+tensiom_max_60_100DAS_,,,1,average and maximum soil water potential 60-100 DAS (-kPa)
+testing_year_,,,1,year the genotype was first tested
+TFI_,,,1,"treatment frequency index (herbicide), as recorded"
+tillage_,,,1,"tillage factor (conventional, minimum, zero), as recorded"
+tillage_category_,,,1,"2022 wheat tillage and residue label, as recorded"
+tillage_number_,,,1,number of tillage passes recorded for wheat in 2022
+tiller_m2_,,,1,tillers per m2
+tillers_,,,1,tiller count as recorded (unit not stated; see ISSUES)
+tillers_hill_,,,1,number of tillers / panicles per hill
+tillers_m2_,,,1,tillers per m2
+tillers_per_plant_,,,1,tillers per plant at harvest
+tillers_point_,,,1,number of tillers assessed at a rat-form sampling point
+time_to_first_pop_s_,,,1,seconds from the start of microwaving to the first pop
+tio_days_,,,1,days after tuber initiation onset
+tool_type_,,,1,class of tools used for that crop
+top_leaf_length_,,,1,"leaf size, unit not stated"
+top_leaf_width_,,,1,"leaf size, unit not stated"
+tops_weight_kg_ha_,,,1,"above-ground biomass with cobs at harvest, kg/ha. Fresh or dry is not stated"
+total_pod_weight_g_,,,1,"units inferred from magnitude, not from the dictionary"
+total_pods_,,,1,TotPodHarvest
+transplanting_month_,,,1,"Bengali calendar month of transplanting (1 = Baishakh, mid-April to mid-May), year not given"
+transplanting_week_,,,1,week of the month of transplanting (1-4)
+trap_crop_,,,1,"faba bean, or none when the treatment has no trap crop"
+trap_days_,,,1,days the trap was active
+trap_insecticide_,,,1,"insecticide, none, or no trap. none means the faba strip was not sprayed"
+trap_method_,,,1,"litter quadrat or soil quadrat method, as stored"
+trap_place_,,,1,"field 1, field 2, or storage"
+trap_type_,,,1,malaise or pit-fall
+tree_species_,,,1,parkland tree. Faidherbia albida is the folder species when the sheet has no tree column
+trial_type_,,,1,mother or baby
+trial_year_,,,1,2023 or 2024
+ttwp_g_,,,1,TTWP_gr as recorded. The dictionary says tuber weight and does not give the unit in the unit column
+ttwp_kg_,,,1,"total tuber weight, kg per plot"
+ttwpl_kg_,,,1,"TTWPL, treated as kg/plot from the CIP field-book name, not converted"
+ttya_,,,1,"total tuber yield adjusted, unit not stated"
+tuber_caffeic_dw_,,,1,"caffeic acid, mg/100 g"
+tuber_caffeic_fw_,,,1,"caffeic acid, mg/100 g"
+tuber_chlorogenic_dw_,,,1,"chlorogenic acid, mg/100 g dry and fresh weight"
+tuber_chlorogenic_fw_,,,1,"chlorogenic acid, mg/100 g dry and fresh weight"
+tuber_class_,,,1,"mother or baby harvest, as named by the file"
+tuber_code_,,,1,tuber number on the sheet. It is not unique inside a field
+tuber_d13c_,,,1,"tuber 13C discrimination, per mil"
+tuber_Fe_,,,1,"iron in the root, mg/100 g fresh weight"
+tuber_infection_pct_,,,1,percent symptomatic tubers on the first-trial block
+tuber_latent_pct_,,,1,percent latent tuber infection
+tuber_TA_dw_,,,1,TA columns. The dictionary does not name TA or give a unit
+tuber_TA_fw_,,,1,TA columns. The dictionary does not name TA or give a unit
+tuber_TP_dw_,,,1,total phenolics on a chlorogenic-acid basis. Unit is not on the dictionary scale row
+tuber_TP_fw_,,,1,total phenolics on a chlorogenic-acid basis. Unit is not on the dictionary scale row
+tuber_tryptophan_dw_,,,1,"tryptophan, mg/100 g"
+tuber_tryptophan_fw_,,,1,"tryptophan, mg/100 g"
+tuber_uniformity_,,,1,"tuber uniformity class, as recorded"
+tuber_weight_g_,,,1,grams and tubers per plant
+tuber_Zn_,,,1,"zinc in the root, mg/100 g fresh weight"
+tubers_41_60g_,,,1,progeny tuber counts per plant in those fresh-weight classes
+tubers_61_80g_,,,1,progeny tuber counts per plant in those fresh-weight classes
+tubers_gt80g_,,,1,progeny tuber counts per plant in those fresh-weight classes
+tubers_lt40g_,,,1,progeny tuber counts per plant in those fresh-weight classes
+tubers_per_plant_,,,1,"tuber count, mean of 4 plants. Not converted to tubers/ha"
+typhlodromalus_30plants_,,,1,"Taripo_30plants, percent of 30 plants, mostly missing"
+typhlodromalus_aripo_,,,1,T_aripo count (0 or 1)
+typhlodromalus_percent_,,,1,"T_aripo_perc; dictionary says percent, values are 0 or 3.333"
+typhlodromalus_present_,,,1,"T_aripo 1/0, presence on the plant"
+unit_code_,,,1,"observation unit for ground cover (subplot), not the yield plot id"
+unpopped_kernel_weight_g_,,,1,"weight of kernels that did not pop, g"
+unpopped_kernels_,,,1,kernels that did not pop
+unpopped_percent_,,,1,percent of kernels that did not pop
+upland_fields_,,,1,number of sweetpotato fields on uplands (G02A)
+urea_amount_,,,1,"quantities as recorded, unit not confirmed"
+urea_product_,,,1,"Dose urée, kg/ha of urea. 0 means none applied"
+used_happy_seeder_,,,1,"2021 plot used a turbo Happy Seeder (1 yes, 0 no)"
+uses_delivery_,,,1,
+valley_bottom_,,,1,
+variety_2_,,,1,
+variety_3_,,,1,
+variety_choice_reason_,,,1,reason for growing the variety
+variety_development_year_,,,1,year the hybrid was developed (Dev_Year). Unit: year
+variety_improved_,,,1,Variedad_PMEJ
+variety_native_,,,1,Variedad_PNAT
+variety_release_note_,,,1,"comment on the release of the variety (e.g. ""Released in Andhra Pradesh"")"
+variety_set_,,,1,genotype group as given in the data (e.g. other breeding lines)
+variety_slot_,,,1,"variety slot number in the seed module (s01, 1-3)"
+vegetative_biomass_,,,1,"vegetative biomass time series, kg/ha, from the mean amount column"
+village_type_,,,1,"village irrigation type (irrigated, rainfed, partially irrigated; NVILTYP)"
+vine_dry_yield_,,,1,"DMVY, kg/ha, from t/ha"
+vine_yield_,,,1,"vine yield, kg/ha, from VY in t/ha"
+visit_,,,1,visit number (1-4) of the crop health assessment
+visual_score_,,,1,"EVAL, visual score. README scale is 1 (worst) to 9 (best); 0 is kept as recorded"
+volume_,,,1,"amount moved, unit not stated"
+wants_origin_,,,1,
+wants_recipes_,,,1,
+wants_variety_names_,,,1,
+water_ret_10kPa_,,,1,water retention at 5-10 cm
+water_ret_1500kPa_,,,1,water retention at 5-10 cm
+water_ret_300kPa_,,,1,water retention at 5-10 cm
+water_ret_500kPa_,,,1,water retention at 5-10 cm
+water_status_,,,1,field water status score (scale not documented); per visit (2014/2015 DS) or per sub-area (2015 WS)
+water_table_60_100DAS_,,,1,average water table depth 60-100 DAS (cm)
+water_user_group_,,,1,water user group code (wucode)
+weather_type_,,,1,"instrument or station type as recorded (Hobo / Watchdog, Cambell)"
+weed_above_rating_,,,1,weed rating above / below the rice canopy (scale see ISSUES 6)
+weed_below_rating_,,,1,weed rating above / below the rice canopy (scale see ISSUES 6)
+weed_biomass_dry_,,,1,"oven-dry weed biomass at harvest, kg/ha. The source is g/m2"
+weed_rank_broadleaved_,,,1,rank of weed types
+weed_rank_grass_,,,1,rank of weed types
+weed_rank_sedge_,,,1,rank of weed types
+weed_rank_small_,,,1,rank of weed types
+weevil_cob_score_,,,1,"1-5 importance of maize weevil in stored cobs, as recorded"
+weevil_grain_score_,,,1,"1-5 importance of maize weevil in stored grain, as recorded"
+weevil_score_,,,1,"sweetpotato weevil reaction, 1 to 5"
+weight_41_60g_,,,1,"progeny weight in those classes, g per plant"
+weight_61_80g_,,,1,"progeny weight in those classes, g per plant"
+weight_gt80g_,,,1,"progeny weight in those classes, g per plant"
+weight_lt40g_,,,1,"progeny weight in those classes, g per plant"
+wellbeing_,,,1,"household well-being class (well-off, average, poor)"
+wf_damage_score_,,,1,whitefly damage score
+willingness_to_pay_,,,1,
+wilt_score_,,,1,mean wilt score at that evaluation
+within_field_vegetation_,,,1,vegetation inside the field
+woreda_code_,,,1,
+worst_growing_,,,1,TRUE when that blinded option was the one named in the matching question
+worst_overall_,,,1,TRUE when that blinded option was the one named in the matching question
+worst_yield_,,,1,TRUE when that blinded option was the one named in the matching question
+would_buy_sprouted_,,,1,
+would_recommend_,,,1,
+wue_,,,1,"water use efficiency, kg/m3"
+years_grown_,,,1,number of years the household has grown the variety
+yellow_leaf_dw_,,,1,"yellow (senesced) leaf dry weight (g, sample basis unclear)"
+yield_baskets_acre_,,,1,reported yield in baskets per acre (all crops)
+yield_per_plant_,,,1,mean bunch yield of three sampled vines (kg/vine)
+yield_ratio_,,,1,bags harvested per bag planted (45.45 kg bags)
+yield_reduction_,,,1,% yield reduction by drought (same value on both records of a site-year)
+yield_score_,,,1,"f_farmer_assessment scores (1-3, scale not defined)"
+yield_se_,,,1,"standard error of the treatment-mean yield, kg/ha"
+yls_,,,1,"youngest leaf spotted, leaf rank"
+yn_wf_,,,1,whitefly counts per plant. See NOTES on the dictionary swap. nn/yn/bn are the three columns that add up to Tot_Nym
+youngest_necrotic_leaf_,,,1,rank of the youngest leaf with necrotic tissue
+zn_dw_,,,1,"mineral sheet columns, unit not stated"
+zn_dw_mean_,,,1,Mean_ZNDW as recorded
+zn_recorded_,,,1,ZnDW as recorded
+Zn_treatment_,,,1,Zn treatment code as recorded
+zone_,,,1,"survey zone named in the file (Eastern, Southern Highlands). It is not an administrative unit"
