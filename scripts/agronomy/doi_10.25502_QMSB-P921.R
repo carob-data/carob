@@ -39,7 +39,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   
   d$trial_id <- d$farm_id
   
-  d$country <- carobiner::fix_name(d$country, "title")
+  d$country <- "Ghana"
   d$adm1 <- as.character(NA)
   d$adm2 <- carobiner::fix_name(d$district,"title")
   d$adm2[d$adm2 %in% c("Nadowli- Kaleo","Nadowli-Kaleo")] <- "Nadowli"
