@@ -2,17 +2,14 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# 1. Year: the title and the Dataverse time period say 2009 (and the file name is PTPV200908), but the
-#    fieldbook has begin date 2013-03-20, harvest evaluation on 2013-09-29 and storage on 2013-10-02.
-#    planting_date is the begin date (2013-03-20) as in the fieldbook. Which year is correct?
-# 2. Baby trials (3 farmers, 1 plot per clone): TTWP gives up to 75 t/ha (10.6-74.8) with 25-75% of plants
+# 1. Baby trials (3 farmers, 1 plot per clone): TTWP gives up to 75 t/ha (10.6-74.8) with 25-75% of plants
 #    harvested, much higher than the mother trial (2.5-29 t/ha). Kept as reported. MTWP has the same
 #    values as NMTPL (marketable tubers per plant), so yield_marketable is NA for the baby trials.
 #    The baby plots have the same size as the mother plots (2.8 m2, Installation sheet), so the high
 #    yields are not due to a different plot size.
-# 3. Texture in the organoleptic test is scored 3 (soggy), 6 (intermediate) or 9 (mealy), but
+# 2. Texture in the organoleptic test is scored 3 (soggy), 6 (intermediate) or 9 (mealy), but
 #    tuber_texture is defined on a 1-5 scale. Stored as reported (out of bounds warning).
-# 4. The organoleptic tests were done with tubers of the mother trial and of the baby trial (sheets
+# 3. The organoleptic tests were done with tubers of the mother trial and of the baby trial (sheets
 #    "Data_organoleptic_Mother" and "Data_organoleptic_Baby"); the selection criteria (F1) are from the
 #    mother trial (confirmed by the contributor). They are by genotype, not by plot, and have no date,
 #    so they are in the long table linked by trial_id and variety_code (hence the plot_id and duplicate
@@ -55,6 +52,9 @@
 # 10. Baby plots: number of marketable tubers per ha (tuber_density_marketable_, from NMTP) and the
 #    initial weight of the tubers used for the dormancy test (dormancy_tuber_weight_, kg, F8_Dormancy;
 #    the sprouting evaluations are empty). Storage votes include the storage type (storage_type_).
+# 11. The trial was in 2013 (confirmed by the contributor): the fieldbook has begin date 2013-03-20
+#    (planting_date), harvest evaluation on 2013-09-29 and storage on 2013-10-02. The Dataverse
+#    description and time period say 2009 (and the file name is PTPV200908), which is not correct.
 
 carob_script <- function(path) {
 
@@ -99,7 +99,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	d1$plant_density <- as.numeric(r1$NPH)[match(d1$plot_id, as.character(r1$PLOT))] * padj
 	d1$yield_adjusted <- NULL
 
-	## baby trials (ISSUES 2)
+	## baby trials (ISSUES 1)
 	r2 <- carobiner::read.excel(f, sheet="F5_harvest_Baby")
 	d2 <- data.frame(
 		plot_id = as.character(r2$PLOT),
@@ -168,7 +168,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	i <- lv$pvs_phase_ == "storage"
 	lv$storage_type_[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
 
-	## long table 2: organoleptic test per panelist (NOTES 7, ISSUES 3, 4)
+	## long table 2: organoleptic test per panelist (NOTES 7, ISSUES 2, 3)
 	org <- function(sheet, trial_id) {
 		r <- carobiner::read.excel(f, sheet=sheet)
 		data.frame(
