@@ -39,7 +39,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   
   d$trial_id <- d$farm_id
   
-  d$country <- "Ghana"
+  d$country <- carobiner::fix_name(d$country, "title")
   d$adm1 <- as.character(NA)
   d$adm2 <- carobiner::fix_name(d$district,"title")
   d$adm2[d$adm2 %in% c("Nadowli- Kaleo","Nadowli-Kaleo")] <- "Nadowli"
@@ -89,7 +89,23 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   r$latitude[r$adm2 == "Yendi" & r$adm3 == "Chirifoyili"] <- 9.7
   # # Additionally, some of the longitude values seem to be reversed
   r$longitude[r$longitude > 0 & !is.na(r$longitude)] <- r$longitude[r$longitude > 0 & !is.na(r$longitude)]*-1
-  
+
+  # incorrect location coords (guzongo)
+  i <- r$adm3 == "Guzongo" & r$latitude > 11.5 & !is.na(r$latitude)
+  r$latitude[i] <- 11.1
+  r$geo_from_source[i] <- FALSE
+
+  # missing coords replaced with medians
+  miss <- is.na(r$latitude) | is.na(r$longitude)
+  for (v in unique(stats::na.omit(r$adm3[miss]))) {
+    k <- which(r$adm3 == v & !miss)
+    m <- which(r$adm3 == v & miss)
+    if (length(k) > 0) {
+      r$latitude[m] <- median(r$latitude[k])
+      r$longitude[m] <- median(r$longitude[k])
+      r$geo_from_source[m] <- FALSE
+    }
+  }
   
   # experiment
   
@@ -224,6 +240,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	z$yield_isfresh <- as.numeric(NA) #needs to be checked
 	z$yield_moisture <- as.numeric(NA) #needs to be checked
 
+  d_check <<- z
   carobiner::write_files(meta, z, path=path)
 }
 
