@@ -106,7 +106,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
       r$geo_from_source[m] <- FALSE
     }
   }
-  
+
   # experiment
   
   d1$trial_id <- d1$farm_id
@@ -240,7 +240,6 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	z$yield_isfresh <- as.numeric(NA) #needs to be checked
 	z$yield_moisture <- as.numeric(NA) #needs to be checked
 
-  d_check <<- z
   carobiner::write_files(meta, z, path=path)
 }
 
