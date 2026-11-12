@@ -24,7 +24,11 @@ carob_script <- function(path) {
 
 	process_cowpea <- carobiner::get_function("process_cowpea", path, group)
 	d <- process_cowpea(ff)
-	d$location <- "Bunza"
+	#d$location <- "Bunza"
+	d$location <- "Serrado"#metadata coverage states Serrado
+	d$longitude[d$longitude== -23.0418] <- -23.5919
+	d$latitude[d$latitude== 16.5388] <- 15.1183
+	
 	carobiner::write_files(path = path, metadata = meta, wide=d)
 }
 
