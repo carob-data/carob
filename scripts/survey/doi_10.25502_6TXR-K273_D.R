@@ -1,6 +1,9 @@
 
 ## ISSUES
-# no specification of total_production (yield) units
+#no specification of total_production (yield) units
+#Location names standardised (spelling variants merged). 
+#Combined names split into admin levels: Kenya ward/village; DRC territory/groupement/village; Nigeria ward. village. Other admin levels taken from action_side
+#Some data points for Ghana has missing location, hence longitude and latitude will be added soon as author responds
 
 carob_script <- function(path) {
 
@@ -294,58 +297,385 @@ carob_script <- function(path) {
 	  market_distance = r18$distance
 	  )
 	
+	## coordinate typos fixed before parsing (checked against neighbouring farms in the same location)
+	r19$homestead_coord_northing[r19$farm_id == "RWA037"] <- "S01.48.53.8"   # was S02.48 (Tanzania); other Gakenyeri farms S01.48-49
+	r19$homestead_coord_northing[r19$farm_id == "RWA330"] <- "S01.34.56"     # was S01.3456; other Nyamusanze farms S01.34.5x
+	r19$homestead_coord_northing[r19$farm_id == "MOZ018"] <- "14.08.48,4"    # was 15.08 (Malawi); other luelele farms 14.08
+	r19[r19$farm_id == "MOZ027", c("homestead_coord_northing", "homestead_coord_easting")] <- c("19.32.42,3", "32.53.51,0")  # lat/lon swapped
+	r19[r19$farm_id %in% c("RWA151", "MOZ048"), c("homestead_coord_northing", "homestead_coord_easting")] <- NA  # fall in DRC / Zimbabwe, no basis to correct
+	
+	parse_coord <- function(x) {
+	  x <- toupper(trimws(as.character(x)))
+	  x <- gsub("O", "0", x)                      # letter O typed for zero (EOO842, O29)
+	  x <- gsub("[A-Z]", "", x)                   # drop hemisphere letters; sign is set by country
+	  x <- trimws(gsub("[^0-9.,]+", " ", x))      # ? * ' - and spaces are separators
+	  sapply(x, function(s) {
+	    if (is.na(s) || s == "") return(NA_real_)
+	    tok <- regmatches(s, gregexpr("[0-9]+", s))[[1]]
+	    sep <- regmatches(s, gregexpr("[^0-9]+", s))[[1]]
+	    if (length(tok) > 3 && tok[1] == "0") {tok <- tok[-1]; sep <- sep[-1]}   # "0,36.42.33,3"
+	    n <- length(tok)
+	    num <- as.numeric(tok)
+	    if (n == 1) {
+	      v <- num
+	      if (v > 180) v <- floor(v/100) + (v %% 100)/60          # DDMM
+	    } else if (n == 2) {
+	      if (num[1] > 180) {                                   # DDMM.mmm / DDDMM.mmm
+	        m <- as.numeric(paste0(substr(tok[1], nchar(tok[1])-1, nchar(tok[1])), ".", tok[2]))
+	        v <- floor(num[1]/100) + m/60
+	      } else {                                              # decimal degrees
+	        v <- as.numeric(paste0(tok[1], ".", tok[2]))
+	      }
+	    } else if (n == 3) {
+	      if (nchar(tok[3]) == 2 && grepl("[.]", sep[1]) == grepl("[.]", sep[2]) && !grepl(",", sep[2])) {
+	        m <- num[2]; sec <- num[3]                            # D.M.S
+	      } else {
+	        m <- as.numeric(paste0(tok[2], ".", tok[3])); sec <- 0   # D M.mmm
+	      }
+	      if (m >= 60 || sec >= 60) return(NA_real_)
+	      v <- num[1] + m/60 + sec/3600
+	    } else if (n == 4) {                                        # D M S.s
+	      sec <- as.numeric(paste0(tok[3], ".", tok[4]))
+	      if (num[2] >= 60 || sec >= 60) return(NA_real_)
+	      v <- num[1] + num[2]/60 + sec/3600
+	    } else return(NA_real_)
+	    v
+	  }, USE.NAMES = FALSE)
+	}
+	
+	cc <- c(DR = "Democratic Republic of the Congo", GH = "Ghana", KE = "Kenya", MW = "Malawi",
+	        MO = "Mozambique", NI = "Nigeria", RW = "Rwanda", ZI = "Zimbabwe")
+	
 	d19 <- data.frame(
 	  hhid = r19$id,
 	  field_id = r19$farm_id,
-	  country = r19$country,
+	  country = unname(cc[substr(r19$farm_id, 1, 2)]),
 	  location = r19$location,
-	  elevation = r19$homestead_coord_altitude
+	  action = tolower(trimws(gsub("\\s+", " ", r19$action_side))),   # temporary, used for admin levels
+	  elevation = r19$homestead_coord_altitude,
+	  latitude = parse_coord(r19$homestead_coord_northing),
+	  longitude = parse_coord(r19$homestead_coord_easting)
 	)
 	
 	d19$elevation <- {
 	  x <- trimws(as.character(d19$elevation))
 	  is_ft <- grepl("ft$", x, ignore.case = TRUE)
-	  num <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", x)))   # strips "m", " m", "ft"
-	  num[is_ft] <- num[is_ft] * 0.3048                              # ft -> m
+	  num <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", x)))
+	  num[is_ft] <- num[is_ft] * 0.3048
 	  num
 	}
+	i <- d19$country == "Zimbabwe" & !is.na(d19$elevation) & d19$elevation > 2600   # Zimbabwe max ~2590 m; these are feet
+	d19$elevation[i] <- d19$elevation[i] * 0.3048
 	
-	#latitude
-	convert_lat <- function(x) {
-	  x <- trimws(x)
-	  out <- rep(NA_real_, length(x))
-	  # format like S02,43450
-	  idx1 <- grepl("^S[0-9]{2},", x)
-	  deg <- as.numeric(substr(x[idx1], 2, 3))
-	  mins <- as.numeric(sub(",", ".", substr(x[idx1], 4, 100)))
-	  out[idx1] <- -(deg + mins/60)
-	  # format like S02 26,121
-	  idx2 <- grepl("^S[0-9]{2} ", x)
-	  deg <- as.numeric(substr(x[idx2], 2, 3))
-	  mins <- as.numeric(gsub(",", ".", sub("^S[0-9]{2} ", "", x[idx2])))
-	  out[idx2] <- -(deg + mins/60)
-	  out
+	south <- d19$country %in% c("Democratic Republic of the Congo", "Mozambique", "Rwanda", "Zimbabwe", "Malawi")
+	d19$latitude[south] <- -d19$latitude[south]
+	d19$longitude[d19$country == "Ghana"] <- -d19$longitude[d19$country == "Ghana"]
+	
+	#set to NA values outside the country bounding box (unrecoverable typos)
+	bb <- data.frame(country = cc,
+	                 xmin = c(12, -3.3, 33.9, 32.6, 30.2, 2.6, 28.8, 25.2), xmax = c(31.4, 1.2, 41.9, 35.9, 41, 14.7, 30.9, 33.1),
+	                 ymin = c(-13.5, 4.5, -4.7, -17.2, -26.9, 4.2, -2.9, -22.5), ymax = c(5.4, 11.2, 5.1, -9.3, -10.4, 13.9, -1, -15.6))
+	i <- match(d19$country, bb$country)
+	out <- !(d19$longitude >= bb$xmin[i] & d19$longitude <= bb$xmax[i] & d19$latitude >= bb$ymin[i] & d19$latitude <= bb$ymax[i])
+	out[is.na(out)] <- TRUE
+	d19$latitude[out] <- d19$longitude[out] <- NA
+	d19$geo_from_source <- !is.na(d19$latitude)
+	
+	#cleaning spelling variants in location names
+	x <- tolower(trimws(gsub("\\s+", " ", d19$location)))
+	x <- gsub("\\s*/\\s*", "/", x)                            # "Buhene / buhene" -> "buhene/buhene"
+	x <- gsub("\\s*,\\s*", "/", x)                            # "Kako, Cegera" -> "kako/cegera"
+	x[x == ""] <- NA
+	ng <- d19$country == "Nigeria" & grepl("\\.", x)
+	ward <- ifelse(ng, trimws(sub("\\..*$", "", x)), NA)      # Nigeria: "ward. village"
+	
+	fix <- c(
+	  #Kenya
+	  "wamuluma/mbaya" = "wamuluma/mbaya",
+	  #DR Congo
+	  "buhene/buhene" = "buhene", "buhene/walungu" = "walungu/buhene",
+	  "mulamba/ndala" = "mulamba/ndola", "ndala" = "ndola", "ndolo" = "ndola",
+	  "kabiganda" = "kabinganda", "kaviganda" = "kabinganda", "kabinganda/kabinganda" = "kabinganda",
+	  "nyangezi/kabiganda" = "nyangezi/kabinganda", "nyagezi/kabiganda" = "nyangezi/kabinganda", "nyangezi/kaviganda" = "nyangezi/kabinganda",
+	  "konge" = "konge 1", "kinge" = "konge 1", "konge 1er/mudaka" = "konge 1/mudaka", "mudaka/konde 1" = "konge 1/mudaka",
+	  "bulonge i" = "bulonge 1", "bulonge/bulonge 1" = "bulonge 1", "mulamba/bulonge" = "walungu/bulonge",
+	  "buhehe/buhehe" = "buhehe", "buhehe/buruma" = "buhehe/buhuma", "buhehe kabare" = "buhehe", "buhehe kabama" = "buhehe",
+	  "kako/cegera" = "cegera/kako", "cigera/kako" = "cegera/kako",
+	  "canya 1 er" = "canya 1er", "canya 1 er/bushwira" = "canya 1er/bushwira",
+	  "kasheke/kahumbiro" = "kasheke/kabumbiro", "kasheke/karumbiro" = "kasheke/kabumbiro", "kasheke/kabambiro" = "kasheke/kabumbiro",
+	  "kasheke/kavumbiro" = "kasheke/kabumbiro", "kabambiro" = "kabumbiro", "kabumbiro/kacheke" = "kasheke/kabumbiro",
+	  "chigazi" = "cigazi", "chigazi/kacheke" = "kasheke/cigazi",
+	  "mwendo ibona" = "mwendo/ibona", "ibona/mwendo" = "mwendo/ibona",
+	  "cibanda/budara" = "cibanda/budaha", "madaka/cibanda budaha" = "cibanda/budaha", "madaka/cibanda" = "cibanda/madaka",
+	  "chibanda" = "cibanda", "changombe/chibanda" = "cibanda/cagombe", "changombo/chibanda" = "cibanda/cagombe",
+	  "changombe/chiranda" = "cibanda/cagombe", "changombe" = "cagombe", "cangombe" = "cagombe",
+	  "ibamba/walungu/ikoma" = "ibamba/ikoma", "kajabu/ibamba" = "ibamba/kajabu",
+	  #Rwanda
+	  "kidehero" = "kadehero", "kadehe" = "kadehero", "gafunzo" = "nyagafunzo", "butimba2" = "butimba 2",
+	  #Ghana
+	  "manyaro" = "manyoro", "maryoro" = "manyoro", "mayaro" = "manyoro", "naa" = "naaga",
+	  "tanima" = "tanina", "tamina" = "tanina", "tanani" = "tanina", "tanigna" = "tanina",
+	  "tibane" = "tibani", "tibaru" = "tibani", "zambogo" = "zambogu", "goothi" = "goohi",
+	  "tilli" = "tillizongo", "tilli zongo" = "tillizongo", "bawio" = "bawiu", "bawiwo" = "bawiu", "gaani" = "gaane",
+	  "nyagemia" = "nayagnia", "nyagaroa" = "nayagnia",
+	  "apoatoabogo" = "apotoabogo", "apotdabago" = "apotoabogo", "apadabogo" = "apotoabogo", "apotoadabogo" = "apotoabogo",
+	  "kpaghlagi" = "kpaglaghi", "dafiama" = "daffiama", "dafiamah" = "daffiama",
+	  "nabujoku" = "nabujako", "nabujoka" = "nabujako", "andonye manu" = "andonyemanu",
+	  "dulzugu" = "dulizugu", "dolzugu" = "dulizugu", "wogandoo" = "wogando", "ugaadu" = "ugaado",
+	  "tarikpali" = "tarikpaa", "napirisi" = "naprisi", "duluu kukuo" = "dalun kukuo", "jaudori kukuo" = "janjori kukuo",
+	  "tonjina" = "tonginga", "tonjing" = "tonginga",
+	  #Malawi
+	  "m'memo" = "mmemo", "mtema2" = "mtema 2", "mtama 2" = "mtema 2", "bwalo ii" = "bwalo 2",
+	  "mtupila" = "ntupila", "mtupira" = "ntupila",
+	  "chikhwiri" = "chinkhwiri", "chinkhwili" = "chinkhwiri", "chinkhwila" = "chinkhwiri",
+	  "chiwunjicha" = "chiunjiza", "chiunjidza" = "chiunjiza", "nkwali" = "nkhwali", "makwangala" = "makwangwala",
+	  "mwenda phazo" = "mwendaphazo", "thengoliiweta" = "thengoliweta",
+	  #Zimbabwe
+	  "mutohwa" = "mutowa", "mataranyyika" = "mataranyika", "mataranyik" = "mataranyika",
+	  "zinudza" = "zunidza", "zinhudza" = "zunidza", "tesekese" = "tsekese", "katsekesa" = "tsekese", "katsekese" = "tsekese",
+	  #Nigeria
+	  "bunkure. un/bunkure" = "bunkure. u/bunkure", "bunkure. bunkure u/tuta" = "bunkure. u/tuta", "bunkure. lautaye bunkura" = "bunkure. lautaye bunkure",
+	  "busaye. busaya yamma" = "busaye. busaye yamma", "busaye. busaye yama village" = "busaye. busaye yamma",
+	  "kogar kaza. kafar kaza" = "kogar kaza", "kogar kaza. kofar kaza" = "kogar kaza",
+	  "karefa. karefe" = "karefa", "karefa. kafere" = "karefa",
+	  "fadan yaya. fandan yaya" = "fadan yaya", "fadan yaya. fadanyaya" = "fadan yaya", "fadan yaya. fan danyaya" = "fadan yaya",
+	  "sidire. sidere" = "sidire", "gwanairi. gwaneri" = "gwanairi",
+	  "zangon-aya. zangon aya" = "zangon-aya", "zangon-aya. zangpm-aya" = "zangon-aya", "zangon-aya. zangpn-aya" = "zangon-aya",
+	  "zangon-aya. zongan-aya" = "zangon-aya",
+	  #Mozambique
+	  "rotunda sede" = "rotanda sede", "rotanta sede" = "rotanda sede", "rotanda-sede" = "rotanda sede",
+	  "maunhinga" = "munhinga", "ruace" = "ruasse", "magigi" = "magige",
+	  "congernge" = "congerenge", "gongerenge" = "congerenge", "muitas" = "muita", "leulele" = "luelele"
+	)
+	i <- x %in% names(fix)
+	x[i] <- fix[x[i]]
+	
+	#Nigeria: keep the village part; ward goes to adm3
+	ng <- d19$country == "Nigeria" & grepl("\\.", x)
+	suf <- trimws(sub("^[^.]*\\.", "", x[ng]))
+	x[ng] <- ifelse(suf == "", trimws(sub("\\..*$", "", x[ng])), suf)
+	d19$location <- x
+	
+	#assigning admin levels
+	d19$adm1 <- d19$adm2 <- d19$adm3 <- d19$adm4 <- NA
+	a <- d19$action
+	#Kenya: county / sub-county / ward (the ward is also the first part of "ward/village" in row data)
+	ke <- d19$country == "Kenya"
+	kmap <- rbind(
+	  c("bondo|north sakwa", "Siaya", "Bondo", NA),
+	  c("rarieda", "Siaya", "Rarieda", NA),
+	  c("kisumu west", "Kisumu", "Seme", NA),
+	  c("south ge", "Siaya", "Gem", NA),
+	  c("east kanyamkago", "Migori", "Uriri", "East Kanyamkago"),
+	  c("central kanyamkago", "Migori", "Uriri", "Central Kanyamkago"),
+	  c("wamuluma|mudete|masigolo", "Vihiga", NA, NA))
+	for (k in 1:nrow(kmap)) {
+	  i <- ke & grepl(kmap[k, 1], a)
+	  d19$adm1[i] <- kmap[k, 2]; d19$adm2[i] <- kmap[k, 3]; d19$adm3[i] <- kmap[k, 4]
+	}
+	i <- ke & grepl("^(south gem|north sakwa|east asembo|south central seme)/", d19$location)
+	d19$adm3[i] <- sub("/.*", "", d19$location[i])
+	d19$location[i] <- sub(".*/", "", d19$location[i])
+	
+	#DRC
+	dr <- d19$country == "Democratic Republic of the Congo"
+	d19$adm1[dr] <- "South Kivu"
+	grp <- c("nduba|ndumba" = "Nduba", "mulamba" = "Mulamba", "ikoma" = "Ikoma", "nya?n?gezi" = "Nyangezi",
+	         "mushinga" = "Mushinga", "karhongo" = "Karhongo", "bugore|bughore" = "Bugorhe", "mudaka" = "Mudaka",
+	         "mumosho" = "Mumosho", "bushwira" = "Bushwira", "katana" = "Irhambi-Katana",
+	         "[mbp]inga sud" = "Mbinga-Sud", "[mbp]inga nord" = "Mbinga-Nord")
+	terr <- c("Walungu" = "Mulamba|Nduba|Ikoma|Nyangezi|Mushinga|Karhongo", 
+	          "Kabare" = "Bugorhe|Mudaka|Mumosho|Bushwira|Irhambi-Katana", "Kalehe" = "Mbinga-Sud|Mbinga-Nord")
+	for (k in names(grp)) {
+	  
+	  parts <- strsplit(ifelse(dr & !is.na(d19$location), d19$location, ""), "/")
+	  hit <- vapply(parts, function(p) any(grepl(paste0("^(", k, ")$"), p)), logical(1))
+	  i <- dr & hit & is.na(d19$adm4)
+	  d19$adm4[i] <- grp[k]
+	  d19$location[i] <- vapply(parts[i], function(p) {q <- p[!grepl(paste0("^(", k, ")$"), p)]; paste(if (length(q)) q else p, collapse = "/")}, character(1))
+	}
+	for (k in names(grp)) {
+	  i <- dr & is.na(d19$adm4) & grepl(k, a)
+	  d19$adm4[i] <- grp[k]
+	}
+	d19$adm2[dr & grepl("walung", a)] <- "Walungu"
+	d19$adm2[dr & grepl("kabare", a)] <- "Kabare"
+	d19$adm2[dr & grepl("kalehe|kasheke", a)] <- "Kalehe"
+	for (k in names(terr)) d19$adm2[dr & is.na(d19$adm2) & grepl(terr[k], d19$adm4)] <- k
+	i <- dr & grepl("^(walungu|kabare)/", d19$location)            # "Walungu/Mwendo" -> territory + village
+	d19$adm2[i] <- tools::toTitleCase(sub("/.*", "", d19$location[i]))
+	d19$location[i] <- sub("^[^/]*/", "", d19$location[i])
+	
+	for (k in names(terr)) d19$adm2[dr & grepl(terr[k], d19$adm4)] <- k
+	d19$adm2[dr & grepl("kasheke", d19$location)] <- "Kalehe"
+	d19$adm4[dr & d19$adm2 == "Kalehe" & !grepl("Mbinga", d19$adm4)] <- NA
+	
+	#Ghana
+	gh <- d19$country == "Ghana"
+	gmap <- rbind(
+	  c("bawk", "Upper East", "Bawku West"),
+	  c("k/n/e|na[ns]+ena nankana|nankana", "Upper East", "Kassena Nankana East"),
+	  c("chereponi", "North East", "Chereponi"),
+	  c("sa[vr]e?lugu|savlugu|naprisi", "Northern", "Savelugu-Nanton"),
+	  c("tolon", "Northern", "Tolon-Kumbungu"),
+	  c("nado[wl]", "Upper West", "Nadowli"),
+	  c("wa east", "Upper West", "Wa East"))
+	for (k in 1:nrow(gmap)) {
+	  i <- gh & grepl(gmap[k, 1], a)
+	  d19$adm1[i] <- gmap[k, 2]; d19$adm2[i] <- gmap[k, 3]
 	}
 	
-	#longitude
-	convert_lon <- function(x) {
-	  x <- trimws(x)
-	  out <- rep(NA_real_, length(x))
-	  # format like E028,80788
-	  idx1 <- grepl("^E[0-9]{3},", x)
-	  deg <- as.numeric(substr(x[idx1], 2, 4))
-	  mins <- as.numeric(sub(",", ".", substr(x[idx1], 5, 100)))
-	  out[idx1] <- deg + mins/60
-	  # format like E028 48,365
-	  idx2 <- grepl("^E[0-9]{3} ", x)
-	  deg <- as.numeric(substr(x[idx2], 2, 4))
-	  mins <- as.numeric(gsub(",", ".", sub("^E[0-9]{3} ", "", x[idx2])))
-	  out[idx2] <- deg + mins/60
-	  out
+	#Malawi
+	mw <- d19$country == "Malawi"
+	d19$adm1[mw] <- "Central"
+	d19$adm2[mw & grepl("dowa", a)] <- "Dowa"
+	d19$adm2[mw & grepl("lilongwe", a)] <- "Lilongwe"
+	d19$adm2[mw & grepl("ntch|mmemo", a)] <- "Ntcheu"
+	d19$adm2[mw & grepl("salima", a)] <- "Salima"
+	
+	#Mozambique
+	mz <- d19$country == "Mozambique"
+	d19$adm1[mz & grepl("gur", a)] <- "Zambezia"; d19$adm2[mz & grepl("gur", a)] <- "Gurue"
+	d19$adm1[mz & grepl("m,?andi", a)] <- "Niassa"; d19$adm2[mz & grepl("m,?andi", a)] <- "Mandimba"
+	d19$adm1[mz & grepl("sussundenga|manica", a)] <- "Manica"; d19$adm2[mz & grepl("sussundenga|manica", a)] <- "Sussundenga"
+	
+	#Nigeria
+	nga <- d19$country == "Nigeria"
+	lga <- c("bunkure" = "Bunkure", "dawakin kudu" = "Dawakin Kudu", "garko" = "Garko", "tudun wada" = "Tudun Wada",
+	         "igabi" = "Igabi", "giwa" = "Giwa", "kachia" = "Kachia", "zon?gon? kataf" = "Zangon Kataf")
+	for (k in names(lga)) d19$adm2[nga & grepl(paste0("^", k), a)] <- lga[k]
+	d19$adm1[nga & d19$adm2 %in% c("Bunkure", "Dawakin Kudu", "Garko", "Tudun Wada")] <- "Kano"
+	d19$adm1[nga & d19$adm2 %in% c("Igabi", "Giwa", "Kachia", "Zangon Kataf")] <- "Kaduna"
+	d19$adm3[nga] <- ward[nga]
+	d19$adm3[nga & d19$location == "gumel"] <- "gumel"     # Gumel is a ward of Kachia
+	
+	#Rwanda
+	rw <- d19$country == "Rwanda"
+	rmap <- rbind(
+	  c("cyabingo", "Northern", "Gakenke", "Cyabingo"),
+	  c("nemba|neamba|muramba", "Northern", "Gakenke", "Nemba"),  # 'muramba' farms share Nemba's GPS
+	  c("k[i]?noni", "Northern", "Burera", "Kinoni"),
+	  c("burera", "Northern", "Burera", NA),
+	  c("mus[a]?m[b]?ir", "Southern", "Kamonyi", "Musambira"),
+	  c("n[y]+amiyaga", "Southern", "Kamonyi", "Nyamiyaga"),
+	  c("kamonyi", "Southern", "Kamonyi", NA),
+	  c("musenyi", "Eastern", "Bugesera", "Musenyi"),
+	  c("bugesera", "Eastern", "Bugesera", NA),
+	  c("rukara", "Eastern", "Kayonza", "Rukara"),
+	  c("kayonza", "Eastern", "Kayonza", NA))
+	for (k in 1:nrow(rmap)) {
+	  i <- rw & grepl(rmap[k, 1], a)
+	  d19$adm1[i] <- rmap[k, 2]; d19$adm2[i] <- rmap[k, 3]; d19$adm3[i] <- rmap[k, 4]
 	}
 	
-	d19$latitude <- convert_lat(r19$homestead_coord_northing)
-	d19$longitude <- convert_lon(r19$homestead_coord_easting)
+	#Zimbabwe
+	zw <- d19$country == "Zimbabwe"
+	blk <- ceiling(as.numeric(sub("ZIM", "", d19$field_id[zw])) / 100)
+	d19$adm2[zw] <- c("Guruve", "Makoni", "Mhondoro-Ngezi", "Mudzi")[blk]
+	d19$adm1[zw] <- c("Mashonaland Central", "Manicaland", "Mashonaland West", "Mashonaland East")[blk]
+	
+	#Ghana
+	d19$adm2[gh & d19$location %in% c("azupupunga", "goase", "sofo abdulai")] <- "Bawku West"
+	d19$adm2[gh & d19$location %in% c("gaane", "pungu bawiwo")] <- "Kassena Nankana East"
+	d19$adm1[gh & d19$adm2 %in% c("Bawku West", "Kassena Nankana East")] <- "Upper East"
+	d19$adm3[rw & d19$location %in% "rukara"] <- "Rukara"
+	
+	#admin levels per location
+	#in DRC and Ghana, where the action site is often inconsistent, all farms in a location take the most common value
+	key <- paste(d19$country, d19$location)
+	for (v in c("adm2", "adm4", "adm1", "adm3")) {
+	  md <- ave(d19[[v]], key, FUN = function(z) {t <- table(z); if (length(t)) names(t)[which.max(t)] else NA})
+	  i <- !is.na(d19$location) & !is.na(md) & (is.na(d19[[v]]) | d19$country %in% c("Democratic Republic of the Congo", "Ghana"))
+	  d19[[v]][i] <- md[i]
+	}
+	d19$adm3[dr] <- c("Walungu" = "Ngweshe", "Kabare" = "Kabare", "Kalehe" = "Buhavu")[d19$adm2[dr]]
+	ok <- mapply(function(t, g) is.na(g) || is.na(t) || grepl(terr[t], g), d19$adm2, d19$adm4)
+	d19$adm4[dr & !ok] <- NA     # groupement not in that territory (e.g. "Walungu/Mudaka" = Madaka village)
+	
+	#missing coordinates
+	#median of the other farms' GPS in the same location (Nigeria: else in the same ward)
+	fill_median <- function(key, ok) {
+	  mlat <- ave(d19$latitude, key, FUN = function(v) if (all(is.na(v))) NA else median(v, na.rm = TRUE))
+	  mlon <- ave(d19$longitude, key, FUN = function(v) if (all(is.na(v))) NA else median(v, na.rm = TRUE))
+	  i <- is.na(d19$latitude) & !is.na(mlat) & ok
+	  d19$latitude[i] <<- mlat[i]
+	  d19$longitude[i] <<- mlon[i]
+	}
+	fill_median(paste(d19$country, d19$adm2, d19$location), !is.na(d19$location))
+	fill_median(paste(d19$country, d19$adm2, d19$adm3), d19$country == "Nigeria" & !is.na(d19$adm3))
+	
+	vil <- as.data.frame(rbind(
+	  c("Kenya", "ogero", 0.00583, 34.48639),  # https://www.geonames.org/182496
+	  c("Kenya", "nyabenge", -0.0571, 34.36183),  # https://www.geonames.org/11784447
+	  c("Kenya", "rombe", -0.94652, 34.48553),  # https://www.geonames.org/11784587
+	  c("Ghana", "daffiama", 10.42135, -2.55967),  # https://www.geonames.org/2302070
+	  c("Ghana", "kpalsako", 10.93605, -0.02011),  # https://www.geonames.org/2299245
+	  c("Ghana", "manyoro-sakunia", 10.97931, -0.99803),  # https://www.geonames.org/2298158
+	  c("Ghana", "nabujako", 10.1864, 0.24835),  # https://www.geonames.org/2297763
+	  c("Malawi", "buno", -13.62191, 33.57754),  # https://www.geonames.org/12185443
+	  c("Malawi", "chinkhwiri", -13.37733, 33.74224),  # https://www.geonames.org/930748
+	  c("Malawi", "chiunjiza", -13.49741, 34.29783),  # https://www.geonames.org/930388
+	  c("Malawi", "gumbi", -14.98632, 34.87115),  # https://www.geonames.org/929737
+	  c("Malawi", "gwaza", -14.87849, 34.81139),  # https://www.geonames.org/929717
+	  c("Malawi", "kambwiri", -13.79547, 34.40808),  # https://www.geonames.org/929113
+	  c("Malawi", "makwangwala", -14.8, 34.76667),  # https://www.geonames.org/927427
+	  c("Malawi", "mmemo", -14.76667, 34.76667),  # https://www.geonames.org/926352
+	  c("Malawi", "mtema", -13.81667, 33.66667),  # https://www.geonames.org/925918
+	  c("Malawi", "mtema 2", -13.81667, 33.66667),  # https://www.geonames.org/925918
+	  c("Nigeria", "sarina", 11.58438, 8.92365),  # https://www.geonames.org/2323646
+	  c("Nigeria", "gumel", 9.85023, 7.97466),  # https://www.geonames.org/2340092
+	  c("Zimbabwe", "nyamweda", -18.15543, 30.71411),  # https://www.geonames.org/7405288
+	  c("Zimbabwe", "zunidza", -18.7, 32.32263)   # https://www.geonames.org/878577
+	))
+	i <- match(paste(d19$country, d19$location), paste(vil[, 1], vil[, 2]))
+	j <- is.na(d19$latitude) & !is.na(i)
+	d19$latitude[j] <- as.numeric(vil[i[j], 3])
+	d19$longitude[j] <- as.numeric(vil[i[j], 4])
+	d19[d19$field_id == "MW293", c("latitude", "longitude")] <- list(-14.76667, 34.76667)   # blank location, action site Mmemo; https://www.geonames.org/926352
+	
+	adm <- as.data.frame(rbind(
+	  c("Kenya", "adm4", "mudete", 0.1, 34.75, 5000),                              # Gwaranda (action site Mudete); https://www.geonames.org/186026
+	  c("Kenya", "adm3", "south gem", -0.01667, 34.48333, 10000),                  # https://www.geonames.org/179870
+	  c("Kenya", "adm3", "north sakwa", -0.11667, 34.25, 10000),                   # https://www.geonames.org/180819
+	  c("Kenya", "adm3", "east asembo", -0.13333, 34.36667, 10000),                # https://www.geonames.org/200827
+	  c("Kenya", "adm3", "south central seme", -0.08333, 34.51667, 10000),         # https://www.geonames.org/180591
+	  c("Kenya", "adm3", "East Kanyamkago", -0.91667, 34.43333, 10000),            # https://www.geonames.org/194304
+	  c("Kenya", "adm3", "Central Kanyamkago", -0.91667, 34.43333, 10000),         # https://www.geonames.org/194304
+	  c("Kenya", "adm1", "Vihiga", 0.072, 34.712, 20000),                          # https://www.geonames.org/7667638
+	  c("Ghana", "adm2", "Bawku West", 10.91667, -0.51667, 20000),                 # https://www.geonames.org/7647390
+	  c("Ghana", "adm2", "Chereponi", 10.13417, 0.28806, 20000),                   # https://www.geonames.org/7647639
+	  c("Ghana", "adm2", "Savelugu-Nanton", 9.62472, -0.82778, 20000),             # https://www.geonames.org/7649029
+	  c("Ghana", "adm2", "Tolon-Kumbungu", 9.54692, -0.94753, 20000),              # https://www.geonames.org/13609077
+	  c("Ghana", "adm2", "Wa East", 9.92933, -1.86848, 30000),                     # https://www.geonames.org/7647181
+	  c("Ghana", "adm2", "Nadowli", 10.28835, -2.60889, 20000),                    # https://www.geonames.org/7647177
+	  c("Malawi", "adm2", "Dowa", -13.60098, 33.82378, 30000),                     # https://www.geonames.org/929975
+	  c("Malawi", "adm2", "Lilongwe", -14.01962, 33.68407, 30000),                 # https://www.geonames.org/927964
+	  c("Malawi", "adm2", "Ntcheu", -14.75, 34.75, 30000),                         # https://www.geonames.org/925072
+	  c("Malawi", "adm2", "Salima", -13.71959, 34.40184, 30000),                   # https://www.geonames.org/924053
+	  c("Nigeria", "adm3", "garko", 11.65022, 8.80782, 5000),                      # https://www.geonames.org/9410679
+	  c("Nigeria", "adm3", "karefa", 11.35295, 8.44254, 5000),                     # https://www.geonames.org/9410894
+	  c("Nigeria", "adm3", "shuwaki", 11.3148, 8.38277, 5000),                     # https://www.geonames.org/9412504
+	  c("Nigeria", "adm3", "zangon-aya", 10.9154, 7.66376, 5000),                  # https://www.geonames.org/2317816
+	  c("Nigeria", "adm2", "Garko", 11.57286, 8.83524, 15000),                     # https://www.geonames.org/8633724
+	  c("Nigeria", "adm2", "Tudun Wada", 11.28272, 8.59928, 20000),                # https://www.geonames.org/8633726
+	  c("Nigeria", "adm2", "Zangon Kataf", 9.841, 8.25491, 20000),                 # https://www.geonames.org/8634540
+	  c("Nigeria", "adm2", "Giwa", 11.12077, 7.40565, 30000),                      # https://www.geonames.org/7932490
+	  c("Zimbabwe", "adm2", "Guruve", -16.7371, 30.68406, 20000),                  # Guruve Communal Land; https://www.geonames.org/7324374
+	  c("Zimbabwe", "adm2", "Makoni", -18.3355, 32.1465, 30000),                   # https://www.geonames.org/887718
+	  c("Zimbabwe", "adm2", "Mhondoro-Ngezi", -18.28148, 30.59574, 20000)          # Mondoro Communal Land; https://www.geonames.org/885924
+	))
+	
+	names(adm) <- c("country", "level", "name", "lat", "lon", "unc")
+	d19$geo_uncertainty <- NA
+	for (lv in c("adm4", "adm3", "adm2", "adm1")) {
+	  a <- adm[adm$level == lv, ]
+	  k <- if (lv == "adm4") ifelse(d19$action == "mudete", "mudete", NA) else tolower(d19[[lv]])
+	  i <- match(paste(d19$country, k), paste(a$country, tolower(a$name)))
+	  j <- is.na(d19$latitude) & !is.na(i)
+	  d19$latitude[j] <- as.numeric(a$lat[i[j]])
+	  d19$longitude[j] <- as.numeric(a$lon[i[j]])
+	  d19$geo_uncertainty[j] <- as.numeric(a$unc[i[j]])
+	}
 	
 	#merging data
 	##Labour
