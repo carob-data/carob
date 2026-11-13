@@ -357,6 +357,67 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
-
+	
+	# fill coordinates with the mean of other samples in the same group
+	fill_geo <- function(d, grp) {
+	  ok  <- complete.cases(d[grp])
+	  key <- do.call(paste, c(d[grp], sep = "|"))
+	  mlon <- tapply(d$longitude[ok], key[ok], mean, na.rm = TRUE)
+	  mlat <- tapply(d$latitude[ok],  key[ok], mean, na.rm = TRUE)
+	  j <- ok & is.na(d$longitude); d$longitude[j] <- as.vector(mlon[key[j]])
+	  j <- ok & is.na(d$latitude);  d$latitude[j]  <- as.vector(mlat[key[j]])
+	  d$longitude[is.nan(d$longitude)] <- NA
+	  d$latitude[is.nan(d$latitude)]   <- NA
+	  d
+	}
+	
+	# accent/case-insensitive names for matching
+	norm <- function(x) gsub("[^a-z]", "", tolower(iconv(x, "UTF-8", "ASCII//TRANSLIT")))
+	
+	# adm1 harmonization
+	d$adm1[d$adm1 %in% "Coahuila"]         <- "Coahuila De Zaragoza"
+	d$adm1[d$adm1 %in% "Distrito Federal"] <- "Ciudad De Mexico"
+	d$adm1[is.na(d$adm1) & d$adm2 %in% "Tepeapulco"] <- "Hidalgo"
+	
+	# Cardenas, Tabasco: household 41306 has coordinates in Hidalgo;
+	# replaced with the mean of the other Cardenas source points
+	i   <- d$adm1 %in% "Tabasco" & d$adm2 %in% "Cárdenas"
+	bad <- i & !is.na(d$longitude) & d$longitude < -95
+	ok  <- i & !bad & !is.na(d$longitude) & !is.na(d$latitude)
+	d$longitude[bad] <- mean(d$longitude[ok])
+	d$latitude[bad]  <- mean(d$latitude[ok])
+	d$geo_from_source[bad] <- FALSE
+	
+	# missing coordinates: mean of other samples in the same municipality
+	miss <- is.na(d$longitude) | is.na(d$latitude)
+	d$k1 <- norm(d$adm1)
+	d$k2 <- norm(d$adm2)
+	d <- fill_geo(d, c("country","k1","k2"))
+	d$k1 <- d$k2 <- NULL
+	
+	# municipalities with no coordinates anywhere in the data:
+	# municipal seat / municipality coordinates from Wikipedia
+	geo <- data.frame(
+	  adm1 = c("Mexico", "Tlaxcala", "Veracruz De Ignacio De La Llave", "Yucatan",
+	           "Yucatan", "San Luis Potosi", "Mexico"),
+	  adm2 = c("Ecatepec De Morelos", "San Francisco Tetlanohcan", "Huiloapan De Cuauhtémoc",
+	           "Mérida", "Kantunil", "Axtla De Terrazas", "Ixtapaluca"),
+	  lon  = c(-99.0600, -98.1640, -97.1500, -89.6236, -89.0347, -98.8722, -98.8822),
+	  lat  = c( 19.6097,  19.2600,  18.8167,  20.9672,  20.7958,  21.4394,  19.3186)
+	)
+	# Sources:
+	# https://en.wikipedia.org/wiki/Ecatepec_de_Morelos
+	# https://en.wikipedia.org/wiki/San_Francisco_Tetlanohcan
+	# https://es.wikipedia.org/wiki/Municipio_de_Huiloapan_de_Cuauhtémoc  (18°49'N, 97°9'W)
+	# https://en.wikipedia.org/wiki/Mérida,_Yucatán
+	# https://en.wikipedia.org/wiki/Kantunil_Municipality
+	# https://en.wikipedia.org/wiki/Axtla_de_Terrazas
+	# https://en.wikipedia.org/wiki/Ixtapaluca
+	
+	m <- match(paste(norm(d$adm1), norm(d$adm2)), paste(norm(geo$adm1), norm(geo$adm2)))
+	j <- is.na(d$longitude) & !is.na(m); d$longitude[j] <- geo$lon[m[j]]
+	j <- is.na(d$latitude)  & !is.na(m); d$latitude[j]  <- geo$lat[m[j]]
+	
+	d$geo_from_source[miss] <- FALSE
 	carobiner::write_files(path, meta, d)
 }
