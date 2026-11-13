@@ -1,0 +1,57 @@
+name: Update to-do list
+
+# Removes a dataset from misc/todo/to-do.csv on main when a pull request
+# includes its script. Reads the pull request file list from the API only.
+# Does not check out or run the pull request.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, synchronize]
+    paths:
+      - "scripts/**"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**/*.R"
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: update-todo-list
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Drop datasets that have a script or a pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python3 misc/todo/update_todo.py
+
+      - name: Commit the to-do list
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add misc/todo/to-do.csv
+          if git diff --cached --quiet; then
+            echo "To-do list unchanged"
+            exit 0
+          fi
+          git commit -m "edited todo list for datasets with a pull request"
+          git push
