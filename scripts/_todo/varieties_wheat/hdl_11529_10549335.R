@@ -2,22 +2,24 @@
 # license: GPL (>=3)
 
 ## NOTES
-### some files are restricted
+
 # Three 2024/25 BNI (T3BL.3NsbS) spring-wheat yield trials: Bhairahawa
 # (Nepal), Islamabad (Pakistan), Ludhiana (India). N rates 0/75/150 kg/ha.
-# BNI_Nepal_2025.xlsx duplicates Bhairahawa yield components and is not used.
 # Pakistan BNI data_Final agronomic sheet is the same trial as the Islamabad
 # file; Islamabad "Agronomic data" is used for that site.
 # Bhairahawa NDVI header dates cause readxl type warnings. 
 # Site coordinates estimated (not in files). 
-# missing yield_moisture, P_fertilizer, K_fertilizer, harvest_date.
-# Ludhiana sowing date not in the agronomic table. 
+ 
 
 ## ISSUES
-# Soil N batch sheets and canopy NDVI/CT/SPAD not mapped. 
-# Yellow rust scores not mapped (scale not documented). 
+# some files are restricted
+# Soil N batch sheets are locked and failed to access them, whereas NDVI,CT and SPAD variables are not mapped, because they are repeated measurements and are not separated  neither by dates nor even indicated as average values. 
+# Yellow rust scores were maped but the  was scale not documented. 
 # Ludhiana BIOMASS t/ha omitted (fresh vs dry not stated). 
-
+# BNI_Nepal_2025.xlsx duplicates Bhairahawa yield components and is not used.
+# missing yield_moisture, P_fertilizer, K_fertilizer
+# Ludhiana sowing date not in the agronomic table.
+#Added variable CT = canopy temperature
 
 carob_script <- function(path) {
   
@@ -74,7 +76,10 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
     plant_height = as.numeric(r1[["Plant Height (cm)"]]),
     spike_density = as.numeric(r1[["No. of spikes/m2"]]) * 10000,
     seed_weight = as.numeric(r1[["TGW (g)"]]),
-    yield = as.numeric(r1[["GY(kg/ha)"]])
+    yield = as.numeric(r1[["GY(kg/ha)"]]),
+    NDVI = r1$`Normalized Difference vegetative Index(NDVI)  reading`,
+    SPAD = r1$`SPAD reading`,
+    CT = r1$`Canopy Temperature`### this is canopy temperature
   )
   
   d1$harvest_date <- as.character(as.Date(r1[["Days of Sowing"]]) + as.numeric(r1[["Dats to Maturity"]]))
@@ -100,7 +105,8 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
     heading_days = as.numeric(r2[["Days to 50% heading"]]),
     plant_height = as.numeric(r2[["PH (cm) Average"]]),
     yield = as.numeric(r2[["Grain Yield (kg/ha)"]]),
-    plot_area = 15
+    plot_area = 15,
+    rust = r2$`Yellow rust` # yellow rust disease scores
   )
   
   d2$latitude <- 33.67
@@ -128,8 +134,10 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
     plant_height = as.numeric(r3[[11]]),
     yield = as.numeric(r3[[17]]) * 1000,
     seed_weight = as.numeric(r3[[18]]),
-    plot_area = 7.2
+    plot_area = 7.2,
+    fwy_total = r3$BIOMASS
   )
+  
   
   d3$latitude <- 30.863
   d3$longitude <- 75.807
