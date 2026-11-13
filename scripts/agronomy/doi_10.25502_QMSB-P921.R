@@ -89,8 +89,24 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   r$latitude[r$adm2 == "Yendi" & r$adm3 == "Chirifoyili"] <- 9.7
   # # Additionally, some of the longitude values seem to be reversed
   r$longitude[r$longitude > 0 & !is.na(r$longitude)] <- r$longitude[r$longitude > 0 & !is.na(r$longitude)]*-1
-  
-  
+
+  # incorrect location coords (guzongo)
+  i <- r$adm3 == "Guzongo" & r$latitude > 11.5 & !is.na(r$latitude)
+  r$latitude[i] <- 11.1
+  r$geo_from_source[i] <- FALSE
+
+  # missing coords replaced with medians
+  miss <- is.na(r$latitude) | is.na(r$longitude)
+  for (v in unique(stats::na.omit(r$adm3[miss]))) {
+    k <- which(r$adm3 == v & !miss)
+    m <- which(r$adm3 == v & miss)
+    if (length(k) > 0) {
+      r$latitude[m] <- median(r$latitude[k])
+      r$longitude[m] <- median(r$longitude[k])
+      r$geo_from_source[m] <- FALSE
+    }
+  }
+
   # experiment
   
   d1$trial_id <- d1$farm_id
