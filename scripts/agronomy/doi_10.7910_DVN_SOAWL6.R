@@ -183,6 +183,28 @@ carob_script <- function(path) {
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked
 
+	d <- unique(d)
+	
+	#fixing NA coordinates
+	
+  geo <- data.frame(
+    country=c("Zimbabwe","Pakistan","Kenya"),
+    location=c(NA,"Faisalabad","Kiboko"),
+    latitude=c(-19,34.467,-2.188),
+    longitude=c(29.75,71.573,37.686),#Pakistan coordinates already present 
+    geo_source=c("Geonames","Dataset","Geonames")
+  )
+  
+  i <- match(trimws(d$location), trimws(geo$location))
+  miss <- (is.na(d$latitude) | is.na(d$longitude)) & !is.na(i)
+  
+  if (!"geo_source" %in% names(d)) d$geo_source <- NA_character_
+  
+  d$latitude[miss] <- geo$latitude[i[miss]]
+  d$longitude[miss] <- geo$longitude[i[miss]]
+  d$geo_source[miss] <- geo$geo_source[i[miss]]
+  d$geo_from_source[miss] <- FALSE
+	
 	carobiner::write_files(meta, d, path=path)
 }
 
