@@ -54,7 +54,6 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		dmy_residue_Aug = r1$Aug_DM_.kg.ha.,
 		residue_N_Aug = r1$Aug._Ncontent,
 		variety = "RS207NX, Renk",
-		fertilizer_type = "urea",
 		crop = "soybean",
 		location = "University of Wisconsin Hancock Agricultural Research Station",
 		longitude = -89.53903, ## from paper
@@ -63,7 +62,7 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		row_spacing = 76,
 		country = "United States",
 		is_survey = FALSE, 
-		on_farm = TRUE, 
+		on_farm = FALSE, 
 		trial_id = paste(r1$Block, r1$Plot, sep = "-"), 
 		yield_part = "grain", 
 		geo_from_source = TRUE, 
@@ -72,6 +71,7 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 	)
 	
 	d$N_fertilizer <- c(0, 34, 101, 101, 101, 101, 202, 404)[d$treatment]
+	d$fertilizer_type <- ifelse(d$N_fertilizer == 0, "none", "urea")
 	d$DAE <- as.integer(c(NA, NA, 10, 30, 60, 80, NA, NA)[d$treatment])
 	d$treatment  <- c("control", "starter", "10DAE", "30DAE", "60DAE", "80DAE", "split(202)", "split(404)")[d$treatment]
 	d$N_splits <- as.integer(ifelse(grepl("split", d$treatment), 3, 1))

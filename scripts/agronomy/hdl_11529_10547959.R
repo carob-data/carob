@@ -3,7 +3,7 @@
 
 ## ISSUES
 # Pesticide products were not split, so they were not summed into herbicide_amount.
-# Fertilizer grades are percentages, not kg/ha, so only the P2O5 and K2O kg/ha columns were converted to elements.
+# Fert.Grade columns are product analyses (%). They are converted to elemental kg/ha with the g/plot amount and plot area. The separate N/P2O5/K2O kg/ha columns stay as the reported totals.
 
 carob_script <- function(path) {
 
@@ -322,7 +322,19 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    
 	  )
 	  
-	  d5 <- d5[!is.na(d5$crop),]
+	  # Fert.Grade.* is percent nutrient in the product, not kg/ha.
+	  # kg/ha = g/plot * 10 / plot_area_m2 * (percent/100) / oxide factor
+	  to_rate <- function(grams, area, percent, oxide) {
+	    as.numeric(grams) * 10 / as.numeric(area) * as.numeric(percent) / 100 / oxide
+	  }
+	  for (i in 1:7) {
+	    grams <- d5[[paste0("fertilizer_amount", i)]]
+	    d5[[paste0("N_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("N_fertilizer", i)]], 1)
+	    d5[[paste0("P_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("P_fertilizer", i)]], 2.29)
+	    d5[[paste0("K_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("K_fertilizer", i)]], 1.2051)
+	  }
+	  
+	  d5 <- d5[!is.na(d5$year),]
 	  
 	  ### merge d and d5
 	  d5 <- d5[which(d5$year!=0),]
@@ -392,7 +404,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    farm_nm = r10$Farmer.s.name
 	  )
 	  
-	  d6 <- d6[!is.na(d6$crop),]
+	  d6 <- d6[!is.na(d6$year),]
 	  
 	  d6$pesticide_price2 <- (as.numeric(d6$pesticide_price2)/as.numeric(d6$Csize2))*1000 ## price/kg 
 	  d6$pesticide_price1 <- (as.numeric(d6$pesticide_price1)/as.numeric(d6$Csize1))*1000 ## price/kg 

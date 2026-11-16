@@ -76,7 +76,8 @@ carob_script <- function(path) {
    d  <- merge(d1, d2, by= c("location", "land_prep_method", "rep", "variety"),  all.x = TRUE)
     
    d$crop <- "potato"
-   d$mulch_type <- "straw"
+   # Straw mulch is the ZTSM treatment. Conventional plots are not mulched.
+   d$mulch_type <- ifelse(d$land_prep_method == "conventional", NA_character_, "straw")
    d$country <- "Bangladesh"
    d$planting_date <- "2021"
    d$irrigated <- NA

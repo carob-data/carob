@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# Fertilizer grades are percentages, not kg/ha. The commented row sums were left commented because they add those grades to the kg/ha columns. The P2O5 and K2O kg/ha columns are converted to elements.
+# Fert.Grade columns are product analyses (%). They are converted to elemental kg/ha with the g/plot amount and plot area. The separate N/P2O5/K2O kg/ha columns stay as the reported totals. The old row sums stay commented so those totals are not added again.
 
 carob_script <- function(path) {
 
@@ -289,6 +289,18 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    fertilizer_type = "SSP;urea;KCl",
 	    farm_nm = r7$Farmer.s.name	    
 	  )
+	  
+	  # Fert.Grade.* is percent nutrient in the product, not kg/ha.
+	  # kg/ha = g/plot * 10 / plot_area_m2 * (percent/100) / oxide factor
+	  to_rate <- function(grams, area, percent, oxide) {
+	    as.numeric(grams) * 10 / as.numeric(area) * as.numeric(percent) / 100 / oxide
+	  }
+	  for (i in 1:8) {
+	    grams <- d5[[paste0("fertilizer_amount", i)]]
+	    d5[[paste0("N_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("N_fertilizer", i)]], 1)
+	    d5[[paste0("P_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("P_fertilizer", i)]], 2.29)
+	    d5[[paste0("K_fertilizer", i)]] <- to_rate(grams, d5$plot_area, d5[[paste0("K_fertilizer", i)]], 1.2051)
+	  }
 	  
 	  d5 <- d5[!is.na(d5$year),]
 	  

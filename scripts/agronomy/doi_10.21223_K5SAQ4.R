@@ -24,7 +24,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 		data_type = "on-farm experiment",
 		treatment_vars = "seed_source",
 		response_vars = "yield", 
-		notes = "LLM-review: [medium, yield] Percent damage columns are divided by 10 and stored as a 1-10 severity score. [low, dates] Per-site planting dates are commented out, so planting_date stays NA.",
+		notes = "Percent damage columns are kept as disease incidence. Per-site planting dates are commented out, so planting_date stays NA.",
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-08-27",
 		carob_completion = 90,	
@@ -127,12 +127,12 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 
   # reshaping disease columns from wide to long
   disease_cols <- names(disease)[-1]
-  disease <- reshape(disease, varying = disease_cols, v.names = "disease_severity",
+  disease <- reshape(disease, varying = disease_cols, v.names = "disease_incidence",
                  timevar = "disease",  times = disease_cols, idvar = "record_id", direction = "long")
   rownames(disease) <- NULL
-  disease$disease <- gsub("_", " ", disease$disease) 
-  disease$disease_severity <- as.character(disease$disease_severity/10)
-  disease$severity_scale <- "1-10"
+  disease$disease <- gsub("_", " ", disease$disease)
+  # Source columns are percent of plants, not a 1-10 severity score.
+  disease$disease_incidence <- as.character(disease$disease_incidence)
 
   carobiner::write_files(path, meta, d, long=disease)
 }

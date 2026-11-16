@@ -46,7 +46,7 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield;dmy_total;LAI;harvest_index;N_fixation",
-		notes = "LLM-review: [medium, coordinates] Missing coordinates are filled with the mean of the other trials, and those rows stay geo_from_source TRUE.",
+		notes = "Longitude is one Murehwa geocode because sta.csv has no longitude. Trials with no station match keep missing coordinates.",
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-13",
 		carob_completion = 70,	
@@ -168,9 +168,6 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 	dd <- merge(dd, d5, by = "station_id", all.x = TRUE)
 
 	d <- merge(d, dd, by = "trial_id", all.x = TRUE)
-
-	d$latitude[is.na(d$latitude)] <- mean(d$latitude, na.rm=TRUE)
-	d$longitude[is.na(d$longitude)] <- mean(d$longitude, na.rm=TRUE)
 
 	d$planting_date = as.character(as.Date(paste0(d$year_harvest-2, "-12-31")) + d$iplt0)
 	d$iplt0 <- d$irec <- d$year_harvest <- d$nomsol <- NULL
