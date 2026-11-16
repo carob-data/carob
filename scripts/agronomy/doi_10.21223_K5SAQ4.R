@@ -36,7 +36,7 @@ Farmer managed on-farm trials, with 8 sites, each site is a replication"
 
 	d <- data.frame(
 	  country = "Kenya",
-	  adm1 = r$Country,
+	  adm1 = r$Country, # not country. Bad name in original data
 	  crop="potato",
 	  rep = as.integer(r$Rep),
 	  treatment = r$Treatment,

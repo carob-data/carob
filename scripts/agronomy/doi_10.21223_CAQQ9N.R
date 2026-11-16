@@ -59,16 +59,18 @@ carob_script <- function(path) {
       soil_EC= r2$EC,
       #soil_ECE= r2$Ece,
       soil_SOM= r2$OM,
-      soil_N= r2$N...18,
-      soil_P= r2$P,
-      soil_K= r2$K...21 * 391, # meq/100g to mg/kg
+      # 03_Data_dictionary: total N is %. 1% = 10000 mg/kg
+      soil_N_total= r2$N...18 * 10000,
+      soil_P= r2$P, # ug/g, same as mg/kg
+      # meq/100g is the same number as cmol(+)/kg. The second K column repeats this one.
+      soil_K_exch= r2$K...21,
       soil_Zn= r2$Zn,
       soil_Cu= r2$Cu,
       soil_Fe= r2$Fe,
       soil_Mn= r2$Mn,
-      soil_Ca= r2$Ca,
-      soil_Mg= r2$Mg,
-      soil_Na= r2$Na,
+      soil_Ca_exch= r2$Ca,
+      soil_Mg_exch= r2$Mg,
+      soil_Na_exch= r2$Na,
       soil_B= r2$B,
       soil_SOC= r2$OC
    )

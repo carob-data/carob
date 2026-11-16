@@ -426,7 +426,8 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	   plot_area = as.numeric(r14$Plot.size..m2.),
 	   yield = as.numeric(r14$grain.yield.t.ha.)*1000,
 	   fwy_total =  as.numeric(r14$Biomass..t.ha.)*1000,
-	   harvest_index =  as.numeric(r14$HI),
+	   # The sheet stores HI as a fraction (about 0.1-0.5). terminag harvest_index is a percent.
+	   harvest_index =  as.numeric(r14$HI) * 100,
 	   farm_nm = r14$Farmer.s.name
 	 )
 	 

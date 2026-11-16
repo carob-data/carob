@@ -4,9 +4,9 @@
 ## ISSUES
 "
 data does not distinguish which); 
-       waterlogged and deficiency_P (waterlogging and phosphorus deficiency occurrence flags from score.csv). 
-       N_fixation exceeds terminag's upper bound (150) for one trial (173 kg/ha)
-       longitude/latitude are NA for 17 trials (the 15 farmer-named groundnut trials,
+ waterlogged and deficiency_P (waterlogging and phosphorus deficiency occurrence flags from score.csv). 
+ N_fixation exceeds terminag's upper bound (150) for one trial (173 kg/ha)
+ longitude/latitude are NA for 17 trials (the 15 farmer-named groundnut trials,
 
 plus test and the MKSH2 trial) that have no match in usms
        N_fertilizer (the declared treatment variable) is NA for the same 15 farmer-named trials lacking usms.csv 
@@ -21,7 +21,7 @@ plus test and the MKSH2 trial) that have no match in usms
 #         HCCF/HMINF/DAF are confirmed uniform across all 5 STICS layers
 
 # - In sta.csv
-#          longitude not provided anywhere in the source data - estimated via carobiner::geocode(country="Zimbabwe", location="Murehwa")
+#  longitude not provided anywhere in the source data - estimated via carobiner::geocode(country="Zimbabwe", location="Murehwa")
 
 
 carob_script <- function(path) {
@@ -46,7 +46,7 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield;dmy_total;LAI;harvest_index;N_fixation",
-		notes = "Longitude is one Murehwa geocode because sta.csv has no longitude. Trials with no station match keep missing coordinates.",
+		notes = "Longitude is one Murehwa geocode because sta.csv has no longitude. Trials with no station match keep missing coordinates",
 		carob_contributor = "Stella Muthoni",
 		carob_date = "2026-07-13",
 		carob_completion = 70,	
@@ -181,12 +181,13 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 	d$K_fertilizer <- NA
 	d$P_fertilizer <- NA
 
+	# metadata.tab: RADIATION is MJ/m2. srad is kJ/m2. Values are about 5-32.
 	w <- data.frame(
 		station_id = r7$id_ws,
 		date = as.character(as.Date(paste0(r7$YEAR-1, "-12-31")) + r7$DOY),
 		tmin = r7$T2M_MIN,
 		tmax = r7$T2M_MAX,
-		srad = r7$RADIATION,
+		srad = r7$RADIATION * 1000,
 		prec = r7$rainfall,
 		wspd = r7$WIND,
 		rhum = r7$HUMIDITY,
