@@ -45,8 +45,9 @@ carob_script <- function(path) {
 	i <- grep("^..-..$", d$wide$planting_date)
 	d$wide$planting_date[i] <- paste0("19", substr(d$wide$planting_date[i],1, 2))
 
-	i <- which(d$soil_pH > 50)
+	i <- which(d$wide$soil_pH > 50)
 	d$wide$soil_pH[i] <- d$wide$soil_pH[i] / 10
+
 	
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

@@ -42,10 +42,10 @@ carob_script <- function(path) {
 	dwide$record_id <- as.integer(dwide$record_id)
 	d <- list(long=dlong, wide=dwide)
 
-	d$soil_pH[d$soil_pH > 20] <- NA	
-	d$planting_date[d$planting_date == "92-93"] <- "1992"
-	d$planting_date[d$planting_date == "98-99"] <- "1998"
-	d$planting_date[d$planting_date == "99-00"] <- "1999"
+	d$wide$soil_pH[d$wide$soil_pH > 20] <- NA	
+	d$wide$planting_date[d$wide$planting_date == "92-93"] <- "1992"
+	d$wide$planting_date[d$wide$planting_date == "98-99"] <- "1998"
+	d$wide$planting_date[d$wide$planting_date == "99-00"] <- "1999"
 	
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

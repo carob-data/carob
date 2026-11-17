@@ -21,14 +21,12 @@ carob_script <- function(path) {
 	)
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
-	df <- proc_wheat(ff)	
-	d <- df$wide
-	long <- df$long
-	i <- which(d$location == "Choryn, Danco LTD")
-	d$latitude[i] <- 52.05
+	d <- proc_wheat(ff)	
+	i <- which(d$wide$location == "Choryn, Danco LTD")
+	d$wide$latitude[i] <- 52.05
 	
 	#much too low
-	d$heading_days[d$country == "South Africa"] <- NA
+	d$wide$heading_days[d$wide$country == "South Africa"] <- NA
 
-	carobiner::write_files(path, meta, d, long)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

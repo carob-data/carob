@@ -23,7 +23,7 @@ carob_script <- function(path) {
 	
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
-	d$harvest_date[d$harvest_date == "2013-01-25"] <- NA
+	d$wide$harvest_date[d$wide$harvest_date == "2013-01-25"] <- NA
 
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

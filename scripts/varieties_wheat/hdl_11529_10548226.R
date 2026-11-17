@@ -23,9 +23,9 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
 	
-	i <- d$location == "Ceneb, Bed Heat"
-	d$planting_date[i] <- NA
-	d$harvest_date[i] <- NA
+	i <- d$wide$location == "Ceneb, Bed Heat"
+	d$wide$planting_date[i] <- NA
+	d$wide$harvest_date[i] <- NA
 	
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

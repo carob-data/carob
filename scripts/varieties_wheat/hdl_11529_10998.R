@@ -22,12 +22,10 @@ carob_script <- function(path) {
 	)
 	
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
-	df <- proc_wheat(ff)
-	d <- df$wide
-	long <- df$long
-	d$crop <- "durum wheat"
-	i <- d$location == "Gangapur Ryd Center"
-	d$longitude[i] <- 76.7325
+	d <- proc_wheat(ff)
+	d$wide$crop <- "durum wheat"
+	i <- d$wide$location == "Gangapur Ryd Center"
+	d$wide$longitude[i] <- 76.7325
 	
-	carobiner::write_files(path, meta, d, long)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }
