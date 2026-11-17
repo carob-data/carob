@@ -1,3 +1,17 @@
+# R script for "carob"
+# license: GPL (>=3)
+
+## ISSUES
+
+
+carob_script <- function(path) {
+
+"
+Nitrous oxide (N2O) emission, leaching and soil mineral N data for BNI and Non-BNI Roelfs wheat variety for Batan and Obregon 2024-2025 cycle
+
+Data from experiments evaluating Biological Nitrification Inhibition (BNI) wheat. A pair of Roelfs wheat variety (with and without the BNI trait) was planted in June 2024 in Batan and December 2024 in Obregon in a split plot randomized design. Main plot was nitrogen fertilizer rate (0, 75, 150, 225 kg/ha) in the form of ammonium sulphate while split plots were variety. Additionally, synthetic nitrification inhibition (SNI) was applied to non BNI variety for N rates of 75, 150, 225 kg/ha to act as an external control. Nitrous oxide emissions (N2O) were measured throughout the season with static chambers using laser gas analyzers (Aeris Ultra Mira). Leaching was measured by burying 7 g of ionic resin in plastic tubes (5 cm diameter) at 60 cm below the wheat. Mineral N was measured at the beginning, mid, and end of each season.
+"
+
 	uri <- "doi:10.71682/10549422"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
@@ -179,3 +193,4 @@
 	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
 	carobiner::write_files(path, meta, d, long=long)
+}
