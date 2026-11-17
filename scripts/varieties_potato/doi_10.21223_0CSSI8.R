@@ -24,7 +24,7 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIP",
 		publication = NA,
 		project = "Enhanced food and income security in SWCA through potato varieties with improved tolerance to abiotic stress (07.7860.5-001.00)",
