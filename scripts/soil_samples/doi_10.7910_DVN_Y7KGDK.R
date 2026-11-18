@@ -41,10 +41,9 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	r2 <- carobiner::read.RData(f2)$Geo_Peds	
 
 	d <- data.frame(
-	  sample_id = as.character(r2$pedon_key),
+	  sample_id = paste(r2$pedon_key, r2$county_cod, sep = "-"),
 	  adm1 = as.character(r2$state),
 	  #location = r2$province,
-	  location_id = as.character(r2$county_cod),
 	  date = as.character(r2$site_obsyear),
 	  land_slope = atan(r2$slope / 100) * (180 / pi), # % to degrees
 	  latitude = r2$lat,
@@ -65,7 +64,7 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	  depth_bottom = r2$hzn_bot,
 	  soil_bd = r2$bd,
 	  soil_SOC = r2$soc,
-	  soil_EC = r2$ecec,
+	  soil_ECEC = r2$ecec,
 	  soil_Ca = r2$ca,
 	  soil_K = r2$k,
 	  soil_Mg = r2$mg,
@@ -111,6 +110,26 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	d$on_farm <- NA
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE
+	
+	### Fixing incorrect coordinates (not on land)
+	
+	geo <- data.frame(
+	  adm1 = c("Florida", "Maryland", "Oregon", "Virginia", "Washington"),
+	  lon = c(-82.4849, -76.7993, -120.5539, -78.8408, -120.4411),
+	  lat = c(28.6407, 39.0544, 43.9379, 37.5164, 47.3823),
+	  geo_uncertainty = c(559350, 242313, 378250, 441727, 340973),
+	  geo_from = FALSE,
+	  geo_s = "GADM 4.1, adm1"
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
+	
+	x <- !is.na(d$lon)
+	d$longitude[x] <- d$lon[x]
+	d$latitude[x] <- d$lat[x]
+	d$geo_from_source[x] <- d$geo_from[x]
+	d$geo_source[x] <- d$geo_s[x] 
+	d$lon <- d$lat <- d$geo_from <- d$geo_s <-  NULL
+	
 	
 	carobiner::write_files(path, meta, d)
 }
