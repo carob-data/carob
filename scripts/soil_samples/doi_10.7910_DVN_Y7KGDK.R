@@ -111,25 +111,5 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE
 	
-	### Fixing incorrect coordinates (not on land)
-	
-	geo <- data.frame(
-	  adm1 = c("Florida", "Maryland", "Oregon", "Virginia", "Washington"),
-	  lon = c(-82.4849, -76.7993, -120.5539, -78.8408, -120.4411),
-	  lat = c(28.6407, 39.0544, 43.9379, 37.5164, 47.3823),
-	  geo_uncertainty = c(559350, 242313, 378250, 441727, 340973),
-	  geo_from = FALSE,
-	  geo_s = "GADM 4.1, adm1"
-	)
-	d <- merge(d, geo, by = "adm1", all.x = TRUE)
-	
-	x <- !is.na(d$lon)
-	d$longitude[x] <- d$lon[x]
-	d$latitude[x] <- d$lat[x]
-	d$geo_from_source[x] <- d$geo_from[x]
-	d$geo_source[x] <- d$geo_s[x] 
-	d$lon <- d$lat <- d$geo_from <- d$geo_s <-  NULL
-	
-	
 	carobiner::write_files(path, meta, d)
 }
