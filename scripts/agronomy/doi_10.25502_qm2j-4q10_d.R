@@ -51,7 +51,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		N_fertilizer = r1$N_application_kg_ha,
 		P_fertilizer = r1$P_application_kg_ha,
 		K_fertilizer = r1$K_application_kg_ha,
-		dmy_leaves = r1$DMLeaves_kg_ha,
+		dmy_leaves = r1$DMLeaves_kg_ha*10,# converted into kg/ha ( from dictionary the initial unit is g/m2)
 		dmy_stems = r1$Dmstems_g_m2*10,
 		dmy_roots = r1$DMRoots_g_m2*10, ## kg/ha
 		yield = r1$DMRoots_g_m2*10,
