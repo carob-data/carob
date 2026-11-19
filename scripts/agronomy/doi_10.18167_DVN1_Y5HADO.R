@@ -5,6 +5,7 @@
 ## The link between maize (intercropped with soybean) in rotation with rice and site information is absent.
 ## Soil profiles have several depths per location and year, so they are not merged onto yield rows.
 ## FertiSiteAnnee has nitrogen only. The blanket 150 kg TSP, 80 kg KCl, and 5 t manure were removed.
+# the num of records with missing coords has dropped from 1476 to about 40, they remain blank due to missing IDPArc & site info
 
 carob_script <- function(path) {
 
@@ -253,6 +254,12 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 		latitude = ifelse(grepl("Andranomanelatra", r11$Site), -19.79, -19.554),
 		geo_from_source = TRUE  # From paper
 	)
+
+	# adding site info to crop rotation via parcelles
+	dp <- unique(data.frame(trial_id = as.character(r5$IDParc), site_Nbr = r5$NumSite))
+	dr <- merge(dr, dp, by="trial_id", all.x = TRUE)
+	dr <- merge(dr, d11, by="site_Nbr", all.x = TRUE)
+	dr$site_Nbr <- NULL
 	
 	### Adding location in weather data 
 	dw <- merge(d10, d11, by= "site_Nbr", all.x = TRUE)
@@ -305,7 +312,6 @@ Data from GARP project in Madagascar highlands. 2 trials at different altitudes 
 	df$plant_density[df$plant_density == 0] <- NA
 	
 	### Missing values in longitude and latitude are due to the missing site information in the maize raw data.
-	
 	carobiner::write_files(path, meta, df, wth = dw)
 
 }
