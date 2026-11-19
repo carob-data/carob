@@ -19,7 +19,7 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
     data_organization = "CIP",
-    publication = NA,
+    publication = "doi:10.1016/j.jafr.2024.101603,
     project = "GIZ-PZTM",
     design = "strip-plot",
     data_type = "on-farm experiment",
@@ -34,7 +34,6 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
   
   f2 <- ff[basename(ff) == "02_Yield data.xlsx"]
   r <- carobiner::read.excel(f2)
-  r$location[r$location == "Hogalbunia"] <- "Hogalburia"
   
   d <- data.frame(
     trial_id = paste("TJFYYD", r$location, sep = "_"),
@@ -61,13 +60,13 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
     P_fertilizer = NA,
     K_fertilizer = NA
   )
-  
+
+  ### from publication (https://www.sciencedirect.com/science/article/pii/S2666154324006409)
   geo <- data.frame(
-    location = c("Fultola", "Moshamari", "Hogalburia"),
-    latitude = c(22.9651, 22.5978, 22.86667),
-    longitude = c(89.4778, 89.4722,  89.57222),
-    geo_from_source = FALSE,
-    geo_source = "Google Maps"
+    location = c("Fultola", "Moshamari", "Hogalbunia"),
+    latitude = c(22.7088, 22.5978, 22.7558),
+    longitude = c(89.5262, 89.4722,  89.5021),
+    geo_from_source = TRUE 
   )
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
