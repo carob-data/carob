@@ -3,7 +3,7 @@
 
 ## ISSUES
 # Soil file not used: 2 sampling depths per plot, and its treatment codes (T3 = BARI Alu 78 + conventional) contradict the yield file (T3 = BARI Alu 78 + zero tillage)
-# Coordinates from carobiner::geocode; Moshamari and Hogalbunia not found
+# Moshamari and Hogalburia not found in Khulna district (Google Maps, OpenStreetMap); coordinates left NA
 
 carob_script <- function(path) {
   
@@ -27,13 +27,14 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
     response_vars = "yield;yield_marketable",
     notes = NA,
     carob_contributor = "Maryam Yahya",
-    carob_date = "2026-16-03",
+    carob_date = "2026-11-03",
     carob_completion = 70,
     carob_effort = 1
   )
   
   f2 <- ff[basename(ff) == "02_Yield data.xlsx"]
   r <- carobiner::read.excel(f2)
+  r$location[r$location == "Hogalbunia"] <- "Hogalburia"
   
   d <- data.frame(
     trial_id = paste("TJFYYD", r$location, sep = "_"),
@@ -62,10 +63,11 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
   )
   
   geo <- data.frame(
-    location = c("Fultola", "Moshamari", "Hogalbunia"),
-    latitude = c(22.3331, NA, NA),
-    longitude = c(89.1066, NA, NA),
-    geo_from_source = FALSE
+    location = c("Fultola", "Moshamari", "Hogalburia"),
+    latitude = c(22.9651, NA, NA),
+    longitude = c(89.4778, NA, NA),
+    geo_from_source = FALSE,
+    geo_source = c("Google Maps", NA, NA)
   )
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
