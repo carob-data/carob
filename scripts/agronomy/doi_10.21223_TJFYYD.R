@@ -64,10 +64,10 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
   
   geo <- data.frame(
     location = c("Fultola", "Moshamari", "Hogalburia"),
-    latitude = c(22.9651, NA, NA),
-    longitude = c(89.4778, NA, NA),
+    latitude = c(22.9651, 22.5978, 22.86667),
+    longitude = c(89.4778, 89.4722,  89.57222),
     geo_from_source = FALSE,
-    geo_source = c("Google Maps", NA, NA)
+    geo_source = c("Google Maps", NA, "Google Maps")
   )
   d <- merge(d, geo, by = "location", all.x = TRUE)
   
