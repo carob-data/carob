@@ -75,7 +75,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;yield_marketable;tuber_flavor;tuber_texture;pvs_votes_;rank_score",
+		response_vars = "yield;yield_marketable;tuber_flavor;tuber_texture;pvs_votes",
 		notes = NA,
 		carob_contributor = "Vilma Hualla",
 		carob_LLM = "Claude Opus 5.5",
@@ -92,7 +92,6 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	process <- carobiner::get_function("process_cip_lbvars", path, group)
 	d1 <- process(f)
 	d1$on_farm <- NA
-	d1$trial_type_ <- "mother"
 	if (is.null(d1$variety_code)) d1$variety_code <- d1$variety
 	# plants harvested per ha (NPH), the same for mother and baby plots
 	r1 <- carobiner::read.excel(f, sheet="F4_ Harvest_Mother")
@@ -108,16 +107,15 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		variety_code = r2$INSTN,
 		trial_id = paste0(trial, "_baby"),
 		yield = as.numeric(r2$TTWP) * padj,
-		yield_marketable = NA,
+		yield_marketable = r2$MTWP *padj,
 		plant_density = as.numeric(r2$NPH) * padj,
 		tuber_density = as.numeric(r2$TNTP) * padj,
-		tuber_density_marketable_ = as.numeric(r2$NMTP) * padj,
-		on_farm = TRUE,
-		trial_type_ = "baby"
+		tuber_density_marketable = as.numeric(r2$NMTP) * padj,
+		on_farm = TRUE
 	)
 	# initial weight (kg) of the tubers of each baby plot used for the dormancy test (NOTES 10)
 	r8 <- carobiner::read.excel(f, sheet="F8_Dormancy")
-	d2$dormancy_tuber_weight_ <- as.numeric(r8$ITW)[match(d2$plot_id, as.character(r8$PLOT))]
+	d2$dormancy_tuber_weight <- as.numeric(r8$ITW)[match(d2$plot_id, as.character(r8$PLOT))]
 	# variables that are the same for all plots
 	same <- setdiff(names(d1), c(names(d2), "variety", "female_parent", "male_parent",
 		"variety_pedigree", "block_id", "yield_moisture"))
@@ -145,9 +143,9 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		data.frame(
 			trial_id = if (mother) trial else paste0(trial, "_baby"),
 			plot_id = rep(as.character(r$PLOT), 2),
-			pvs_phase_ = phase,
+			growth_stage = phase,
 			sex = rep(c("male", "female"), each=nrow(r)),
-			pvs_votes_ = as.numeric(c(r[[sm]], r[[swm]]))
+			pvs_votes = as.numeric(c(r[[sm]], r[[swm]]))
 		)
 	}
 	fl <- carobiner::read.excel(f, sheet="F2 Clones_Select_Flowering")
@@ -164,9 +162,9 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		votes(st, "SCMEN", "SCWM", FALSE, "storage")
 	)
 	# storage type of the storage selection (F9), e.g. "rustic"
-	lv$storage_type_ <- NA
+	lv$storage_type <- NA
 	i <- lv$pvs_phase_ == "storage"
-	lv$storage_type_[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
+	lv$storage_type[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
 
 	## long table 2: organoleptic test per panelist (NOTES 7, ISSUES 2, 3)
 	org <- function(sheet, trial_id) {
@@ -185,19 +183,25 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		org("Data_organoleptic_Mother", trial),
 		org("Data_organoleptic_Baby", paste0(trial, "_baby"))
 	)
-
+	### Aggregate organoleptic test per variety and sex
+    lo <- aggregate(lo[, c("tuber_appearance", "tuber_flavor", "tuber_texture")], by = lo[, c("trial_id", "sex", "variety_code")], FUN = mean, na.rm = TRUE)
+    lo$rec <- seq_len(nrow(lo))
+    lo <- merge(lo, unique(lv[, c("plot_id", "sex", "trial_id", "variety_code")]), by = c("trial_id", "sex", "variety_code"), all.x = TRUE )
+    lo <- lo[!duplicated(lo$rec),] 
+    lv$variety_code <-  lo$rec <- lo$variety_code <- NULL
 	## long table 3: selection criteria identified by the farmers, per phase (NOTES 9)
-	cr <- carobiner::read.excel(f, sheet="F1_Selec_Crit")
-	lc <- data.frame(
-		trial_id = trial,
-		pvs_phase_ = tolower(cr$PHASE),
-		rank_variable = tolower(cr[["Identified criteria"]]),
-		sex = rep(c("male", "female"), each=nrow(cr)),
-		rank_score = as.integer(c(cr$OR_M, cr$OR_WM)),
-		pvs_votes_ = as.numeric(c(cr$SCMEN, cr$SCWM))
-	)
+	## No direct link between this and variety 
+	#cr <- carobiner::read.excel(f, sheet="F1_Selec_Crit")
+	#lc <- data.frame(
+	#	trial_id = trial,
+	#	pvs_phase_ = tolower(cr$PHASE),
+	#	rank_variable = tolower(cr[["Identified criteria"]]),
+	#	sex = rep(c("male", "female"), each=nrow(cr)),
+	#	rank_score = as.integer(c(cr$OR_M, cr$OR_WM)),
+	#	pvs_votes_ = as.numeric(c(cr$SCMEN, cr$SCWM))
+	#)
 
-	long <- carobiner::bindr(lv, lo, lc)
-
+    long <- carobiner::bindr(lv, lo)
+	
 	carobiner::write_files(path, meta, d, long=long)
 }
