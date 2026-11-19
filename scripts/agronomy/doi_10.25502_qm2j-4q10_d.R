@@ -48,24 +48,24 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	## "time" is the day of the year, counted from 1 January of the planting year
 	r$sampling_date <- as.character(as.Date(paste0(r$Year, "-01-01")) + r$time - 1)
 
-	h <- r[r$HarvestNumber == 3, ]
+	r_h <- r[r$HarvestNumber == 3, ]
 
 	## all parts are in g/m2, including DMLeaves_kg_ha: g/m2 * 10 = kg/ha
 
 	d <- data.frame(
-		record_id = h$ID,
-		country = h$Country,
-		adm1 = c(Benue="Benue", CRS="Cross River", Edo="Edo")[h$Location],
-		treatment = h$Treatment,
-		N_fertilizer = h$N_application_kg_ha,
-		P_fertilizer = h$P_application_kg_ha,
-		K_fertilizer = h$K_application_kg_ha,
-		harvest_date = h$sampling_date,
-		dmy_leaves = h$DMLeaves_kg_ha * 10,
-		dmy_stems = h$Dmstems_g_m2 * 10,
-		dmy_storage = h$DMRoots_g_m2 * 10,
-		dmy_total = h$Biomass_g_m2 * 10,
-		yield = h$DMRoots_g_m2 * 10,
+		record_id = r_h$ID,
+		country = r_h$Country,
+		adm1 = c(Benue="Benue", CRS="Cross River", Edo="Edo")[r_h$Location],
+		treatment = r_h$Treatment,
+		N_fertilizer = r_h$N_application_kg_ha,
+		P_fertilizer = r_h$P_application_kg_ha,
+		K_fertilizer = r_h$K_application_kg_ha,
+		harvest_date = r_h$sampling_date,
+		dmy_leaves = r_h$DMLeaves_kg_ha * 10,
+		dmy_stems = r_h$Dmstems_g_m2 * 10,
+		dmy_storage = r_h$DMRoots_g_m2 * 10,
+		dmy_total = r_h$Biomass_g_m2 * 10,
+		yield = r_h$DMRoots_g_m2 * 10,
 		yield_moisture = 0,
 		yield_part = "roots",
 		crop = "cassava",
@@ -75,7 +75,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		on_farm = TRUE,
 		irrigated = NA
 	)
-	d$trial_id <- paste(h$Location, h$Year, sep="-")
+	d$trial_id <- paste(r_h$Location, r_h$Year, sep="-")
 
 	## secondary and micronutrients, applied to one treatment only (Methods)
 	mn <- d$treatment == "NfPfKfMn"
@@ -107,7 +107,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	## intermediate samplings, linked to the harvest record of the same treatment and field-year
 	s <- r[r$HarvestNumber != 3, ]
 	key <- function(x) paste(x$Location, x$Year, x$Treatment)
-	s$record_id <- h$ID[match(key(s), key(h))]
+	s$record_id <- r_h$ID[match(key(s), key(r_h))]
 	planted <- d$planting_date[match(s$record_id, d$record_id)]
 
 	parts <- c(dmy_leaves="DMLeaves_kg_ha", dmy_stems="Dmstems_g_m2", dmy_storage="DMRoots_g_m2", dmy_total="Biomass_g_m2")
