@@ -121,7 +121,8 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	
 	trt <- c("Control", "PK", "NK", "NP", "NPK", "NPK+S+Ca+Mg+Zn+B")   # plot numbers 1-6
 	site1 <- r1f$`Experiment site code = EXPsit`
-	
+	maturity <- data.frame(do.call(rbind, strsplit(as.character(r1f$`Crop maturation`), "-")))
+  
 	d1a <- data.frame(
 	  trial_id = site1,
 	  adm1 = r1f$State,
@@ -131,8 +132,10 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  plot = r1f$`Plot number = PLOTnumb`,
 	  treatment = trt[r1f$`Plot number = PLOTnumb`],   # 2015 label lacks Mg
 	  variety = r1f$`Maize variety name = MVnam`,
-	  maturity_class_ = r1f$`Crop maturation`,
+	  #maturity_class_ = r1f$`Crop maturation`,
+	  maturity_days = rowMeans(sapply(maturity[, c("X1", "X2")], as.numeric),na.rm = FALSE),
 	  planting_date = fix_date(r1f$`Planting date = PLNdat`),   # equals "1st basal application"
+	  N1_date =  fix_date(r1f$`1st basal application`),	
 	  N2_date = fix_date(r1f$`2nd N application`),
 	  N3_date = fix_date(r1f$`3rd N application`),
 	  harvest_date = fix_date(r1f$`Harvest date = HDATE`),
@@ -177,7 +180,7 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  farmland = fill_site(r1f$`Farm Size (Ha)`, site1),
 	  previous_crops_2yr_ = crop_names(fill_site(r1f$`Crops grown in the past two years`, site1)),
 	  farmer_yield_ = fill_site(r1f$`Estimated yield of Maize (kg/ha)`, site1),
-	  soil_sample_date_ = fix_date(fill_site(r1f$`Soil sampling date zero`, site1)),
+	  soil_sample_date = fix_date(fill_site(r1f$`Soil sampling date zero`, site1)),
 	  soil_pH = fill_site(r1f$`pH (Water)  1:1`, site1),
 	  soil_SOC = fill_site(r1f$`OC (%)`, site1),
 	  soil_N_total = fill_site(r1f$`N (%)`, site1) * 10000,   # % -> mg/kg
@@ -204,6 +207,7 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	
 	## 2016 plots (r1g), with soil (r2c), site history (r3d), N dates (r3e) and fall armyworm (r3f)
 	site2 <- r1g$`Experimental site code = EXPsit`
+    maturity <- data.frame(do.call(rbind, strsplit(as.character(r1g$`Crop maturation`), "-")))
 	i2c <- match(site2, r2c$`SAMPLE CODE`)
 	i3d <- match(site2, r3d$`Site Code`)
 	i3e <- match(site2, r3e$`Site Code`)
@@ -219,8 +223,10 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  plot = match(r1g$Treatment, trt),
 	  treatment = r1g$Treatment,
 	  variety = r1g$`Maize variety name = MVnam`,
-	  maturity_class_ = r1g$`Crop maturation`,
+	  #maturity_class_ = r1g$`Crop maturation`,
+	  maturity_days = rowMeans(sapply(maturity[, c("X1", "X2")], as.numeric),na.rm = FALSE),
 	  planting_date = fix_date(r1g$`Planting date`),
+	  N1_date = fix_date(r1g$`Planting date`),
 	  N2_date = fix_date(r3e$`2nd N Split Application Date`[i3e]),   # Data_2016 has these for one plot per site only
 	  N3_date = fix_date(r3e$`3rd N Split Application Date`[i3e]),
 	  harvest_date = as.character(as.Date(r1g$`Harvest Date`)),
@@ -324,10 +330,10 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	d$N_splits <- as.integer(hasN * 3)
 	
 	# paper: N in 3 equal splits at planting, 21 and 42 days after emergence; other nutrients at planting
-	d$fertilizer_date <- ifelse(hasN, paste(d$planting_date, d$N2_date, d$N3_date, sep=";"), d$planting_date)
+	d$fertilizer_date <- ifelse(hasN, paste(d$N1_date, d$N2_date, d$N3_date, sep=";"), d$N1_date)
 	d$fertilizer_date[d$treatment == "Control"] <- NA
-	d$N2_date <- NULL
-	d$N3_date <- NULL
+	d$N1_date <- d$N2_date <- d$N3_date <- NULL
+	
 	
 	# LGA centroids (GADM 4.1, computed offline); geo_uncertainty is the max distance to the LGA border (m)
 	geo <- data.frame(
