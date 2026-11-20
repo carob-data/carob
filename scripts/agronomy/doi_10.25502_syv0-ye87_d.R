@@ -2,7 +2,9 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+#1. for countries without location,or locations that could not be located on google maps, the country coordinates were obtained from geonames 
+#2. other location coordinates were NA, but already exist in the dataset, so i just added them 
+#3. place name "Akanyirandoli" could not be located on google maps, instead i used the adm2 which a paper (ISSN: 2168-8662) suggested
 
 carob_script <- function(path) {
 
@@ -413,6 +415,36 @@ d <- d[, !grepl("soil_P", names(d))]
 
 d <- unique(d)
 
+geo <- data.frame(
+  adm2=c("Bindura",NA,NA,NA,"Prishtina",NA,"Tompkins County","Gicumbi",NA,"Kirsehir Merkez","Sooretama","East Welega Zone",NA),
+  location = c("Bindura University", "Buta Jira/Taba/Halba", "Mbeya, Kagera, Arusha, Morogoro", "Madiira- Arusha", "University of Prishtina, Experimental Didactic Farm", "Across sites", "Ithaca, NY", "Akanyirandoli", "Samsun", "Kirsehir", "Sooretama-ES", "Boshe", "southern Idaho"),
+  latitude = c(-17.29, 8.117, -6, -6, 42.656, -2.5, 42.44, -1.621, 41.294, 39.145, -19.195, 8.939, 42.579),
+  longitude = c(31.347, 37.899, 35, 35, 21.162, 23.5, -76.496, 30.113, 36.326, 34.161, -40.107, 37.102, -114.473),
+  geo_source = c("Google Maps", "Dataset", "Geonames", "Geonames", "Google Maps", "Geonames", "Google Maps", "GADM 4.1, adm2", "Google Maps", "Google Maps", "Google Maps", "Google Maps", "Google Maps"),
+  geo_from_source=c(FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+)
+
+# row index in geo for each row of d (NA if location not found)
+i <- match(trimws(d$location), trimws(geo$location))
+miss <- (is.na(d$latitude) | is.na(d$longitude)) & !is.na(i)
+
+# create the geo columns that d does not have yet
+if (!"adm2" %in% names(d))d$adm2 <- NA_character_
+if (!"geo_source" %in% names(d))d$geo_source <- NA_character_
+if (!"geo_from_source" %in% names(d)) d$geo_from_source <- NA
+
+# fill from geo for rows with missing coordinates
+d$adm2[miss]            <- geo$adm2[i[miss]]
+d$latitude[miss]        <- geo$latitude[i[miss]]
+d$longitude[miss]       <- geo$longitude[i[miss]]
+d$geo_source[miss]      <- geo$geo_source[i[miss]]
+d$geo_from_source[miss] <- geo$geo_from_source[i[miss]]
+
+#manually assigning coordinates to Malawi since it does not have a location
+d$latitude[d$country=="Malawi"] <- -13.5
+d$longitude[d$country=="Malawi"] <- 34
+d$geo_uncertainty <- ifelse(d$geo_source=="GADM 4.1, adm2",22375,NA) 
+  
 carobiner::write_files(path, meta, d, long = soilP)
 
 }
