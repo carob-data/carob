@@ -294,7 +294,7 @@ N2A_monitoring_2 <- function(ff, path) {
 		adm3 = carobiner::fix_name(r0$sector_ward, "title"), 
 		location = carobiner::fix_name(r0$vilage, "title"), 
 		latitude = r0$gps_latitude, 
-		longitude = r0$gps_latitude, 
+		longitude = r0$gps_longitude, 
 		season = r0$season, 
 		farm_id = r0$farm_id
 	)
@@ -460,7 +460,7 @@ N2A_monitoring_1 <- function(ff) {
 		adm3 = carobiner::fix_name(r0$sector_ward, "Title"), 
 		location = carobiner::fix_name(r0$vilage, "Title"), 
 		latitude = r0$gps_latitude, 
-		longitude = r0$gps_latitude, 
+		longitude = r0$gps_longitude, 
 		season = r0$season, 
 		farm_id= r0$farm_id
 	)
