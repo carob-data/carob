@@ -33,7 +33,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		response_vars = "yield;dmy_storage;dmy_stems;dmy_leaves;dmy_total",
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,
-		notes = "Intermediate samplings (136-261 days after planting) are in the long table."
+		notes = "Each of the three harvests is a record with its own harvest date and root yield; the first two (136-261 days after planting) cover four of the twelve treatments."
 	)
 
 	f <- ff[basename(ff) == "plantparts_totalbiomass.csv"]
@@ -48,24 +48,22 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	## "time" is the day of the year, counted from 1 January of the planting year
 	r$sampling_date <- as.character(as.Date(paste0(r$Year, "-01-01")) + r$time - 1)
 
-	r_h <- r[r$HarvestNumber == 3, ]
-
 	## all parts are in g/m2, including DMLeaves_kg_ha: g/m2 * 10 = kg/ha
 
 	d <- data.frame(
-		record_id = r_h$ID,
-		country = r_h$Country,
-		adm1 = c(Benue="Benue", CRS="Cross River", Edo="Edo")[r_h$Location],
-		treatment = r_h$Treatment,
-		N_fertilizer = r_h$N_application_kg_ha,
-		P_fertilizer = r_h$P_application_kg_ha,
-		K_fertilizer = r_h$K_application_kg_ha,
-		harvest_date = r_h$sampling_date,
-		dmy_leaves = r_h$DMLeaves_kg_ha * 10,
-		dmy_stems = r_h$Dmstems_g_m2 * 10,
-		dmy_storage = r_h$DMRoots_g_m2 * 10,
-		dmy_total = r_h$Biomass_g_m2 * 10,
-		yield = r_h$DMRoots_g_m2 * 10,
+		record_id = r$ID,
+		country = r$Country,
+		adm1 = c(Benue="Benue", CRS="Cross River", Edo="Edo")[r$Location],
+		treatment = r$Treatment,
+		N_fertilizer = r$N_application_kg_ha,
+		P_fertilizer = r$P_application_kg_ha,
+		K_fertilizer = r$K_application_kg_ha,
+		harvest_date = r$sampling_date,
+		dmy_leaves = r$DMLeaves_kg_ha * 10,
+		dmy_stems = r$Dmstems_g_m2 * 10,
+		dmy_storage = r$DMRoots_g_m2 * 10,
+		dmy_total = r$Biomass_g_m2 * 10,
+		yield = r$DMRoots_g_m2 * 10,
 		yield_moisture = 0,
 		yield_part = "roots",
 		crop = "cassava",
@@ -75,7 +73,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		on_farm = TRUE,
 		irrigated = NA
 	)
-	d$trial_id <- paste(r_h$Location, r_h$Year, sep="-")
+	d$trial_id <- paste(r$Location, r$Year, sep="-")
 
 	## secondary and micronutrients, applied to one treatment only (Methods)
 	mn <- d$treatment == "NfPfKfMn"
@@ -104,20 +102,5 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	)
 	d <- merge(d, geo, by="trial_id", all.x=TRUE)
 
-	## intermediate samplings, linked to the harvest record of the same treatment and field-year
-	s <- r[r$HarvestNumber != 3, ]
-	key <- function(x) paste(x$Location, x$Year, x$Treatment)
-	s$record_id <- r_h$ID[match(key(s), key(r_h))]
-	planted <- d$planting_date[match(s$record_id, d$record_id)]
-
-	parts <- c(dmy_leaves="DMLeaves_kg_ha", dmy_stems="Dmstems_g_m2", dmy_storage="DMRoots_g_m2", dmy_total="Biomass_g_m2")
-	dlong <- data.frame(
-		record_id = rep(s$record_id, length(parts)),
-		date = rep(s$sampling_date, length(parts)),
-		DAP = rep(as.integer(as.Date(s$sampling_date) - as.Date(planted)), length(parts)),
-		variable = rep(names(parts), each = nrow(s)),
-		value = unlist(s[, parts], use.names = FALSE) * 10
-	)
-
-	carobiner::write_files(path, meta, d, long=dlong)
+	carobiner::write_files(path, meta, d)
 }
