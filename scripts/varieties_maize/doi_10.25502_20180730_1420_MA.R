@@ -1,5 +1,6 @@
 # R script for "carob"
-# unknown location (set coordinates to NA) 
+## ISSUES
+  # Longitude, latitude, and location information for trial_id == "M1101RSS" (20 rows) are missing from the raw data.
 
 carob_script <- function(path) {
 "
@@ -33,10 +34,6 @@ This dataset contains output of the research for South Sudan.
 	x <- mz_fun(ff)
 	d <- x$d
 	
-	i <- d$trial_id == "M1101RSS"
-	d$longitude[i] <- NA
-	d$latitude[i] <- NA
-
 	carobiner::write_files(meta, d, path=path, long=x$long)
 
 }
