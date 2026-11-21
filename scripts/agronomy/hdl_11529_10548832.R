@@ -42,7 +42,7 @@ Grain yield data collected from Conservation Agriculture (CA) systems across exp
 		project = NA,
 		design = "RCBD (4 reps; HRS 5 from 2007)",
 		data_type = "experiment",
-		treatment_vars = "land_prep_method;planting_implement;residue_prevcrop_used;crop_rotation;intercrops;biochar_used_",
+		treatment_vars = "land_prep_method;planting_implement;residue_prevcrop_used;crop_rotation;intercrops;biochar_used",
 		response_vars = "yield;maize_biomass_",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
@@ -83,7 +83,9 @@ Grain yield data collected from Conservation Agriculture (CA) systems across exp
 		yield_part = "grain",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		N_splits = 2L                          # basal + topdressing (Table S2)
+		N_splits = 2L ,                         # basal + topdressing (Table S2)
+		yield_moisture = NA, # not reported
+        irrigated = NA, # nor reported
 	)
 
 	# cropping systems (codebook, paper Table 2 and Fig. 4, supplement system descriptions)
@@ -97,7 +99,7 @@ Grain yield data collected from Conservation Agriculture (CA) systems across exp
 		residue_prevcrop_used = c(TRUE, FALSE, FALSE, FALSE, rep(TRUE, 19)),
 		crop_rotation = c("maize", "maize", "maize", "maize;cotton", "maize", "maize", "maize", "maize", "maize;cowpea", "maize", "maize", "maize", "maize", "maize;cowpea", "maize;cotton", "maize;cotton;crotalaria", "maize;groundnut", "maize;sunflower", "maize;sunflower;cowpea", "maize;soybean", "maize", "maize", "maize"),
 		intercrops = c(rep("none", 5), "cowpea", "velvet bean", "pigeon pea", "none", "none", "cowpea", "pigeon pea", rep("none", 10), "cowpea"),
-		biochar_used_ = c(rep(FALSE, 12), TRUE, rep(FALSE, 10))
+		biochar_used = c(rep(FALSE, 12), TRUE, rep(FALSE, 10))
 	)
 
 	# sites: paper Table 1 (coordinates, elevation, soils) and Table S2 (fertilizer, weed control)
