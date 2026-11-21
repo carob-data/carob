@@ -13,10 +13,10 @@
 # Likely data errors, left as reported: grain yield > cob yield in 20 plots; harvest index differs from grain/tops weight in 123 plots; one 100-seed weight of 99.7 g.
 
 ## NEW VARIABLES
-# cob_yield_: cob yield after drying (kg/ha)
-# biomass_tasseling_: biomass without cobs at 50% tasselling (kg/ha; fresh or dry not stated)
-# kernels_per_cob_: kernels per cob (mean of 5 cobs)
-# maturity_group_: maturity group from the papers (extra early to late)
+# cob_yield: cob yield after drying (kg/ha)
+# biomass_tasseling: biomass without cobs at 50% tasselling (kg/ha; fresh or dry not stated)
+# kernels_per_cob: kernels per cob (mean of 5 cobs)
+
 
 ## NOT PROCESSED
 # herbicide rate: product only (Primextra 4 l/ha), no active ingredient
@@ -74,12 +74,12 @@ Validation Trials Dataset for Nigeria
 		yield = r1d$GY_ha,                       # kg/ha, after drying
 		cob_yield_ = r1d$CY_ha,                  # kg/ha, after drying
 		seed_weight = r1d$hun_SW * 10,           # 100-seed -> 1000-seed weight (g)
-		biomass_tasseling_ = r1d$BM_Tasselling,  # kg/ha, without cobs
+		biomass_tasseling = r1d$BM_Tasselling,  # kg/ha, without cobs
 		emergence_days = r1d$DTE,
 		tassling_days = r1d$DTT,                 # 50% of plants with tassels
 		silking_days = r1d$DTS,
 		maturity_days = r1d$DTPM,                # physiological maturity
-		kernels_per_cob_ = r1d$No_Kernel,        # mean of 5 cobs
+		kernels_per_cob = r1d$No_Kernel,        # mean of 5 cobs
 		trial_id = paste0("cal_", r1d$Location),
 		plot_id = paste0("cal_", seq_len(nrow(r1d))),
 		season = "dry",
@@ -104,6 +104,8 @@ Validation Trials Dataset for Nigeria
 	)
 	# these 12 plots (3 varieties x 3 reps at DBT, 1 at SMR) have no data in any column
 	d1d <- d1d[!is.na(d1d$yield), ]
+	## harvest_date extimation from plating_date and maturity days
+    d1d$harvest_date = as.character(as.Date(d1d$planting_date)+ d1d$maturity_days)
 
 ## on-farm trials, Northern Guinea Savanna, rainy season 2016 (Front. Agron. 2022; Exp. Agric. 2020)
 	# one point per LGA from the r2a metadata sheet; Exp. Agric. gives points 0.3-6 km away
@@ -112,7 +114,7 @@ Validation Trials Dataset for Nigeria
 		adm2 = r2c$LGA,
 		variety = trimws(r2c$Variety),
 		plant_density = r2c$Density,             # plants/ha, after thinning to 1 plant per hill
-		cob_yield_ = r2c$CY_ha,                  # kg/ha, after drying
+		cob_yield = r2c$CY_ha,                  # kg/ha, after drying
 		yield = r2c$GY_ha,                       # kg/ha, after drying
 		dmy_total = r2c$TW_Ha,                   # tops weight with cobs at harvest; papers oven-dried stover and cob subsamples
 		harvest_index = r2c$HI * 100,            # ratio -> %
@@ -141,7 +143,8 @@ Validation Trials Dataset for Nigeria
 	d$is_survey <- FALSE
 	d$yield_part <- "grain"
 	d$yield_isfresh <- FALSE                     # "after drying", moisture not reported
-
+	d$yield_moisture <- NA     # not reported
+	
 	# 120 N : 60 P2O5 : 60 K2O kg/ha as urea, SSP and KCl; P and K at sowing, half N at sowing, half 21 days later
 	d$N_fertilizer <- 120
 	d$P_fertilizer <- 60 / 2.29
@@ -149,6 +152,7 @@ Validation Trials Dataset for Nigeria
 	d$S_fertilizer <- d$P_fertilizer / 0.0874 * 0.12  # SSP: 8.74% P, 12% S
 	d$fertilizer_type <- "urea;SSP;KCl"
 	d$N_splits <- 2L
+	
 
 	# PLoS 2019 Table 3 (calibration names) and Front. Agron. 2022 Table 1 (NGS names, and calibration names that are the same without spaces)
 	vt <- data.frame(
@@ -167,7 +171,7 @@ Validation Trials Dataset for Nigeria
 	)
 	i <- match(d$variety, vt$variety)
 	d$variety_type <- vt$variety_type[i]
-	d$maturity_group_ <- vt$maturity_group_[i]
-
+	variety_traits <- ifelse(!is.na(vt$maturity_group_[i]),  paste0(vt$maturity_group_[i], " maturity"), vt$maturity_group_[i])
+	
 	carobiner::write_files(path, meta, d)
 }
