@@ -149,6 +149,9 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 	d1$elevation <- 1813
 	d1$geo_from_source <- TRUE
 	d1$geo_uncertainty <- 1000                       # longitude given to the minute
+    d1$yield <- NA
+	d1$yield_moisture <- NA ## not provided
+	d1$yield_part <- "aboveground biomass"
 	
 	## d1long: late blight severity per plot and date (r1, dates from r2)
 	lbcol <- grep("^LB", names(r1), value=TRUE)
@@ -185,9 +188,9 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 	  tmin = r8$`T low prom`,                  # mean of the hourly minima
 	  rhum = r8$`% HR prom.`,
 	  prec = r8$`Rain/d`,
-	  rhum90_hours_ = r8$`Hora Hr>90`,
+	  rhum90_hours = r8$`Hora Hr>90`,
 	  temp_rhum90_ = r8$`T prom. HR>90`,
-	  leaf_wet_hours_ = r8$`Hr de LW>=1`
+	  leaf_wet_hours = r8$`Hr de LW>=1`
 	)
 	d8 <- d8[!is.na(d8$date), ]                  # summary row
 	
@@ -206,10 +209,10 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 	  irad = r9$Rad,                           # W/m2
 	  ETo = r9$ET,                             # mm per hour, computed by the station
 	  pressure = r9$Bar * 1.33322,             # mmHg -> hPa (611 mmHg = 815 hPa, fits 1813 m)
-	  wind_speed_ = r9$Speed,
-	  wind_speed_max_ = r9$Hi...13,
-	  wdir = (match(r9$Dir, compass) - 1) * 22.5,
-	  leaf_wetness_ = r9$Leaf
+	  wspd = r9$Speed,
+      wspdmx = r9$Hi...13,
+	  wdir = (match(r9$Dir, compass) - 1) * 22.5, #Nice # 22.5 is a standard compass interval
+	  leaf_wetness = r9$Leaf
 	)
 	d9 <- d9[!is.na(d9$date), ]                  # totals row
 	
