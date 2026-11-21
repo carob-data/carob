@@ -49,7 +49,7 @@ carob_script <- function(path) {
       #soil_SOC= r1$SOC.g.kg,
       soil_bd= r1$Bulk.Density.Mg.m.3,
       soil_pH= r1$Soil.pH,
-      plot_area= r1$Plot.Size..m.2./10000, # ha
+      plot_area= r1$Plot.Size..m.2., # m2; the source column is already square metres
       geo_from_source= TRUE
    )
    ## process yield file 

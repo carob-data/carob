@@ -45,7 +45,7 @@ carob_script <- function(path) {
 	d$wide$planting_date[d$wide$planting_date == "99-00"] <- "1999"
 	d$wide$planting_date[d$wide$planting_date == "00-01"] <- "2000"
 
-	d$wide$soil_pH[d$soil_pH==60] <- 6.0
+	d$wide$soil_pH[d$wide$soil_pH==60] <- 6.0
 	
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

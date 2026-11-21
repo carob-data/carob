@@ -24,7 +24,7 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		data_type = "experiment",
 		treatment_vars = "cover_crop;N_fertilizer",
 		response_vars = "yield", 
-		notes = "LLM-review: [low, metadata] trial_id is block and plot, one id per plot, shared by both years. on_farm is TRUE at Hancock station. irrigated is NA while the abstract says the study was irrigated. fertilizer_type urea is on the zero-N control. The N-rate index only works if treatment is the integer 1 to 8.",
+		notes = "LLM-review: [low, metadata] trial_id is block and plot, one id per plot, shared by both years. The N-rate index only works if treatment is the integer 1 to 8.",
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-07-09",
 		carob_completion = 100,	
@@ -54,7 +54,6 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		dmy_residue_Aug = r1$Aug_DM_.kg.ha.,
 		residue_N_Aug = r1$Aug._Ncontent,
 		variety = "RS207NX, Renk",
-		fertilizer_type = "urea",
 		crop = "soybean",
 		location = "University of Wisconsin Hancock Agricultural Research Station",
 		longitude = -89.53903, ## from paper
@@ -63,15 +62,16 @@ The potential for nitrogen (N) fertilization to increase soybean yield is known 
 		row_spacing = 76,
 		country = "United States",
 		is_survey = FALSE, 
-		on_farm = TRUE, 
+		on_farm = FALSE, 
 		trial_id = paste(r1$Block, r1$Plot, sep = "-"), 
 		yield_part = "grain", 
 		geo_from_source = TRUE, 
-		irrigated = NA, 
+		irrigated = TRUE, 
 		record_id = as.integer(1:nrow(r1))
 	)
 	
 	d$N_fertilizer <- c(0, 34, 101, 101, 101, 101, 202, 404)[d$treatment]
+	d$fertilizer_type <- ifelse(d$N_fertilizer == 0, "none", "urea")
 	d$DAE <- as.integer(c(NA, NA, 10, 30, 60, 80, NA, NA)[d$treatment])
 	d$treatment  <- c("control", "starter", "10DAE", "30DAE", "60DAE", "80DAE", "split(202)", "split(404)")[d$treatment]
 	d$N_splits <- as.integer(ifelse(grepl("split", d$treatment), 3, 1))

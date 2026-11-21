@@ -23,12 +23,12 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
 
-	d$heading_days[d$heading_days > 300] <- NA
+	d$wide$heading_days[d$wide$heading_days > 300] <- NA
 
-	i <- which(d$location == "Mount Vernon, Nwrec, Wsu")
-	d$location[i] <- "Mount Vernon, NWREC, WSU"
-	d$longitude[i] <- -122.38626
-	d$latitude[i] <- 48.4397
+	i <- which(d$wide$location == "Mount Vernon, Nwrec, Wsu")
+	d$wide$location[i] <- "Mount Vernon, NWREC, WSU"
+	d$wide$longitude[i] <- -122.38626
+	d$wide$latitude[i] <- 48.4397
 	
 	
 # all scripts must end like this

@@ -2,7 +2,12 @@
 # license: GPL (>=3)
 
 ## ISSUES
+## S_BASES is the sum of exchangeable bases, not extractable sulfur, so it is kept as soil_exch_bases_.
+## Exchangeable cations stay in meq/100g, which is the same number as cmol(+)/kg. There is no terminag name for exchangeable Mn.
 
+## NEW VARIABLES
+## soil_exch_bases_: sum of exchangeable bases (S_BASES), meq/100g (same number as cmol(+)/kg).
+## soil_Mn_exch_: exchangeable Mn, meq/100g (same number as cmol(+)/kg).
 
 carob_script <- function(path) {
 
@@ -97,6 +102,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	)
 	
 	d3[d3==-999] <- NA
+	d3$srad[!is.na(d3$srad) & d3$srad < 0] <- NA
 	### process soil 
 	
 	d4 <- data.frame(
@@ -122,15 +128,15 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	   soil_SOC = r5$C_ORG,
 	   soil_N_total = r5$N_TOT*1000,
 	   soil_P_total = r5$P_TOT,
-	   ## from meq/100g to ppm using molecular weight en charge number
-	   soil_Ca = r5$CA*(40/2)*10, 
-	   soil_Mg = r5$MG*(24.31/2)*10,
-	   soil_K = r5$K * 391, # meq/100g to mg/kg; K is monovalent
-	   soil_Na = r5$`NA`,
-	   soil_Al = r5$AL,
-	   soil_Mn = r5$MN,
+	   ## meq/100g is the same number as cmol(+)/kg
+	   soil_Ca_exch = r5$CA,
+	   soil_Mg_exch = r5$MG,
+	   soil_K_exch = r5$K,
+	   soil_Na_exch = r5$`NA`,
+	   soil_Al_exch = r5$AL,
+	   soil_Mn_exch_ = r5$MN,
 	   #r6$H,
-	   soil_S = r5$S_BASES,
+	   soil_exch_bases_ = r5$S_BASES,
 	   soil_CEC = r5$CEC,
 	   soil_pH = r5$PH
 	)
@@ -139,7 +145,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	dd <- merge(d4, d5, by=c("year", "treatment", "deph", "serie", "location"), all.y = TRUE)
 	
 	### aggregate
-	dd <- aggregate(cbind(soil_clay, soil_silt_coarse,soil_silt_fine, soil_sand_coarse,soil_sand_fine, soil_SOM, soil_SOC, soil_N_total, soil_P_total, soil_Ca, soil_Mg, soil_K, soil_Na, soil_Al, soil_Mn, soil_S, soil_CEC, soil_pH) ~ year+ treatment, data= dd, FUN= mean, na.action = na.pass)
+	dd <- aggregate(cbind(soil_clay, soil_silt_coarse,soil_silt_fine, soil_sand_coarse,soil_sand_fine, soil_SOM, soil_SOC, soil_N_total, soil_P_total, soil_Ca_exch, soil_Mg_exch, soil_K_exch, soil_Na_exch, soil_Al_exch, soil_Mn_exch_, soil_exch_bases_, soil_CEC, soil_pH) ~ year+ treatment, data= dd, FUN= mean, na.action = na.pass)
 	dd$soil_P_method <- "Olsen"
 	
 	### process yield data 

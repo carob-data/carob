@@ -631,6 +631,7 @@ proc_wheat <- function(ff) {
 		"bean", "common bean",
 		"onions", "onion",
 		"vegetables", "vegetable",
+		"mayz-nabo-trigo", "maize;turnip;wheat",
 		"crop", NA)
 	)
 

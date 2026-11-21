@@ -70,8 +70,16 @@ The BT population is a bi-parental cross comprising 317 F1 genotypes that were e
 	   latitude= c(0.534, 1.5020, -1.255 ),
 	   trial_id= c("1", "2", "3")
 	)
+
+	# using match() to assign lat/lon to d
+	i <- match(d$location, geo$location)
+	if (anyNA(i)) stop("unmatched location(s): ", paste(unique(d$location[is.na(i)]), collapse=", "))
+	d$longitude <- geo$longitude[i]
+	d$latitude  <- geo$latitude[i]
+	d$trial_id  <- geo$trial_id[i]	
 	
-	dd <- merge(d, geo, by="location")	
+	# commented out bc it isnt being used in the script
+	# dd <- merge(d, geo, by="location")	
 
 	cols <- c("white", "cream", "dark cream", "pale yellow", "dark yellow", "pale orange", "intermediate orange", "dark orange", "strongly pigmented with anthocyanins")
 	d$flesh_color[d$flesh_color > 9] <- NA

@@ -4,7 +4,8 @@
 ## ISSUES
 #1. added other important tools in d$land_prep_implement
 #2. invalid terms errors are as a result of aggregation, which if not done, could have exploded the observations
-#3. NA values in country and longitude originates from the raw data
+#3. 14 samples (Vietnam) lacked longitude and/or latitude. Gaps were filled
+#   with the mean coordinates of other samples in the same adm4 (village)
 
 carob_script <- function(path) {
   
@@ -435,6 +436,25 @@ land_num <- aggregate(land[, c("farmland_owned","farmland_rentedin","farmland_re
  d$yield_part <- "grain"
  d$hhid <- as.character(d$hhid)
  d$yield_moisture <- is.numeric(NA)
+ 
+ #fixing location data
+ fill_geo <- function(d, grp) {
+   key  <- do.call(paste, c(d[grp], sep = "|"))
+   mlon <- tapply(d$longitude, key, mean, na.rm = TRUE)
+   mlat <- tapply(d$latitude,  key, mean, na.rm = TRUE)
+   j <- is.na(d$longitude); d$longitude[j] <- as.vector(mlon[key[j]])
+   j <- is.na(d$latitude);  d$latitude[j]  <- as.vector(mlat[key[j]])
+   d$longitude[is.nan(d$longitude)] <- NA
+   d$latitude[is.nan(d$latitude)]   <- NA
+   d
+ }
+ 
+ miss <- is.na(d$longitude) | is.na(d$latitude)
+ d <- fill_geo(d, c("country","adm1","adm2","adm3","adm4"))   # same village
+ d <- fill_geo(d, c("country","adm1","adm2","adm3"))          # then same commune
+ d$geo_from_source[miss] <- FALSE
+ 
+ unique(d[is.na(d$longitude) | is.na(d$latitude), c("adm1","adm2","adm3","adm4")])
  
  carobiner::write_files(path, meta, d)
 }
