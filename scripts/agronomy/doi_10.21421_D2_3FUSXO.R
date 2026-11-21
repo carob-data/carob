@@ -74,13 +74,13 @@ Experimental location on Google Maps
 		variety = gsub("Ex-dakar", "Ex-Dakar", r$Variety),
 		treatment = paste0(r$Mulch, "_", r$Variety),
 		planting_date = paste0(r$Year, "-12-24"),               # paper: sown on 24 December in both seasons
-		first_flowering_days_ = r$DFF,
+		first_flowering_days = r$DFF,
 		flowering_days = r$DF,                                  # DF: days to 50% flowering
 		maturity_days = r$DM,
 		yield = r[["Pod Yield"]],
 		dmy_residue = r[["Haulm Yield"]],                       # haulm weighed after 1 week of air-drying
-		seed_weight = r$HSW * 10,                               # HSW is 100-seed weight; seed_weight is 1000-seed weight
-		shelling_ratio_ = r[["Shelling ratio"]]                 # does not match the paper's shelling percentage (72% / 67%)
+		seed_weight = r$HSW * 10                             # HSW is 100-seed weight; seed_weight is 1000-seed weight
+		#shelling_ratio_ = r[["Shelling ratio"]]                 # does not match the paper's shelling percentage (72% / 67%)
 	)
 
 	# paper: harvested when at least 80% of plants reached physiological maturity (days to maturity)
@@ -88,6 +88,7 @@ Experimental location on Google Maps
 
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"
+	d$yield_moisture <- NA ## no provided 
 	d$yield_isfresh <- FALSE
 	d$season <- "dry"
 
