@@ -3,7 +3,7 @@
 
 ## ISSUES
 # 1. Flowering degree (Flower) has values 1, 3, 6, 7, 8 and 9; the CIP manual scale is 0-7 (0, 1, 3, 5,
-#    7), so the scale used in this trial is not clear. Kept as reported (flowering_score_).
+#    7), so the scale used in this trial is not clear. Kept as reported (flowering_score_). 
 
 ## NOTES
 # 1. Each plot had 30 plants (5.25 m2), but only 10 plants per plot were harvested
@@ -21,10 +21,10 @@
 ## NEW VARIABLES
 # Scales from the CIP manual "Metodologias de Evaluacion Estandar y Manejo de Datos de Clones
 #   Avanzados de Papa, Modulo 2" (2014, doi:10.4160/9789290604495), not cited in the dataset:
-# plant_vigor_: plant vigor (PV), 45 days after planting; 1 (very weak) to 9 (very vigorous)
-# flowering_score_: flowering degree (Flower), 60 days after planting; the manual uses 0 (no buds),
+# plant_vigor: plant vigor (PV), 45 days after planting; 1 (very weak) to 9 (very vigorous)
+# flowering_score: flowering degree (Flower), 60 days after planting; the manual uses 0 (no buds),
 #   1 (bud abortion), 3 (few), 5 (moderate), 7 (profuse), but the data have values up to 9 (ISSUES 1)
-# senescence_score_: senescence (SE), 70-90 days after planting; 1 (very late, all plants green) to
+# senescence_score: senescence (SE), 70-90 days after planting; 1 (very late, all plants green) to
 #   9 (very early, completely senescent)
 # Not included (as in doi:10.21223/15FGBK): yield adjusted for missing plants (TTYA, MTYA;
 #   plants planted and harvested are recorded instead) and the weight and number of marketable
@@ -50,7 +50,6 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 		data_organization = "CIP",
 		publication = NA,
 		project = "Enhanced food and income security in SWCA through potato varieties with improved tolerance to abiotic stress (07.7860.5-001.00)",
-		# design as reported in the "Installation" sheet
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
@@ -94,9 +93,9 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	#d$tuber_density_c2_ <- as.numeric(r$NMTCII) * 10000 / harvest_area
 	## PC: plant canopy cover (%)
 	d$ground_cover <- as.numeric(r$PC)
-	d$plant_vigor_ <- as.numeric(r$PV)
-	d$flowering_score_ <- as.numeric(r$Flower)
-	d$senescence_score_ <- as.numeric(r$SE)
+	d$plant_vigor <- as.numeric(r$PV)
+	d$flowering_score <- as.numeric(r$Flower)
+	d$senescence_score <- as.numeric(r$SE)
 
 	## variety names in upper case in the material list
 	d$variety[d$variety == "REICHE"] <- "Reiche"
@@ -111,7 +110,8 @@ Trials featuring heat-tolerant potato varieties were conducted in South West Cen
 	## irrigation and fertilizer not reported in the fieldbook; no dry matter.
 	## The shared function adds empty columns for these; they are removed
 	d$irrigated <- NA
-	d$yield_moisture <- d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- NULL
+	d$on_farm <- TRUE
+	d$yield_moisture <- d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
 	## daily weather at the site (NOTES 2)
 	w <- carobiner::read.excel(f, sheet="Weather_data")
