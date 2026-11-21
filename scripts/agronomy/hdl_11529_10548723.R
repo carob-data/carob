@@ -5,6 +5,13 @@
 #1. location(probably research centers) in raw dataset are all uppercase. 
 #2. missing values in the treatment's variables is because there were "ND" (no data) from the trial dataset
 #3. yield raw data contains empty values
+#4. # no coordinates in source; points sourced from GeoNames
+# CEVAF (INIFAP Campo Experimental Valle del Fuerte): town of Juan José Ríos
+#   https://www.geonames.org/4005864/juan-jose-rios.html
+# farmer-named sites: only the state is known; GeoNames ADM1 point
+#   Sinaloa:  https://www.geonames.org/3983035/estado-de-sinaloa.html
+#   Tlaxcala: https://www.geonames.org/3515359/estado-de-tlaxcala.html
+
 carob_script <- function(path) {
   
 "Nutrient omission experiments aim to identify nutritional deficiencies in maize production systems in different regions of Mexico. (2022-07-06)"
@@ -134,15 +141,16 @@ carob_script <- function(path) {
                  "San Pablo Huixtepec", "San Andrés Sinaxtla", "Tlacolula de Matamoros",
                  "Espinal de Morelos", "Muna", "Xoy", "Valle Hermoso", "Metepec", "Zaachila",
                  "Ayoquezco de Aldama", "Chocani", "Xul-Ha", "Ejido Juan Sarabia", "Guadalupe Septien",
-                 "Sitio Experimental Ébano", "Campo Experimental Centro Altos de Jalisco", "San Andres Sinaxtla"),
+                 "Sitio Experimental Ébano", "Campo Experimental Centro Altos de Jalisco", "San Andres Sinaxtla",
+                 "CEVAF", "Enrique Meza", "Felipe Ibarra", "Ramon Reyes", "Plutarco Flores Luna"),
     
     longitude = c(-100.9722, -100.7955, -101.0442, -109.6419, -109.7671, -109.5925, -99.5397, -96.7842,
                   -97.2830, -96.4723, -93.4278, -89.7131, -88.9711, -97.8159, -99.5986, -96.7518, -96.8431,
-                  -97.5024, -88.4639, -88.4863, -100.1119, -98.4660, -102.7127, -97.2830),
+                  -97.5024, -88.4639, -88.4863, -100.1119, -98.4660, -102.7127, -97.2830,-108.82420, -107.50000, -107.50000, -107.50000, -98.16667),
     
     latitude = c(19.7921, 21.0056, 19.7467, 26.8271, 27.1979, 27.1585, 18.3448, 16.8211, 17.4670, 16.9552,
                  16.7083, 20.4849, 20.1230, 25.6684, 19.2529, 16.9487, 16.6842, 17.6658, 18.5517, 18.5172,
-                 20.5284, 22.1725, 20.8733, 17.4670)
+                 20.5284, 22.1725, 20.8733, 17.4670,25.75714,   25.00000,   25.00000,   25.00000,  19.41667)
   )
   
   d <- merge(d, loc, by="location", all.x = TRUE)
@@ -193,6 +201,7 @@ carob_script <- function(path) {
   d$yield_moisture <- 14# from original variable name r$Rendimiento.14pct.hum._.kg.ha
   d$yield_isfresh <- TRUE
   d <- unique(d)
+  
   carobiner::write_files(path, meta, d)
 }
 
