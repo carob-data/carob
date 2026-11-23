@@ -4,9 +4,11 @@
 ## NOTES
 # Publication found by search (not in the metadata): same six field-years, treatments and harvest dates.
 # "time" (called "replication" in the dictionary) is the day of the year, from 1 January of the planting year: it reproduces the publication's harvest dates to within a day.
+# HarvestNumber 1 and 2 are destructive samples at about 4 and 8 months. yield is HarvestNumber 3 only. Earlier root dry matter stays in dmy_storage.
 
 ## ISSUES
 # ID 35 (Cross River 2016, NfPfKf) repeats the stems and roots of ID 36 (NfPfKfMn); the publication gives 29.7 t/ha root DM for NfPfKf, not 28.7. Its stems, roots, total and yield are set to NA.
+# write_files reports NA yield for the 4- and 8-month samples, and for ID 35.
 
 
 carob_script <- function(path) {
@@ -33,7 +35,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		response_vars = "yield;dmy_storage;dmy_stems;dmy_leaves;dmy_total",
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,
-		notes = "Each of the three harvests is a record with its own harvest date and root yield; the first two (136-261 days after planting) cover four of the twelve treatments."
+		notes = "Each sampling is a record with its own date. yield is the final harvest only (HarvestNumber 3). The 4- and 8-month samples keep root dry matter in dmy_storage and cover four of the twelve treatments."
 	)
 
 	f <- ff[basename(ff) == "plantparts_totalbiomass.csv"]
@@ -49,6 +51,8 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 	r$sampling_date <- as.character(as.Date(paste0(r$Year, "-01-01")) + r$time - 1)
 
 	## all parts are in g/m2, including DMLeaves_kg_ha: g/m2 * 10 = kg/ha
+	## HarvestNumber 1 and 2 are not the crop harvest.
+	final <- r$HarvestNumber == 3
 
 	d <- data.frame(
 		record_id = r$ID,
@@ -63,7 +67,7 @@ The African Cassava Agronomy Initiative (ACAI) aims at improving cassava root yi
 		dmy_stems = r$Dmstems_g_m2 * 10,
 		dmy_storage = r$DMRoots_g_m2 * 10,
 		dmy_total = r$Biomass_g_m2 * 10,
-		yield = r$DMRoots_g_m2 * 10,
+		yield = ifelse(final, r$DMRoots_g_m2 * 10, NA_real_),
 		yield_moisture = 0,
 		yield_part = "roots",
 		crop = "cassava",
