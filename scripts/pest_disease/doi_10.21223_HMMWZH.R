@@ -11,14 +11,13 @@
 # Tomasa plots are not in the paper: P, K, fertilizer type, N splits and fungicide product left NA.
 # on_farm and irrigated are not stated in the paper; left NA.
 # Out of bounds, kept as reported: fungicide_times 29 (above terminag max 20, real: every 4 days); ground cover 106.5% (plot 55); slightly negative hourly ETo; one impossible last hourly record (63.7 C).
-# Hourly wind speed unit not given (probably m/s), so kept as new variables.
+# No tuber yield in the data (only total biomass); yield left NA.
 
 ## NEW VARIABLES
-# rhum90_hours_: hours per day with relative humidity > 90% (h)
+# rhum90_hours: hours per day with relative humidity > 90% (h)
 # temp_rhum90_: mean temperature during those hours (C)
-# leaf_wet_hours_: hours per day with leaf wetness (h)
-# leaf_wetness_: hourly leaf wetness index, 0 (dry) to 15 (wet)
-# wind_speed_, wind_speed_max_: hourly mean and maximum wind speed (unit not given)
+# leaf_wet_hours: hours per day with leaf wetness (h)
+# leaf_wetness: hourly leaf wetness index, 0 (dry) to 15 (wet)
 
 ## NOT PROCESSED
 # paper Table 1 treatment means (tuber dry matter, rAUDPC, intercepted radiation)
@@ -152,6 +151,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
     d1$yield <- NA
 	d1$yield_moisture <- NA ## not provided
 	d1$yield_part <- "aboveground biomass"
+	d1$yield_isfresh <- NA                           # no tuber yield in the data
 	
 	## d1long: late blight severity per plot and date (r1, dates from r2)
 	lbcol <- grep("^LB", names(r1), value=TRUE)
