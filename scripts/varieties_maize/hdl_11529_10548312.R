@@ -42,7 +42,7 @@ Validation Trials Dataset for Nigeria
 		design = "on-station: RCBD; on-farm: incomplete blocks (farmers' fields)",
 		data_type = "experiment",
 		treatment_vars = "variety;plant_density",
-		response_vars = "yield;cob_yield_;dmy_total;harvest_index;seed_weight;biomass_tasseling_;emergence_days;tassling_days;silking_days;maturity_days;kernels_per_cob_",
+		response_vars = "yield;cob_yield;dmy_total;harvest_index;seed_weight;biomass_tasseling;emergence_days;tassling_days;silking_days;maturity_days;kernels_per_cob",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_LLM = "Claude Opus 5.5 (merged from 3 drafts)",
@@ -72,7 +72,7 @@ Validation Trials Dataset for Nigeria
 		rep = as.integer(r1d$Rep),
 		variety = trimws(r1d$Variety),
 		yield = r1d$GY_ha,                       # kg/ha, after drying
-		cob_yield_ = r1d$CY_ha,                  # kg/ha, after drying
+		cob_yield = r1d$CY_ha,                  # kg/ha, after drying
 		seed_weight = r1d$hun_SW * 10,           # 100-seed -> 1000-seed weight (g)
 		biomass_tasseling = r1d$BM_Tasselling,  # kg/ha, without cobs
 		emergence_days = r1d$DTE,
@@ -171,7 +171,7 @@ Validation Trials Dataset for Nigeria
 	)
 	i <- match(d$variety, vt$variety)
 	d$variety_type <- vt$variety_type[i]
-	variety_traits <- ifelse(!is.na(vt$maturity_group_[i]),  paste0(vt$maturity_group_[i], " maturity"), vt$maturity_group_[i])
+	d$variety_traits <- ifelse(!is.na(vt$maturity_group_[i]),  paste0(vt$maturity_group_[i], " maturity"), vt$maturity_group_[i])
 	
 	carobiner::write_files(path, meta, d)
 }
