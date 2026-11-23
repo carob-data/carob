@@ -19,7 +19,7 @@ As part of the GIZ-PZTM project, agronomic trials were conducted under a strip-p
   
   meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
     data_organization = "CIP",
-    publication = "doi:10.1016/j.jafr.2024.101603,
+    publication = "doi:10.1016/j.jafr.2024.101603",
     project = "GIZ-PZTM",
     design = "strip-plot",
     data_type = "on-farm experiment",
