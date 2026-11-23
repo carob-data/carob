@@ -55,7 +55,8 @@ carob_script <- function(path) {
   d$crop <- "rice"
   d$yield_part <- "grain" 
   d$on_farm <- TRUE
-  d$irrigated <- TRUE
+  # Title, keywords, and the paper: rainfed lowland and hillside rice. The file has rainfall and no irrigation column.
+  d$irrigated <- FALSE
   d$inoculated <- FALSE
   d$is_survey <- FALSE
   d$fertilizer_type <- "urea;NPK"
@@ -69,14 +70,21 @@ carob_script <- function(path) {
   d$herbicide_product <- "none"
   d$herbicide_product[d$herbicide_used] <- "glyphosate"
  
+  # Coordinates are not in the data. Ambohitsilaozana and Ambongabe are the villages of those names beside Lake Alaotra.
+  # Antsahamamy (Sahamamy) is the rural municipality in Amparafaravola district, about 15 km north of Amparafaravola. 17°31'S, 48°18'E.
+  # Ampitatsimo (Ampitasimo) is the commune in Ambatondrazaka district. The reported position is the box 17°46'-47'S, 48°22'-23'E; the centre of that box is used.
+  # Ambohimiarina also names a place about 400 km away, and no village of that name was found near the lake, so its coordinates are left empty.
   geo <- data.frame(
 		location=c("Antsahamamy", "Ambohimiarina", "Ambohitsilaozana", "Ambongabe", "Ampitatsimo"),
-		latitude=c(-18.9185, -21.3561, -17.7014, -17.7067, -18.6729),
-		longitude=c(47.5592 , 47.5680 , 48.4657 , 48.1885 , 47.4564),
+		latitude=c(-17.51667, -17.93201, -17.7014, -17.7067, -17.775),
+		longitude=c(48.3, 48.36667, 48.4657, 48.1885, 48.375),
+		geo_uncertainty = c(2000, 75000, NA, NA, 2000),
 		geo_from_source = FALSE
 	)
-  
+
   d <- merge(d, geo, by="location", all.x=TRUE)
+  # GADM NAME_1. The region is also written Alaotra-Mangoro.
+  d$adm1 <- "Alaotra Mangoro"
   
   carobiner::write_files(meta, d, path=path)
   
