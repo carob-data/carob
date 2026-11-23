@@ -5,22 +5,23 @@
 # Paper: Shehu et al. 2018 (doi:10.3390/agronomy8020018); rates, plot size, spacing, soil depth and 15% moisture are from its Methods.
 # Each field had an OPV and a hybrid set of 6 nutrient omission treatments (one plot each); fields are the replicates.
 # 2016 soil, site history, N dates and fall armyworm scores come from the separate 2016 files.
-# Coordinates were removed from the public files; sites are placed at LGA centroids.
+# Coordinates were removed from the public files; 4 of 113 village names were found in OpenStreetMap, the rest are at LGA centroids.
 
 ## ISSUES
 # S_fertilizer includes the S in SSP (12%) for all P treatments, plus 24 kg S/ha in +SMM; the paper reports only the 24 kg. Keep?
 # 99 plots without yield (88 in 2015, mostly not recorded; 3 with 0 plants; 11 in 2016 not harvested). Kept as NA.
 # Out of bounds: terminag minima look too strict for maize grain Mg/Ca and micronutrients (mg/kg-like); low grain N and leaf S fit the omission treatments.
 # Likely data errors, left as reported: grain K up to 97 mg/g, negative residue P/Mg, grain moisture of 0.3%.
+# variety_type taken from the variety name; NG_NOT_Yield_2016 agrees except one OBA SUP-1 plot labelled OPV.
+# pest_species "fall armyworm" is not in terminag (values_pest); please add.
 
 ## NEW VARIABLES
-# agroecological_zone_: Northern Guinea or Sudan Savanna; sets the fertilizer rates
-# maturity_class_: maturity class of the variety (days)
-# grain_moisture_: grain moisture when weighed (%)
-# site_status_: 2016 field "New" or "Repeated"
-# previous_crops_2yr_: crops grown in the past two years (2015)
-# farmer_yield_: maize yield estimated by the farmer (kg/ha)
-# soil_sample_date_: date of soil sampling (2015)
+# agroecological_zone: Northern Guinea or Sudan Savanna; sets the fertilizer rates
+# grain_moisture: grain moisture when weighed (%); yields are at 15% (yield_moisture)
+# site_status: 2016 field "New" or "Repeated"
+# previous_crops_2yr: crops grown in the past two years (2015)
+# farmer_yield: maize yield estimated by the farmer (kg/ha)
+# soil_sample_date: date of soil sampling (2015)
 
 ## NOT PROCESSED
 # 2015 stover and biomass dry weights: fresh weight x a fixed 0.48, not measured
@@ -29,7 +30,8 @@
 # ear-leaf sampling dates: unreliable (some on or after harvest)
 # 2016 site history recall data: mixed formats
 # 15 fields in 2016 with soil data but no plot data
-# older copies of the database (NG_NOT_* files, second TAMASA file)
+# NG_NOT_Yield_2016 "Yield Data": same 1039 plots and values as Data_2016 (only the armyworm score is used)
+# 2015 NG_NOT_* files (Grain, Stover, Yield) and the second TAMASA file: older copies of Data_2015
 
 carob_script <- function(path) {
 
@@ -121,28 +123,27 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	
 	trt <- c("Control", "PK", "NK", "NP", "NPK", "NPK+S+Ca+Mg+Zn+B")   # plot numbers 1-6
 	site1 <- r1f$`Experiment site code = EXPsit`
-	maturity <- data.frame(do.call(rbind, strsplit(as.character(r1f$`Crop maturation`), "-")))
-  
+	maturity1 <- data.frame(do.call(rbind, strsplit(as.character(r1f$`Crop maturation`), "-")))   # e.g. "105-110" days
+
 	d1a <- data.frame(
 	  trial_id = site1,
 	  adm1 = r1f$State,
 	  adm2 = r1f$LGA,
 	  location = r1f$`Community/village`,
-	  agroecological_zone_ = r1f$`Agro-ecological zone`,
+	  agroecological_zone = r1f$`Agro-ecological zone`,
 	  plot = r1f$`Plot number = PLOTnumb`,
 	  treatment = trt[r1f$`Plot number = PLOTnumb`],   # 2015 label lacks Mg
 	  variety = r1f$`Maize variety name = MVnam`,
-	  #maturity_class_ = r1f$`Crop maturation`,
-	  maturity_days = rowMeans(sapply(maturity[, c("X1", "X2")], as.numeric),na.rm = FALSE),
+	  maturity_days = rowMeans(sapply(maturity1[, c("X1", "X2")], as.numeric)),   # mean of the variety's range
 	  planting_date = fix_date(r1f$`Planting date = PLNdat`),   # equals "1st basal application"
-	  N1_date =  fix_date(r1f$`1st basal application`),	
+	  N1_date = fix_date(r1f$`1st basal application`),
 	  N2_date = fix_date(r1f$`2nd N application`),
 	  N3_date = fix_date(r1f$`3rd N application`),
 	  harvest_date = fix_date(r1f$`Harvest date = HDATE`),
 	  plant_density = r1f$`No. of plants in the net plot` * 10000 / 9,   # 9 m2 net plot
 	  cob_density = r1f$`No. of cobs in the net plot` * 10000 / 9,
 	  fwy_residue = r1f$`Wt (kg) of the total maize stalks in the net plot` * 10000 / 9,
-	  grain_moisture_ = r1f$`Grain moisture content (%)`,
+	  grain_moisture = r1f$`Grain moisture content (%)`,
 	  shelling_percentage = r1f$`Shelling Percentage`,
 	  seed_weight = r1f$`100 seed weight (g)` * 10,   # 100 -> 1000 seeds
 	  yield = r1f$`Grain Yield (kg/ha)`,
@@ -178,8 +179,8 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  grain_Fe = r1f$`ppm Fe...98` / 1000,
 	  grain_Zn = r1f$`ppm Zn...99` / 1000,
 	  farmland = fill_site(r1f$`Farm Size (Ha)`, site1),
-	  previous_crops_2yr_ = crop_names(fill_site(r1f$`Crops grown in the past two years`, site1)),
-	  farmer_yield_ = fill_site(r1f$`Estimated yield of Maize (kg/ha)`, site1),
+	  previous_crops_2yr = crop_names(fill_site(r1f$`Crops grown in the past two years`, site1)),
+	  farmer_yield = fill_site(r1f$`Estimated yield of Maize (kg/ha)`, site1),
 	  soil_sample_date = fix_date(fill_site(r1f$`Soil sampling date zero`, site1)),
 	  soil_pH = fill_site(r1f$`pH (Water)  1:1`, site1),
 	  soil_SOC = fill_site(r1f$`OC (%)`, site1),
@@ -203,41 +204,31 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  soil_S = fill_site(r1f$`S (pmm)`, site1)   # header typo; ppm
 	)
 	d1a <- d1a[which(r1f$Country == "Nigeria"), ]   # drop empty and summary rows
-	d1a$previous_crops_2yr_[d1a$previous_crops_2yr_ == "53"] <- NA   # not a crop
+	d1a$previous_crops_2yr[d1a$previous_crops_2yr == "53"] <- NA   # not a crop
 	
-	## 2016 plots (r1g), with soil (r2c), site history (r3d), N dates (r3e) and fall armyworm (r3f)
+	## 2016 plots (r1g)
 	site2 <- r1g$`Experimental site code = EXPsit`
-    maturity <- data.frame(do.call(rbind, strsplit(as.character(r1g$`Crop maturation`), "-")))
-	i2c <- match(site2, r2c$`SAMPLE CODE`)
-	i3d <- match(site2, r3d$`Site Code`)
-	i3e <- match(site2, r3e$`Site Code`)
-	i3f <- match(r1g$sample_code, r3f$sample_code)
-	
+	maturity2 <- data.frame(do.call(rbind, strsplit(as.character(r1g$`Crop maturation`), "-")))
+
 	d1b <- data.frame(
 	  trial_id = site2,
-	  adm1 = r3d$State[i3d],   # site history; main sheet has wrong State/LGA for N-NOT1-4 and N-NOT4-7
-	  adm2 = r3d$LGA[i3d],
-	  location = r3d$Community[i3d],
-	  agroecological_zone_ = r1g$`Agro-ecological zone`,
-	  site_status_ = r1g$Status,
+	  sample_code = r1g$sample_code,   # key to d3f; removed after merging
+	  agroecological_zone = r1g$`Agro-ecological zone`,
+	  site_status = r1g$Status,
 	  plot = match(r1g$Treatment, trt),
 	  treatment = r1g$Treatment,
 	  variety = r1g$`Maize variety name = MVnam`,
-	  #maturity_class_ = r1g$`Crop maturation`,
-	  maturity_days = rowMeans(sapply(maturity[, c("X1", "X2")], as.numeric),na.rm = FALSE),
+	  maturity_days = rowMeans(sapply(maturity2[, c("X1", "X2")], as.numeric)),   # mean of the variety's range
 	  planting_date = fix_date(r1g$`Planting date`),
 	  N1_date = fix_date(r1g$`Planting date`),
-	  N2_date = fix_date(r3e$`2nd N Split Application Date`[i3e]),   # Data_2016 has these for one plot per site only
-	  N3_date = fix_date(r3e$`3rd N Split Application Date`[i3e]),
 	  harvest_date = as.character(as.Date(r1g$`Harvest Date`)),
 	  plant_density = r1g$`Number plants per netplot` * 10000 / 9,   # 9 m2 net plot
 	  cob_density = r1g$`Number Ears per net plot` * 10000 / 9,
 	  fwy_residue = r1g$`Total stalks_weight per netplot  (Kg)` * 10000 / 9,
 	  dmy_residue = r1g$`Stalk Yield (kg/ha)`,   # dry/fresh ratio of a dried subsample
-	  grain_moisture_ = r1g$`Grain moisture content (%)`,
+	  grain_moisture = r1g$`Grain moisture content (%)`,
 	  shelling_percentage = r1g$`Shelling Percentage`,
 	  yield = r1g$`Grain Yield (kg/ha)`,
-	  pest_severity = as.character(r3f$`Fall army warm infestation ranking`[i3f]),
 	  leaf_N = r1g$`% N...42` * 10,   # ear leaf; % -> mg/g
 	  leaf_P = r1g$`% P...43` * 10,
 	  leaf_K = r1g$`% K...44` * 10,
@@ -254,43 +245,80 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	  residue_K = r1g$`% K...55` * 10,
 	  grain_N = r1g$`% N...56` * 10,
 	  grain_P = r1g$`% P...57` * 10,
-	  grain_K = r1g$`% K...58` * 10,
-	  farmland = r3d$`Farm Size (ha)`[i3d],
-	  farmer_yield_ = r3d$`Maize Yield (t/ha)`[i3d] * 1000,
-	  previous_crop = crop_names(r3d$`Previous crop1/crops 2`[i3d]),
-	  previous_crop_residue_management = trimws(r3d$`Previous crop Residue Management`[i3d]),   # includes unexplained numbers
-	  soil_pH = r2c$`pH(H2O)`[i2c],
-	  soil_SOC = r2c$OC[i2c],
-	  soil_N_total = r2c$N[i2c] * 10000,   # % -> mg/kg
-	  soil_P = r2c$`Meh P`[i2c],
-	  soil_sand = r2c$`Particle size`[i2c],   # sand, silt, clay
-	  soil_silt = r2c$...12[i2c],
-	  soil_clay = r2c$...13[i2c],
-	  soil_Ca_exch = r2c$Ca[i2c],
-	  soil_Mg_exch = r2c$Mg[i2c],
-	  soil_K_exch = r2c$K[i2c],
-	  soil_Na_exch = r2c$Na[i2c],
-	  soil_ex_acidity = r2c$`Exch. Acidity`[i2c],
-	  soil_ECEC = r2c$ECEC[i2c],
-	  soil_Zn = r2c$Zn[i2c],
-	  soil_Cu = r2c$Cu[i2c],
-	  soil_Mn = r2c$Mn[i2c],
-	  soil_Fe = r2c$Fe[i2c]
+	  grain_K = r1g$`% K...58` * 10
 	)
 	d1b <- d1b[!is.na(d1b$trial_id), ]   # drop empty rows; rows without Country are unharvested plots
-	pcrm <- d1b$previous_crop_residue_management
-	d1b$previous_crop_burnt <- ifelse(grepl("Burnt", pcrm), TRUE, ifelse(grepl("Remove|Retained", pcrm), FALSE, NA))
 	d1b$harvest_date[d1b$harvest_date == "2017-09-30"] <- "2016-09-30"   # N-NOT6-4 OPV control; other plots of the site 2016-09-30
-	d1b$pest_species <- "fall armyworm"
-	d1b$severity_scale <- "1-5"   # % plants affected: 1 = 0-10, 2 = 11-25, 3 = 26-50, 4 = 51-75, 5 = 76-100
-	
+
+	## 2016 soil per site (r2c)
+	d2c <- data.frame(
+	  trial_id = r2c$`SAMPLE CODE`,
+	  soil_pH = r2c$`pH(H2O)`,
+	  soil_SOC = r2c$OC,
+	  soil_N_total = r2c$N * 10000,   # % -> mg/kg
+	  soil_P = r2c$`Meh P`,
+	  soil_sand = r2c$`Particle size`,   # sand, silt, clay
+	  soil_silt = r2c$...12,
+	  soil_clay = r2c$...13,
+	  soil_Ca_exch = r2c$Ca,
+	  soil_Mg_exch = r2c$Mg,
+	  soil_K_exch = r2c$K,
+	  soil_Na_exch = r2c$Na,
+	  soil_ex_acidity = r2c$`Exch. Acidity`,
+	  soil_ECEC = r2c$ECEC,
+	  soil_Zn = r2c$Zn,
+	  soil_Cu = r2c$Cu,
+	  soil_Mn = r2c$Mn,
+	  soil_Fe = r2c$Fe
+	)
+	d2c <- d2c[!is.na(d2c$trial_id) & !duplicated(d2c$trial_id), ]   # one record per site
+
+	## 2016 site history (r3d)
+	d3d <- data.frame(
+	  trial_id = r3d$`Site Code`,
+	  adm1 = r3d$State,   # main sheet has wrong State/LGA for N-NOT1-4 and N-NOT4-7
+	  adm2 = r3d$LGA,
+	  location = r3d$Community,
+	  farmland = r3d$`Farm Size (ha)`,
+	  farmer_yield = r3d$`Maize Yield (t/ha)` * 1000,
+	  previous_crop = crop_names(r3d$`Previous crop1/crops 2`),
+	  previous_crop_residue_management = trimws(r3d$`Previous crop Residue Management`)   # includes unexplained numbers
+	)
+	d3d <- d3d[!is.na(d3d$trial_id) & !duplicated(d3d$trial_id), ]   # one record per site
+	pcrm <- d3d$previous_crop_residue_management
+	d3d$previous_crop_burnt <- ifelse(grepl("Burnt", pcrm), TRUE, ifelse(grepl("Remove|Retained", pcrm), FALSE, NA))
+
+	## 2016 N split dates (r3e); Data_2016 has these for one plot per site only
+	d3e <- data.frame(
+	  trial_id = r3e$`Site Code`,
+	  N2_date = fix_date(r3e$`2nd N Split Application Date`),
+	  N3_date = fix_date(r3e$`3rd N Split Application Date`)
+	)
+	d3e <- d3e[!is.na(d3e$trial_id) & !duplicated(d3e$trial_id), ]   # one record per site
+
+	## 2016 fall armyworm per plot (r3f); its other columns repeat Data_2016
+	d3f <- data.frame(
+	  sample_code = r3f$sample_code,
+	  pest_species = "fall armyworm",
+	  pest_severity = as.character(r3f$`Fall army warm infestation ranking`),
+	  severity_scale = "1-5"   # % plants affected: 1 = 0-10, 2 = 11-25, 3 = 26-50, 4 = 51-75, 5 = 76-100
+	)
+	d3f <- d3f[!is.na(d3f$sample_code), ]
+
+	## 2016: plots with soil, site history, N dates and armyworm
+	d1b <- merge(d1b, d2c, by="trial_id", all.x=TRUE)
+	d1b <- merge(d1b, d3d, by="trial_id", all.x=TRUE)
+	d1b <- merge(d1b, d3e, by="trial_id", all.x=TRUE)
+	d1b <- merge(d1b, d3f, by="sample_code", all.x=TRUE)
+	d1b$sample_code <- NULL
+
 	## both years
 	d <- carobiner::bindr(d1a, d1b)
 	
 	d$adm2[d$adm2 == "T/Wada"] <- "Tudun Wada"
 	d$location <- carobiner::fix_name(d$location, "title")
-	d$agroecological_zone_[d$agroecological_zone_ == "Sudan savanna"] <- "Sudan Savanna"
-	d$variety_type <- ifelse(grepl("OBA", d$variety), "hybrid", "OPV")   # type is missing for some unharvested plots
+	d$agroecological_zone[d$agroecological_zone == "Sudan savanna"] <- "Sudan Savanna"
+	d$variety_type <- ifelse(grepl("OBA", d$variety), "hybrid", "OPV")   # from the variety name; f3 variety_type agrees except one plot
 	d$variety <- gsub("OBA SUP-", "Oba Super ", d$variety)
 	d$plot_id <- paste(substr(d$planting_date, 1, 4), d$trial_id, d$variety_type, d$plot, sep="_")
 	d$plot <- NULL
@@ -311,7 +339,7 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	d$soil_P_method <- "Mehlich3"   # sheet "Soil_analysis_methods"
 	
 	## fertilizer (paper and rate sheet): N-P2O5-K2O 140-50-50 (Northern Guinea Savanna), 120-40-40 (Sudan Savanna)
-	ss <- d$agroecological_zone_ == "Sudan Savanna"
+	ss <- d$agroecological_zone == "Sudan Savanna"
 	hasN <- d$treatment %in% c("NK", "NP", "NPK", "NPK+S+Ca+Mg+Zn+B")
 	hasP <- d$treatment %in% c("PK", "NP", "NPK", "NPK+S+Ca+Mg+Zn+B")
 	hasK <- d$treatment %in% c("PK", "NK", "NPK", "NPK+S+Ca+Mg+Zn+B")
@@ -335,16 +363,33 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	d$N1_date <- d$N2_date <- d$N3_date <- NULL
 	
 	
-	# LGA centroids (GADM 4.1, computed offline); geo_uncertainty is the max distance to the LGA border (m)
-	geo <- data.frame(
+	# villages found in OpenStreetMap (looked up offline) and inside their LGA; the others are not mapped
+	vil <- data.frame(
+	  adm2 = c("Doguwa", "Doguwa", "Doguwa", "Dandume"),
+	  location = c("Doguwa", "Sogaga", "Tagwaye", "Kadawa"),
+	  longitude = c(8.5922, 8.5777, 8.6148, 7.2167),
+	  latitude = c(10.74, 10.7549, 10.8513, 11.4333),
+	  geo_uncertainty = 2000,   # village extent
+	  geo_source = "OpenStreetMap village"
+	)
+	
+	# LGA centroids (GADM 4.1, computed offline) for villages not found; geo_uncertainty is the max distance to the LGA border (m)
+	lga <- data.frame(
 	  adm2 = c("Giwa", "Ikara", "Kauru", "Lere", "Makarfi", "Soba", "Bunkure", "Doguwa", "Tofa", "Tudun Wada", "Bakori", "Dandume", "Faskari", "Funtua"),
 	  longitude = c(7.4226, 8.162, 8.3093, 8.5577, 7.9541, 8.0428, 8.5254, 8.6387, 8.3101, 8.478, 7.4381, 7.1985, 7.1081, 7.3256),
 	  latitude = c(11.0907, 11.2909, 10.1913, 10.2996, 11.3245, 10.926, 11.6629, 10.8832, 12.0034, 11.209, 11.5998, 11.3833, 11.6424, 11.4148),
-	  geo_uncertainty = c(43000, 42000, 64000, 43000, 21000, 36000, 23000, 39000, 14000, 39000, 26000, 20000, 38000, 24000)
+	  geo_uncertainty = c(43000, 42000, 64000, 43000, 21000, 36000, 23000, 39000, 14000, 39000, 26000, 20000, 38000, 24000),
+	  geo_source = "GADM 4.1 adm2 centroid"
 	)
-	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	
+	d <- merge(d, vil, by=c("adm2", "location"), all.x=TRUE)
+	i <- is.na(d$longitude)
+	j <- match(d$adm2[i], lga$adm2)
+	d$longitude[i] <- lga$longitude[j]
+	d$latitude[i] <- lga$latitude[j]
+	d$geo_uncertainty[i] <- lga$geo_uncertainty[j]
+	d$geo_source[i] <- lga$geo_source[j]
 	d$geo_from_source <- FALSE
-	d$geo_source <- "GADM 4.1 adm2 centroid"
 	
 	carobiner::write_files(path, meta, d)
 }
