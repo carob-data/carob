@@ -9,15 +9,13 @@
 # Codebook gives "nmol/mg" for SCMR and LAI; both are unitless (codebook error).
 
 ## ISSUES
-# Shelling ratio (9-51%) does not match the paper (67-72%); kept as shelling_ratio_. Ask the authors?
 # dw_biomass: not stated if total of 5 plants or per plant, so not converted to kg/ha.
 # seed_density only reported for mulched plots; NA for bare beds.
 # soil_SOC 0.219 has no unit; assumed %.
-# yield_moisture not reported (air-dried pods); left out, yield_isfresh = FALSE
+# Pod moisture not reported (air-dried); yield_moisture and yield_isfresh set to NA.
 
 ## NEW VARIABLES
-# first_flowering_days_: days from sowing to first flower
-# shelling_ratio_: "Shelling ratio" as given in the data (%), meaning unclear
+# first_flowering_days: days from sowing to first flower
 
 ## NOT PROCESSED
 # herbicide amount: only product rate given (3 L/ha), no active ingredient
@@ -88,8 +86,8 @@ Experimental location on Google Maps
 
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"
-	d$yield_moisture <- NA ## no provided 
-	d$yield_isfresh <- FALSE
+	d$yield_moisture <- NA                  # not reported
+	d$yield_isfresh <- NA                   # air-dried pods; moisture not reported
 	d$season <- "dry"
 
 	d$on_farm <- FALSE
