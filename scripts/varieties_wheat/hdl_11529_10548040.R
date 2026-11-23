@@ -24,13 +24,13 @@ carob_script <- function(path) {
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
   d <- proc_wheat(ff)	
   
-  i <- d$location == "Ningxia Aaf"
-  d$longitude[i] <- 106.2667 
-  d$latitude[i] <- 38.46667
+  i <- d$wide$location == "Ningxia Aaf"
+  d$wide$longitude[i] <- 106.2667 
+  d$wide$latitude[i] <- 38.46667
   
-  i <- d$location == "Wad Medani- Gezira Res. Stn.-Arc"
-  d$longitude[i] <- 33.48333 
-  d$latitude[i] <- 14.4
+  i <- d$wide$location == "Wad Medani- Gezira Res. Stn.-Arc"
+  d$wide$longitude[i] <- 33.48333 
+  d$wide$latitude[i] <- 14.4
 
     carobiner::write_files(path, meta, d$wide, d$long)
 }

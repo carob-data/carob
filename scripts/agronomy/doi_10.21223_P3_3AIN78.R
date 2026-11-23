@@ -91,12 +91,13 @@ On-farm trial dataset evaluating sweetpotato intercropped with soybean and pigeo
   i <- grepl("SP\\+SB", d$treatment) & d$crop=="soybean"
   d$intercrops[i] <- "sweetpotato"
   
-  ### Adding geo-coordinate
-  
+  # Thuchira in the 2023-2024 file is the same EPA as Thuchila.
+  d$location[d$location == "Thuchira"] <- "Thuchila"
+
   geo <- data.frame(
-    location = c("Chinguluwe", "Chipoka", "Kamwendo", "Boma", "Thuchila", "Thuchira"),
-    longitude = c(NA, 34.5119, NA, 33.7905, 35.358, 35.309),
-    latitude = c(NA, -13.993, NA, -13.948, -15.914, -15.971),
+    location = c("Chinguluwe", "Chipoka", "Kamwendo", "Boma", "Thuchila"),
+    longitude = c(34.46085, 34.5119, 33.0444, 33.7905, 35.358),
+    latitude = c(-13.69766, -13.993, -13.8321, -13.948, -15.914),
     geo_source = "Google Maps"
   )
   

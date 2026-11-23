@@ -22,15 +22,13 @@ carob_script <- function(path) {
   )
   
   proc_wheat <- carobiner::get_function("proc_wheat", path, group)
-  df <- proc_wheat(ff)	
-  d <- df$wide
-  long <- df$long
+  d <- proc_wheat(ff)	
   
   # Correcting the longitude coordinate for the "Rostam Abad" location provided in the raw data.
-  i <- d$location== "Rostam Abad" 
-  d$longitude[i] <- 48.131
+  i <- d$wide$location== "Rostam Abad" 
+  d$wide$longitude[i] <- 48.131
   
-  carobiner::write_files(path, meta, d, long)
+  carobiner::write_files(path, meta, d$wide, d$long)
   
 }
 

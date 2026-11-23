@@ -25,7 +25,7 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
 	
-	d$maturity_days[d$maturity_days > 400] <- NA
+	d$wide$maturity_days[d$wide$maturity_days > 400] <- NA
 	carobiner::write_files(path, meta, d$wide, d$long)
 }
 

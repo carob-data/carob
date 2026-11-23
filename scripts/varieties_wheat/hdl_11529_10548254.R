@@ -25,11 +25,11 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)	
   
-	i <- which(d$irrigation_amount == 2800)
-	d$irrigation_amount[i] <- d$irrigation_amount[i] / 10
+	i <- which(d$wide$irrigation_amount == 2800)
+	d$wide$irrigation_amount[i] <- d$wide$irrigation_amount[i] / 10
   
-	i <- d$location == "Nobaria"
-	d$yield[i] <- d$yield[i] / 10
+	i <- d$wide$location == "Nobaria"
+	d$wide$yield[i] <- d$wide$yield[i] / 10
   
 	carobiner::write_files(path, meta, d$wide, d$long)
 

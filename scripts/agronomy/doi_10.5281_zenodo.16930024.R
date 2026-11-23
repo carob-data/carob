@@ -69,8 +69,9 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 	  harvest_date = ifelse(!is.na(r2$finalYield) & r2$finalYield > 0, as.character(as.Date(r2$Date, "%d.%m.%Y")), NA),
 	  plot_id = r2$PlotCode,
 	  seed_weight = rowMeans(r2[, c("hundredgrainsWeight1","hundredgrainsWeight2", "hundredgrainsWeight3")])*10,
-	  yield = r2$finalYield,
-	  dmy_storage = r2$dryGrainYield,
+	  # finalYield and dryGrainYield are grams per 5 m x 5 m plot (dataset readme)
+	  yield = r2$finalYield * 10 / 25,
+	  dmy_storage = r2$dryGrainYield * 10 / 25,
 	  treatment = r2$cropTreatment,
 	  intercropped = grepl("Maize", r2$cropTreatment),
 	  crop = "cowpea",
@@ -90,8 +91,9 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 	  harvest_date = ifelse(!is.na(r3$finalYield) & r3$finalYield > 0, as.character(as.Date(r3$Date, "%d.%m.%Y")), NA),
 	  plot_id = r3$PlotCode,
 	  seed_weight = rowMeans(r3[, c("hundredKernelsWeight1","hundredKernelsWeight2", "hundredKernelsWeight3")])*10,
-	  yield = r3$finalYield,
-	  dmy_storage = r3$dryGrainYield,
+	  # finalYield and dryGrainYield are grams per 5 m x 5 m plot (dataset readme)
+	  yield = r3$finalYield * 10 / 25,
+	  dmy_storage = r3$dryGrainYield * 10 / 25,
 	  treatment = r3$cropTreatment,
 	  intercropped = grepl("Cowpea", r3$cropTreatment),
 	  crop = "maize",
@@ -124,11 +126,13 @@ This dataset contains raw data collected during an experiment on maize-cowpea in
 	dw <- data.frame(
 	  date = as.character(as.Date(carobiner::eng_months_to_nr(substr(r4$Time, 1, 11)), "%d-%m-%Y")),
 	  time = substr(r4$Time, 13, 20),
-	  rhmn = r4$RH,
+	  temp = r4$AirTC,
+	  rhum = r4$RH, # relative humidity, not the daily minimum
 	  prec = r4$Rain,
 	  wspd = r4$WS,
 	  wdir = r4$WD,
-	  srad = r4$Srad,
+	  irad = r4$Srad, # pyranometer W/m2, which is J s-1 m-2
+	  pressure = r4$pressmb, # mbar, equal to hPa
 	  location = "Maktau",
 	  country = "Kenya",
 	  longitude = 38.19444,

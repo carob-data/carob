@@ -38,25 +38,23 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 	
 	# the given latitudes were not negative
 	d$latitude <- -(d$latitude)
-	# all longitudes were the same as the latitude
-	d$longitude <- NA
+	# GPS has one decimal (~11 km), so some farms near the Angonia border fall in Malawi or Zambia
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	
-	
- # creating a data frame with the unique entries and the latitudes and longitudes, coordinates hard coded
+	# hard-coded coordinates for the farms without GPS
 	lat_lon <- data.frame(
 		location = c("Barue", "Domue", "Ewarelo", "Gurue", "Lioma", "Macanga", "Magige", "Manica", "Mossurize", "Murrimo", "Mussacumbira", "Mutequelesse", "Nametil", "Nintulo", "Pissi", "Ruace", "Serra", "Tetete", "Tsangano", "Ulongue", "Zembe"), 
 	
-		lat = c(-17.5, -14.47, -15.16, -15.46, -15.17, -14.68, -15.32, -19, -21.21, -15.37, -13.43, -19, -14.21, -15.09, -14.9, -14.91, -16.47, -15.38, -15.16, -14.72, -19.29), 
+		lat = c(-17.5, -14.47, -15.16, -15.46, -15.17, -14.68, -15.32, -19, -21.21, -15.37, -13.43, -19, -15.72, -15.09, -14.9, -14.91, -16.47, -15.38, -15.16, -14.72, -19.29), 
 
-		lon = c(33.65, 34.2, 36.94, 36.98, 36.8, 32.73, 36.7, 33.5, 33.38, 36.8, 38.6, 33.5, 40.55, 37.1, 36.6, 36.35, 35.7, 36.5, 34.5, 34.36, 33.35),
-		geo_from_source = FALSE
+		lon = c(33.65, 34.2, 36.94, 36.98, 36.8, 32.73, 36.7, 33.5, 33.38, 36.8, 38.6, 33.5, 39.34, 37.1, 36.6, 36.35, 35.7, 36.5, 34.5, 34.36, 33.35)
 	)	
 	
 	d <- merge(d, lat_lon, by="location", all.x=TRUE)
  
-	nna <- !is.na(d$lat)
-	d$longitude[nna] <- d$lon[nna]
-	d$latitude[nna] <- d$lat[nna]
+	i <- !d$geo_from_source & !is.na(d$lat)
+	d$longitude[i] <- d$lon[i]
+	d$latitude[i] <- d$lat[i]
 	d$lat <- d$lon <- NULL
     
 	i <- which(d$variety %in% c("Y", "N") & d$inoculated == "")

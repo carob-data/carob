@@ -26,7 +26,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		response_vars ="yield;plant_density", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed. LLM-review: [medium, dropped] The first five data rows are dropped with no comment, and rows with missing yield are dropped, which removes establishment records. [medium, invented] N is 45 and P and K are 0 with no source. The abstract does not give fertilizer rates. Unrecognized tillage becomes none. trial_id is the location across years. on_farm is TRUE for university sites. GPS is parsed with fixed substring widths."
+		notes ="Precipitation 7 days before planting and 14 days after planting has not been processed. LLM-review: [medium, dropped] The first five data rows are dropped with no comment, and rows with missing yield are dropped, which removes establishment records. [medium, invented] N is 45 and P and K are 0 with no source. The abstract does not give fertilizer rates. Unrecognized tillage is unknown, and a previous crop recorded as stover is maize. trial_id is the location across years. on_farm is TRUE for university sites. GPS is parsed with fixed substring widths."
 	)
 	
 	f <- ff[basename(ff) == "Pellet_field.csv"]
@@ -42,7 +42,7 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 		country= "United States",
 		land_prep_method= ifelse(grepl("Conventional Till" , r$Prepared.Tillage), "conventional",
 		                 ifelse(grepl("fall disc", r$Prepared.Tillage), "disk tillage", 
-		                 ifelse(grepl("roto-til", r$Prepared.Tillage), "rotovating", "none"))),
+		                 ifelse(grepl("roto-til", r$Prepared.Tillage), "rotovating", "unknown"))),
 		planting_date= as.character(as.Date(as.numeric(r$Planting.Day..DOY.) - 1, origin = paste0(as.numeric(r$Year)-1, "-01-01"))),
 		rep= as.integer(r$Block..Rep.),
 		trt_number= r$Treatment,
@@ -86,7 +86,8 @@ This dataset contains data related to pennycress establishment, growth, and yiel
 	P <- carobiner::fix_name(d$previous_crop)
 	P <- gsub("corn sillage|sweetcorn", "maize", P)
 	P <- gsub("spring wheat", "wheat", P)
-	P <- gsub("stover", "none", P)
+	# Stover is the maize residue left on the field.
+	P <- gsub("stover", "maize", P)
 	d$previous_crop <- P
 	
 	d$N_fertilizer <- 45

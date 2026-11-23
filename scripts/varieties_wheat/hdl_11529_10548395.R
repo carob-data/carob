@@ -23,13 +23,11 @@ carob_script <- function(path) {
 	
 
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
-	df <- proc_wheat(ff)	
-	d <- df$wide
-	long <- df$long
+	d <- proc_wheat(ff)	
 	
 	# Correcting the longitude coordinate for the "Academic Unit Farm" location provided in the raw data.
-	i <- d$location== "Academic Unit Farm"
-	d$longitude[i] <-  88.7704
+	i <- d$wide$location== "Academic Unit Farm"
+	d$wide$longitude[i] <-  88.7704
 	
-	carobiner::write_files(path, meta, d, long)
+	carobiner::write_files(path, meta, d$wide, d$long)
 }

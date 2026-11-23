@@ -47,7 +47,7 @@ Most farmers and extension officers in Tanzania use blanket fertilizer recommend
              P_fertilizer= r1$P.Trt..kg.P.ha.,
              N_fertilizer= r1$N.Trt..kg.N.ha.,
              K_fertilizer=0,
-             plot_area= 5*6/10000, ## ha
+             plot_area= 5*6, ## m2; the trial description gives 5 m x 6 m plots
              yield= r1$Grain..t.ha.* 1000, ## kg/ha
              country= "Tanzania",
              planting_date= "2016",

@@ -12,7 +12,7 @@ carob_script <- function(path) {
 		project=NA,
 		publication= NA,
 		data_organization = "CIMMYT;IRRI",
-		data_type="crop cuts", 
+		data_type="crop-cuts", 
 		carob_contributor="Effie Ochieng'",
 		carob_date="2023-09-25",
 		carob_effort = NA,
@@ -30,16 +30,17 @@ carob_script <- function(path) {
 		on_farm = TRUE,
 		is_survey = TRUE,
 		adm1="Odisha",
-		adm2=r$District_Name,
-		season=r$Season, 
-		latitude =r$Latitude,
-		longitude=r$Longitude,
-		variety=r$VAR, 
+		adm2= r$District_Name,
+		season= tolower(r$Season), 
+		latitude = r$Latitude,
+		longitude= r$Longitude,
+		variety= trimws(r$VAR), 
 		planting_date = r$DOS,
 		transplanting_date = r$DOT,
 		harvest_date = r$DOH,
 		planting_method = r$CEM,
-		trial_id = r$FID
+		trial_id = as.character(r$FID),
+		geo_from_source = TRUE
 	)
 
 
@@ -104,13 +105,22 @@ carob_script <- function(path) {
 	
 	d$harvest_date <- as.character(as.Date(d$harvest_date, format = "%d-%b-%y")) 
 	d$transplanting_date <- as.character(as.Date(d$transplanting_date, format = "%d-%b-%y")) 
-
+  
+	### fixing planting method 
+	d$planting_implement <- c("ManualRandomTransplanting"= "manual", "ManualLineTransplanting"= "manual", "DirectSeededRice" = "unknown", "MechanicalTransplanting"= "unknown", "ManualBroadcasting"= "manual")[d$planting_method]
+	
+	d$planting_method <- c("ManualRandomTransplanting"= "transplanting", "ManualLineTransplanting"= "transplanting", "DirectSeededRice" = "direct seeding", "MechanicalTransplanting"= "transplanting", "ManualBroadcasting"= "broadcasting")[d$planting_method]
 	
 
 # merging last because the order changes
-	x <- data.frame(adm2 = c("Bhadrak", "Mayurbhanj", "Puri"), 
-					lon = c(86.498, 86.3957, 85.8391), 
-					lat = c(21.0666, 21.9156, 19.8068))
+	x <- data.frame(
+	        adm2 = c("Bhadrak", "Mayurbhanj", "Puri" ), 
+					lon = c(86.6167, 86.4059, 85.6984), 
+					lat = c(20.9786, 21.8907, 19.8658),
+					geo_source = "GADM 4.1, adm2",
+					geo_uncertainty = c(46171, 83588, 75939),
+					geo_from = FALSE
+					)
 
 	d$latitude[d$latitude == "-"] <- NA
 	d$longitude <- as.numeric(d$longitude)
@@ -119,9 +129,11 @@ carob_script <- function(path) {
 	d$longitude[i] <- d$latitude[i] <- NA
 
 	d <- merge(d, x, by="adm2")
-	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
-	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
-	d$lon <- d$lat <- NULL
+	x <- is.na(d$longitude)| !is.na(d$lon)
+	d$longitude[x] <- d$lon[x]
+	d$latitude[x] <- d$lat[x]
+	d$geo_from_source[x] <- d$geo_from[x]
+	d$lon <- d$lat <- d$geo_from <- NULL
 	i = which(d$latitude > 50)
 	tmp <- d$latitude[i]
 	d$latitude[i] <- d$longitude[i]

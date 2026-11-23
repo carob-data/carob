@@ -22,10 +22,10 @@ carob_script <- function(path) {
 	proc_wheat <- carobiner::get_function("proc_wheat", path, group)
 	d <- proc_wheat(ff)
 	
-	d$planting_date[d$planting_date == "2001-12-07"] <- "2012-11-07"
-	d$planting_date[d$planting_date == "2011-11-16"] <- "2012-12-16"
+	d$wide$planting_date[d$wide$planting_date == "2001-12-07"] <- "2012-11-07"
+	d$wide$planting_date[d$wide$planting_date == "2011-11-16"] <- "2012-12-16"
 
-	d$P_fertilizer[d$P_fertilizer > 450] <- NA
+	d$wide$P_fertilizer[d$wide$P_fertilizer > 450] <- NA
 	
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

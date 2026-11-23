@@ -62,10 +62,12 @@ This experiments were established with different rates of nitrogen in order to g
 	d <- do.call(rbind, lapply(years, make_standard_df))
 	
 
-	# INIFAP Sitio Experimental Mixteca, Santo Domingo Yanhuitlán 
-	d$latitude <- 17.511  
-	d$longitude <- -97.352
-	d$geo_from_source <- FALSE
+	# Keep the coordinates recorded on each row. Fill only the rows that have none,
+	# using INIFAP Sitio Experimental Mixteca, Santo Domingo Yanhuitlán.
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	i <- !d$geo_from_source
+	d$latitude[i] <- 17.511
+	d$longitude[i] <- -97.352
 	d$crop <- "wheat"
 	d$trial_id <- paste(d$location, as.character(d$planting_date), sep = "_")
 	d$on_farm <- FALSE
