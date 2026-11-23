@@ -188,7 +188,7 @@ Although mild to moderately severe drought stress may have less of an effect on 
 	### merge
 	d4 <- merge(d4, fd2, by = c("variety", "treatment", "plot_id"), all.x = TRUE)  
 	
-	##### joint d1, d2 and d3
+	##### joint d1, d2, d3 and d4
 	d <- carobiner::bindr(d1, d2, d3, d4)
 	
 	d$trial_id <- paste0(d$season, "_", d$treatment)
