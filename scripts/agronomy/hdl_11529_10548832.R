@@ -12,11 +12,11 @@
 # "Biomass" is below grain in 56% of rows, so it is not total biomass (probably stover); kept as maize_biomass_ (t/ha assumed).
 # Soil and rain values look partly copied or rescaled: soil N/P/K repeated across sites; OrgC 6-11 labelled "%" (taken as g/kg); rainfall in multiples of 100/33 at CRS, HRS, MFTC.
 # Other data issues, left as reported: CRS 2011 plots 15 and 17 used twice; one CRS 2010 plot missing; 4 MFTC 2019 plots with zero yield; two CRS seasons with unusual sowing-to-harvest times.
-# Irrigation and yield moisture basis not reported; left out.
+# Irrigation and yield moisture not reported; set to NA.
 
 ## NEW VARIABLES
 # maize_biomass_: maize "aboveground biomass" as reported, probably stover (kg/ha)
-# biochar_used_: biochar applied (DS-MBio at DTC)
+# biochar_used: biochar applied (DS-MBio at DTC)
 
 ## NOT PROCESSED
 # Table S1: legume and companion crop populations (no data for those crops)
@@ -84,8 +84,9 @@ Grain yield data collected from Conservation Agriculture (CA) systems across exp
 		on_farm = FALSE,
 		is_survey = FALSE,
 		N_splits = 2L ,                         # basal + topdressing (Table S2)
-		yield_moisture = NA, # not reported
-        irrigated = NA, # nor reported
+		yield_moisture = NA,                   # not reported
+		yield_isfresh = NA,                    # not reported
+		irrigated = NA  
 	)
 
 	# cropping systems (codebook, paper Table 2 and Fig. 4, supplement system descriptions)
@@ -158,17 +159,18 @@ Grain yield data collected from Conservation Agriculture (CA) systems across exp
 	d$herbicide_product[i] <- NA
 	d$herbicide_used <- d$herbicide_product != "none"
 
-	# companion crops by year (paper 2.2); its year ranges run from first sowing to last harvest, as in Table 1
+	# companion crops and rotations by year (paper 2.2); year ranges run from first sowing to last harvest
 	h <- d$harvest_year
-	i <- d$Location == "HRS" & d$treatment == "RI-M+C"
-	d$intercrops[i & h <= 2007] <- "velvet bean"
-	d$intercrops[i & h %in% 2008:2013] <- "pigeon pea"
-	i <- d$Location == "DTC"
-	d$intercrops[i & d$treatment == "DS-M+C" & h <= 2015] <- "pigeon pea"
-	d$crop_rotation[i & d$treatment == "DS-MSf" & h >= 2016] <- "maize;cowpea"
-	i <- d$Location == "SRS" & h <= 2011
-	d$intercrops[i & d$treatment == "DS-M+Pp"] <- "sunflower"
-	d$crop_rotation[i & d$treatment == "DS-MSfC"] <- "maize;sunflower;common bean"
+	hrs <- d$Location == "HRS"
+	dtc <- d$Location == "DTC"
+	srs <- d$Location == "SRS"
+	d$intercrops[hrs & d$treatment == "RI-M+C" & h <= 2007] <- "velvet bean"
+	d$intercrops[hrs & d$treatment == "RI-M+C" & h %in% 2008:2013] <- "pigeon pea"
+	d$intercrops[dtc & d$treatment == "DS-M+C" & h <= 2015] <- "pigeon pea"
+	d$crop_rotation[dtc & d$treatment == "DS-MSf" & h >= 2016] <- "maize;cowpea"
+	d$intercrops[srs & d$treatment == "DS-M+Pp" & h <= 2011] <- "sunflower"
+	d$crop_rotation[srs & d$treatment == "DS-MSfC" & h <= 2011] <- "maize;sunflower;common bean"   # beans until 2011, then cowpea (paper 2.2)
+	
 	# plots split into rotation halves, unknown which half was sampled: HRS from year 3, CRS DiS-MC from 2009/10
 	d$crop_rotation[d$Location == "HRS" & h >= 2007] <- NA
 	d$crop_rotation[d$Location == "CRS" & d$treatment == "DiS-MC" & h >= 2010] <- NA
