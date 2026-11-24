@@ -1,5 +1,8 @@
 # R script for "carob"
 
+## ISSUE
+ # 4 rows with missing location, longitude and latitude coordinates  
+
 carob_script <- function(path) {
   
 "
@@ -201,7 +204,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
   d$season <- paste0(d$season,"_",d$year)
   d$farmer_name <- d$crop_sys <- d$year <- NULL
   d$herbicide_used <- ifelse(is.na(d$herbicide_product)| grepl("none", d$herbicide_product), FALSE, TRUE)
-  d$fertilizer_price <- as.character(d$fertilizer_price)
+  d$fertilizer_price <- as.numeric(d$fertilizer_price)
   
   # Clean up and convert correctly
   d$planting_date <- gsub(" UTC", "", d$planting_date)
