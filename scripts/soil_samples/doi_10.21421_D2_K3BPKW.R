@@ -6,6 +6,7 @@
 # OC is organic carbon in % -> soil_SOC. EC in dS/m (= mS/cm) -> soil_EC.
 # Available and exchangeable nutrients are taken as mg/kg.
 # Extent (AC) is in acres. field_size is that value times 0.404686 (ha).
+#   A hyphen is the decimal point ("0-45" = 0.45). "2.34,1.80" is two parcels on one record, added.
 # Crop before: local (Telugu) names and spelling variants mapped to terminag crop names;
 #   multiple crops separated by "; ". Names with no terminag match are kept as they are.
 # Farmer Name and Fathers Name are not kept.
@@ -13,7 +14,7 @@
 ## ISSUES
 # Units are not stated in the column names; assumed from ICRISAT soil-health convention.
 # out of bounds (left as is, to be checked): soil_EC up to 27.5, soil_P up to 362, soil_Ca up to 13304, soil_S up to 2540.
-# Some coordinates are not on land (in the sea); left as is.
+# One wrong digit in the GPS: 5574 and 5311 were a degree south (in the sea), 3914 was at 75 E (Karnataka), and 3135-3138 were a degree west of Dirasavancha. 1143 was at 81.43 E, also in the sea. Corrected from the other records of the same village.
 # Some "Crop before" values look like soil descriptions (red, sandy, light black) or are unclear (maagu, mc).
 
 
@@ -43,8 +44,24 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 	)
 
 	f <- ff[basename(ff) == "AP Primary Sector Farmerwise Soil Health Data of 13 districts.xls"]
-	r <- carobiner::read.excel(f, sheet="Farmer wise data", na=c("", "NA", "-"))
+
+	r <- suppressWarnings(carobiner::read.excel(f, sheet="Farmer wise data", na=c("", "NA", "-")))
 	names(r) <- trimws(gsub("\\s+", " ", names(r)))
+
+	# acres. "0-45" and "1.-50" use a hyphen as the decimal point; "1,8" uses a comma; "1.1O" uses the letter O.
+	acres <- function(x) {
+		x <- trimws(x)
+		x[x %in% c(".", "")] <- NA
+		x <- sub("^AREA-", "", x)
+		x <- sub(" AC$", "", x)
+		x <- gsub("O", "0", x)
+		two <- !is.na(x) & grepl(",", x) & grepl("\\.", x)
+		x[two] <- sapply(strsplit(x[two], ","), function(p) sum(as.numeric(p)))
+		x <- gsub(",", ".", x)
+		x <- gsub("\\.-", ".", x)
+		x <- sub("-", ".", x)
+		as.numeric(x)
+	}
 
 	d <- data.frame(
 		country = "India",
@@ -59,7 +76,7 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		field_id = trimws(as.character(r[["Survey No."]])),
 		# nutrient_type_ = trimws(r[["Macro/ Micro nutrient"]]),
 		soil_type = trimws(r[["Soil type"]]),
-		field_size = as.numeric(gsub("AREA-", "", r[["Extent (AC)"]])) * 0.404686,
+		field_size = acres(r[["Extent (AC)"]]) * 0.404686, # acres -> ha
 		soil_pH = as.numeric(r$pH),
 		soil_EC = as.numeric(r$EC),
 		soil_SOC = as.numeric(r$OC),
@@ -76,6 +93,24 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
+
+	# One digit of the GPS reading is wrong. The other records of the same village have the corrected digit.
+	# 17.1233 N is in the sea; Chillapeta Rajam is at 18.12 N.
+	i <- d$location == "Chillapeta Rajam" & abs(d$latitude - 17.1233) < 0.001
+	d$latitude[i] <- d$latitude[i] + 1
+	# 17.6614 N is in the sea; Kuddapalli is at 18.66 N.
+	i <- d$location == "Kuddapalli" & abs(d$latitude - 17.6614) < 0.001
+	d$latitude[i] <- d$latitude[i] + 1
+	# 75.2841 E is in Karnataka; Nandavaram is at 78.28 E.
+	i <- d$location == "Nandavaram" & abs(d$longitude - 75.2841) < 0.001
+	d$longitude[i] <- d$longitude[i] + 3
+	# 78.01 E is a degree west of Dirasavancha.
+	i <- d$location == "Dirasavancha" & abs(d$longitude - 78.01) < 0.02
+	d$longitude[i] <- d$longitude[i] + 1
+	# 81.4302 E is in the sea. The other Tadepalli readings are 80.91-80.92 E; the latitude already matches them.
+	i <- d$location == "Tadepalli" & d$adm3 == "Ghantasala" & abs(d$longitude - 81.4302) < 0.001
+	d$longitude[i] <- median(d$longitude[d$location == "Tadepalli" & d$adm3 == "Ghantasala" & !i])
+	d$geo_from_source[i] <- FALSE
 
 	# previous crop: remove sample labels, turn intercrop notes and separators into ","
 	pc <- tolower(trimws(r[["Crop before"]]))
@@ -110,7 +145,7 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		"rajma"="kidney bean", "seasamum"="sesame", "sesamum"="sesame", "sesumum"="sesame",
 		"sweetcorn"="sweet corn", "tamato"="tomato","niger"="niger",
 		"topioca"="cassava", "topica"="cassava", "turmaric"="turmeric","vegetable"="vegetable",
-		"vegitable"="vegetable", "eucaliptus"="eucalyptus", "red sandal" = "sandalwood", "sandal" = "sandalwood",
+		"vegitables"="vegetable", "eucaliptus"="eucalyptus", "red sandal" = "sandalwood", "sandal" = "sandalwood",
 		 "mc" = NA, "red" = NA, "sandy" = NA
 	)
 
