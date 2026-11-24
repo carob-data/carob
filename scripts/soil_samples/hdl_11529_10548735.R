@@ -6,14 +6,16 @@
 # The first row of each data sheet is the unit line.
 # Nitrate is the N-NO3 column, in ppm. Electric conductivity is dS/m, equal to mS/cm.
 # Where both Bray and Olsen phosphorus are filled, Bray is kept.
-# Geographic coverage is empty. Country is not set from the state name.
+# Geographic coverage is empty. Country is Mexico from the state.
+# The rainfed workbook is the Valle de Santiago samples in doi:10.71682/10549439 (all 93 rows, 2022). It is not read. Three of its rows are not in that compilation; they use the same whole-degree coordinate as the rest.
 
 ## ISSUES
-# write_files: missing variables: country. out of bounds: soil_silt (2, 226), soil_P (0, 330.8), soil_Na (17.013, 1689), soil_S (1.364, 7506.369), soil_EC (0.156, 45.406). location: variable 'country' is missing.
+# write_files: out of bounds: soil_silt (2, 226), soil_P (0, 330.8), soil_Na (17.013, 1689), soil_S (1.364, 7506.369), soil_EC (0.156, 45.406).
 
 ## NOT PROCESSED
 # Carbonates, exchangeable cations in meq/100 g, and saturation percentages.
 # Map images.
+# BD_Suelo_Valle de Santiago temporal.xlsx: the same samples as doi:10.71682/10549439.
 
 
 carob_script <- function(path) {
@@ -85,6 +87,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Valle de Santiago
 			lon <- num("Latitud")
 		}
 		data.frame(
+			country = "Mexico",
 			sample_id = as.character(r$Folio),
 			adm1 = carobiner::fix_name(r$Estado, "title"),
 			adm2 = carobiner::fix_name(r$Municipio, "title"),
@@ -119,13 +122,13 @@ Soil sampling with 1x1 km grid in the agricultural area of the Valle de Santiago
 			soil_S = num("Azufre (S)"),
 			soil_CEC = num(c("(CIC)", "CIC")),
 			soil_EC = num("CE (Extracto)"),
-			geo_from_source = TRUE
+			geo_from_source = TRUE,
+			geo_uncertainty = 55000
 		)
 	}
 
-	f1 <- ff[basename(ff) == "BD_Suelo_Valle de Santiago Riego.xls"]
-	f2 <- ff[basename(ff) == "BD_Suelo_Valle de Santiago temporal.xlsx"]
-	d <- rbind(one(f1, "Suelos", swap=TRUE), one(f2, "Matriz", swap=FALSE))
+	f <- ff[basename(ff) == "BD_Suelo_Valle de Santiago Riego.xls"]
+	d <- one(f, "Suelos", swap=TRUE)
 	d <- d[!is.na(d$latitude) & !is.na(d$longitude), ]
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE

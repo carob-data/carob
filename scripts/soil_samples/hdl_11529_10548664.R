@@ -148,7 +148,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Purisima del Rinc
 		soil_H_exch = h_exch,
 		soil_CEC = num("(CIC)"),
 		soil_EC = num("CE (Extracto)"),
-		geo_from_source = TRUE
+		geo_from_source = TRUE,
+		geo_uncertainty = 55000
 	)
 
 	d$is_survey <- TRUE

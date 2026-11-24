@@ -6,7 +6,7 @@
 # Texture classes follow the USDA names in the metadata sheet. Arcilla is clay. Franco Arcilloso is clay loam.
 # Nitrate, phosphorus, and the other nutrients are ppm, stored as mg/kg. Phosphorus in this file is Bray 1. Olsen and carbonates are the missing code "." on every row.
 # Bulk density is g/cm3. Electric conductivity is dS/m, equal to mS/cm. Carbonates, where present in this series, are percent CaCO3 and would be stored as g/kg.
-# Latitude and longitude in this file are whole degrees only. Every sample is 18, -98. Uncertainty is 111 km.
+# Latitude and longitude in this file are whole degrees only. Every sample is 18, -98. Uncertainty is 55 km.
 # pH is a 1:2 soil:water ratio. The buffer pH is SMP.
 
 ## ISSUES
@@ -92,7 +92,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Jantetelco Munici
 	lon <- num(r$Longitud)
 	whole <- !is.na(lat) & !is.na(lon) & (lat == round(lat)) & (lon == round(lon))
 	unc <- rep(NA_real_, length(lat))
-	unc[whole] <- 111000
+	unc[whole] <- 55000
 
 	rancho <- trimws(as.character(r$Rancho))
 	rancho[!nzchar(rancho)] <- NA_character_

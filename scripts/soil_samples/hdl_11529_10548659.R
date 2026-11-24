@@ -4,7 +4,7 @@
 ## NOTES
 # Soil samples, 0-30 cm, from the agricultural area of Ayala, Morelos. The Estado column is Morelos. Rancho is empty.
 # Phosphorus is Bray 1 or Olsen. Two rows have both. Olsen is soil_P on those rows and Bray is kept beside it. Carbonates are percent CaCO3, stored as g/kg.
-# Nutrients are ppm. Electric conductivity is dS/m. Coordinates are whole degrees. Uncertainty is 111 km.
+# Nutrients are ppm. Electric conductivity is dS/m. Coordinates are whole degrees. Uncertainty is 55 km.
 # pH is a 1:2 soil:water ratio.
 
 ## ISSUES
@@ -100,7 +100,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Ayala Municipalit
 	lon <- num(r$Longitud)
 	whole <- !is.na(lat) & !is.na(lon) & (lat == round(lat)) & (lon == round(lon))
 	unc <- rep(NA_real_, length(lat))
-	unc[whole] <- 111000
+	unc[whole] <- 55000
 
 	bray <- num(r$`Fosforo Bray 1`)
 	olsen <- num(r$`Fosforo Olsen`)

@@ -13,42 +13,40 @@
 # "." in the sheet is a missing value.
 
 ## ISSUES
-# Country is not in the sheet or in geographicCoverage.
 # meq/100g cation columns and saturation percentages are calculated from the ppm values and are not stored.
-# write_files: missing variables: country. location: variable 'country' is missing. contributor:
 
 ## NOT PROCESSED
 # Carbonates. Exchangeable cations in meq/100g and the saturation percentages.
 # Hydrogen in ppm. Map images.
-# Azufre_TEMOAC.png: image, not a data table.
-# Boro_TEMOAC.png: image, not a data table.
-# Calcio_TEMOAC.png: image, not a data table.
-# CIC_TEMOAC.png: image, not a data table.
-# Cobre_TEMOAC.png: image, not a data table.
-# Cond Hid_TEMOAC.png: image, not a data table.
-# Fosforo Bray Olsen_TEMOAC.png: image, not a data table.
-# Hierro_TEMOAC.png: image, not a data table.
-# Magnesio_TEMOAC.png: image, not a data table.
-# Manganeso_TEMOAC.png: image, not a data table.
-# Materia organica_TEMOAC.png: image, not a data table.
-# Nitratos_TEMOAC.png: image, not a data table.
-# pH 12 agua_TEMOAC.png: image, not a data table.
-# Potasio_TEMOAC.png: image, not a data table.
-# Punto de saturacion_TEMOAC.png: image, not a data table.
-# Salinidad CE Ext_TEMOAC.png: image, not a data table.
-# Sodio porc Sat_TEMOAC.png: image, not a data table.
-# Zinc_TEMOAC.png: image, not a data table.
+# Azufre_ZACUALPAN.png: image, not a data table.
+# Boro_ZACUALPAN.png: image, not a data table.
+# Calcio_ZACUALPAN.png: image, not a data table.
+# CIC_ZACUALPAN.png: image, not a data table.
+# Cobre_ZACUALPAN.png: image, not a data table.
+# Cond Hid_ZACUALPAN.png: image, not a data table.
+# Fosforo Bray Olsen_ZACUALPAN.png: image, not a data table.
+# Hierro_ZACUALPAN.png: image, not a data table.
+# Magnesio_ZACUALPAN.png: image, not a data table.
+# Manganeso_ZACUALPAN.png: image, not a data table.
+# Materia organica_ZACUALPAN.png: image, not a data table.
+# Nitratos_ZACUALPAN.png: image, not a data table.
+# pH 12 agua_ZACUALPAN.png: image, not a data table.
+# Potasio_ZACUALPAN.png: image, not a data table.
+# Punto saturacion_ZACUALPAN.png: image, not a data table.
+# Salinidad CE Ext_ZACUALPAN.png: image, not a data table.
+# Sodio porc Sat_ZACUALPAN.png: image, not a data table.
+# Zinc_ZACUALPAN.png: image, not a data table.
 
 
 carob_script <- function(path) {
 
 '
-Fertility Maps of "Temoac, Morelos".
+Fertility Maps of "Zacualpan, Morelos".
 
-Soil sampling with 1x1 km grid in the agricultural area of the Temoac Municipality at at 0 to 30 cm depth.
+Soil sampling with 1x1 km grid in the agricultural area of the Zacualpan Municipality at at 0 to 30 cm depth.
 '
 
-	uri <- "hdl:11529/10548740"
+	uri <- "hdl:11529/10548742"
 	group <- "soil_samples"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -67,8 +65,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Temoac Municipali
 		carob_effort = 0.3
 	)
 
-	f <- ff[basename(ff) == "BD_Suelo_Temoac.xls"]
-	r <- carobiner::read.excel(f, sheet="Temoac", na=".")
+	f <- ff[basename(ff) == "BD_Suelo_Zacualpan.xls"]
+	r <- carobiner::read.excel(f, sheet="Zacualpan", na=".")
 	r <- r[!is.na(r$Folio), ]
 
 	prof <- as.character(r$Profundidad)
@@ -110,6 +108,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Temoac Municipali
 	place <- if ("Localidad" %in% names(r)) r$Localidad else r$Rancho
 
 	d <- data.frame(
+		country = "Mexico",
 		sample_id = as.character(r$Folio),
 		adm1 = adm,
 		adm2 = carobiner::fix_name(r$Municipio, "title"),
@@ -145,6 +144,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Temoac Municipali
 		soil_CEC = as.numeric(r$`(CIC)`),
 		soil_EC = as.numeric(r$`CE (Extracto)`),
 		geo_from_source = TRUE,
+		geo_uncertainty = 55000,
 		is_survey = TRUE,
 		on_farm = TRUE
 	)

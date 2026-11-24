@@ -5,7 +5,7 @@
 # Soil samples, 0-30 cm, from the agricultural area of Tlachichuca, Puebla. The Estado column is Puebla.
 # Texture classes follow the USDA names in the metadata. Arcilla is clay. Franco Arcilloso is clay loam.
 # Nutrients are ppm, stored as mg/kg. Phosphorus in this file is Bray 1. Carbonates are percent CaCO3, stored as g/kg. The token of dots is missing.
-# Electric conductivity is dS/m, equal to mS/cm. Latitude and longitude are whole degrees. Uncertainty is 111 km.
+# Electric conductivity is dS/m, equal to mS/cm. Latitude and longitude are whole degrees. Uncertainty is 55 km.
 # pH is a 1:2 soil:water ratio.
 
 ## ISSUES
@@ -81,7 +81,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Tlachichuca Munic
 	lon[!is.na(lon) & lon > 0] <- -lon[!is.na(lon) & lon > 0]
 	whole <- !is.na(lat) & !is.na(lon) & (lat == round(lat)) & (lon == round(lon))
 	unc <- rep(NA_real_, length(lat))
-	unc[whole] <- 111000
+	unc[whole] <- 55000
 	rancho <- trimws(as.character(r$Rancho))
 	rancho[!nzchar(rancho)] <- NA_character_
 	loc <- rep(NA_character_, length(rancho))

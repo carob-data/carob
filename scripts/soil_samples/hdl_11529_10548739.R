@@ -6,10 +6,7 @@
 # The first row of the sheet is the unit line.
 # Nitrate is the N-NO3 column, in ppm. Electric conductivity is dS/m, equal to mS/cm.
 # Where both Bray and Olsen phosphorus are filled, Bray is kept.
-# Geographic coverage is empty. The state column is Morelos. Country is not set from that.
-
-## ISSUES
-# write_files: missing variables: country. location: variable 'country' is missing.
+# Geographic coverage is empty. The state column is Morelos. Country is Mexico.
 
 ## NOT PROCESSED
 # Carbonates, exchangeable cations in meq/100 g, and saturation percentages.
@@ -65,6 +62,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Jonacatepec Munic
 	place[!nzchar(place)] <- NA_character_
 
 	d <- data.frame(
+		country = "Mexico",
 		sample_id = as.character(r$Folio),
 		adm1 = carobiner::fix_name(r$Estado, "title"),
 		adm2 = carobiner::fix_name(r$Municipio, "title"),
@@ -99,7 +97,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Jonacatepec Munic
 		soil_S = as.numeric(r$`Azufre (S)`),
 		soil_CEC = as.numeric(r$`(CIC)`),
 		soil_EC = as.numeric(r$`CE (Extracto)`),
-		geo_from_source = TRUE
+		geo_from_source = TRUE,
+		geo_uncertainty = 55000
 	)
 	d <- d[!is.na(d$latitude) & !is.na(d$longitude), ]
 	d$is_survey <- TRUE

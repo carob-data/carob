@@ -2,53 +2,34 @@
 # license: GPL (>=3)
 
 ## NOTES
-# 1 km soil grid. The first sheet row is the unit line and is not data.
-# Latitude and longitude are in the sheet, so geo_from_source is TRUE.
-# There is no country column and geographicCoverage is empty. The state is taken from the Estado column.
-# "Guanjuato" in the Salamanca sheet is the spelling of Guanajuato. "Michoacan" is stored as Michoacán.
-# "Estado de Mexico" is stored as México, the GADM state name.
+# 1 km soil grid for the agricultural area of Ixtlahuaca. The first sheet row is the unit line and is not data.
+# Latitude and longitude are in the sheet, so geo_from_source is TRUE. Several coordinates are whole degrees.
+# Estado is "Estado de Mexico", the state. Country is Mexico. There is no country column and geographicCoverage is empty.
 # Nitrate-N, P, and the other nutrients are ppm, stored as mg/kg. Electrical conductivity is dS/m, equal to mS/cm.
-# CEC is meq/100g, equal to cmol/kg.
+# CEC is meq/100g, equal to cmol/kg. Punto de saturación is the gravimetric saturation percentage.
 # Bray-1 is the P method when that column is filled. Olsen is used only on rows where Bray-1 is empty.
 # "." in the sheet is a missing value.
 
 ## ISSUES
-# Country is not in the sheet or in geographicCoverage.
 # meq/100g cation columns and saturation percentages are calculated from the ppm values and are not stored.
-# write_files: missing variables: country. location: variable 'country' is missing. contributor:
+# soil_P reaches 306 mg/kg and soil_Na reaches 667 mg/kg. The vocabulary maxima are 200 and 650. The values were left as recorded.
+# write_files: out of bounds: soil_P (3.56, 306.06), soil_Na (11.564, 667.338). contributor:
 
 ## NOT PROCESSED
-# Carbonates. Exchangeable cations in meq/100g and the saturation percentages.
-# Hydrogen in ppm. Map images.
-# Azufre_ZACUALPAN.png: image, not a data table.
-# Boro_ZACUALPAN.png: image, not a data table.
-# Calcio_ZACUALPAN.png: image, not a data table.
-# CIC_ZACUALPAN.png: image, not a data table.
-# Cobre_ZACUALPAN.png: image, not a data table.
-# Cond Hid_ZACUALPAN.png: image, not a data table.
-# Fosforo Bray Olsen_ZACUALPAN.png: image, not a data table.
-# Hierro_ZACUALPAN.png: image, not a data table.
-# Magnesio_ZACUALPAN.png: image, not a data table.
-# Manganeso_ZACUALPAN.png: image, not a data table.
-# Materia organica_ZACUALPAN.png: image, not a data table.
-# Nitratos_ZACUALPAN.png: image, not a data table.
-# pH 12 agua_ZACUALPAN.png: image, not a data table.
-# Potasio_ZACUALPAN.png: image, not a data table.
-# Punto saturacion_ZACUALPAN.png: image, not a data table.
-# Salinidad CE Ext_ZACUALPAN.png: image, not a data table.
-# Sodio porc Sat_ZACUALPAN.png: image, not a data table.
-# Zinc_ZACUALPAN.png: image, not a data table.
+# Carbonates (%). No soil carbonate variable is used because many cells are the missing marker.
+# Exchangeable Ca, Mg, K, Na, Al, and H in meq/100g, and the saturation percentages. The metadata says these are calculated.
+# Hydrogen in ppm. Map PDF.
 
 
 carob_script <- function(path) {
 
-'
-Fertility Maps of "Zacualpan, Morelos".
+"
+Fertility Maps of \"Ixtlahuaca, Estado de México\".
 
-Soil sampling with 1x1 km grid in the agricultural area of the Zacualpan Municipality at at 0 to 30 cm depth.
-'
+Soil sampling with 1x1 km grid in the agricultural area of the Ixtlahuaca Municipality at at 0 to 30 cm depth.
+"
 
-	uri <- "hdl:11529/10548742"
+	uri <- "hdl:11529/10548737"
 	group <- "soil_samples"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -64,21 +45,14 @@ Soil sampling with 1x1 km grid in the agricultural area of the Zacualpan Municip
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.3
+		carob_effort = 0.4
 	)
 
-	f <- ff[basename(ff) == "BD_Suelo_Zacualpan.xls"]
-	r <- carobiner::read.excel(f, sheet="Zacualpan", na=".")
+	f <- ff[basename(ff) == "BD_Suelo_Ixtlahuaca.xlsx"]
+	r <- carobiner::read.excel(f, sheet="ixtlahuaca", na=".")
 	r <- r[!is.na(r$Folio), ]
 
-	prof <- as.character(r$Profundidad)
-	prof[prof %in% c("NA", "N/A", "")] <- NA
-	depth_top <- rep(NA_real_, length(prof))
-	depth_bottom <- depth_top
-	ok <- !is.na(prof)
-	parts <- strsplit(prof[ok], "-", fixed=TRUE)
-	depth_top[ok] <- vapply(parts, function(z) as.numeric(z[1]), numeric(1))
-	depth_bottom[ok] <- vapply(parts, function(z) as.numeric(z[2]), numeric(1))
+	depth <- do.call(rbind, strsplit(as.character(r$Profundidad), "-"))
 	texture <- trimws(as.character(r$`Clase Textural`))
 	texture[texture %in% c("", "No aplica")] <- NA
 	texture <- gsub("Franco arcillo arenoso", "sandy clay loam", texture, ignore.case=TRUE)
@@ -102,22 +76,16 @@ Soil sampling with 1x1 km grid in the agricultural area of the Zacualpan Municip
 	method[use_olsen] <- "Olsen"
 	method[is.na(p)] <- NA
 
-	adm <- trimws(as.character(r$Estado))
-	adm[adm %in% c("Estado de Mexico", "Estado de México")] <- "México"
-	adm[adm == "Michoacan"] <- "Michoacán"
-	adm[adm == "Guanjuato"] <- "Guanajuato"
-
-	place <- if ("Localidad" %in% names(r)) r$Localidad else r$Rancho
-
 	d <- data.frame(
+		country = "Mexico",
 		sample_id = as.character(r$Folio),
-		adm1 = adm,
+		adm1 = "México",
 		adm2 = carobiner::fix_name(r$Municipio, "title"),
-		location = carobiner::fix_name(place, "title"),
+		location = carobiner::fix_name(r$Rancho, "title"),
 		latitude = as.numeric(r$Latitud),
 		longitude = as.numeric(r$Longitud),
-		depth_top = depth_top,
-		depth_bottom = depth_bottom,
+		depth_top = as.numeric(depth[, 1]),
+		depth_bottom = as.numeric(depth[, 2]),
 		soil_sand = as.numeric(r$Arena),
 		soil_clay = as.numeric(r$Arcilla),
 		soil_silt = as.numeric(r$Limo),
@@ -145,10 +113,11 @@ Soil sampling with 1x1 km grid in the agricultural area of the Zacualpan Municip
 		soil_CEC = as.numeric(r$`(CIC)`),
 		soil_EC = as.numeric(r$`CE (Extracto)`),
 		geo_from_source = TRUE,
+		geo_uncertainty = 55000,
 		is_survey = TRUE,
 		on_farm = TRUE
 	)
+	# The sheet writes the state as "Estado de Mexico". GADM calls that state México.
 
 	carobiner::write_files(path, meta, d)
 }
-

@@ -6,10 +6,10 @@
 # The first row of each data sheet is the unit line.
 # Nitrate is the N-NO3 column, in ppm. Electric conductivity is dS/m, equal to mS/cm.
 # Where both Bray and Olsen phosphorus are filled, Bray is kept.
-# Geographic coverage is empty. Country is not set from the state name.
+# Geographic coverage is empty. Country is Mexico from the state.
 
 ## ISSUES
-# write_files: missing variables: country. out of bounds: soil_P (3.02, 699.07), soil_Ca (897.733, 12346.848), soil_Na (7.494, 3902.701). location: variable 'country' is missing.
+# write_files: out of bounds: soil_silt (-2, 46).
 
 ## NOT PROCESSED
 # Carbonates, exchangeable cations in meq/100 g, and saturation percentages.
@@ -19,12 +19,12 @@
 carob_script <- function(path) {
 
 "
-Data base of soil sample of Huanimaro and Celaya, Guanajuato.
+Fertility Maps of Concordia and Villacorzo, Chiapas.
 
-Soil sampling with 1x1 km grid in the agricultural area of the Huanimaro and Celaya Municipalities at at 0 to 30 cm depth.
+Soil sampling with 1x1 km grid in the agricultural area of the Villacorzo and Concordia Municipalities at at 0 to 30 cm depth.
 "
 
-	uri <- "hdl:11529/10548806"
+	uri <- "hdl:11529/10548808"
 	group <- "soil_samples"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -85,6 +85,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Huanimaro and Cel
 			lon <- num("Latitud")
 		}
 		data.frame(
+			country = "Mexico",
 			sample_id = as.character(r$Folio),
 			adm1 = carobiner::fix_name(r$Estado, "title"),
 			adm2 = carobiner::fix_name(r$Municipio, "title"),
@@ -119,13 +120,13 @@ Soil sampling with 1x1 km grid in the agricultural area of the Huanimaro and Cel
 			soil_S = num("Azufre (S)"),
 			soil_CEC = num(c("(CIC)", "CIC")),
 			soil_EC = num("CE (Extracto)"),
-			geo_from_source = TRUE
+			geo_from_source = TRUE,
+			geo_uncertainty = 55000
 		)
 	}
 
-	f1 <- ff[basename(ff) == "BD_Suelo_Celaya.xls"]
-	f2 <- ff[basename(ff) == "BD_Suelo_Huanimaro.xlsx"]
-	d <- rbind(one(f1, "CELAYA"), one(f2, "Huanimaro"))
+	f <- ff[basename(ff) == "BD_Suelo_Concordia y Villa Corzo_Chiapas.xlsx"]
+	d <- one(f, "Data")
 	d <- d[!is.na(d$latitude) & !is.na(d$longitude), ]
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
