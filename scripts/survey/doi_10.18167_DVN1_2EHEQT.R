@@ -71,16 +71,22 @@ carob_script <- function(path) {
   d$herbicide_product[d$herbicide_used] <- "glyphosate"
  
   # Coordinates are not in the data. Ambohitsilaozana and Ambongabe are the villages of those names beside Lake Alaotra.
-  # Antsahamamy (Sahamamy) is the rural municipality in Amparafaravola district, about 15 km north of Amparafaravola. 17°31'S, 48°18'E.
+  # Antsahamamy (Sahamamy) is the rural municipality in Amparafaravola district, about 15 km north of Amparafaravola. 17°31'S, 48°18'E. 
   # Ampitatsimo (Ampitasimo) is the commune in Ambatondrazaka district. The reported position is the box 17°46'-47'S, 48°22'-23'E; the centre of that box is used.
-  # Ambohimiarina also names a place about 400 km away, and no village of that name was found near the lake, so its coordinates are left empty.
+  
+# update presumably from one of the authors (see #1373):
+# Ambohimiarina https://maps.app.goo.gl/c8mYMjkp4nQcxqBRA?g_st=iw
+# Ampitatsimo https://maps.app.goo.gl/peWm1cA2UwX9eYXT8?g_st=iw
+# Amparihintsokatra (Antsahamamy) https://maps.app.goo.gl/gsg1xCosPSrcytPS6?g_st=iw
+  
   geo <- data.frame(
 		location=c("Antsahamamy", "Ambohimiarina", "Ambohitsilaozana", "Ambongabe", "Ampitatsimo"),
-		latitude=c(-17.51667, -17.93201, -17.7014, -17.7067, -17.775),
-		longitude=c(48.3, 48.36667, 48.4657, 48.1885, 48.375),
+		latitude=c(-17.515, -17.9325, -17.7014, -17.7067, -17.775),
+		longitude=c(48.56, 48.179 48.4657, 48.1885, 48.375),
 		geo_uncertainty = c(2000, 75000, NA, NA, 2000),
 		geo_from_source = FALSE
 	)
+	
 
   d <- merge(d, geo, by="location", all.x=TRUE)
   # GADM NAME_1. The region is also written Alaotra-Mangoro.
