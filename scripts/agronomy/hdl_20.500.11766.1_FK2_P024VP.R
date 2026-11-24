@@ -14,9 +14,8 @@
 # write_files: , on_farm, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: stover_yield_kg_ha_, head_length_cm_, head_weight_g_, tillers_per_plant_.
 
 ## NEW VARIABLES
-# stover_yield_kg_ha_: stover in kg/ha. The file says ton/ha and does not say fresh or dry.
-# head_length_cm_: head length, cm.
-# head_weight_g_: head weight, g.
+# head_length: head length, cm.
+# head_weight: head weight, g.
 # tillers_per_plant_: tillers per plant at harvest.
 
 
@@ -43,12 +42,13 @@ Effect of ridging and tie-ridging time on the yield performance of sorghum at Gu
 		project = "Reducing land degradation and farmers' vulnerability to climate change in the highland dry areas of north-western Ethiopia",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "land_prep_method;land_prep_date",
 		response_vars = "yield",
+		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-10-30",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.45
+		carob_completion = 80,
+		carob_effort = 2
 	)
 
 	f <- ff[basename(ff) == "ExperimentalData.csv"]
@@ -76,16 +76,34 @@ Effect of ridging and tie-ridging time on the yield performance of sorghum at Gu
 		harvest_date = unname(end[yr]),
 		yield = as.numeric(r$Yield) * 1000,
 		yield_part = "grain",
-		stover_yield_kg_ha_ = as.numeric(r$Stover) * 1000,
+		dmy_residue = as.numeric(r$Stover) * 1000,
 		plant_height = as.numeric(r$Plant_Height),
-		head_length_cm_ = as.numeric(r$Head_Lenght),
-		head_weight_g_ = as.numeric(r$Head_Weight),
-		tillers_per_plant_ = as.numeric(r$Tillers_N),
+		head_length = as.numeric(r$Head_Lenght), # cm
+		head_weight = as.numeric(r$Head_Weight), # cm
+		#tillers_per_plant = as.numeric(r$Tillers_N),
 		geo_from_source = FALSE,
-		is_survey = FALSE
+		is_survey = FALSE,
+		latitude = 12.3836  ,
+		longitude = 37.5487 ,
+		geo_source = "Goole Maps",
+		on_farm = TRUE,
+		yield_moisture = NA,  ## not provided
+		yield_isfresh = NA,
+		irrigated = NA,
+		land_prep_method = ifelse(grepl("Control",  r$treatment), "none", "tied ridges"),
+		dap1 = c(0, 0, 3, 3, 3, 3, 8, NA)[r$Treatment]*7, ## from weeks to days
+		dap2 = c(0, 7, 3, 6, 9, 12, 8, NA)[r$Treatment]*7
 	)
 	
-	 
-
+	dat1 <- as.Date(d$planting_date) + d$dap1
+	dat2 <- as.Date(d$planting_date) + d$dap2
+	d$land_prep_date <- mapply(function(x, y) { if (!is.na(x) && !is.na(y) && x == y) {as.character(x) } else {paste(na.omit(c(x, y)), collapse = ";")}}, dat1, dat2)
+  d$dap2 <- d$dap1 <- NULL
+  d$land_prep_date <- ifelse(d$land_prep_method =="none", NA, d$land_prep_date)
+	
+ 
+  d$K_fertilizer <- d$N_fertilizer <- d$P_fertilizer <- as.numeric(NA)
+  
+  
 	carobiner::write_files(path, meta, d)
 }
