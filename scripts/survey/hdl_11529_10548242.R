@@ -1,5 +1,8 @@
 # R script for "carob"
 
+#ISSUE
+## 5 rows have missing longitude and latitude coordinates, and their corresponding location information is also missing from the raw data.
+
 carob_script <- function(path) {
 
 "TAMASA Agronomy Panel Survey 2016/17 Season. This file contains the maize grain yield from approximately 578 maize fields in the Southern Highlands, Northern and Eastern Zones of Tanzania in collected May-August 2017. Maize grain yield data can be linked to associated maize yield and soil by the common HHID."
