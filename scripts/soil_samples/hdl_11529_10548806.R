@@ -40,7 +40,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Huanimaro and Cel
 		treatment_vars = "none",
 		response_vars = "none",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_date = "2026-11-24",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.3
