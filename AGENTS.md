@@ -119,7 +119,7 @@ Whichever you use, be aware the cache is only refreshed by `vocal` (on the GitHu
 ```r
 meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
     data_organization = "PURDUE",     # data provider and/or author institutes
-    publication = NA,                 # paper DOI if any (add matching RIS in references/); use NA, never ""
+    publication = NA,                 # paper DOI if any, or other reference; otherwise use NA, never ""
     project = NA,
     design = NA,                      # experimental/survey design if known
     data_type = "on-farm experiment", # "experiment", "on-farm experiment", "survey", "compilation", ...
@@ -302,7 +302,6 @@ Common things the Methods section supplies:
 
 Guidance:
 
-- Add a RIS file for the paper in the `references/` folder (matching the `publication` DOI) as noted in Section 4.
 - When a value is stated in the paper but not the data, hard-code it with a comment, e.g. `d$N_fertilizer <- 120   # Methods: 120 kg N/ha as urea, all plots`.
 - If the value applies to some rows only, be careful to assign it to the right subset rather than the whole table.
 - If the paper and data disagree, prefer the data for measured values, note the discrepancy in `## ISSUES`, and use the paper for context/management.
@@ -432,7 +431,7 @@ Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgemen
 - [ ] `## NOT PROCESSED` lists all possibly relevant raw variables that were not processed, and why.
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
 - [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields; treatments and responses not swapped.
-- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists) a RIS added to `references/`.
+- [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists).
 - [ ] All column names and categorical values match terminag; units correct (kg/ha yields, elemental N/P/K, ha areas, proper date formats).
 - [ ] Meaningful non-standard variables/values kept (named, not omitted or mapped to `"none"`/`"unknown"`); multiple values joined with `;`.
 - [ ] No `library()`/`require()` (use `pkg::`); numbers-with-units parsed before `as.numeric()`; one operation per line where reasonable.

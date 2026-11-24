@@ -5,10 +5,9 @@
 # Paper: Shehu et al. 2018 (doi:10.3390/agronomy8020018); rates, plot size, spacing, soil depth and 15% moisture are from its Methods.
 # Each field had an OPV and a hybrid set of 6 nutrient omission treatments (one plot each); fields are the replicates.
 # 2016 soil, site history, N dates and fall armyworm scores come from the separate 2016 files.
-# Coordinates were removed from the public files; 4 of 113 village names were found in OpenStreetMap, the rest are at LGA centroids.
 
 ## ISSUES
-# S_fertilizer includes the S in SSP (12%) for all P treatments, plus 24 kg S/ha in +SMM; the paper reports only the 24 kg. Keep?
+# S_fertilizer includes the S in SSP (12%) for all P treatments, plus 24 kg S/ha in +SMM; the paper reports only the 24 kg. 
 # 99 plots without yield (88 in 2015, mostly not recorded; 3 with 0 plants; 11 in 2016 not harvested). Kept as NA.
 # Out of bounds: terminag minima look too strict for maize grain Mg/Ca and micronutrients (mg/kg-like); low grain N and leaf S fit the omission treatments.
 # Likely data errors, left as reported: grain K up to 97 mg/g, negative residue P/Mg, grain moisture of 0.3%.
@@ -26,9 +25,9 @@
 ## NOT PROCESSED
 # 2015 stover and biomass dry weights: fresh weight x a fixed 0.48, not measured
 # 2016 above-ground biomass: sum of grain and stover
-# 2015 farmer practice (manure, fertilizer, other crop): unknown units
+# 2015 farmer practice: manure rate has no unit; fertilizer rate is kg product/ha (NPK, or urea and DAP together)
 # ear-leaf sampling dates: unreliable (some on or after harvest)
-# 2016 site history recall data: mixed formats
+# 2016 farmer recall: mineral fertilizer is three unlabelled kg/ha columns; residue management mixes words and fractions; soil depth is Deep or Shallow. Organic fertilizer is previous practice, not a trial treatment
 # 15 fields in 2016 with soil data but no plot data
 # NG_NOT_Yield_2016 "Yield Data": same 1039 plots and values as Data_2016 (only the armyworm score is used)
 # 2015 NG_NOT_* files (Grain, Stover, Yield) and the second TAMASA file: older copies of Data_2015
@@ -363,33 +362,90 @@ The data can be used to study nutrient limitations, fertilizer responses, and ma
 	d$N1_date <- d$N2_date <- d$N3_date <- NULL
 	
 	
-	# villages found in OpenStreetMap (looked up offline) and inside their LGA; the others are not mapped
-	vil <- data.frame(
-	  adm2 = c("Doguwa", "Doguwa", "Doguwa", "Dandume"),
-	  location = c("Doguwa", "Sogaga", "Tagwaye", "Kadawa"),
-	  longitude = c(8.5922, 8.5777, 8.6148, 7.2167),
-	  latitude = c(10.74, 10.7549, 10.8513, 11.4333),
-	  geo_uncertainty = 2000,   # village extent
-	  geo_source = "OpenStreetMap village"
+	# Site location and elevation data from the unblurred files
+	geo <- data.frame(
+		trial_id = c("N-1-1", "N-1-2", "N-1-3", "N-1-4", "N-1-5", "N-1-6", "N-1-7", "N-1-8", "N-1-9",
+			"N-1-10", "N-2-1", "N-2-2", "N-2-3", "N-2-4", "N-2-5", "N-2-6", "N-2-7", "N-2-8", "N-2-9",
+			"N-2-10", "N-3-1", "N-3-2", "N-3-3", "N-3-4", "N-3-5", "N-3-6", "N-3-7", "N-3-8", "N-3-9",
+			"N-3-10", "N-4-1", "N-4-2", "N-4-3", "N-4-4", "N-4-5", "N-4-6", "N-4-7", "N-4-8", "N-4-9",
+			"N-4-10", "N-5-1", "N-5-2", "N-5-3", "N-5-4", "N-5-5", "N-5-6", "N-5-7", "N-5-8", "N-5-9",
+			"N-5-10", "N-6-1", "N-6-2", "N-6-3", "N-6-4", "N-6-5", "N-6-6", "N-6-7", "N-6-8", "N-6-9",
+			"N-6-10", "N-7-1", "N-7-2", "N-7-3", "N-7-4", "N-7-5", "N-7-6", "N-7-7", "N-7-8", "N-7-9",
+			"N-7-10", "N-8-1", "N-8-2", "N-8-3", "N-8-4", "N-8-5", "N-8-6", "N-8-7", "N-8-8", "N-8-9",
+			"N-8-10", "N-9-1", "N-9-2", "N-9-3", "N-9-4", "N-9-5", "N-10-1", "N-10-2", "N-10-3", "N-10-4",
+			"N-10-5", "N-10-6", "N-10-7", "N-10-8", "N-10-9", "N-10-10", "N-NOT1-1", "N-NOT1-2", "N-NOT1-3",
+			"N-NOT1-4", "N-NOT1-5", "N-NOT1-6", "N-NOT1-7", "N-NOT1-8", "N-NOT1-9", "N-NOT1-10", "N-NOT2-1",
+			"N-NOT2-2", "N-NOT2-3", "N-NOT2-4", "N-NOT2-5", "N-NOT2-6", "N-NOT2-7", "N-NOT2-8", "N-NOT2-9",
+			"N-NOT3-1", "N-NOT3-2", "N-NOT3-3", "N-NOT3-4", "N-NOT3-5", "N-NOT4-1", "N-NOT4-2", "N-NOT4-3",
+			"N-NOT4-4", "N-NOT4-5", "N-NOT4-6", "N-NOT4-7", "N-NOT4-8", "N-NOT4-9", "N-NOT4-10", "N-NOT5-1",
+			"N-NOT5-2", "N-NOT5-3", "N-NOT5-4", "N-NOT5-5", "N-NOT5-6", "N-NOT5-7", "N-NOT5-8", "N-NOT5-9",
+			"N-NOT5-10", "N-NOT6-1", "N-NOT6-2", "N-NOT6-3", "N-NOT6-4", "N-NOT7-1", "N-NOT7-2", "N-NOT7-3",
+			"N-NOT7-4", "N-NOT7-5", "N-NOT7-6", "N-NOT7-7", "N-NOT7-8", "N-NOT8-1", "N-NOT8-2", "N-NOT8-3",
+			"N-NOT8-4", "N-NOT8-5", "N-NOT9-1", "N-NOT9-2", "N-NOT9-3", "N-NOT9-4", "N-NOT9-5", "N-NOT9-6",
+			"N-NOT9-7", "N-NOT9-8", "N-NOT9-9", "N-NOT9-10", "N-NOT10-1", "N-NOT10-2", "N-NOT10-3",
+			"N-NOT10-4", "N-NOT10-5", "N-NOT11-1", "N-NOT11-2", "N-NOT11-3", "N-NOT11-4", "N-NOT11-5",
+			"N-NOT11-6", "N-NOT11-7", "N-NOT11-8", "N-NOT12-1", "N-NOT12-2", "N-NOT12-3", "N-NOT12-4",
+			"N-NOT12-5", "N-NOT12-6", "N-NOT12-7", "N-NOT12-8", "N-NOT12-9", "N-NOT13-1", "N-NOT13-2",
+			"N-NOT13-3", "N-NOT13-4", "N-NOT13-5", "N-NOT14-1", "N-NOT14-2", "N-NOT14-3", "N-NOT14-4",
+			"N-NOT14-5"),
+		latitude = c(10.4875, 10.50395, 10.52715, 10.51662, 10.51345, 10.50512, 10.50272, 10.52515,
+			10.54295, 10.51815, 10.73025, 10.75030, 10.71538, 10.68866, 10.77826, 10.79174, 10.77831,
+			10.77896, 10.68781, 10.67590, 11.44327, 11.44262, 11.44295, 11.46079, 11.46064, 11.43369,
+			11.43786, 11.43122, 11.43515, 11.44089, 11.57925, 11.55759, 11.62754, 11.62602, 11.52981,
+			11.53308, 11.61091, 11.61581, 11.63083, 11.57696, 11.54052, 11.54201, 11.50024, 11.37662,
+			11.38078, 11.38209, 11.38229, 11.47598, 11.57925, 11.55008, 11.19444, 11.14138, 11.14053,
+			11.14067, 11.14018, 11.13414, 11.12717, 11.12285, 11.12777, 11.13942, 11.00855, 11.01100,
+			11.01180, 11.01435, 11.01557, 11.015709, 11.01717, 11.04658, 11.05197, 11.05500, 11.31994,
+			11.45278, 11.45514, 11.32161, 11.31616, 11.31644, 11.32039, 11.31147, 11.32000, 11.39340,
+			11.24825, 11.24925, 11.28334, 11.29094, 11.27799, 11.68786, 11.68655, 11.68468, 11.68309,
+			11.67712, 11.67278, 11.73519, 11.68081, 11.67099, 11.68229, 11.62195, 11.64533, 11.62875,
+			11.57416, 11.55343, 11.663035, 11.65778, 11.6392, 11.63299, 11.63346, 11.53497, 11.47186, 11.4732,
+			11.5002, 11.5079, 11.5069, 11.48173, 11.48156, 11.5794, 11.46078, 11.460457, 11.435628, 11.443078,
+			11.43465, 11.73704, 11.73731, 11.75949, 11.7667, 11.75527, 11.57618, 11.54272, 11.62045, 11.6201,
+			11.53085, 11.28899, 11.2897, 11.28962, 11.29636, 11.33448, 11.24194, 11.24248, 11.25114, 11.24581,
+			11.25075, 11.45124, 11.4638, 11.3862, 11.39477, 11.01071, 11.0137, 11.0138, 11.01584, 11.0222,
+			11.0158, 11.01627, 11.01925, 10.59355, 10.56343, 10.56473, 10.57152, 10.54874, 10.72944, 10.75062,
+			10.73861, 10.77884, 10.77841, 10.77832, 10.79184, 10.68406, 10.67283, 10.74032, 10.52754,
+			10.54297, 10.52542, 10.50803, 10.48773, 11.12786, 11.12727, 11.12484, 11.13327, 11.14099,
+			11.14065, 11.19498, 11.13432, 11.2376, 11.23856, 11.23952, 11.24198, 11.25834, 11.24061, 11.22976,
+			11.26851, 11.23345, 11.66945, 11.67769, 11.73501, 11.75608, 11.68038, 11.99441, 11.98762,
+			12.01035, 12.01728, 11.99703),
+		longitude = c(8.545867, 8.52375, 8.508783, 8.49195, 8.48811, 8.48386, 8.50559, 8.46690, 8.45099,
+			8.46467, 8.57735, 8.58041, 8.60209, 8.62682, 8.58441, 8.58402, 8.60252, 8.60721, 8.62577, 8.63299,
+			7.19931, 7.19999, 7.19659, 7.14772, 7.14874, 7.24725, 7.25665, 7.24968, 7.25239, 7.26125, 7.40556,
+			7.41263, 7.46770, 7.46558, 7.36272, 7.36767, 7.45851, 7.46241, 7.46457, 7.45516, 7.28199, 7.27891,
+			7.33610, 7.33746, 7.33749, 7.33895, 7.34009, 7.28875, 7.24797, 7.27764, 8.14108, 8.23223, 8.23195,
+			8.23935, 8.23509, 8.23159, 8.23679, 8.23421, 8.23931, 8.23532, 7.91857, 7.90709, 7.89551, 7.89514,
+			7.89849, 7.88112, 7.87684, 7.87486, 7.85280, 7.84558, 7.99636, 7.92364, 7.92681, 7.95611, 7.96033,
+			7.96478, 7.98585, 7.98358, 7.99560, 7.90139, 8.37213, 8.37048, 8.36618, 8.37420, 8.37718, 8.53474,
+			8.53336, 8.53477, 8.52455, 8.52781, 8.54260, 8.53797, 8.54914, 8.52986, 8.54580, 7.11551, 7.14161,
+			7.13451, 7.09071, 7.08804, 7.162408, 7.15811, 7.15978, 7.17642, 7.18204, 7.28632, 7.32028,
+			7.31351, 7.33571, 7.34541, 7.35738, 7.32072, 7.30753, 7.2478, 7.14795, 7.14887, 7.252622, 7.20054,
+			7.25192, 7.35922, 7.341, 7.37933, 7.37876, 7.37697, 7.45716, 7.36464, 7.4504, 7.45143, 7.36067,
+			7.41883, 7.421, 7.41594, 7.40918, 7.38633, 7.29623, 7.29168, 7.26777, 7.27914, 7.31966, 7.91658,
+			7.92765, 7.9185, 7.92542, 7.90639, 7.90804, 7.89542, 7.89873, 7.90644, 7.87852, 7.88098, 7.87734,
+			8.18953, 8.18741, 8.18058, 8.17729, 8.13038, 8.57747, 8.58097, 8.59801, 8.60706, 8.60288, 8.58362,
+			8.58405, 8.62938, 8.62854, 8.58389, 8.50865, 8.45094, 8.46585, 8.52864, 8.54609, 8.23937, 8.23678,
+			8.23495, 8.23771, 8.23207, 8.23433, 8.14196, 8.23279, 8.36558, 8.37008, 8.38178, 8.33391, 8.39448,
+			8.42099, 8.48014, 8.37706, 8.40356, 8.52184, 8.52814, 8.53887, 8.5414, 8.53032, 8.30174, 8.30378,
+			8.31265, 8.30675, 8.29185),
+		elevation = c(795, 776, 798, 797, 796, 791, 776, 785, 788, 783, 748, 759, 757, 780, 743, 741, 754,
+			753, 773, 752, 702, 710, 710, 704, 708, 705, 710, 702, 711, 713, 682, 665, 665, 663, 691, 696,
+			664, 670, 658, 643, 681, 682, 720, 664, 665, 666, 665, 700, 651, 678, 699, 672, 718, 721, 722,
+			721, 714, 708, 719, 718, 680, 683, 676, 670, 673, 669, 672, NA, NA, NA, NA, 641, 637, 696, 683,
+			681, 679, 674, 672, 688, 612, 615, 580, 571, 584, NA, 490, 489, 491, 496, 493, 468, 479, 477, 495,
+			603, 639, 629, 631, 649, 732, 650, 639, 639, 647, 689, 685, 696, 717, 707, 690, 697, 712, 649,
+			704, 705, 700, 730, 711, 622, 608, 610, 614, 615, 638, 691, 655, 667, 694, 652, 655, 655, 644,
+			638, 658, 660, 668, 671, 635, 636, 634, 673, 664, 642, 646, 629, 635, 641, 629, 631, 632, 649,
+			648, 650, 657, 677, 755, 761, 753, 750, 751, 737, 748, 772, 741, 762, 795, 781, 781, 781, 789,
+			690, 673, 682, 691, 691, 687, 665, 682, 616, 619, 607, 602, 579, 598, 629, 597, 589, 477, 490,
+			459, 446, 489, 499, 497, 498, 500, 505)
 	)
-	
-	# LGA centroids (GADM 4.1, computed offline) for villages not found; geo_uncertainty is the max distance to the LGA border (m)
-	lga <- data.frame(
-	  adm2 = c("Giwa", "Ikara", "Kauru", "Lere", "Makarfi", "Soba", "Bunkure", "Doguwa", "Tofa", "Tudun Wada", "Bakori", "Dandume", "Faskari", "Funtua"),
-	  longitude = c(7.4226, 8.162, 8.3093, 8.5577, 7.9541, 8.0428, 8.5254, 8.6387, 8.3101, 8.478, 7.4381, 7.1985, 7.1081, 7.3256),
-	  latitude = c(11.0907, 11.2909, 10.1913, 10.2996, 11.3245, 10.926, 11.6629, 10.8832, 12.0034, 11.209, 11.5998, 11.3833, 11.6424, 11.4148),
-	  geo_uncertainty = c(43000, 42000, 64000, 43000, 21000, 36000, 23000, 39000, 14000, 39000, 26000, 20000, 38000, 24000),
-	  geo_source = "GADM 4.1 adm2 centroid"
-	)
-	
-	d <- merge(d, vil, by=c("adm2", "location"), all.x=TRUE)
-	i <- is.na(d$longitude)
-	j <- match(d$adm2[i], lga$adm2)
-	d$longitude[i] <- lga$longitude[j]
-	d$latitude[i] <- lga$latitude[j]
-	d$geo_uncertainty[i] <- lga$geo_uncertainty[j]
-	d$geo_source[i] <- lga$geo_source[j]
-	d$geo_from_source <- FALSE
+	d <- merge(d, geo, by="trial_id", all.x=TRUE)
+	d$geo_from_source <- TRUE
+
+	d$seed_weight[d$seed_weight == 0] <- NA
+	d$seed_weight[d$seed_weight > 1000] <- NA
 	
 	carobiner::write_files(path, meta, d)
 }
