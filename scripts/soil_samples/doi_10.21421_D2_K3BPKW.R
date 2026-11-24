@@ -38,7 +38,7 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		response_vars = "none",
 		notes = NA,
 		carob_date = "2026-11-06",
-		carob_contributor = "Ajit S",
+		carob_contributor = "Ajith S",
 		carob_completion = 80,
 		carob_effort = 0.5
 	)
