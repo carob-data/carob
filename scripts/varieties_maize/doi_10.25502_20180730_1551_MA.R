@@ -2,6 +2,10 @@
 
 
 # border tbd
+#   1990 trials (trial_id ...ZA1 to ...ZA4) have location "Zaire" (former
+#   name of DR Congo), i.e. the country only; the suffix appears to number
+#   sites within the country without naming them. Location set to NA;
+#   no coordinates in the source, left NA.
 
 carob_script <- function(path) {
 "

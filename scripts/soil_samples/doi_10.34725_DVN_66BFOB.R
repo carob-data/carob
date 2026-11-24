@@ -1,5 +1,17 @@
 # R script for "carob"
 
+#NOTES
+# 1. In raw data file Shoshong (Botswana) longitude is a copy of latitude
+#    for all 24 rows, which puts the points in the Atlantic Ocean. 
+#    latitudes are valid and are kept but longitude was replaced 
+#    Source: https://en.wikipedia.org/wiki/Shoshong
+# 2. On sample from Prieska (South Africa): one sample (cluster 8, plot 6, subsoil) has no
+#    coordinates. Filled with the mean of the other Prieska plots in this
+#    dataset (~ -29.96, 22.77). 
+# 3. Analavory (Madagascar) has no coordinates in the source for any sample.
+#    Assigned the coordinates of Analavory town, Miarinarivo district
+#    (-18.967, 46.717).Source: https://en.wikipedia.org/wiki/Analavory,_Miarinarivo
+
 carob_script <- function(path) {
   
 "This dataset contains a subset of the samples collected during the AfSIS Phase I project and was a collaborative effort between World Agroforestry (ICRAF) and Rothamsted Research. The soil samples were retrieved from ICRAF Soil Archive: https://worldagroforestry.org/output/icraf-soil-archive-physical-archive-systematically-collected-soil-samples and subject to wet chemical analysis at Rothamsted Research in the UK under a Global Challenges Research Fund project, 'BBS/OS/GC/000014B: Chemical and Biological Assessment of AfSIS soils funded through the UK Biotechnology and Biological Sciences Research Council. This dataset includes the Site, Cluster, Plot as well as the GPS coordinates and wet chemistry data from 2002 samples collected from 18 countries and 51 LDSF sites. The original data collection was part of the AfSIS Phase I project, funded by the Bill and Melinda Gates Foundation (BMGF) and took place between 2009-2013. ICRAF and CIAT contributed the Site, Cluster, Plot and GPS coordinates for the soil samples, ICRAF organized the sub-sampling of the soil samples from the ICRAF physical archive in Nairobi and Rothamsted analysed the soil samples in the UK in 2017 and 2018. Visit our websites here: https://worldagroforestry.org/landhealth and https://www.rothamsted.ac.uk/. The AfSIS Phase I project funded by the Bill and Melinda Gates Foundation (BMGF) from 2009-2013, aimed to provide a consistent baseline of soil information across sub-Saharan Africa (SSA). Led by CIAT-TSBF, partners included: ISRIC, CIESIN, The Earth Institute at Columbia University and World Agroforestry (ICRAF). ICRAF led the systematic assessments of soil health using the Land Degradation Surveillance Framework (LDSF), which was developed at ICRAF, http://landscapeportal.org/blog/2015/03/25/the-land-degradation-surveillance-framework-ldsf/. LDSF sites were randomized using spatial stratification based on Koeppen-Geiger Climate zones across 19 countries in SSA. In total 60 LDSF sites were sampled. Soil samples were collected using the LDSF at two depths, 0-20 cm (labelled Topsoil) and 20-50 cm (labelled Subsoil). In each LDSF site, approximately 320 standard soil samples were collected. All of these were also scanned using MIR Spectroscopy and are available on Dataverse here: Vågen, Tor-Gunnar;Winowiecki, Leigh Ann;Desta, Luseged;Tondoh, Ebagnerin Jérôme;Weullow, Elvis;Shepherd, Keith;Sila, Andrew, 2020, 'Mid-Infrared Spectra (MIRS) from ICRAF Soil and Plant Spectroscopy Laboratory: Africa Soil Information Service (AfSIS) Phase I 2009-2013', https://doi.org/10.34725/DVN/QXCWP1, World Agroforestry - Research Data Repository, V1."
@@ -88,10 +100,27 @@ carob_script <- function(path) {
 	d$soil_Na[d$soil_Na <= 0] <- 0.0001
 	d$soil_P_total[d$soil_P_total <= 0] <- 0.0001
 	d$soil_SOC[d$soil_SOC <= 0] <- 0.001
+  
+	# Shoshong: longitude in source is a copy of latitude
+	i <- d$location == "Shoshong"
+	d$longitude[i] <- 26.517
+	d$geo_from_source[i] <- FALSE   # longitude added; latitude is from source
+	
+	# Prieska: fill the one missing plot with the mean of the other Prieska plots
+	i <- d$location == "Prieska"
+	j <- i & is.na(d$longitude)
+	d$longitude[j] <- mean(d$longitude[i], na.rm = TRUE)
+	d$latitude[j]  <- mean(d$latitude[i],  na.rm = TRUE)
+	d$geo_from_source[j] <- FALSE
+	
+	# Analavory: no coordinates in source, use town centre
+	i <- d$location == "Analavory"
+	d$longitude[i] <- 46.717
+	d$latitude[i]  <- -18.967
+	d$geo_from_source[i] <- FALSE
+  ## better not georeference by looking up names as the other locations seem quite precise.
 
-## better not georeference by looking up names as the other locations seem quite precise.
-
-	d$longitude[d$location == "Shoshong"] <- NA
+	#d$longitude[d$location == "Shoshong"] <- NA
 
 	
 	carobiner::write_files(path, meta, d)

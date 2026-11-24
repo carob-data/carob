@@ -81,5 +81,59 @@ Soil sampling with 1x1 km grid in the agricultural area of the Tlalquiltenango M
     method = c("Mehlich3"))
   soilmeta$soil_P <- "Bray1"
   
+  #fix geolocation names and add coordinates
+  x <- tolower(trimws(gsub("\\s+", " ", d$location)))
+  x[x %in% c("na", "")] <- NA
+  geo <- as.data.frame(rbind(
+    ## raw name,                       location,                         lat,      lon,       uncertainty (m)
+    c("santiopan",                     "Santiopa",                       18.42965, -98.95135, NA),     # https://www.geonames.org/3514575
+    c("xochipala",                     "Xochipala",                      18.42419, -99.0514,  NA),     # https://www.geonames.org/3514443
+    c("rancho viejo",                  "Rancho Viejo",                   18.42444, -99.01361, NA),     # https://www.geonames.org/8878427
+    c("chimalacatlan",                 "Chimalacatlán",                  18.46327, -99.09242, NA),     # https://www.geonames.org/3530859
+    c("huatla",                        "Huautla",                        18.44,    -99.02472, NA),     # https://www.geonames.org/3526990
+    c("cuaxitlan",                     "Coaxitlán",                      18.44944, -99.1825,  NA),     # https://www.geonames.org/3761666
+    c("coaxitlan",                     "Coaxitlán",                      18.44944, -99.1825,  NA),     # https://www.geonames.org/3761666
+    c("loaxitlan",                     "Coaxitlán",                      18.44944, -99.1825,  NA),     # https://www.geonames.org/3761666
+    c("ajuchitlan",                    "Ajuchitlán",                     18.46357, -98.97257, NA),     # https://www.geonames.org/3533122
+    c("juchitlan",                     "Ajuchitlán",                     18.46357, -98.97257, NA),     # https://www.geonames.org/3533122
+    c("ajuchitlan, campo cardona",     "Ajuchitlán, Campo Cardona",      18.46357, -98.97257, 2000),   # https://www.geonames.org/3533122
+    c("ajuchitlan, campo tierra larga","Ajuchitlán, Campo Tierra Larga", 18.46357, -98.97257, 2000),   # https://www.geonames.org/3533122
+    c("nexpa",                         "Nexpa",                          18.52032, -99.14553, NA),     # https://www.geonames.org/3522755
+    c("la mezquitera",                 "La Mezquitera",                  18.5621,  -99.10031, NA),     # https://www.geonames.org/3532666
+    c("la mezquitera la piaña",        "La Mezquitera, La Piaña",        18.5621,  -99.10031, 2000),   # https://www.geonames.org/3532666
+    c("valle de vazquez",              "Valle de Vázquez",               18.52858, -99.06943, NA),     # https://www.geonames.org/3524045
+    c("lorenzo de vazquez",            "Lorenzo Vázquez",                18.57361, -99.07278, NA),     # https://www.geonames.org/8860777
+    c("tlaquiltenango",                "Tlaquiltenango",                 18.63429, -99.1632,  NA),     # https://www.geonames.org/3515373
+    c("xicatlacotla",                  "Xicatlacotla",                   18.51667, -99.19306, NA),     # https://www.geonames.org/8867048
+    c("la maroma",                     "La Maroma",                      18.62167, -99.14639, NA),     # https://www.geonames.org/8898440
+    c("lo elotes",                     "Los Elotes",                     18.51958, -99.11951, NA),     # https://www.geonames.org/3524080
+    c("los elotes",                    "Los Elotes",                     18.51958, -99.11951, NA),     # https://www.geonames.org/3524080
+    c("la era",                        "La Era",                         18.54821, -99.10783, NA),     # https://www.geonames.org/13436333
+    c("las bovedas",                   "Las Bóvedas",                    18.55917, -99.1125,  NA),     # https://www.geonames.org/8870366
+    c("san jose de pala",              "San José de Pala",               18.55667, -99.01472, NA),     # https://www.geonames.org/8864790
+    c("quilamula",                     "Quilamula",                      18.51049, -99.01895, NA),     # https://www.geonames.org/3520897
+    c("quilamula - campo huayacares",  "Quilamula, Campo Huayacares",    18.51049, -99.01895, 2000),   # https://www.geonames.org/3520897
+    c("quilamula (las presas)",        "Quilamula, Las Presas",          18.51049, -99.01895, 2000),   # https://www.geonames.org/3520897
+    c("las presas",                    "Quilamula, Las Presas",          18.51049, -99.01895, 2000),   # https://www.geonames.org/3520897
+    c("quilamula (la linea)",          "Quilamula, La Línea",            18.51049, -99.01895, 2000),   # https://www.geonames.org/3520897
+    c("quilamula / san jose jepala",   "Quilamula/San José de Pala",     18.51049, -99.01895, 5000),   # https://www.geonames.org/3520897
+    ## not in GeoNames: centre of Tlaquiltenango municipality
+    c("san jose",                      "San José",                       18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("loma del muerto",               "Loma del Muerto",                18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("el guayabo",                    "El Guayabo",                     18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("zacualpa",                      "Zacualpa",                       18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("la gra",                        "La Gra",                         18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("pamarunera",                    "Pamarunera",                     18.55041, -99.12255, 20000),  # https://www.geonames.org/8582393
+    c("las ventillas",                 "Las Ventillas",                  18.55041, -99.12255, 20000)   # https://www.geonames.org/8582393
+  ))
+  
+  names(geo) <- c("raw", "location", "latitude", "longitude", "geo_uncertainty")
+  i <- match(x, geo$raw)
+  d$location <- geo$location[i]
+  d$latitude <- as.numeric(geo$latitude[i])
+  d$longitude <- as.numeric(geo$longitude[i])
+  d$geo_uncertainty <- as.numeric(geo$geo_uncertainty[i])
+  d$geo_from_source <- FALSE
+  
   carobiner::write_files(path, meta, d)
 }

@@ -1,5 +1,8 @@
 # R script for "carob"
 
+#ISSUES
+# No GPS in the data. Basing on data description all fields set to the centre of the 10 x 10 km Bako study area (37.115, 9.085; geo_uncertainty 7.1 km);
+# Laga Mara and Gudeya were obtained from GeoNames. Location strings "kebele, village" split into adm4 and location; spelling variants merged.
 
 carob_script <- function(path) {
 
@@ -108,10 +111,47 @@ carob_script <- function(path) {
 	d$soil_K <- r$`K (mg kg-1)` # mg/kg
 	d$soil_P_total <- r$`P (mg kg-1)`
 	
-#	d <- d[,c("country", "site", "trial_id", "longitude", "latitude", "planting_date", "on_farm", "is_survey", "treatment", "rep", "crop", "variety_code", "variety_type", "previous_crop",
-#	          "yield", "fertilizer_type", "N_fertilizer", "P_fertilizer", "K_fertilizer", "OM_used", "OM_type", "OM_amount", "soil_type", "soil_pH", "soil_SOC",
-#	          "soil_N", "soil_K", "soil_P_total")]
+	#fixing location names where possible
+	x <- tolower(gsub("\\s+", " ", trimws(gsub("[\r\n]", " ", d$location))))
+	keb <- c("^b[ae]ch[ae]ra[ ,.-]*oda[ -]*(gibe|wolde)|^b[ae]ch[ae]ra|^oda gibe" = "Bechera Oda Gibe",
+	         "^d[ae]mb[iu] dima" = "Dembi Dima",
+	         "^s[ae]d[ae]n (kite|qixee)" = "Sadan Kite",
+	         "^tulu s[ae]ngota" = "Tulu Sangota",
+	         "^ch[ae][kg]a( dimi?tu)?" = "Cheka Dimtu",
+	         "^dambi gobu" = "Dambi Gobu", "^bari abo" = "Bari Abo", "^kortu chancho" = "Kortu Chancho")
+	d$adm4 <- NA
+	for (k in names(keb)) {
+	  i <- is.na(d$adm4) & grepl(k, x)
+	  d$adm4[i] <- keb[k]
+	  x[i] <- sub(k, "", x[i])
+	}
+	x <- trimws(gsub("^[ ,.(/-]+|[ ,.)/-]+$", "", x))
+	x[x == ""] <- NA
 	
+	vfix <- c("burqa mesee" = "burka mese", "qilxu gada" = "kiltu gada", "guba haro/kiltu goda" = "guba haro/kiltu gada",
+	          "gindabali" = "ginda bali", "gindo bali" = "ginda bali", "wande2nd" = "wande 2",
+	          "lega ida" = "laga hida", "lega hida" = "laga hida", "lega mera" = "laga mara", "semoni" = "samoni",
+	          "ware gode" = "wara gode", "dagaago" = "dagago")
+	i <- x %in% names(vfix)
+	x[i] <- vfix[x[i]]
+	d$location <- gsub("(^|[ /-])([a-z])", "\\1\\U\\2", x, perl = TRUE)
+	
+	#add coordinates
+	d$longitude <- 37.115
+	d$latitude <- 9.085
+	d$geo_uncertainty <- 7071
+	d$geo_from_source <- FALSE
+	## villages found in GeoNames inside the study area
+	i <- d$location %in% "Laga Mara"
+	d$longitude[i] <- 37.15;    d$latitude[i] <- 9.1                                 # https://www.geonames.org/332308
+	i <- d$location %in% "Gudeya"
+	d$longitude[i] <- 37.16667; d$latitude[i] <- 9.11667                             # https://www.geonames.org/335747
+	d$geo_uncertainty[d$location %in% c("Laga Mara", "Gudeya")] <- 2000              # GeoNames rounds to ~1 arc-minute
+	
+	d$country <- "Ethiopia"
+	d$adm1 <- "Oromia"
+	d$adm2 <- "West Shewa"
+	d$adm3 <- "Bako Tibe"
 	
 	d$yield_part <- "grain"
 	d$crop_cut <- TRUE

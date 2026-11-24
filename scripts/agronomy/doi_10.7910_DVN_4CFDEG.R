@@ -80,8 +80,10 @@ To assess long-term sustainability of intensive irrigated lowland rice in semi-a
 	d$longitude[i] <- -15.222
 	d$latitude[i] <- 16.5258
 	i <- grepl("Ndiaye", d$location)
-	d$longitude[i] <- -16.3484
-	d$latitude[i] <- 13.9608
+	# AfricaRice Ndiaye station is in the Senegal River delta, not southern Senegal.
+	# GLTEN site for this LTFE: https://glten.org/experiments/3
+	d$longitude[i] <- -16.2474
+	d$latitude[i] <- 16.1824
 	
 	i <- is.na(d$planting_date)
 	d$planting_date[i] <- d$year[i]

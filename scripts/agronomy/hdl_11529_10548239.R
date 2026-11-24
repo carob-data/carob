@@ -86,6 +86,17 @@ carob_script <- function(path) {
 	d$longitude[i] <- d$latitude[i]
 	d$latitude[i] <- lat
 
+	i <- is.na(d$latitude) | is.na(d$longitude)
+	d$geo_from_source[i] <- FALSE
+	d$latitude[i & d$adm3 == "Hawassa"] <- 7.04878
+	d$longitude[i & d$adm3 == "Hawassa"] <- 38.49796
+	d$latitude[i & d$adm3 == "Adami tullu"] <- 7.86474
+	d$longitude[i & d$adm3 == "Adami tullu"] <- 38.70719
+
+	# geo source for hawassa and adami tullu
+	# - hawassa : https://www.google.com/maps/place/Hawassa,+Ethiopia/@7.0559363,38.4490359,13z/data=!3m1!4b1!4m6!3m5!1s0x17b14573a067b82b:0xa82c1a9985db8f16!8m2!3d7.0477329!4d38.4957849!16zL20vMDZreDkx?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D
+	# - adami tullu : https://www.google.com/maps/place/Adami+Tulu,+Ethiopia/@7.8636366,38.6974953,15z/data=!3m1!4b1!4m6!3m5!1s0x17b483013309a1db:0x661c13478680c378!8m2!3d7.8648076!4d38.7079849!16zL20vMGZqNDRm?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D
+
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- 0
 	d$Ca_fertilizer <- d$Mg_fertilizer <- d$Zn_fertilizer <- d$B_fertilizer <- 0
 	

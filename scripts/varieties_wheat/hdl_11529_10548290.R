@@ -26,8 +26,8 @@ carob_script <- function(path) {
 	d$wide$crop <- "durum wheat"
 	
 	#removing out of bound value
-	d$soil_pH[d$soil_pH == 24] <- NA
-	d$soil_pH[d$soil_pH == 0] <- NA
+	d$wide$soil_pH[d$wide$soil_pH == 24] <- NA
+	d$wide$soil_pH[d$wide$soil_pH == 0] <- NA
 
 	carobiner::write_files(path, meta, d$wide, d$long)
 }

@@ -41,10 +41,9 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	r2 <- carobiner::read.RData(f2)$Geo_Peds	
 
 	d <- data.frame(
-	  sample_id = as.character(r2$pedon_key),
+	  sample_id = paste(r2$pedon_key, r2$county_cod, sep = "-"),
 	  adm1 = as.character(r2$state),
 	  #location = r2$province,
-	  location_id = as.character(r2$county_cod),
 	  date = as.character(r2$site_obsyear),
 	  land_slope = atan(r2$slope / 100) * (180 / pi), # % to degrees
 	  latitude = r2$lat,
@@ -65,7 +64,7 @@ Soils data from 41,878 horizons were extracted from the Kellogg Soil Survey Labo
 	  depth_bottom = r2$hzn_bot,
 	  soil_bd = r2$bd,
 	  soil_SOC = r2$soc,
-	  soil_EC = r2$ecec,
+	  soil_ECEC = r2$ecec,
 	  soil_Ca = r2$ca,
 	  soil_K = r2$k,
 	  soil_Mg = r2$mg,
