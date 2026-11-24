@@ -8,14 +8,14 @@
 # 540 plots in d; long table: 1188 cover records (plot x 30-120 DAS) and 5939 species records. Metadata file is the codebook.
 
 ## ISSUES
-# NPK 11-22-16 taken as N-P2O5-K2O; paper gives 17.6 kg P and 12.8 kg K (as if elements). Check.
 # Manure: paper says 10 t DM/ha, codebook 5-10 t DM/ha; 10000 kg/ha used; OM_type assumed farmyard manure.
 # "shoot t/ha" taken as rice straw dry matter (dmy_residue); fresh/dry basis is not stated.
 # missing.plant often disagrees with tiller and panicle counts (e.g. 102 of 105 hills empty, 2.5 t/ha); kept.
-# Likely data errors, kept: tot.weeds is not the sum of weed groups in 3 plots.
+# Likely data errors, kept: tot.weeds differs from grass + broadleaved + sedge in 51 records: mostly by 1 g/m2 (rounding), 3 by more.
 # 2 CT weedy plots (2017) with yield 0; one has no tillers, so stem/spike_density 0 is flagged (min 500).
 # harvest_date not reported (4-month cycle); left NA.
 # Weed-free NT plots have per-species cover but no total weed cover (WeedCover empty); kept as is.
+# Stylosanthes is a living mulch (established before the rice), stored as cover_crop; give it its own record, as for intercrops?
 
 ## NEW VARIABLES
 # weed_management: weeding regime ("weedy", "weed-free", "weed-stylo-free" = weeds and stylosanthes regrowth removed)
@@ -32,7 +32,7 @@
 
 ## NOT PROCESSED
 # Paper: rainfall 1220, 1231, 1241 mm in 2016-2018 (period not clear: season or year).
-# Paper: rolled stylosanthes mulch 16 t/ha at sowing (mean over NT plots, not per plot), 7-10 seeds per hill.
+# Paper: 7-10 seeds per hill (a range).
 # Paper: CT ploughed in May and tilled 5 cm deep in October; NT stylosanthes rolled 3 times (June, September).
 
 
@@ -57,11 +57,11 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		treatment_vars = "land_prep_method;cover_crop;N_fertilizer;P_fertilizer;K_fertilizer;weed_management",
 		response_vars = "yield;weed_dmy;weed_cover;weed_species_cover;cover_crop_dmy",
 		notes = NA,
-		carob_contributor = NA,
-		carob_LLM = "Claude Opus 5.5",
+		carob_contributor = "Stella Muthoni",
+		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
 		carob_date = "2026-11-24",
 		carob_completion = 90,
-		carob_effort = 0.3
+		carob_effort = 0.5
 	)
 
 	f1 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedBiomassRiceYield.xlsx"]
@@ -139,7 +139,9 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		soil = c("CT", "NT"),
 		land_prep_method = c("conventional", "none"),       # CT: ploughing in May, 5 cm tillage in October
 		cover_crop = c("none", "stylosanthes"),             # S. guianensis cv. CIAT 184, living mulch
-		cover_crop_used = c(FALSE, TRUE)
+		cover_crop_used = c(FALSE, TRUE),
+		mulch = c(0, 16000),                                # paper: rolled stylosanthes 16 t/ha at sowing (mean over NT plots)
+		mulch_type = c(NA, "stylosanthes")
 	)
 	dferti <- data.frame(
 		ferti = c("F1", "F2"),
@@ -150,8 +152,8 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		fertilizer_amount = c(0, 80 + 50),                  # 80 kg/ha NPK 11-22-16 at sowing, 50 kg/ha urea 6 weeks later
 		fertilizer_dap = c(NA, "0;42"),
 		N_fertilizer = c(0, 80 * 0.11 + 50 * 0.46),
-		P_fertilizer = c(0, 80 * 0.22 / 2.29),              # grade taken as P2O5
-		K_fertilizer = c(0, 80 * 0.16 / 1.2051)             # grade taken as K2O
+		P_fertilizer = c(0, 80 * 0.22 / 2.29),              # grade is P2O5: paper's "17.6 kg P" = 80 x 22%, an oxide amount
+		K_fertilizer = c(0, 80 * 0.16 / 1.2051)             # grade is K2O: paper's "12.8 kg K" = 80 x 16%
 	)
 	dweed <- data.frame(
 		weed_management = c("weedy", "weed-free", "weed-stylo-free"),
