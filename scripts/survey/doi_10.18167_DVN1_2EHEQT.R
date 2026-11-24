@@ -82,7 +82,7 @@ carob_script <- function(path) {
   geo <- data.frame(
 		location=c("Antsahamamy", "Ambohimiarina", "Ambohitsilaozana", "Ambongabe", "Ampitatsimo"),
 		latitude=c(-17.515, -17.9325, -17.7014, -17.7067, -17.775),
-		longitude=c(48.56, 48.179 48.4657, 48.1885, 48.375),
+		longitude=c(48.56, 48.179, 48.4657, 48.1885, 48.375),
 		geo_uncertainty = c(2000, 75000, NA, NA, 2000),
 		geo_from_source = FALSE
 	)
