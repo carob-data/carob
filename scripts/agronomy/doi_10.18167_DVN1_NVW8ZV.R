@@ -17,7 +17,7 @@
 # Paper calls the intercrops "cover crops". They were not harvested, so each is its own row (yield NA), not a cover_crop on the cane row.
 # Herbicide counts from Table 2 are herbicide_times (pre- and post-emergence summed): applications on the cane row on the sugarcane record, applications in the inter-row on the intercrop record. With no intercrop, both are on the sugarcane record.
 # Readme says dates are DD/MM/YYYY, but species file uses MM/DD/YYYY (read as such).
-# Likely data errors, kept: 19 rows inter-row weed+intercrop cover < weed cover; Canavalia cover in 3 CcRo rows.
+# Likely data errors, kept: 19 rows where inter-row weeds-and-intercrop cover is below the weed score; Canavalia cover in 3 CcRo rows, stored as ground_cover. On plots with no intercrop the global score is weed cover, so it is not stored separately.
 # yield (91-184 t/ha) flagged out of bounds by the generic 150 t/ha limit; normal for sugarcane.
 # fertilizer_amount 1152 kg/ha at Saint-Paul is above the terminag limit (1000); kept as reported.
 # geo_uncertainty left NA for the two farmer fields (field size not given).
@@ -27,11 +27,8 @@
 # internode_number, bored_internodes: internodes and bored internodes per dissected stalk (long table)
 # stalk_bored: stalk with at least one internode bored (long table, TRUE/FALSE)
 # herbicide_tfi: herbicide treatment frequency index per treatment and trial (paper section 2.6), unitless
-# interrow_weed_control: inter-row management ("intercrop", "herbicide" or "none")
 # ratoon_number: crop cycle (0 = planted cane, 1 = first ratoon, ...)
-# weed_intercrop_cover, weed_intercrop_cover_interrow: ground cover by weeds and intercrop, whole plot / inter-row, %
 # weed_cover_interrow: ground cover by weeds in the inter-row, %
-# intercrop_cover_interrow: ground cover by the intercrop in the inter-row, %
 
 ## NOT PROCESSED
 # ground cover by species: pres (equals cover > 0) and growth_type (species attribute).
@@ -59,8 +56,8 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 		project = NA,
 		design = "RCBD; 3 (Saint-Paul) or 4 reps",
 		data_type = "experiment",
-		treatment_vars = "intercrops;seed_rate;planting_date;interrow_weed_control",
-		response_vars = "yield;bored_stalks;herbicide_tfi;weeding_times;weed_cover;weed_cover_interrow;intercrop_cover_interrow;weed_species_cover",
+		treatment_vars = "intercrops;seed_rate;planting_date",
+		response_vars = "yield;bored_stalks;herbicide_tfi;weeding_times;weed_cover;weed_cover_interrow;ground_cover;weed_species_cover",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
@@ -181,7 +178,6 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 		herbicide_interrow = as.integer(pre_ir + post_ir)
 	)
 	dtrt$intercrops <- c(DiE="desmodium", DiL="desmodium", CeE="jack bean", CeL="jack bean", CcRo="none", CcWp="none")[dtrt$treatment]
-	dtrt$interrow_weed_control <- c(DiE="intercrop", DiL="intercrop", CeE="intercrop", CeL="intercrop", CcRo="none", CcWp="herbicide")[dtrt$treatment]
 	dtrt$intercrop_type <- ifelse(dtrt$intercrops == "none", NA, "row")   # sown on 2 lines in each inter-row
 	dtrt$intercrop_seed_rate <- c(DiE=5.3, DiL=5.3, CeE=116.7, CeL=116.7, CcRo=NA, CcWp=NA)[dtrt$treatment]
 	# early intercrops at Saint-Paul were natural regrowth from a previous trial, not sown
@@ -271,8 +267,10 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
 	## long table: ground cover (r2, plus r4 rows not in r2), species cover (r3) and borer per stalk (r1)
-	## record_id separates the two crops, which share a plot_id. Intercrop cover goes to the intercrop record.
-	## Canavalia cover on CcRo (no intercrop row) stays on the cane record.
+	## record_id separates the two crops, which share a plot_id.
+	## On the intercrop record, weeds-and-intercrop cover is weed_cover (whole plot) and weed_cover_interrow;
+	## the intercrop's own cover is ground_cover. Weed-only scores stay on the cane.
+	## With no intercrop the global score is weed cover. It fills weed_cover only where that score is missing.
 	keys <- rbind(d6[, c("trial_id", "treatment", "rep", "plot_id")], des)
 	d2 <- merge(d2, keys, by=c("trial_id", "treatment", "rep"))
 	d4 <- merge(d4, keys, by=c("trial_id", "treatment", "rep"))
@@ -281,10 +279,26 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 	cane_id <- d[d$crop == "sugarcane", c("plot_id", "record_id")]
 	ic_id <- d[d$crop != "sugarcane", c("plot_id", "record_id")]
 	dlong$record_id <- cane_id$record_id[match(dlong$plot_id, cane_id$plot_id)]
-	has_ic <- dlong$plot_id %in% ic_id$plot_id & !is.na(dlong$intercrop_cover_interrow)
-	icov <- dlong[has_ic, c("plot_id", "date", "DAE", "intercrop_cover_interrow")]
+	ic_cols <- c("weed_intercrop_cover", "weed_intercrop_cover_interrow", "intercrop_cover_interrow")
+	on_ic <- dlong$plot_id %in% ic_id$plot_id
+	has_ic <- on_ic & (rowSums(!is.na(dlong[, ic_cols])) > 0)
+	icov <- dlong[has_ic, c("plot_id", "date", "DAE", ic_cols)]
 	icov$record_id <- ic_id$record_id[match(icov$plot_id, ic_id$plot_id)]
-	dlong$intercrop_cover_interrow[dlong$plot_id %in% ic_id$plot_id] <- NA
+	icov$weed_cover <- icov$weed_intercrop_cover
+	icov$weed_cover_interrow <- icov$weed_intercrop_cover_interrow
+	icov$ground_cover <- icov$intercrop_cover_interrow
+	icov$weed_intercrop_cover <- icov$weed_intercrop_cover_interrow <- icov$intercrop_cover_interrow <- NULL
+	dlong[on_ic, ic_cols] <- NA
+	# no intercrop: global score is weed cover. Keep the weeds-only score, and use the global
+	# score only where that is missing. Stray Canavalia cover is ground_cover.
+	solo <- !on_ic
+	dlong$ground_cover <- NA
+	dlong$ground_cover[solo] <- dlong$intercrop_cover_interrow[solo]
+	miss_wp <- solo & is.na(dlong$weed_cover)
+	dlong$weed_cover[miss_wp] <- dlong$weed_intercrop_cover[miss_wp]
+	miss_ir <- solo & is.na(dlong$weed_cover_interrow)
+	dlong$weed_cover_interrow[miss_ir] <- dlong$weed_intercrop_cover_interrow[miss_ir]
+	dlong$weed_intercrop_cover <- dlong$weed_intercrop_cover_interrow <- dlong$intercrop_cover_interrow <- NULL
 	dlong <- carobiner::bindr(dlong, icov)
 	dlong$trial_id <- dlong$treatment <- dlong$rep <- NULL
 	dlong$date <- as.character(dlong$date)
