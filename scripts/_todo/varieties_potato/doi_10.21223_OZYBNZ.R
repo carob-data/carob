@@ -50,7 +50,8 @@ An analysis of micronutrient concentration, including minerals and vitamin C, wa
 		treatment_vars = "variety",
 		response_vars = "tuber_Fe_dw_;tuber_Zn_dw_;tuber_ascorbate_dw_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.4

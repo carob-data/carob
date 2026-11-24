@@ -46,7 +46,8 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 		treatment_vars = "variety;water_regime_",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.5

@@ -47,7 +47,8 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		treatment_vars = "irrigation_regime_",
 		response_vars = "tuber_fresh_g_plant_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.45

@@ -42,7 +42,8 @@ Enquête dans les treize régions administratives où la culture du coton a ét�
 		treatment_vars = "none",
 		response_vars = "yield",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 30,
 		carob_effort = 0.4
 	)

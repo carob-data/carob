@@ -49,7 +49,8 @@ Five most promising FOC antagonistic isolates (CAI-24, CAI-121, CAI-127, KAI-32 
 		treatment_vars = "seed_treatment",
 		response_vars = "disease_incidence",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.8

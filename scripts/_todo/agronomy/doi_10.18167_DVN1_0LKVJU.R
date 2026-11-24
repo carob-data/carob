@@ -47,7 +47,8 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 		treatment_vars = "weeding_method;intercrops",
 		response_vars = "yield;ground_cover",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 50,
 		carob_effort = 0.8
 	)

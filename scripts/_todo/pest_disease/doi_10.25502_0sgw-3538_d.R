@@ -52,7 +52,8 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 		treatment_vars = "treatment",
 		response_vars = "pest_incidence;fruit_infestation_",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.7

@@ -43,7 +43,8 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		treatment_vars = "variety",
 		response_vars = "dry_matter_minerals_percent_;tuber_Fe_mg_kg_dw_;tuber_Zn_mg_kg_dw_;ascorbic_acid_mg_100g_fw_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.5

@@ -62,7 +62,8 @@ Harvest index is an important component of grain yield and is typically reduced 
 		data_type = "experiment",
 		treatment_vars = "variety;drought_stress",
 		response_vars = "yield;harvest_index", 
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 60,
 		carob_effort = 1

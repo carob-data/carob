@@ -37,7 +37,8 @@ The Indo-Gangetic Plains (IGP) in north-west (NW) India are facing a severe decl
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;land_prep_method;irrigation_method;residue_prevcrop_used",
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
 		carob_effort = 0.5

@@ -40,7 +40,8 @@ CIMMYT implemented a study at its station in Texcoco, Mexico to compare the effe
 		data_type = "experiment",
 		treatment_vars = "treatment;variety",
 		response_vars = "germination_rate;seed_weight",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.4

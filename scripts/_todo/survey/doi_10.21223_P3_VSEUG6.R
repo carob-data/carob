@@ -55,7 +55,8 @@ The Mama SASHA baseline survey is a key part of a project evaluation strategy ai
 		design = NA,
 		data_type = "survey",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 20,
 		carob_effort = 0.35

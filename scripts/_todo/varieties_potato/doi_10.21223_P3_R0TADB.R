@@ -49,7 +49,8 @@ Field evaluation trials for relative resistance requires the testing material to
 		treatment_vars = "variety",
 		response_vars = "infected_plants_pct_;virus_severity",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.55

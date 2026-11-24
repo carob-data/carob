@@ -80,7 +80,8 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 		treatment_vars = "none",
 		response_vars = "yield",
 		notes = "Yield is farmer-reported production (fresh paddy) per reported area",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 50,
 		carob_effort = 0.6

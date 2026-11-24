@@ -31,7 +31,8 @@ Climatic data reported during the wheat cycle in Obregon (IWYP Hub) in 2015-2016
 		project = "IWYP",
 		design = NA,
 		data_type = "compilation",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 90,
 		carob_effort = 0.3

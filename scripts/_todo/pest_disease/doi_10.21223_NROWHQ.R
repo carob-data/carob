@@ -50,7 +50,8 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 		treatment_vars = "none",
 		response_vars = "incidence_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.45

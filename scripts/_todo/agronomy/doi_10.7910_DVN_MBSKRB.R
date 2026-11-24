@@ -62,7 +62,8 @@ water use related traits, flowering time and root system architecture in the fie
 		data_type = "experiment",
 		treatment_vars = "variety;stress",
 		response_vars = "yield;dmy_residue;flowering_days",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 80,
 		carob_effort = 0.5

@@ -83,7 +83,8 @@ The rapid progress in genotyping of rice must be matched by advances in phenotyp
 		data_type = "experiment",
 		treatment_vars = "variety;stress",
 		response_vars = "yield;dmy_residue;harvest_index;flowering_days;plant_height",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 45,
 		carob_effort = 1

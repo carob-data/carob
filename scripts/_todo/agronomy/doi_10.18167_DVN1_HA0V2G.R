@@ -54,7 +54,8 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 		treatment_vars = "treatment",
 		response_vars = "yield;ground_cover;weed_biomass",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 50,
 		carob_effort = 1.1
 	)

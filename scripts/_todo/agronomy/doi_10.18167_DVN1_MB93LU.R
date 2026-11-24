@@ -45,7 +45,8 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 		treatment_vars = "land_prep_method;shrub_density_",
 		response_vars = "yield",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 50,
 		carob_effort = 0.55
 	)

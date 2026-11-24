@@ -45,7 +45,8 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;seed_density;CO2_concentration_",
 		response_vars = "yield",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
 		carob_effort = 2.5

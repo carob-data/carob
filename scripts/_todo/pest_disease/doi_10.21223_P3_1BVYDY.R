@@ -59,7 +59,8 @@ Study area. The study was conducted through the winter cropping season (from Jun
 		treatment_vars = "landscape_;conservation_strip_;potato_rows_",
 		response_vars = "pest_incidence;pest_severity",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.45

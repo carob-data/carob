@@ -41,7 +41,8 @@ Wheat head blast index (%) data for four CIMMYT nurseries (15HLBSN, 15HZAN, 41SA
 		data_type = "experiment",
 		treatment_vars = "variety_code",
 		response_vars = "blast_index_",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.4

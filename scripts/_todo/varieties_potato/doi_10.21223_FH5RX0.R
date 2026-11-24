@@ -60,7 +60,8 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		treatment_vars = "variety",
 		response_vars = "yield_moisture;tuber_chlorogenic_dw_;tuber_caffeic_dw_;tuber_tryptophan_dw_;tuber_TP_dw_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.55

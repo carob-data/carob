@@ -43,7 +43,8 @@ Household wheat yield in Bangladesh before and after the 2016 wheat blast outbre
 		data_type = "survey",
 		treatment_vars = NA,
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
 		carob_effort = 0.4

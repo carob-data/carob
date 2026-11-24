@@ -51,7 +51,8 @@ This dataset consists of daily weather data collected from diverse locations in 
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.5

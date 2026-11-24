@@ -52,7 +52,8 @@ This dataset contains, Actinomycetes (CAI-13, CAI-85, CAI-93, CAI-140, CAI-155 a
 		treatment_vars = "seed_treatment",
 		response_vars = "yield;dmy_residue;dmy_total;plant_height;SPAD;seed_weight",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.8

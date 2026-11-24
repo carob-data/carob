@@ -52,7 +52,8 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 		treatment_vars = "irrigation_timing_;irrigation_regime_",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.55

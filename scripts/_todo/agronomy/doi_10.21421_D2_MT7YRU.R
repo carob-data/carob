@@ -887,7 +887,8 @@ Sequential observations of agronomical important traits during cropping season f
 		treatment_vars = paste(tv, collapse = ";"),
 		response_vars = paste(resp, collapse = ";"),
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.5

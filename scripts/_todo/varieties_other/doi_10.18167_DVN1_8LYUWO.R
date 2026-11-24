@@ -40,7 +40,8 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "flowering_days;plant_height;seed_weight",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.5

@@ -39,7 +39,8 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		treatment_vars = "variety;storage_",
 		response_vars = "sensory_score_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.35

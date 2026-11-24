@@ -74,7 +74,8 @@ An agronomic trial designed to identify the varieties best suited to the grower'
 		treatment_vars = "variety;irrigated;fertiliser_regime_",
 		response_vars = "plant_height;bunch_weight_;pest_severity",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
 		carob_effort = 0.7

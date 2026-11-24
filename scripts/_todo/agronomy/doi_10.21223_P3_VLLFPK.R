@@ -60,7 +60,8 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 		treatment_vars = "irrigation_method;cwsi_rule_",
 		response_vars = "fw_tubers;ground_cover;soil_GWC",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.7

@@ -44,7 +44,8 @@ Essais mis en place chez des producteurs dans deux grappes de villages du Nord C
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment;land_prep_method",
 		response_vars = "yield;plant_height",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
 		carob_effort = 0.7

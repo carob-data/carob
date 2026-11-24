@@ -64,7 +64,8 @@ Main crop and plot area on the focal field of each household.
 		data_type = "survey",
 		treatment_vars = NA,
 		response_vars = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 30,
 		carob_effort = 0.3

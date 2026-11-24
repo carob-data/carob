@@ -39,7 +39,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Tlachichuca Munic
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.35

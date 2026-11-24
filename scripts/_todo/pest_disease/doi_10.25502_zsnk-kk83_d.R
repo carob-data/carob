@@ -57,7 +57,8 @@ Assess the link between damage, abundance and yield
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "grain_weight_",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 58,
 		carob_effort = 0.6

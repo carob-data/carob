@@ -47,7 +47,8 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 		treatment_vars = "variety",
 		response_vars = "fe_recorded_;ttwpl_kg_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
 		carob_effort = 0.3

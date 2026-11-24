@@ -43,7 +43,8 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 		treatment_vars = "treatment",
 		response_vars = "fw_;dw_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.35

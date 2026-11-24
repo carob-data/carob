@@ -43,7 +43,8 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height",
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.5

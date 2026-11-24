@@ -42,7 +42,8 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		treatment_vars = "variety;N_fertilizer",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 70,
 		carob_effort = 0.8

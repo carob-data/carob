@@ -43,7 +43,8 @@ Dry direct-seeded rice in no-till or tilled soil is an alternate option for tran
 		data_type = "experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield;dry_weed_biomass_kg_ha_",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.6

@@ -57,7 +57,8 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 		treatment_vars = "variety",
 		response_vars = "ascorbic_acid_mg_100g_dw_;ascorbic_acid_mg_100g_fw_;yield_moisture",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.7

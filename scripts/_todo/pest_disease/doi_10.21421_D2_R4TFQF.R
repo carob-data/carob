@@ -42,7 +42,8 @@ This database includes the research work carried out on evaluation of 160 Pearl 
 		treatment_vars = "variety;pathotype_",
 		response_vars = "disease_severity",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.5

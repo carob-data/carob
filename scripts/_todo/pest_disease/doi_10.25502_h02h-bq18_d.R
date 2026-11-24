@@ -75,7 +75,8 @@ Assess the field biophysical efficacy of different products against FAW and dete
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment;variety",
 		response_vars = "pest_incidence;pest_severity",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 68,
 		carob_effort = 0.9

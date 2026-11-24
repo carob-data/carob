@@ -60,7 +60,8 @@ As part of the GIZ–PZTM project, the trial was established in 2021, while the 
 		treatment_vars = "treatment",
 		response_vars = "disease_severity;pest_count_",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.8

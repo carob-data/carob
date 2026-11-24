@@ -48,7 +48,8 @@ This contains potato seed system data collected for a network analysis. It is fr
 		treatment_vars = "none",
 		response_vars = "volume_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.3

@@ -62,7 +62,8 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 		treatment_vars = "N_fertilizer;OM_amount",
 		response_vars = "yield",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 45,
 		carob_effort = 0.6
 	)

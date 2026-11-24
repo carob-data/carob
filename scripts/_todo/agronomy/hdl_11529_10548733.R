@@ -42,7 +42,8 @@ South Asia is a global hotspot for climate change with enormous pressure on land
 		data_type = "compilation",
 		treatment_vars = "treatment",
 		response_vars = "none",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 25,
 		carob_effort = 0.4

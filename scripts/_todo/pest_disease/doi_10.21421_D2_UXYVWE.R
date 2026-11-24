@@ -48,7 +48,8 @@ This dataset contains phenotypic evaluation data of medium duration disease resi
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;maturity_days;plant_height",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.5

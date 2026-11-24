@@ -40,7 +40,8 @@ Smallholder dairy farmers constitute up to 85% of dairy farmers in Uganda (Atuha
 		treatment_vars = "none",
 		response_vars = "field_size",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 30,
 		carob_effort = 0.4

@@ -37,7 +37,8 @@ This dataset consists of Result of Grain Analysis for the 95 on-farm field trial
 		data_type = "experiment",
 		treatment_vars = "treatment;variety",
 		response_vars = "grain_N;grain_P;grain_K;grain_Zn",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.4

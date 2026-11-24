@@ -42,7 +42,8 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 		treatment_vars = "none",
 		response_vars = "none",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.35

@@ -41,7 +41,8 @@ This experiments were established with different rates of nitrogen in order to g
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer",
 		response_vars = "yield;NDVI",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.8

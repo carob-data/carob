@@ -114,7 +114,8 @@ As the human population continues to grow and competition for natural resources 
 		data_type = "experiment",
 		treatment_vars = "variety;water_management_;drought_stress;planting_method",
 		response_vars = "yield;dmy_total;harvest_index", 
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 45,
 		carob_effort = 1.2

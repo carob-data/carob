@@ -45,7 +45,8 @@ Study of the weed flora of flood sorghum (Muskwari) in the karal soil areas in N
 		treatment_vars = "none",
 		response_vars = "weed_species;ground_cover;weed_cover",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.5

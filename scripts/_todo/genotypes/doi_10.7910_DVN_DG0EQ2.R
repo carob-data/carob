@@ -39,7 +39,8 @@ List of selected Ethiopian sorghum landraces and elite lines assembled as a cros
 		data_type = "compilation",
 		treatment_vars = "none",
 		response_vars = "none",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.35

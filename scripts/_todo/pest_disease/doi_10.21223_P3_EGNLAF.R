@@ -56,7 +56,8 @@ In the years 2005, 2007 and 2008, three trials were carried out in the Cañete v
 		treatment_vars = "variety;insecticide_regime_",
 		response_vars = "yield;pest_severity",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.8

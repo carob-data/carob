@@ -42,7 +42,8 @@ A set of 260 validation trials was conducted from the season 2021B onwards to co
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.45

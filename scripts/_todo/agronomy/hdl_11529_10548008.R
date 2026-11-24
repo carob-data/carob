@@ -50,7 +50,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		treatment_vars = "treatment;variety",
 		response_vars = "yield",
 		carob_contributor = "Fredy Chimire",
-		carob_date = "2026-10-31",
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.8,
