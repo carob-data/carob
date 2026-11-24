@@ -38,7 +38,7 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		response_vars = "none",
 		notes = NA,
 		carob_date = "2026-11-06",
-		carob_contributor = "DMAS, ICRISAT",
+		carob_contributor = "Ajit S",
 		carob_completion = 80,
 		carob_effort = 0.5
 	)
@@ -159,6 +159,8 @@ AP Primary Sector farmer-wise soil health data of 13 districts of Andhra Pradesh
 		paste(unique(x), collapse="; ")
 	}
 	d$previous_crop <- sapply(pc, fix_crop, USE.NAMES=FALSE)
+
+	d <- unique(d) # remove one duplicated record (3513 & 3508)
 
 	carobiner::write_files(path, meta, d)
 }
