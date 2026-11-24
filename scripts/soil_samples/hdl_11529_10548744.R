@@ -12,11 +12,7 @@
 # Coordinates are whole degrees. Positive longitudes were given a minus sign.
 # One silt value is negative and one nitrate value is negative. They are kept.
 # Hydraulic conductivity, milliequivalents, saturation percentages, and CIC are calculated in the metadata.
-# write_files: unknown variables: saturation_pct_. out of bounds: soil_silt (-8, 40), soil_NO3 (-0.144, 100.188). duplicate coordinates: fewer coordinates than locations.
-
-## NEW VARIABLES
-# saturation_pct_: saturation percentage, gravimetric maximum water content, percent.
-
+# write_files: out of bounds: soil_silt (-8, 40), soil_NO3 (-0.144, 100.188). duplicate coordinates: fewer coordinates than locations.
 
 ## NOT PROCESSED
 # Conductividad Hidráulica, milliequivalents, cation saturation, and CIC. The metadata says they are calculated.
@@ -104,7 +100,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Tlachichuca Munic
 		soil_clay = num(r$Arcilla),
 		soil_silt = num(r$Limo),
 		soil_texture = mapped,
-		saturation_pct_ = num(r$`Punto de Saturación`),
+		soil_SP = num(r$`Punto de Saturación`),
 		soil_bd = num(r$`Densidad Aparente`),
 		soil_pH = num(r$`pH(1:2 Agua)`),
 		soil_pH_buffer = num(r$`pH Buffer`),

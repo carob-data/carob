@@ -10,10 +10,9 @@
 ## ISSUES
 # Coordinates are whole degrees. Some sodium, calcium, zinc, and sulfur values are outside the vocabulary range and are kept.
 # Hydraulic conductivity, milliequivalents, saturation percentages, and CIC are calculated.
-# write_files: unknown variable: soil_P_bray_ (soil_P?). unknown variables: saturation_pct_. out of bounds: soil_Ca (1217.979, 10043.181), soil_Na (6.792, 902.964), soil_Zn (-0.002, 8.358), soil_S (1.542, 625.952). duplicate coordinates: fewer coordinates than locations.
+# write_files: unknown variable: soil_P_bray_ (soil_P?). out of bounds: soil_Ca (1217.979, 10043.181), soil_Na (6.792, 902.964), soil_Zn (-0.002, 8.358), soil_S (1.542, 625.952). duplicate coordinates: fewer coordinates than locations.
 
 ## NEW VARIABLES
-# saturation_pct_: saturation percentage, gravimetric maximum water content, percent.
 # soil_P_bray_: Bray 1 phosphorus, mg/kg, on rows that also have Olsen phosphorus.
 
 
@@ -125,7 +124,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Ayala Municipalit
 		soil_clay = num(r$Arcilla),
 		soil_silt = num(r$Limo),
 		soil_texture = mapped,
-		saturation_pct_ = num(r$`Punto de Saturación`),
+		soil_SP = num(r$`Punto de Saturación`),
 		soil_bd = num(r$`Densidad Aparente`),
 		soil_pH = num(r$`pH(1:2 Agua)`),
 		soil_pH_buffer = num(r$`pH Buffer`),

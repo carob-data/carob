@@ -12,11 +12,7 @@
 ## ISSUES
 # Coordinates are whole degrees, so the samples are not separated.
 # Hydraulic conductivity and the milliequivalent and saturation columns are calculated in the metadata, so they are not stored.
-# write_files: unknown variables: saturation_pct_. duplicate coordinates: fewer coordinates than locations.
-
-## NEW VARIABLES
-# saturation_pct_: saturation percentage, the gravimetric maximum water content, percent.
-
+# write_files: duplicate coordinates: fewer coordinates than locations.
 
 ## NOT PROCESSED
 # Conductividad Hidráulica. The metadata says it is calculated from organic matter, saturation, and sodium.
@@ -113,7 +109,7 @@ Soil sampling with 1x1 km grid in the agricultural area of the Jantetelco Munici
 		soil_clay = num(r$Arcilla),
 		soil_silt = num(r$Limo),
 		soil_texture = mapped,
-		saturation_pct_ = num(r$`Punto de Saturación`),
+		soil_SP = num(r$`Punto de Saturación`),
 		soil_bd = num(r$`Densidad Aparente`),
 		soil_pH = num(r$`pH(1:2 Agua)`),
 		soil_pH_buffer = num(r$`pH Buffer`),
