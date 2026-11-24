@@ -4,15 +4,13 @@
 ## NOTES
 # Alpha-lattice variety trial of the sorghum RIL population 296 B x PVK 801, postrainy 2012-13 at IIMR, Rajendranagar, Hyderabad. Moved from agronomy to varieties_sorghum because the treatment is genotype.
 # Plot is 2 rows x 2 m x 0.75 m (3 m2). Spacing 75 cm between rows and 15 cm between plants.
-# Grain yield is "weight/meter square" without a mass unit. Values near 0.1-0.5 were read as kg/m2 and multiplied by 10000 to kg/ha. Hundred-grain weight (g) times 10 is the 1000-grain weight.
-# Fe and Zn are mg/kg and were left in mg/kg (terminag states mg/g).
+# Grain yield is kg/m2. Phuke et al. 2017 Table 3 (IIMR 2012-13) is in t/ha: raw x 10 matches PVK 801 (3.60 t/ha, 2.8-4.5) and the RILs (2.70, 0.4-6.5). 296 B in the file is 3.1 t/ha (1.8-4.2); the published range 1.7-1.4 does not contain the published mean of 3.00. Multiplied by 10000 to kg/ha. 
+# 
 # Coordinates 17.19 N, 78.28 E and elevation 542 m are from the dataset description. geo_uncertainty 600 m reflects 0.01 degree precision.
 
 ## ISSUES
-# Confirm kg/m2 for grain yield in Phuke et al. 2017 (doi:10.3389/fpls.2017.00712).
-# grain_Zn exceeds the terminag maximum because the published unit is mg/kg.
 # Parental rows are not identified, so variety_pedigree is on every row. Fertilizer and irrigation are not reported. Plots missing yield or flowering were kept.
-# write_files: missing carob_contributor; missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; out of bounds grain_Zn (13.9-44.3); NA detected in yield.
+# write_files: missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; NA detected in yield.
 
 ## NOT PROCESSED
 # Genotype: numeric entry code, stored as variety_code.
@@ -41,10 +39,11 @@ The low grain iron and zinc densities are well documented problems in food crops
 		treatment_vars = "variety",
 		response_vars = "yield;grain_Fe;grain_Zn;plant_height;flowering_days;seed_weight",
 		notes = NA,
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "Sorghum RIL populations trial during 2012-13  IIMR.xlsx"]
@@ -66,8 +65,9 @@ The low grain iron and zinc densities are well documented problems in food crops
 		yield = as.numeric(r$`Grain yield`) * 10000,
 		yield_moisture = NA_real_,
 		yield_isfresh = NA,
-		grain_Fe = as.numeric(r$Iron),
-		grain_Zn = as.numeric(r$Zinc),
+		# mg/kg to mg/g
+		grain_Fe = as.numeric(r$Iron) / 1000,
+		grain_Zn = as.numeric(r$Zinc) / 1000,
 		crop = "sorghum",
 		yield_part = "grain",
 		country = "India",

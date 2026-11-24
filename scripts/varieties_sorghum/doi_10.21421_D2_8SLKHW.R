@@ -4,18 +4,13 @@
 ## NOTES
 # Alpha-lattice variety trial of a sorghum RIL population (296 B x PVK 801) and parents, postrainy 2012-13 at ICRISAT, Patancheru. Moved from agronomy to varieties_sorghum because the treatment is genotype.
 # Plot is 2 rows x 2 m x 0.75 m (3 m2). Row spacing 75 cm and plant spacing 15 cm are from the description.
-# Grain yield metadata says "weight/meter square" without a mass unit. Values are about 0.1-0.5, which is kg/m2 (1-5 t/ha) rather than g/m2. Multiplied by 10000 to kg/ha.
-# Hundred-grain weight (g) was multiplied by 10 to 1000-grain weight.
-# Fe and Zn are mg/kg in the metadata. terminag grain_Fe and grain_Zn are mg/g. Values were left in mg/kg, as in doi:10.21421/D2/PMNQEO.
+# Grain yield is kg/m2. Phuke et al. 2017 Table 3 (ICRISAT 2012-13) is in t/ha: raw x 10 matches 296 B (4.13 t/ha, 2.5-5.6), PVK 801 (5.85, 5.0-7.3) and the RILs (3.70, 0.7-7.0). Multiplied by 10000 to kg/ha. 
+# 
 # Coordinates 17.53 N, 78.27 E and elevation 545 m are from the dataset description. geo_uncertainty 600 m is half of the 0.01 degree precision.
 
 ## ISSUES
-# Confirm the grain-yield mass unit (kg/m2) against Phuke et al. 2017 (doi:10.3389/fpls.2017.00712).
-# grain_Zn is above the terminag maximum because the values are mg/kg. Parents are included but not flagged, so the pedigree was applied to every row.
-# Fertilizer and irrigation are not reported. Some plots have no yield, flowering date or grain weight; those rows were kept.
-# Fe and Zn were not divided by 1000. Doing so would put every grain_Fe value below the terminag minimum of 1.
-# Some plots have no yield. They were kept because flowering, height or Fe/Zn is present.
-# write_files: missing carob_contributor; missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; out of bounds grain_Zn (13.6-54.2); NA detected in yield.
+# Parents are included but not flagged, so the pedigree was applied to every row. Fertilizer and irrigation are not reported. Plots missing yield, flowering or grain weight were kept.
+# write_files: missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; NA detected in yield.
 
 ## NOT PROCESSED
 # Genotype: a numeric entry code, stored as variety_code. ICSL No is the variety name.
@@ -44,10 +39,11 @@ The low grain iron and zinc densities are well documented problems in food crops
 		treatment_vars = "variety",
 		response_vars = "yield;grain_Fe;grain_Zn;plant_height;flowering_days;seed_weight",
 		notes = NA,
+		carob_contributor = "Robert Hijmans",
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "Sorghum RIL populations trial during 2012-13 patancheru.xlsx"]
@@ -69,8 +65,9 @@ The low grain iron and zinc densities are well documented problems in food crops
 		yield = as.numeric(r$`Grain yield`) * 10000,
 		yield_moisture = NA_real_,
 		yield_isfresh = NA,
-		grain_Fe = as.numeric(r$Iron),
-		grain_Zn = as.numeric(r$Zinc),
+		# mg/kg to mg/g
+		grain_Fe = as.numeric(r$Iron) / 1000,
+		grain_Zn = as.numeric(r$Zinc) / 1000,
 		crop = "sorghum",
 		yield_part = "grain",
 		country = "India",

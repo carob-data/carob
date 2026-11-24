@@ -6,13 +6,12 @@
 # The description paragraph still says 2012-2013; planting_date is 2013 from the title, file name, and datafile note. Coordinates in that paragraph (17.19 N, 78.28 E, 542 m) are the IIMR site.
 # Plot is 2 rows x 2 m x 0.75 m (3 m2). Spacing 75 cm between rows and 15 cm between plants.
 # Grain yield is kg/m2 ("weight/m2", 0.025-0.702). Phuke et al. 2017 Table 3 (IIMR 2013-14) is in t/ha: raw x 10 matches 296 B (2.14 t/ha, 1.0-3.8) and the RIL range (0.25-6.4). Multiplied by 10000 to kg/ha. The published RIL mean (3.30) and PVK 801 mean (5.19) are higher than these plots (2.7 and 5.0). 
-#divided by 1000 to mg/g. geo_uncertainty 600 m reflects 0.01 degree precision.
+# Fe and Zn are mg/kg in the file and in the paper; divided by 1000 to mg/g. geo_uncertainty 600 m reflects 0.01 degree precision.
 # Replication number is 1-3 and Block is 1-36, matching "36 blocks/rep", so those columns were not swapped.
 
 ## ISSUES
 # The description year (2012-13) disagrees with the title and file (2013-14). 2013 was used as the planting year.
 # The note says 10 entries per block and 320 entries. The file has 360 genotype codes and block sizes from 7 to 14 plots.
-# grain_Fe is 0.02-0.05 mg/g. That is below the terminag minimum of 1 mg/g; the values are kept.
 # ICSL114341 (genotype codes 326-342) and ICSL114342 (343-360) are repeated in many blocks. The file does not name the parents, so variety_pedigree is on every row. Fertilizer and irrigation are not reported. Plots missing yield or flowering were kept.
 
 ## NOT PROCESSED
@@ -44,7 +43,7 @@ The low grain iron and zinc densities are well documented problems in food crops
 		carob_date = "2026-10-29",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "Sorghum RIL population during 2013-14 IIMR.xlsx"]
