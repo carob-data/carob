@@ -40,7 +40,8 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		treatment_vars = "variety",
 		response_vars = "ascorbic_acid_mg_100g_fw_;yield_moisture",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
 		carob_effort = 0.35

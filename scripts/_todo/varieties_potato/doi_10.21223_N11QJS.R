@@ -59,7 +59,8 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 		treatment_vars = "variety",
 		response_vars = "fe_dw_mean_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 30,
 		carob_effort = 0.4

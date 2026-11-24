@@ -33,7 +33,7 @@ and southern Guinea savanna. The 2017 on-farm trials cover cassava and cassava-m
 		carob_completion = 30,
 		carob_effort = 0,
 		carob_contributor = "Your Name",
-		carob_date = "2026-10-30",
+		carob_date = "202?-??-??",
 		notes = "",
 		
 	)

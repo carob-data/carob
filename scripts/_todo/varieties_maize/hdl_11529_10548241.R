@@ -43,7 +43,8 @@ Experiments at multiple locations in Tanzania (800 to 1500m) to calibrate develo
 		data_type = "experiment",
 		treatment_vars = "variety;sowing_order_",
 		response_vars = "emergence_days;flowering_days;maturity_days",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.5

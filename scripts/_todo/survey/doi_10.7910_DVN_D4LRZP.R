@@ -52,7 +52,8 @@ Trained Partner Enumerators to perform Data Collection: Central Luzon State Univ
 		treatment_vars = NA,
 		response_vars = NA,
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 25,
 		carob_effort = 0.3

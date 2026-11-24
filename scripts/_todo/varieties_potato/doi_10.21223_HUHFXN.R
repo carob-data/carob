@@ -46,7 +46,8 @@ Assessment of the current status of agronomy practices in potato cultivation in 
 		treatment_vars = "adm2",
 		response_vars = "elevation",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
 		carob_effort = 0.4

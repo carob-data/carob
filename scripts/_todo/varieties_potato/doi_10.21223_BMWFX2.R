@@ -42,7 +42,8 @@ Dataset for yield and stability advanced trial for late blight and heat tolerant
 		treatment_vars = "variety",
 		response_vars = "yield;yield_marketable;yield_moisture",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.4

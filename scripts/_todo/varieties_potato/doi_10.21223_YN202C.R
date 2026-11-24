@@ -44,7 +44,8 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		treatment_vars = "variety",
 		response_vars = "AUDPC;rAUDPC",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.45

@@ -39,7 +39,8 @@ The objective of this study was to assess the main factors that explain the func
 		treatment_vars = "variety",
 		response_vars = "fwy_leaves;fwy_stems;fwy_storage;dmy_leaves;dmy_stems;dmy_storage;ground_cover",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.35

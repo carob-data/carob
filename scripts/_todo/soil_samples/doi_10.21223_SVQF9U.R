@@ -49,7 +49,8 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 		treatment_vars = "none",
 		response_vars = "none",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.6

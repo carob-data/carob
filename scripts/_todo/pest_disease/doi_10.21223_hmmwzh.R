@@ -47,7 +47,7 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 		carob_completion = 20,
 		carob_effort = 0,
 		carob_contributor = "Your Name",
-		carob_date = "2026-10-30",
+		carob_date = "202?-??-??",
 		notes = "Oxapampa field experiment only. Huancayo is described in the abstract and is not in these files.",
 		
 	)

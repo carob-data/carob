@@ -45,7 +45,8 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.5

@@ -44,7 +44,8 @@ N/A
 		data_type = "experiment",
 		treatment_vars = "variety;stress",
 		response_vars = "yield;dmy_total;harvest_index;flowering_days;plant_height",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 60,
 		carob_effort = 0.6

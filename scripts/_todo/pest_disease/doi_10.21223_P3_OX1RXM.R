@@ -55,7 +55,8 @@ Habitat manipulation by trap crops establishes a management component which allo
 		treatment_vars = "insecticide_used;trap_crop_;trap_insecticide_",
 		response_vars = "larvae_per_leaflet_;feeding_punctures_;adult_trap_count_",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.4

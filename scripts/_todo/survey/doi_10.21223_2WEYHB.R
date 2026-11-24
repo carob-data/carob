@@ -45,7 +45,8 @@ Dataset for: Sweetpotato value chain actors in Mbale and Gulu markets, Uganda
 		design = NA,
 		data_type = "survey",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.35

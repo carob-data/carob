@@ -41,7 +41,8 @@ carob_script <- function(path) {
 		response_vars = "yield",
 		carob_effort = 0.4,
 		carob_completion = 60,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		notes = "No coordinates or planting date. Fodder and total biomass were not used because fresh and dry weight are not distinguished. Maturity is 48 to 68 days."
 	)

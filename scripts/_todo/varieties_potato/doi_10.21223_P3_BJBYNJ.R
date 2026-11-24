@@ -59,7 +59,8 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 		treatment_vars = "variety",
 		response_vars = "dm_pct_;tuber_Fe_dw_;tuber_Zn_dw_",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.7

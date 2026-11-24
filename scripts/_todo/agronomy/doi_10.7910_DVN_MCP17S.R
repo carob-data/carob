@@ -65,7 +65,8 @@ The aus rice variety group originated in stress‐prone regions and is a promisi
 		data_type = "experiment",
 		treatment_vars = "variety;stress;NP_treatment_",
 		response_vars = "yield;dmy_residue;flowering_days",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 60,
 		carob_effort = 0.8

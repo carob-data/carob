@@ -38,7 +38,8 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		treatment_vars = "variety",
 		response_vars = "severity_percent_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.35

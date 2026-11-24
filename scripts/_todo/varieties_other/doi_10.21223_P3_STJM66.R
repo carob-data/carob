@@ -43,7 +43,8 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		treatment_vars = "variety",
 		response_vars = "yield;plant_height",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
 		carob_effort = 0.35

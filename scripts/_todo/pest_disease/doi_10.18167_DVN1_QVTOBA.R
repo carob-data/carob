@@ -41,7 +41,8 @@ Données collectées à La Dalia, Nicaragua, de 2017 à 2018. Données issues de
 		treatment_vars = "none",
 		response_vars = "pest_incidence;bored_fruits_",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 45,
 		carob_effort = 0.5
 	)

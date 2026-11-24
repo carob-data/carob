@@ -41,7 +41,8 @@ Data on field and semi-field trials of maize seed treament for the control of fa
 		treatment_vars = "seed_treatment",
 		response_vars = "pest_severity",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 55,
 		carob_effort = 0.4
 	)

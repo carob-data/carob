@@ -56,7 +56,8 @@ The dataset includes cotton phenology, morphology, physiology, leaf area index, 
 		treatment_vars = "variety;fertilization_level_;irrigation_level_",
 		response_vars = "yield;plant_height;LAI",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 75,
 		carob_effort = 0.6
 	)

@@ -67,7 +67,8 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.6

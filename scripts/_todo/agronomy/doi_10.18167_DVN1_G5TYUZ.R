@@ -38,7 +38,8 @@ These are the raw data of the paper \"Intercrop overyielding is maintained under
 		data_type = "on-farm experiment",
 		treatment_vars = "intercrops",
 		response_vars = "yield;dmy_total",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
 		carob_effort = 0.8

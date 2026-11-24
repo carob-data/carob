@@ -53,7 +53,8 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 		treatment_vars = NA,
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 40,
 		carob_effort = 0.4

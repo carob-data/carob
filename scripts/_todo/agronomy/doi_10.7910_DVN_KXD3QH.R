@@ -57,7 +57,8 @@ The data sets reveal grain Zn biofortfication performance of Zn-efficient and Zn
 		data_type = "experiment",
 		treatment_vars = "variety;Zn_fertilizer",
 		response_vars = "yield;grain_Zn", 
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
 		carob_effort = 1

@@ -40,7 +40,8 @@ The main objective of the research is to advise Norad on the relevance of contin
 		treatment_vars = "treatment",
 		response_vars = "grain_protein",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
 		carob_effort = 0.6

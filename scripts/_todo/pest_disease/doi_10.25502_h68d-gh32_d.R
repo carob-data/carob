@@ -58,7 +58,8 @@ Diagnostic and surveillance network established for characterization, monitoring
 		treatment_vars = "none",
 		response_vars = "root_infection;disease_severity",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.6

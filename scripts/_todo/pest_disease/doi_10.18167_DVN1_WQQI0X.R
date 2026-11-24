@@ -39,7 +39,8 @@ The aim of this study was to determine the efficiency of using Erianthus arundin
 		treatment_vars = "treatment",
 		response_vars = "damaged_stalks_;bored_internodes_;whips_",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_completion = 50,
 		carob_effort = 0.55
 	)

@@ -59,7 +59,8 @@ N management trial in DSR
 		treatment_vars = "N_fert_level;variety",
 		response_vars = "yield;dmy_total;harvest_index;spike_density;seed_weight;grain_fill", 
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 60,
 		carob_effort = 0.8

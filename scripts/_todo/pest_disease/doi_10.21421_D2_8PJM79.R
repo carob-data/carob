@@ -54,7 +54,8 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 		treatment_vars = "variety",
 		response_vars = "leaf_blast_30_das_;leaf_blast_soft_dough_;neck_blast_incidence_;finger_blast_incidence_",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.7

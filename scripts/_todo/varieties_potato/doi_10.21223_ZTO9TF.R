@@ -45,7 +45,8 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 		treatment_vars = "none",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
 		carob_effort = 0.3

@@ -39,7 +39,8 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 		response_vars = "yield;grain_Fe;grain_Zn;grain_protein;oil_content",
 		carob_effort = 0.4,
 		carob_completion = 55,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		notes = "Only two of eight environments are in the deposit. No coordinates in the files. Iron and zinc were treated as mg/kg."
 	)

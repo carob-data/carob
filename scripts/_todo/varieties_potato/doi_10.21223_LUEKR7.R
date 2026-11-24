@@ -44,7 +44,8 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 		treatment_vars = "variety",
 		response_vars = "plant_growth_habit_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.4

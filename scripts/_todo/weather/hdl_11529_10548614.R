@@ -45,7 +45,8 @@ The wheat area and yield data were collated by the Cajeme District grain receiva
 		design = NA,
 		data_type = "compilation",
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.5

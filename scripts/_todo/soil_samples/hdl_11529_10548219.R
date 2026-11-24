@@ -40,7 +40,8 @@ This dataset consists of soil data from Baseline Yield Survey conducted in South
 		project = "TAMASA",
 		design = NA,
 		data_type = "survey",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.4

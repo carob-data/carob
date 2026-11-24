@@ -39,7 +39,8 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		data_type = "experiment",
 		treatment_vars = "treatment;land_prep_method;N_fertilizer",
 		response_vars = "yield;weed_biomass;weed_cover",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.7

@@ -55,7 +55,8 @@ This dataset describes how different tree species (monospecific vs. mixed) influ
 		treatment_vars = "none",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
 		carob_effort = 0.8

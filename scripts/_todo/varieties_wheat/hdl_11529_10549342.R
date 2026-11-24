@@ -37,7 +37,8 @@ Preliminary yield and agronomic trial data collected from 6 different trials car
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;plant_height",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.4

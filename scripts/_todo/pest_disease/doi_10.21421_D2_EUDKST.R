@@ -37,7 +37,8 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 		treatment_vars = "variety",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.3

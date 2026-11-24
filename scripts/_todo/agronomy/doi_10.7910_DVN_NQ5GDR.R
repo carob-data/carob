@@ -57,7 +57,8 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 		treatment_vars = "N_fertilizer;treatment",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 20,
 		carob_effort = 0.4

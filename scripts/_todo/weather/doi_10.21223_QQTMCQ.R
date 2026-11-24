@@ -39,7 +39,8 @@ In the present dataset, meteorological data at Vista Florida locality - Pataz, L
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
 		carob_effort = 0.35

@@ -57,7 +57,8 @@ The demand for corn is increasing in Asia for feed and biofuel. It is grown in t
 		data_type = "experiment",
 		treatment_vars = "herbicide_product;herbicide_amount;herbicide_timing",
 		response_vars = "weed_density;weed_biomass;stem_density;LAI;dmy_stems;dmy_leaves",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
 		carob_effort = 1

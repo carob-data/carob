@@ -43,7 +43,8 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		treatment_vars = "variety",
 		response_vars = "tuber_ascorbate_dw_;yield_moisture",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 0.35

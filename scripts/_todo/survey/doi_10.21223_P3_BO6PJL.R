@@ -41,7 +41,8 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 		treatment_vars = "none",
 		response_vars = "none",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 20,
 		carob_effort = 0.35

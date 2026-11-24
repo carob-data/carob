@@ -76,7 +76,8 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "kharif_mey_kg_ha_;rabi_mey_kg_ha_;system_mey_kg_ha_",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.6

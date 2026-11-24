@@ -42,7 +42,8 @@ Vitamin A deficiency (VAD) is a widespread health problem among young children a
 		design = "randomized controlled trial",
 		data_type = "survey",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 8,
 		carob_effort = 0.4

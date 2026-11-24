@@ -69,7 +69,8 @@ Assessing how maize plants damage at different injury levels can recover and rep
 		data_type = "on-station experiment",
 		treatment_vars = "treatment",
 		response_vars = "plant_height;seed_weight;pest_severity",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 72,
 		carob_effort = 0.8

@@ -49,7 +49,8 @@ Eight CIP-bred potato clones (V1 = 392745.7, V2 = 392780.1, V3 = 397006.18, V4 =
 		treatment_vars = "variety;irrigation_number",
 		response_vars = "yield;plant_height;yield_moisture",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.5

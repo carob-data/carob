@@ -52,7 +52,8 @@ Yield and agronomic trait assessment
 		treatment_vars = "variety;treatment",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
 		carob_effort = 1.2

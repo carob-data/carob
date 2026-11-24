@@ -50,7 +50,8 @@ This dataset describes 21 species of cover crops (17 sp.), wild plant species (2
 		treatment_vars = "variety",
 		response_vars = "plant_height;dmy_total",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
 		carob_effort = 0.6

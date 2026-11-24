@@ -45,7 +45,8 @@ A total of 53 accessions were evaluated for sweetpotato virus disease resistance
 		treatment_vars = "variety",
 		response_vars = "elisa_1_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 30,
 		carob_effort = 0.3

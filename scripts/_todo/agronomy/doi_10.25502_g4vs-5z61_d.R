@@ -71,7 +71,8 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		data_type = "experiment",
 		treatment_vars = "herbicide_product;weeding_times;herbicide_timing",
 		response_vars = "yield;fwy_stems;plant_density;stem_density",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 74,
 		carob_effort = 0.8

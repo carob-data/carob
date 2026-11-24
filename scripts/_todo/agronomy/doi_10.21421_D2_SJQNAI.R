@@ -34,7 +34,8 @@ The Agricultural Transformation Agenda Support Program Phase 1 (AT ASP-1) of the
 		treatment_vars = "variety",
 		response_vars = "yield",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
 		carob_effort = 0.4

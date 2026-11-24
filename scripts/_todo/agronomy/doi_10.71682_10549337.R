@@ -41,7 +41,8 @@ Research on the effect of split nitrogen application on wheat grain yield and qu
 		data_type = "experiment",
 		treatment_vars = "treatment;variety",
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.5

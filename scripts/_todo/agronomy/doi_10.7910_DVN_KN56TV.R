@@ -101,7 +101,8 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 		data_type = "experiment",
 		treatment_vars = "planting_date;rabi_crop_;mulch",
 		response_vars = "yield;dmy_residue;harvest_index;seed_weight", 
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 35,
 		carob_effort = 1.2

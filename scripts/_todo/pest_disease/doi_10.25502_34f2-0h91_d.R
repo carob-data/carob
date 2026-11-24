@@ -53,7 +53,8 @@ The project evaluated efficacy of crude formulation of neem oil, commercial neem
 		treatment_vars = "treatment",
 		response_vars = "pest_incidence;disease_severity",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.7

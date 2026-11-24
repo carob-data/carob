@@ -54,7 +54,8 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		treatment_vars = NA,
 		response_vars = NA,
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 30,
 		carob_effort = 0.7

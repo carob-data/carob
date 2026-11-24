@@ -41,7 +41,8 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.6

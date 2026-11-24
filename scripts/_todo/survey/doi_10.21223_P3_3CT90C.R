@@ -44,7 +44,8 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		treatment_vars = "variety;seed_management_",
 		response_vars = "tuber_weight_g_",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
 		carob_effort = 0.6

@@ -90,7 +90,8 @@ Dataset for: Endline Survey: Jumpstarting Orange-fleshed Sweetpotato in West Afr
 		design = NA,
 		data_type = "survey",
 		notes = NA,
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 15,
 		carob_effort = 0.45

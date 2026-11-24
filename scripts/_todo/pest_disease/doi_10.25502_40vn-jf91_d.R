@@ -90,7 +90,8 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "pest_incidence",
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 1

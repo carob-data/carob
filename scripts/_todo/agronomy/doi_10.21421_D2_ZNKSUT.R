@@ -57,7 +57,8 @@ The experiment was done for two consecutive post-rainy cropping seasons in 2012â
 		treatment_vars = "seed_treatment",
 		response_vars = "yield;dmy_residue;dmy_total;seed_weight",
 		notes = NA,
-		carob_date = "2026-10-29",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
 		carob_effort = 0.8

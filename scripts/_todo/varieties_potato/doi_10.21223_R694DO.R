@@ -43,7 +43,8 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		treatment_vars = "treatment;variety",
 		response_vars = "yield;rAUDPC",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
 		carob_effort = 0.4

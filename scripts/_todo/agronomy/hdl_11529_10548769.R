@@ -36,7 +36,8 @@ Measured rice grain yield for zero-till direct-seeded rice and puddled transplan
 		data_type = "experiment",
 		treatment_vars = "N_fertilizer;land_prep_method;planting_method;irrigation_method",
 		response_vars = "yield",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.4

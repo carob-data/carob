@@ -32,7 +32,7 @@ Summary results and individual trial results from the International Late White H
 		carob_completion = 30,
 		carob_effort = 0,
 		carob_contributor = "Your Name",
-		carob_date = "2026-10-30",
+		carob_date = "202?-??-??",
 		notes = "",
 		
 	)

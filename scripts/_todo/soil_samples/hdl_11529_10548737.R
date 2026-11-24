@@ -42,7 +42,8 @@ Soil sampling with 1x1 km grid in the agricultural area of the Ixtlahuaca Munici
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "none",
-		carob_date = "2026-10-31",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
 		carob_effort = 0.4

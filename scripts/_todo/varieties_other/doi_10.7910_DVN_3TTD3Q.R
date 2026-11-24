@@ -56,7 +56,8 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height;seed_weight;maturity_days",
 		notes = NA,
-		carob_date = "2026-10-30",
+		carob_contributor = NA,
+		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
 		carob_effort = 0.6
