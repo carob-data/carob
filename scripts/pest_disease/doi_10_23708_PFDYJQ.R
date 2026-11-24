@@ -1,14 +1,15 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## ISSUES
-#    bdd_kenya_nairobi_climate.csv has ~3.42 million rows (readings logged
-#    multiple times per minute over 2022-2024) - read.csv() on this is slow
-#    and memory-heavy. Left as base R read.csv(), but flagging for reviewers 
+# 1. bdd_kenya_nairobi_climate.csv has about 3.42 million rows (several readings
+#    per minute, 2022-2024). The weather table is the hourly mean of temperature,
+#    relative humidity and pressure. The file has no rainfall. 
 
 carob_script <- function(path) {
   
-  "This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Nairobi, Kenya (1°16’12”S, 36°48’17”E, altitude 1700 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature, relative humidity, and atmospheric pressure from a BME680 sensor acquired using a Raspberry Pi 3A+ single-board computer. All date and time data are in UTC. (2025-03-12)"
+"This dataset corresponds to climate data and maize pests monitoring of Busseola fusca, Chilo partellus, and Spodoptera frugiperda between 2022 and 2024 at Nairobi, Kenya (1°16’12”S, 36°48’17”E, altitude 1700 masl). Trapping data include site name, survey date, species, number of individuals, pheromone change dates, and any notes. Climatic data include date, temperature, relative humidity, and atmospheric pressure from a BME680 sensor acquired using a Raspberry Pi 3A+ single-board computer. All date and time data are in UTC. (2025-03-12)"
   
   uri <- "doi:10.23708/PFDYJQ"
   group <- "pest_disease"
@@ -54,23 +55,21 @@ carob_script <- function(path) {
   
   d <- rbind(d1, d2, d3)
   
-  # climate_data is kept separate from d and not merged: pest surveys (d) are 
-  # recorded per trap visit (roughly daily/weekly), while climate readings are 
-  # logged continuously (multiple readings per minute) by the automated sensor
-  
-  climate_data <- data.frame(
-    sensor_id = "BME680",
-    temp = r3$temperature,
-    rhum = r3$rh,
-    pressure = r3$pressure,
-    date = as.character(as.Date(r3$dateUTC, format = "%Y-%m-%d %H:%M:%S")),
-    time = substr(r3$dateUTC, 12, 19)
-  )
-  
-  climate_data$location <- "Nairobi"
-  climate_data$longitude <- 36.804722
-  climate_data$latitude <- -1.270000
-  climate_data$geo_from_source <- FALSE
+  # pest surveys are one row per trap visit; the climate log is several readings per minute
+  # BME680: temperature, relative humidity and pressure. There is no rainfall.
+  hour <- substr(r3$dateUTC, 1, 13)
+  wth <- aggregate(cbind(temp=r3$temperature, rhum=r3$rh, pressure=r3$pressure), list(hour=hour), mean, na.rm=TRUE)
+  wth$temp[is.nan(wth$temp)] <- NA
+  wth$rhum[is.nan(wth$rhum)] <- NA
+  wth$pressure[is.nan(wth$pressure)] <- NA
+  wth$date <- substr(wth$hour, 1, 10)
+  wth$time <- paste0(substr(wth$hour, 12, 13), ":00")
+  wth$hour <- NULL
+  wth$sensor_id <- "BME680"
+  wth$location <- "Nairobi"
+  wth$longitude <- 36.804722
+  wth$latitude <- -1.270000
+  wth$geo_from_source <- FALSE
   
   d$country <- "Kenya"
   d$adm1 <- "Nairobi"
@@ -93,5 +92,5 @@ carob_script <- function(path) {
   d$P_fertilizer <- d$K_fertilizer <- d$N_fertilizer <- d$S_fertilizer <- d$lime <- d$fertilizer_type <- NA
   d <- unique(d)
   
-  carobiner::write_files(path, meta, d, wth = climate_data)
+  carobiner::write_files(path, meta, d, wth=wth)
 }

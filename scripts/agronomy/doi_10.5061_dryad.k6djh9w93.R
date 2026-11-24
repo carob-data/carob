@@ -43,7 +43,7 @@ This data set is a biological data generated through field experimentation on ce
 	f2 <- ff[basename(ff) == "README.txt"]
 
 	r1a <- carobiner::read.excel(f1, sheet="Maize")
-	r1b <- carobiner::read.excel(f1, sheet="Common bean")
+	r1b <- carobiner::read.excel(f1, sheet="Common bean", na="null")
 	
 	r1a$`Grain moisture content (%)`[r1a$`Grain moisture content (%)` == "null"] <- NA
 
@@ -83,22 +83,15 @@ This data set is a biological data generated through field experimentation on ce
 	  hhid = r1b$Farmer,
 	  treatment = as.character(r1b$Treatment),
 	  variety = r1b$`Variety 1 and 2`,
-	  planting_date = r1b$`Date of sowing`,
+	  planting_date = as.character(as.Date(r1b$`Date of sowing`)),
 	  yield_moisture = as.numeric(r1b$`Moisture of Beans grain (%)`),
-	  maturity_date = r1b$`Date 90% maturity`,
-	  harvest_date = r1b$`Date of harvesting`,
+	  maturity_date = as.character(as.Date(r1b$`Date 90% maturity`)),
+	  harvest_date = as.character(as.Date(r1b$`Date of harvesting`)),
 	  intercrops = "maize_common bean",
 	  crop = "common bean"
 	)
+	d2$harvest_date[d2$harvest_date == "1900-05-16"] <- NA
 
-	d2$planting_date[d2$planting_date == "null"] <- NA
-	d2$maturity_date[d2$maturity_date == "null"] <- NA
-	d2$harvest_date[d2$harvest_date == "null"] <- NA
-	
-	d2$planting_date <- as.character(as.Date(as.numeric(d2$planting_date),origin = "1900-01-01"))
-	d2$maturity_date <- as.character(as.Date(as.numeric(d2$maturity_date),origin = "1900-01-01"))
-	d2$harvest_date <- as.character(as.Date(as.numeric(d2$harvest_date),origin = "1900-01-01"))
-	
 	d <- carobiner::bindr(d1, d2)
 
 	d$adm3 <- gsub("HU|Hu","Haro Maya",d$adm3)
@@ -110,8 +103,8 @@ This data set is a biological data generated through field experimentation on ce
 	  geo_source = c("GADM 4.1, adm3", "GADM 4.1, adm3", "GADM 4.1, adm3")
 	)
     
-  d <- merge(d, location, by = "adm3", all.x = TRUE)
-  d$geo_from_source <- FALSE
+	d <- merge(d, location, by = "adm3", all.x = TRUE)
+	d$geo_from_source <- FALSE
 	
 	d$trial_id <- "1"
 	
@@ -125,8 +118,8 @@ This data set is a biological data generated through field experimentation on ce
 	d$P_fertilizer <- d$K_fertilizer <- d$S_fertilizer <- NA
 	d$fertilizer_type <- ifelse(maize, "NPS; urea", NA)
  
-  d$inoculated <- NA
-  d$inoculant <- NA
+	d$inoculated <- NA
+	d$inoculant <- NA
    
 	d$yield <- NA
 	d$yield_part <- "grain"
