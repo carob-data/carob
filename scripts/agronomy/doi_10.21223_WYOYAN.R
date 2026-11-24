@@ -15,15 +15,9 @@
 #    the oat/barley straw mulch (10, 20 or 30 cm). mulch_type is "plastic;straw" for these plots,
 #    but terminag does not allow multiple values for mulch_type. How should this be coded?
 # 4. Soil temperature sensors: the logger recorded soil temperature with 30 cm mulch or without mulch,
-#    but the plots with the sensors are not identified. The five series are columns of the weather
-#    table (same logger and timestamps as air temperature), not plot records.
-
-## NEW VARIABLES
-# soil_temp_0cm_mulch30_: soil temperature (deg C) at 0 cm depth under 30 cm mulch
-# soil_temp_10cm_mulch30_: soil temperature (deg C) at 10 cm depth under 30 cm mulch
-# soil_temp_10cm_nomulch_: soil temperature (deg C) at 10 cm depth without mulch
-# soil_temp_25cm_mulch30_: soil temperature (deg C) at 25 cm depth under 30 cm mulch
-# soil_temp_25cm_nomulch_: soil temperature (deg C) at 25 cm depth without mulch
+#    but the plots with the sensors are not identified. The series are in the long table as soil_temp,
+#    depth and mulch_depth, linked by trial_id. Those rows have no plot_id. mulch_depth is also the
+#    treatment thickness in the wide table.
 
 ## NOTES
 # 1. One variety (INIA 325 Poderosa). Factors: tillage (minimum or zero), plastic (yes or no)
@@ -55,7 +49,7 @@
 #    dictionary says the bags were extracted on "April 26, 2023", which is before the trial.
 # 13. A logger in the trial recorded air temperature, relative humidity and precipitation every
 #    15 minutes from 26 Oct 2023 to 11 Apr 2024 (weather table), and soil temperature at 0, 10 and
-#    25 cm depth (weather table, ISSUES 4). On 2024-03-21 11:45 two soil temperature readings are not
+#    25 cm depth (long table, ISSUES 4). On 2024-03-21 11:45 two soil temperature readings are not
 #    plausible (-7.3 deg C at 25 cm and 271.2 deg C at 10 cm, both without mulch); kept as reported.
 #    Air temperature and soil temperature at 10 cm under mulch have missing values ("NA").
 # 14. Not processed: benefit-cost ratio, carbon footprint (Cool Farm Tool estimates), tuber uniformity,
@@ -73,7 +67,7 @@ An experimental potato trial based on conservation agriculture in the second sea
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
+	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIP",
 		publication = NA,
 		project = NA,
@@ -198,26 +192,37 @@ An experimental potato trial based on conservation agriculture in the second sea
 		soil_GWC = r5$Hg
 	)
 
-	long <- carobiner::bindr(lc, lw)
-
-	## weather table, and the trial logger's soil temperature (NOTES 13, ISSUES 4)
+	## long table 3: logger soil temperature (deg C). Plots with the sensors are not known (ISSUES 4)
 	# Excel times are read as date-times on 1899-12-31
+	dt <- as.character(as.Date(r6$Date))
+	tm <- format(r6$Time, "%H:%M")
+	sensor <- function(x, depth, mulch) {
+		data.frame(trial_id = trial, date = dt, time = tm, depth = depth, mulch_depth = mulch, soil_temp = x)
+	}
+	lt <- carobiner::bindr(
+		sensor(r6$ST_0_M30, 0, 30),
+		sensor(r6$ST_10_M30, 10, 30),
+		sensor(r6$ST_10_WM, 10, 0),
+		sensor(r6$ST_25_M30, 25, 30),
+		sensor(r6$ST_25_WM, 25, 0)
+	)
+
+	long <- carobiner::bindr(lc, lw, lt)
+	# removing three clear errors
+	long$soil_temp[long$soil_temp > 40 | long$soil_temp < 4] <- NA 
+
+	## weather table (NOTES 13)
 	wth <- data.frame(
 		country = "Peru",
 		location = "Licame",
 		longitude = -77.85,
 		latitude = -7.76,
-		date = as.character(as.Date(r6$Date)),
-		time = format(r6$Time, "%H:%M"),
+		date = dt,
+		time = tm,
 		temp = r6$Ta,
 		rhum = r6$RH,
-		prec = r6$PP,
-		soil_temp_0cm_mulch30_ = r6$ST_0_M30,
-		soil_temp_10cm_mulch30_ = r6$ST_10_M30,
-		soil_temp_10cm_nomulch_ = r6$ST_10_WM,
-		soil_temp_25cm_mulch30_ = r6$ST_25_M30,
-		soil_temp_25cm_nomulch_ = r6$ST_25_WM
+		prec = r6$PP
 	)
-
+	
 	carobiner::write_files(path, meta, d, long=long, wth=wth)
 }
