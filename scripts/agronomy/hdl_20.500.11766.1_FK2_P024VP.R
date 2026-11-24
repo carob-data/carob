@@ -76,7 +76,7 @@ Effect of ridging and tie-ridging time on the yield performance of sorghum at Gu
 		harvest_date = unname(end[yr]),
 		yield = as.numeric(r$Yield) * 1000,
 		yield_part = "grain",
-		dmy_residue = as.numeric(r$Stover) * 1000,
+		y_residue = as.numeric(r$Stover) * 1000,
 		plant_height = as.numeric(r$Plant_Height),
 		head_length = as.numeric(r$Head_Lenght), # cm
 		head_weight = as.numeric(r$Head_Weight), # cm
