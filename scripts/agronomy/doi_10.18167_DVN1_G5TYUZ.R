@@ -5,7 +5,7 @@
 # Paper: Kwenda et al. 2025 Field Crops Research (doi:10.1016/j.fcr.2025.109890); its rainfall and yield ranges match the data.
 # On-farm, Mutoko (Zimbabwe): 12 fields in 2021-22, 11 in 2022-23 (23 trials); 9 unreplicated plots per field.
 # 276 records (207 plots; intercrop plots have one record per crop); yields from sheet pLER_LER, management from other sheets.
-# Long table: 1157 LAI, soil water and N records; wth: daily station (KWERE) weather and rain gauge rainfall.
+# Long table: 1157 LAI, soil water and N records, plus the soil profile (6 layers, Oct 2021) for each record; wth: station and rain gauges.
 
 ## ISSUES
 # Grain yield and biomass column labels are swapped in pLER_LER (checked with pLER columns and paper); swapped back.
@@ -16,18 +16,17 @@
 # SCHI 2021-22 has two "ZS500_CPA maize" rows; the one with cowpea sowing date and depth taken as SC403_CPA cowpea.
 # Year typos corrected: 5 harvest dates (CHIU, SMAN) and 2 BMAN top dressing dates in 2021-22.
 # BMAN and SCHI 2022-23: maize sown 2022-12-20 but basal fertilizer (at sowing) dated 2022-12-31. Kept.
-# soil pH is labelled pH_water in the data but the paper says CaCl2; stored as soil_pH. Check.
+# Soil: available P about twice supplement Table S1; one SOC of 76 g/kg (Table S1 means about 10). Kept data.
 # Treatment descriptions in sheet Treatments contradict the codes for several farmers; codes used.
 # Rain gauge sheets repeat identical temperature, radiation, wind and humidity series; only their rainfall is used.
 # Rainfall missing for HOND, SAJP, SCHI, CHIU and PSMA 2021-22; KANB 2021-22 stops on 2021-12-31.
 # 48 long rows share plot, crop and date with another row (9 with conflicting LAI or N uptake); kept, numbered by order.
-# irrigated set FALSE: rainfed implied by the water stress analysis, not stated explicitly. Check.
+# irrigated not stated (rainfed implied by the water stress analysis); left NA.
 
 ## NEW VARIABLES
 # Ndfa: N in cowpea aboveground biomass derived from the atmosphere (15N natural abundance), % (checked: N_fixation = kg/ha, crop_N = kg/ha)
 
 ## NOT PROCESSED
-# Soil_results: layers 20-120 cm (only 0-20 cm stored; no per-field soil table in carob).
 # pLER_LER: simulated (STICS) water and N stress factors; pLER and LER (computed from the yields); planting day numbers (repeat Crop_management).
 # Climate_data at rain gauges: srad, tmax, tmin, wind speed, humidity (identical across gauges, not from the station).
 # Treatments: fertiliser flags and descriptions (repeat Fertilization); Fertilization: application depth (5 or 3 cm).
@@ -56,8 +55,8 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 		treatment_vars = "variety;intercrops;planting_date;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield;dmy_total;N_fixation;Ndfa;crop_N;LAI;soil_SWC",
 		notes = NA,
-		carob_contributor = NA,
-		carob_LLM = "Claude Opus 5.5",
+		carob_contributor = "Stella Muthoni",
+		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
 		carob_date = "2026-11-24",
 		carob_completion = 85,
 		carob_effort = 0.3
@@ -94,22 +93,24 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	# HOND and RUMU give two depths (160, 180 cm) but have no soil water data
 	d1c <- d1c[!d1c$location %in% d1c$location[duplicated(d1c$location)], ]
 
-## d1d from r1d: topsoil (0-20 cm), sampled October 2021
-	top <- r1d$layer_base_depth == 20
+## d1d from r1d: soil profile per field, 6 layers of 20 cm, sampled October 2021 (long table)
 	d1d <- data.frame(
-		location = r1d$farmer[top],
-		soil_clay = r1d[["clay (%)"]][top],
-		soil_silt = r1d[["silt (%)"]][top],
-		soil_sand = r1d[["sand (%)"]][top],
-		soil_pH = r1d$pH_water[top],                                     # paper: CaCl2 method
-		soil_N_total = r1d[["Ntotal_g_kg of soil"]][top] * 1000,         # g/kg -> mg/kg, micro-Kjeldahl
-		soil_P = r1d[["Available_P_mg_Kg of soil"]][top],                # resin extractable (paper)
-		soil_K = r1d[["Available _K_mg_kg_soil"]][top],                  # ammonium acetate (paper)
-		soil_Ca = r1d[["Total Ca__mg_kg of soil"]][top],                 # "total" in codebook, exchangeable (EDTA) in paper
-		soil_Mg = r1d[["Total Mg_mg_kg of soil"]][top],
-		soil_SOC = r1d[["organic_Carbon_g_kg_soil"]][top] / 10           # g/kg -> %, Walkley-Black
+		location = r1d$farmer,
+		date = "2021-10",
+		depth_top = r1d$layer_base_depth - 20,
+		depth_bottom = r1d$layer_base_depth,
+		soil_clay = r1d[["clay (%)"]],
+		soil_silt = r1d[["silt (%)"]],
+		soil_sand = r1d[["sand (%)"]],
+		soil_pH_CaCl2 = r1d$pH_water,                                   # labelled water, but paper and Table S1 (means match): CaCl2
+		soil_N_total = r1d[["Ntotal_g_kg of soil"]] * 1000,             # g/kg -> mg/kg, micro-Kjeldahl
+		soil_P = r1d[["Available_P_mg_Kg of soil"]],                    # resin extractable (paper)
+		soil_P_method = "resin",
+		soil_K = r1d[["Available _K_mg_kg_soil"]],                      # ammonium acetate (paper)
+		soil_Ca = r1d[["Total Ca__mg_kg of soil"]],                     # "total" in codebook, exchangeable (EDTA) in paper
+		soil_Mg = r1d[["Total Mg_mg_kg of soil"]],
+		soil_SOC = r1d[["organic_Carbon_g_kg_soil"]] / 10               # g/kg -> %, Walkley-Black
 	)
-	d1d$soil_P_method <- "resin"
 
 ## d1e from r1e: daily weather
 	d1e <- data.frame(
@@ -223,14 +224,13 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 		dmy_total = 1000 * c(r1j[["maize grain yield for sole cropping"]], r1j[["Maize grain yield for intercropping"]],
 			r1j[["cowpea grain yield for intercropping"]], r1j[["cowpea grain yield for sole cropping"]])                 # Mg DM/ha -> kg/ha
 	)
-	# sole cowpea (sown with maize, D1) is repeated for each maize variety
+	# sole cowpea (sown with maize, D1; paper: D1 used for LER) is repeated for each maize variety
 	d1j <- unique(d1j)
 
 ## build d
 	d <- merge(d1g, d1j, by=c("location", "season", "treatment", "crop"), all.x=TRUE)
 	d <- merge(d, d1f, by=c("location", "season", "treatment", "crop"), all.x=TRUE)
 	d <- merge(d, d1b, by="location", all.x=TRUE)
-	d <- merge(d, d1d, by="location", all.x=TRUE)
 
 	ctrl <- d$treatment == "CONTR"
 	icc <- grepl("_CPA", d$treatment) & d$crop == "cowpea"
@@ -256,7 +256,8 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	d$geo_from_source <- TRUE
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- FALSE                             # rainfed; water stress from rainfall (paper)
+	d$irrigated <- NA                                # not stated in the paper
+	d$soil_type <- "Arenosol"                       # paper: sandy soils (Arenosols)
 	d$plot_area <- 30                                # 6 x 5 m
 	d$yield_part <- ifelse(d$crop == "maize", "grain", "seed")
 	d$yield_moisture <- 0                            # oven dried at 65 C (paper)
@@ -275,6 +276,11 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	dlong <- dlong[order(dlong$record_id, dlong$date, dlong$row), ]
 	dlong$order <- ave(dlong$record_id, dlong$record_id, dlong$date, FUN=seq_along)   # > 1 only for duplicated rows
 	dlong <- dlong[, c("record_id", "date", "order", vars, "depth_top", "depth_bottom")]
+	dlong$date <- as.character(as.Date(dlong$date))
+	# soil profile of each field, repeated for every record of that field (same plots in both seasons)
+	dsoil <- merge(d[, c("record_id", "location")], d1d, by="location")
+	dsoil$location <- NULL
+	dlong <- carobiner::bindr(dlong, dsoil)
 
 ## weather table
 	wth <- merge(d1e, d1b, by="location", all.x=TRUE)
