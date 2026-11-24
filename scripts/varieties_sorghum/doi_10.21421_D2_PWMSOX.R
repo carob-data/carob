@@ -5,17 +5,16 @@
 # Alpha-lattice variety trial of the sorghum RIL population 296 B x PVK 801, postrainy 2013-14 at IIMR, Rajendranagar, Hyderabad. Moved from agronomy to varieties_sorghum because the treatment is genotype.
 # The description paragraph still says 2012-2013; planting_date is 2013 from the title, file name, and datafile note. Coordinates in that paragraph (17.19 N, 78.28 E, 542 m) are the IIMR site.
 # Plot is 2 rows x 2 m x 0.75 m (3 m2). Spacing 75 cm between rows and 15 cm between plants.
-# Grain yield is "weight/m2" without a mass unit. Values near 0.03-0.70 were read as kg/m2 and multiplied by 10000 to kg/ha. Hundred-grain weight (g) times 10 is the 1000-grain weight.
-# Fe and Zn are mg/kg and were left in mg/kg (terminag states mg/g). geo_uncertainty 600 m reflects 0.01 degree precision.
+# Grain yield is kg/m2 ("weight/m2", 0.025-0.702). Phuke et al. 2017 Table 3 (IIMR 2013-14) is in t/ha: raw x 10 matches 296 B (2.14 t/ha, 1.0-3.8) and the RIL range (0.25-6.4). Multiplied by 10000 to kg/ha. The published RIL mean (3.30) and PVK 801 mean (5.19) are higher than these plots (2.7 and 5.0). Hundred-grain weight (g) times 10 is the 1000-grain weight.
+# Fe and Zn are mg/kg in the file and in Phuke et al. 2017; divided by 1000 to mg/g. geo_uncertainty 600 m reflects 0.01 degree precision.
 # Replication number is 1-3 and Block is 1-36, matching "36 blocks/rep", so those columns were not swapped.
 
 ## ISSUES
 # The description year (2012-13) disagrees with the title and file (2013-14). 2013 was used as the planting year.
 # The note says 10 entries per block and 320 entries. The file has 360 genotype codes and block sizes from 7 to 14 plots.
-# Confirm kg/m2 for grain yield in Phuke et al. 2017 (doi:10.3389/fpls.2017.00712).
-# grain_Zn exceeds the terminag maximum because the published unit is mg/kg.
+# grain_Fe is 0.02-0.05 mg/g. That is below the terminag minimum of 1 mg/g; the values are kept.
 # ICSL114341 (genotype codes 326-342) and ICSL114342 (343-360) are repeated in many blocks. The file does not name the parents, so variety_pedigree is on every row. Fertilizer and irrigation are not reported. Plots missing yield or flowering were kept.
-# write_files: missing carob_contributor; missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; out of bounds grain_Zn (11.765-41.56); NA detected in yield.
+# write_files: missing carob_contributor; missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; out of bounds grain_Fe (0.02-0.052); NA detected in yield.
 
 ## NOT PROCESSED
 # Genotype: numeric entry code, stored as variety_code.
@@ -69,8 +68,9 @@ The low grain iron and zinc densities are well documented problems in food crops
 		yield = as.numeric(r$`Grain yield`) * 10000,
 		yield_moisture = NA_real_,
 		yield_isfresh = NA,
-		grain_Fe = as.numeric(r$Iron),
-		grain_Zn = as.numeric(r$Zinc),
+		# mg/kg to mg/g
+		grain_Fe = as.numeric(r$Iron) / 1000,
+		grain_Zn = as.numeric(r$Zinc) / 1000,
 		crop = "sorghum",
 		yield_part = "grain",
 		country = "India",
