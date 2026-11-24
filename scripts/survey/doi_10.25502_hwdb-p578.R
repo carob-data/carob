@@ -21,7 +21,7 @@ N2Africa is to contribute to increasing biological nitrogen fixation and product
 		data_organization="IITA;ICRAF;WUR"
 	)
 	
-	n2afun <- carobiner::get_function("N2A_monitoring_2", path, group)
+	n2afun <- carobiner::get_function("N2A_monitoring_1", path, group)
 	d <- n2afun(ff)
 
 	d$adm2 <- carobiner::replace_values(d$adm2, 

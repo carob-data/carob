@@ -163,7 +163,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	)
 	# storage type of the storage selection (F9), e.g. "rustic"
 	lv$storage_type <- NA
-	i <- lv$pvs_phase_ == "storage"
+	i <- lv$growth_stage == "storage"
 	lv$storage_type[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
 
 	## long table 2: organoleptic test per panelist (NOTES 7, ISSUES 2, 3)
@@ -183,12 +183,10 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		org("Data_organoleptic_Mother", trial),
 		org("Data_organoleptic_Baby", paste0(trial, "_baby"))
 	)
-	### Aggregate organoleptic test per variety and sex
-    lo <- aggregate(lo[, c("tuber_appearance", "tuber_flavor", "tuber_texture")], by = lo[, c("trial_id", "sex", "variety_code")], FUN = mean, na.rm = TRUE)
-    lo$rec <- seq_len(nrow(lo))
-    lo <- merge(lo, unique(lv[, c("plot_id", "sex", "trial_id", "variety_code")]), by = c("trial_id", "sex", "variety_code"), all.x = TRUE )
-    lo <- lo[!duplicated(lo$rec),] 
-    lv$variety_code <-  lo$rec <- lo$variety_code <- NULL
+	## mean score per variety and sex. plot_id comes from the trial plots (the votes table has no variety_code)
+	lo <- aggregate(lo[, c("tuber_appearance_", "tuber_flavor", "tuber_texture")], by=lo[, c("trial_id", "sex", "variety_code")], FUN=mean, na.rm=TRUE)
+	plots <- unique(d[, c("trial_id", "variety_code", "plot_id")])
+	lo <- merge(lo, plots, by=c("trial_id", "variety_code"), all.x=TRUE)
 	## long table 3: selection criteria identified by the farmers, per phase (NOTES 9)
 	## No direct link between this and variety 
 	#cr <- carobiner::read.excel(f, sheet="F1_Selec_Crit")
