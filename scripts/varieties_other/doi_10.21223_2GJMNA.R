@@ -8,13 +8,14 @@
 # Raw images (Imagenes_Moz2.rar, 303 MB) not downloaded; coordinates from Image_description_Moz2.xlsx.
 
 ## ISSUES
-# Yield, vine and root weights are in the paper (BLUPs only) but not in the data; yield left NA.
+# Yield, vine and root weights are in the paper (BLUPs only) but not in the data; yield left NA. Keep in varieties without yield?
 # Genotype spelling variants harmonised (9 names); check the mapping in the code.
 # After that, 122 names (paper: 120); 5 names in >4 plots, 7 in <4 plots; kept as reported.
 # Urea rate not reported: N_fertilizer NA.
 # 5 plots have negative CI red-edge (NIR < red-edge reflectance); kept as reported.
 # Plot area: dataset says 25 m2, paper gives 5.1 x 4.5 m (22.95 m2); paper value used.
-# Variety types (checks, parents, landraces) are in paper Table S2 (not available); only 2 landraces set.
+# Variety types (checks, parents, landraces) are in paper Table S2 (not available); only the checks and landraces named in the description are set.
+# Flight date: sheet name gives 3 Oct 2019, but 190 DAP from planting (28 Mar, day 0) is 4 Oct; date from the sheet name.
 
 ## NEW VARIABLES
 # canopy_temp: mean canopy temperature of the plot from UAV thermal image, C
@@ -25,6 +26,7 @@
 # CI_rededge: mean chlorophyll red-edge index (NIR/RedEdge - 1) of the plot, unitless
 # CI_rededge_sd: standard deviation of CI red-edge pixels in the plot, unitless
 # irrigation_stop: days after planting from which irrigation was withheld (LSD only), days
+# is_check: TRUE for the check clones named in the dataset description (Resisto, 199062.1 and the 2 landraces); NA for others
 
 ## NOT PROCESSED
 # Image_description_Moz2.xlsx: flight altitude, image resolution and size (image metadata).
@@ -54,11 +56,11 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		treatment_vars = "variety;stress",
 		response_vars = "canopy_temp;NDVI;NDVI_green;CI_rededge;ground_cover",
 		notes = NA,
-		carob_contributor = NA,
-		carob_LLM = "Claude Opus 5.5",
+		carob_contributor = "Stella Muthoni",
+		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
 		carob_date = "2026-11-24",
 		carob_completion = 90,
-		carob_effort = 0.4
+		carob_effort = 0.5
 	)
 
 	f1 <- ff[basename(ff) == "Umbeluzi_2019_Moz2.xlsx"]
@@ -81,7 +83,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 	variety <- r1$Genotype
 	tofix <- variety %in% names(vfix)
 	variety[tofix] <- vfix[variety[tofix]]
-	# measurements: sheet name "031019" (3 Oct 2019); paper and image file say 190 DAP (planting day counted as day 1)
+	# measurements: sheet name "031019" (3 Oct 2019); image file says 190 DAP (= 4 Oct, as the dictionary counts planting as day 0)
 	d1 <- data.frame(
 		plot_id = paste0(ifelse(r1$Treatment == "Optimum Irrigation", "OI", "LSD"), "_", r1$PLOT),
 		plot_row = as.integer(r1$Row),
@@ -109,6 +111,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 	d$crop <- "sweetpotato"
 	# landraces named in the dataset description; other variety types are in paper Table S2
 	d$variety_type <- ifelse(d$variety %in% c("Xitsekele", "Xiadlaxakau"), "landrace", NA)
+	d$is_check <- ifelse(d$variety %in% c("Resisto", "199062.1", "Xitsekele", "Xiadlaxakau"), TRUE, NA)   # "check clones such as" (description); list may be incomplete
 	d$country <- "Mozambique"
 	d$adm1 <- "Maputo"
 	d$adm2 <- "Boane"
@@ -134,7 +137,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 	d$plot_area <- 5.1 * 4.5
 	# paper: urea (46N:0P:0K) at 3 weeks after planting, rate not given
 	d$fertilizer_type <- "urea"
-	d$fertilizer_date <- "2019-04"
+	d$fertilizer_dap <- "21"   # three weeks after planting
 	d$N_fertilizer <- as.numeric(NA)
 	d$P_fertilizer <- 0
 	d$K_fertilizer <- 0
