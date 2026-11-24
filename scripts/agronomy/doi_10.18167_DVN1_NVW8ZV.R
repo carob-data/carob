@@ -14,7 +14,8 @@
 # Saint-Benoit 14_15 emergence (2014-07-03) is before the reported 13_14 harvest (8-15 July 2014).
 # NPK grades assumed N-P2O5-K2O (French labelling); converted to elemental P and K. S unknown, left out.
 # Basis of weed_species_cover (inter-row or whole plot) is not stated; species sums match neither total.
-# Paper calls the intercrops "cover crops"; stored as intercrops (not harvested). Use cover_crop instead?
+# Paper calls the intercrops "cover crops". They were not harvested, so each is its own row (yield NA), not a cover_crop on the cane row.
+# Herbicide counts from Table 2 are herbicide_times (pre- and post-emergence summed): applications on the cane row on the sugarcane record, applications in the inter-row on the intercrop record. With no intercrop, both are on the sugarcane record.
 # Readme says dates are DD/MM/YYYY, but species file uses MM/DD/YYYY (read as such).
 # Likely data errors, kept: 19 rows inter-row weed+intercrop cover < weed cover; Canavalia cover in 3 CcRo rows.
 # yield (91-184 t/ha) flagged out of bounds by the generic 150 t/ha limit; normal for sugarcane.
@@ -26,11 +27,7 @@
 # internode_number, bored_internodes: internodes and bored internodes per dissected stalk (long table)
 # stalk_bored: stalk with at least one internode bored (long table, TRUE/FALSE)
 # herbicide_tfi: herbicide treatment frequency index per treatment and trial (paper section 2.6), unitless
-# herbicide_pre_row, herbicide_pre_interrow: number of pre-emergence herbicide applications on the row / inter-row (paper Table 2)
-# herbicide_post_row, herbicide_post_interrow: number of post-emergence herbicide applications on the row / inter-row (paper Table 2)
 # interrow_weed_control: inter-row management ("intercrop", "herbicide" or "none")
-# intercrop_sowing_time: intercrop sowing time, months after sugarcane emergence (paper Table 2)
-# intercrop_seed_rate: intercrop seed rate, kg/ha
 # ratoon_number: crop cycle (0 = planted cane, 1 = first ratoon, ...)
 # weed_intercrop_cover, weed_intercrop_cover_interrow: ground cover by weeds and intercrop, whole plot / inter-row, %
 # weed_cover_interrow: ground cover by weeds in the inter-row, %
@@ -46,7 +43,7 @@
 
 carob_script <- function(path) {
 	
-	"
+"
 Jack bean (Canavalia ensiformis) intercrop to reduce weeds and stalk borer damage in sugarcane
 
 The aim of this study was to assess the efficiency of two intercrop species, Canavalia ensiformis and Desmodium intortum, to reduce weed growth, herbicide use and damage by the stalk borer Chilo sacchariphagus in sugarcane cropping system in Reunion.  We compared six inter-row management techniques: four treatments combined the two intercrops Canavalia ensiformis or Desmodium intortum sown either early (between 0 and 2.1 months after sugarcane emergence) or late (between 1.3 and 3.7 months after sugarcane emergence), a treatment where no weeding was carried out on the inter-row, and a treatment with chemical weeding of the inter-row (CcWp). In all treatments, the sugarcane row was weeded chemically and manually. The six treatments were compared in a multilocal randomized block design with tree localities, during one or two crop cycles depending on the locality.
@@ -57,19 +54,19 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 	ff  <- carobiner::get_data(uri, path, group)
 	
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-																	data_organization = "CIRAD; eRcane",
-																	publication = "doi:10.64898/2026.01.26.701649",
-																	project = NA,
-																	design = "RCBD; 3 (Saint-Paul) or 4 reps",
-																	data_type = "experiment",
-																	treatment_vars = "intercrops;intercrop_sowing_time;interrow_weed_control",
-																	response_vars = "yield;bored_stalks;herbicide_tfi;weeding_times;weed_cover;weed_cover_interrow;intercrop_cover_interrow;weed_species_cover",
-																	notes = NA,
-																	carob_contributor = "Stella Muthoni",
-																	carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
-																	carob_date = "2026-11-23",
-																	carob_completion = 90,
-																	carob_effort = 0.4
+		data_organization = "eRcane; CIRAD",
+		publication = "doi:10.64898/2026.01.26.701649",
+		project = NA,
+		design = "RCBD; 3 (Saint-Paul) or 4 reps",
+		data_type = "experiment",
+		treatment_vars = "intercrops;seed_rate;planting_date;interrow_weed_control",
+		response_vars = "yield;bored_stalks;herbicide_tfi;weeding_times;weed_cover;weed_cover_interrow;intercrop_cover_interrow;weed_species_cover",
+		notes = NA,
+		carob_contributor = "Stella Muthoni",
+		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
+		carob_date = "2026-11-23",
+		carob_completion = 90,
+		carob_effort = 0.4
 	)
 	
 	f1 <- ff[basename(ff) == "borer damage.csv"]
@@ -169,18 +166,20 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 	)
 	
 	## dtrt: treatments per trial, paper Table 2 (order DiE, DiL, CeE, CeL, CcRo, CcWp)
+	## pre- and post-emergence applications are summed. Row sprays stay on the cane;
+	## inter-row sprays go to the intercrop row (or to the cane, when there is no intercrop).
 	trt <- c("DiE", "DiL", "CeE", "CeL", "CcRo", "CcWp")
+	pre_row <- c(1,1,1,1,1,1,  1,1,1,1,1,1,  0,1,0,1,0,1,  1,1,1,1,1,1,  0,0,0,0,0,0)
+	pre_ir <- c(0,1,0,1,1,1,  1,1,1,1,0,1,  0,0,0,0,0,1,  0,0,0,0,0,1,  0,0,0,0,0,0)
+	post_row <- c(0,1,0,1,1,1,  2,3,2,3,3,3,  1,1,0,0,1,1,  1,1,1,1,1,1,  1,1,1,1,1,1)
+	post_ir <- c(0,0,0,0,0,1,  0,1,0,1,0,3,  1,2,0,1,0,1,  0,0,0,0,0,1,  0,1,0,1,0,1)
 	dtrt <- data.frame(
 		trial_id = rep(c("Saint-Paul_14_15", "Saint-Benoit_13_14", "Saint-Benoit_14_15", "Sainte-Marie_14_15", "Sainte-Marie_15_16"), each=6),
 		treatment = rep(trt, 5),
 		intercrop_sowing_time = c(0, 1.3, 0, 1.3, NA, NA,  1.2, 2.2, 1.2, 2.2, NA, NA,  0.8, 1.8, 0.8, 1.8, NA, NA,  1.4, 2.4, 1.4, 2.4, NA, NA,  2.1, 3.7, 2.1, 3.7, NA, NA),
-		herbicide_pre_row = as.integer(c(1,1,1,1,1,1,  1,1,1,1,1,1,  0,1,0,1,0,1,  1,1,1,1,1,1,  0,0,0,0,0,0)),
-		herbicide_pre_interrow = as.integer(c(0,1,0,1,1,1,  1,1,1,1,0,1,  0,0,0,0,0,1,  0,0,0,0,0,1,  0,0,0,0,0,0)),
-		herbicide_post_row = as.integer(c(0,1,0,1,1,1,  2,3,2,3,3,3,  1,1,0,0,1,1,  1,1,1,1,1,1,  1,1,1,1,1,1)),
-		herbicide_post_interrow = as.integer(c(0,0,0,0,0,1,  0,1,0,1,0,3,  1,2,0,1,0,1,  0,0,0,0,0,1,  0,1,0,1,0,1))
+		herbicide_times = as.integer(pre_row + post_row),
+		herbicide_interrow = as.integer(pre_ir + post_ir)
 	)
-	dtrt$herbicide_times <- as.integer(rowSums(dtrt[, grep("^herbicide_p", names(dtrt))]))   # all applications, Table 2
-	dtrt$herbicide_used <- dtrt$herbicide_times > 0
 	dtrt$intercrops <- c(DiE="desmodium", DiL="desmodium", CeE="jack bean", CeL="jack bean", CcRo="none", CcWp="none")[dtrt$treatment]
 	dtrt$interrow_weed_control <- c(DiE="intercrop", DiL="intercrop", CeE="intercrop", CeL="intercrop", CcRo="none", CcWp="herbicide")[dtrt$treatment]
 	dtrt$intercrop_type <- ifelse(dtrt$intercrops == "none", NA, "row")   # sown on 2 lines in each inter-row
@@ -234,13 +233,59 @@ The aim of this study was to assess the efficiency of two intercrop species, Can
 	d$yield_part <- "stems"
 	d$yield_moisture <- as.numeric(NA)   # not reported; fresh cane weight
 	d$yield_isfresh <- TRUE
-	
+	# inter-row sprays are recorded on the intercrop. With no intercrop they stay on the cane.
+	alone <- !d$intercropped
+	d$herbicide_times[alone] <- d$herbicide_times[alone] + d$herbicide_interrow[alone]
+	d$herbicide_used <- d$herbicide_times > 0
+
+	## intercrop rows: not harvested. seed rate and sowing date are theirs; cane yield and fertilizer are not.
+	di <- d[d$intercropped, ]
+	di$crop <- di$intercrops
+	di$intercrops <- "sugarcane"
+	di$seed_rate <- di$intercrop_seed_rate
+	di$planting_date <- as.character(as.Date(di$emergence_date) + as.integer(round(di$intercrop_sowing_time * 365 / 12)))
+	di$planting_date[is.na(di$seed_rate)] <- NA   # Saint-Paul early intercrops were regrowth, not sown
+	di$emergence_date <- NA
+	di$harvest_date <- NA
+	di$variety <- NA
+	di$yield <- NA
+	di$yield_part <- NA
+	di$yield_moisture <- NA
+	di$yield_isfresh <- NA
+	di$bored_stalks <- NA
+	di$pest_species <- NA
+	di$herbicide_times <- di$herbicide_interrow
+	di$herbicide_used <- di$herbicide_times > 0
+	di$herbicide_tfi <- NA
+	di$weeding_times <- NA
+	di$weeding_method <- NA
+	di$fertilizer_type <- NA
+	di$fertilizer_amount <- NA
+	di$N_fertilizer <- NA
+	di$P_fertilizer <- NA
+	di$K_fertilizer <- NA
+	di$row_spacing <- 30   # two sowing lines, 30 cm apart, in each inter-row
+	d$intercrop_sowing_time <- d$intercrop_seed_rate <- d$herbicide_interrow <- NULL
+	di$intercrop_sowing_time <- di$intercrop_seed_rate <- di$herbicide_interrow <- NULL
+	d <- carobiner::bindr(d, di)
+	d$record_id <- as.integer(seq_len(nrow(d)))
+
 	## long table: ground cover (r2, plus r4 rows not in r2), species cover (r3) and borer per stalk (r1)
+	## record_id separates the two crops, which share a plot_id. Intercrop cover goes to the intercrop record.
+	## Canavalia cover on CcRo (no intercrop row) stays on the cane record.
 	keys <- rbind(d6[, c("trial_id", "treatment", "rep", "plot_id")], des)
 	d2 <- merge(d2, keys, by=c("trial_id", "treatment", "rep"))
 	d4 <- merge(d4, keys, by=c("trial_id", "treatment", "rep"))
 	d4new <- d4[!paste(d4$plot_id, d4$date) %in% paste(d2$plot_id, d2$date), ]
 	dlong <- carobiner::bindr(d2, d4new, d3, d1long)
+	cane_id <- d[d$crop == "sugarcane", c("plot_id", "record_id")]
+	ic_id <- d[d$crop != "sugarcane", c("plot_id", "record_id")]
+	dlong$record_id <- cane_id$record_id[match(dlong$plot_id, cane_id$plot_id)]
+	has_ic <- dlong$plot_id %in% ic_id$plot_id & !is.na(dlong$intercrop_cover_interrow)
+	icov <- dlong[has_ic, c("plot_id", "date", "DAE", "intercrop_cover_interrow")]
+	icov$record_id <- ic_id$record_id[match(icov$plot_id, ic_id$plot_id)]
+	dlong$intercrop_cover_interrow[dlong$plot_id %in% ic_id$plot_id] <- NA
+	dlong <- carobiner::bindr(dlong, icov)
 	dlong$trial_id <- dlong$treatment <- dlong$rep <- NULL
 	dlong$date <- as.character(dlong$date)
 	
