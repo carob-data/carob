@@ -49,10 +49,17 @@ carob_script <- function(path) {
 		soil_Al=r1$`Al (mg kg-1)`,
 		soil_C=r1$`Carbon (%)`,
 		fertilizer_type=r1$`Type of Inorganic Fertilizer`,
-		location = r1$`Name of the Village`,
+		location = trimws(r1$`Name of the Village`),
 		planting_date = as.character(as.Date(r1$`Planting Date`)),	
 		weed_cover = r1$`Average % weed cover`,
-		fertilizer_amount = r1$`Amount of Inorganic Fertilizer (kg)`
+		fertilizer_amount = r1$`Amount of Inorganic Fertilizer (kg)`,
+		OM_amount = r1$`Amount of  Organic Fertilizer applied`,
+		sex = r1$Sex,
+		age = r1$Age,
+		plot_id = as.character(r1$`plot ID`),
+		seed_type = r1$`Seed type (Local vs Improved)`,
+		farmland = r1$`Farm size (ha)`,
+		farmland_owned = ifelse(grepl("Yes_Owned", r1$`Household owenership`), r1$`Farm size (ha)`, NA)
 	)
 
 	d2 <- data.frame(
@@ -77,10 +84,17 @@ carob_script <- function(path) {
 		soil_Al=r2$Al..mg.kg.1.,
 		soil_C=r2$Carbon....,
 		fertilizer_type=r2$Type.of.Inorganic.Fertilizer,
-		location = r2$Name.of.the.Village,
+		location = trimws(r2$Name.of.the.Village),
 		planting_date = as.character(as.Date( r2$Planting.Date  )),
-		weed_cover = r1$`Average % weed cover`,
-		fertilizer_amount = r1$`Amount of Inorganic Fertilizer (kg)`
+		weed_cover = r2$Average...weed.cover,
+		fertilizer_amount = r2$Amount.of.Inorganic.Fertilizer..kg.,
+		OM_amount = r2$Amount.of..Organic.Fertilizer.applied,
+		sex = r2$Sex,
+		age = r2$Age,
+		plot_id = as.character(r2$plot.ID),
+		seed_type = r2$Seed.type..Local.vs.Improved.,
+		farmland = r2$Farm.size..ha.,
+		farmland_owned = ifelse(grepl("Yes_Owned", r2$Household.owenership), r2$Farm.size..ha., NA)
 	)
   
 	d <- carobiner::bindr(d1, d2)
@@ -92,6 +106,11 @@ carob_script <- function(path) {
 	d$adm1 <- "Oromia"
 	d$adm2 <- "West Showa"
 	d$geo_from_source <- TRUE
+	i <- is.na(d$longitude) & is.na(d$latitude)
+	d$longitude[i] <- 37.890
+	d$latitude[i] <- 9.2912
+	d$geo_from_source[i] <- FALSE
+	d$geo_source[i] <- "Google Maps"
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	#d$trial_id <- "1"
@@ -106,9 +125,11 @@ carob_script <- function(path) {
 	d$crop_rotation <- gsub(", ", ";", d$crop_rotation)
 	d$crop_rotation <- gsub("beans", "common bean", d$crop_rotation)
 	d$crop_rotation <- gsub("other", "unknown", d$crop_rotation)
-
+	d$crop_rotation <- gsub("vegetables", "vegetable", d$crop_rotation)
+	
 	d$previous_crop <- gsub("beans", "common bean", d$previous_crop)
 	d$previous_crop <- gsub("other", "unknown", d$previous_crop)
+	d$previous_crop <- gsub("vegetables", "vegetable", d$previous_crop)
 
 	d$intercrops <- gsub("Haricot bean", "common bean", d$intercrops)
 	
