@@ -110,10 +110,12 @@ carob_script <- function(path) {
 			d$latitude <- 26.592 # https://www.gps-coordinates.net/
 			d$longitude <- 87.103
 			d$location <- "Bhokraha"
+			d$geo_source <- "gps-coordinates"
 		} else { #Saalbani please add lon/lat
-			d$latitude <- NA
-			d$longitude <- NA
+			d$latitude <- 26.71904 
+			d$longitude <- 87.11274
 			d$location <- "Saalbani"
+			d$geo_source <- "Google Maps"
 		}
 		d$geo_from_source <- FALSE
 		crop <- tolower(strsplit(basename(f), "-")[[1]][1])
@@ -130,7 +132,8 @@ carob_script <- function(path) {
 	
 	dd <- lapply(ff, fun)
 	dd <- do.call(rbind, dd)
-
+  
+  dd$season <- gsub("rabi \\(winter\\)", "rabi", tolower(dd$season))
 	dd$on_farm <- TRUE
 	dd$is_survey <- FALSE
 	dd$yield_isfresh <- as.numeric(NA) #needs to be checked
