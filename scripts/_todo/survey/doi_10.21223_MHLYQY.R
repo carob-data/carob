@@ -44,7 +44,7 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.35
 	)
@@ -102,9 +102,20 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 		ifelse(!is.na(x) & toupper(x) == x, tools::toTitleCase(tolower(x)), x)
 	}
 	d$adm2 <- nice(d$adm2)
+	d$adm2[d$adm2 %in% c("Gekenke", "Kakenke")] <- "Gakenke"
+	d$adm2[d$adm2 == "Katonza"] <- "Kayonza"
+	d$adm2[d$adm2 == "Muzanze"] <- "Musanze"
+	d$adm2[d$adm2 %in% c("Ngorero", "Ngororeero")] <- "Ngororero"
+	d$adm2[d$adm2 == "Nuhanga"] <- "Muhanga"
 	d$adm3 <- nice(d$adm3)
 	d$location <- nice(d$location)
 	d$country <- "Rwanda"
+	geo <- data.frame(
+		adm2 = c("Gakenke", "Kayonza", "Muhanga", "Musanze", "Ngororero", "Kamonyi", "Ruhango", "Rulindo", "Rwamagana", "Burera", "Gicumbi", "Nyabihu", "Rubavu"),
+		latitude = c(-1.690, -1.850, -2.076, -1.500, -1.878, -2.000, -2.230, -1.730, -1.949, -1.466, -1.576, -1.650, -1.680),
+		longitude = c(29.780, 30.650, 29.757, 29.635, 29.570, 29.900, 29.780, 29.990, 30.435, 29.827, 30.067, 29.510, 29.330)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 	d$crop <- "sweetpotato"
 	d$geo_from_source <- FALSE
 	d$is_survey <- TRUE

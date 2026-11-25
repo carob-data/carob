@@ -47,12 +47,12 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 
 	uri <- "doi:10.21223/P3/P9TJCO"
 	group <- "survey"
-	ff <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group, ignore = "GROWING Baseline Data - nopii.rar")
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIP",
 		publication = NA,
-		project = NA,
+		project = "GROWING",
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
@@ -60,7 +60,7 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.4
 	)
@@ -77,10 +77,10 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 	d <- data.frame(
 		hhid = trimws(as.character(r$hhid)),
 		country = "Ghana",
-		adm1 = trimws(as.character(r$region)),
+		adm1 = sub("^[0-9]+-", "", trimws(as.character(r$region))),
 		adm2 = trimws(as.character(r$district)),
 		adm3 = trimws(as.character(r$sub_district)),
-		location = trimws(as.character(r$community_name)),
+		location = sub("^[0-9]+-", "", trimws(as.character(r$community_name))),
 		variety = trimws(as.character(r$this_variety_name)),
 		treatment = trimws(as.character(r$treatment_status)),
 		plot_size_recorded_ = qty,
@@ -88,8 +88,15 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 		field_size = ha,
 		on_farm = TRUE,
 		is_survey = TRUE,
+		geo_from_source = FALSE,
 		irrigated = NA,
 		trial_id = "GROWING_baseline"
 	)
+	geo <- data.frame(
+		adm2 = c("Chereponi", "East Mamprusi", "Gushegu", "North Gonja", "Saboba", "West Gonja"),
+		latitude = c(10.138, 10.525, 9.917, 9.533, 9.700, 9.083),
+		longitude = c(0.283, -0.367, -0.217, -1.350, 0.317, -1.817)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 	carobiner::write_files(path, meta, d)
 }

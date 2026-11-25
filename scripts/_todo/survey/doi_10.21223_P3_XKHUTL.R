@@ -50,7 +50,7 @@ This contains potato seed system data collected for a network analysis. It is fr
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.3
 	)
@@ -105,6 +105,7 @@ This contains potato seed system data collected for a network analysis. It is fr
 	)
 	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

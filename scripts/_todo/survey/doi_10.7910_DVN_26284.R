@@ -53,7 +53,7 @@ The Integrated Upland Agriculture and Forestry Research Project (IUARP) is a mul
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.4
 	)
@@ -63,11 +63,15 @@ The Integrated Upland Agriculture and Forestry Research Project (IUARP) is a mul
 	r2 <- carobiner::read.excel(f, sheet="Landuse-Lowland", skip=5)
 	r3 <- carobiner::read.excel(f, sheet="Landhold-Lowland", skip=6)
 
-	crops <- c("rice", "job's tears", "chili pepper", "eggplant", "sesame", "cassava", "maize", "sugarcane", "banana", "jackfruit", "mango", "taro", "tamarind", "pineapple", "lychee", "lemon", "custard apple", "avocado", "pomelo", "cantaloupe", "paper mulberry", "teak", "pumpkin", "onion", "coriander", "garlic", "lettuce", "common bean", "kale", "large ground", "sweetpotato", "groundnut", "rambutan", "longan", "papaya", "cotton", "rattan", "cabbage", "pigeon pea")
+	# Codes 2 (job's tears), 21 (paper mulberry), 30 (large ground) not in terminag values_crop; set to NA
+	crops <- c("rice", NA, "chili pepper", "eggplant", "sesame", "cassava", "maize", "sugarcane", "banana", "jackfruit", "mango", "taro", "tamarind", "pineapple", "lychee", "lemon", "custard apple", "avocado", "pomelo", "cantaloupe", NA, "teak", "pumpkin", "onion", "coriander", "garlic", "lettuce", "common bean", "kale", NA, "sweetpotato", "groundnut", "rambutan", "longan", "papaya", "cotton", "rattan", "cabbage", "pigeon pea")
 	villages <- c("Hatzoa", "Houaylueng", "Pakcheak", "Latthahea", "Houaytham", "Houaykha", "Houaythoum", "Mokmueng")
 	wellbeing <- c(w="well-off", a="average", p="poor")
 
-	cc <- suppressWarnings(as.integer(r1$Crop))
+	rawc <- trimws(as.character(r1$Crop))
+	cc <- rep(NA_integer_, nrow(r1))
+	is_num <- grepl("^[0-9]+$", rawc)
+	cc[is_num] <- as.integer(rawc[is_num])
 	d1 <- data.frame(
 		village = r1$Village,
 		farmer = r1$Farmer,
@@ -75,6 +79,7 @@ The Integrated Upland Agriculture and Forestry Research Project (IUARP) is a mul
 		planting_date = as.character(r1$Year),
 		plot_id = as.character(r1$Parcel),
 		crop = crops[cc],
+		crop_label_ = ifelse(cc %in% c(2, 21, 30), c("2"="job's tears", "21"="paper mulberry", "30"="large ground")[as.character(cc)], NA_character_),
 		intercropped = toupper(r1$Cropping) == "I",
 		field_size = r1$Areapro,
 		yield = ifelse(r1$ProdUnit %in% "kg", r1$Prod / r1$Areapro, NA),
@@ -85,10 +90,18 @@ The Integrated Upland Agriculture and Forestry Research Project (IUARP) is a mul
 	fal <- grepl("fal", r1$Crop, ignore.case=TRUE)
 	d1$crop[fal] <- "none"
 	d1$fallow_ <- ifelse(fal, ifelse(grepl("^impro", r1$Crop, ignore.case=TRUE), "improved fallow", "fallow"), NA)
-	d1 <- d1[!is.na(d1$crop), ]
+	d1 <- d1[!is.na(d1$crop) | !is.na(d1$crop_label_), ]
 
+	irraw <- tolower(trimws(as.character(r3$IrrSource)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("rain|none", irraw)] <- "none"
+	irsrc[grepl("river|stream|creek|brook", irraw)] <- "stream"
+	irsrc[grepl("canal|weir|gravity|irrig", irraw)] <- "canal"
+	irsrc[grepl("spring", irraw)] <- "spring"
+	irsrc[grepl("pond|reservoir|dam", irraw)] <- "pond"
 	lh <- data.frame(village = r3$Village, farmer = r3$Farmer, parcel = r3$Parcel, 
-		irrigated = r3$Irrig == "Irrigated", irrigation_source = tolower(r3$IrrSource))
+		irrigated = r3$Irrig == "Irrigated", irrigation_source = irsrc)
 	lh <- lh[!is.na(lh$parcel) & !duplicated(lh[, 1:3]), ]
 	r2 <- r2[!is.na(r2$Crop), ]
 	d2 <- data.frame(
@@ -116,14 +129,18 @@ The Integrated Upland Agriculture and Forestry Research Project (IUARP) is a mul
 	d$country <- "Laos"
 	d$adm1 <- "Louangphrabang"
 	d$adm2 <- "Pak Ou"
+	d$latitude <- 20.067
+	d$longitude <- 102.217
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- "grain"
+	d$yield_part[is.na(d$crop)] <- NA
 	d$yield_part[d$crop %in% c("sesame", "common bean", "pigeon pea", "cotton")] <- "seed"
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato", "taro")] <- "roots"
 	d$yield_part[d$crop %in% c("chili pepper", "eggplant", "banana", "jackfruit", "mango", "tamarind", "pineapple", "lychee", "lemon", "custard apple", "avocado", "pomelo", "cantaloupe", "pumpkin", "rambutan", "longan", "papaya")] <- "fruit"
 	d$yield_part[d$crop %in% c("lettuce", "kale", "cabbage", "coriander", "onion", "garlic")] <- "leaves"
-	d$yield_part[d$crop %in% c("sugarcane", "paper mulberry", "rattan")] <- "stems"
+	d$yield_part[d$crop %in% c("sugarcane", "rattan")] <- "stems"
 	d$yield_part[d$crop == "teak"] <- "wood"
 	d$yield_part[d$crop == "groundnut"] <- "pod"
 	d$yield_part[d$crop == "none"] <- "none"

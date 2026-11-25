@@ -101,7 +101,7 @@ Household survey of lime use and crop harvest on farm subplots in Rwanda.
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.6
 	)
@@ -116,7 +116,7 @@ Household survey of lime use and crop harvest on farm subplots in Rwanda.
 		"Banana"="banana", "Cabbage"="cabbage", "Barley"="barley", "Cassava"="cassava"
 	)
 	part_of <- c(
-		potato="tubers", maize="grain", "common bean"="seed", wheat="seed",
+		potato="tubers", maize="grain", "common bean"="seed", wheat="grain",
 		"faba bean"="seed", sweetpotato="roots", pea="seed", sorghum="grain",
 		chickpea="seed", banana="fruit", cabbage="leaves", barley="grain", cassava="roots"
 	)
@@ -186,6 +186,9 @@ Household survey of lime use and crop harvest on farm subplots in Rwanda.
 		geo_uncertainty = c(22162, 25330, 25561, 23866),
 		geo_source = "GADM 4.1, adm2"
 	)
+	d$adm1[d$adm1 == "Northern"] <- "Amajyaruguru"
+	d$adm1[d$adm1 == "Southern"] <- "Amajyepfo"
+	d$adm1[d$adm1 == "Western"] <- "Iburengerazuba"
 	d <- merge(d, geo, by="adm2", all.x=TRUE)
 
 	carobiner::write_files(path, meta, d)

@@ -38,7 +38,7 @@ Root and tuber crops (RTC) play an important role in diverse Asian agri-food sys
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.3
 	)
@@ -67,6 +67,13 @@ Root and tuber crops (RTC) play an important role in diverse Asian agri-food sys
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	d$adm1[d$adm1 == "Apayo"] <- "Apayao"
+	geo <- data.frame(
+		adm2 = c("Conner", "Kabugao", "Pinukpuk", "Tabuk", "Tanudan"),
+		latitude = c(17.798, 18.021, 17.615, 17.419, 17.283),
+		longitude = c(121.334, 121.186, 121.375, 121.444, 121.246)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

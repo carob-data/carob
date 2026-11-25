@@ -45,7 +45,7 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.8
 	)
@@ -73,7 +73,7 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 
 	# Bangladesh: yield is kg and area is treated as decimals.
 	f <- ff[basename(ff) == "1-SRFSI-HH survey-Bangladesh-IWMI.xlsm"]
-	r1 <- carobiner::read.excel(f, sheet="Plots")
+	r1 <- carobiner::read.excel(f, sheet="Plots", col_types="text")
 	dec_ha <- 0.4046863 / 100
 	bang <- function(area, yld, crop, season) {
 		a <- num(r1[[area]])
@@ -101,7 +101,7 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		bang("Pulses area cultivated pulses", "Pulses yield of pulses", "pulse", NA_character_),
 		bang("Tobacco area cultivated Tobacco", "Tobacco yield of Tobacco", "tobacco", NA_character_),
 		bang("Winter Paddy area cultivated winter paddy", "Winter Paddy yield of winter  paddy", "rice", "boro"),
-		bang("Summer paddy area cultivated summer paddy", "Summer paddy yield of summer paddy", "rice", NA_character_)
+		bang("Summer paddy area cultivated summer paddy", "Summer paddy yield of summer paddy", "rice", "early wet")
 	)
 
 	f <- ff[basename(ff) == "2-SRFSI-HH survey-Bihar -IWMI.xlsx"]
@@ -190,8 +190,21 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 	d$geo_from_source <- FALSE
 	d$adm1 <- carobiner::fix_name(d$adm1, "title")
 	d$adm2 <- carobiner::fix_name(d$adm2, "title")
+	d$adm2[d$adm2 == "Chapai Nawabgonj"] <- "Chapai Nawabganj"
+	d$adm1[d$adm2 %in% c("Chapai Nawabganj", "Rajshahi")] <- "Rajshahi"
+	d$adm1[d$adm2 %in% c("Dinajpur", "Rangpur")] <- "Rangpur"
+	d$adm1[d$adm2 == "Dhanusha"] <- "Madhesh"
+	d$adm1[d$adm2 == "Sunsari"] <- "Koshi"
 	d$location <- carobiner::fix_name(d$location, "title")
 	d$variety <- carobiner::fix_name(d$variety, "title")
+
+	geo <- data.frame(
+		adm2 = c("Chapai Nawabganj", "Dinajpur", "Rajshahi", "Rangpur", "Madhubani", "Purnea", "Cooch Behar", "Malda", "Dhanusha", "Sunsari"),
+		latitude = c(24.596, 25.622, 24.374, 25.744, 26.353, 25.777, 26.324, 25.011, 26.727, 26.627),
+		longitude = c(88.277, 88.633, 88.604, 89.275, 86.071, 87.475, 89.446, 88.141, 85.925, 87.176)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

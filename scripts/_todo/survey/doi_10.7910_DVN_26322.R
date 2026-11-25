@@ -53,7 +53,7 @@ To examine how such a pattern of agrarian change has emerged through the interac
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -121,6 +121,9 @@ To examine how such a pattern of agrarian change has emerged through the interac
 	d$adm1 <- "Laguna"
 	d$adm2 <- "Pila"
 	d$location <- "Tubuan"
+	d$latitude <- 14.233
+	d$longitude <- 121.367
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$trial_id <- paste(d$hhid, d$season, sep="_")

@@ -41,7 +41,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
 		carob_effort = 0.4
 	)
@@ -131,6 +131,15 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 	d$trial_id <- paste0("PPH_", d$hhid, "_", seq_len(nrow(d)))
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Julcán", "Sánchez Carrión"),
+		latitude = c(-8.0439, -7.8136),
+		longitude = c(-78.4875, -78.0489)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

@@ -52,7 +52,7 @@ International Potato Center (CIP) and partners collaborated to develop orange-fl
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.35
 	)
@@ -98,6 +98,21 @@ International Potato Center (CIP) and partners collaborated to develop orange-fl
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Balaka", "Blantyre", "Chikwawa", "Chiradzulu", "Chitipa", "Dedza", "Dowa",
+			"Karonga", "Kasungu", "Lilongwe", "Lilongwe East", "Lilongwe West", "Machinga",
+			"Mangochi", "Mchinji", "Mulanje", "Mwanza", "Mzimba", "Neno", "Nkhata Bay",
+			"Nkhotakota", "Nsanje", "Ntcheu", "Ntchisi", "Phalombe", "Rumphi", "Salima", "Thyolo", "Zomba"),
+		latitude = c(-14.980, -15.786, -16.035, -15.675, -9.702, -14.378, -13.654,
+			-9.933, -13.033, -13.983, -14.000, -13.950, -15.167,
+			-14.478, -13.798, -16.032, -15.603, -11.900, -15.398, -11.607,
+			-12.927, -16.920, -14.820, -13.367, -15.806, -11.019, -13.780, -16.068, -15.386),
+		longitude = c(34.956, 35.006, 34.801, 35.141, 33.270, 34.333, 33.938,
+			33.933, 33.483, 33.783, 33.900, 33.650, 35.300,
+			35.264, 32.880, 35.500, 34.525, 33.600, 34.653, 34.291,
+			34.296, 35.262, 34.636, 33.917, 35.651, 33.857, 34.459, 35.140, 35.319)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

@@ -56,7 +56,7 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.3
 	)
@@ -102,13 +102,13 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 	r3$hhid <- as.character(r3$Hhcode)
 	area <- tapply(d$field_size[d$season == "wet"], d$hhid[d$season == "wet"], sum)
 
-	ftype <- c(UREA="urea", SULP="DAS", COMP="NPK", T162="16-20-0")
+	ftype <- c(UREA="urea", SULP="DAS", COMP="NPK", T162="NP")
 	r3$fert <- ftype[r3$FERTKD]
 	r3$fkg <- as.numeric(r3$FERTKG)
 	# hh 261: 3500 kg urea for 633.5 pesos (CRetWs76 FERTC), ten times cheaper per kg than other households
 	r3$fkg[r3$hhid == "261" & r3$FERTKD %in% "UREA"] <- NA
 	# NA for products with unknown grade, so that the household N total becomes NA
-	r3$Nkg <- r3$fkg * c(urea=0.46, DAS=0.21, NPK=NA, "16-20-0"=NA)[r3$fert]
+	r3$Nkg <- r3$fkg * c(urea=0.46, DAS=0.21, NPK=NA, NP=NA)[r3$fert]
 	inorg <- r3[!is.na(r3$fert), ]
 	paste_u <- function(x) {
 		x <- unique(x[!is.na(x)])
@@ -149,6 +149,9 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 	d$adm1 <- "Laguna"
 	d$adm2 <- "Pila"
 	d$location <- "Tubuan"
+	d$latitude <- 14.233
+	d$longitude <- 121.367
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$trial_id <- paste(d$hhid, d$season, sep="_")

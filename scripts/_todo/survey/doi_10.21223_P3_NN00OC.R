@@ -57,7 +57,7 @@ The baseline survey for Viable Sweetpotato Technologies in Africa (VISTA) projec
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.35
 	)
@@ -98,6 +98,14 @@ The baseline survey for Viable Sweetpotato Technologies in Africa (VISTA) projec
 	d$on_farm <- TRUE
 	d$trial_id <- "Mozambique_VISTA_2015"
 	d <- d[!is.na(d$hhid), ]
+	geo <- data.frame(
+		adm2 = c("Alto Molocue", "Gurue", "Meconta", "Monapo", "Murrupula", "Rapale"),
+		latitude = c(-15.6458, -15.4636, -14.9833, -14.9167, -15.4500, -15.0500),
+		longitude = c(37.6639, 36.9817, 39.8500, 40.3000, 38.6667, 39.2000)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

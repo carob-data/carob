@@ -47,7 +47,7 @@ To estimate yield and profitability of gains in the cultivation of hybrids compa
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.4
 	)
@@ -55,7 +55,8 @@ To estimate yield and profitability of gains in the cultivation of hybrids compa
 	f <- ff[basename(ff) == "costs and return.xlsx"]
 	r <- carobiner::read.excel(f)
 
-	irr <- c("1"="gravity (NIA)", "2"="pump", "3"="rainfed", "12"="pump;gravity (NIA)")[as.character(r$IRRIG)]
+	irr <- c("1"="canal", "2"="unknown", "3"="none", "12"="canal")[as.character(r$IRRIG)]
+	irlift <- c("1"="gravity", "2"="motorized pump", "12"="motorized pump")[as.character(r$IRRIG)]
 	ten <- c("owned", "CLT holder", "share tenant", "fixed rent", "mortgaged-in")[r$TENURE]
 	elev <- c("1"="upland", "2"="medium land", "3"="lowland", "12"="upland;medium land", "23"="medium land;lowland")[as.character(r$LANDEL)]
 
@@ -81,20 +82,29 @@ To estimate yield and profitability of gains in the cultivation of hybrids compa
 		seed_cost = r$SEEDC / r$AREA,
 		transplanting_days = ifelse(r$MESTB == 2 & r$AGEHS > 0, r$AGEHS, NA),
 		irrigation_source = as.vector(irr),
+		irrigation_lifting = as.vector(irlift),
 		irrigated = r$IRRIG != 3,
 		irrigation_cost = r$IRRNIA / r$AREA,
 		fertilizer_cost = r$FRTCST / r$AREA,
 		insecticide_cost = r$INSCST / r$AREA,
 		insecticide_times = as.integer(r$IXAPP),
 		herbicide_cost = r$HERBC / r$AREA,
-		herbicide_times = r$HXAPP,
+		herbicide_times = ifelse(!is.na(r$HXAPP) & r$HXAPP == floor(r$HXAPP), as.integer(r$HXAPP), NA_integer_),
+		herbicide_times_ = r$HXAPP,
 		yield = r$PROD * r$WEIGHT / r$AREA,
 		crop_price = r$PRIKG,
 		currency = "PHP"
 	)
 
+	geo <- data.frame(
+		adm1 = c("Isabela", "Bukidnon"),
+		latitude = c(16.927, 7.906),
+		longitude = c(121.771, 125.094)
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$insecticide_used <- d$insecticide_times > 0
-	d$herbicide_used <- d$herbicide_times > 0
+	d$herbicide_used <- d$herbicide_times_ > 0
 	d$trial_id <- paste(d$hhid, r[[4]], sep="-")
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE

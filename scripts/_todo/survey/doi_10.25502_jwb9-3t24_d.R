@@ -56,7 +56,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.7
 	)
@@ -108,8 +108,8 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		out
 	}
 
-	s1 <- "July-December 2021"
-	s2 <- "January-May 2022"
+	s1 <- "second"
+	s2 <- "first"
 
 	base <- data.frame(
 		hhid = as.character(r$ID),
@@ -134,6 +134,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		d <- base[keep, ]
 		d$crop <- crop
 		d$season <- season
+		d$planting_date <- ifelse(season == "second", "2021", "2022")
 		d$variety <- clean_var(variety)[keep]
 		d$area_reported_ <- area[keep]
 		d$yield_reported_ <- yield[keep]

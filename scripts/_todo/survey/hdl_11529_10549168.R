@@ -44,7 +44,7 @@ Household survey of wheat plots in Ethiopia, with grain quantity recorded in kil
 		response_vars = "grain_yield_kg_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -68,13 +68,28 @@ Household survey of wheat plots in Ethiopia, with grain quantity recorded in kil
 		crop = "wheat",
 		variety = variety,
 		treatment = variety,
-		yield_part = "seed",
+		yield_part = "grain",
 		grain_yield_kg_ = as.numeric(r1$Plot_GrainYield_Qnt),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
 	d <- d[!is.na(d$variety), ]
+	d$adm1[d$adm1 == "Oromiia"] <- "Oromia"
+	d$adm1[d$adm1 == "Snnp"] <- "SNNPR"
+
+	geo <- data.frame(
+		adm2 = c("Arsi", "Awi", "East Gojam", "East Shoa", "Finfine Zuria", "Gurage", "Hadiya",
+			"Jimma", "Kambata Tembaro", "North Shoa", "Sidama", "South West Shoa", "South Wollo",
+			"Special", "West Arsi", "West Shoa"),
+		latitude = c(7.950, 10.950, 10.330, 8.550, 8.980, 8.120, 7.550,
+			7.670, 7.270, 9.680, 6.740, 8.530, 11.130,
+			7.050, 7.180, 8.980),
+		longitude = c(39.130, 36.500, 37.730, 39.270, 38.760, 38.000, 37.850,
+			36.830, 37.590, 39.530, 38.480, 38.000, 39.630,
+			37.780, 38.600, 37.850)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

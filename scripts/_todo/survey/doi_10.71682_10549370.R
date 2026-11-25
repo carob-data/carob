@@ -45,7 +45,7 @@ INIAP (Instituto Nacional de Investigaciones Agropecuarias) and CIMMYT implement
 		response_vars = "insect_loss_percent_;rodent_loss_percent_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.4
 	)
@@ -90,6 +90,13 @@ INIAP (Instituto Nacional de Investigaciones Agropecuarias) and CIMMYT implement
 	d$adm3 <- carobiner::fix_name(d$adm3, "title")
 	d$location <- carobiner::fix_name(d$location, "title")
 	d$variety <- carobiner::fix_name(d$variety, "title")
+
+	geo <- data.frame(
+		adm1 = c("Azuay", "Bolívar", "Carchi", "Chimborazo", "Galápagos", "Imbabura", "Loja", "Los Ríos", "Manabí", "Orellana", "Sucumbíos"),
+		latitude = c(-2.900, -1.600, 0.750, -1.670, -0.740, 0.350, -4.000, -1.400, -0.850, -0.470, 0.080),
+		longitude = c(-79.000, -79.050, -77.900, -78.650, -90.310, -78.120, -79.200, -79.500, -80.450, -76.990, -76.890)
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

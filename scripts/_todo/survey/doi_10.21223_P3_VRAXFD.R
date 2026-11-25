@@ -65,7 +65,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
@@ -117,6 +117,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 	r1 <- carobiner::read.excel(f2, sheet="Lista_Area")
 	d2 <- data.frame(
 		country = "Peru",
+		adm1 = "Pasco",
 		variety = chr(r1$Variedad),
 		area_m2_ = num(r1[["Area m2"]])
 	)
@@ -126,7 +127,19 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 	d$crop <- "potato"
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste0("Pasco_", seq_len(nrow(d)))
+	geo <- data.frame(
+		location = c("Bellavista", "Chupaca"),
+		latitude = c(-10.7500, -10.7700),
+		longitude = c(-75.9500, -75.8100)
+	)
+	m <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	na_g <- is.na(d$latitude)
+	d$latitude[na_g] <- -10.7700
+	d$longitude[na_g] <- -75.8100
 
 	carobiner::write_files(path, meta, d)
 }

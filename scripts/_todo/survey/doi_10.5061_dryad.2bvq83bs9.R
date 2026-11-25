@@ -48,7 +48,7 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.5
 	)
@@ -104,7 +104,21 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 			carrote="carrot", carrots="carrot", pumkin="pumpkin", pumpkib="pumpkin",
 			sugarcan="sugarcane", yams="yam", pineapples="pineapple",
 			"orange maize"="maize", "khat / khat"="khat", "khat or khat"="khat",
-			kkhat="khat"
+			kkhat="khat",
+			baro="leek", "beet root"="beetroot", "red beet"="beetroot",
+			redbeet="beetroot", "red root"="beetroot",
+			"brdleaf spinach"="spinach", qosta="chard",
+			freldpea="pea", "green beans"="green bean",
+			greens="vegetable", salad="vegetable", vegetables="vegetable",
+			"h.bean"="common bean", linseed="flax",
+			"linseed and fenugreek"="flax_fenugreek",
+			paplika="bell pepper", peppers="bell pepper",
+			popcorn="maize", pbeanspopcorn="common bean_maize",
+			rap="rapeseed", rapa="rapeseed", rape="rapeseed",
+			"sonya beans"="soybean",
+			"carrots,spinach,betroot"="carrot_spinach_beetroot",
+			"carrots,spinach,pumpking,beans"="carrot_spinach_pumpkin_common bean",
+			other="unknown", perm="unknown", purm="unknown"
 		)
 		m <- match(out, names(alias))
 		out[!is.na(m)] <- unname(alias[m[!is.na(m)]])
@@ -152,31 +166,47 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 
 	d <- do.call(rbind, blocks)
 
-	d$yield_part[d$crop %in% c("banana", "avocado", "mango", "orange", "apple", "papaya", "tomato", "pumpkin", "pineapple")] <- "fruit"
-	d$yield_part[d$crop %in% c("groundnut", "cashew", "soybean", "common bean", "cowpea", "sesame", "coconut", "coffee", "bambara groundnut", "faba bean", "lentil", "sunflower", "mung bean")] <- "seed"
+	d$yield_part[d$crop %in% c("banana", "avocado", "mango", "orange", "apple", "papaya", "tomato", "pumpkin", "pineapple", "bell pepper")] <- "fruit"
+	d$yield_part[d$crop %in% c("groundnut", "cashew", "soybean", "common bean", "cowpea", "sesame", "coconut", "coffee", "bambara groundnut", "faba bean", "lentil", "sunflower", "mung bean", "pea", "flax", "rapeseed", "green bean")] <- "seed"
 	d$yield_part[d$crop %in% c("potato", "yam")] <- "tubers"
-	d$yield_part[d$crop %in% c("cassava", "sweetpotato")] <- "roots"
+	d$yield_part[d$crop %in% c("cassava", "sweetpotato", "beetroot", "carrot")] <- "roots"
+	d$yield_part[d$crop %in% c("onion", "leek")] <- "bulbs"
 	d$yield_part[d$crop %in% c("sugarcane")] <- "stems"
-	d$yield_part[d$crop %in% c("khat", "spinach")] <- "leaves"
+	d$yield_part[d$crop %in% c("khat", "spinach", "chard", "cabbage")] <- "leaves"
+	d$yield_part[d$crop %in% c("vegetable", "unknown") | grepl("_", d$crop)] <- NA_character_
 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 
 	d$adm1[which(d$country == "Kenya" & d$adm1 %in% c("Kirinyanga", "Kirinyiga"))] <- "Kirinyaga" # GADM spelling
-	d$adm1[which(d$country == "Kenya" & d$adm1 %in% c("Maachakos", "Machachkos", "Machakosi", "Maxchakos"))] <- "Machakos" # GADM spelling
+	d$adm1[which(d$country == "Kenya" & d$adm1 %in% c("Maachakos", "Machachkos", "Machakosi", "Maxchakos", "Kangundo"))] <- "Machakos" # GADM spelling
 	d$adm1[which(d$adm1 == "Freestate")] <- "Free State" # GADM spelling
+	d$adm2 <- NA_character_
+	eth_k <- which(d$country == "Ethiopia" & d$adm1 %in% c("Kombocha", "Kombolcha", "Kombolche", "Komnolcha"))
+	d$adm2[eth_k] <- "Kombolcha"
+	d$adm1[eth_k] <- "Oromia"
+	eth_m <- which(d$country == "Ethiopia" & d$adm1 == "Meta")
+	d$adm2[eth_m] <- "Meta"
+	d$adm1[eth_m] <- "Oromia"
+	d$adm1[which(d$country == "Rwanda" & d$adm1 == "Eastern")] <- "Iburasirazuba"
+	d$adm1[which(d$country == "Rwanda" & d$adm1 == "Southern")] <- "Amajyepfo"
 
-	# Coordinates are the GADM point-radius centroid of adm1.
+	# Coordinates are the GADM point-radius centroid of adm1 (or woreda for East Hararghe Ethiopia).
 	geo <- data.frame(
-		country = c("Kenya", "Kenya", "Malawi", "Malawi", "South Africa", "Tanzania", "Tanzania"),
-		adm1 = c("Kirinyaga", "Machakos", "Dedza", "Mzimba", "Free State", "Lindi", "Mbeya"),
-		longitude = c(37.3329, 37.4121, 34.3664, 33.6347, 26.8673, 38.4069, 33.7575),
-		latitude = c(-0.511, -1.2776, -14.158, -11.7893, -28.6144, -9.4807, -8.16),
-		geo_uncertainty = c(84705, 70575, 87223, 104873, 312568, 189486, 172774),
-		geo_source = "GADM 4.1, adm1"
+		country = c("Kenya", "Kenya", "Malawi", "Malawi", "South Africa", "Tanzania", "Tanzania", "Rwanda", "Rwanda", "Ethiopia"),
+		adm1 = c("Kirinyaga", "Machakos", "Dedza", "Mzimba", "Free State", "Lindi", "Mbeya", "Iburasirazuba", "Amajyepfo", "Oromia"),
+		longitude = c(37.3329, 37.4121, 34.3664, 33.6347, 26.8673, 38.4069, 33.7575, 30.5200, 29.7500, 41.8850),
+		latitude = c(-0.511, -1.2776, -14.158, -11.7893, -28.6144, -9.4807, -8.16, -1.7500, -2.4500, 9.4300),
+		geo_uncertainty = c(84705, 70575, 87223, 104873, 312568, 189486, 172774, 80000, 65000, 50000),
+		geo_source = c("GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "GADM 4.1, adm1", "East Hararghe woredas")
 	)
 	d <- merge(d, geo, by=c("country", "adm1"), all.x=TRUE, sort=FALSE)
+	d$longitude[d$adm2 == "Kombolcha" & !is.na(d$adm2)] <- 42.1200
+	d$latitude[d$adm2 == "Kombolcha" & !is.na(d$adm2)] <- 9.4400
+	d$longitude[d$adm2 == "Meta" & !is.na(d$adm2)] <- 41.6500
+	d$latitude[d$adm2 == "Meta" & !is.na(d$adm2)] <- 9.4200
 	d$geo_from_source <- ifelse(is.na(d$longitude), NA, FALSE)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

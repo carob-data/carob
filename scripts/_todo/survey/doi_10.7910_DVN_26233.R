@@ -56,7 +56,7 @@ Objectives of the study are to identify rice varieties that are recently being a
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.6
 	)
@@ -65,10 +65,10 @@ Objectives of the study are to identify rice varieties that are recently being a
 	f2 <- ff[basename(ff) == "Landhold.XLS"]
 	f3 <- ff[basename(ff) == "RiceInp.xls"]
 	f4 <- ff[basename(ff) == "Demog.xlsx"]
-	r1 <- carobiner::read.excel(f1, sheet="LandUse", skip=7)
+	r1 <- carobiner::read.excel(f1, sheet="LandUse", skip=7, col_types="text")
 	r2 <- carobiner::read.excel(f2, sheet="LandDescrip", skip=5)
 	r3 <- carobiner::read.excel(f3, sheet="Material", skip=5)
-	r4 <- carobiner::read.excel(f4, sheet="Demog", skip=6)
+	r4 <- carobiner::read.excel(f4, sheet="Demog", skip=6, col_types="text")
 
 	tv <- c("Saruchina", "Sebatipokhia", "Jagannath Ballabha", "Sitabhoga", "Ratanchudi", "Chandrapuri", "Madhupiri", "Bhubaniukuda", "Rajabhoga", "Kalamkathi", "Badakalamula", "Sanakalamula", "Rasapanjari", "Baunsagaja", "Machhakanta", "Sunakhala", "Budhamunda", "Bhandi", "Betanasia", "Matia", "Hajarimala", "Maurakantha", "Baula", "Kakudia", "Malabati", "Kedaragouri", "Bhanumati", "Koili", "Hiramala", "Basumati", "Pakshira", "Bankoi", "Suaaboula", "Dhalakartika", "Bangaramadhabi", "Motara", "Kakudimangi", "Kalapakhia", "Kelikadamba", "Gagabhoga", "Kalasura", "Champa", "Bachhakalama", "Bhutia", "Hanseswari", "Muktapakhia", "Chandainakhi", "Pathuria", "Sahani", "Suhabaula", "Nababi", "Masinaphula", "Jhuli", "Biramani", "Bitibaula", "Sapari", "Changuri", "Kantamali", "Bunda", "Sankari", "Khalia", "Kuadi", "Gurmati", "Jagati", "Serla", "Lachai", "Dubraj", "Yubraj", "Sukalaghata", "Jaiphula")
 	mv <- c("Swarna", "Lalat/Samrat", "Balaram", "Puja", "Durga", "Ramchandi", "Chha akhi/Kalashree", "CR 141", "Kanchana", "CR 1018", "CR 1030", "CR 1009", "Saragatara", "CRLC 899", "T 1242", "Culture M11", "Khandagiri", "Culture M10, S10", "Moti", "CR 1014", "Sujata", "Lunishree", "CR 1021", "Culture S6", "Jagannath", "IET 5656", "Parijata", "IR36", "Basanti", "Debasis", "Tulashi", "CR 1590", "Sarala", "Gitanjali", "Saraswati", "Jagabalia", "CR 77", "Masuri", "Ambica", "Lakshyahira", "MTU1010", "MTU1001", "Mahamaya", "HMT", "Purnima", "Sarathi", "Annapurna", "Gangasafari", "Jajati", "Surendra", "Mahanadi", "Gajapati", "Daya", "Superstar", "Arnapurna")
@@ -76,29 +76,33 @@ Objectives of the study are to identify rice varieties that are recently being a
 	blocks <- c(Cuttack="Salipur", Bargarh="Attabira", Puri="Puri Sadar", Jagatsinghpur="Ersama", Angul="Angul", Nuapada="Nuapada Sadar")
 	villages <- c("Cuttack 1"="Pikala", "Bargarh 1"="Godabhanga", "Bargarh 2"="Bhuintikira", "Bargarh 3"="Gadtiapalli", "Bargarh 4"="Kujapalli", "Puri 1"="Khandighar", "Puri 2"="Rua", "Puri 3"="Talajanga", "Jagatsinghpur 1"="Ersama", "Jagatsinghpur 2"="Siha", "Angul 1"="Baluakata", "Nuapada 1"="Mahua Bhat")
 
+	area1 <- as.numeric(r1$Area)
+	mvtv1 <- as.integer(r1$MVTV)
+	var1 <- as.integer(r1$Variety)
+	cem1 <- as.integer(r1$CEMethod)
 	d <- data.frame(
 		hhid = paste(r1$District, r1$Type, r1$Farmer, sep="-"),
 		farm_size_class_ = r1$Type,
 		adm2 = r1$District,
-		season = c("kharif", "rabi", "pre-kharif")[r1$Season],
-		parcel = r1$Parcel,
-		plot = r1$Plot,
+		season = c("kharif", "rabi", "early wet")[as.integer(r1$Season)],
+		parcel = as.numeric(r1$Parcel),
+		plot = as.numeric(r1$Plot),
 		plot_id = paste(r1$Parcel, r1$Plot, r1$Subplot, sep="-"),
-		crop = crops[as.character(r1[["Crop...9"]])],
-		intercropped = r1$Cropping == 2,
-		variety_type = c("modern", "traditional")[r1$MVTV],
-		field_size = r1$Area,
-		planting_method = c("direct seeding", "direct seeding", "transplanting")[r1$CEMethod],
-		establishment_method_ = c("DSR", "WSR", "TPR")[r1$CEMethod],
-		planting_month_ = r1$CEMon,
-		planting_week_ = r1$CEWk,
-		harvest_month_ = r1$HarvMon,
-		harvest_week_ = r1$HarvWk,
-		yield = r1[["Prod...19"]] * 100 / r1$Area,
-		fwy_residue = r1[["Byprod...20"]] * 100 / r1$Area,
-		crop_price = r1[["Prod...21"]]
+		crop = unname(crops[as.character(as.integer(r1[["Crop...9"]]))]),
+		intercropped = as.integer(r1$Cropping) == 2,
+		variety_type = c("modern", "traditional")[mvtv1],
+		field_size = area1,
+		planting_method = c("direct seeding", "direct seeding", "transplanting")[cem1],
+		establishment_method_ = c("DSR", "WSR", "TPR")[cem1],
+		planting_month_ = as.numeric(r1$CEMon),
+		planting_week_ = as.numeric(r1$CEWk),
+		harvest_month_ = as.numeric(r1$HarvMon),
+		harvest_week_ = as.numeric(r1$HarvWk),
+		yield = as.numeric(r1[["Prod...19"]]) * 100 / area1,
+		fwy_residue = as.numeric(r1[["Byprod...20"]]) * 100 / area1,
+		crop_price = as.numeric(r1[["Prod...21"]])
 	)
-	d$variety <- ifelse(r1$MVTV == 1, mv[r1$Variety], tv[r1$Variety])
+	d$variety <- ifelse(mvtv1 == 1, mv[var1], tv[var1])
 	d$variety[d$crop != "rice"] <- NA
 	d$variety_type[d$crop != "rice"] <- NA
 
@@ -109,7 +113,7 @@ Objectives of the study are to identify rice varieties that are recently being a
 		plot = r2$Plot,
 		topography_ = c("upland (bunded)", "upland (unbunded)", "medium", "lowland", "very lowland")[r2$Topog],
 		soil_texture = c("clay", "clay loam", "sandy clay loam", "sandy loam", "loamy sand", "loam", "sand")[r2$Soiltype],
-		irrigation_source = c("canal", "deep tube well", "shallow tube well", "none")[r2$IrrigSrc],
+		irrigation_source = c("canal", "groundwater", "groundwater", "none")[r2$IrrigSrc],
 		land_tenure = c("owned", "sharecropped", "rented", "rented out")[r2$Tenure]
 	)
 	lh <- unique(lh)
@@ -133,18 +137,17 @@ Objectives of the study are to identify rice varieties that are recently being a
 	)
 	fert$OM_type <- ifelse(fert$OM_amount > 0, "farmyard manure", "none")
 	ftype <- cbind(ifelse(q(22) > 0, "urea", NA), ifelse(q(26) > 0, "SSP", NA), ifelse(q(30) > 0, "DAP", NA), 
-		ifelse(q(34) > 0, "KCl", NA), ifelse(q(38) > 0, "28-28-0", NA), ifelse(q(42) > 0, "unknown", NA), 
-		ifelse(q(46) > 0, "AS", NA), ifelse(q(50) > 0, "10-26-26", NA))
-	fert$fertilizer_type <- apply(ftype, 1, \(x) if (all(is.na(x))) "none" else paste(na.omit(x), collapse="; "))
+		ifelse(q(34) > 0, "KCl", NA), ifelse(q(38) > 0, "NP", NA), ifelse(q(42) > 0, "unknown", NA), 
+		ifelse(q(46) > 0, "DAS", NA), ifelse(q(50) > 0, "NPK", NA))
+	fert$fertilizer_type <- apply(ftype, 1, \(x) if (all(is.na(x))) "none" else paste(unique(na.omit(x)), collapse="; "))
 	rocord <- q(42) > 0
 	fert[rocord, c("N_fertilizer", "P_fertilizer", "K_fertilizer")] <- NA
-	fert$fertilizer_type <- gsub("unknown", "Rocord", fert$fertilizer_type)
 	fert <- fert[!duplicated(fert[, c("hhid", "parcel", "plot", "season")]), ]
 	d <- merge(d, fert, by=c("hhid", "parcel", "plot", "season"), all.x=TRUE)
 	d$parcel <- d$plot <- NULL
 
 	## village
-	hh <- r4[r4$Relation %in% 0, ]
+	hh <- r4[as.integer(r4$Relation) %in% 0, ]
 	hh <- data.frame(hhid = paste(hh$District, hh$Type, hh[["Farmer...5"]], sep="-"), village = villages[paste(hh$District, hh$Village)])
 	hh <- hh[!duplicated(hh$hhid), ]
 	d <- merge(d, hh, by="hhid", all.x=TRUE)

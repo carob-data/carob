@@ -46,7 +46,7 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.5
 	)
@@ -65,41 +65,32 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 		out
 	}
 
-	dms_to_dec <- function(hem, d, m, s) {
-		hem <- toupper(trimws(as.character(hem)))
-		# all records are in southern Malawi; missing hemisphere treated as S
-		hem[is.na(hem) | hem == ""] <- "S"
-		dec <- as.numeric(d) + as.numeric(m) / 60 + as.numeric(s) / 3600
-		dec[hem %in% c("S", "W")] <- -dec[hem %in% c("S", "W")]
-		dec
-	}
-
 	# GPS + herbicide/weeding for one plot sheet (PART B high, PART I low)
 	read_gps <- function(sheet) {
-		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".")
+		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".", col_types="text")
 		names(r) <- c("hhid", "plot_name", "lat_hem", "lat_d", "lat_m", "lat_s",
 			"lon_hem", "lon_d", "lon_m", "lon_s", "slope", "same_gps",
 			"herb_this", "herb_name", "herb_last", "herb_name_last",
 			"weedings", "weeding_labor")
-		r[!is.na(r$hhid), ]
+		r[!is.na(r$hhid) & grepl("^[0-9]+$", trimws(r$hhid)), ]
 	}
 
 	read_crops <- function(sheet) {
-		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".")
+		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".", col_types="text")
 		names(r) <- c("hhid", "fallow", "maize_code", "maize_ready", "legume1",
 			"legume1_other", "legume1_ready", "legume2", "legume2_ready",
 			"legume2_other", "other1", "other1_spec", "other2", "other2_spec",
 			"ridge1", "ridge2", "ridge3")
-		r[!is.na(r$hhid), ]
+		r[!is.na(r$hhid) & grepl("^[0-9]+$", trimws(r$hhid)), ]
 	}
 
 	read_maize <- function(sheet) {
-		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".")
+		r <- carobiner::read.excel(f, sheet=sheet, skip=5, col_names=FALSE, na=".", col_types="text")
 		names(r) <- c("hhid", "maize_in_plot", "crop_code", "intercrop_code",
 			"plants1", "plants2", "plants3", "cobs1", "w1", "cobs2", "w2",
 			"cobs3", "w3", "rate1", "stover1", "rate2", "stover2", "rate3",
 			"stover3", "meter", "stover_field", "stover_dry")
-		r[!is.na(r$hhid), ]
+		r[!is.na(r$hhid) & grepl("^[0-9]+$", trimws(r$hhid)), ]
 	}
 
 	r1 <- carobiner::read.excel(f, sheet="PART A", skip=4, na=".")
@@ -114,15 +105,20 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 	# skipped: PART E/G legume harvest; PART H/P witchweed and weed biomass
 
 	make_plot <- function(gps, crops, maize, field) {
+		hraw <- trimws(as.character(gps$herb_name))
+		hraw[hraw %in% c("", "NA")] <- NA
+		hprod <- ifelse(is.na(hraw), NA_character_,
+			ifelse(grepl("round ?up", hraw, ignore.case=TRUE), "glyphosate", "unknown"))
 		d <- data.frame(
 			hhid = as.character(gps$hhid),
 			field_id = field,
 			location = carobiner::fix_name(as.character(gps$plot_name), "title"),
-			latitude = dms_to_dec(gps$lat_hem, gps$lat_d, gps$lat_m, gps$lat_s),
-			longitude = dms_to_dec(gps$lon_hem, gps$lon_d, gps$lon_m, gps$lon_s),
+			latitude = carobiner::dms_to_dd(gps$lat_d, gps$lat_m, gps$lat_s, hem=gps$lat_hem, default_hem="S"),
+			longitude = carobiner::dms_to_dd(gps$lon_d, gps$lon_m, gps$lon_s, hem=gps$lon_hem, default_hem="E"),
 			herbicide_used = ifelse(as.numeric(gps$herb_this) == 1, TRUE,
 				ifelse(as.numeric(gps$herb_this) == 2, FALSE, NA)),
-			herbicide_product = gps$herb_name,
+			herbicide_product = hprod,
+			herbicide_brand_ = hraw,
 			weeding_times = as.integer(as.numeric(gps$weedings)),
 			maize_code_ = as.character(crops$maize_code[match(gps$hhid, crops$hhid)]),
 			intercrop_code_ = as.character(maize$intercrop_code[match(gps$hhid, maize$hhid)]),
@@ -139,8 +135,14 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 	d <- carobiner::bindr(dH, dL)
 	d <- d[!is.na(d$hhid), ]
 
+	# Clear corrupted out-of-Malawi GPS (e.g. 0.34 E)
+	bad_gps <- (!is.na(d$longitude) & (d$longitude < 32 | d$longitude > 36)) |
+		(!is.na(d$latitude) & (d$latitude > -9 | d$latitude < -18))
+	d$latitude[bad_gps] <- NA
+	d$longitude[bad_gps] <- NA
+
 	d$country <- "Malawi"
-	d$geo_from_source <- TRUE
+	d$geo_from_source <- ifelse(is.na(d$latitude) | is.na(d$longitude), NA, TRUE)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$crop <- ifelse(d$maize_in_plot == 1, "maize", NA)

@@ -34,7 +34,6 @@
 # rice_type_: japonica, indica or hybrid rice
 # parcel_type_: paddy field, dry land, sloping field, water area
 # topography_: lowland flat, upland flat, upland sloping, pond
-# soil_type_: red soil or others
 # fertilizer_product_: total fertilizer product applied (kg/ha)
 # N_fertilizer_product_, P_fertilizer_product_, K_fertilizer_product_: nitrogen, phosphate and potash fertilizer product applied (kg/ha)
 # fertilizer_times_: number of fertilizer applications
@@ -70,7 +69,7 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.7
 	)
@@ -84,26 +83,26 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	}
 	# numbers stored as text, with some free text entries
 	num <- function(x) {
-		r2 <- trimws(as.character(r2))
-		r2[!grepl("^[0-9]*\\.?[0-9]+$", r2)] <- NA
-		as.numeric(r2)
+		x <- trimws(as.character(x))
+		x[!grepl("^[0-9]*\\.?[0-9]+$", x)] <- NA
+		as.numeric(x)
 	}
 	join <- function(x, y) {
-		if (nrow(r2) == nrow(y) && all(r2$HHNO == y$HHNO)) {
-			cbind(r2, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
+		if (nrow(x) == nrow(y) && all(x$HHNO == y$HHNO)) {
+			cbind(x, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
 		} else {
 			y <- y[!duplicated(paste(y$VLAGE, y$HHNO)), ]
-			merge(r2, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
+			merge(x, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
 		}
 	}
 	prefix <- function(x, p) {
-		i <- !(names(r2) %in% c("HHNO", "VLAGE"))
-		names(r2)[i] <- paste0(p, names(r2)[i])
-		r2
+		i <- !(names(x) %in% c("HHNO", "VLAGE"))
+		names(x)[i] <- paste0(p, names(x)[i])
+		x
 	}
 	sumNA <- function(...) {
-		r2 <- cbind(...)
-		ifelse(rowSums(!is.na(r2)) > 0, rowSums(r2, na.rm=TRUE), NA)
+		m <- cbind(...)
+		ifelse(rowSums(!is.na(m)) > 0, rowSums(m, na.rm=TRUE), NA)
 	}
 
 	mu <- 1/15
@@ -114,37 +113,37 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	)
 	# crop entries: codes, "code-variety", variety names and Chinese crop names
 	parse_crop <- function(x) {
-		r2 <- trimws(as.character(r2))
-		code <- rep(NA_real_, length(r2))
-		crop <- rep(NA_character_, length(r2))
-		variety <- rep(NA_character_, length(r2))
-		i <- grepl("^[0-9]+$", r2) & r2 %in% as.character(1:11)
-		code[i] <- as.numeric(r2[i])
-		i <- grepl("^[0-9]+-[0-9]", r2)
-		code[i] <- as.numeric(sub("-.*", "", r2[i]))
-		variety[i] <- sub("^[0-9]+-", "", r2[i])
+		x <- trimws(as.character(x))
+		code <- rep(NA_real_, length(x))
+		crop <- rep(NA_character_, length(x))
+		variety <- rep(NA_character_, length(x))
+		i <- grepl("^[0-9]+$", x) & x %in% as.character(1:11)
+		code[i] <- as.numeric(x[i])
+		i <- grepl("^[0-9]+-[0-9]", x)
+		code[i] <- as.numeric(sub("-.*", "", x[i]))
+		variety[i] <- sub("^[0-9]+-", "", x[i])
 		# Xiushui (japonica)
-		i <- grepl("\u79c0\u6c34", r2) | r2 %in% c("03", "09", "110")
+		i <- grepl("\u79c0\u6c34", x) | x %in% c("03", "09", "110")
 		code[i] <- 1
-		variety[i] <- paste("Xiushui", sub("\u79c0\u6c34", "", r2[i]))
+		variety[i] <- paste("Xiushui", sub("\u79c0\u6c34", "", x[i]))
 		# hybrid 2070
-		i <- r2 %in% c("2070", "\u6742\u4ea42070")
+		i <- x %in% c("2070", "\u6742\u4ea42070")
 		code[i] <- 3
 		variety[i] <- "2070"
 		code[code > 11] <- NA
 		crop <- crops$crop[match(code, crops$code)]
 		rtype <- crops$rice_type[match(code, crops$code)]
 		# Huayu 1 (groundnut)
-		i <- r2 == "\u82b1\u80b21\u53f7"
+		i <- x == "\u82b1\u80b21\u53f7"
 		crop[i] <- "groundnut"
 		variety[i] <- "Huayu 1"
-		crop[grepl("\u68a8", r2)] <- "pear"
-		crop[r2 == "\u6843\u6728"] <- "peach"
-		crop[grepl("\u82a6\u7b0b", r2)] <- "asparagus"
-		crop[r2 == "\u83dc\u7c7b"] <- "vegetable"
-		crop[r2 == "\u897f\u74dc"] <- "watermelon"
-		crop[r2 %in% c("\u6c34\u679c", "11\uff08\u6c34\u679c\uff09", "\u6c34\u679c\uff08\u68a8\u3001\u6843\uff09")] <- "fruit"
-		data.frame(crop=crop, variety=variety, rice_type_=rtype, variety_type=ifelse(code %in% 3, "hybrid", NA), crop_label_=r2)
+		crop[grepl("\u68a8", x)] <- "pear"
+		crop[x == "\u6843\u6728"] <- "peach"
+		crop[grepl("\u82a6\u7b0b", x)] <- "asparagus"
+		crop[x == "\u83dc\u7c7b"] <- "vegetable"
+		crop[x == "\u897f\u74dc"] <- "watermelon"
+		crop[x %in% c("\u6c34\u679c", "11\uff08\u6c34\u679c\uff09", "\u6c34\u679c\uff08\u68a8\u3001\u6843\uff09")] <- "fruit"
+		data.frame(crop=crop, variety=variety, rice_type_=rtype, variety_type=ifelse(code %in% 3, "hybrid", NA), crop_label_=x)
 	}
 	loss <- data.frame(code = 1:8,
 		label = c("drought", "flood", "typhoon", "diseases", "insects", "weeds", "low input use", "others"),
@@ -222,7 +221,7 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 			parcel_type_ = c("paddy field", "dry land", "sloping field", "water area")[match(num(r1$TYPEP), 1:4)],
 			land_tenure = c("family plot", "contracted plot", "rented out", "rented in")[match(num(r1$TYPEO), 1:4)],
 			topography_ = c("lowland flat", "upland flat", "upland sloping", "pond")[match(num(r1$TOPOG), 1:4)],
-			soil_type_ = c("red soil", "others")[match(num(r1$TSOIL), 1:2)],
+			soil_type = c("red soil", "others")[match(num(r1$TSOIL), 1:2)],
 			soil_quality = c("good", "average", "poor")[match(num(r1$QSOIL), 1:3)],
 			irrigated = c(TRUE, FALSE)[match(num(r1$IRIG), 1:2)]
 		)

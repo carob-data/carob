@@ -75,7 +75,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.6
 	)
@@ -84,7 +84,9 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		z <- gsub("\\s+", " ", trimws(z))
 		z <- trimws(gsub("\\([^)]*\\)", "", z))
 		if (!nzchar(z) || z %in% c("na", "n/a", "none", "other", "others", "rented in land", "local", "cropping", "fallow", "fallow land", "fallowland", "grazing", "grazing land", "grass land", "forage grass", "tree", "trees")) return(NA_character_)
-		if (grepl("^relay\\b|^solo\\b|^cropping$", z)) return(NA_character_)
+		if (grepl("^relay\\b|^solo\\b|^solo_|^cropping$", z)) return(NA_character_)
+		if (grepl("^hb\\b|^hb_|^hb-|^hr-relay$", z)) return("common bean")
+		if (grepl("gumsor", z)) return("sorghum")
 		if (grepl(",| and |\\+", z)) {
 			parts <- trimws(unlist(strsplit(z, ",| and |\\+")))
 			parts <- parts[nzchar(parts)]
@@ -145,7 +147,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 			lab <- character()
 			for (s in parts) {
 				sl <- tolower(s)
-				if (sl %in% c("none", "no", "non", "nil", "0", "n/a")) lab <- c(lab, "none")
+				if (sl %in% c("none", "no", "non", "nil", "0", "n/a", "n")) lab <- c(lab, "none")
+				else if (sl == "local") lab <- c(lab, "unknown")
 				else if (grepl("npk", sl)) lab <- c(lab, "NPK")
 				else if (grepl("urea|ureia|^uera$|^uerea$|^ura$", sl)) lab <- c(lab, "urea")
 				else if (grepl("dap", sl)) lab <- c(lab, "DAP")
@@ -250,6 +253,17 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
+	miss_xy <- is.na(d$longitude) | is.na(d$latitude)
+	if (any(miss_xy)) {
+		wgeo <- data.frame(
+			adm2 = c("Pawe", "Boricha", "Enemay", "Sinana"),
+			lat = c(11.317, 6.917, 10.450, 7.117),
+			lon = c(36.417, 38.250, 38.200, 40.217)
+		)
+		im <- match(d$adm2[miss_xy], wgeo$adm2)
+		d$latitude[miss_xy] <- wgeo$lat[im]
+		d$longitude[miss_xy] <- wgeo$lon[im]
+	}
 	d$trial_id <- d$hhid
 
 	carobiner::write_files(path, meta, d)

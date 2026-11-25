@@ -42,13 +42,14 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "01_DataSet_CAP Anemia - La Libertad 2021 - Linea de Base v3.xlsx"]
 	r <- carobiner::read.excel(f)
+	r <- r[!grepl("^P0?8", trimws(as.character(r$Departamento))), ]
 	num <- function(x) {
 		z <- trimws(as.character(x))
 		z[grepl("^P[0-9]", z)] <- NA_character_
@@ -105,6 +106,12 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 	d$area_ha <- NULL
 	d$tonnes <- NULL
 	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Julcán", "Sánchez Carrión"),
+		latitude = c(-8.046, -7.813),
+		longitude = c(-78.487, -78.048)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
 	d$trial_id <- "LaLibertad_CAP_2020"

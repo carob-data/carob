@@ -3,7 +3,7 @@
 
 ## NOTES
 # IRRI/BIDS "Livelihood Systems in Bangladesh" panel, 2000 round (62 villages; sam#87 links to the 1987 households).
-# Parcel_2000.xls and CostRet_2000.xls are Excel 2.1 (BIFF2) worksheets that readxl cannot open; parsed with a small base-R record reader (read_biff2 below).
+# Parcel_2000.xls and CostRet_2000.xls are Excel 2.1 (BIFF2) worksheets, read via carobiner::read.excel() BIFF2 fallback.
 # Two record types are combined in d (record_type_):
 #  "parcel": Parcel_2000, one row per parcel x season. Boro season has two crop slots (crpbr1, crpbr2). land in ha, production in tonnes (codebook); yield = production * 1000 / land.
 #  "cost_return": CostRet_2000, one parcel per household with inputs and value of output (no production quantity, so no yield). land in decimals (/247 -> ha).
@@ -65,65 +65,10 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 1
 	)
-
-	# Excel 2.1 (BIFF2) worksheet reader: INTEGER, NUMBER, LABEL, BOOLERR and FORMULA cell records
-	read_biff2 <- function(f) {
-		b <- readBin(f, "raw", file.size(f))
-		bi <- as.integer(b)
-		n <- length(bi)
-		pos <- integer(n %/% 8L)
-		ids <- integer(n %/% 8L)
-		p <- 1L
-		k <- 0L
-		while (p + 3L <= n) {
-			id <- bi[p] + 256L * bi[p + 1L]
-			k <- k + 1L
-			pos[k] <- p + 4L
-			ids[k] <- id
-			if (id == 10L) break
-			p <- p + 4L + bi[p + 2L] + 256L * bi[p + 3L]
-		}
-		cell <- ids[1:k] %in% 2:6
-		pos <- pos[1:k][cell]
-		ids <- ids[1:k][cell]
-		u16 <- function(i) bi[i] + 256L * bi[i + 1L]
-		rows <- u16(pos) + 1L
-		cols <- u16(pos + 2L) + 1L
-		num <- rep(NA_real_, length(pos))
-		chr <- rep(NA_character_, length(pos))
-		i <- ids == 2L
-		num[i] <- u16(pos[i] + 7L)
-		i <- which(ids %in% c(3L, 6L))
-		if (length(i) > 0) {
-			idx <- as.vector(outer(0:7, pos[i] + 7L, "+"))
-			num[i] <- readBin(b[idx], "double", n=length(i), size=8, endian="little")
-		}
-		for (j in which(ids == 4L)) {
-			nc <- bi[pos[j] + 7L]
-			chr[j] <- if (nc > 0) rawToChar(b[(pos[j] + 8L):(pos[j] + 7L + nc)]) else ""
-		}
-		nr <- max(rows)
-		h <- rows == 1L
-		hdr <- paste0("V", 1:max(cols))
-		hdr[cols[h]] <- chr[h]
-		out <- lapply(seq_along(hdr), function(j) {
-			i <- which(cols == j & rows > 1L)
-			if (all(is.na(chr[i]))) {
-				v <- rep(NA_real_, nr - 1L)
-				v[rows[i] - 1L] <- num[i]
-			} else {
-				v <- rep(NA_character_, nr - 1L)
-				v[rows[i] - 1L] <- ifelse(is.na(chr[i]), as.character(num[i]), chr[i])
-			}
-			v
-		})
-		names(out) <- hdr
-		as.data.frame(out, check.names=FALSE)
-	}
 
 	f1 <- ff[basename(ff) == "Documentation of 2000_Bangladesh.xls"]
 	# value labels from the codebook: variable name (filled down), code, label
@@ -135,13 +80,13 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		data.frame(code=as.numeric(r[[2]][k]), label=trimws(r[[4]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(r, cds$code)]
+		cds$label[match(x, cds$code)]
 	}
 
 	# crop codes 1-12 (sheet Cost&Retrn_val); 13 and higher are rice varieties (Parcel_val)
 	crops <- data.frame(code=1:11,
 		crop = c("wheat", "jute", "sugarcane", "oilseed", "pulse", NA, "onion", "spices", "vegetable", NA, NA),
-		yield_part = c("grain", NA, "stems", NA, "seed", NA, NA, NA, NA, NA, NA)
+		yield_part = c("grain", NA, "stems", NA, "seed", NA, "bulbs", NA, NA, NA, NA)
 	)
 	crplab <- rbind(codes("Cost&Retrn_val", "crp")[1:12, ], codes("Parcel_val", c("crpbr1/crpbr2/", "crpas/crpam")))
 	vtype <- c("local", "modern", "hybrid")
@@ -158,8 +103,8 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 	}
 
 	## Parcel_2000
-	r1 <- read_biff2(ff[basename(ff) == "Parcel_2000.xls"])
-	slots <- data.frame(season=c("boro", "boro", "aus", "aman"), sfx=c("br1", "br2", "as", "am"), slot=c(1, 2, 1, 1))
+	r1 <- carobiner::read.excel(ff[basename(ff) == "Parcel_2000.xls"])
+	slots <- data.frame(season=c("boro", "boro", "early wet", "aman"), sfx=c("br1", "br2", "as", "am"), slot=c(1, 2, 1, 1))
 	d1 <- lapply(1:4, function(i) {
 		s <- slots$sfx[i]
 		data.frame(
@@ -194,13 +139,13 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 	d1$record_type_ <- "parcel"
 
 	## CostRet_2000
-	r2 <- read_biff2(ff[basename(ff) == "CostRet_2000.xls"])
+	r2 <- carobiner::read.excel(ff[basename(ff) == "CostRet_2000.xls"])
 	# land in decimals
 	ha <- r2$land / 247
 	d2 <- data.frame(
 		hhid = as.character(r2$sample),
 		hhid_1987_ = as.character(r2[["sam#87"]]),
-		season = c("aus", "aman", "boro", "rabi")[match(r2$season, 1:4)],
+		season = c("early wet", "aman", "boro", "rabi")[match(r2$season, 1:4)],
 		variety_type = vtype[match(r2$vrty, 1:3)],
 		field_size = ha,
 		land_prep_times = as.integer(r2$pln),
@@ -237,16 +182,27 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 	d <- carobiner::bindr(d1, d2)
 
 	d$irrigated <- ifelse(d$irrigation_source == "Without irrigation", FALSE, NA)
-	d$irrigation_source[d$irrigation_source == "Without irrigation"] <- "none"
+	irmap <- c("Without irrigation"="none", "Low lift pump (LLP)"="surface water", "Shallow tube well (STW)"="groundwater",
+		"Deep tube well(DTW)"="groundwater", "Irrigation canal project of Govt.(WDB)"="canal", "Local irrigation system"="unknown")
+	irlift <- c("Low lift pump (LLP)"="motorized pump", "Shallow tube well (STW)"="motorized pump", "Deep tube well(DTW)"="motorized pump")
+	d$irrigation_lifting <- unname(irlift[d$irrigation_source])
+	d$irrigation_source <- unname(irmap[d$irrigation_source])
 
 	d$location <- lab(d$village, codes("Genral_val", "village"))
 	d$adm4 <- lab(d$union, codes("Genral_val", "union"))
 	d$adm3 <- lab(d$upazila, codes("Genral_val", "upazila"))
 	d$adm2 <- lab(d$zila, codes("Genral_val", "zila"))
-	gadm <- c("B. Baria"="Brahamanbaria", "Mouvi-Bazar"="Maulvibazar", "Lakhmipur"="Lakshmipur", "Jhalakhati"="Jhalokati", "Perojpur"="Pirojpur", "Jhenaidaha"="Jhenaidah", "Kustia"="Kushtia", "Nababganj"="Nawabganj", "Panchaghar"="Panchagarh", "Netrokona"="Netrakona", "Munsiganj"="Munshiganj")
+	gadm <- c("B. Baria"="Brahamanbaria", "B.Baria"="Brahamanbaria", "Mouvi-Bazar"="Maulvibazar", "Moulovi-Bazar"="Maulvibazar", "Lakhmipur"="Lakshmipur", "Jhalakhati"="Jhalokati", "Perojpur"="Pirojpur", "Jhenaidaha"="Jhenaidah", "Kustia"="Kushtia", "Nababganj"="Nawabganj", "Panchaghar"="Panchagarh", "Netrokona"="Netrakona", "Munsiganj"="Munshiganj")
 	i <- d$adm2 %in% names(gadm)
 	d$adm2[i] <- gadm[d$adm2[i]]
 	d$country <- "Bangladesh"
+	geo <- data.frame(
+		adm2 = c("Barisal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur", "Brahamanbaria", "Chandpur", "Chittagong", "Comilla", "Cox's Bazar", "Feni", "Lakshmipur", "Noakhali", "Habiganj", "Maulvibazar", "Sunamganj", "Sylhet", "Dhaka", "Faridpur", "Gopalganj", "Jamalpur", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Mymensingh", "Narsingdi", "Netrakona", "Rajbari", "Shariatpur", "Sherpur", "Tangail", "Bagerhat", "Chuadanga", "Jessore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira", "Bogra", "Dinajpur", "Gaibandha", "Joypurhat", "Kurigram", "Lalmonirhat", "Naogaon", "Natore", "Nawabganj", "Nilphamari", "Pabna", "Panchagarh", "Rajshahi", "Rangpur", "Sirajganj", "Thakurgaon"),
+		latitude = c(22.70, 22.69, 22.64, 22.36, 22.58, 23.96, 23.23, 22.36, 23.46, 21.43, 23.02, 22.94, 22.87, 24.38, 24.48, 25.07, 24.90, 23.81, 23.60, 23.01, 24.92, 24.44, 23.16, 23.86, 23.54, 24.75, 23.93, 24.88, 23.76, 23.24, 25.02, 24.25, 22.65, 23.64, 23.17, 23.54, 22.82, 23.90, 23.49, 23.76, 23.17, 22.72, 24.85, 25.63, 25.33, 25.10, 25.81, 25.92, 24.81, 24.42, 24.60, 25.93, 24.01, 26.34, 24.37, 25.75, 24.45, 26.03),
+		longitude = c(90.37, 90.65, 90.20, 90.33, 89.97, 91.11, 90.66, 91.81, 91.18, 92.00, 91.40, 90.83, 91.10, 91.41, 91.77, 91.40, 91.87, 90.41, 89.84, 89.83, 89.95, 90.78, 90.20, 90.00, 90.53, 90.40, 90.72, 90.73, 89.64, 90.35, 90.02, 89.92, 89.79, 88.84, 89.21, 89.17, 89.54, 89.12, 89.42, 88.63, 89.50, 89.07, 89.37, 88.64, 89.53, 89.02, 89.65, 89.45, 88.94, 88.99, 88.27, 88.85, 89.24, 88.55, 88.60, 89.25, 89.70, 88.46)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 
 	d$crop_code <- d$production <- NULL
 	d$village <- d$union <- d$upazila <- d$zila <- NULL

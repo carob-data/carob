@@ -77,7 +77,7 @@ Most local farmers practice traditional small scale agriculture with focus on po
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.35
 	)
@@ -123,6 +123,14 @@ Most local farmers practice traditional small scale agriculture with focus on po
 	if (any(duplicated(d$hhid))) {
 		d$hhid <- make.unique(d$hhid, sep = "_")
 	}
+	geo <- data.frame(
+		location = c("Coromata Media", "Icrana", "Pairumani", "Pongonhuyo Wilajahuira"),
+		latitude = c(-16.2167, -16.3000, -16.9500, -16.0500),
+		longitude = c(-68.5833, -68.5333, -68.2500, -68.6833)
+	)
+	m <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

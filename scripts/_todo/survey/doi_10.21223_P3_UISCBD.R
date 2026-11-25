@@ -43,7 +43,7 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.35
 	)
@@ -92,6 +92,13 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 	d <- d[!is.na(d$local_crop_) | !is.na(d$harvest_kg_), ]
 	d$crop <- as.character(crop_of(d$local_crop_))
 	d$local_crop_[!is.na(d$crop)] <- NA_character_
+	d$country <- "Peru"
+	geo <- data.frame(
+		adm1 = c("Cajamarca", "Cusco", "Huánuco", "Junín", "La Libertad"),
+		latitude = c(-7.162, -13.532, -9.931, -11.900, -8.112),
+		longitude = c(-78.513, -71.967, -76.242, -75.200, -78.500)
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
 	d$geo_from_source <- FALSE
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE

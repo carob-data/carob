@@ -58,7 +58,7 @@ Dataset processed of a household level survey to describe the main farm characte
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 1.2
 	)
@@ -85,8 +85,8 @@ Dataset processed of a household level survey to describe the main farm characte
 
 	spec <- data.frame(
 		stem = c("rice", "maize", "jute", "wheat", "lentils", "mungbean", "tomato", "potato", "onion", "garlic", "tumeric", "ginger", "cabbage", "coriander", "chili", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin", "gourds"),
-		crop = c("rice", "maize", "jute", "wheat", "lentil", "mung bean", "tomato", "potato", "onion", "garlic", "turmeric", "ginger", "cabbage", "coriander", "chili pepper", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin", "gourd"),
-		yield_part = c("grain", "grain", "fiber", "grain", "seed", "seed", "fruit", "tubers", "bulb", "tubers", "rhizome", "tubers", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed", "fruit")
+		crop = c("rice", "maize", "jute", "wheat", "lentil", "mung bean", "tomato", "potato", "onion", "garlic", "tumeric", "ginger", "cabbage", "coriander", "chili pepper", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin", "bottle gourd"),
+		yield_part = c("grain", "grain", "stems", "grain", "seed", "seed", "fruit", "tubers", "bulbs", "bulbs", "rhizome", "rhizome", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed", "fruit")
 	)
 
 	kg_stem <- function(stem) if (stem == "lentils") "lentil" else stem
@@ -109,6 +109,7 @@ Dataset processed of a household level survey to describe the main farm characte
 	gps <- trimws(tolower(as.character(r$geoplace)))
 	gps[gps == ""] <- NA_character_
 
+	smap <- c(aman = "aman", boro = "boro", aus = "early wet")
 	parts <- list()
 	for (s in c("aman", "boro", "aus")) {
 		for (i in seq_len(nrow(spec))) {
@@ -134,7 +135,7 @@ Dataset processed of a household level survey to describe the main farm characte
 				longitude = as.numeric(r$long)[keep],
 				gps_from_ = gps[keep],
 				crop = spec$crop[i],
-				season = s,
+				season = unname(smap[s]),
 				variety_type = vtype(r[[vt_col(s, stem)]])[keep],
 				field_size = area[keep],
 				yield = yld[keep],

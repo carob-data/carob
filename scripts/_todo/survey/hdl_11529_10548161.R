@@ -70,7 +70,7 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.6
 	)
@@ -112,7 +112,7 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 		data.frame(
 			hhid = chr(r1$Respondent_ID),
 			variety = variety,
-			planting_method_ = method,
+			planting_method = method,
 			treatment = paste(method, variety),
 			yield = yld,
 			keep = keep
@@ -121,8 +121,8 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 	d <- rbind(
 		block("ManLocal_MzCultYN", "ManLocal_TotalMzArea", "ManLocal_LandUnit", "ManLocal_DryGrainSoldQty", "ManLocal_DryGrainConsQty", "local", "manual"),
 		block("ManHyb_MzCultYN", "ManHyb_TotalMzArea", "ManHyb_LandUnit", "ManHyb_DryGrainSoldQty", "ManHyb_DryGrainConsQty", "hybrid", "manual"),
-		block("LSLocal_MzCultYN", "LSLocal_TotalMzArea", "LSLocal_LandUnit", "LSLocal_DryGrainSoldQty", "LSLocal_DryGrainConsQty", "local", "line-sown"),
-		block("LSHybrid_MzCultYN", "LSHybrid_TotalMzArea", "LSHybrid_LandUnit", "LSHybrid_DryGrainSoldQty", "LSHybrid_DryGrainConsQty", "hybrid", "line-sown")
+		block("LSLocal_MzCultYN", "LSLocal_TotalMzArea", "LSLocal_LandUnit", "LSLocal_DryGrainSoldQty", "LSLocal_DryGrainConsQty", "local", "line sowing"),
+		block("LSHybrid_MzCultYN", "LSHybrid_TotalMzArea", "LSHybrid_LandUnit", "LSHybrid_DryGrainSoldQty", "LSHybrid_DryGrainConsQty", "hybrid", "line sowing")
 	)
 	d <- d[d$keep, ]
 	d$keep <- NULL
@@ -143,8 +143,12 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	miss_gps <- is.na(d$latitude) | is.na(d$longitude)
+	d$latitude[miss_gps] <- 21.933
+	d$longitude[miss_gps] <- 86.733
 	d$adm2 <- carobiner::fix_name(d$adm2, "title")
 	d$location <- carobiner::fix_name(d$location, "title")
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

@@ -67,7 +67,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -84,7 +84,8 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 
 	vars <- c("1"="Swarna", "2"="Parijat", "3"="Hira", "4"="Lalat", "5"="Rudra", "6"="Culture-1", "7"="Jhau", "8"="Utkal Prava", "9"="Pathara", "10"="Khandagiri", "11"="No.51", "12"="Sarada", "13"="Moti", "14"="Annapurna", "15"="Gitanjali", "16"="Mugai", "17"="Patharasala", "18"="CR 1030", "19"="Kalinga", 
 		"1001"="Chetka", "1002"="Mugudhi", "1003"="Gurian", "1004"="Sarian", "1005"="Mahipal", "1006"="Kusuma", "1007"="Karni", "1008"="Badamahipal", "1009"="Assamchudi", "1010"="Burei", "1011"="Malpatri", "1012"="Biramani", "1013"="Locha", "1014"="Sela", "1015"="Gelei", "1016"="Jabda", "1017"="Jangalijata", "1018"="Jatakalam", "1019"="Burian", "1020"="Jhari", "1021"="Kankani", "1022"="Selaburi", "1023"="Puagi", "1024"="Hiran", "1025"="Bundei", "1026"="Kharkal", "1027"="Kainch", "1028"="Paniruhi", "1029"="Bhutia", "1030"="Asu", "1031"="Kakhuria", "1032"="Jaladhan", "1033"="Goda", "1034"="Jiramani", "1035"="Rangi", "1036"="Raishari", "1037"="Raichini", "1038"="Khakra", "1039"="Lal", "1040"="Maljhinga", "1041"="Dani", "1042"="Bhuska", "1043"="Kalia", "1044"="Karanga", "1045"="Baigan Bhija", "1046"="Nardi", "1047"="Sunga", "1048"="Katamudi", "1049"="Agnisal", "1050"="Kerakhandi", "1051"="Khajur Jhumpa", "1052"="Saljhati", "1053"="Kulichor", "1054"="Jhinga", "1055"="Kalama", "1056"="Baidyaraj", "1057"="Putiashakar", "1058"="Nilamani", "1059"="Karlabhuta", "1060"="Ganjeikali", "1061"="Bhajana", "1062"="Uddkurkur", "1063"="Chaina", "1064"="Harishankar", "1065"="Bidera")
-	crops <- c("rice", "mung bean", "horse gram", "vegetables", "wheat", "chickpea", "grass pea", "cotton", "black gram", "pigeon pea", "sugarcane", "groundnut", "sabai grass", "bamboo", "onion", "finger millet", "pea", "castor", "mustard", "chili pepper", "vegetables", "eggplant", "sesame")
+	# Code 13 ("sabai grass") is not in terminag values_crop; set crop to NA and retain crop_label_
+	crops <- c("rice", "mung bean", "horse gram", "vegetable", "wheat", "chickpea", "grass pea", "cotton", "black gram", "pigeon pea", "sugarcane", "groundnut", NA, "bamboo", "onion", "finger millet", "pea", "castor", "mustard", "chili pepper", "vegetable", "eggplant", "sesame")
 	villages <- c("Sergad", "Pasticudi", "Masinakati", "Tulasichaura")
 	blocks <- c("Narla", "Kesinga", "Betonati", "Suliapada")
 
@@ -94,10 +95,11 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		village = r1$Village,
 		type = r1$Type,
 		farmer = r1$Farmer,
-		season = c("pre-kharif", "kharif", "rabi", "zaid")[r1$Season],
+		season = c("early wet", "kharif", "rabi", "early wet")[r1$Season],
 		parcel = r1$Parcel,
 		plot = r1$Plot,
 		crop = crops[r1$Crop],
+		crop_label_ = ifelse(r1$Crop == 13, "sabai grass", NA_character_),
 		intercropped = r1$Cropping == 2,
 		field_size = r1$Area,
 		planting_method = c("direct seeding", "direct seeding", "transplanting")[r1$CEMethod],
@@ -119,7 +121,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		topography_ = c("upland (bunded)", "upland (unbunded)", "medium", "lowland", "very lowland")[r2$Topog],
 		soil_texture = c("clay", "clay loam", "sandy clay loam", "sandy loam", "loamy sand", "loam", "sand")[r2$Soiltype],
 		land_quality_ = c("very good", "good", "average", "poor", "very poor")[r2$LandQlty],
-		irrigation_source = c("canal", "deep tube well", "shallow tube well", "none", "cross bund", "dug well")[r2$IrrigSrc],
+		irrigation_source = c("canal", "groundwater", "groundwater", "none", "small reservoir", "groundwater")[r2$IrrigSrc],
 		land_tenure = c("owned", "sharecropped", "rented", "rented out")[r2$Tenure]
 	)
 	lh$irrigated <- !(lh$irrigation_source %in% "none")
@@ -131,7 +133,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	## fertilizer
 	grades <- data.frame(
 		code = c(1:6, 10),
-		name = c("urea", "SSP", "DAP", "KCl", "10-26-26", "28-28-0", "gypsum"),
+		name = c("urea", "SSP", "DAP", "KCl", "NPK", "NP", "gypsum"),
 		N = c(46, 0, 18, 0, 10, 28, 0),
 		P = c(0, 16, 46, 0, 26, 28, 0),
 		K = c(0, 0, 0, 58, 26, 0, 0)
@@ -147,7 +149,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	ft <- aggregate(fl["name"], fl["rec"], \(x) paste(unique(x), collapse="; "))
 	fert <- data.frame(
 		rec = r3$rec, district = r3$District, year = r3$Year, village = r3$Village, type = r3$Type, farmer = r3$Farmer,
-		season = c("pre-kharif", "kharif", "rabi", "zaid")[r3$Season], parcel = r3$Parcel, plot = r3$Plot,
+		season = c("early wet", "kharif", "rabi", "early wet")[r3$Season], parcel = r3$Parcel, plot = r3$Plot,
 		ha = r3$Area, seed_rate = r3$SeedQty / r3$Area, OM_amount = ifelse(is.na(r3$FYMQUA), 0, r3$FYMQUA) / r3$Area
 	)
 	fert <- merge(fert, merge(fn, ft, by="rec"), by="rec", all.x=TRUE)
@@ -170,6 +172,9 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	d$adm2 <- c("Kalahandi", "Mayurbhanj")[d$district]
 	d$adm3 <- blocks[d$village]
 	d$location <- villages[d$village]
+	d$latitude <- c(20.11, 20.20, 21.73, 22.15)[d$village]
+	d$longitude <- c(83.42, 83.23, 86.85, 86.87)[d$village]
+	d$geo_from_source <- FALSE
 	d$plot_id <- paste(d$parcel, d$plot, sep="-")
 	d$trial_id <- paste(d$hhid, d$year, sep="-")
 	d$planting_date <- as.character(d$year)
@@ -181,10 +186,11 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- "grain"
+	d$yield_part[is.na(d$crop)] <- NA
 	d$yield_part[d$crop %in% c("mung bean", "horse gram", "chickpea", "grass pea", "black gram", "pigeon pea", "pea", "castor", "mustard", "sesame")] <- "seed"
-	d$yield_part[d$crop %in% c("vegetables")] <- "leaves"
+	d$yield_part[d$crop %in% c("vegetable")] <- "leaves"
 	d$yield_part[d$crop %in% c("chili pepper", "eggplant")] <- "fruit"
-	d$yield_part[d$crop %in% c("sugarcane", "bamboo", "sabai grass")] <- "stems"
+	d$yield_part[d$crop %in% c("sugarcane", "bamboo")] <- "stems"
 	d$yield_part[d$crop == "cotton"] <- "lint"
 	d$yield_part[d$crop == "onion"] <- "bulbs"
 	d$yield_part[d$crop == "groundnut"] <- "pod"

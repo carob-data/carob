@@ -47,7 +47,7 @@ The goal of this study was to assess sweet potato seed (vine) transactions and a
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.3
 	)
@@ -58,6 +58,9 @@ The goal of this study was to assess sweet potato seed (vine) transactions and a
 		serial <- as.numeric(r$Sale_Date)
 		age <- trimws(as.character(r$Seller_Age))
 		age[!nzchar(age)] <- NA_character_
+		price <- trimws(as.character(r[["Selling Price /Bundle(big Size)"]]))
+		price[tolower(price) == "free"] <- "0"
+		price[!nzchar(price)] <- NA_character_
 		data.frame(
 			hhid = trimws(as.character(r$Seller_ID)),
 			age = as.numeric(age),
@@ -67,17 +70,21 @@ The goal of this study was to assess sweet potato seed (vine) transactions and a
 			date = as.character(as.Date(serial, origin="1899-12-30")),
 			variety = trimws(as.character(r$Variety)),
 			bundles_sold_ = as.numeric(r$BundlesSold),
-			bundle_price_ = as.numeric(r[["Selling Price /Bundle(big Size)"]])
+			bundle_price_ = as.numeric(price)
 		)
 	}
 	d <- carobiner::bindr(one("2013 All Data"), one("2014 All Data"))
 	d$country <- "Uganda"
 	d$adm1 <- "Northern"
+	d$latitude <- 2.772
+	d$longitude <- 32.288
+	d$geo_from_source <- FALSE
 	d$crop <- "sweetpotato"
 	d$trial_id <- substr(d$date, 1, 4)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$irrigated <- NA
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

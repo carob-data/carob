@@ -88,7 +88,7 @@ The Marando Bora endline survey was conducted from January to March 2013. The ob
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.35
 	)
@@ -131,6 +131,7 @@ The Marando Bora endline survey was conducted from January to March 2013. The ob
 		adm2 = carobiner::fix_name(plain(from_labels(r$District)), "title"),
 		adm3 = carobiner::fix_name(plain(from_labels(r$Ward)), "title"),
 		location = carobiner::fix_name(plain(from_labels(r$Village)), "title"),
+		crop = "sweetpotato",
 		elevation = as.numeric(r$elevation),
 		hh_size = as.numeric(r$HHmembers),
 		date = sprintf("%04d-%02d-%02d", as.integer(r$A18C), as.integer(r$A18B), as.integer(r$A18A)),
@@ -139,6 +140,31 @@ The Marando Bora endline survey was conducted from January to March 2013. The ob
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
+	geo <- data.frame(
+		adm2 = c("Biharamulo", "Bukombe", "Bunda", "Chato", "Geita", "Ilemela",
+		         "Magu", "Maswa", "Misungwi", "Muleba", "Musoma", "Nyamagana",
+		         "Rorya", "Sengerema", "Tarime", "Ukerewe"),
+		latitude = c(-2.6319, -3.4833, -2.0500, -2.6378, -2.8725, -2.4500,
+		             -2.5896, -3.1833, -2.8500, -1.8400, -1.5000, -2.5164,
+		             -1.2667, -2.6419, -1.3500, -2.0333),
+		longitude = c(31.3089, 31.8333, 33.8667, 31.7669, 32.2295, 32.9167,
+		              33.4381, 33.7667, 33.0833, 31.6544, 33.8000, 32.9175,
+		              34.0500, 32.6225, 34.3667, 33.0167)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	na_g <- is.na(d$latitude)
+	if (any(na_g)) {
+		reg <- data.frame(
+			adm1 = c("Kagera", "Mara", "Mwanza", "Shinyanga"),
+			lat = c(-1.9167, -1.7833, -2.5164, -3.6619),
+			lon = c(31.2626, 34.1532, 32.9175, 33.4231)
+		)
+		mr <- match(d$adm1[na_g], reg$adm1)
+		d$latitude[na_g] <- reg$lat[mr]
+		d$longitude[na_g] <- reg$lon[mr]
+	}
 
 	carobiner::write_files(path, meta, d)
 }

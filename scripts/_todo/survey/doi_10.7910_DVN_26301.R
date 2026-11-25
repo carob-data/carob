@@ -63,7 +63,7 @@ To devise practical means for the regular monitoring of variety diffusion and fo
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.6
 	)
@@ -131,11 +131,26 @@ To devise practical means for the regular monitoring of variety diffusion and fo
 	d2$variety_type <- "modern"
 
 	d <- carobiner::bindr(d1, d2)
+	d$season_label_ <- d$season
+	d$season[d$season %in% c("aus", "spring")] <- "early wet"
+	geo <- data.frame(
+		country = c("Bangladesh", "Nepal", "Bhutan"),
+		latitude = c(23.685, 27.700, 27.514),
+		longitude = c(90.356, 85.324, 90.433)
+	)
+	d <- merge(d, geo, by="country", all.x=TRUE)
+	d$latitude[d$adm1 %in% "West Bengal"] <- 22.987
+	d$longitude[d$adm1 %in% "West Bengal"] <- 87.855
+	d$latitude[d$adm1 %in% "Odisha"] <- 20.952
+	d$longitude[d$adm1 %in% "Odisha"] <- 85.099
+	d$latitude[d$adm1 %in% "Chhattisgarh"] <- 21.279
+	d$longitude[d$adm1 %in% "Chhattisgarh"] <- 81.866
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

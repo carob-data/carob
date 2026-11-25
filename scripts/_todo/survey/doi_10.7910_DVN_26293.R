@@ -143,7 +143,7 @@ To investigate the determinants of technology adoption in rice cultivation by fo
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 10,
 		carob_effort = 0.6
 	)
@@ -202,6 +202,13 @@ To investigate the determinants of technology adoption in rice cultivation by fo
 		seed_rate = seedkg / area
 	)
 
+	geo <- data.frame(
+		adm2 = c("Kilombero", "Mvomero", "Kyela", "Mbarali", "Shinyanga Rural", "Kahama"),
+		latitude = c(-8.13, -6.30, -9.58, -8.52, -3.70, -3.83),
+		longitude = c(36.68, 37.45, 33.85, 34.33, 33.42, 32.60)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$hhid, d$variety_slot_, sep="-")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

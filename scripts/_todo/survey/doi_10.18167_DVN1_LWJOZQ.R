@@ -40,7 +40,7 @@ Data on a sample of cotton farms in Hebei province, out of which a sub-sample wa
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 40,
@@ -76,8 +76,16 @@ Data on a sample of cotton farms in Hebei province, out of which a sub-sample wa
 		labour_cost_ = num(r$labour_mu_cost) * per_ha,
 		date = "2011",
 		on_farm = TRUE,
-		is_survey = TRUE
+		is_survey = TRUE,
+		geo_from_source = FALSE
 	)
+
+	geo <- data.frame(
+		adm3 = c("高阳", "东光", "辛集", "冀州", "故城", "景县", "深州", "南宫", "威县", "曲周"),
+		latitude = c(38.690, 37.887, 37.943, 37.542, 37.350, 37.688, 38.003, 37.358, 36.977, 36.773),
+		longitude = c(115.779, 116.536, 115.217, 115.579, 115.967, 116.259, 115.555, 115.391, 115.263, 114.956)
+	)
+	d <- merge(d, geo, by = "adm3", all.x = TRUE)
 
 	f1 <- ff[basename(ff) == "Sub_Spray_Date_WhatControlled.xlsx"]
 	r1 <- carobiner::read.excel(f1, sheet="Sub_Spray_Date_WhatControlled")

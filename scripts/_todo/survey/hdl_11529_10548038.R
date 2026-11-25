@@ -66,7 +66,7 @@ Main crop and plot area on the focal field of each household.
 		response_vars = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.3
 	)
@@ -93,17 +93,20 @@ Main crop and plot area on the focal field of each household.
 		as.numeric(x)
 	}
 
+	lat <- gps(r$X_gpsq1_latitude)
+	lon <- gps(r$X_gpsq1_longitude)
+
 	d <- data.frame(
 		country = "Tanzania",
-		latitude = gps(r$X_gpsq1_latitude),
-		longitude = gps(r$X_gpsq1_longitude),
+		latitude = lat,
+		longitude = lon,
 		hhid = as.character(r$hhid),
 		trial_id = paste(r$hhid, r$plotid),
 		crop = crop,
 		farmer_area_ = as.numeric(r$area_est),
 		on_farm = TRUE,
 		is_survey = TRUE,
-		geo_from_source = TRUE
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
 	carobiner::write_files(path, meta, d)
 }

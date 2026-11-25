@@ -60,7 +60,7 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI-
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.3
 	)
@@ -170,14 +170,17 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI-
 	rN$kgK <- ifelse(qty == 0, 0, qty * pK / 100 / 1.2051)
 	ftype <- b
 	ftype[g] <- paste(pN[g], pP[g], pK[g], sep="-")
+	ftype[ftype == "18-46-0"] <- "DAP"
 	ftype[g & pK > 0] <- "NPK"
+	ftype[g & pK == 0 & pN > 0 & pP > 0 & ftype != "DAP"] <- "NP"
 	ftype[ftype %in% c("UREA", "UREA - VIKINGS", "46-0-0")] <- "urea"
 	ftype[ftype %in% c(std$b[3:7], "21-0-0")] <- "DAS"
 	ftype[ftype == "MURIATE"] <- "KCl"
-	ftype[ftype == "18-46-0"] <- "DAP"
+	ftype[ftype %in% c("AMMONIUM PHOSPHATE", "AMONIUM PHOSPATE", "AMMOPHOS")] <- "NP"
 	ftype[ftype %in% c("NONE", "FALLOW", "NRICE")] <- "none"
-	ftype[ftype == "-99"] <- NA
+	ftype[ftype %in% c("-99", "FURADAN")] <- NA
 	ftype[is.na(b)] <- "none"
+	ftype[!is.na(ftype) & !(ftype %in% c("urea", "DAS", "DAP", "KCl", "NP", "NPK", "SSP", "TSP", "ZnSO4", "gypsum", "none"))] <- "unknown"
 	sumna <- function(z) sum(z, na.rm=TRUE)
 	ptype <- function(z) {
 		z <- unique(z[!is.na(z)])
@@ -209,8 +212,20 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI-
 	)
 
 	irr <- tolower(trimws(pick(rF$IRRTYPE, rF)))
-	d$irrigation_source <- irr
+	irr[irr %in% c("missing", "-99", "")] <- NA
 	d$irrigated <- ifelse(is.na(irr), NA, irr != "rainfed")
+	irsrc <- rep("unknown", length(irr))
+	irsrc[is.na(irr)] <- NA_character_
+	irsrc[grepl("rainfed", irr)] <- "none"
+	irsrc[grepl("gravity|canal|nia|cis|communal|irrigated", irr)] <- "canal"
+	irsrc[grepl("well|stw|ground", irr)] <- "groundwater"
+	irsrc[grepl("river|creek|stream|lake", irr)] <- "surface water"
+	irlift <- rep(NA_character_, length(irr))
+	irlift[grepl("gravity", irr)] <- "gravity"
+	irlift[grepl("pump", irr)] <- "motorized pump"
+	irlift[grepl("gravity", irr) & grepl("pump", irr)] <- "motorized pump"
+	d$irrigation_source <- irsrc
+	d$irrigation_lifting <- irlift
 	d$land_tenure <- tolower(trimws(pick(rF$TENURE, rF)))
 
 	# fertilizer of sub-parcels that share HHCODE, PARNO and FSIZE cannot be separated

@@ -82,7 +82,7 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 		notes = "Yield is farmer-reported production (fresh paddy) per reported area",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
 		carob_effort = 0.6
 	)
@@ -128,7 +128,7 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 	f$specify <- tolower(trimws(f$specify))
 	npk <- data.frame(
 		specify = c("urea", "46-0-0", "14-14-14", "ammonium sulfate", "21-0-0", "16-20-0"),
-		ftype = c("urea", "urea", "NPK", "DAS", "DAS", NA),
+		ftype = c("urea", "urea", "NPK", "DAS", "DAS", "NP"),
 		N = c(46, 46, 14, 21, 21, 16), P = c(0, 0, 14, 0, 0, 20) * 0.4364, K = c(0, 0, 14, 0, 0, 0) * 0.8301,
 		S = c(0, 0, 0, 24, 24, 0)
 	)
@@ -163,10 +163,15 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 2
 	d$yield_part <- "grain"
 	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
+	geo <- data.frame(
+		adm2 = c("Famy", "Mabitac", "Majayjay", "Siniloan", "Santa Maria"),
+		latitude = c(14.439, 14.427, 14.145, 14.420, 14.472),
+		longitude = c(121.448, 121.427, 121.472, 121.446, 121.423)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 	d$geo_from_source <- FALSE
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
 	d$irrigated <- as.logical(NA)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

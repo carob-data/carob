@@ -40,7 +40,7 @@ El presente estudio de base de la metodología del Enfoque Participativo de Cade
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.35
 	)
@@ -50,13 +50,15 @@ El presente estudio de base de la metodología del Enfoque Participativo de Cade
 	prov <- trimws(as.character(r[["2Provincia"]]))
 	prov[prov == "Chimboraazo"] <- "Chimborazo"
 	when <- as.Date(trimws(as.character(r$FecApl)), "%d%m%Y")
+	adm2 <- carobiner::fix_name(trimws(as.character(r[["3Canton"]])), "title")
+	adm2[adm2 == "Canton"] <- NA_character_
 
 	d <- data.frame(
 		trial_id = "EPCP_potato_Ecuador_2009",
 		hhid = trimws(as.character(r$NroEnc)),
 		country = trimws(as.character(r[["1Pais"]])),
 		adm1 = carobiner::fix_name(prov, "title"),
-		adm2 = carobiner::fix_name(trimws(as.character(r[["3Canton"]])), "title"),
+		adm2 = adm2,
 		adm3 = carobiner::fix_name(trimws(as.character(r[["4Parroquia"]])), "title"),
 		location = carobiner::fix_name(trimws(as.character(r[["5Comunidad"]])), "title"),
 		crop = "potato",
@@ -66,6 +68,17 @@ El presente estudio de base de la metodología del Enfoque Participativo de Cade
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Colta", "Riobamba"),
+		latitude = c(-1.7333, -1.6636),
+		longitude = c(-78.7667, -78.6546)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	na_g <- is.na(d$latitude)
+	d$latitude[na_g] <- -1.6636
+	d$longitude[na_g] <- -78.6546
 
 	carobiner::write_files(path, meta, d)
 }

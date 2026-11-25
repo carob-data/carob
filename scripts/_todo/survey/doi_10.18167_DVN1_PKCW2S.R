@@ -39,7 +39,7 @@ Données issues du suivi de 55 exploitations dans quatre villages pour cerner le
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 40,
@@ -90,8 +90,15 @@ Données issues du suivi de 55 exploitations dans quatre villages pour cerner le
 		weeding_times = as.integer(r[["Nombre sarclage...11"]]),
 		date = "1997",
 		on_farm = TRUE,
-		is_survey = TRUE
+		is_survey = TRUE,
+		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("Dampéla", "Danderesso", "Kodougouni", "Nténa"),
+		latitude = c(11.517, 11.462, 11.500, 11.583),
+		longitude = c(-5.683, -5.774, -5.850, -5.733)
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 	d$herbicide_used[is.na(herb)] <- NA
 	d$OM_type[is.na(om)] <- NA_character_
 	d$OM_used[is.na(om)] <- NA

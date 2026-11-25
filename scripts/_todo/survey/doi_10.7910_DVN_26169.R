@@ -55,7 +55,7 @@ The objective of the study is to document the changes in rice establishment meth
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -93,7 +93,8 @@ The objective of the study is to document the changes in rice establishment meth
 		land_irrigated = r1$IRAREA,
 		land_tenure = c("owner", "share tenant", "leasehold", "CLT", "mortgaged-in", "parents", "CARP")[r1$TENURE],
 		soil_type = c("Galas", "Lagkitin", "Mistezo", "Maganda", "Second class", "Lupain", "Sapang bato", "First class", "Kaingin")[r1$SOIL],
-		irrigation_source = c("1"="NIA", "2"="motor pump", "3"="creek", "4"="rainfall", "12"="motor pump; NIA", "13"="creek; NIA")[as.character(r1$IRSOURCE)],
+		irrigation_source = unname(c("1"="canal", "2"="unknown", "3"="stream", "4"="none", "12"="canal", "13"="stream;canal")[as.character(r1$IRSOURCE)]),
+		irrigation_lifting = unname(c("1"="gravity", "2"="motorized pump", "12"="motorized pump", "13"="gravity")[as.character(r1$IRSOURCE)]),
 		planting_date = wdate(r1$CEMNOWK),
 		harvest_date = wdate(r1$HARNOWK),
 		yield = r1$PRODKG / r1$PlantArea,
@@ -110,7 +111,7 @@ The objective of the study is to document the changes in rice establishment meth
 	# fertilizer: 5 product slots, grades N-P2O5-K2O
 	grade <- data.frame(
 		code = c(1, 2, 3, 4, 6, 9, 12, 13, 18),
-		fertilizer_type = c("urea", "DAS", "NPK", "16-20-0", "KCl", "DAP", "0-17-0", "17-0-17", "0-18-0"),
+		fertilizer_type = c("urea", "DAS", "NPK", "NP", "KCl", "DAP", "SSP", "unknown", "SSP"),
 		N = c(46, 21, 14, 16, 0, 18, 0, 17, 0),
 		P = c(0, 0, 14, 20, 0, 46, 17, 0, 18) / 2.29,
 		K = c(0, 0, 14, 0, 60, 0, 0, 17, 0) / 1.2051
@@ -125,7 +126,7 @@ The objective of the study is to document the changes in rice establishment meth
 	fl$N <- fl$amount * fl$N / 100 / fl$area
 	fl$P <- fl$amount * fl$P / 100 / fl$area
 	fl$K <- fl$amount * fl$K / 100 / fl$area
-	fl$fertilizer_type[is.na(fl$fertilizer_type)] <- paste0("code ", fl$code[is.na(fl$fertilizer_type)])
+	fl$fertilizer_type[is.na(fl$fertilizer_type)] <- "unknown"
 	fert <- data.frame(
 		key = unique(r3$key)
 	)
@@ -148,6 +149,9 @@ The objective of the study is to document the changes in rice establishment meth
 
 	d$country <- "Philippines"
 	d$adm1 <- "Nueva Ecija"
+	d$latitude <- 15.5784
+	d$longitude <- 120.9726
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

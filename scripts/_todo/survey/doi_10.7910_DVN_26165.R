@@ -305,7 +305,7 @@ This is a household baseline survey that will measure ex-post and ex-ante econom
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.7
 	)
@@ -382,11 +382,27 @@ This is a household baseline survey that will measure ex-post and ex-ante econom
 	d$crop_establishment_[d$crop_establishment_ == "code NA"] <- NA
 	d$planting_method <- c(TPR="transplanting", DSR="direct seeding", WSR="direct seeding")[d$crop_establishment_] |> as.vector()
 
+	geo <- data.frame(
+		country = c("Laos", "Vietnam", "Cambodia", "Thailand", "Indonesia"),
+		latitude = c(17.97, 14.06, 12.57, 15.87, -6.20),
+		longitude = c(102.63, 108.28, 104.99, 100.99, 106.85)
+	)
+	d <- merge(d, geo, by="country", all.x=TRUE)
+	geo1 <- data.frame(
+		adm1 = c("Champasak", "Khammouan", "Binh Dinh", "Hau Giang", "Long An", "Kampong Thom", "Pursat", "Jawa Barat", "Sumatera Selatan"),
+		lat1 = c(15.12, 17.40, 13.88, 9.78, 10.70, 12.71, 12.54, -6.33, -3.39),
+		lon1 = c(105.80, 104.83, 109.11, 105.47, 106.17, 104.89, 103.92, 108.32, 104.84)
+	)
+	m <- match(d$adm1, geo1$adm1)
+	d$latitude[!is.na(m)] <- geo1$lat1[m[!is.na(m)]]
+	d$longitude[!is.na(m)] <- geo1$lon1[m[!is.na(m)]]
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$trial_id <- d$hhid
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

@@ -49,7 +49,7 @@ In this data base, representative georeferenced farmer survey data from Zambia f
 		response_vars = "storage_loss_cob_percent_;storage_loss_grain_percent_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -87,12 +87,13 @@ In this data base, representative georeferenced farmer survey data from Zambia f
 		lgb_grain_score_ = num(r$lgb_grn),
 		weevil_cob_score_ = num(r$weevil_cob),
 		weevil_grain_score_ = num(r$weevil_grn),
-		interview_date_ = when,
+		date = when,
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
 	d$adm1 <- carobiner::fix_name(d$adm1, "title")
 	d$location <- carobiner::fix_name(d$location, "title")
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

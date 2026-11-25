@@ -37,7 +37,7 @@ El presente es un informe del estudio de base de la metodología 'Mama y Bebé' 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.25
 	)
@@ -53,12 +53,14 @@ El presente es un informe del estudio de base de la metodología 'Mama y Bebé' 
 		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(as.Date(x), "%Y-%m-%d"))
 		txt(x)
 	}
+	adm2 <- txt(r[["3Municipio"]])
+	adm2[adm2 == "Slachoque"] <- "Siachoque"
 	d <- data.frame(
 		hhid = txt(r$NroEnc),
 		date = when(r$FecApl),
 		country = txt(r[["1Pais"]]),
 		adm1 = txt(r[["2Departamento"]]),
-		adm2 = txt(r[["3Municipio"]]),
+		adm2 = adm2,
 		location = txt(r[["4Vereda"]]),
 		crop = "potato",
 		geo_from_source = FALSE,
@@ -67,6 +69,14 @@ El presente es un informe del estudio de base de la metodología 'Mama y Bebé' 
 		trial_id = "Colombia_mother_baby_2009"
 	)
 	d <- d[!is.na(d$hhid), ]
+	geo <- data.frame(
+		adm2 = c("Siachoque", "Soraca"),
+		latitude = c(5.5119, 5.5019),
+		longitude = c(-73.2442, -73.3328)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

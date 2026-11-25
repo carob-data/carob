@@ -51,7 +51,7 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -125,6 +125,8 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 	fert[grepl("NPK", fert_raw) & grepl("Urea|urea", fert_raw)] <- "NPK; urea"
 	fert[grepl("NPK", fert_raw) & !grepl("Urea|urea", fert_raw)] <- "NPK"
 	fert[grepl("^Urea$", fert_raw)] <- "urea"
+	fert[tolower(fert_raw) == "kno3"] <- "KNO"
+	fert[fert_raw %in% c("Golden Pen", "Krister K")] <- "unknown"
 
 	vtype <- tolower(trimws(r$casvar))
 	vtype[grepl("both", vtype)] <- NA
@@ -154,6 +156,17 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
+	miss_xy <- is.na(d$longitude) | is.na(d$latitude)
+	if (any(miss_xy)) {
+		lga_geo <- data.frame(
+			adm2 = c("Atisbo", "Itesiwaju", "Iwajowa", "Kajola", "Orelope", "Saki East", "Saki West"),
+			lat = c(8.627, 8.200, 7.983, 8.033, 8.833, 8.667, 8.667),
+			lon = c(3.437, 3.550, 3.067, 3.350, 3.767, 3.683, 3.394)
+		)
+		im <- match(d$adm2[miss_xy], lga_geo$adm2)
+		d$latitude[miss_xy] <- lga_geo$lat[im]
+		d$longitude[miss_xy] <- lga_geo$lon[im]
+	}
 	d$trial_id <- d$hhid
 
 	carobiner::write_files(path, meta, d)

@@ -76,8 +76,8 @@ Rwanda Sweetpotato Super Foods Project Endline Survey  This endline survey was d
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 20,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 25,
 		carob_effort = 0.4
 	)
 
@@ -104,13 +104,15 @@ Rwanda Sweetpotato Super Foods Project Endline Survey  This endline survey was d
 	f2 <- ff[basename(ff) == "RW_sf_end_pg8_sp_prod_1.dta"]
 	r1 <- haven::read_dta(f1)
 	r2 <- haven::read_dta(f2)
+	adm1 <- carobiner::fix_name(chr(r1$a01a), "title")
+	adm1 <- c("North" = "Amajyaruguru", "South" = "Amajyepfo")[adm1]
 	d <- data.frame(
 		hhid = chr(r1$hhid),
-		adm1 = chr(r1$a01a),
-		adm2 = chr(r1$a02a),
-		adm3 = chr(r1$a03a),
-		location = chr(r1$a04a),
-		residents_ = num(r1$a08b1),
+		adm1 = unname(adm1),
+		adm2 = carobiner::fix_name(chr(r1$a02a), "title"),
+		adm3 = carobiner::fix_name(chr(r1$a03a), "title"),
+		location = carobiner::fix_name(chr(r1$a04a), "title"),
+		hh_size = num(r1$a08b1),
 		valley_bottom_ = chr(r1$a08b2),
 		farmer_group_ = chr(r1$a08b3),
 		elevation = num(r1$a15e),
@@ -133,7 +135,16 @@ Rwanda Sweetpotato Super Foods Project Endline Survey  This endline survey was d
 	d$trial_id <- paste0("RW_sf_", d$hhid, "_", seq_len(nrow(d)))
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
 	d$elevation[d$elevation < -200] <- NA_real_
+	geo <- data.frame(
+		adm2 = c("Burera", "Gakenke", "Kamonyi", "Muhanga", "Rulindo"),
+		latitude = c(-1.4833, -1.7000, -2.0167, -2.0833, -1.7500),
+		longitude = c(29.8333, 29.7833, 29.9000, 29.7500, 29.9833)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

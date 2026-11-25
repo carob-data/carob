@@ -74,7 +74,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		response_vars = "dry_harvest_local_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -110,13 +110,13 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		"tomato"="tomato", "white teff"="teff"
 	)
 	part_of <- c(
-		banana="fruit", barley="grain", wheat="seed", cabbage=NA_character_,
-		carrot=NA_character_, cassava="roots", khat="leaves", coffee="seed",
+		banana="fruit", barley="grain", wheat="grain", cabbage="leaves",
+		carrot="roots", cassava="roots", khat="leaves", coffee="seed",
 		cowpea="seed", chickpea="seed", enset="rhizome", "faba bean"="seed",
-		pea="seed", "finger millet"="grain", ginger="tubers", garlic="tubers",
+		pea="seed", "finger millet"="grain", ginger="rhizome", garlic="bulbs",
 		groundnut="seed", "common bean"="seed", gesho="leaves", potato="tubers",
 		lupin="seed", maize="grain", mango="fruit", teff="grain", niger="seed",
-		onion=NA_character_, "pearl millet"="grain", "chili pepper"="fruit",
+		onion="bulbs", "pearl millet"="grain", "chili pepper"="fruit",
 		rice="grain", sesame="seed", sorghum="grain", soybean="seed",
 		sugarcane="stems", sweetpotato="roots", tomato="fruit"
 	)

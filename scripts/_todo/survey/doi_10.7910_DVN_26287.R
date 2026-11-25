@@ -67,7 +67,7 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.8
 	)
@@ -82,7 +82,7 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		data.frame(code=as.numeric(r3[[2]][k]), label=trimws(r3[[ncol(r3)]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(r3, cds$code)]
+		cds$label[match(x, cds$code)]
 	}
 
 	acre <- 0.4046863
@@ -131,9 +131,14 @@ To assess the impact of adoption of new rice-based technologies on income and em
 	d1$crop_label_ <- crops$label[i]
 	rice <- d1$crop %in% "rice"
 	d1$variety <- ifelse(rice, lab(d1$variety_code, rvar), NA)
-	d1$yield <- ifelse(rice, d1$yield_baskets_acre_ * basket / acre, NA)
-	d1$expected_yield <- ifelse(rice, d1$normal * basket / acre, NA)
+	d1$yield <- ifelse(rice, d1$production_baskets_ * basket / d1$field_size, NA)
+	d1$expected_yield <- ifelse(rice, d1$normal * basket / d1$field_size, NA)
 	d1$irrigated <- ifelse(d1$irrigation_source == "Not irrigated - Rainfed", FALSE, TRUE)
+	irmap <- c("Not irrigated - Rainfed"="none", "Pumped from canals"="canal", "Tubewells"="groundwater",
+		"Others"="unknown", "Rainfed and pumped from canals"="canal")
+	irlift <- c("Pumped from canals"="motorized pump", "Rainfed and pumped from canals"="motorized pump")
+	d1$irrigation_lifting <- unname(irlift[d1$irrigation_source])
+	d1$irrigation_source <- unname(irmap[d1$irrigation_source])
 	d1$field_id[d1$field_id == "."] <- NA
 	d1$crop_code <- d1$normal <- d1$acres <- NULL
 	d1$record_type_ <- "parcel"
@@ -178,7 +183,7 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		currency = "MMK"
 	)
 	ft <- cbind(ifelse(r2$UREA > 0, "urea", NA), ifelse(r2$TSP > 0, "TSP", NA), ifelse(r2$MOP > 0, "KCl", NA), ifelse(r2$GYPSUM > 0, "gypsum", NA))
-	d2$fertilizer_type <- apply(ft, 1, function(x) paste(r3[!is.na(r3)], collapse="; "))
+	d2$fertilizer_type <- apply(ft, 1, function(x) paste(x[!is.na(x)], collapse="; "))
 	d2$fertilizer_type[d2$fertilizer_type == ""] <- "none"
 	d2$OM_used <- r2$FYM > 0
 	d2$OM_type <- ifelse(r2$FYM > 0, "farmyard manure", NA)
@@ -191,8 +196,12 @@ To assess the impact of adoption of new rice-based technologies on income and em
 	d$village <- NULL
 	d$adm1 <- "Ayeyarwady"
 	d$country <- "Myanmar"
+	d$latitude <- 16.7792
+	d$longitude <- 94.7321
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

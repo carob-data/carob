@@ -41,7 +41,7 @@ Orange-fleshed sweetpotato (OFSP) as a staple food providing necessary body ener
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.4
 	)
@@ -72,21 +72,32 @@ Orange-fleshed sweetpotato (OFSP) as a staple food providing necessary body ener
 	# Value labels: Baseline = 0, Endline = 1.
 	round <- ifelse(wave == 0, "baseline", ifelse(wave == 1, "endline", NA_character_))
 	hid <- paste(trimws(as.character(r$a04)), trimws(as.character(r$a05)), sep="_")
+	adm2 <- carobiner::fix_name(plain(r$a02a), "title")
+	adm2[adm2 == "Waging'ombe"] <- "Wanging'ombe"
 
 	d <- data.frame(
 		hhid = hid,
 		survey_round_ = round,
 		country = "Tanzania",
 		adm1 = carobiner::fix_name(plain(r$a01a), "title"),
-		adm2 = carobiner::fix_name(plain(r$a02a), "title"),
+		adm2 = adm2,
 		adm3 = carobiner::fix_name(plain(r$a03a), "title"),
 		location = carobiner::fix_name(plain(r$a04a), "title"),
+		crop = "sweetpotato",
 		date = as.character(as.Date(r$a16)),
 		trial_id = paste(hid, round, sep="_"),
 		geo_from_source = FALSE,
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
+	geo <- data.frame(
+		adm2 = c("Chunya", "Gairo", "Iringa", "Mbozi", "Mufindi", "Ulanga", "Wanging'ombe"),
+		latitude = c(-8.5333, -6.1333, -7.7700, -9.1000, -8.5900, -8.6833, -9.0500),
+		longitude = c(33.4167, 36.8667, 35.6900, 32.9333, 35.2900, 36.7167, 34.6333)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

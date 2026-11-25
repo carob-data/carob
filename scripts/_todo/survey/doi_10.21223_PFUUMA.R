@@ -37,7 +37,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.25
 	)
@@ -58,6 +58,8 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		sex = sex,
 		age_band_ = trimws(as.character(r$Edad)),
 		kilos_purchased_ = trimws(as.character(r[[kilos]])),
+		latitude = -12.0464,
+		longitude = -77.0428,
 		on_farm = FALSE,
 		is_survey = TRUE,
 		geo_from_source = FALSE

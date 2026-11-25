@@ -41,7 +41,7 @@ El presente es un informe del estudio de base de la metodología “Desarrollo O
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.35
 	)
@@ -68,6 +68,14 @@ El presente es un informe del estudio de base de la metodología “Desarrollo O
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Canas", "Canchis", "Paucartambo"),
+		latitude = c(-14.4333, -14.2694, -13.3156),
+		longitude = c(-71.4333, -71.2261, -71.5944)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

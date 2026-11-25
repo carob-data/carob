@@ -55,7 +55,7 @@ It is widely recognized that female farmers have considerably less access to pro
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.4
 	)
@@ -93,7 +93,15 @@ It is widely recognized that female farmers have considerably less access to pro
 	)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
+
+	geo <- data.frame(
+		adm2 = c("Lilongwe", "Mchinji", "Dedza", "Ntchisi", "Kasungu", "Mzimba"),
+		latitude = c(-13.983, -13.798, -14.378, -13.367, -13.033, -11.900),
+		longitude = c(33.783, 32.880, 34.333, 33.917, 33.483, 33.600)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

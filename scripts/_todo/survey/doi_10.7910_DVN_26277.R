@@ -64,7 +64,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.5
 	)
@@ -87,7 +87,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	# nutrient content (%, elemental) from terminag values_fertilizer_type; Gromor 28-28-0
 	fert <- data.frame(
 		specify = c("Urea", "DAP", "MOP", "Potash", "Gromor"),
-		fertilizer_type = c("urea", "DAP", "KCl", "KCl", "Gromor"),
+		fertilizer_type = c("urea", "DAP", "KCl", "KCl", "NP"),
 		N = c(46, 18, 0, 0, 28),
 		P = c(0, 20.1, 0, 0, 28 / 2.29),
 		K = c(0, 0, 49.8, 49.8, 0)
@@ -95,7 +95,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	fm <- rM[rM$matinputs %in% "Fertilizer", ]
 	i <- match(trimws(fm$specify), fert$specify)
 	fm$type <- fert$fertilizer_type[i]
-	fm$type[is.na(i)] <- trimws(fm$specify[is.na(i)])
+	fm$type[is.na(i)] <- "unknown"
 	fm$qty <- ifelse(fm$kg, fm$qtyPerHa, NA)
 	fm$N <- fm$qty * fert$N[i] / 100
 	fm$P <- fm$qty * fert$P[i] / 100
@@ -198,15 +198,28 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	d$country <- "India"
 	d$adm1 <- "Odisha"
 	d$adm2 <- rS$district[s]
+	d$adm2[d$adm2 == "Bolangir"] <- "Balangir"
 	d$location <- trimws(rS$village[s])
 	d$village_stress_ <- rS$stress[s]
 	d$currency <- "INR"
 
 	d$season <- tolower(d$season)
+	d$season_label_ <- d$season
+	d$season[d$season == "summer"] <- "early wet"
 	d$variety_type <- unname(c(MV="modern", TV="traditional")[d$variety_type])
 	d$planting_method <- unname(c(TPR="transplanting", DSR="direct seeding", WSR="direct seeding")[d$planting_method])
 	d$landscape_position <- gsub("medium land", "medium", d$landscape_position)
-	d$irrigation_source[tolower(d$irrigation_source) %in% "none"] <- "none"
+
+	irraw <- tolower(trimws(as.character(d$irrigation_source)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("none|rain|no irr", irraw)] <- "none"
+	irsrc[grepl("tube ?well|stw|dtw|bore|deep|shallow|ground|well", irraw)] <- "groundwater"
+	irsrc[grepl("canal", irraw)] <- "canal"
+	irsrc[grepl("pond|tank", irraw)] <- "pond"
+	irsrc[grepl("river|stream|creek", irraw)] <- "river"
+	irsrc[grepl("lift", irraw)] <- "surface water"
+	d$irrigation_source <- irsrc
 
 	tex <- tolower(d$soil_type)
 	tex[tex == "sandy clayloam"] <- "sandy clay loam"
@@ -214,21 +227,31 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	d$soil_texture <- tex
 
 	# arhar = pigeon pea; bengalgram = chickpea; greengram = mung bean; colocasia = taro; ridgegourd = luffa
+	d$crop_label_ <- d$crop
 	crops <- c(blackgram="black gram", greengram="mung bean", bengalgram="chickpea", arhar="pigeon pea",
 		brinjal="eggplant", chili="chili pepper", sesamum="sesame", bittergourd="bitter gourd",
 		"ladys finger"="okra", ridgegourd="luffa", colocasia="taro", "green vegetable"="vegetable",
-		vegetables="vegetable", lathyrus="grass pea")
+		vegetables="vegetable", lathyrus="grass pea", horsegram="horse gram", bean="common bean", fallow="none")
 	i <- match(d$crop, names(crops))
 	d$crop[!is.na(i)] <- crops[i[!is.na(i)]]
+	d$crop[d$crop %in% c("pointedgourd", "poi")] <- NA
 	yp <- c(rice="grain", wheat="grain", "black gram"="seed", "mung bean"="seed", chickpea="seed",
-		"pigeon pea"="seed", groundnut="seed", sesame="seed", mustard="seed", "grass pea"="seed",
-		potato="tubers", eggplant="fruit", "chili pepper"="fruit", cucumber="fruit", "bitter gourd"="fruit",
-		pumpkin="fruit", okra="fruit", luffa="fruit", tomato="fruit", cabbage="leaves", cauliflower="flowers")
+		"pigeon pea"="seed", "common bean"="seed", groundnut="seed", sesame="seed", mustard="seed", "grass pea"="seed",
+		"horse gram"="seed", potato="tubers", taro="tubers", eggplant="fruit", "chili pepper"="fruit",
+		cucumber="fruit", "bitter gourd"="fruit", pumpkin="fruit", okra="fruit", luffa="fruit",
+		tomato="fruit", cabbage="leaves", cauliflower="flowers", none="none")
 	d$yield_part <- unname(yp[d$crop])
 
+	geo <- data.frame(
+		adm2 = c("Kendrapara", "Bhadrak", "Jajpur", "Dhenkanal", "Balangir"),
+		latitude = c(20.50, 21.06, 20.85, 20.66, 20.71),
+		longitude = c(86.42, 86.50, 86.34, 85.60, 83.49)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

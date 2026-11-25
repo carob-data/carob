@@ -38,7 +38,7 @@ El presente informe tiene como objetivo principal describir la situación inicia
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.3
 	)
@@ -63,6 +63,14 @@ El presente informe tiene como objetivo principal describir la situación inicia
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("El Carmen", "Los Palmitos", "Ovejas", "Sampues", "San Jacinto", "Toluviejo"),
+		latitude = c(9.7174, 9.3789, 9.5267, 9.1836, 9.8275, 9.4517),
+		longitude = c(-75.1202, -75.2669, -75.2269, -75.3817, -75.1219, -75.4369)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

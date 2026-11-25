@@ -78,7 +78,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.4
 	)
@@ -98,7 +98,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	# nutrient content (%, elemental) from terminag values_fertilizer_type; 10-26-26 from the grade (P2O5/2.29, K2O/1.2051)
 	fert <- data.frame(
 		specify = c("Urea", "DAP", "SSP", "MOP", "Amonsulphate", "10-26-26", "Micronutrient", "Zinc", "Estozinc", "Zinc sulphate"),
-		fertilizer_type = c("urea", "DAP", "SSP", "KCl", "DAS", "NPK", "Micronutrient", "Zinc", "Estozinc", "ZnSO4"),
+		fertilizer_type = c("urea", "DAP", "SSP", "KCl", "DAS", "NPK", "unknown", "unknown", "unknown", "ZnSO4"),
 		N = c(46, 18, 0, 0, 21, 10, 0, 0, 0, 0),
 		P = c(0, 20.1, 8.74, 0, 0, 26 / 2.29, 0, 0, 0, 0),
 		K = c(0, 0, 0, 49.8, 0, 26 / 1.2051, 0, 0, 0, 0)
@@ -106,7 +106,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	fm <- rM[rM$matinputs %in% "Fertilizer", ]
 	i <- match(trimws(fm$specify), fert$specify)
 	fm$type <- fert$fertilizer_type[i]
-	fm$type[is.na(i)] <- trimws(fm$specify[is.na(i)])
+	fm$type[is.na(i)] <- "unknown"
 	fm$qty <- ifelse(fm$kg, fm$qtyPerHa, NA)
 	fm$N <- fm$qty * fert$N[i] / 100
 	fm$P <- fm$qty * fert$P[i] / 100
@@ -216,12 +216,25 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	d$currency <- "INR"
 
 	d$season <- tolower(d$season)
+	d$season_label_ <- d$season
 	d$season[d$season == "wet season"] <- "wet"
 	d$season[d$season == "dry season"] <- "dry"
+	d$season[d$season == "pre wet"] <- "early wet"
+	d$season[d$season == "wet and dry season"] <- NA
 	d$variety_type <- unname(c(MV="modern", TV="traditional")[d$variety_type])
 	d$planting_method <- unname(c(TPR="transplanting")[d$planting_method])
 	d$landscape_position <- gsub("medium land", "medium", d$landscape_position)
-	d$irrigation_source[tolower(d$irrigation_source) %in% "none"] <- "none"
+
+	irraw <- tolower(trimws(as.character(d$irrigation_source)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("none|rain|no irr", irraw)] <- "none"
+	irsrc[grepl("tube ?well|stw|dtw|bore|deep|shallow|ground|well", irraw)] <- "groundwater"
+	irsrc[grepl("canal", irraw)] <- "canal"
+	irsrc[grepl("pond|tank", irraw)] <- "pond"
+	irsrc[grepl("river|stream|creek", irraw)] <- "river"
+	irsrc[grepl("lift", irraw)] <- "surface water"
+	d$irrigation_source <- irsrc
 
 	tex <- tolower(d$soil_type)
 	tex[tex == "sandy"] <- "sand"
@@ -229,19 +242,28 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	d$soil_texture <- tex
 
 	# gram = chickpea; ridge gourd = luffa
+	d$crop_label_ <- d$crop
 	crops <- c(chilli="chili pepper", gram="chickpea", "ground nut"="groundnut", pulses="pulse",
 		"ridge gourd"="luffa", vegetables="vegetable")
 	i <- match(d$crop, names(crops))
 	d$crop[!is.na(i)] <- crops[i[!is.na(i)]]
+	d$crop[d$crop %in% c("mixed crops", "night queen", "parwal", "tube rose")] <- NA
 	yp <- c(rice="grain", wheat="grain", mustard="seed", lentil="seed", sesame="seed", chickpea="seed",
 		groundnut="seed", pea="seed", potato="tubers", banana="fruit", "bitter gourd"="fruit",
 		"chili pepper"="fruit", cucumber="fruit", okra="fruit", luffa="fruit", cabbage="leaves",
 		marigold="flowers")
 	d$yield_part <- unname(yp[d$crop])
 
+	geo <- data.frame(
+		adm2 = c("Nadia", "Purulia", "North 24 Parganas"),
+		latitude = c(23.47, 23.33, 22.62),
+		longitude = c(88.56, 86.36, 88.40)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

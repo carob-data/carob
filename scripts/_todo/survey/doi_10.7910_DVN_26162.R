@@ -57,7 +57,7 @@ The benchmark survey was used to develop a systematic understanding of target en
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.8
 	)
@@ -84,8 +84,10 @@ The benchmark survey was used to develop a systematic understanding of target en
 		soil_saline_ = ifelse(r$STYPE == 0, NA, r$STYPE == 6),
 		land_type_ = lk(c("upland", "midland", "shallow lowland", "lowland"), r$LTYPE),
 		sodic_percent_ = r$PRCNTSDC,
-		irrigation_source = lk(c("own diesel pump", "rented diesel pump", "own electric tubewell", "rented electric tubewell",
-			"government tubewell", "canal", NA, "shared diesel pump"), r$SOIRRI),
+		irrigation_source = lk(c("unknown", "unknown", "groundwater", "groundwater",
+			"groundwater", "canal", "none", "unknown"), r$SOIRRI),
+		irrigation_lifting = lk(c("diesel pump", "diesel pump", "electric pump", "electric pump",
+			"motorized pump", NA, NA, "diesel pump"), r$SOIRRI),
 		irrigated = ifelse(r$SOIRRI %in% c(1:6, 8), TRUE, ifelse(r$SOIRRI == 7, FALSE, NA)),
 		land_tenure = lk(c("self-cultivated", "sharecropped-rented out", NA, NA, "mortgaged-in", "share-in"), r$TSTATUS)
 	)

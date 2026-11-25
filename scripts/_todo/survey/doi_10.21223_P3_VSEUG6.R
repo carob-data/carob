@@ -57,7 +57,7 @@ The Mama SASHA baseline survey is a key part of a project evaluation strategy ai
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.35
 	)
@@ -73,12 +73,15 @@ The Mama SASHA baseline survey is a key part of a project evaluation strategy ai
 	r <- haven::read_dta(f)
 	arm <- as.integer(r$interv)
 	hid <- trimws(as.character(r$hhid))
+	adm2 <- carobiner::fix_name(from_labels(r$dist), "title")
 
 	d <- data.frame(
 		hhid = hid,
 		country = "Kenya",
-		adm2 = carobiner::fix_name(from_labels(r$dist), "title"),
+		adm1 = ifelse(adm2 == "Bunyala", "Busia", "Bungoma"),
+		adm2 = adm2,
 		location = carobiner::fix_name(from_labels(r$vil), "title"),
+		crop = "sweetpotato",
 		intervention_ = ifelse(arm == 1, TRUE, ifelse(arm == 0, FALSE, NA)),
 		date = sprintf("%04d-%02d-%02d", as.integer(r$a19c), as.integer(r$a19b), as.integer(r$a19a)),
 		trial_id = hid,
@@ -86,6 +89,14 @@ The Mama SASHA baseline survey is a key part of a project evaluation strategy ai
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
+	geo <- data.frame(
+		adm2 = c("Bungoma East", "Bungoma North", "Bunyala", "Kimilili"),
+		latitude = c(0.6000, 0.7833, 0.1000, 0.7833),
+		longitude = c(34.7333, 34.8833, 34.0333, 34.7167)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

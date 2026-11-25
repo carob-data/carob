@@ -69,7 +69,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.6
 	)
@@ -102,11 +102,11 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		"soyabean"="soybean", "sugarcane"="sugarcane", "sunflower"="sunflower",
 		"sweet potato"="sweetpotato", "tomato"="tomato", "watermelon"="watermelon",
 		"wheat"="wheat", "yams"="yam", "capsicum"="chili pepper",
-		"gabbage"="cabbage", "african egg plant"="eggplant",
-		"nyanya chungu"="eggplant", "coconut tree"="coconut",
+		"gabbage"="cabbage", "african egg plant"="african eggplant",
+		"nyanya chungu"="african eggplant", "coconut tree"="coconut",
 		"coconut"="coconut", "coconut trees"="coconut", "ngano"="wheat",
 		"pinapple"="pineapple", "soya lishe"="soybean", "tobacco"="tobacco",
-		"bale"="bale", "ngwala"="ngwala", "ngwara"="ngwara", "rosera"="rosera"
+		"bale"="barley", "ngwala"="lablab", "ngwara"="lablab", "rosera"="roselle"
 	)
 	part_of <- c(
 		banana="fruit", barley="grain", cardamom="seed", cassava="roots",
@@ -114,14 +114,13 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		pea="seed", "finger millet"="grain", "mung bean"="seed",
 		groundnut="seed", "common bean"="seed", flax="seed",
 		vegetable=NA_character_, maize="grain", mango="fruit",
-		onion=NA_character_, orange="fruit", "pearl millet"="grain",
+		onion="bulbs", orange="fruit", "pearl millet"="grain",
 		"chili pepper"="fruit", "pigeon pea"="seed", pineapple="fruit",
 		pumpkin="fruit", rice="grain", sesame="seed", sorghum="grain",
 		soybean="seed", sugarcane="stems", sunflower="seed",
 		sweetpotato="roots", tomato="fruit", watermelon="fruit",
-		wheat="seed", yam="tubers", cabbage=NA_character_, eggplant="fruit",
-		coconut="seed", tobacco="leaves", bale=NA_character_,
-		ngwala=NA_character_, ngwara=NA_character_, rosera=NA_character_
+		wheat="grain", yam="tubers", cabbage="leaves", "african eggplant"="fruit",
+		coconut="seed", tobacco="leaves", lablab="seed", roselle="leaves"
 	)
 	map_crop <- function(x) {
 		key <- tolower(x)

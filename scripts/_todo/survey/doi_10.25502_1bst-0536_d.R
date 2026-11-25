@@ -59,7 +59,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 1
 	)
@@ -117,7 +117,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		land_cultivated_ = as.numeric(r$ERAAL34)
 	)
 
-	one <- function(crop, season, area, yield, variety, om, fert, herb, irr, area_both) {
+	one <- function(crop, season, pdate, area, yield, variety, om, fert, herb, irr, area_both) {
 		area <- as.numeric(area)
 		yield <- as.numeric(yield)
 		keep <- !is.na(area) | !is.na(yield)
@@ -125,6 +125,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		d <- base[keep, ]
 		d$crop <- crop
 		d$season <- season
+		d$planting_date <- pdate
 		d$variety <- clean_var(variety)[keep]
 		d$area_reported_ <- area[keep]
 		d$yield_reported_ <- yield[keep]
@@ -142,12 +143,12 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 	no_irr <- rep(NA, nrow(r))
 
 	parts <- list(
-		one("coffee", "July-December 2023", r$ERAAL411, r$ERAAL412, r$ERAAL4141, r$ERAAL4111, r$ERAAL4112, r$ERAAL4110, coffee_irr, TRUE),
-		one("coffee", "January-May 2024", r$ERAAL411, r$ERAAL413, r$ERAAL4141, r$ERAAL4111, r$ERAAL4112, r$ERAAL4110, coffee_irr, TRUE),
-		one("common bean", "July-December 2023", r$ERAAL421, r$ERAAL423, r$ERAAL4251, r$ERAAL4213, r$ERAAL4215, r$ERAAL4211, no_irr, FALSE),
-		one("common bean", "January-May 2024", r$ERAAL422, r$ERAAL424, r$ERAAL4261, r$ERAAL4214, r$ERAAL4216, r$ERAAL4212, no_irr, FALSE),
-		one("maize", "July-December 2023", r$ERAAL431, r$ERAAL433, r$ERAAL4351, r$ERAAL4313, r$ERAAL4315, r$ERAAL4311, maize_irr_a, FALSE),
-		one("maize", "January-May 2024", r$ERAAL432, r$ERAAL434, r$ERAAL4361, r$ERAAL4314, r$ERAAL4317, r$ERAAL4312, maize_irr_b, FALSE)
+		one("coffee", "second", "2023", r$ERAAL411, r$ERAAL412, r$ERAAL4141, r$ERAAL4111, r$ERAAL4112, r$ERAAL4110, coffee_irr, TRUE),
+		one("coffee", "first", "2024", r$ERAAL411, r$ERAAL413, r$ERAAL4141, r$ERAAL4111, r$ERAAL4112, r$ERAAL4110, coffee_irr, TRUE),
+		one("common bean", "second", "2023", r$ERAAL421, r$ERAAL423, r$ERAAL4251, r$ERAAL4213, r$ERAAL4215, r$ERAAL4211, no_irr, FALSE),
+		one("common bean", "first", "2024", r$ERAAL422, r$ERAAL424, r$ERAAL4261, r$ERAAL4214, r$ERAAL4216, r$ERAAL4212, no_irr, FALSE),
+		one("maize", "second", "2023", r$ERAAL431, r$ERAAL433, r$ERAAL4351, r$ERAAL4313, r$ERAAL4315, r$ERAAL4311, maize_irr_a, FALSE),
+		one("maize", "first", "2024", r$ERAAL432, r$ERAAL434, r$ERAAL4361, r$ERAAL4314, r$ERAAL4317, r$ERAAL4312, maize_irr_b, FALSE)
 	)
 	parts <- parts[!vapply(parts, is.null, logical(1))]
 	d <- do.call(rbind, parts)
@@ -155,9 +156,20 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
-	d$geo_from_source <- as.logical(NA)
-	has_xy <- !is.na(d$latitude) & !is.na(d$longitude)
-	d$geo_from_source[has_xy] <- TRUE
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	# Replace 2 corrupted GPS readings (hhid 407 in ocean, hhid 471 in DRC) and 3 missing GPS with district centroids
+	bad_xy <- is.na(d$latitude) | is.na(d$longitude) | d$longitude < 29.0 | d$longitude > 35.5
+	if (any(bad_xy)) {
+		dgeo <- data.frame(
+			adm2 = c("Luweero", "Sironko", "Bushenyi", "Kabarole"),
+			lat = c(0.833, 1.231, -0.542, 0.650),
+			lon = c(32.500, 34.248, 30.188, 30.250)
+		)
+		im <- match(d$adm2[bad_xy], dgeo$adm2)
+		d$latitude[bad_xy] <- dgeo$lat[im]
+		d$longitude[bad_xy] <- dgeo$lon[im]
+		d$geo_from_source[bad_xy] <- FALSE
+	}
 	d$trial_id <- as.character(seq_len(nrow(d)))
 
 	carobiner::write_files(path, meta, d)

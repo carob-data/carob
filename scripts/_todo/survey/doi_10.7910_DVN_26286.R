@@ -65,65 +65,10 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.6
 	)
-
-	# Excel 2.1 (BIFF2) worksheet reader: INTEGER, NUMBER, LABEL, BOOLERR and FORMULA cell records
-	read_biff2 <- function(f) {
-		b <- readBin(f, "raw", file.size(f))
-		bi <- as.integer(b)
-		n <- length(bi)
-		pos <- integer(n %/% 8L)
-		ids <- integer(n %/% 8L)
-		p <- 1L
-		k <- 0L
-		while (p + 3L <= n) {
-			id <- bi[p] + 256L * bi[p + 1L]
-			k <- k + 1L
-			pos[k] <- p + 4L
-			ids[k] <- id
-			if (id == 10L) break
-			p <- p + 4L + bi[p + 2L] + 256L * bi[p + 3L]
-		}
-		cell <- ids[1:k] %in% 2:6
-		pos <- pos[1:k][cell]
-		ids <- ids[1:k][cell]
-		u16 <- function(i) bi[i] + 256L * bi[i + 1L]
-		rows <- u16(pos) + 1L
-		cols <- u16(pos + 2L) + 1L
-		num <- rep(NA_real_, length(pos))
-		chr <- rep(NA_character_, length(pos))
-		i <- ids == 2L
-		num[i] <- u16(pos[i] + 7L)
-		i <- which(ids %in% c(3L, 6L))
-		if (length(i) > 0) {
-			idx <- as.vector(outer(0:7, pos[i] + 7L, "+"))
-			num[i] <- readBin(b[idx], "double", n=length(i), size=8, endian="little")
-		}
-		for (j in which(ids == 4L)) {
-			nc <- bi[pos[j] + 7L]
-			chr[j] <- if (nc > 0) rawToChar(b[(pos[j] + 8L):(pos[j] + 7L + nc)]) else ""
-		}
-		nr <- max(rows)
-		h <- rows == 1L
-		hdr <- paste0("V", 1:max(cols))
-		hdr[cols[h]] <- chr[h]
-		out <- lapply(seq_along(hdr), function(j) {
-			i <- which(cols == j & rows > 1L)
-			if (all(is.na(chr[i]))) {
-				v <- rep(NA_real_, nr - 1L)
-				v[rows[i] - 1L] <- num[i]
-			} else {
-				v <- rep(NA_character_, nr - 1L)
-				v[rows[i] - 1L] <- ifelse(is.na(chr[i]), as.character(num[i]), chr[i])
-			}
-			v
-		})
-		names(out) <- hdr
-		as.data.frame(out, check.names=FALSE)
-	}
 
 	f1 <- ff[basename(ff) == "Documentation of 2004 survey.xls"]
 	# value labels from the codebook: variable name (filled down), code, label (last column)
@@ -135,7 +80,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		data.frame(code=as.numeric(r[[2]][k]), label=trimws(r[[ncol(r)]][k]))
 	}
 	lab <- function(x, cds) {
-		cds$label[match(r, cds$code)]
+		cds$label[match(x, cds$code)]
 	}
 
 	acre <- 0.4046863
@@ -148,7 +93,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 	rvar <- codes("Cost&Retrn_vaL", "VARIETY")
 
 	## Parcel04
-	r1 <- read_biff2(ff[basename(ff) == "Parcel04.xls"])
+	r1 <- carobiner::read.excel(ff[basename(ff) == "Parcel04.xls"])
 	crops <- codes("Parcel_val", "CROP1/CROP2")
 	crops$crop <- c("rice", "maize", "groundnut", "sesame", "mustard", NA, "cowpea", "mung bean", "black gram", "chili pepper", "onion", "garlic", "potato", "tobacco", "sugarcane", "cassava", "sweetpotato", "coconut", NA, "jute", "banana", "fruit", "betel", NA, "bitter gourd", "vegetable", "sunflower")[match(crops$code, 1:27)]
 	why <- codes("Parcel_val", "WHY1/WHY2")
@@ -180,7 +125,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 	d1$record_type_ <- "parcel"
 
 	## Cost&Return04 (rice only)
-	r2 <- read_biff2(ff[basename(ff) == "Cost&Return04.xls"])
+	r2 <- carobiner::read.excel(ff[basename(ff) == "Cost&Return04.xls"])
 	r2 <- r2[r2$SEASON > 0, ]
 	ha <- r2$LANDAREA * acre
 	labour <- c("CARRFAM", "CARRHIRE", "TRANFAM", "TRANHIRE", "DIRFAM", "DIRHIRE", "BROFAM", "BROHIRE", "WEEDFAM", "WEEHIRE", "IRRFAM", "IRRHIRE", "FERTFAM", "FERTHIRE", "PESTFAM", "PESTHIRE", "HARFAM", "HARHIRE", "BUNDFAM", "BUNDHIRE", "CARFAM", "CARHIRE", "THRESFAM", "THRESHIRE", "WINFAM", "WINHIRE", "DRYFAM", "DRYHIRE", "STORFAM", "STORHIRE")
@@ -218,7 +163,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		currency = "MMK"
 	)
 	ft <- cbind(ifelse(r2$UREA > 0, "urea", NA), ifelse(r2$TSP > 0, "TSP", NA), ifelse(r2$MOP > 0, "KCl", NA), ifelse(r2$OTHERF > 0, "unknown", NA))
-	d2$fertilizer_type <- apply(ft, 1, function(x) paste(r[!is.na(r)], collapse="; "))
+	d2$fertilizer_type <- apply(ft, 1, function(x) paste(x[!is.na(x)], collapse="; "))
 	d2$fertilizer_type[d2$fertilizer_type == ""] <- "none"
 	d2$OM_used <- r2$FYM > 0
 	d2$OM_type <- ifelse(r2$FYM > 0, "farmyard manure", NA)
@@ -233,6 +178,9 @@ To assess the changes that took place in agriculture and socio-economic conditio
 	d$village <- NULL
 	d$adm1 <- "Ayeyarwady"
 	d$country <- "Myanmar"
+	d$latitude <- 16.7792
+	d$longitude <- 94.7321
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 

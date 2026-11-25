@@ -49,7 +49,7 @@ The key findings of the baseline survey are. In terms of socio-economic indicato
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 10,
 		carob_effort = 0.4
 	)
@@ -83,6 +83,14 @@ The key findings of the baseline survey are. In terms of socio-economic indicato
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Central", "Eastern", "Southern"),
+		latitude = c(14.1211, 14.2770, 12.7875),
+		longitude = c(38.7234, 39.4620, 39.5422)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

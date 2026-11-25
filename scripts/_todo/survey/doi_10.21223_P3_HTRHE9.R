@@ -36,7 +36,7 @@ Conocer la percepción de los consumidores sobre las papas nativas de color en s
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.3
 	)
@@ -51,6 +51,7 @@ Conocer la percepción de los consumidores sobre las papas nativas de color en s
 		trial_id = "Native_potato_consumers_Lima_2015",
 		hhid = trimws(as.character(r$encuestado)),
 		country = "Peru",
+		adm1 = "Lima",
 		location = carobiner::fix_name(as.character(r$distrito), "title"),
 		crop = "potato",
 		sex = unname(sex),
@@ -60,6 +61,14 @@ Conocer la percepción de los consumidores sobre las papas nativas de color en s
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("La Molina", "Miraflores", "San Isidro"),
+		latitude = c(-12.0833, -12.1111, -12.0977),
+		longitude = c(-76.9333, -77.0316, -77.0365)
+	)
+	m <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

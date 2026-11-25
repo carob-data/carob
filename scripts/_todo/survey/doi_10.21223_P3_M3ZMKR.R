@@ -93,7 +93,7 @@ The survey included interview modules for household characteristics, household f
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 8,
 		carob_effort = 0.4
 	)
@@ -107,11 +107,18 @@ The survey included interview modules for household characteristics, household f
 	yr <- as.integer(haven::zap_labels(r$a19c))
 	when <- as.Date(sprintf("%04d-%02d-%02d", yr, mon, day))
 
+	adm2 <- carobiner::fix_name(as.character(haven::zap_labels(r$a01a)), "title")
+	adm1 <- ifelse(grepl("Bunyala", adm2, ignore.case = TRUE), "Busia", "Bungoma")
+
 	d <- data.frame(
 		trial_id = "MamaSASHA_endline_2014",
 		hhid = as.character(haven::zap_labels(r$hh_id)),
-		adm2 = carobiner::fix_name(as.character(haven::zap_labels(r$a01a)), "title"),
+		country = "Kenya",
+		adm1 = adm1,
+		adm2 = adm2,
 		location = carobiner::fix_name(as.character(haven::zap_labels(r$a05a)), "title"),
+		latitude = ifelse(adm1 == "Busia", 0.100, 0.569),
+		longitude = ifelse(adm1 == "Busia", 34.050, 34.558),
 		elevation = elev,
 		survey_group_ = as.character(haven::as_factor(r$a06b)),
 		date = as.character(when),

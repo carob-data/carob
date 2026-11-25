@@ -38,27 +38,29 @@ CIMMYT and Universidad Zamorano carried out a study across five departments of H
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		response_vars = "crop_area_ha_",
+		response_vars = "field_size",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Caracterizacion_de_la_mecanizacion_en_Honduras_database_revJPE.xlsx"]
-	r <- carobiner::read.excel(f, sheet="Mecanizacion_Honduras_data")
+	r <- carobiner::read.excel(f, sheet="Mecanizacion_Honduras_data", na=c("", "NA", "N/A", "n/a", "-", "No aplica", "NS/NR"))
 	topo <- c("Plano"="plain", "Laderas"="hillside", "Mixto"="mixed")
 	one <- function(crop, flag, area, top, tool) {
 		keep <- tolower(trimws(as.character(r[[flag]]))) == "si"
 		tp <- trimws(as.character(r[[top]]))
+		ar <- trimws(as.character(r[[area]]))
+		ar[!nzchar(ar) | ar %in% c("NA", "N/A", "No", "no", "-", "<0.0629")] <- NA_character_
 		data.frame(
 			hhid = as.character(r$ID),
 			adm1 = trimws(as.character(r$Departamento)),
 			adm2 = trimws(as.character(r$Municipio)),
 			location = trimws(as.character(r$Comunidad)),
 			crop = crop,
-			crop_area_ha_ = as.numeric(r[[area]]),
+			field_size = as.numeric(ar),
 			land_topography_ = unname(topo[tp]),
 			tool_type_ = trimws(as.character(r[[tool]])),
 			keep = keep
@@ -80,6 +82,13 @@ CIMMYT and Universidad Zamorano carried out a study across five departments of H
 	d$adm1 <- carobiner::fix_name(d$adm1, "title")
 	d$adm2 <- carobiner::fix_name(d$adm2, "title")
 	d$location <- carobiner::fix_name(d$location, "title")
+
+	geo <- data.frame(
+		adm2 = c("Alauca", "Corquín", "Danlí", "El Paraíso", "Erandique", "Gualaco", "Intibucá", "Jacaleapa", "Potrerillos", "San Andrés", "Teupasenti"),
+		latitude = c(13.848, 14.565, 14.033, 13.867, 14.233, 15.025, 14.317, 14.017, 14.000, 14.217, 14.217),
+		longitude = c(-86.696, -88.869, -86.583, -86.550, -88.467, -86.067, -88.167, -86.667, -86.750, -88.550, -86.700)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

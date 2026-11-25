@@ -55,7 +55,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.4
 	)
@@ -196,7 +196,15 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	d$variety_type <- unname(c(MV="modern", TV="traditional")[d$variety_type])
 	d$planting_method <- unname(c(TPR="transplanting", DSR="direct seeding")[d$planting_method])
 	d$landscape_position <- gsub("medium land", "medium", d$landscape_position)
-	d$irrigation_source[tolower(d$irrigation_source) %in% "none"] <- "none"
+	irraw <- tolower(trimws(as.character(d$irrigation_source)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("none|rain|no irr", irraw)] <- "none"
+	irsrc[grepl("tube ?well|stw|dtw|bore|deep|shallow|ground|well", irraw)] <- "groundwater"
+	irsrc[grepl("canal", irraw)] <- "canal"
+	irsrc[grepl("pond|tank", irraw)] <- "pond"
+	irsrc[grepl("river|stream|creek", irraw)] <- "river"
+	d$irrigation_source <- irsrc
 
 	# lathyrus = grass pea; gram = chickpea; masoor = lentil
 	crops <- c(lathyrus="grass pea", gram="chickpea", masoor="lentil")
@@ -205,9 +213,12 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (India, 
 	yp <- c(rice="grain", wheat="grain", "grass pea"="seed", chickpea="seed", lentil="seed")
 	d$yield_part <- unname(yp[d$crop])
 
+	d$latitude <- 21.25
+	d$longitude <- 81.63
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

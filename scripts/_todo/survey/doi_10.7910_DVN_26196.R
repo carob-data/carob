@@ -55,7 +55,7 @@ Measure awareness and adoption of 3R3G in the Mekong Delta Region and assess dif
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.5
 	)
@@ -138,6 +138,13 @@ Measure awareness and adoption of 3R3G in the Mekong Delta Region and assess dif
 	d$hh_size <- r1$HHSize[k]
 
 	d$country <- "Vietnam"
+	geo <- data.frame(
+		adm2 = c("Chau Thanh", "Chau Phu", "Chau Doc", "Thot Not", "Co Do", "Vinh Thanh", "My Tu", "Ke Sach", "My Xuyen"),
+		latitude = c(10.440, 10.560, 10.700, 10.267, 10.095, 10.220, 9.633, 9.770, 9.555),
+		longitude = c(105.330, 105.230, 105.110, 105.533, 105.430, 105.400, 105.800, 105.980, 105.985)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE

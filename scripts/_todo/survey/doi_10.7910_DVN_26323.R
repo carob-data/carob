@@ -63,7 +63,7 @@ To examine how the influence of various modernizing forces affect the income lev
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -89,7 +89,8 @@ To examine how the influence of various modernizing forces affect the income lev
 		nia <- as.numeric(r$IRGNIA)
 		pump <- as.numeric(r$IRGPUMP)
 		rain <- as.numeric(r$IRGRAIN)
-		src <- cbind(ifelse(nia > 0, "NIA canal", NA), ifelse(pump > 0, "pump", NA))
+		src <- ifelse(!is.na(nia) & nia > 0, "canal", ifelse(!is.na(pump) & pump > 0, "unknown", NA))
+		lft <- ifelse(!is.na(pump) & pump > 0, "motorized pump", ifelse(!is.na(nia) & nia > 0, "gravity", NA))
 		data.frame(
 			hhid = r$HHCODE,
 			season = seas,
@@ -103,7 +104,8 @@ To examine how the influence of various modernizing forces affect the income lev
 			irr_pump_perc_ = pump,
 			irr_rain_perc_ = rain,
 			irrigated = ifelse(is.na(nia) & is.na(pump) & is.na(rain), NA, (!is.na(nia) & nia > 0) | (!is.na(pump) & pump > 0)),
-			irrigation_source = apply(src, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
+			irrigation_source = src,
+			irrigation_lifting = lft
 		)
 	}
 	d <- rbind(prod(r1, "wet"), prod(r2, "dry"))
@@ -151,6 +153,9 @@ To examine how the influence of various modernizing forces affect the income lev
 	d$adm1 <- "Laguna"
 	d$adm2 <- "Pila"
 	d$location <- "Tubuan"
+	d$latitude <- 14.233
+	d$longitude <- 121.367
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$trial_id <- paste(d$hhid, d$season, sep="_")

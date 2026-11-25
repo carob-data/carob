@@ -49,7 +49,7 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
 		carob_effort = 0.8
 	)
@@ -106,6 +106,7 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		hh <- trimws(as.character(r[[id_name]]))
 		qid <- trimws(as.character(r[[q_name]]))
 		hh[!nzchar(hh)] <- NA_character_
+		hh[is.na(hh)] <- paste0(round_id, "_row", which(is.na(hh)))
 		qid[!nzchar(qid)] <- NA_character_
 		yn <- intersect(c("Grain yield (kg/ha@12.5%)", "Grain yield (kg/ha)"), names(r))
 		sn <- intersect(c("Plant stands", "Plant Stands", "Plant stand"), names(r))
@@ -172,6 +173,9 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		r <- r[!is.na(r$Country) & r$Country == "Tanzania", ]
 		dp <- depth_pair(r$Depth)
 		id <- trimws(as.character(r[[id_name]]))
+		id[!nzchar(id)] <- NA_character_
+		ssid <- trimws(as.character(r$SSID))
+		hh_soil <- if (id_name == "HHID") ifelse(is.na(id), paste0(round_id, "_", ssid), id) else paste0("BYS_", ssid)
 		lat <- num(r$Latitude)
 		lon <- num(r$Longitude)
 		loc <- place(r$Village)
@@ -181,9 +185,9 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 			adm2 = place(r$District),
 			adm3 = place(r$Ward),
 			location = loc,
-			hhid = if (id_name == "HHID") id else NA_character_,
-			trial_id = paste(round_id, id, r$Depth),
-			sample_id = trimws(as.character(r$SSID)),
+			hhid = hh_soil,
+			trial_id = paste(round_id, hh_soil, r$Depth),
+			sample_id = ssid,
 			crop = "maize",
 			depth_top = dp$top,
 			depth_bottom = dp$bot,
@@ -215,9 +219,14 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 	s16 <- soils(r5, "soil2016", "HHID")
 	r6 <- read1(f6, "Revised_Data")
 	ss <- soils(r6, "soilBYS", "SSID")
-	ss$hhid <- NA_character_
+	ss$hhid <- paste0("BYS_", ss$sample_id)
 
 	d <- carobiner::bindr(d16, d17, db, s16, ss)
+	# Fix Excel auto-fill coordinate error in Korogwe (Mahenge - Gounguza: -5.0 incremented to -4.0, -3.0 in Kenya)
+	bad_kor <- which(d$adm1 == "Tanga" & d$adm2 == "Korogwe" & !is.na(d$latitude) & d$latitude > -4.2)
+	d$latitude[bad_kor] <- -5.0
+	d$geo_from_source[bad_kor] <- FALSE
 	d$geo_from_source[is.na(d$latitude) | is.na(d$longitude)] <- FALSE
+	d <- unique(d)
 	carobiner::write_files(path, meta, d)
 }

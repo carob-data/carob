@@ -96,7 +96,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.6
 	)
@@ -228,13 +228,15 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	d$yield_part[d$crop %in% seed] <- "seed"
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato")] <- "roots"
 	d$yield_part[d$crop == "potato"] <- "tubers"
-	d$yield_part[d$crop %in% c("banana", "tomato", "eggplant", "pear", "mango", "chili pepper")] <- "fruit"
-	d$yield_part[d$crop %in% c("cabbage", "tea", "lettuce")] <- "leaves"
+	d$yield_part[d$crop %in% c("banana", "tomato", "eggplant", "pear", "mango", "chili pepper", "orange", "pumpkin")] <- "fruit"
+	d$yield_part[d$crop %in% c("cabbage", "tea", "lettuce", "tobacco")] <- "leaves"
+	d$yield_part[d$crop == "onion"] <- "bulbs"
 	d$yield_part[d$crop == "sugarcane"] <- "stems"
 	d$yield_part[d$crop == "teff"] <- "grain"
 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
 
 	carobiner::write_files(path, meta, d)

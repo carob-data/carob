@@ -37,7 +37,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.35
 	)
@@ -89,6 +89,25 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		d$latitude <- as.numeric(lat)
 		d$longitude <- as.numeric(lon)
 		d$geo_from_source <- TRUE
+	} else {
+		geo <- data.frame(
+			adm2 = c("Acobamba", "Concepción", "Huancayo", "Jauja", "Julcán", "Pataz", "Sanchez Carrión", "Tayacaja"),
+			latitude = c(-12.842, -11.918, -12.065, -11.775, -8.046, -7.737, -7.813, -12.400),
+			longitude = c(-74.572, -75.313, -75.205, -75.497, -78.487, -77.603, -78.048, -74.867)
+		)
+		d <- merge(d, geo, by = "adm2", all.x = TRUE)
+		miss_xy <- is.na(d$latitude)
+		if (any(miss_xy) && "adm1" %in% names(d)) {
+			d$latitude[miss_xy & grepl("Lima", d$adm1, ignore.case=TRUE)] <- -12.046
+			d$longitude[miss_xy & grepl("Lima", d$adm1, ignore.case=TRUE)] <- -77.043
+			d$latitude[miss_xy & grepl("Libertad", d$adm1, ignore.case=TRUE)] <- -8.112
+			d$longitude[miss_xy & grepl("Libertad", d$adm1, ignore.case=TRUE)] <- -78.500
+			d$latitude[miss_xy & grepl("Jun", d$adm1, ignore.case=TRUE)] <- -12.065
+			d$longitude[miss_xy & grepl("Jun", d$adm1, ignore.case=TRUE)] <- -75.205
+			d$latitude[miss_xy & grepl("Huancavelica", d$adm1, ignore.case=TRUE)] <- -12.786
+			d$longitude[miss_xy & grepl("Huancavelica", d$adm1, ignore.case=TRUE)] <- -74.976
+		}
+		d$geo_from_source <- FALSE
 	}
 	carobiner::write_files(path, meta, d)
 }

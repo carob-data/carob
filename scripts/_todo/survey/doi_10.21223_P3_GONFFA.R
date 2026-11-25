@@ -36,7 +36,7 @@ This survey was implemented using a stratified sampling design where each canton
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.45
 	)
@@ -74,6 +74,14 @@ This survey was implemented using a stratified sampling design where each canton
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Latacunga", "Pujili", "Salcedo", "Saquisili"),
+		latitude = c(-0.9346, -0.9576, -1.0455, -0.8399),
+		longitude = c(-78.6155, -78.6964, -78.5906, -78.6670)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

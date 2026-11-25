@@ -44,7 +44,7 @@ Boro rice yield reported by farmers who buy irrigation from water-market service
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.4
 	)
@@ -62,6 +62,8 @@ Boro rice yield reported by farmers who buy irrigation from water-market service
 		hhid = as.character(r$hh_id),
 		trial_id = as.character(r$hh_id),
 		crop = "rice",
+		season = "boro",
+		planting_date = "2014",
 		yield_part = "grain",
 		yield = as.numeric(r$yield),
 		field_size = as.numeric(r$boroha),
@@ -69,6 +71,15 @@ Boro rice yield reported by farmers who buy irrigation from water-market service
 		is_survey = TRUE,
 		geo_from_source = TRUE
 	)
+	# Fix obvious GPS typos falling in the Bay of Bengal (Charfashion recorded as 20.xx instead of 22.xx) and India (Birol 88.3887 vs 88.58)
+	bad_cf <- which(d$location == "Charfashion" & !is.na(d$latitude) & d$latitude < 21.5)
+	d$latitude[bad_cf] <- 22.10
+	d$longitude[bad_cf] <- 90.71
+	d$geo_from_source[bad_cf] <- FALSE
+	bad_bi <- which(d$location == "Birol" & !is.na(d$longitude) & d$longitude < 88.5)
+	d$latitude[bad_bi] <- 25.70
+	d$longitude[bad_bi] <- 88.57
+	d$geo_from_source[bad_bi] <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

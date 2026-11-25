@@ -38,7 +38,7 @@ International Potato Center (CIP) and Yunnan Normal University collaborated to d
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.4
 	)
@@ -65,6 +65,8 @@ International Potato Center (CIP) and Yunnan Normal University collaborated to d
 		occupation = occ,
 		farmland = as.numeric(r$totalarea_ha),
 		elevation = as.numeric(r$elevation),
+		latitude = 25.0389,
+		longitude = 102.7183,
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE

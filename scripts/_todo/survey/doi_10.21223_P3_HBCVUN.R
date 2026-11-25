@@ -62,7 +62,7 @@ The QDBH project is being implemented by the International Potato Center (CIP) a
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.45
 	)
@@ -70,7 +70,7 @@ The QDBH project is being implemented by the International Potato Center (CIP) a
 	f <- ff[basename(ff) == "Module 1 - Household Information.dta"]
 	r <- haven::read_dta(f)
 	wd <- as.character(as.integer(r$admin2))
-	loc <- c("1" = "Chuko", "2" = "Dilla", "3" = "Wonega")[wd]
+	loc <- c("1" = "Chuko", "2" = "Dilla", "3" = "Wonago")[wd]
 	st <- as.character(as.integer(r$m01_02))
 	sex <- c("1" = "male", "2" = "female", "3" = "female", "4" = "female")[st]
 	edu <- as.character(as.integer(r$m01_05))
@@ -99,6 +99,7 @@ The QDBH project is being implemented by the International Potato Center (CIP) a
 		hhid = trimws(as.character(as.integer(r$hhid))),
 		country = "Ethiopia",
 		location = unname(loc),
+		crop = "sweetpotato",
 		treatment = trt,
 		sex = unname(sex),
 		age = as.numeric(r$m01_03),
@@ -107,6 +108,14 @@ The QDBH project is being implemented by the International Potato Center (CIP) a
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("Chuko", "Dilla", "Wonago"),
+		latitude = c(6.5500, 6.4106, 6.3167),
+		longitude = c(38.3500, 38.3100, 38.2667)
+	)
+	m <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

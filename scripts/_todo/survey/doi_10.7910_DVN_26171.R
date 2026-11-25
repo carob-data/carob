@@ -52,7 +52,7 @@ The objective of the study is to conduct an economic assessment of direct seedin
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -63,8 +63,9 @@ The objective of the study is to conduct an economic assessment of direct seedin
 	r2 <- carobiner::read.excel(f1, sheet="Village")
 	r3 <- carobiner::read.excel(f2, sheet="Fert", skip=8)
 
-	crops <- c("rice", "rice", "sugarcane", "cassava", "groundnut", "soybean", "maize", "sesame", "mango; tamarind",
-		"banana", "rubber", "tomato", "melon", "flower", "mushrooms", "cucumber", "pasture", "mulberry", "eucalyptus",
+	# Code 14 ("flower") is not in terminag values_crop; set crop to NA
+	crops <- c("rice", "rice", "sugarcane", "cassava", "groundnut", "soybean", "maize", "sesame", "mango_tamarind",
+		"banana", "rubber", "tomato", "melon", NA, "mushrooms", "cucumber", "pasture", "mulberry", "eucalyptus",
 		"lemon", "cabbage", "pomelo", "areca nut", "vegetable")
 	varieties <- c("1"="KDML", "2"="Local Mali", "3"="Chainat 1", "4"="Chainat 6", "5"="Suphan 60", "6"="Suphan 90",
 		"7"="Tor Chor Dor", "8"="Daeng", "11"="RD6", "12"="RD8", "13"="Mali light")
@@ -73,7 +74,9 @@ The objective of the study is to conduct an economic assessment of direct seedin
 		location = c("Ban Pumoonlbao mu.4", "Ban Pumoonlbao mu.16", "Ban Nongkaunchang mu.6", "Ban Nongkaunchang mu.17",
 			"Ban Sinemoon mu.1", "Ban Sinemoon mu.2"),
 		adm3 = rep(c("Non Tong", "Sinemoon"), c(4, 2)),
-		adm2 = rep(c("Nong Ruea", "Nam Phong"), c(4, 2))
+		adm2 = rep(c("Nong Ruea", "Nam Phong"), c(4, 2)),
+		latitude = rep(c(16.495, 16.705), c(4, 2)),
+		longitude = rep(c(102.435, 102.855), c(4, 2))
 	)
 	rai <- 6.25
 	# week number -> "yyyy-mm"
@@ -114,7 +117,7 @@ The objective of the study is to conduct an economic assessment of direct seedin
 
 	grade <- data.frame(
 		code = c(1:8, 10:13),
-		fertilizer_type = c("16-20-0", "16-16-8", "16-8-8", "urea", "NPK", "12-3-6", "12-36-0", "16-6-3", "20-0-0", "16-3-2", "18-12-6", "16-16-0"),
+		fertilizer_type = c("NP", "NPK", "NPK", "urea", "NPK", "NPK", "NP", "NPK", "unknown", "NPK", "NPK", "NP"),
 		N = c(16, 16, 16, 46, 15, 12, 12, 16, 20, 16, 18, 16),
 		P = c(20, 16, 8, 0, 15, 3, 36, 6, 0, 3, 12, 16) / 2.29,
 		K = c(0, 8, 8, 0, 15, 6, 0, 3, 0, 2, 6, 0) / 1.2051
@@ -124,7 +127,7 @@ The objective of the study is to conduct an economic assessment of direct seedin
 	fl <- do.call(rbind, fl)
 	fl <- fl[!is.na(fl$code), ]
 	fl <- merge(fl, grade, by="code", all.x=TRUE)
-	fl$fertilizer_type[fl$code == 9] <- "polymer"
+	fl$fertilizer_type[fl$code == 9] <- "unknown"
 	fl$N <- fl$amount * fl$N / 100 / fl$area
 	fl$P <- fl$amount * fl$P / 100 / fl$area
 	fl$K <- fl$amount * fl$K / 100 / fl$area
@@ -152,15 +155,17 @@ The objective of the study is to conduct an economic assessment of direct seedin
 
 	d$country <- "Thailand"
 	d$adm1 <- "Khon Kaen"
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- "grain"
+	d$yield_part[is.na(d$crop)] <- NA
 	d$yield_part[d$crop %in% c("sugarcane")] <- "stems"
 	d$yield_part[d$crop %in% c("cassava")] <- "roots"
 	d$yield_part[d$crop %in% c("groundnut")] <- "pod"
 	d$yield_part[d$crop %in% c("soybean", "sesame")] <- "seed"
-	d$yield_part[d$crop %in% c("mango; tamarind", "banana", "tomato", "melon", "cucumber", "lemon", "pomelo", "areca nut")] <- "fruit"
+	d$yield_part[d$crop %in% c("mango_tamarind", "banana", "tomato", "melon", "cucumber", "lemon", "pomelo", "areca nut")] <- "fruit"
 	d$yield_part[d$crop %in% c("cabbage", "mulberry", "pasture", "vegetable")] <- "leaves"
 	d$yield_part[d$crop %in% c("eucalyptus")] <- "wood"
 

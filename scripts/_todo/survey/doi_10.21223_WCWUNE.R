@@ -41,8 +41,8 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
 		carob_effort = 0.3
 	)
 
@@ -63,17 +63,20 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		date = as.character(as.Date(r$Fecha)),
 		survey_year_ = chr(r[["Año_encuesta"]]),
 		location = chr(r[["1.1. DISTRITO:"]]),
-		respondent_age_ = num(r[["2.1. Edad (años)"]]),
+		age = num(r[["2.1. Edad (años)"]]),
 		farmer_gender = chr(r[["2.2. Género"]]),
 		birth_place_ = chr(r[["2.3. Lugar de Nacimiento (Ciudad/ País):"]]),
-		household_size_ = num(r[["2.4.a. Nro. de integrantes del hogar:"]]),
+		hh_size = num(r[["2.4.a. Nro. de integrantes del hogar:"]]),
 		children_under_18_ = num(r[["2.4.b. ¿Cuántos menores de 18 años?"]]),
-		occupation_ = chr(r[["2.5. Ocupación:"]]),
+		occupation = chr(r[["2.5. Ocupación:"]]),
 		purchase_kg_ = num(r[["3.6.a. ¿Cuántos kilos de papa nativa surtida suele comprar en cada oportunidad?"]])
 	)
 	d$crop <- "potato"
 	d$country <- "Peru"
 	d$adm1 <- "Lima"
+	d$latitude <- -12.0464
+	d$longitude <- -77.0428
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste0("Miskipapa_2020_", seq_len(nrow(d)))
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE

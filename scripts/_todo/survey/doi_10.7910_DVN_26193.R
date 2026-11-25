@@ -56,7 +56,7 @@ The objective of the study is to review government policies on upland rice, eval
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.6
 	)
@@ -71,7 +71,7 @@ The objective of the study is to review government policies on upland rice, eval
 	districts <- c("1"="Sukabumi", "2"="Tasikmalaya", "3"="Garut", "5"="Lampung Selatan")
 	subdistricts <- c("1"="Jampang Tengah", "2"="Cibadak", "3"="Kadipaten", "4"="Salawu", "5"="Malangbong", "6"="Cidaun", "9"="Panengahan")
 	crops <- c("upland rice"="rice", "chili"="chili pepper", "sweet potato"="sweetpotato", "peanut"="groundnut",
-		"long bean"="asparagus bean", "red bean"="common bean", "leaf for silkworm"="mulberry")
+		"long bean"="asparagus bean", "red bean"="common bean", "leaf for silkworm"="mulberry", "vegetalbe-hiris"="pigeon pea")
 
 	## upland fields: field x season x crop slots
 	slots <- data.frame(
@@ -92,6 +92,7 @@ The objective of the study is to review government policies on upland rice, eval
 				district = r1$District,
 				field_id = as.character(r1[[s$parcel]]),
 				season = c("first", "second")[s$season],
+				season_label_ = c("first", "second")[s$season],
 				field_size = r1[[s$area]] / 10000,
 				intercrops = r1[[s$comb]],
 				crop = r1[[paste0("Crop", p)]],
@@ -142,7 +143,8 @@ The objective of the study is to review government policies on upland rice, eval
 				subdistrict = r2$Subdistrict,
 				district = r2$District,
 				field_id = as.character(r2[[pcols[i]]]),
-				season = c("first", "second", "third")[j],
+				season = c("first", "second", NA)[j],
+				season_label_ = c("first", "second", "third")[j],
 				field_size = ha,
 				crop = "rice",
 				yield = r2[[paste0("Prod", i, j)]] / ha,
@@ -173,21 +175,22 @@ The objective of the study is to review government policies on upland rice, eval
 	d$yield_part <- "grain"
 	d$yield_part[d$crop %in% c("cassava", "sweetpotato", "radish")] <- "roots"
 	d$yield_part[d$crop %in% c("groundnut")] <- "pod"
-	d$yield_part[d$crop %in% c("common bean", "asparagus bean")] <- "seed"
+	d$yield_part[d$crop %in% c("common bean", "asparagus bean", "pigeon pea")] <- "seed"
 	d$yield_part[d$crop %in% c("banana", "chili pepper", "cucumber", "pumpkin", "watermelon")] <- "fruit"
 	d$yield_part[d$crop %in% c("tea", "mulberry")] <- "leaves"
 
 	d$adm3[which(d$adm3 == "Panengahan")] <- "Penengahan" # GADM spelling
+	d$adm2[which(d$adm3 == "Cidaun")] <- "Cianjur" # Cidaun is in Cianjur (Jawa Barat), not Garut
 
 	# Coordinates are the GADM point-radius centroid of the kecamatan.
 	# Cibadak and Kadipaten also occur in other kabupaten, so the parent names stay in the merge key.
 	geo <- data.frame(
-		adm1 = c("Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Lampung"),
-		adm2 = c("Sukabumi", "Sukabumi", "Tasikmalaya", "Tasikmalaya", "Garut", "Lampung Selatan"),
-		adm3 = c("Jampang Tengah", "Cibadak", "Kadipaten", "Salawu", "Malangbong", "Penengahan"),
-		longitude = c(106.7904, 106.7629, 108.1161, 107.9842, 108.082, 105.6878),
-		latitude = c(-7.0681, -6.8947, -7.1191, -7.3728, -7.0572, -5.7498),
-		geo_uncertainty = c(12597, 8590, 5603, 9387, 8503, 8996),
+		adm1 = c("Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Jawa Barat", "Lampung"),
+		adm2 = c("Sukabumi", "Sukabumi", "Tasikmalaya", "Tasikmalaya", "Garut", "Cianjur", "Lampung Selatan"),
+		adm3 = c("Jampang Tengah", "Cibadak", "Kadipaten", "Salawu", "Malangbong", "Cidaun", "Penengahan"),
+		longitude = c(106.7904, 106.7629, 108.1161, 107.9842, 108.082, 107.350, 105.6878),
+		latitude = c(-7.0681, -6.8947, -7.1191, -7.3728, -7.0572, -7.450, -5.7498),
+		geo_uncertainty = c(12597, 8590, 5603, 9387, 8503, 15000, 8996),
 		geo_source = "GADM 4.1, adm3"
 	)
 	d <- merge(d, geo, by=c("adm1", "adm2", "adm3"), all.x=TRUE, sort=FALSE)

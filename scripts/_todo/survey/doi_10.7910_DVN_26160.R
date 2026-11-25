@@ -53,7 +53,7 @@ This farm household survey is an activity under the socio-economic component of 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
@@ -63,7 +63,8 @@ This farm household survey is an activity under the socio-economic component of 
 	r1 <- carobiner::read.excel(f1, sheet="Landuse", skip=9)
 	r2 <- carobiner::read.excel(f2, sheet="RMatInput", skip=7)
 
-	crops <- c("1"="rice", "2"="maize", "3"="job's tears", "4"="sesame", "5"="banana", "7"="soybean", "8"="groundnut", "11"="cucumber")
+	# Crop code 3 (Job's tears) is not in terminag values_crop; set crop to NA and retain crop_label_
+	crops <- c("1"="rice", "2"="maize", "4"="sesame", "5"="banana", "7"="soybean", "8"="groundnut", "11"="cucumber")
 	varieties <- c("1"="TDK1", "2"="Khao Phekhao", "3"="Khao Chaoleuang", "4"="Khao Phedeng", "5"="Khao metgnay",
 		"6"="Khaonone", "7"="Khao nok", "8"="Khao metam", "9"="Khao none noy", "10"="Khaochao Na Ngao")
 	decode <- function(x, codes) {
@@ -82,7 +83,8 @@ This farm household survey is an activity under the socio-economic component of 
 		season = c(DS="dry", WS="wet")[r1$Season],
 		field_id = r1$Parcel,
 		plot_id = as.character(r1$Plot),
-		crop = crops[as.character(r1$Crop)],
+		crop = unname(crops[as.character(r1$Crop)]),
+		crop_label_ = ifelse(r1$Crop == 3, "job's tears", NA_character_),
 		intercropped = r1$Cropping == 2,
 		field_size = r1$Area,
 		yield = r1$Prod / r1$Area,
@@ -93,17 +95,17 @@ This farm household survey is an activity under the socio-economic component of 
 	)
 	d$planting_method <- c(WSR="direct seeding", "DSR-dibbled"="dibbling")[d$establishment_method_]
 
-	# FertType1 grades that Excel converted to times
-	ftype <- c("1.9166666666666667"="urea", "46:00:00"="urea", "16:20:00"="16-20-0")
+	# FertType1 grades that Excel converted to times (16-20-0 mapped to terminag "NP")
+	ftype <- c("1.9166666666666667"="urea", "46:00:00"="urea", "16:20:00"="NP")
 	fert <- data.frame(
 		key = paste(r2$District, r2$Farmer, c("lowland", "upland")[r2$Landtype], r2$Season, r2$Parcel, r2$Plot),
-		fertilizer_type = ftype[as.character(r2$FertType1)],
+		fertilizer_type = unname(ftype[as.character(r2$FertType1)]),
 		seed_rate = r2$SeedQty / r2$Area
 	)
 	fq <- r2$FertQty1
 	fq[is.na(fq)] <- 0
 	fert$N_fertilizer <- fq * ifelse(fert$fertilizer_type %in% "urea", 0.46, 0.16) / r2$Area
-	fert$P_fertilizer <- fq * ifelse(fert$fertilizer_type %in% "16-20-0", 0.20, 0) / 2.29 / r2$Area
+	fert$P_fertilizer <- fq * ifelse(fert$fertilizer_type %in% "NP", 0.20, 0) / 2.29 / r2$Area
 	fert$K_fertilizer <- 0
 	fert$fertilizer_type[is.na(fert$fertilizer_type)] <- "none"
 
@@ -114,6 +116,9 @@ This farm household survey is an activity under the socio-economic component of 
 	d$hhid <- paste(d$district, d$farmer, sep="-")
 	d$adm2 <- c("Xiengngen", "Pak Ou")[d$district]
 	d$location <- c("Silalek", "Fay")[d$district]
+	d$latitude <- c(19.750, 20.067)[d$district]
+	d$longitude <- c(102.183, 102.217)[d$district]
+	d$geo_from_source <- FALSE
 	d$district <- d$farmer <- d$key <- NULL
 
 	d$country <- "Laos"
@@ -123,6 +128,7 @@ This farm household survey is an activity under the socio-economic component of 
 	d$is_survey <- TRUE
 	d$irrigated <- NA
 	d$yield_part <- "grain"
+	d$yield_part[is.na(d$crop)] <- NA
 	d$yield_part[d$crop %in% c("banana", "cucumber")] <- "fruit"
 	d$yield_part[d$crop %in% c("groundnut")] <- "pod"
 	d$yield_part[d$crop %in% c("sesame", "soybean")] <- "seed"

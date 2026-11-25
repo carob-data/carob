@@ -39,7 +39,7 @@ The study of women's involvement and responsibilities within seed systems in Nep
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -96,9 +96,11 @@ The study of women's involvement and responsibilities within seed systems in Nep
 	}
 
 	hh <- blank(r$HH_ID)
-	loc <- trimws(paste(blank(r$Village_Name), blank(r$Municipal_Name)))
-	loc[!nzchar(loc)] <- NA_character_
-	loc <- carobiner::fix_name(loc, "title")
+	muni <- carobiner::fix_name(blank(r$Municipal_Name), "title")
+	adm2 <- ifelse(grepl("Mandan", muni, ignore.case=TRUE), "Kavrepalanchok",
+		ifelse(grepl("Panchpokhari", muni, ignore.case=TRUE), "Sindhupalchok", NA_character_))
+	lat <- ifelse(adm2 == "Kavrepalanchok", 27.710, ifelse(adm2 == "Sindhupalchok", 27.950, NA_real_))
+	lon <- ifelse(adm2 == "Kavrepalanchok", 85.620, ifelse(adm2 == "Sindhupalchok", 85.650, NA_real_))
 	one <- function(crop, prod, land_a, land_b, seed) {
 		fs <- area_ha(land_a, land_b)
 		kg <- kg_only(prod)
@@ -112,7 +114,11 @@ The study of women's involvement and responsibilities within seed systems in Nep
 		keep <- !is.na(kg) | !is.na(fs)
 		data.frame(
 			country = "Nepal",
-			location = loc[keep],
+			adm1 = "Bagmati",
+			adm2 = adm2[keep],
+			location = muni[keep],
+			latitude = lat[keep],
+			longitude = lon[keep],
 			hhid = hh[keep],
 			trial_id = paste(hh[keep], crop),
 			crop = crop,

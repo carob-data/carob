@@ -65,7 +65,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.7
 	)
@@ -152,7 +152,9 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		if (grepl("d[- .]*comp", sl)) return("D-compound")
 		if (grepl("^can$|ammonium nitrate", sl)) return("CAN")
 		if (grepl("^tsp$|supetriphosphate|superphosphate", sl)) return(if (grepl("supetri|superphos", sl)) "SSP" else "TSP")
-		if (grepl("chitowe", sl)) return("Chitowe")
+		if (grepl("chitowe", sl)) return("NPS")
+		if (sl == "local") return("unknown")
+		if (grepl("^rwrk", sl)) return(NA_character_)
 		trimws(s)
 	}
 

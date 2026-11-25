@@ -50,7 +50,7 @@ Conducted a nationwide survey to collect yield loss in 19 provinces across the m
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
 		carob_effort = 0.5
 	)
@@ -62,7 +62,8 @@ Conducted a nationwide survey to collect yield loss in 19 provinces across the m
 	mun <- c("Banna", "Infanta", "Cauayan", "Solano", "Zaragoza", "San Ildefonso", "Nabua", "Camalig", "Naujan", "Brooke's Point", "Dumarao", "Balasan", "Sibalom", "San Miguel", "Palo", "Mahayag", "Valencia", "Kabacan", "Bansalan")
 	vil <- c("Bugasi", "Tabtabagan", "Nayom", "Bamban", "Alinam", "San Francisco", "Wacal", "Roxas", "Valeriana", "Sto Rosario (Old)", "Telepatio", "Umpucan", "Paloyon", "Sta Lucia", "Libod", "Tumpa", "Pinagsabangan 1", "Sampaguita", "Maasin", "Salogon", "Bayog", "Salcedo", "Mahmut North", "Tinguian", "Pis-anan", "Egaña", "Mahayag", "San Vicente", "Castilla", "Teraza", "San Isidro", "Kabuhi", "Batangan", "Nabag-o", "Katidtuan", "Magatos", "Dolo", "New Clarin")
 
-	irr <- c("NIA canal", "pump", "communal (CIS)", NA)
+	irr <- c("canal", "unknown", "canal", "none")
+	irlift <- c("gravity", "motorized pump", "gravity", NA)
 	vtype <- c("1"="hybrid", "2"="modern", "3"="traditional")
 
 	ssn <- function(seas, area, code, var, vtyp, prod, loss, kgcav, reason) {
@@ -80,6 +81,7 @@ Conducted a nationwide survey to collect yield loss in 19 provinces across the m
 			land_tenure = c("owned", "CLT holder", "sharecropped in", "fixed rent", "mortgaged in")[as.integer(r$tencode)],
 			irrigated = ifelse(is.na(r$irrcode), NA, as.integer(r$irrcode) %in% 1:3),
 			irrigation_source = irr[as.integer(r$irrcode)],
+			irrigation_lifting = irlift[as.integer(r$irrcode)],
 			village_type_ = c("irrigated", "rainfed", "partially irrigated")[as.integer(r$nviltyp)],
 			season = seas,
 			harvest_date = ifelse(seas == "wet", "2003", "2004"),
@@ -114,11 +116,19 @@ Conducted a nationwide survey to collect yield loss in 19 provinces across the m
 	d$stress <- apply(st, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
 
 	d$country <- "Philippines"
+	geo <- data.frame(
+		adm1 = prov,
+		latitude = c(18.17, 15.90, 16.98, 16.33, 15.58, 14.95, 13.62, 13.17, 13.00, 9.83, 11.39, 11.00, 11.17, 9.85, 10.86, 7.84, 8.05, 7.20, 6.77),
+		longitude = c(120.71, 120.28, 121.81, 121.17, 120.97, 121.05, 123.33, 123.62, 121.30, 118.74, 122.63, 122.54, 122.07, 124.14, 124.89, 123.30, 125.09, 124.85, 125.33)
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$trial_id <- paste(d$hhid, d$season, sep="_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

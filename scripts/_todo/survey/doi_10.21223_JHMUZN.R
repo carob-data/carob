@@ -45,7 +45,7 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
@@ -105,6 +105,9 @@ RTCs play an important role in diverse Asian agri-food systems and contribute to
 	d$local_crop_[!is.na(d$crop)] <- NA_character_
 	d <- merge(d, alt, by="hhid", all.x=TRUE)
 	d$country <- "Bangladesh"
+	d$adm1 <- "Khulna"
+	d$latitude <- ifelse(d$adm2 == "Khulna", 22.846, ifelse(d$adm2 == "Satkhira", 22.719, NA_real_))
+	d$longitude <- ifelse(d$adm2 == "Khulna", 89.540, ifelse(d$adm2 == "Satkhira", 89.071, NA_real_))
 	d$geo_from_source <- FALSE
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE

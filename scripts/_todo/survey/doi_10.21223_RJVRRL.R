@@ -39,7 +39,7 @@ This data set details information collected on preferred characteristics of urba
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.25
 	)
@@ -51,16 +51,25 @@ This data set details information collected on preferred characteristics of urba
 	d <- data.frame(
 		hhid = trimws(as.character(r$ID)),
 		country = "Uganda",
-		adm2 = trimws(as.character(r$district)),
-		adm3 = trimws(as.character(r$parish)),
-		location = trimws(as.character(r$village)),
+		adm2 = carobiner::fix_name(trimws(as.character(r$district)), "title"),
+		adm3 = carobiner::fix_name(trimws(as.character(r$parish)), "title"),
+		location = carobiner::fix_name(trimws(as.character(r$village)), "title"),
 		sex = sex,
 		age = as.numeric(r$age),
 		on_farm = FALSE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "urban_consumers"
+		trial_id = "urban_consumers",
+		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Entebbe", "Kampala"),
+		latitude = c(0.0512, 0.3476),
+		longitude = c(32.4637, 32.5825)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

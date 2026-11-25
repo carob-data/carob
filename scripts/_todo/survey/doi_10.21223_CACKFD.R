@@ -41,7 +41,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
 		carob_effort = 0.35
 	)
@@ -68,9 +68,9 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		farmer_gender = chr(r$P.02),
 		birth_country_ = chr(r$P.03_pais),
 		birth_city_ = chr(r$P.03_ciudad),
-		occupation_ = chr(r$P.04),
+		occupation = chr(r$P.04),
 		occupation_detail_ = chr(r$P.04_profesional),
-		household_size_ = num(r$P.05),
+		hh_size = num(r$P.05),
 		location = chr(r$P.06),
 		heard_from_ = chr(r$P.08),
 		customer_since_ = chr(r$P.09),
@@ -103,6 +103,9 @@ The native potato varieties have been successfully marketed to consumers in Lima
 	d$crop <- "potato"
 	d$country <- "Peru"
 	d$adm1 <- "Lima"
+	d$latitude <- -12.046
+	d$longitude <- -77.043
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste0("Miskipapa_2022_", seq_len(nrow(d)))
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE

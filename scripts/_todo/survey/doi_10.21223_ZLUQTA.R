@@ -53,7 +53,7 @@ New LB-resistant potato varieties with improved yield, resistance, and nutrition
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.35
 	)
@@ -88,6 +88,8 @@ New LB-resistant potato varieties with improved yield, resistance, and nutrition
 	d$geo_uncertainty <- 20000
 	d$geo_source <- "Dataverse bounding box, south and west edges only"
 	d$trial_id <- "Jumla_2013"
+	d$hhid <- d$plot_id
+	d$planting_date <- "2013"
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA

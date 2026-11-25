@@ -64,7 +64,7 @@ This study in general aims to look at the impacts of drought on rice production,
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.6
 	)
@@ -133,15 +133,15 @@ This study in general aims to look at the impacts of drought on rice production,
 	## land
 	k2 <- paste(r2$hhid, r2$bparcel, r2$bplot)
 	j <- match(paste(r4$hhid, r4$dparcel, r4$dplot), k2)
-	soil <- c("1"="clay", "2"="loam", "3"="sand", "4"="silt", "12"="clay loam", "23"="sandy loam", "34"="sandy silt")
+	soil <- c("1"="clay", "2"="loam", "3"="sand", "4"="silt", "12"="clay loam", "23"="sandy loam", "34"="unknown")
 	d$soil_texture <- soil[as.character(r2$bsoil[j])]
 	tenure <- c("1"="owned", "2"="rented-in", "3"="rented-out", "4"="share-crop", "5"="government-owned", "6"="mortgaged")
 	d$land_tenure <- tenure[as.character(r2$btenure[j])]
-	wsource <- c("1"="rain", "2"="spring/river/creek", "3"="irrigation", "4"="shallow tube well", "5"="reservoir",
-		"12"="rain; spring", "13"="rain; irrigation", "14"="rain; shallow tube well", "15"="rain; reservoir",
-		"23"="spring; irrigation", "24"="spring; shallow tube well", "25"="spring; reservoir",
-		"34"="irrigation; shallow tube well", "35"="irrigation; reservoir", "45"="shallow tube well; reservoir")
-	d$irrigation_source <- wsource[as.character(r2$bwsource[j])]
+	wsource <- c("1"="none", "2"="surface water", "3"="canal", "4"="groundwater", "5"="reservoir",
+		"12"="surface water", "13"="canal", "14"="groundwater", "15"="reservoir",
+		"23"="canal", "24"="groundwater", "25"="reservoir",
+		"34"="canal", "35"="canal", "45"="groundwater")
+	d$irrigation_source <- unname(wsource[as.character(r2$bwsource[j])])
 	d$percent_irrigated_ <- r2$birrigated[j]
 
 	## fertilizer (household x season)
@@ -155,14 +155,14 @@ This study in general aims to look at the impacts of drought on rice production,
 	organic <- c("ORGANIC", "0RGANIC", "ORGANIK", "ORGANIC FERTILIZER", "ORGANIK FERTILIZER", "PETROGANIC")
 	unit <- toupper(trimws(fe$f3unit))
 	fe$kg <- fe$f3quantity * ifelse(unit == "KW", 100, ifelse(unit == "KG", 1, NA))
-	# percentages N, P, K, S of the product
+	# percentages N, P, K, S of the product (SP36 mapped to terminag SSP)
 	comp <- data.frame(
 		product = c("UREA", "ZA", "TSP", "KCL", "SP36", "PHONSKA"),
 		N = c(46, 21, 0, 0, 0, 15),
 		P = c(0, 0, 19.23, 0, 36/2.29, 15/2.29),
 		K = c(0, 0, 0, 49.8, 0, 15/1.2051),
 		S = c(0, 24, 2, 0, 5, 10),
-		ftype = c("urea", "DAS", "TSP", "KCl", "SP36", "NPK")
+		ftype = c("urea", "DAS", "TSP", "KCl", "SSP", "NPK")
 	)
 	i <- match(fe$product, comp$product)
 	isorg <- fe$product %in% organic
@@ -207,7 +207,15 @@ This study in general aims to look at the impacts of drought on rice production,
 	d$fertilizer_type[nof] <- "none"
 	d$OM_used[nof] <- FALSE
 
+	geo <- data.frame(
+		adm2 = c("Indramayu", "Pati", "Lombok Tengah"),
+		latitude = c(-6.327, -6.756, -8.705),
+		longitude = c(108.320, 111.038, 116.276)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$hhid, d$season, d$field_id, sep="_")
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

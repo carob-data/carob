@@ -73,7 +73,7 @@ Replication Data for: Rwanda Super Foods Project Baseline Survey
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.4
 	)
@@ -100,12 +100,14 @@ Replication Data for: Rwanda Super Foods Project Baseline Survey
 		"Woman HH with resident man"
 	)] <- "female"
 	when <- as.Date(sprintf("%04d-%02d-%02d", as.integer(r$A16C), as.integer(r$A16B), as.integer(r$A16A)))
+	adm1 <- carobiner::fix_name(txt(r$prov), "title")
+	adm1 <- c("North" = "Amajyaruguru", "South" = "Amajyepfo")[adm1]
 
 	d <- data.frame(
 		trial_id = "Rwanda_SuperFoods_2011",
 		hhid = txt(r$hhid),
 		country = "Rwanda",
-		adm1 = carobiner::fix_name(txt(r$prov), "title"),
+		adm1 = unname(adm1),
 		adm2 = carobiner::fix_name(txt(r$dist), "title"),
 		adm3 = carobiner::fix_name(txt(r$sec), "title"),
 		adm4 = carobiner::fix_name(txt(r$cell), "title"),
@@ -119,6 +121,14 @@ Replication Data for: Rwanda Super Foods Project Baseline Survey
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Burera", "Gakenke", "Kamonyi", "Muhanga", "Rulindo"),
+		latitude = c(-1.4833, -1.7000, -2.0167, -2.0833, -1.7500),
+		longitude = c(29.8333, 29.7833, 29.9000, 29.7500, 29.9833)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

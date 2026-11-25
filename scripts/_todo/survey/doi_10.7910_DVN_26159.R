@@ -55,7 +55,7 @@ This farm household survey is an activity under the socio-economic component of 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.6
 	)
@@ -63,11 +63,12 @@ This farm household survey is an activity under the socio-economic component of 
 	f1 <- ff[basename(ff) == "Landhold-Landuse.xls"]
 	f2 <- ff[basename(ff) == "Rice inputs.xls"]
 	r1 <- carobiner::read.excel(f1, sheet="Lowland use", skip=8)
-	r2 <- carobiner::read.excel(f1, sheet="Upland use", skip=8)
+	r2 <- carobiner::read.excel(f1, sheet="Upland use", skip=8, col_types="text")
 	r3 <- carobiner::read.excel(f2, sheet="Input", skip=7)
 
+	# Crop code 20 ("Keo"/acacia) is not in terminag values_crop; set crop to NA and retain crop_label_
 	crops <- c("1"="rice", "3"="maize", "5"="groundnut", "14"="cassava", "15"="soybean", "16"="tea",
-		"19"="cinnamon", "20"="acacia", "24"="cabbage", "25"="pumpkin", "26"="ginger", "28"="longan", "33"="taro")
+		"19"="cinnamon", "24"="cabbage", "25"="pumpkin", "26"="ginger", "28"="longan", "33"="taro")
 	varieties <- c("1"="Nhi Uu 838", "2"="Red non-glutinous", "3"="Striped non-glutinous", "4"="White non-glutinous",
 		"5"="White sticky", "6"="Loc rice", "7"="Local sticky", "8"="Tien Uu 63", "9"="Non-glutinous")
 	cem <- c("1"="TPR", "2"="DSR", "3"="WSR")
@@ -75,7 +76,7 @@ This farm household survey is an activity under the socio-economic component of 
 	d1 <- data.frame(
 		village = r1$Village,
 		farmer = r1$Farmer,
-		field_id = r1$Parcel,
+		field_id = as.character(r1$Parcel),
 		plot_id = as.character(r1$Plot),
 		season = c("wet", "dry")[r1$Season],
 		planting_date = "2005",
@@ -91,27 +92,28 @@ This farm household survey is an activity under the socio-economic component of 
 	)
 
 	d2 <- data.frame(
-		village = r2$Village,
-		farmer = r2$Farmer,
-		field_id = r2$Parcel,
-		plot_id = as.character(r2$Plot),
-		season = c("wet", "dry")[r2$Season],
-		planting_date = as.character(r2$Year),
-		crop_code = r2$Crop,
-		intercropped = r2$Cropping == 2,
-		field_size = r2$Area,
-		production = r2$Prod,
-		seed_rate = r2$Seed / r2$Area,
-		variety = varieties[as.character(r2$Variety)],
-		variety_type = c("modern", "traditional")[r2$MVTV],
-		variety_traits = c("glutinous", "non-glutinous")[r2$Glut],
-		establishment_method_ = cem[as.character(r2$CEMethod)],
+		village = as.numeric(r2$Village),
+		farmer = as.numeric(r2$Farmer),
+		field_id = trimws(r2$Parcel),
+		plot_id = trimws(r2$Plot),
+		season = c("wet", "dry")[as.integer(r2$Season)],
+		planting_date = trimws(r2$Year),
+		crop_code = as.numeric(r2$Crop),
+		intercropped = as.numeric(r2$Cropping) == 2,
+		field_size = as.numeric(r2$Area),
+		production = as.numeric(r2$Prod),
+		seed_rate = as.numeric(r2$Seed) / as.numeric(r2$Area),
+		variety = varieties[trimws(r2$Variety)],
+		variety_type = c("modern", "traditional")[as.integer(r2$MVTV)],
+		variety_traits = c("glutinous", "non-glutinous")[as.integer(r2$Glut)],
+		establishment_method_ = cem[trimws(r2$CEMethod)],
 		land_type_ = "upland"
 	)
 
 	d <- carobiner::bindr(d1, d2)
 	d <- d[!is.na(d$crop_code), ]
-	d$crop <- crops[as.character(d$crop_code)]
+	d$crop <- unname(crops[as.character(d$crop_code)])
+	d$crop_label_ <- ifelse(d$crop_code == 20, "acacia", NA_character_)
 	d$yield <- d$production / d$field_size
 	d$planting_method <- ifelse(d$establishment_method_ == "TPR", "transplanting", "direct seeding")
 	d$location <- c("Suoi Giang", "Nam Bung")[d$village]
@@ -143,11 +145,19 @@ This farm household survey is an activity under the socio-economic component of 
 	d$country <- "Vietnam"
 	d$adm1 <- "Yen Bai"   # Van Chan district is in Yen Bai province
 	d$adm2 <- "Van Chan"
+	geo <- data.frame(
+		location = c("Suoi Giang", "Nam Bung"),
+		latitude = c(21.595, 21.685),
+		longitude = c(104.555, 104.535)
+	)
+	d <- merge(d, geo, by="location", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$irrigated <- NA
 	d$yield_part <- "grain"
+	d$yield_part[is.na(d$crop)] <- NA
 	d$yield_part[d$crop == "cassava"] <- "roots"
 	d$yield_part[d$crop == "taro"] <- "tubers"
 	d$yield_part[d$crop == "ginger"] <- "rhizome"
@@ -155,7 +165,7 @@ This farm household survey is an activity under the socio-economic component of 
 	d$yield_part[d$crop %in% c("pumpkin", "longan")] <- "fruit"
 	d$yield_part[d$crop == "groundnut"] <- "pod"
 	d$yield_part[d$crop == "cinnamon"] <- "stems"
-	d$yield_part[d$crop == "acacia"] <- "wood"
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

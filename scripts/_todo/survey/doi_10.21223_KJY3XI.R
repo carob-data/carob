@@ -47,8 +47,8 @@ Background: Persistent prevalence of high malnutrition in poor households in dev
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 20,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 25,
 		carob_effort = 0.4
 	)
 
@@ -67,8 +67,8 @@ Background: Persistent prevalence of high malnutrition in poor households in dev
 	r <- haven::read_dta(f)
 	d <- data.frame(
 		hhid = chr(r$study_no),
-		center_ = chr(r$center_name),
-		subcounty_ = chr(r$scounty_name),
+		location = carobiner::fix_name(chr(r$center_name), "title"),
+		adm2 = carobiner::fix_name(chr(r$scounty_name), "title"),
 		study_group_ = chr(r$study_grp),
 		grew_ofsp_ = chr(r$grew_ofsp),
 		sale_quantity_ = num(r$quantity),

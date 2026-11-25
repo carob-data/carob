@@ -48,7 +48,7 @@ The Mama SASHA project was set in Bungoma county in Kenya’s Western Province. 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.5
 	)
@@ -90,7 +90,10 @@ The Mama SASHA project was set in Bungoma county in Kenya’s Western Province. 
 		trial_id = "Mama_SASHA_voucher_Kenya",
 		hhid = trimws(as.character(as.integer(r$link_ANC_id))),
 		country = "Kenya",
+		adm1 = "Bungoma",
 		location = place,
+		latitude = 0.569,
+		longitude = 34.558,
 		crop = "sweetpotato",
 		sex = unname(sex),
 		date = date,
@@ -98,6 +101,7 @@ The Mama SASHA project was set in Bungoma county in Kenya’s Western Province. 
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

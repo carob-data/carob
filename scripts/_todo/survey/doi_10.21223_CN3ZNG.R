@@ -43,7 +43,7 @@ The endline survey for Viable Sweetpotato Technologies in Africa (VISTA) project
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.3
 	)
@@ -52,12 +52,17 @@ The endline survey for Viable Sweetpotato Technologies in Africa (VISTA) project
 	r <- carobiner::read.dta(f)
 	sex <- trimws(as.character(r$sex))
 	sex <- tolower(sex)
+	hh <- trimws(as.character(r$hhid))
+	hh[!nzchar(hh)] <- NA_character_
+	hh[is.na(hh)] <- paste0("VISTA18_", which(is.na(hh)))
+	adm2 <- carobiner::fix_name(trimws(as.character(r$ad2)), "title")
+	adm1 <- ifelse(adm2 %in% c("Alto Molocue", "Gile", "Gurue", "Mocuba"), "Zambezia", "Nampula")
 
 	d <- data.frame(
-		hhid = trimws(as.character(r$hhid)),
+		hhid = hh,
 		country = "Mozambique",
-		adm1 = trimws(as.character(r$ad1)),
-		adm2 = trimws(as.character(r$ad2)),
+		adm1 = adm1,
+		adm2 = adm2,
 		adm3 = trimws(as.character(r$ad3)),
 		location = trimws(as.character(r$ad4)),
 		sex = sex,
@@ -66,9 +71,20 @@ The endline survey for Viable Sweetpotato Technologies in Africa (VISTA) project
 		farm_size_upland_ = as.numeric(r$sizefarmupl),
 		on_farm = TRUE,
 		is_survey = TRUE,
+		geo_from_source = FALSE,
 		irrigated = NA,
 		trial_id = "VISTA_2018"
 	)
+	geo <- data.frame(
+		adm2 = c("Alto Molocue", "Angoche", "Gile", "Gurue", "Larde", "Malema", "Meconta",
+			"Mecuburi", "Mocuba", "Mogovolas", "Moma", "Monapo", "Murrupula", "Nampula City", "Nampula", "Rapale"),
+		latitude = c(-15.633, -16.233, -16.143, -15.467, -16.450, -14.950, -14.983,
+			-14.650, -16.833, -15.700, -16.767, -14.917, -15.450, -15.117, -15.117, -15.050),
+		longitude = c(37.683, 39.909, 38.374, 36.983, 39.500, 37.417, 39.850,
+			38.900, 36.983, 39.267, 39.217, 40.300, 38.683, 39.267, 39.267, 39.100)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

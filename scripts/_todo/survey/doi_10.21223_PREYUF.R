@@ -44,7 +44,7 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
@@ -118,6 +118,14 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
 	d$trial_id <- "LaLibertad_COVID_2021"
+	geo <- data.frame(
+		adm2 = c("Julcán", "Pataz", "Sánchez Carrión"),
+		latitude = c(-8.0439, -8.2500, -7.8136),
+		longitude = c(-78.4875, -77.3000, -78.0489)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

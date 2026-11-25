@@ -75,7 +75,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Nepal)
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.4
 	)
@@ -208,10 +208,23 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Nepal)
 	d$currency <- "NPR"
 
 	d$season <- tolower(d$season)
+	d$season_label_ <- d$season
 	d$season[d$season == "rainy"] <- "wet"
+	d$season[d$season %in% c("spring", "spring2", "summer")] <- "early wet"
+	d$season[d$season %in% c("perennial", "yearround")] <- NA
 	d$variety_type <- unname(c(MV="modern", TV="traditional")[d$variety_type])
 	d$planting_method <- unname(c(TPR="transplanting", DSR="direct seeding")[d$planting_method])
-	d$irrigation_source[tolower(d$irrigation_source) %in% "none"] <- "none"
+
+	irraw <- tolower(trimws(as.character(d$irrigation_source)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("none|rain|no irr", irraw)] <- "none"
+	irsrc[grepl("tube ?well|stw|dtw|bore|deep|shallow|ground|well", irraw)] <- "groundwater"
+	irsrc[grepl("canal|kulo", irraw)] <- "canal"
+	irsrc[grepl("pond|tank", irraw)] <- "pond"
+	irsrc[grepl("river|stream|creek|khola", irraw)] <- "river"
+	irsrc[grepl("spring", irraw)] <- "spring"
+	d$irrigation_source <- irsrc
 
 	tex <- tolower(d$soil_type)
 	tex[tex == "loamy"] <- "loam"
@@ -220,19 +233,28 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Nepal)
 	tex[tex == "alluvial soil"] <- NA
 	d$soil_texture <- tex
 
+	d$crop_label_ <- d$crop
 	crops <- c(blackgram="black gram", forage="forage crop", fruits="fruit", "lentil +mustard"="lentil_mustard",
 		oat="oats", "other legumes"="legume", "other oilseeds"="oilseed", peanut="groundnut",
 		pigeonpea="pigeon pea", vegetables="vegetable")
 	i <- match(d$crop, names(crops))
 	d$crop[!is.na(i)] <- crops[i[!is.na(i)]]
+	d$crop[d$crop %in% c("minor cereals", "mixed crops")] <- NA
 	yp <- c(rice="grain", wheat="grain", maize="grain", oats="grain", lentil="seed", "black gram"="seed",
 		chickpea="seed", "pigeon pea"="seed", mustard="seed", sesame="seed", groundnut="seed",
 		potato="tubers", okra="fruit", pumpkin="fruit", sugarcane="stems", cauliflower="flowers")
 	d$yield_part <- unname(yp[d$crop])
 
+	geo <- data.frame(
+		adm3 = c("Banke", "Siraha", "Tanahun"),
+		latitude = c(28.05, 26.65, 27.93),
+		longitude = c(81.62, 86.21, 84.23)
+	)
+	d <- merge(d, geo, by="adm3", all.x=TRUE)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

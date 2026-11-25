@@ -144,7 +144,7 @@ Dataset for: Baseline Survey for the OFDA 2016 Mitigating Drought Impacts on Liv
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.4
 	)
@@ -179,6 +179,17 @@ Dataset for: Baseline Survey for the OFDA 2016 Mitigating Drought Impacts on Liv
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Boane", "Chicualacuala", "Chigubo", "Funhalouro", "Govuro", "Guija",
+		         "Mabalane", "Mabote", "Magude", "Mapai", "Massangena", "Matutuine", "Moamba"),
+		latitude = c(-26.0439, -22.0833, -22.8333, -23.0833, -21.2167, -24.5167,
+		             -23.7500, -22.0500, -25.0250, -22.8500, -21.5500, -26.4333, -25.6000),
+		longitude = c(32.3261, 31.6833, 33.5167, 34.3833, 34.9667, 33.0000,
+		              32.6167, 34.1500, 32.6517, 31.9667, 32.9667, 32.6833, 32.2333)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

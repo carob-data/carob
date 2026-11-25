@@ -46,7 +46,7 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.45
 	)
@@ -73,10 +73,16 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 	)
 	q <- data.frame(
 		hhid = txt(r2$unique_id),
-		area_ha_ = as.numeric(r2$quant_ha_M03_01_3_1),
+		field_size = as.numeric(r2$quant_ha_M03_01_3_1),
 		production_quintals_ = as.numeric(r2$quant_quint_M3a_01A7_1)
 	)
 	d <- merge(d, q, by="hhid", all.x=TRUE)
+	geo <- data.frame(
+		adm2 = c("Bolivar", "Espejo", "Huaca", "San Pedro de Huaca", "Mira", "Montufar", "Tulcan"),
+		latitude = c(0.500, 0.620, 0.633, 0.633, 0.550, 0.594, 0.812),
+		longitude = c(-77.900, -77.930, -77.727, -77.727, -78.033, -77.833, -77.717)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 	d$geo_from_source <- FALSE
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE

@@ -55,7 +55,7 @@ The major objectives of this project are to  a) understand the socioeconomic and
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -69,21 +69,27 @@ The major objectives of this project are to  a) understand the socioeconomic and
 		country = c("Vietnam", "Philippines", "Indonesia", "Thailand", "India", "India", "Vietnam", "China", "India"),
 		adm1 = c("Cần Thơ", "Nueva Ecija", "Jawa Barat", "Suphan Buri", "Tamil Nadu", "Tamil Nadu", "Hà Nội", "Zhejiang", "Uttarakhand"),
 		location = c("Omon", "Maligaya", "Sukamandi", "Suphan Buri", "Aduthurai", "Thanjavur", "Hanoi", "Jinhua", "Pantnagar"),
+		latitude = c(10.115, 15.672, -6.353, 14.474, 11.015, 10.787, 21.028, 29.079, 29.022),
+		longitude = c(105.625, 120.892, 107.648, 100.118, 79.483, 79.138, 105.854, 119.647, 79.490),
 		currency = c("VND", "PHP", "IDR", "THB", "INR", "INR", "VND", "CNY", "INR")
 	)
 
 	sc <- substr(r$IDSEASON, 5, 6)
-	season <- c(DS="dry", WS="wet", KH="kharif", RB="rabi", TH="thaladi", KR="kuruvai", SM="samba", WD="WD")[sc]
+	season_raw <- c(DS="dry", WS="wet", KH="kharif", RB="rabi", TH="thaladi", KR="kuruvai", SM="samba", WD="WD")[sc]
 	er <- sc %in% c("ER", "LR")
-	season[er & r$IDSITE == "HA"] <- c(ER="spring", LR="summer")[sc[er & r$IDSITE == "HA"]]
-	season[er & r$IDSITE == "JI"] <- c(ER="early", LR="late")[sc[er & r$IDSITE == "JI"]]
+	season_raw[er & r$IDSITE == "HA"] <- c(ER="spring", LR="summer")[sc[er & r$IDSITE == "HA"]]
+	season_raw[er & r$IDSITE == "JI"] <- c(ER="early", LR="late")[sc[er & r$IDSITE == "JI"]]
+	smap <- c(dry="dry", wet="wet", kharif="kharif", rabi="rabi",
+		spring="early wet", summer="early wet", early="early wet", late="late wet",
+		kuruvai="early wet", thaladi="rabi", samba="rabi")
 
 	d <- data.frame(
 		record_id = 1:nrow(r),
 		trial_id = r$IDFARM,
 		hhid = r$IDHHCODE,
 		IDSITE = r$IDSITE,
-		season = as.vector(season),
+		season = unname(smap[season_raw]),
+		season_label_ = as.vector(season_raw),
 		planting_date = paste0("19", substr(r$IDSEASON, 3, 4)),
 		crop = "rice",
 		field_size = r$FSIZE,
@@ -117,6 +123,7 @@ The major objectives of this project are to  a) understand the socioeconomic and
 	d$insecticide_used <- d$insecticide_amount > 0
 	d$fungicide_used <- d$fungicide_amount > 0
 	d$yield_part <- "grain"
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 

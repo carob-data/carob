@@ -65,7 +65,7 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.4
 	)
@@ -93,6 +93,7 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 		adm2 = carobiner::fix_name(from_labels(r$A02), "title"),
 		adm3 = carobiner::fix_name(from_labels(r$A03), "title"),
 		location = carobiner::fix_name(from_labels(r$A04), "title"),
+		crop = "sweetpotato",
 		elevation = as.numeric(r$A15G),
 		hh_size = as.numeric(r$A08B1),
 		farmland_owned = as.numeric(r1$L01)[i],
@@ -103,6 +104,14 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 		on_farm = TRUE,
 		is_survey = TRUE
 	)
+	geo <- data.frame(
+		adm2 = c("Bunda", "Geita", "Ilemela", "Magu", "Misungwi", "Musoma", "Nyamagana", "Sengerema", "Ukerewe"),
+		latitude = c(-2.0500, -2.8725, -2.4500, -2.5896, -2.8500, -1.5000, -2.5164, -2.6419, -2.0333),
+		longitude = c(33.8667, 32.2295, 32.9167, 33.4381, 33.0833, 33.8000, 32.9175, 32.6225, 33.0167)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

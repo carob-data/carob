@@ -38,7 +38,7 @@ The International Maize and Wheat Improvement Centre (CIMMYT), in collaboration 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -62,6 +62,7 @@ The International Maize and Wheat Improvement Centre (CIMMYT), in collaboration 
 		location = loc,
 		hhid = hh,
 		trial_id = paste(hh, yr),
+		planting_date = yr,
 		crop = "maize",
 		yield = num(r$MAIZE_Y_KH),
 		yield_part = "grain",

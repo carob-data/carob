@@ -70,7 +70,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -84,6 +84,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 	crop[crop == "millet"] <- "pearl millet"
 	crop[crop == "sweet potato"] <- "sweetpotato"
 	crop[crop == "irish potato"] <- "potato"
+	crop[crop == "vegetables"] <- "vegetable"
 	crop[crop %in% c("other, specify", "")] <- NA
 
 	unit <- trimws(r$plot1_szUnit)
@@ -141,6 +142,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
 	d$trial_id <- d$hhid
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

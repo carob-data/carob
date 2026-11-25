@@ -62,7 +62,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -89,7 +89,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		"cabbage"="cabbage", "repolho-cabbage"="cabbage", "couve-cabbage"="cabbage",
 		"sorghum"="sorghum", "potato-reno"="potato", "onion"="onion",
 		"sesame"="sesame", "garlic"="garlic", "yam /mandubim"="yam",
-		"rice"="rice", "wheat"="wheat", "yoke beans"="yoke beans",
+		"rice"="rice", "wheat"="wheat", "yoke beans"="bambara groundnut",
 		"banana"="banana", "pea"="pea", "squash"="squash",
 		"sweet potato pulp not orange"="sweetpotato",
 		"sweet orange flesh potatoes"="sweetpotato",
@@ -99,12 +99,12 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 	)
 	part_of <- c(
 		maize="grain", "common bean"="seed", tobacco="leaves", soybean="seed",
-		cowpea="seed", tomato="fruit", groundnut="seed", cabbage=NA_character_,
-		sorghum="grain", potato="tubers", onion=NA_character_, sesame="seed",
-		garlic="tubers", yam="tubers", rice="grain", wheat="seed",
-		"yoke beans"=NA_character_, banana="fruit", pea="seed", squash=NA_character_,
-		sweetpotato="roots", cassava="roots", cotton=NA_character_, millet="grain",
-		ginger="tubers", lettuce=NA_character_, pumpkin="leaves",
+		cowpea="seed", tomato="fruit", groundnut="seed", cabbage="leaves",
+		sorghum="grain", potato="tubers", onion="bulbs", sesame="seed",
+		garlic="bulbs", yam="tubers", rice="grain", wheat="grain",
+		"bambara groundnut"="seed", banana="fruit", pea="seed", squash="fruit",
+		sweetpotato="roots", cassava="roots", cotton="lint", millet="grain",
+		ginger="rhizome", lettuce="leaves", pumpkin="leaves",
 		sugarcane="stems", "chili pepper"="fruit"
 	)
 	map_crop <- function(x) {
@@ -153,5 +153,6 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		slot(r$c111b, r$c112b, r$c159b, 2),
 		slot(r$c111c, r$c112c, r$c159c, 3)
 	)
+	d <- unique(d)
 	carobiner::write_files(path, meta, d)
 }

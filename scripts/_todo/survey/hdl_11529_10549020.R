@@ -45,7 +45,7 @@ Household maize area and grain production in three palikas of Nepal.
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -69,14 +69,20 @@ Household maize area and grain production in three palikas of Nepal.
 
 	pal <- c("1"="Gandaki", "2"="Panchpokhari", "3"="Ichhyakamana")
 	dst <- c("1"="Gorkha", "2"="Sindhupalchok", "3"="Chitwan")
+	prov <- c("1"="Gandaki", "2"="Bagmati", "3"="Bagmati")
+	plat <- c("1"=27.880, "2"=27.950, "3"=27.850)
+	plon <- c("1"=84.720, "2"=85.650, "3"=84.630)
 	code <- trimws(r$Palika)
 	variety <- blank(r$NameVar_Maize1)
 	variety[variety %in% c("No maize cultivation", "No maize cultivation / No idea", "No idea")] <- NA_character_
 
 	d <- data.frame(
 		country = "Nepal",
-		adm2 = dst[code],
-		location = pal[code],
+		adm1 = unname(prov[code]),
+		adm2 = unname(dst[code]),
+		location = unname(pal[code]),
+		latitude = unname(plat[code]),
+		longitude = unname(plon[code]),
 		hhid = r$HH_ID,
 		trial_id = r$HH_ID,
 		crop = "maize",
@@ -84,7 +90,7 @@ Household maize area and grain production in three palikas of Nepal.
 		yield_part = "grain",
 		yield = prod / area,
 		field_size = area,
-		season_bs_ = "2077",
+		planting_date = "2020",
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE

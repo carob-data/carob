@@ -54,7 +54,7 @@ Trained Partner Enumerators to perform Data Collection: Central Luzon State Univ
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.3
 	)
@@ -93,15 +93,19 @@ Trained Partner Enumerators to perform Data Collection: Central Luzon State Univ
 		crop = "rice",
 		variety = variety,
 		field_size = as.numeric(r$adoption_C_PlotSize),
-		variety_trait_ = r$adoption_Improved_rice_varieties,
+		variety_traits = r$adoption_Improved_rice_varieties,
 		variety_source_ = r$adoption_source_technology,
 		variety_adoption_year_ = r$year_adoption,
 		years_using_variety_ = as.numeric(r$c_year_adoption)
 	)
 
 	d$variety[trimws(as.character(d$variety)) == ""] <- NA
+	d$latitude <- 15.4828
+	d$longitude <- 120.7120
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

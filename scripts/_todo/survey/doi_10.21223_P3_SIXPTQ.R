@@ -66,7 +66,7 @@ The baseline survey is designed with an aim of determining the level of communit
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.45
 	)
@@ -115,8 +115,8 @@ The baseline survey is designed with an aim of determining the level of communit
 		crop_type_ = chr(r1$CROPTYPE),
 		farm_type_ = chr(r1$FARMTYPE),
 		date = date,
-		latitude = dms(r1$BPLG, r1$BPLS, r1$BPLM, 3, 15),
-		longitude = dms(r1$BPLOG, r1$BPLOS, r1$BPLOM, 30, 48),
+		latitude = dms(r1$BPLG, r1$BPLM, r1$BPLS, 3, 15),
+		longitude = dms(r1$BPLOG, r1$BPLOM, r1$BPLOS, 30, 48),
 		elevation = num(r1$BPAL),
 		potato_area_m2_ = num(r1$BPP),
 		sweetpotato_area_m2_ = num(r1$BSPP),

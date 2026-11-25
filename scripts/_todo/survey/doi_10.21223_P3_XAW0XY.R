@@ -53,8 +53,8 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 25,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 30,
 		carob_effort = 0.3
 	)
 
@@ -69,9 +69,10 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 		hhid = chr(r$HHID),
 		facility_ = chr(r$FAC_NAME),
 		intervention_ = chr(r$INTVGPNAME),
+		adm1 = "Bungoma",
 		adm2 = tools::toTitleCase(tolower(chr(r$DISTNAME))),
-		location = tools::toTitleCase(tolower(chr(r$VILLNAME))),
-		sublocation_ = chr(r$SLOCNAME)
+		adm3 = tools::toTitleCase(tolower(chr(r$SLOCNAME))),
+		location = tools::toTitleCase(tolower(chr(r$VILLNAME)))
 	)
 	d <- d[!is.na(d$hhid) | !is.na(d$location), ]
 	d$crop <- "sweetpotato"
@@ -79,6 +80,18 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 	d$trial_id <- paste0("MamaSASHA_", seq_len(nrow(d)))
 	d$on_farm <- NA
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Bungoma Central", "Bungoma East", "Bungoma Kimilili", "Bungoma North"),
+		latitude = c(0.6500, 0.6000, 0.7833, 0.7833),
+		longitude = c(34.6167, 34.7333, 34.7167, 34.8833)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	na_g <- is.na(d$latitude)
+	d$latitude[na_g] <- 0.5635
+	d$longitude[na_g] <- 34.5606
 
 	carobiner::write_files(path, meta, d)
 }

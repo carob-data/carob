@@ -50,8 +50,8 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.5
 	)
 
@@ -99,8 +99,8 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 			h[miss] <- paste0("row", seq_len(nrow(r))[miss])
 			h
 		},
-		farmer_age_ = num(r$Age),
-		education_ = trimws(as.character(r[["Education level"]])),
+		age = num(r$Age),
+		education = trimws(as.character(r[["Education level"]])),
 		farmer_gender = trimws(as.character(r$Gender)),
 		location = tools::toTitleCase(tolower(trimws(as.character(r$Place)))),
 		latitude = dms(r$Latitude),
@@ -176,6 +176,9 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 	d$stress <- "disease"
 	d$pathogen <- "Phytophthora infestans"
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	na_g <- !d$geo_from_source
+	d$latitude[na_g] <- -10.9711
+	d$longitude[na_g] <- -75.7022
 
 	carobiner::write_files(path, meta, d)
 }

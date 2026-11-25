@@ -45,7 +45,7 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.35
 	)
@@ -64,7 +64,7 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		country = trimws(as.character(r$Country)),
 		adm2 = trimws(as.character(r[["A6. What district do you live in?"]])),
 		adm3 = trimws(as.character(r[["A7. What upazilla do you live in?"]])),
-		location = trimws(as.character(r[["A8. What village, city or town do you live in?"]])),
+		location = carobiner::fix_name(trimws(as.character(r[["A8. What village, city or town do you live in?"]])), "title"),
 		crop = "potato",
 		sex = sex,
 		age = as.numeric(r[["A9. Age of respondent (Years)"]]),
@@ -74,6 +74,12 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Bogura", "Dinajpur", "Jessore", "Khulna", "Munshiganj", "Nilphamari", "Rangpur", "Satkhira"),
+		latitude = c(24.847, 25.622, 23.166, 22.846, 23.542, 25.931, 25.744, 22.719),
+		longitude = c(89.377, 88.633, 89.208, 89.540, 90.530, 88.856, 89.275, 89.071)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

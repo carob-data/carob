@@ -42,7 +42,7 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.3
 	)
@@ -86,6 +86,12 @@ An assessment of fertilizer availability in potato producing areas in Rwanda was
 	d$on_farm <- FALSE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Burera", "Gicumbi", "Musanze", "Nyabihu", "Rubavu"),
+		latitude = c(-1.466, -1.576, -1.500, -1.650, -1.680),
+		longitude = c(29.827, 30.067, 29.635, 29.510, 29.330)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

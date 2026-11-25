@@ -41,7 +41,7 @@ Enquête dans les treize régions administratives où la culture du coton a ét�
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "yield",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 30,
@@ -69,8 +69,25 @@ Enquête dans les treize régions administratives où la culture du coton a ét�
 		weeding_times = as.integer(r$L61_Nb_sarcla_2013),
 		date = "2014",
 		on_farm = TRUE,
-		is_survey = TRUE
+		is_survey = TRUE,
+		geo_from_source = FALSE
 	)
+
+	geo <- data.frame(
+		adm2 = c("Beoumi", "Bouafle", "Boundiali", "Dikodougou", "Ferkessedougou", "Kani", "Kaniasso",
+			"Kong", "Korhogo", "Koro", "Kounahiri", "Kouto", "M'bengue", "Mankono", "Minignan",
+			"Niakaramadougou", "Odienne", "Ouangolodougou", "Ouaninou", "Samatiguila", "Seguela",
+			"Seguelon", "Sinematiali", "Tengrela", "Vavoua", "Yamoussoukro", "Zuenoula"),
+		latitude = c(7.674, 6.990, 9.521, 9.069, 9.593, 8.478, 9.819,
+			9.150, 9.458, 8.555, 7.798, 9.893, 10.002, 8.059, 9.997,
+			8.659, 9.505, 9.969, 8.238, 9.817, 7.961,
+			9.354, 9.588, 10.481, 7.382, 6.821, 7.429),
+		longitude = c(-5.581, -5.744, -6.487, -5.772, -5.194, -6.605, -7.515,
+			-4.610, -5.630, -7.464, -5.833, -6.410, -5.900, -6.190, -7.837,
+			-5.289, -7.564, -5.149, -7.868, -7.562, -6.673,
+			-7.119, -5.383, -6.407, -6.478, -5.277, -6.043)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

@@ -83,7 +83,7 @@ The study examines the changes in the livelihood of the rural household that com
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.5
 	)
@@ -100,20 +100,20 @@ The study examines the changes in the livelihood of the rural household that com
 		r[!duplicated(paste(r$HHNO, r$VIL, r$SSN)), ]
 	}
 	num <- function(x) {
-		r <- trimws(as.character(r))
-		r[!grepl("^-?[0-9]*\\.?[0-9]+$", r)] <- NA
-		r <- as.numeric(r)
-		r[r < 0] <- NA
-		r
+		x <- trimws(as.character(x))
+		x[!grepl("^-?[0-9]*\\.?[0-9]+$", x)] <- NA
+		x <- as.numeric(x)
+		x[x < 0] <- NA
+		x
 	}
 	sumNA <- function(x) {
-		r <- sapply(r, num)
-		ifelse(rowSums(!is.na(r)) > 0, rowSums(r, na.rm=TRUE), NA)
+		m <- sapply(x, num)
+		ifelse(rowSums(!is.na(m)) > 0, rowSums(m, na.rm=TRUE), NA)
 	}
 
 	r4 <- rd("COSRET4-M.xls")
 	k <- paste(r4$HHNO, r4$VIL, r4$SSN)
-	m <- function(x) r[match(k, paste(r$HHNO, r$VIL, r$SSN)), ]
+	m <- function(x) x[match(k, paste(x$HHNO, x$VIL, x$SSN)), ]
 	r1 <- m(rd("COSRET1-M.xls"))
 	r2 <- m(rd("COSRET2-M.xls"))
 	r3 <- m(rd("COSRET3-M.xls"))
@@ -146,11 +146,16 @@ The study examines the changes in the livelihood of the rural household that com
 		yield_part = "grain",
 		country = "Philippines"
 	)
-	d$irrigation_source <- c("gravity", "pump", "none")[match(num(r2$IRGSRC), 1:3)]
+	irg <- num(r2$IRGSRC)
+	d$irrigation_source <- c("canal", "unknown", "none")[match(irg, 1:3)]
+	d$irrigation_lifting <- c("gravity", "motorized pump", NA)[match(irg, 1:3)]
 	d$irrigated <- ifelse(is.na(d$irrigation_source), NA, d$irrigation_source != "none")
 	d$location <- ifelse(vil %in% 4, "Pandan", NA)
 	d$adm2 <- ifelse(vil %in% 4, "Dingle", NA)
 	d$adm1 <- ifelse(vil %in% 4, "Iloilo", NA)
+	d$latitude <- ifelse(vil %in% 4, 10.9964, NA_real_)
+	d$longitude <- ifelse(vil %in% 4, 122.6717, NA_real_)
+	d$geo_from_source <- FALSE
 	d$crop_price[d$crop_price %in% 0] <- NA
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

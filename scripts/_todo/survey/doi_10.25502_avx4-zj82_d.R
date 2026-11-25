@@ -110,7 +110,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 2
 	)
@@ -271,8 +271,8 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		"potato" = "tubers", "kale" = "leaves", "maize" = "grain", "millet" = "grain",
 		"vegetable" = "leaves", "pigeon pea" = "seed", "pineapple" = "fruit",
 		"rice" = "grain", "sorghum" = "grain", "soybean" = "seed", "sweetpotato" = "roots",
-		"timber" = "wood", "tomato" = "fruit", "wheat" = "seed", "yam" = "tubers",
-		"eggplant" = "fruit"
+		"timber" = "wood", "tomato" = "fruit", "wheat" = "grain", "yam" = "tubers",
+		"eggplant" = "fruit", "cotton" = "lint"
 	)
 	stress_map <- c(
 		"Diseases" = "disease", "Drought" = "drought", "Insects pest" = "pests",
@@ -348,12 +348,13 @@ The objectives of this activity were: (1) to insure that the households surveyed
 
 	om_type <- rep("none", nrow(r))
 	om_src <- trimws(as.character(r$om))
-	om_src[om_src == "Animal manure"] <- "farmyard manure"
-	om_src[om_src == "Compost"] <- "compost"
-	om_src[om_src == "Others"] <- "unknown"
-	use_om <- !is.na(r$omq) & r$omq > 0
-	om_type[use_om] <- om_src[use_om]
-	om_type[use_om & (is.na(om_src) | om_src == "")] <- "unknown"
+	om_mapped <- rep(NA_character_, nrow(r))
+	om_mapped[om_src == "Animal manure"] <- "farmyard manure"
+	om_mapped[om_src == "Compost"] <- "compost"
+	om_mapped[om_src %in% c("Others", "Crop residues", "Household refuse")] <- "unknown"
+	use_om <- !is.na(r$omq) & r$omq > 0 & !(om_src %in% c("Natural fallow", "Improved fallow"))
+	om_type[use_om] <- om_mapped[use_om]
+	om_type[use_om & is.na(om_type)] <- "unknown"
 
 	seed_kg <- rowSums(cbind(r$seed_own, r$seed_buy), na.rm = TRUE)
 	seed_kg[is.na(r$seed_own) & is.na(r$seed_buy)] <- NA
@@ -436,8 +437,16 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	east <- c("Bugesera", "Gatsibo", "Kayonza", "Kirehe", "Nyagatare")
 	west <- c("Karongi", "Nyabihu", "Rubavu")
 	d$adm1 <- NA_character_
-	d$adm1[d$adm2 %in% east] <- "Eastern Province"
-	d$adm1[d$adm2 %in% west] <- "Western Province"
+	d$adm1[d$adm2 %in% east] <- "Iburasirazuba"
+	d$adm1[d$adm2 %in% west] <- "Iburengerazuba"
+
+	rgeo <- data.frame(
+		adm2 = c("Bugesera", "Gatsibo", "Kayonza", "Kirehe", "Nyagatare", "Karongi", "Nyabihu", "Rubavu"),
+		latitude = c(-2.230, -1.590, -1.850, -2.260, -1.300, -2.070, -1.650, -1.680),
+		longitude = c(30.150, 30.450, 30.650, 30.720, 30.330, 29.380, 29.510, 29.330)
+	)
+	d <- merge(d, rgeo, by = "adm2", all.x = TRUE)
+	d$geo_from_source <- FALSE
 
 	hh_type <- tolower(trimws(r4$HH_type))
 	gend <- rep(NA_character_, length(hh_type))
@@ -450,6 +459,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$trial_id <- as.character(d$trial_id)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

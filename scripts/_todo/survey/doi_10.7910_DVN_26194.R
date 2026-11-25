@@ -348,12 +348,12 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 1
 		project = "Green Super Rice (GSR)",
 		design = "household survey; about 1200 households in Cambodia, Pakistan and Sri Lanka",
 		data_type = "survey",
-		treatment_vars = "none",
+		treatment_vars = NA,
 		response_vars = "yield",
 		notes = "Yield is farmer-reported production per reported area",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.8
 	)
@@ -416,17 +416,15 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 1
 	d$is_survey <- TRUE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
-	d$yield_moisture <- as.numeric(NA)
 	d$yield_isfresh <- TRUE
-	d$planting_date <- as.character(NA)
-	d$harvest_date <- as.character(NA)
+	geo <- data.frame(
+		country = c("Cambodia", "Pakistan", "Sri Lanka"),
+		latitude = c(12.57, 31.17, 7.87),
+		longitude = c(104.99, 72.71, 80.77)
+	)
+	d <- merge(d, geo, by="country", all.x=TRUE)
 	d$geo_from_source <- FALSE
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$irrigated <- as.logical(NA)
-	d$N_fertilizer <- as.numeric(NA)
-	d$P_fertilizer <- as.numeric(NA)
-	d$K_fertilizer <- as.numeric(NA)
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

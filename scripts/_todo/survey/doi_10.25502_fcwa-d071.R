@@ -64,7 +64,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.7
 	)
@@ -82,7 +82,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		if (grepl("faba|fava", z)) return("faba bean")
 		if (grepl("finger millet", z)) return("finger millet")
 		if (grepl("^millet$", z)) return("pearl millet")
-		if (grepl("bambara", z)) return("bambara groundnut")
+		if (grepl("bambara|ground ?beans?$", z)) return("bambara groundnut")
 		if (grepl("^cassava$", z)) return("cassava")
 		if (grepl("^maize$", z)) return("maize")
 		if (grepl("banana", z)) return("banana")
@@ -129,23 +129,24 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	map_fert_one <- function(s) {
 		sl <- tolower(trimws(s))
 		if (!nzchar(sl)) return(NA_character_)
-		if (sl %in% c("none", "no", "non", "nil", "0", "n/a", "na")) return("none")
-		if (grepl("23[:.]21", sl)) return("NPS")
+		if (sl %in% c("none", "no", "non", "nil", "0", "n/a", "na", "n")) return("none")
+		if (grepl("23[:.;]21|11[:.;]21|chitowe", sl)) return("NPS")
 		if (grepl("npk", sl)) return("NPK")
 		if (grepl("^ur$|^ure$|urea|ureia", sl)) return("urea")
 		if (grepl("dap", sl)) return("DAP")
 		if (grepl("sympa", sl)) return("sympal")
-		if (grepl("d[- .]*comp", sl)) return("D-compound")
+		if (grepl("d[- .]*comp|super[- ]?d|super compound", sl)) return("D-compound")
 		if (grepl("^can$|ammonium nitrate", sl)) return("CAN")
-		if (grepl("^tsp$|supetriphosphate|superphosphate", sl)) return(if (grepl("supetri|superphos", sl)) "SSP" else "TSP")
-		if (grepl("chitowe", sl)) return("Chitowe")
+		if (grepl("^tsp$|^stp$|supetriphosphate|superphosphate", sl)) return(if (grepl("supetri|superphos|stp", sl)) "SSP" else "TSP")
+		if (sl %in% c("1", "a", "21", "23", "11:21", "4s", "cotton fertlizer", "cotton fertilizer") || grepl("^[0-9]+$", sl)) return("unknown")
 		trimws(s)
 	}
 
 	clean_fert <- function(x) {
 		x <- trimws(as.character(x))
 		x[x %in% c("", "NA", "-88")] <- NA
-		x[!is.na(x) & grepl("23[:.]21", x, ignore.case=TRUE)] <- "NPS"
+		x <- gsub("23[:.;]21[:.;][01]([:+]4s)?", "NPS", x, ignore.case=TRUE)
+		x <- gsub("11[:.;]21[:.;]0", "NPS", x, ignore.case=TRUE)
 		out <- x
 		for (i in which(!is.na(x))) {
 			parts <- unlist(strsplit(x[i], "\\s*[,+/]| and "))

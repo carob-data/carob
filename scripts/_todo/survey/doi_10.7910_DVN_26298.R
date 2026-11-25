@@ -61,7 +61,7 @@ To compare economic performance of rice production and water management practice
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.8
 	)
@@ -101,7 +101,8 @@ To compare economic performance of rice production and water management practice
 	i4 <- match(r1$id, r4$id)
 	i5 <- match(r1$id, r5$id)
 	i7 <- match(r1$HHCODE, r7$HHCODE)
-	src <- c("canal (gravity)", "canal (pumping)", "shallow tubewell (pumping)", "river or creek (pumping)", "other")
+	src <- c("canal", "canal", "groundwater", "river", "unknown")
+	lft <- c("gravity", "motorized pump", "motorized pump", "motorized pump", NA)
 
 	d <- data.frame(
 		hhid = r1$HHCODE,
@@ -120,6 +121,7 @@ To compare economic performance of rice production and water management practice
 		harvest_date = as.character(as.Date(as.numeric(r4$HDATE[i4]), origin="1899-12-30")),
 		irrigated = TRUE,
 		irrigation_source = src[as.integer(r5$SOURCEWAT[i5])],
+		irrigation_lifting = lft[as.integer(r5$SOURCEWAT[i5])],
 		field_position_ = r5$POSITION[i5],
 		distance_lateral_ = as.numeric(r5$DISTLAT[i5]),
 		yield = as.vector(prod[r1$id]) / as.numeric(r1$AREAPLT),
@@ -133,15 +135,21 @@ To compare economic performance of rice production and water management practice
 
 	ftype <- trimws(r6$BRAND)
 	ftype[ftype %in% c("Urea", "46-0-0")] <- "urea"
-	ftype[ftype %in% c("14-14-14", "12-12-12", "17-0-17", "17-017", "11-7-11")] <- "NPK"
+	ftype[ftype %in% c("14-14-14", "12-12-12", "11-7-11")] <- "NPK"
 	ftype[ftype == "18-46"] <- "DAP"
 	ftype[ftype == "0-0-60"] <- "KCl"
-	ftype[ftype == "16-20"] <- "16-20-0"
+	ftype[ftype == "16-20"] <- "NP"
+	ftype[ftype == "0-17-0"] <- "SSP"
+	valid_ft <- c("urea", "DAS", "DAP", "KCl", "NP", "NPK", "SSP", "TSP", "ZnSO4", "gypsum", "none")
+	ftype[!is.na(ftype) & !(ftype %in% valid_ft)] <- "unknown"
 	fts <- tapply(ftype, r6$id, function(x) paste(sort(unique(x[!is.na(x)])), collapse="; "))
 	d$fertilizer_type <- as.vector(fts[r1$id])
 	d$fertilizer_type[d$fertilizer_type == ""] <- "none"
 	d$fertilizer_used <- d$fertilizer_type != "none"
 
+	d$latitude <- 15.5784
+	d$longitude <- 120.9726
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$hhid, d$field_id, sep="-")
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE

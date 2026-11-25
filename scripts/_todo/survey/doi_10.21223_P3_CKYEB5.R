@@ -37,7 +37,7 @@ This dataset contains primary survey data collected as part of a study on the im
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.45
 	)
@@ -75,6 +75,15 @@ This dataset contains primary survey data collected as part of a study on the im
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Buuri", "Igembe Central", "Igembe South", "Imenti Central",
+		         "Laikipia East", "Meru Central", "Meru South", "Tigania East", "Timau"),
+		latitude = c(0.1333, 0.2500, 0.2167, 0.0333, 0.0167, 0.0463, -0.3333, 0.1667, 0.0833),
+		longitude = c(37.5500, 37.9000, 37.9333, 37.6500, 37.0728, 37.6559, 37.6500, 37.8167, 37.2333)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

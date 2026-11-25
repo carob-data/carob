@@ -46,7 +46,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
 		carob_effort = 0.6
 	)
@@ -217,6 +217,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 	d$stress <- "disease"
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$trial_id <- paste("Ecuador_seed", d$location, d$cycle_, d$variety, d$seed_management_, seq_len(nrow(d)), sep="_")
+	d$hhid <- paste(d$location, d$plot_manager_, sep = "_")
 	miss <- is.na(d$variety) | !nzchar(d$variety)
 	d$variety[miss] <- paste("unlabeled", seq_len(nrow(d))[miss])
 	d$seed_management_[is.na(d$seed_management_) | !nzchar(d$seed_management_)] <- "not recorded"

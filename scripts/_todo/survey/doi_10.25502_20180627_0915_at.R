@@ -85,7 +85,7 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.5
 	)
@@ -150,6 +150,7 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
 	d$trial_id <- d$hhid
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

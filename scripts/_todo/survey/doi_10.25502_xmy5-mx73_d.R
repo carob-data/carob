@@ -48,7 +48,7 @@ Dataset processed of a household level survey to describe the main farm characte
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.6
 	)
@@ -66,11 +66,11 @@ Dataset processed of a household level survey to describe the main farm characte
 	}
 
 	spec <- data.frame(
-		crop = c("banana", "lentil", "maize", "mango", "masyang", "millet", "potato", "rice", "wheat"),
+		crop = c("banana", "lentil", "maize", "mango", "ricebean", "millet", "potato", "rice", "wheat"),
 		area = c("su_banana", "su_lentil", "su_maize", "su_mango", "su_masayang", "su_millet", "su_potato", "su_riceasha", "su_wheat"),
 		yield = c("yield_banana", "yield_lentil", "yield_maize", "yield_mango", "yield_masayng", "yield_millet", "yield_potato", "yield_rice_as", "yield_wheat"),
 		irri = c("irri_banana", "irri_lentil", "irri_maize", "irri_mango", "irri_masayng", "irri_millet", "irri_potato", "irri_rice_as", "irri_wheat"),
-		yield_part = c("fruit", "seed", "grain", "fruit", NA_character_, "grain", "tubers", "grain", "grain")
+		yield_part = c("fruit", "seed", "grain", "fruit", "seed", "grain", "tubers", "grain", "grain")
 	)
 
 	muni <- place(r$municipality)
@@ -115,6 +115,8 @@ Dataset processed of a household level survey to describe the main farm characte
 	d <- do.call(rbind, parts)
 	rownames(d) <- NULL
 	d$ward_[d$ward_ %in% c("", "NA")] <- NA
+	d$adm1 <- "Karnali"
+	d$planting_date <- "2023"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE

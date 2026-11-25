@@ -64,7 +64,7 @@ The dataset includes the raw data of the published manuscript https://doi.org/10
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.6
 	)
@@ -134,7 +134,11 @@ The dataset includes the raw data of the published manuscript https://doi.org/10
 	d$seed_treatment[d$seed_treatment %in% "Chemical (name not known)"] <- "chemical"
 	d$seed_treatment <- tolower(d$seed_treatment)
 
-	om <- c("Compost"="compost", "FYM/Compost"="farmyard manure; compost", "Green manure"="green manure", "Straw"="straw")
+	irmap <- c("Ground water"="groundwater", "Surface water"="surface water", "Own borewell"="groundwater", "Specify (if any)"="unknown")
+	d$irrigation_source <- unname(irmap[d$irrigation_source])
+
+	d$OM_type_ <- d$OM_type
+	om <- c("Compost"="compost", "FYM/Compost"="farmyard manure; compost", "Green manure"="foliage", "Straw"="unknown")
 	d$OM_type <- as.vector(om[d$OM_type])
 
 	prev <- c("Fallow"="none", "Pulses"="pulse", "Vegetables"="vegetable",
@@ -152,6 +156,9 @@ The dataset includes the raw data of the published manuscript https://doi.org/10
 	d$fertilizer_type <- fert
 	d$fertilizer_used <- !is.na(fert)
 
+	d$latitude <- 19.81
+	d$longitude <- 85.83
+	d$geo_from_source <- FALSE
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE

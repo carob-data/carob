@@ -71,7 +71,7 @@ The farm survey data was used to explore the roles of pricing policy, institutio
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.6
 	)
@@ -100,7 +100,8 @@ The farm survey data was used to explore the roles of pricing policy, institutio
 		location = paste(r1$town, r1$village, sep=", "),
 		water_user_group_ = as.character(r1$wucode),
 		irrigation_pricing_ = r1$pricing,
-		season = "summer",
+		season = "wet",
+		season_label_ = "summer",
 		planting_date = "2008",
 		crop = "rice",
 		field_size = r1$areapltdha,
@@ -140,6 +141,13 @@ The farm survey data was used to explore the roles of pricing policy, institutio
 	d$variety[d$variety == ""] <- NA
 	d$herbicide_used <- d$herbicide_amount > 0
 	d$insecticide_used <- d$insecticide_amount > 0
+	geo <- data.frame(
+		adm2 = c("Jingmen", "Shayang", "Zhongxiang"),
+		latitude = c(31.035, 30.709, 31.168),
+		longitude = c(112.200, 112.588, 112.589)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE

@@ -90,7 +90,7 @@ The study is based on village full enumeration field surveys.  The main purpose 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.3
 	)
@@ -108,22 +108,22 @@ The study is based on village full enumeration field surveys.  The main purpose 
 		r
 	}
 	num <- function(x) {
-		if (is.null(r)) return(NULL)
-		r <- trimws(as.character(r))
-		r[!grepl("^-?[0-9]*\\.?[0-9]+$", r)] <- NA
-		r <- as.numeric(r)
-		r[r < 0] <- NA
-		r
+		if (is.null(x)) return(NULL)
+		x <- trimws(as.character(x))
+		x[!grepl("^-?[0-9]*\\.?[0-9]+$", x)] <- NA
+		x <- as.numeric(x)
+		x[x < 0] <- NA
+		x
 	}
 	# fertilizer product quantity; 0 if not recorded in the file at all
 	qty <- function(x, v) {
-		q <- num(r[[v]])
-		if (is.null(q) || all(is.na(q))) q <- rep(0, nrow(r))
+		q <- num(x[[v]])
+		if (is.null(q) || all(is.na(q))) q <- rep(0, nrow(x))
 		q
 	}
 	key <- function(x, season=TRUE) {
-		k <- paste(num(r$HHNO), num(r$VIL), num(r$PNO))
-		if (season) k <- paste(k, num(r$SEASON))
+		k <- paste(num(x$HHNO), num(x$VIL), num(x$PNO))
+		if (season) k <- paste(k, num(x$SEASON))
 		k
 	}
 
@@ -151,7 +151,13 @@ The study is based on village full enumeration field surveys.  The main purpose 
 	crops <- c("rice", "watermelon", "asparagus bean", "mung bean", "garlic", "onion", "eggplant", "vegetable", "groundnut", "sweetpotato", "tomato", "okra", NA, "maize", "chili pepper", "cowpea", "bitter gourd", "squash", "jute mallow", "fruit", NA, "luffa", "cucumber", NA, "bottle gourd", "tobacco")
 	clab <- c("rice", "watermelon", "string beans", "mungbean", "garlic", "onion", "eggplant", "vegetable (not specified)", "peanuts", "camote", "tomatoes", "okra", "milled rice", "corn", "pepper/chili", "cowpea", "ampalaya", "squash", "saluyot/kenaf", "fruits", "tomatoes & stringbeans", "patola", "cucumber", NA, "gourd (upo)", "tobacco")
 	vars <- c("1"="IR64", "2"="IR66", "3"="IR70", "4"="IR72", "5"="IR74", "6"="R10", "7"="PSBRC2", "8"="PSBRC4", "9"="R4", "10"="C3", "11"="IR64 & 90 days", "12"="IR32 & IR64", "13"="IR36 & IR64", "14"="IR10 & IR64", "15"="R10 & IR64", "16"="IR42 & IR64", "17"="IR60 & IR64", "18"="IR36", "19"="IR42", "20"="CE3", "21"="IR32", "22"="Malagkit & IR64", "23"="C2 & IR64", "24"="California rice", "25"="IR60", "26"="IR64 & C3", "27"="C438", "28"="IR76", "29"="IR10", "30"="Milagrosa", "31"="San Isidro", "32"="Sinandomeng", "33"="841", "34"="1-3-8", "35"="IR68", "36"="IR38", "37"="Dinurado", "38"="Minindanao", "39"="IR58", "40"="206 variety", "41"="Kinarbao putot", "42"="IR29 & IR36", "43"="IR62", "44"="IR79", "45"="NOVA", "46"="IR5 & IR58", "47"="IR5", "48"="Mordagol/IR36/IR64", "49"="Kinarbao/IR64/IR10/K-5", "50"="Bordagol", "51"="Kinarbao/IR64", "52"="IR72 & IR74", "53"="IR79 & IR36", "54"="IR36 & IR74", "55"="C2 & C3", "57"="R10, Milagrosa, 841", "58"="Sangmaria", "59"="IR36 & Native", "60"="IR60 & RC10", "61"="C22", "62"="RC10", "63"="IR76/Malagkit", "64"="B9-2", "65"="C2 & C1", "66"="IR64 & Malagkit", "67"="IR69", "68"="747", "69"="IR36 & R10", "70"="RC12", "72"="IR94", "73"="Line 96", "74"="RC4", "75"="Fancy rice", "76"="IR64 & IR78", "77"="IR78", "78"="C10", "79"="RC10 & Menaria", "80"="RC2", "81"="RC6, Malagkit & IR64", "82"="RC8 & IR64", "83"="IR46", "84"="IR64 & IR8", "85"="R60", "86"="IR64, IR60 & Malagkit", "87"="R38", "88"="RI10", "89"="C14", "90"="C40", "91"="R40", "92"="Binicol", "93"="RC10 & Kinarbao putot", "94"="IR64 & RC12", "95"="RC20", "96"="RC8", "97"="IR64 & RC20", "98"="IR20", "99"="RC14", "100"="R14", "101"="IR29", "102"="Malagkit", "103"="RC8, RC20 & IR64", "104"="IR64 & RC4", "105"="92 varieties", "106"="C10 & RC20", "107"="IR60 & RC20", "108"="IR60 & RC14", "109"="IR64 & RC14", "110"="RC14 & RC12", "111"="RC10 & RC14", "112"="RC18 & RC14", "113"="IR42 & RC14", "114"="RC18", "115"="RC14 & Bordagol", "116"="RC16", "117"="RC30", "118"="RC6", "119"="IR14", "120"="RC28", "121"="IR28/R28", "122"="Super Intan", "125"="Ratoon", "126"="IR6", "127"="IR50", "128"="IR30", "129"="IR80")
-	villages <- data.frame(location=c("Tubuan", "Gabaldon", "Signe", "Pandan"), adm2=c("Pila", "Mu\u00f1oz", "Igbaras", "Dingle"), adm1=c("Laguna", "Nueva Ecija", "Iloilo", "Iloilo"))
+	villages <- data.frame(
+		location=c("Tubuan", "Gabaldon", "Signe", "Pandan"),
+		adm2=c("Pila", "Mu\u00f1oz", "Igbaras", "Dingle"),
+		adm1=c("Laguna", "Nueva Ecija", "Iloilo", "Iloilo"),
+		latitude=c(14.2333, 15.7167, 10.7167, 10.9964),
+		longitude=c(121.3667, 120.9000, 122.2667, 122.6717)
+	)
 	vil <- num(lu$VIL)
 	season <- num(lu$SEASON)
 	code <- num(lu$CROP)
@@ -164,8 +170,8 @@ The study is based on village full enumeration field surveys.  The main purpose 
 	ap <- qty(ci, "AMOPHOS")
 	cp <- qty(ci, "COMP")
 	dap <- qty(ci, "18460")
-	ft <- cbind(ifelse(urea > 0, "urea", NA), ifelse(as > 0, "DAS", NA), ifelse(ap > 0, "16-20-0", NA), ifelse(cp > 0, "NPK", NA), ifelse(dap > 0, "DAP", NA))
-	ftype <- apply(ft, 1, function(x) if (all(is.na(r))) NA else paste(r[!is.na(r)], collapse="; "))
+	ft <- cbind(ifelse(urea > 0, "urea", NA), ifelse(as > 0, "DAS", NA), ifelse(ap > 0, "NP", NA), ifelse(cp > 0, "NPK", NA), ifelse(dap > 0, "DAP", NA))
+	ftype <- apply(ft, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
 	ftype[!is.na(urea + as + ap + cp + dap) & (urea + as + ap + cp + dap) == 0] <- "none"
 	ftype[is.na(ic)] <- NA
 	org <- num(ci$ORGANIC)
@@ -173,7 +179,9 @@ The study is based on village full enumeration field surveys.  The main purpose 
 	mdays <- sapply(lb[, md], num)
 	labour <- ifelse(rowSums(!is.na(mdays)) > 0, rowSums(mdays, na.rm=TRUE), NA)
 
-	irrs <- c("no source", "government project", "community project", "private investment", "rainfed", "rainfed and pump", "river", "natural spring", "non-functional NIA")[match(num(op$IRRIGS), 1:9)]
+	irg_code <- num(op$IRRIGS)
+	irrs <- c("none", "canal", "canal", "unknown", "none", "unknown", "river", "spring", "none")[match(irg_code, 1:9)]
+	irrl <- c(NA, "gravity", "gravity", NA, NA, "motorized pump", NA, NA, NA)[match(irg_code, 1:9)]
 
 	d <- data.frame(
 		hhid = paste(vil, num(lu$HHNO), sep="_"),
@@ -205,12 +213,16 @@ The study is based on village full enumeration field surveys.  The main purpose 
 		topography_ = c("upland", "lowland not flooded", "lowland flooded up to 30 cm", "lowland flooded 30 to 100 cm", "lowland flooded above 100 cm", "upland and lowland not flooded", "lowland not flooded and flooded up to 30 cm")[match(num(op$TOPOG), 1:7)],
 		soil_quality = c("very good", "good", "average", "poor", "acidic")[match(num(op$SOILQ), 1:5)],
 		irrigation_source = irrs,
-		irrigated = ifelse(is.na(irrs), NA, !(irrs %in% c("no source", "rainfed", "non-functional NIA"))),
+		irrigation_lifting = irrl,
+		irrigated = ifelse(is.na(irrs), NA, irrs != "none"),
 		land_tenure = c("share cropping", "leasehold (fixed rent after harvest)", "fixed rent before harvest", "CLT (owned)", "mortgaged", "owner", "borrowed", "communal", "homestead", "share tenant and leasehold", "owner and leasehold", "mortgaged and fixed rent", "owned and mortgaged", "owned and share tenant", "owned (bakod)", "landowner")[match(num(op$TENURE), 1:16)],
 		currency = "PHP",
 		location = villages$location[vil],
 		adm2 = villages$adm2[vil],
 		adm1 = villages$adm1[vil],
+		latitude = villages$latitude[vil],
+		longitude = villages$longitude[vil],
+		geo_from_source = FALSE,
 		country = "Philippines"
 	)
 	d <- d[!is.na(code), ]
@@ -219,10 +231,12 @@ The study is based on village full enumeration field surveys.  The main purpose 
 	d$yield_part[d$crop %in% c("mung bean", "cowpea")] <- "seed"
 	d$yield_part[d$crop %in% "groundnut"] <- "pod"
 	d$yield_part[d$crop %in% "sweetpotato"] <- "roots"
+	d$yield_part[d$crop %in% c("garlic", "onion")] <- "bulbs"
 	d$yield_part[d$crop %in% c("watermelon", "asparagus bean", "eggplant", "tomato", "okra", "chili pepper", "bitter gourd", "squash", "luffa", "cucumber", "bottle gourd", "fruit")] <- "fruit"
 	d$yield_part[d$crop %in% c("jute mallow", "tobacco")] <- "leaves"
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

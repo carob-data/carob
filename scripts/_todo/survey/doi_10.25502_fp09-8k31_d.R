@@ -53,7 +53,7 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		notes = "Implemented with NCBA CLUSA",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -153,7 +153,9 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 		fertilizer_amount_ = NA_real_
 	)
 	d2$harvest_kg <- kg_from(d2$harvest_reported_, d2$harvest_unit_)
-	d2$yield_part <- ifelse(d2$crop == "pearl millet", "grain", ifelse(d2$crop %in% c("soybean", "common bean", "bambara groundnut"), "seed", NA_character_))
+	d2$yield_part <- ifelse(d2$crop %in% c("pearl millet", "rice", "sorghum"), "grain",
+		ifelse(d2$crop %in% c("soybean", "common bean", "bambara groundnut", "cashew", "groundnut"), "seed",
+		ifelse(d2$crop == "cotton", "lint", NA_character_)))
 
 	d <- rbind(d1, d2)
 	d$yield <- ifelse(!is.na(d$field_size) & d$field_size > 0, d$harvest_kg / d$field_size, NA_real_)
@@ -165,6 +167,17 @@ The Sofala Province Water, Energy, and Food Security (SWEF) project and Climate 
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
+	miss_xy <- is.na(d$longitude) | is.na(d$latitude)
+	if (any(miss_xy)) {
+		sgeo <- data.frame(
+			adm2 = c("Buzi", "Caia", "Machanga"),
+			lat = c(-19.883, -17.833, -20.967),
+			lon = c(34.600, 35.333, 35.017)
+		)
+		im <- match(d$adm2[miss_xy], sgeo$adm2)
+		d$latitude[miss_xy] <- sgeo$lat[im]
+		d$longitude[miss_xy] <- sgeo$lon[im]
+	}
 	d$trial_id <- d$hhid
 
 	carobiner::write_files(path, meta, d)

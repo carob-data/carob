@@ -45,7 +45,7 @@ Household wheat yield in Bangladesh before and after the 2016 wheat blast outbre
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
 		carob_effort = 0.4
 	)
@@ -68,7 +68,7 @@ Household wheat yield in Bangladesh before and after the 2016 wheat blast outbre
 	d <- data.frame(
 		country = "Bangladesh",
 		adm1 = nice(r$divi),
-		adm2 = as.character(r$dist),
+		adm2 = trimws(as.character(r$dist)),
 		location = nice(r$upa),
 		hhid = as.character(r$id),
 		trial_id = paste(r$id, r$year),
@@ -76,12 +76,36 @@ Household wheat yield in Bangladesh before and after the 2016 wheat blast outbre
 		yield_part = "grain",
 		yield = as.numeric(r$yield),
 		field_size = as.numeric(r$wheha),
-		season_year_ = as.integer(r$year),
+		planting_date = as.character(r$year),
 		blast_affected_ = as.integer(r$affected),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	d$adm2[d$adm2 == "B.Baria"] <- "Brahmanbaria"
+	d$adm2[d$adm2 == "ChapaiNG"] <- "Chapai Nawabganj"
+	d$adm2[d$adm2 == "Kusthia"] <- "Kushtia"
+	d$adm2[d$adm2 == "Mymemsingh"] <- "Mymensingh"
+	d$adm2[d$adm2 == "Sirajgonj"] <- "Sirajganj"
+
+	geo <- data.frame(
+		adm2 = c("Brahmanbaria", "Bandarban", "Bhola", "Chandpur", "Chapai Nawabganj", "Chuadanga",
+			"Comilla", "Faridpur", "Gazipur", "Gopalganj", "Habiganj", "Jamalpur", "Jessore",
+			"Jhalokati", "Jhenaidah", "Kishoreganj", "Kushtia", "Madaripur", "Magura", "Manikganj",
+			"Meherpur", "Mymensingh", "Naogaon", "Narail", "Natore", "Noakhali", "Pabna", "Rajbari",
+			"Rajshahi", "Rangamati", "Satkhira", "Shariatpur", "Sirajganj", "Tangail"),
+		latitude = c(23.957, 22.195, 22.686, 23.233, 24.596, 23.640,
+			23.461, 23.607, 23.999, 23.005, 24.375, 24.937, 23.166,
+			22.641, 23.545, 24.445, 23.901, 23.164, 23.487, 23.864,
+			23.762, 24.747, 24.794, 23.173, 24.421, 22.872, 24.006, 23.757,
+			24.374, 22.653, 22.719, 23.242, 24.453, 24.251),
+		longitude = c(91.112, 92.218, 90.648, 90.671, 88.277, 88.842,
+			91.181, 89.843, 90.420, 89.827, 91.416, 89.938, 89.208,
+			90.199, 89.153, 90.777, 89.120, 90.190, 89.420, 90.005,
+			88.632, 90.420, 88.932, 89.513, 88.986, 91.097, 89.237, 89.644,
+			88.604, 92.178, 89.071, 90.435, 89.701, 89.917)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

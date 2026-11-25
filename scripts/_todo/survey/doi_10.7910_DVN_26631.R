@@ -30,7 +30,6 @@
 # rice_type_: japonica, indica or hybrid rice
 # topography_: lowland flat, upland flat, upland sloping, pond
 # geography_: plain or hill
-# soil_type_: red soil or others
 # fertilizer_product_: total fertilizer product applied (kg/ha)
 # N_fertilizer_product_, P_fertilizer_product_, K_fertilizer_product_: nitrogen, phosphate and potash fertilizer product applied (kg/ha)
 # fertilizer_times_: number of fertilizer applications
@@ -66,7 +65,7 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.6
 	)
@@ -80,22 +79,22 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 	}
 	# numbers stored as text, with some free text entries
 	num <- function(x) {
-		r2 <- trimws(as.character(r2))
-		r2[!grepl("^[0-9]*\\.?[0-9]+$", r2)] <- NA
-		as.numeric(r2)
+		x <- trimws(as.character(x))
+		x[!grepl("^[0-9]*\\.?[0-9]+$", x)] <- NA
+		as.numeric(x)
 	}
 	join <- function(x, y) {
-		if (nrow(r2) == nrow(y) && all(r2$HHNO == y$HHNO)) {
-			cbind(r2, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
+		if (nrow(x) == nrow(y) && all(x$HHNO == y$HHNO)) {
+			cbind(x, y[, !(names(y) %in% c("HHNO", "VLAGE"))])
 		} else {
 			y <- y[!duplicated(paste(y$VLAGE, y$HHNO)), ]
-			merge(r2, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
+			merge(x, y, by=c("VLAGE", "HHNO"), all.x=TRUE)
 		}
 	}
 	prefix <- function(x, p) {
-		i <- !(names(r2) %in% c("HHNO", "VLAGE"))
-		names(r2)[i] <- paste0(p, names(r2)[i])
-		r2
+		i <- !(names(x) %in% c("HHNO", "VLAGE"))
+		names(x)[i] <- paste0(p, names(x)[i])
+		x
 	}
 
 	mu <- 1/15
@@ -178,7 +177,7 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 			yield = num(r1[[paste0("PR", s$sfx)]]) / ha,
 			topography_ = c("lowland flat", "upland flat", "upland sloping", "pond")[match(num(r1$TOPOG), 1:4)],
 			geography_ = c("plain", "hill")[match(num(r1$GEOG), 1:2)],
-			soil_type_ = c("red soil", "others")[match(num(r1$TSOIL), 1:2)],
+			soil_type = c("red soil", "others")[match(num(r1$TSOIL), 1:2)],
 			soil_quality = c("good", "average", "poor")[match(num(r1$QSOIL), 1:3)],
 			irrigated = c(TRUE, FALSE)[match(num(r1$IRIG), 1:2)]
 		)

@@ -84,7 +84,7 @@ Varietal tracking and impact assessment (Phase II) under the Stress-tolerant Ric
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.6
 	)
@@ -92,8 +92,9 @@ Varietal tracking and impact assessment (Phase II) under the Stress-tolerant Ric
 	rd <- function(name) carobiner::read.excel(ff[basename(ff) == name], guess_max=100000)
 
 	tenure <- c("own", "rented-in fixed rate", "rented-in sharecropping", "rented-out fixed rate", "rented-out sharecropping", "public land", "other")
-	irsrc <- c("0"="none", "1"="electric shallow tube well", "2"="electric deep tube well", "3"="diesel shallow tube well",
-		"4"="diesel deep tube well", "5"="canal", "90"="other")
+	irsrc <- c("0"="none", "1"="groundwater", "2"="groundwater", "3"="groundwater",
+		"4"="groundwater", "5"="canal", "90"="unknown")
+	irlift <- c("1"="electric pump", "2"="electric pump", "3"="diesel pump", "4"="diesel pump")
 	vtype <- c("traditional", "hybrid", "high-yielding", "submergence tolerant", "drought tolerant", "salinity tolerant", "other", NA)
 	pmeth <- c("1"="transplanting", "2"="direct seeding")
 
@@ -119,8 +120,8 @@ Varietal tracking and impact assessment (Phase II) under the Stress-tolerant Ric
 			field_id = paste(r$Parcel_ID, r$Plot_ID, sep="-"),
 			survey_month_ = substr(h$starting_time[j], 4, 10),
 			season = "kharif",
-			crop = c("1"="rice", "2"="maize", "3"="sugarcane", "4"="pigeon pea", "5"="fodder")[as.character(r$crop_id)],
-			intercropped_ = r$intercropped == "Y",
+			crop = c("1"="rice", "2"="maize", "3"="sugarcane", "4"="pigeon pea", "5"="forage crop")[as.character(r$crop_id)],
+			intercropped = r$intercropped == "Y",
 			variety = variety,
 			variety_type = vtype[r$variety_type],
 			planting_method = pmeth[as.character(r$planting_method)],
@@ -134,7 +135,8 @@ Varietal tracking and impact assessment (Phase II) under the Stress-tolerant Ric
 			drought_damage_ = r$damage_drought,
 			land_tenure = tenure[p$tenure[i]],
 			landscape_position = c("lowland", "medium land", "upland")[p$land_type[i]],
-			irrigation_source = irsrc[as.character(p$irrigation_source[i])],
+			irrigation_source = unname(irsrc[as.character(p$irrigation_source[i])]),
+			irrigation_lifting = unname(irlift[as.character(p$irrigation_source[i])]),
 			irrigated_percent_ = p$irrigation_percent[i]
 		)
 	}
@@ -179,15 +181,27 @@ Varietal tracking and impact assessment (Phase II) under the Stress-tolerant Ric
 		submerged_ = c(TRUE, FALSE)[r$yes_submerged],
 		submergence_damage_ = r$damaged_submergence,
 		land_tenure = c(tenure[1:3], "rented-out fixed rate", "rented-out sharecropping", "public land", "mortgaged in")[r$tenure],
-		irrigation_source = irsrc[as.character(r$irrigation_source)]
+		irrigation_source = unname(irsrc[as.character(r$irrigation_source)]),
+		irrigation_lifting = unname(irlift[as.character(r$irrigation_source)])
 	)
 
 	d <- carobiner::bindr(d1, d2, d3)
 	d$field_size[d$field_size %in% 0] <- NA
 	d$yield[is.na(d$field_size)] <- NA
 	d$irrigated <- ifelse(is.na(d$irrigation_source), NA, d$irrigation_source != "none")
-	d$irrigation_source[d$irrigation_source %in% "none"] <- NA
-	d$yield_part <- unname(c(rice="grain", maize="grain", "pigeon pea"="grain", sugarcane="stems")[d$crop])
+	d$yield_part <- unname(c(rice="grain", maize="grain", "pigeon pea"="seed", sugarcane="stems", "forage crop"="aboveground biomass")[d$crop])
+	geo <- data.frame(
+		adm2 = c("Puri", "Khurda", "Gorakhpur", "Maharajganj", "Siddharthnagar", "Basti", "Sant Kabir Nagar", "Mau", "Kurigram", "Rangpur", "Lalmonirhat"),
+		latitude = c(19.81, 20.18, 26.76, 27.19, 27.28, 26.81, 26.78, 25.94, 25.81, 25.75, 25.92),
+		longitude = c(85.83, 85.62, 83.37, 83.50, 83.09, 82.76, 83.06, 83.56, 89.65, 89.25, 89.45)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$latitude[is.na(d$latitude) & d$adm1 %in% "Odisha"] <- 20.95
+	d$longitude[is.na(d$longitude) & d$adm1 %in% "Odisha"] <- 85.10
+	d$latitude[is.na(d$latitude) & d$adm1 %in% "Uttar Pradesh"] <- 26.85
+	d$longitude[is.na(d$longitude) & d$adm1 %in% "Uttar Pradesh"] <- 80.95
+	d$latitude[is.na(d$latitude) & d$country %in% "Bangladesh"] <- 25.80
+	d$longitude[is.na(d$longitude) & d$country %in% "Bangladesh"] <- 89.45
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE

@@ -44,7 +44,7 @@ Vitamin A deficiency (VAD) is a widespread health problem among young children a
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 8,
 		carob_effort = 0.4
 	)
@@ -52,15 +52,18 @@ Vitamin A deficiency (VAD) is a widespread health problem among young children a
 	f <- ff[basename(ff) == "SUSTAIN_Baseline_HHSurvey2015_HH_level_v11.dta"]
 	r <- haven::read_dta(f)
 	sec <- carobiner::fix_name(as.character(haven::as_factor(r$scode)), "title")
+	adm1 <- carobiner::fix_name(as.character(haven::as_factor(r$pcode)), "title")
+	adm1 <- c("Eastern" = "Iburasirazuba", "Northern" = "Amajyaruguru", "Southern" = "Amajyepfo")[adm1]
 
 	d <- data.frame(
 		trial_id = "SUSTAIN_Rwanda_2015",
 		hhid = trimws(as.character(r$hhid)),
 		country = "Rwanda",
-		adm1 = carobiner::fix_name(as.character(haven::as_factor(r$pcode)), "title"),
+		adm1 = unname(adm1),
 		adm2 = carobiner::fix_name(as.character(haven::as_factor(r$dcode)), "title"),
 		adm3 = sec,
 		location = sec,
+		crop = "sweetpotato",
 		sex = tolower(as.character(haven::as_factor(r$a18))),
 		survey_group_ = trimws(as.character(haven::as_factor(r$tr_group))),
 		date = as.character(r$surveydate),
@@ -68,6 +71,14 @@ Vitamin A deficiency (VAD) is a widespread health problem among young children a
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Gakenke", "Gicumbi", "Kamonyi", "Kayonza", "Muhanga", "Ruhango", "Rulindo", "Rwamagana"),
+		latitude = c(-1.7000, -1.5764, -2.0167, -1.8500, -2.0833, -2.2333, -1.7500, -1.9487),
+		longitude = c(29.7833, 30.0675, 29.9000, 30.6500, 29.7500, 29.7833, 29.9833, 30.4347)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

@@ -43,7 +43,7 @@ Datasets for: Monitoring Data for Viable Sweetpotato Technologies in Africa (VIS
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.4
 	)
@@ -63,13 +63,15 @@ Datasets for: Monitoring Data for Viable Sweetpotato Technologies in Africa (VIS
 	}
 	sex <- tolower(txt(r$sex))
 	acre <- 0.4046863
+	adm2 <- gsub("\u2019", "'", carobiner::fix_name(txt(r$district_name), "title"))
+	adm2[adm2 == "Waging'ombe"] <- "Wanging'ombe"
 
 	d <- data.frame(
 		trial_id = "VISTA_Tanzania_DVM_2016",
 		hhid = paste(txt(r$village_code), txt(r$sheet), sep = "_"),
 		country = "Tanzania",
 		adm1 = carobiner::fix_name(txt(r$region_name), "title"),
-		adm2 = carobiner::fix_name(txt(r$district_name), "title"),
+		adm2 = adm2,
 		adm3 = carobiner::fix_name(txt(r$ward_name), "title"),
 		location = carobiner::fix_name(txt(r$village_name), "title"),
 		crop = "sweetpotato",
@@ -82,6 +84,14 @@ Datasets for: Monitoring Data for Viable Sweetpotato Technologies in Africa (VIS
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Chunya", "Gairo", "Iringa", "Mbozi", "Mufindi", "Ulanga", "Wanging'ombe"),
+		latitude = c(-8.5333, -6.1333, -7.7700, -9.1000, -8.5900, -8.6833, -9.0500),
+		longitude = c(33.4167, 36.8667, 35.6900, 32.9333, 35.2900, 36.7167, 34.6333)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

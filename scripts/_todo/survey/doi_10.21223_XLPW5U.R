@@ -43,7 +43,7 @@ This dataset included information on 83 farmers' agroecological knowledge in  Ph
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -72,6 +72,7 @@ This dataset included information on 83 farmers' agroecological knowledge in  Ph
 	d <- data.frame(
 		trial_id = "CA3561_agroecology",
 		hhid = trimws(as.character(r$NUM)),
+		country = "Vietnam",
 		adm1 = unname(prov[as.character(r$PROVINCE)]),
 		adm2 = trimws(as.character(r$DISTRICT)),
 		adm3 = trimws(as.character(r$COMMUNE)),
@@ -91,6 +92,12 @@ This dataset included information on 83 farmers' agroecological knowledge in  Ph
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm1 = c("Phu Tho", "Phu Yen", "Tay Ninh"),
+		latitude = c(21.300, 13.100, 11.350),
+		longitude = c(105.230, 109.100, 106.100)
+	)
+	d <- merge(d, geo, by = "adm1", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

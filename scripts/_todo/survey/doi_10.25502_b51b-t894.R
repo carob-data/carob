@@ -49,7 +49,7 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.5
 	)
@@ -65,9 +65,8 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 			if (isTRUE(can[i] == 1)) lab <- c(lab, "CAN")
 			if (isTRUE(dcomp[i] == 1)) lab <- c(lab, "D-compound")
 			if (isTRUE(urea[i] == 1)) lab <- c(lab, "urea")
-			if (isTRUE(mix[i] == 1)) lab <- c(lab, "soymix")
-			if (isTRUE(other[i] == 1)) lab <- c(lab, "other")
-			if (length(lab)) out[i] <- paste(lab, collapse=";")
+			if (isTRUE(mix[i] == 1) || isTRUE(other[i] == 1)) lab <- c(lab, "unknown")
+			if (length(lab)) out[i] <- paste(unique(lab), collapse=";")
 		}
 		out
 	}

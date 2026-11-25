@@ -96,21 +96,53 @@ The Jump-starting project had the goal of sustainable and inclusive market-drive
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 15,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 20,
 		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "Module A - Household Identication.dta"]
 	r <- carobiner::read.dta(f)
 	key <- function(col) trimws(as.character(r[[col]]))
+	adm1 <- carobiner::fix_name(key("a01"), "title")
+	adm2 <- carobiner::fix_name(key("a02"), "title")
+	loc <- carobiner::fix_name(key("a03"), "title")
+	st <- toupper(key("a07"))
+	sex <- rep(NA_character_, length(st))
+	sex[st == "MAN"] <- "male"
+	sex[grepl("^WOMAN", st)] <- "female"
+
 	d <- data.frame(
 		hhid = paste(key("a01"), key("a02"), key("a03"), key("a04"), key("a05"), key("a06"), sep="-"),
 		country = trimws(as.character(r$country_code)),
+		adm1 = adm1,
+		adm2 = adm2,
+		location = loc,
+		crop = "sweetpotato",
+		sex = sex,
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "Ghana_OFSP_baseline"
+		trial_id = "Ghana_OFSP_baseline",
+		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Kumbungu", "Kasena Nankana", "Garu-Tempani", "Binduri", "Tolon",
+		         "Bawku Municipal", "Nabdam", "Bolgatanga", "Bawku West", "Pusiga"),
+		latitude = c(9.5667, 10.8950, 10.8542, 10.9717, 9.4333,
+		             11.0616, 10.7667, 10.7856, 10.9167, 11.0833),
+		longitude = c(-0.9500, -1.0930, -0.1806, -0.3083, -1.0667,
+		              -0.2417, -0.6833, -0.8514, -0.5167, -0.1500)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	na_g <- is.na(d$latitude)
+	if (any(na_g)) {
+		d$latitude[na_g & d$adm1 == "Northern"] <- 9.4034
+		d$longitude[na_g & d$adm1 == "Northern"] <- -0.8424
+		d$latitude[na_g & d$adm1 == "Upper East"] <- 10.7856
+		d$longitude[na_g & d$adm1 == "Upper East"] <- -0.8514
+	}
 	carobiner::write_files(path, meta, d)
 }

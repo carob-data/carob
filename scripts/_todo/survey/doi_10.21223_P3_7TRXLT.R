@@ -62,7 +62,7 @@ Dataset for: Nutritious Orange-Fleshed Sweetpotato (OFSP) For Niassa - Endline H
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.45
 	)
@@ -104,6 +104,14 @@ Dataset for: Nutritious Orange-Fleshed Sweetpotato (OFSP) For Niassa - Endline H
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Chimbunila", "Cuamba", "Lago", "Lichinga", "Mandimba", "Mecanhelas", "Muembe", "Sanga"),
+		latitude = c(-13.4500, -14.8031, -12.7167, -13.3128, -14.3525, -15.1900, -13.0500, -12.4000),
+		longitude = c(35.1500, 36.5372, 34.8167, 35.2406, 35.6506, 35.9300, 35.6333, 35.3500)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

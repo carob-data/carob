@@ -49,7 +49,7 @@ Roots and tuber crops (RTCs) play an important role in diverse Asian agri-food s
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.3
 	)
@@ -69,6 +69,7 @@ Roots and tuber crops (RTCs) play an important role in diverse Asian agri-food s
 	d <- data.frame(
 		hhid = trimws(as.character(r[["Household ID"]])),
 		country = "Bangladesh",
+		adm1 = "Khulna",
 		adm2 = trimws(as.character(r[["District / province"]])),
 		adm3 = trimws(as.character(r[["Upazilla / Subdistrict"]])),
 		location = trimws(as.character(r$Village)),
@@ -76,8 +77,11 @@ Roots and tuber crops (RTCs) play an important role in diverse Asian agri-food s
 		date = date,
 		on_farm = TRUE,
 		is_survey = TRUE,
+		geo_from_source = FALSE,
 		irrigated = NA,
 		trial_id = "Bangladesh_potato_sweetpotato"
 	)
+	d$latitude <- ifelse(d$adm2 == "Khulna", 22.846, ifelse(d$adm2 == "Satkhira", 22.719, NA_real_))
+	d$longitude <- ifelse(d$adm2 == "Khulna", 89.540, ifelse(d$adm2 == "Satkhira", 89.071, NA_real_))
 	carobiner::write_files(path, meta, d)
 }

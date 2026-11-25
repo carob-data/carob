@@ -39,7 +39,7 @@ Plot crops and area from the 2023 carbon-farming household survey.
 		response_vars = "field_size",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.4
 	)
@@ -94,7 +94,7 @@ Plot crops and area from the 2023 carbon-farming household survey.
 			crop = crop[ok],
 			variety = variety[ok],
 			field_size = ha[ok],
-			season_name_ = season,
+			season = season,
 			on_farm = TRUE,
 			is_survey = TRUE,
 			geo_from_source = TRUE

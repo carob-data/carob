@@ -44,7 +44,7 @@ Household crop area and production for aman, boro, and aus.
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -64,11 +64,12 @@ Household crop area and production for aman, boro, and aus.
 	}
 
 	specs <- data.frame(
-		crop = c("rice", "maize", "wheat", "lentil", "mung bean", "tomato", "potato", "onion", "garlic", "turmeric", "ginger", "cabbage", "coriander", "chili pepper", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin"),
-		part = c("grain", "grain", "grain", "seed", "seed", "fruit", "tubers", "tubers", "tubers", "rhizome", "rhizome", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed"),
+		crop = c("rice", "maize", "wheat", "lentil", "mung bean", "tomato", "potato", "onion", "garlic", "tumeric", "ginger", "cabbage", "coriander", "chili pepper", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin"),
+		part = c("grain", "grain", "grain", "seed", "seed", "fruit", "tubers", "bulbs", "bulbs", "rhizome", "rhizome", "leaves", "leaves", "fruit", "seed", "seed", "roots", "seed", "seed"),
 		stub = c("rice", "maize", "wheat", "lentil", "mungbean", "tomato", "potato", "onion", "garlic", "tumeric", "ginger", "cabbage", "coriander", "chili", "mustard", "groundnut", "sweetpotato", "sunflower", "cumin")
 	)
 	seasons <- c("aman", "boro", "aus")
+	smap <- c(aman="aman", boro="boro", aus="early wet")
 	nice <- function(x) {
 		x <- blank(x)
 		up <- !is.na(x) & x == toupper(x)
@@ -108,7 +109,7 @@ Household crop area and production for aman, boro, and aus.
 				yield_part = specs$part[i],
 				yield = kg[ok] / ha[ok],
 				field_size = ha[ok],
-				season_name_ = s,
+				season = unname(smap[s]),
 				on_farm = TRUE,
 				is_survey = TRUE,
 				geo_from_source = TRUE

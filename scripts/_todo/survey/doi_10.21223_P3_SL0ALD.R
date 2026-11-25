@@ -75,7 +75,7 @@ Relevant information on the challenges and opportunities of the project were con
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.6
 	)
@@ -97,20 +97,38 @@ Relevant information on the challenges and opportunities of the project were con
 	interview <- rep(NA_character_, nrow(r))
 	interview[dmy] <- as.character(as.Date(as.character(r$A16_DATE)[dmy], "%d/%m/%Y"))
 
+	hh <- as.character(num(r$A05HHID))
+	hh[is.na(hh)] <- paste0("Niassa_", which(is.na(hh)))
+	lat <- -(num(r$DEGREES) + (num(r$MINUTES) + num(r$D_MINTS) / 1000) / 60)
+	lon <- num(r$DEG_E) + (num(r$MIN_E) + num(r$D_M_E) / 1000) / 60
 	d <- data.frame(
 		country = "Mozambique",
 		adm1 = "Niassa",
 		adm2 = adm2,
-		hhid = as.character(num(r$A05HHID)),
-		latitude = -(num(r$DEGREES) + (num(r$MINUTES) + num(r$D_MINTS) / 1000) / 60),
-		longitude = num(r$DEG_E) + (num(r$MIN_E) + num(r$D_M_E) / 1000) / 60,
+		hhid = hh,
+		latitude = lat,
+		longitude = lon,
 		elevation = num(r$ELEVATION),
-		interview_date_ = interview
+		date = interview
 	)
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	# Replace wildly corrupted GPS outside Niassa province with district centroids
+	bad_xy <- is.na(d$latitude) | is.na(d$longitude) | d$latitude > -11.4 | d$latitude < -15.6 | d$longitude < 34.7 | d$longitude > 38.5
+	if (any(bad_xy)) {
+		ngeo <- data.frame(
+			adm2 = c("Chimbunila", "Cuamba", "Lago", "Lichinga-cidade", "Mandimba", "Mecanhelas", "Muembe", "Sanga"),
+			lat = c(-13.450, -14.803, -12.717, -13.313, -14.354, -15.172, -13.100, -12.400),
+			lon = c(35.300, 36.537, 34.850, 35.241, 35.650, 35.792, 35.600, 35.300)
+		)
+		im <- match(d$adm2[bad_xy], ngeo$adm2)
+		d$latitude[bad_xy] <- ifelse(is.na(im), -13.313, ngeo$lat[im])
+		d$longitude[bad_xy] <- ifelse(is.na(im), 35.241, ngeo$lon[im])
+		d$geo_from_source[bad_xy] <- FALSE
+	}
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
 	d$trial_id <- d$hhid
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

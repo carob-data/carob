@@ -67,7 +67,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.35
 	)
@@ -85,13 +85,23 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		country = trimws(as.character(r$Country)),
 		adm1 = trimws(as.character(r$Region)),
 		location = trimws(as.character(r$Community)),
+		crop = "potato",
 		age = num(r$AgeHousHead),
 		sex = sex,
 		hh_size = num(r[["# Adult_Hous"]]) + num(r[["# Chil_Hous"]]),
 		on_farm = TRUE,
 		is_survey = TRUE,
 		irrigated = NA,
-		trial_id = "Huancavelica_households"
+		trial_id = "Huancavelica_households",
+		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("Castilla Pata", "Huachhua", "Pumaranra"),
+		latitude = c(-12.7833, -12.7500, -12.7667),
+		longitude = c(-74.8333, -74.6667, -74.8667)
+	)
+	m <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 	carobiner::write_files(path, meta, d)
 }

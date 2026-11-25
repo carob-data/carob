@@ -51,13 +51,25 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 30,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.3
 	)
 
 	f <- ff[basename(ff) == "05_Data-Agronomic-La Libertad-2021-2022-Productivity.xlsx"]
 	r <- carobiner::read.excel(f, sheet="5-Productivity")
+	f1 <- ff[basename(ff) == "01_Data-Agronomic-La Libertad-2021-2022-Farmers-Crop-Site.xlsx"]
+	r1 <- carobiner::read.excel(f1, sheet="1-Farmers-crops", na=c("", "NA"))
+	geo <- data.frame(
+		hhid = trimws(as.character(r1$ID)),
+		adm2 = carobiner::fix_name(trimws(as.character(r1$province)), "title"),
+		adm3 = carobiner::fix_name(trimws(as.character(r1$district)), "title"),
+		latitude = as.numeric(r1$latitude),
+		longitude = as.numeric(r1$longitude),
+		elevation = as.numeric(r1$elevation)
+	)
+	geo <- geo[!duplicated(geo$hhid), ]
+
 	crop <- tolower(trimws(as.character(r$crop_name)))
 	crop[crop %in% c("papa", "potato", "patata")] <- "potato"
 
@@ -68,7 +80,7 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		crop = crop,
 		previous_yield_ = {
 			y <- trimws(as.character(r$previous_year_yield))
-			y[!nzchar(y) | y %in% c("NA", ".")] <- NA_character_
+			y[!nzchar(y) | tolower(y) %in% c("na", ".", "mayor", "igual", "menor", "no_sembro")] <- NA_character_
 			as.numeric(y)
 		},
 		country = "Peru",
@@ -78,6 +90,8 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		is_survey = TRUE,
 		irrigated = NA
 	)
+	d <- merge(d, geo, by = "hhid", all.x = TRUE)
+	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 
 	carobiner::write_files(path, meta, d)
 }

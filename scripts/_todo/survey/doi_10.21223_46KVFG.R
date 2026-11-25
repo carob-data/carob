@@ -41,7 +41,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.3
 	)
@@ -83,6 +83,12 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 	d$location[!nzchar(d$location)] <- NA_character_
 	d$adm2[!nzchar(d$adm2)] <- NA_character_
 	d$adm3[!nzchar(d$adm3)] <- NA_character_
+	geo <- data.frame(
+		adm2 = c("Acobamba", "Castro Virreyna", "Huancavelica", "Huancayo", "Julcán", "Pataz", "Sanchez Carrión", "Tayacaja"),
+		latitude = c(-12.842, -13.283, -12.786, -12.065, -8.046, -7.737, -7.813, -12.400),
+		longitude = c(-74.572, -75.317, -74.976, -75.205, -78.487, -77.603, -78.048, -74.867)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

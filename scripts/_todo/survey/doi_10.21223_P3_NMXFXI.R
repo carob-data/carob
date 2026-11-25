@@ -37,7 +37,7 @@ El proyecto tuvo como objetivo general 'Mejorar la calidad de vida de pequeños 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
 		carob_effort = 0.3
 	)
@@ -65,6 +65,14 @@ El proyecto tuvo como objetivo general 'Mejorar la calidad de vida de pequeños 
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Huancayo", "Tayacaja"),
+		latitude = c(-12.0651, -12.3989),
+		longitude = c(-75.2049, -74.8686)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

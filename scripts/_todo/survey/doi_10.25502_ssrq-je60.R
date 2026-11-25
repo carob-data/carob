@@ -56,7 +56,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -90,9 +90,10 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 				else if (grepl("urea", sl)) lab <- c(lab, "urea")
 				else if (grepl("^tsp", sl)) lab <- c(lab, "TSP")
 				else if (grepl("^can$", sl)) lab <- c(lab, "CAN")
-				else if (grepl("mop", sl)) lab <- c(lab, "MOP")
+				else if (grepl("mop", sl)) lab <- c(lab, "KCl")
 				else if (grepl("sympal", sl)) lab <- c(lab, "sympal")
-				else if (grepl("d[- ]?comp", sl)) lab <- c(lab, "D-compound")
+				else if (grepl("d[- ]?comp|super[- ]?d", sl)) lab <- c(lab, "D-compound")
+				else if (grepl("nitrogen fertilizer", sl)) lab <- c(lab, "unknown")
 				else if (grepl("sulphate of ammonia|sulfate of ammonia|sulphate ammonia|sulphate of ammonium|sulphate ammonium", sl)) lab <- c(lab, "DAS")
 				else if (sl %in% c("farmers own source", "market", "plant spacing (75*5cm)")) next
 				else lab <- c(lab, trimws(s))
@@ -127,7 +128,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	map_inter_token <- function(p) {
 		p <- gsub("^with[[:space:]]+", "", trimws(p))
-		if (!nzchar(p) || p %in% c("na", "n/a", "n2africa")) return(NA_character_)
+		if (!nzchar(p) || p %in% c("na", "n/a", "n2africa", "chinese")) return(NA_character_)
 		if (grepl("jenguma|anidaso|soybeanm|^soy", p)) return("soybean")
 		if (grepl("groundnut", p)) return("groundnut")
 		if (grepl("cowpea", p)) return("cowpea")
@@ -173,6 +174,12 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	dist[dl == "chereponi" | dl == "cherepponi"] <- "Chereponi"
 	dist[dl == "nadowli"] <- "Nadowli"
 	dist[dl == "dowa"] <- "Dowa"
+	dist[dl %in% c("kn/e", "k/n/e")] <- "Kassena-Nankana East"
+
+	ctry <- trimws(r1$country)
+	# Fix 3 country typos where Ghana/Malawi districts were coded as Kenya
+	ctry[ctry == "Kenya" & dist == "Wa East"] <- "Ghana"
+	ctry[ctry == "Kenya" & dist == "Dowa"] <- "Malawi"
 
 	season <- trimws(as.character(r1$season))
 	plant <- ifelse(season %in% c("2010", "2011"), season, NA_character_)
@@ -180,7 +187,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	loc <- data.frame(
 		farm_id = r1$farm_id,
-		country = trimws(r1$country),
+		country = ctry,
 		adm2 = carobiner::fix_name(dist, "title"),
 		location = carobiner::fix_name(r1$village, "title"),
 		ward_ = trimws(r1$sector_ward),
@@ -196,7 +203,18 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d <- d[!is.na(d$crop) & !is.na(d$hhid) & !is.na(d$country), ]
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
+	d$geo_from_source <- FALSE
 	d$trial_id <- d$hhid
+
+	geo <- data.frame(
+		adm2 = c("Chereponi", "Karaga", "Bawku West", "Kassena-Nankana East", "Nadowli", "Wa East",
+			"Dowa", "Salima", "Dedza", "Lilongwe", "Ntcheu"),
+		latitude = c(10.138, 9.925, 10.917, 10.895, 10.371, 10.067,
+			-13.654, -13.780, -14.378, -13.983, -14.820),
+		longitude = c(0.283, -0.430, -0.517, -1.095, -2.660, -2.017,
+			33.938, 34.459, 34.333, 33.783, 34.636)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

@@ -92,7 +92,7 @@ Dataset for: Endline Survey: Jumpstarting Orange-fleshed Sweetpotato in West Afr
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.45
 	)
@@ -123,12 +123,14 @@ Dataset for: Endline Survey: Jumpstarting Orange-fleshed Sweetpotato in West Afr
 			as.integer(r$m02_08b),
 			as.integer(r$m02_08a)
 		))
+		adm2 <- carobiner::fix_name(place(r$admin2cd), "title")
+		adm2[adm2 == "Ifedlodun"] <- "Ifelodun"
 		data.frame(
 			trial_id = "OFSP_WestAfrica_endline_2017",
 			hhid = paste(country, txt(r$num_iid), sep = "_"),
 			country = country,
 			adm1 = carobiner::fix_name(place(r$admin1cd), "title"),
-			adm2 = carobiner::fix_name(place(r$admin2cd), "title"),
+			adm2 = adm2,
 			location = carobiner::fix_name(loc, "title"),
 			crop = "sweetpotato",
 			sex = tolower(txt(r$sex)),
@@ -146,6 +148,25 @@ Dataset for: Endline Survey: Jumpstarting Orange-fleshed Sweetpotato in West Afr
 	d1 <- one(haven::read_sav(f1), "Ghana")
 	d2 <- one(haven::read_sav(f2), "Nigeria")
 	d <- rbind(d1, d2)
+
+	geo <- data.frame(
+		country = c(rep("Ghana", 7), rep("Nigeria", 21)),
+		adm2 = c("Tolon", "Kumbungu", "Bolgatanga Municipal", "Bawku", "Binduri", "Pusiga", "Garu-Tempane",
+		         "Atakumosa East", "Atakumosa West", "Boluwaduro", "Boripe", "Ede North", "Ede South",
+		         "Egbedore", "Ejigbo", "Ife North", "Ifelodun", "Ila", "Irepodun", "Iwo", "Obokun",
+		         "Odo Otin", "Olaoluwa", "Oriade", "Orolu", "Osogbo", "Ilesa East", "Other"),
+		latitude = c(9.4333, 9.5667, 10.7856, 11.0616, 10.9717, 11.0833, 10.8542,
+		             7.5167, 7.5500, 7.9333, 7.9000, 7.7333, 7.6833,
+		             7.7667, 7.9000, 7.5500, 7.9167, 8.0167, 7.8667, 7.6333, 7.7667,
+		             8.0167, 7.7833, 7.6500, 7.8833, 7.7710, 7.6167, 7.5629),
+		longitude = c(-1.0667, -0.9500, -0.8514, -0.2417, -0.3083, -0.1500, -0.1806,
+		              4.7500, 4.6500, 4.7833, 4.6833, 4.4333, 4.4500,
+		              4.4500, 4.3167, 4.4167, 4.6500, 4.9000, 4.5000, 4.1833, 4.7167,
+		              4.6667, 4.2167, 4.8500, 4.4500, 4.5570, 4.7500, 4.5200)
+	)
+	m <- match(paste(d$country, d$adm2), paste(geo$country, geo$adm2))
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

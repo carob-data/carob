@@ -83,8 +83,8 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 40,
 		carob_effort = 0.6
 	)
 
@@ -103,10 +103,27 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 		x
 	}
 	irsrc <- function(x) {
-		x <- tolower(x)
-		x[grepl("no irrigation", x)] <- "none"
+		x <- tolower(trimws(as.character(x)))
 		x <- gsub("deisel", "diesel", gsub("sallow", "shallow", x))
-		x
+		src <- rep("unknown", length(x))
+		src[is.na(x) | !nzchar(x)] <- NA_character_
+		src[grepl("no irrigation|rainfed", x)] <- "none"
+		src[grepl("tube ?well|bore ?well|ground", x)] <- "groundwater"
+		src[grepl("canal", x)] <- "canal"
+		src[grepl("pond/river|river/pond|lift irrigation", x)] <- "surface water"
+		src[x == "pond"] <- "pond"
+		src[x == "river"] <- "river"
+		src[grepl("reservoir|tank", x)] <- "small reservoir"
+		src
+	}
+	irlift <- function(x) {
+		x <- tolower(trimws(as.character(x)))
+		x <- gsub("deisel", "diesel", gsub("sallow", "shallow", x))
+		lft <- rep(NA_character_, length(x))
+		lft[grepl("diesel", x)] <- "diesel pump"
+		lft[grepl("electric", x)] <- "electric pump"
+		lft[grepl("lift irrigation", x)] <- "motorized pump"
+		lft
 	}
 	yn <- function(x) c(Yes=TRUE, No=FALSE)[x]
 	variety <- function(v, nc) {
@@ -151,6 +168,7 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 			land_tenure = tenure(p$tenure[i]),
 			landscape_position = tolower(p$land_type[i]),
 			irrigation_source = irsrc(p$irrigation_source[i]),
+			irrigation_lifting = irlift(p$irrigation_source[i]),
 			irrigated_percent_ = p$irrigation_percent[i],
 			adm1 = if (country == "India") states[r$State_ID] else NA,
 			location = if (country == "Nepal") h$village_name[j] else NA
@@ -190,7 +208,8 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 			drought_damage_ = r$prot_dam,
 			land_tenure = tenure(p$tenure[i]),
 			landscape_position = tolower(p$land_type[i]),
-			irrigation_source = irsrc(r$irrigation_source)
+			irrigation_source = irsrc(r$irrigation_source),
+			irrigation_lifting = irlift(r$irrigation_source)
 		)
 	}
 	d3 <- bd(rd("BANGLADESH_2014_Aman_rice_BD.xls"), "aman", "2013")
@@ -207,6 +226,19 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		country = c(rep("India", 4), rep("Bangladesh", 7), "Nepal"),
+		adm1 = c("Bihar", "Odisha", "Uttar Pradesh", "West Bengal",
+		         "Barisal", "Chittagong", "Dhaka", "Khulna", "Rajshahi", "Rangpur", "Sylhet", NA),
+		latitude = c(25.0961, 20.9517, 26.8467, 22.9868,
+		             22.7010, 22.3569, 23.8103, 22.8456, 24.3745, 25.7439, 24.8949, 27.7172),
+		longitude = c(85.3131, 85.0985, 80.9462, 87.8550,
+		              90.3535, 91.7832, 90.4125, 89.5403, 88.6042, 89.2752, 91.8687, 85.3240)
+	)
+	m <- match(paste(d$country, d$adm1), paste(geo$country, geo$adm1))
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

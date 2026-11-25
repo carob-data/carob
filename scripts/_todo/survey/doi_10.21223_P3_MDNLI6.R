@@ -46,7 +46,7 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.8
 	)
@@ -121,12 +121,15 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 		longitude = -dms(d$P0Longitud),
 		elevation = num(d$P0Altitud)
 	)
+	bad_xy <- !is.na(d$latitude) & (d$latitude > 0 | d$latitude < -18.5 | is.na(d$longitude) | d$longitude > -68.5 | d$longitude < -81.5)
+	d$latitude[bad_xy] <- NA_real_
+	d$longitude[bad_xy] <- NA_real_
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
 	d$trial_id <- d$hhid
 	keep <- !is.na(d$variety) | !is.na(d$production_kg_)
-	d <- d[keep, ]
+	d <- unique(d[keep, ])
 
 	carobiner::write_files(path, meta, d)
 }

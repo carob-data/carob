@@ -55,7 +55,7 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -79,6 +79,9 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 	tenure <- c("owned", "CLT holder", "sharecropped", "fixed rent", "mortgaged")[tcode]
 	tenure[tcode %in% 6:7] <- tolower(r$TENURE[tcode %in% 6:7])
 	icode <- num(r$IRRCODE)
+	irsrc <- c("1"="canal", "2"="unknown", "3"="canal", "4"="groundwater", "5"="none")[as.character(icode)]
+	irsrc[is.na(irsrc) & !is.na(icode)] <- "unknown"
+	irlift <- c("1"="gravity", "2"="motorized pump", "3"="gravity", "4"="motorized pump")[as.character(icode)]
 
 	ssn <- function(seas, area, crop, var, prod, loss, kgcav, reason) {
 		kg <- num(r[[kgcav]])
@@ -95,7 +98,8 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 			landscape_position = c("upland", "medium land", "lowland", "rolling", "combined")[num(r$ELEV)],
 			land_tenure = tenure,
 			irrigated = ifelse(icode %in% 1:4, TRUE, ifelse(icode %in% 5, FALSE, NA)),
-			irrigation_source = r$SORSIRR,
+			irrigation_source = as.vector(irsrc),
+			irrigation_lifting = as.vector(irlift),
 			season = seas,
 			crop_ = toupper(r[[crop]]),
 			variety = r[[var]],
@@ -127,6 +131,17 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 	d$stress <- apply(st, 1, function(x) if (all(is.na(x))) NA else paste(x[!is.na(x)], collapse="; "))
 
 	d$country <- "Philippines"
+	# Fill missing adm1 from adm2 lookup where PCODE was missing
+	m2p <- unique(d[!is.na(d$adm1) & !is.na(d$adm2), c("adm2", "adm1")])
+	miss <- is.na(d$adm1) & !is.na(d$adm2)
+	d$adm1[miss] <- m2p$adm1[match(d$adm2[miss], m2p$adm2)]
+	geo <- data.frame(
+		adm1 = prov,
+		latitude = c(18.17, 15.90, 16.98, 16.33, 15.58, 14.95, 13.62, 13.17, 13.00, 9.83, 11.39, 11.00, 11.17, 9.85, 10.86, 7.84, 8.05, 7.20, 6.77),
+		longitude = c(120.71, 120.28, 121.81, 121.17, 120.97, 121.05, 123.33, 123.62, 121.30, 118.74, 122.63, 122.54, 122.07, 124.14, 124.89, 123.30, 125.09, 124.85, 125.33)
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$trial_id <- paste(d$hhid, d$season, sep="_")

@@ -47,7 +47,7 @@ Dataset for: Sweetpotato value chain actors in Mbale and Gulu markets, Uganda
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.35
 	)
@@ -86,6 +86,12 @@ Dataset for: Sweetpotato value chain actors in Mbale and Gulu markets, Uganda
 	d$is_survey <- TRUE
 	d$on_farm <- FALSE
 	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Bugiri", "Busia", "Gulu", "Kitgum", "Tororo", "Mbale"),
+		latitude = c(0.571, 0.466, 2.772, 3.278, 0.693, 1.082),
+		longitude = c(33.742, 34.092, 32.288, 32.887, 34.181, 34.175)
+	)
+	d <- merge(d, geo, by = "adm2", all.x = TRUE)
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

@@ -38,7 +38,7 @@ La metodología SEP, es una herramienta de gestión de proyectos que se aplica c
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.25
 	)
@@ -73,6 +73,14 @@ La metodología SEP, es una herramienta de gestión de proyectos que se aplica c
 	d$adm1 <- nice(d$adm1)
 	d$adm2 <- nice(d$adm2)
 	d$location <- nice(d$location)
+	geo <- data.frame(
+		adm2 = c("Granada", "Sibate"),
+		latitude = c(4.5186, 4.4914),
+		longitude = c(-74.3514, -74.2606)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

@@ -71,7 +71,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.5
 	)
@@ -85,7 +85,8 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 
 	vars <- c("1"="Mahsuri", "2"="Sarjoo-52", "3"="CR 1009", "4"="NDR 118", "5"="Indrasan", "6"="Pankaj", "7"="Pant-4", "8"="Pant-10", "9"="hybrid", "10"="Bisunparag", "11"="NDR 359", "12"="Sita", "13"="Saket-4", "14"="Sabitri", "15"="NDR 80/97", "16"="IR 64/49", "17"="Sarjoo-49", "18"="Usha", "19"="Prasad", "20"="Basmati", "21"="IR 8", 
 		"1001"="Didei", "1002"="Bindesari", "1003"="Belas", "1004"="Chaurasia", "1005"="Ramkajra", "1006"="Mala", "1007"="China-4", "1008"="Malesia", "1009"="Parhani", "1010"="Kanchchi Masuri", "1011"="Orissawa", "1012"="Kalanamak", "1013"="Sardar", "1014"="Chaini", "1015"="Jarhan", "1016"="Satha", "1017"="Saraji", "1018"="Dhaniya", "1019"="Nagendra")
-	crops <- c("rice", "mung bean", "horse gram", "vegetables", "wheat", "maize; pigeon pea; black gram", "berseem", "lentil; mustard", "sugarcane", "pointed gourd", "none", "mustard; flax", "lentil", "maize; black gram", "pigeon pea; maize; black gram; kenaf", "pigeon pea; maize; black gram; kenaf; pearl millet", "maize; pigeon pea", "maize; black gram; kenaf; pearl millet", "coriander", "barley", "pea; mustard", "maize; black gram; kenaf", "pigeon pea; black gram; pearl millet", "maize; black gram; kenaf; pearl millet", "maize", "onion; garlic", "maize; black gram; pearl millet", "pea", "maize; pearl millet; pigeon pea", "maize; pearl millet", "sorghum", "black gram", "wheat; mustard", "pigeon pea", "forage", "potato", "sugarcane; mustard", "maize", "maize", "pearl millet", "chickpea", "kenaf", "lentil; mustard; pea; flax", "lentil; mustard; flax", "pea; lentil; mustard", "cucumber", "pigeon pea")
+	# Code 10 ("pointed gourd" / parval) is not in terminag values_crop; set crop to NA
+	crops <- c("rice", "mung bean", "horse gram", "vegetable", "wheat", "maize; pigeon pea; black gram", "berseem clover", "lentil; mustard", "sugarcane", NA, "none", "mustard; flax", "lentil", "maize; black gram", "pigeon pea; maize; black gram; kenaf", "pigeon pea; maize; black gram; kenaf; pearl millet", "maize; pigeon pea", "maize; black gram; kenaf; pearl millet", "coriander", "barley", "pea; mustard", "maize; black gram; kenaf", "pigeon pea; black gram; pearl millet", "maize; black gram; kenaf; pearl millet", "maize", "onion; garlic", "maize; black gram; pearl millet", "pea", "maize; pearl millet; pigeon pea", "maize; pearl millet", "sorghum", "black gram", "wheat; mustard", "pigeon pea", "forage crop", "potato", "sugarcane; mustard", "maize", "maize", "pearl millet", "chickpea", "kenaf", "lentil; mustard; pea; flax", "lentil; mustard; flax", "pea; lentil; mustard", "cucumber", "pigeon pea")
 	villages <- c("Sukrauli", "Deoghatti", "Harakhpur", "Jugauli", "Khairati", "Hardee", "Bhulna", "Rajwal", "Morwan Sonadi", "Baswar", "Agnapara", "Nandwal", "Dhakherwa", "Sisaura", "Sarai Jagna", "Intaha", "Matera Kala", "Kotawa", "Chandela Kala", "Behara")
 	blocks <- c("Nautanwa", "Mithaura", "Phakharpur", "Shivpur")
 	z <- function(x) { x[x %in% 0] <- NA; x }
@@ -109,7 +110,9 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	r1$rec <- 1:nrow(r1)
 	expand <- which(ncrop > 1 & nprod == ncrop)
 	single <- setdiff(1:nrow(r1), expand)
-	r1$crop <- crop
+	# Unsplit intercrops use terminag "_" separator
+	r1$crop <- gsub("; ", "_", crop)
+	r1$crop_label_ <- ifelse(r1$Crop %in% 10, "pointed gourd", NA_character_)
 	r1$prod <- sapply(prod, \(p) if (length(p) == 1) p else NA)
 	r1$byprod <- sapply(byprod, \(p) if (length(p) == 1) p else NA)
 	rx <- r1[rep(expand, ncrop[expand]), ]
@@ -124,10 +127,11 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		adm2 = c("Mahrajganj", "Bahraich")[r1$District],
 		adm3 = blocks[r1$Block],
 		adm4 = villages[r1$Village],
-		season = c("pre-kharif", "kharif", "rabi", "zaid")[r1$Season],
+		season = c("early wet", "kharif", "rabi", "early wet")[r1$Season],
 		parcel = r1$Parcel,
 		plot_id = paste(r1$Parcel, r1$Plot, r1$Subplot, sep="-"),
 		crop = r1$crop,
+		crop_label_ = r1$crop_label_,
 		field_size = r1$Area,
 		yield = r1$prod * 100 / r1$Area,
 		fwy_residue = r1$byprod * 100 / r1$Area
@@ -145,7 +149,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 		farm_size_class_ = r2$Category,
 		topography_ = c("upland", "medium", "lowland")[r2$Topog],
 		soil_texture = c("clay", "sandy loam", "loam", "clay loam")[r2$Soiltype],
-		irrigation_source = c("canal", "deep tube well", "shallow tube well", "none")[z(r2$IrrigSrc)],
+		irrigation_source = c("canal", "groundwater", "groundwater", "none")[z(r2$IrrigSrc)],
 		land_tenure = c("owned", "sharecropped", "rented")[r2$Tenure]
 	)
 	lh$irrigated <- lh$irrigation_source != "none"
@@ -155,7 +159,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	## fertilizer
 	grades <- data.frame(
 		code = c(1:4, 8),
-		name = c("urea", "SSP", "DAP", "KCl", "Zn"),
+		name = c("urea", "SSP", "DAP", "KCl", "unknown"),
 		N = c(46, 0, 18, 0, NA),
 		P = c(0, 16, 46, 0, NA),
 		K = c(0, 0, 0, 58, NA)
@@ -172,7 +176,7 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	fl$N[fl$code == 8] <- fl$P[fl$code == 8] <- fl$K[fl$code == 8] <- 0
 	fn <- aggregate(fl[, c("N", "P", "K")], fl["rec"], sum)
 	ft <- aggregate(fl["name"], fl["rec"], \(x) paste(unique(x), collapse="; "))
-	fert <- data.frame(rec = r3$rec, farmer = r3$Farmer, parcel = r3$Parcel, season = c("pre-kharif", "kharif", "rabi", "zaid")[r3$Season],
+	fert <- data.frame(rec = r3$rec, farmer = r3$Farmer, parcel = r3$Parcel, season = c("early wet", "kharif", "rabi", "early wet")[r3$Season],
 		ha = r3$Area, seed_rate = r3$SeedQty / r3$Area)
 	fert <- merge(fert, merge(fn, ft, by="rec"), by="rec", all.x=TRUE)
 	nofert <- !fert$rec %in% fl$rec
@@ -214,12 +218,15 @@ The objectives of the project are: (1) to analyze the spatial patterns of rice p
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$yield_part <- "grain"
-	d$yield_part[d$crop %in% c("mung bean", "horse gram", "lentil", "black gram", "pigeon pea", "pea", "chickpea", "coriander", "mustard; flax")] <- "seed"
-	d$yield_part[d$crop %in% c("vegetables", "berseem", "forage")] <- "leaves"
-	d$yield_part[d$crop %in% c("pointed gourd", "cucumber")] <- "fruit"
+	d$yield_part[is.na(d$crop)] <- NA
+	d$yield_part[d$crop %in% c("mung bean", "horse gram", "lentil", "black gram", "pigeon pea", "pea", "chickpea", "coriander", "mustard_flax")] <- "seed"
+	d$yield_part[d$crop %in% c("vegetable")] <- "leaves"
+	d$yield_part[d$crop %in% c("berseem clover", "forage crop")] <- "aboveground biomass"
+	d$yield_part[d$crop %in% c("cucumber")] <- "fruit"
 	d$yield_part[d$crop %in% c("sugarcane", "kenaf")] <- "stems"
 	d$yield_part[d$crop == "potato"] <- "tubers"
 	d$yield_part[d$crop == "none"] <- "none"
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

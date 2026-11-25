@@ -43,8 +43,8 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 20,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 25,
 		carob_effort = 0.35
 	)
 
@@ -64,11 +64,11 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 	d <- data.frame(
 		hhid = chr(r$NroEnc),
 		country = chr(r[["1Pais"]]),
-		adm1 = chr(r[["2Provinvia"]]),
-		adm2 = chr(r[["3Canton"]]),
-		adm3 = chr(r[["4Parroquia"]]),
+		adm1 = carobiner::fix_name(chr(r[["2Provinvia"]]), "title"),
+		adm2 = carobiner::fix_name(chr(r[["3Canton"]]), "title"),
+		adm3 = carobiner::fix_name(chr(r[["4Parroquia"]]), "title"),
 		location = chr(r[["5Comunidad"]]),
-		household_size_ = num(r[["7NroMiembros"]]),
+		hh_size = num(r[["7NroMiembros"]]),
 		area_total_ = num(r[["9AreaTotal"]]),
 		crop_name_ = chr(r[["10Cultivo01"]]),
 		crop_area_ = num(r[["10Area01"]]),
@@ -79,6 +79,15 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 	d$is_survey <- TRUE
 	d$on_farm <- TRUE
 	d$trial_id <- paste0("CONPAPA_", d$hhid)
+	d$geo_from_source <- FALSE
+	geo <- data.frame(
+		adm2 = c("Ambato", "Chimbo", "Quero", "San Miguel"),
+		latitude = c(-1.2491, -1.6828, -1.3792, -1.7089),
+		longitude = c(-78.6168, -79.0261, -78.6064, -79.0431)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

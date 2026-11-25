@@ -52,7 +52,7 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.8
 	)
@@ -60,7 +60,7 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 	code_crop <- c(
 		"11"="maize", "12"="wheat", "13"="pearl millet", "14"="sorghum", "15"="finger millet", "16"="rice",
 		"21"="common bean", "22"="soybean", "23"="pigeon pea", "24"="chickpea", "25"="cowpea", "26"="pea",
-		"27"="groundnut", "28"="ground bean", "29"="bambara groundnut",
+		"27"="groundnut", "28"="bambara groundnut", "29"="bambara groundnut",
 		"31"="cabbage", "32"="tomato", "33"="amaranth", "34"="pumpkin", "35"="okra",
 		"41"="onion", "42"="potato", "43"="sweetpotato", "44"="garlic", "45"="cassava",
 		"51"="avocado", "52"="banana", "53"="mango", "54"="orange", "55"="papaya", "56"="coconut",
@@ -281,6 +281,13 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 	}
 
 	d <- do.call(rbind, rows)
+	geo <- data.frame(
+		adm2 = c("Babati", "Kiteto", "Kongwa"),
+		latitude = c(-4.22, -5.50, -6.20),
+		longitude = c(35.75, 36.85, 36.42)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$trial_id <- d$hhid

@@ -54,7 +54,7 @@ This is a component of a big research project in China whose objective is to dev
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
 		carob_effort = 0.5
 	)
@@ -78,9 +78,9 @@ This is a component of a big research project in China whose objective is to dev
 		field_position_ = tolower(r$ELEV),
 		crop = "rice",
 		field_size = r$AREAPLT,
-		land_prep_date_ = as.character(as.Date(r$PLDATE)),
+		land_prep_date = as.character(as.Date(r$PLDATE)),
 		land_prep_times = as.integer(r$PLNOTIME),
-		land_prep_traction = pw,
+		land_prep_traction_ = pw,
 		planting_method = ifelse(r$METHOD == "TPR", "transplanting", NA),
 		transplanting_date = as.character(ceday),
 		planting_date = as.character(ceday - r$SEEDAGE),
@@ -112,6 +112,9 @@ This is a component of a big research project in China whose objective is to dev
 		weeding_labour = r$HWFLABHA + r$HWHLABHA + r$HWELABHA
 	)
 
+	d$latitude <- 31.035
+	d$longitude <- 112.200
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$hhid, r$YEAR, d$field_id, sep="-")
 	d$yield_part <- "grain"
 	d$on_farm <- TRUE

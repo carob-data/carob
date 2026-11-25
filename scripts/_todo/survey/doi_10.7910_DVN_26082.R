@@ -55,7 +55,7 @@ The objective of the study is to monitor the changes in rice farming in the majo
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
 		carob_effort = 0.3
 	)
@@ -99,7 +99,8 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	i[is.na(i)] <- j[is.na(i)]
 	irr <- trimws(r2$IRRTYPE[i])
 	d$irrigated <- irr != "Rainfed"
-	d$irrigation_source <- as.vector(c(Irrigated="gravity irrigation system", Pump="pump", Rainfed=NA)[irr])
+	d$irrigation_source <- as.vector(c(Irrigated="canal", Pump="unknown", Rainfed="none")[irr])
+	d$irrigation_lifting <- as.vector(c(Irrigated="gravity", Pump="motorized pump", Rainfed=NA)[irr])
 	d$land_tenure <- tolower(trimws(r2$TENURE[i]))
 
 	## fertilizer
@@ -122,17 +123,20 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	d$P_fertilizer[nofert] <- 0
 	d$K_fertilizer[nofert] <- 0
 
-	ftype <- tolower(brand)
+	ftype <- rep("unknown", length(brand))
+	ftype[is.na(brand)] <- NA_character_
 	ftype[brand %in% c("UREA", "46-0-0")] <- "urea"
 	ftype[brand %in% c("AMMONIUM SULFATE", "21-0-0")] <- "DAS"
 	ftype[brand %in% c("0-0-60", "M. POTASH")] <- "KCl"
 	ftype[brand %in% "ZINC SULFATE"] <- "ZnSO4"
-	ftype[grepl("^[1-9][0-9]*-[1-9][0-9]*-[1-9][0-9]*$", brand)] <- "NPK"
+	ftype[grepl("^[1-9][0-9]*-[1-9][0-9]*-0$", brand)] <- "NP"
+	ftype[grepl("^[1-9][0-9]*-[1-9][0-9]*-[1-9][0-9]*", brand)] <- "NPK"
 	ok <- inorg & !is.na(ftype)
 	ft <- tapply(ftype[ok], r3$id[ok], function(x) paste(unique(x), collapse=";"))
 	d$fertilizer_type <- as.vector(ft[r1$id])
 	d$fertilizer_type[nofert] <- "none"
-	omtype <- tolower(brand)
+	omtype <- rep("unknown", length(brand))
+	omtype[brand %in% "COMPOST"] <- "compost"
 	omtype[brand %in% "COW DUNG"] <- "cattle dung"
 	om <- tapply(omtype[organic], r3$id[organic], function(x) paste(unique(x), collapse=";"))
 	d$OM_type <- as.vector(om[r1$id])
@@ -151,6 +155,9 @@ The objective of the study is to monitor the changes in rice farming in the majo
 	d$sex <- as.vector(c(M="male", F="female")[toupper(trimws(h$SEX[k]))])
 	d$age <- as.numeric(h$AGE[k])
 
+	d$latitude <- 15.4828
+	d$longitude <- 120.7120
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 

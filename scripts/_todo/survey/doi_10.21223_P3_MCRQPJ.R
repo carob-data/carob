@@ -41,7 +41,7 @@ This baseline survey assesses the conditions, capacities, and constraints influe
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
 		carob_effort = 0.4
 	)
@@ -70,6 +70,14 @@ This baseline survey assesses the conditions, capacities, and constraints influe
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Kuresoi North", "Kuresoi South", "Molo", "Njoro"),
+		latitude = c(-0.3167, -0.4333, -0.2479, -0.3304),
+		longitude = c(35.6333, 35.6667, 35.7374, 35.9438)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

@@ -27,7 +27,7 @@
 # seedbed_method_: method of seedbed preparation (dapog, wet bed, dry bed)
 # education_years_: education of the respondent (years)
 # insecticide_ai_, herbicide_ai_, fungicide_ai_, molluscicide_ai_, rodenticide_ai_: active ingredients (or brand names) as given
-# molluscicide_used_, rodenticide_used_: was a molluscicide / rodenticide used
+# rodenticide_used_: was a rodenticide used
 # molluscicide_amount_, rodenticide_amount_: active ingredient applied (kg/ha), summed over applications
 
 
@@ -84,7 +84,7 @@ This is a follow-up survey on Rola & Pingali's 1989/90 pesticide health cost stu
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
 		carob_effort = 0.6
 	)
@@ -128,7 +128,7 @@ This is a follow-up survey on Rola & Pingali's 1989/90 pesticide health cost stu
 			fungicide_times = vtimes(fun$ID, fun[[apps[3]]], ids),
 			fungicide_amount = vsum(fun$ID, fun$AIha, ids),
 			fungicide_ai_ = vtext(fun$ID, fun[[fun_ai]], ids),
-			molluscicide_used_ = ids %in% mol$ID,
+			molluscicide_used = ids %in% mol$ID,
 			molluscicide_amount_ = vsum(mol$ID, mol$AIha, ids),
 			molluscicide_ai_ = vtext(mol$ID, mol[[mol_ai]], ids),
 			rodenticide_used_ = ids %in% rod$ID,
@@ -251,9 +251,13 @@ This is a follow-up survey on Rola & Pingali's 1989/90 pesticide health cost stu
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$irrigated <- NA
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- NA
+	geo <- data.frame(
+		adm1 = c("Laguna", "Nueva Ecija", "Quezon"),
+		latitude = c(14.269, 15.578, 14.031),
+		longitude = c(121.411, 120.973, 122.113)
+	)
+	d <- merge(d, geo, by="adm1", all.x=TRUE)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

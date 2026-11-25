@@ -41,7 +41,7 @@ Household survey and maize crop-cut data collected in Kaduna, Kano, and Katsina 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
 		carob_effort = 0.4
 	)
@@ -61,9 +61,10 @@ Household survey and maize crop-cut data collected in Kaduna, Kano, and Katsina 
 		trial_id = as.character(r$hhid),
 		plot_id = as.character(r$hhindex),
 		crop = "maize",
+		planting_date = "2016",
 		yield_part = "grain",
 		yield = as.numeric(r[["dry_yield(kg/ha)"]]),
-		yield_moisture = as.numeric(r$avgmc),
+		yield_moisture = 0,
 		yield_isfresh = FALSE,
 		plot_area = 25,
 		row_spacing = as.numeric(sp),

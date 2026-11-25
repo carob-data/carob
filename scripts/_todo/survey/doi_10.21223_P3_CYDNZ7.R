@@ -40,20 +40,22 @@ El presente es un informe del estudio de base de la metodología 'Mamá y Bebé'
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.3
 	)
 
 	f <- ff[basename(ff) == "01_DataBase Madre&Bebe - Peru.xlsx"]
 	r <- carobiner::read.excel(f, na=c("", "NA"))
+	adm2 <- trimws(as.character(r[["3Provinvia"]]))
+	adm2[adm2 == "Anagraes"] <- "Angaraes"
 
 	d <- data.frame(
 		trial_id = "Mama_y_Bebe_Peru_2008",
 		hhid = trimws(as.character(r$NroEnc)),
 		country = trimws(as.character(r[["1Pais"]])),
 		adm1 = trimws(as.character(r[["2Departamento"]])),
-		adm2 = trimws(as.character(r[["3Provinvia"]])),
+		adm2 = adm2,
 		adm3 = trimws(as.character(r[["4Distrito"]])),
 		location = trimws(as.character(r[["5Comunidad"]])),
 		crop = "potato",
@@ -63,6 +65,14 @@ El presente es un informe del estudio de base de la metodología 'Mamá y Bebé'
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Angaraes", "Chupaca", "Huancavelica", "Huancayo", "Huanuco", "Jauja", "Urubamba"),
+		latitude = c(-12.9833, -12.0617, -12.7862, -12.0651, -9.9306, -11.7758, -13.3043),
+		longitude = c(-74.7167, -75.2878, -74.9764, -75.2049, -76.2422, -75.4966, -72.1157)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }

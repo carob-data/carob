@@ -81,7 +81,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Banglad
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 1.5
 	)
@@ -108,7 +108,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Banglad
 	fm <- rM[rM$matinputs %in% "Fertilizer", ]
 	i <- match(trimws(fm$specify), fert$specify)
 	fm$type <- fert$fertilizer_type[i]
-	fm$type[is.na(i)] <- trimws(fm$specify[is.na(i)])
+	fm$type[is.na(i)] <- "unknown"
 	fm$qty <- ifelse(fm$kg, fm$qtyPerHa, NA)
 	fm$N <- fm$qty * fert$N[i] / 100
 	fm$P <- fm$qty * fert$P[i] / 100
@@ -194,29 +194,60 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Banglad
 	d$currency <- "BDT"
 
 	d$season <- tolower(d$season)
+	d$season_label_ <- d$season
+	d$season[d$season == "aus"] <- "early wet"
+	d$season[d$season == "aman2"] <- "aman"
 	d$variety_type <- unname(c(MV="modern", TV="traditional", Hybrid="hybrid")[d$variety_type])
 	d$planting_method <- unname(c(TPR="transplanting")[d$planting_method])
 	d$landscape_position <- gsub("medium land", "medium", d$landscape_position)
+
+	irraw <- tolower(trimws(as.character(d$irrigation_source)))
+	irsrc <- rep("unknown", length(irraw))
+	irsrc[is.na(irraw) | !nzchar(irraw)] <- NA_character_
+	irsrc[grepl("none|rain|no irr", irraw)] <- "none"
+	irsrc[grepl("tube ?well|stw|dtw|bore|deep|shallow|ground|well", irraw)] <- "groundwater"
+	irsrc[grepl("canal", irraw)] <- "canal"
+	irsrc[grepl("pond|tank", irraw)] <- "pond"
+	irsrc[grepl("river|stream|creek|beel|khal", irraw)] <- "river"
+	irsrc[grepl("llp|surface|lift", irraw)] <- "surface water"
+	irlift <- rep(NA_character_, length(irraw))
+	irlift[grepl("diesel", irraw)] <- "diesel pump"
+	irlift[grepl("electric", irraw)] <- "electric pump"
+	irlift[grepl("llp|pump|lift", irraw) & is.na(irlift)] <- "motorized pump"
+	irlift[grepl("hand|treadle", irraw)] <- "hand pump"
+	d$irrigation_source <- irsrc
+	d$irrigation_lifting <- irlift
 
 	tex <- tolower(d$soil_type)
 	tex[tex == "loamy"] <- "loam"
 	tex[tex == "sandy"] <- "sand"
 	d$soil_texture <- tex
 
-	# mukhi = mukhi kachu (taro); till = til (sesame)
+	# mukhi = mukhi kachu (taro); till = til (sesame); patal/rabi/seedbed preparation not in values_crop
+	d$crop_label_ <- d$crop
 	crops <- c(bringle="eggplant", brinjal="eggplant", chili="chili pepper", chilli="chili pepper",
-		raddish="radish", sesum="sesame", till="sesame", vegetables="vegetable", mukhi="taro")
+		pepper="chili pepper", raddish="radish", sesum="sesame", till="sesame", vegetables="vegetable",
+		mukhi="taro", arum="taro", bean="common bean", gourd="bottle gourd", grampea="chickpea",
+		turmeric="tumeric")
 	i <- match(d$crop, names(crops))
 	d$crop[!is.na(i)] <- crops[i[!is.na(i)]]
+	d$crop[d$crop %in% c("patal", "rabi", "seedbed preparation")] <- NA
 	yp <- c(rice="grain", wheat="grain", maize="grain", lentil="seed", mustard="seed", sesame="seed",
-		potato="tubers", tomato="fruit", eggplant="fruit", "chili pepper"="fruit", pumpkin="fruit",
-		"bottle gourd"="fruit", guava="fruit", sugarcane="stems", ginger="rhizome", turmeric="rhizome",
-		radish="roots", cabbage="leaves")
+		chickpea="seed", "common bean"="seed", potato="tubers", taro="tubers", tomato="fruit",
+		eggplant="fruit", "chili pepper"="fruit", pumpkin="fruit", "bottle gourd"="fruit", guava="fruit",
+		sugarcane="stems", ginger="rhizome", tumeric="rhizome", radish="roots", cabbage="leaves")
 	d$yield_part <- unname(yp[d$crop])
 
+	geo <- data.frame(
+		adm2 = c("Jamalpur", "Kurigram", "Habiganj", "Rajshahi", "Satkhira"),
+		latitude = c(24.92, 25.81, 24.38, 24.37, 22.72),
+		longitude = c(89.95, 89.65, 91.41, 88.60, 89.07)
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

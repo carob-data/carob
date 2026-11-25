@@ -36,7 +36,7 @@ The implementation of the large- scale planting material dissemination component
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
 		carob_effort = 0.4
 	)
@@ -67,6 +67,17 @@ The implementation of the large- scale planting material dissemination component
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		adm2 = c("Biharamulo", "Bukombe", "Bunda", "Chato", "Geita", "Ilemela",
+		         "Magu", "Misungwi", "Muleba", "Musoma", "Nyamagana", "Sengerema", "Ukerewe"),
+		latitude = c(-2.6319, -3.4833, -2.0500, -2.6378, -2.8725, -2.4500,
+		             -2.5896, -2.8500, -1.8400, -1.5000, -2.5164, -2.6419, -2.0333),
+		longitude = c(31.3089, 31.8333, 33.8667, 31.7669, 32.2295, 32.9167,
+		              33.4381, 33.0833, 31.6544, 33.8000, 32.9175, 32.6225, 33.0167)
+	)
+	m <- match(d$adm2, geo$adm2)
+	d$latitude <- geo$latitude[m]
+	d$longitude <- geo$longitude[m]
 
 	carobiner::write_files(path, meta, d)
 }
