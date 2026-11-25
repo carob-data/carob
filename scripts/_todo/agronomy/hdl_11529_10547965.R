@@ -11,10 +11,7 @@
 # The 2014 workbook names the phenology sheet "4...- Stand counts & Phenology". Korahiya and the 2016-17 books use "13 - Grain Harvest ". The other books use "14 - Grain Harvest ".
 
 ## ISSUES
-# write_files: missing variables: yield_moisture, latitude, longitude, irrigated. unknown variables: biomass_kg_ha_. out of bounds: plot_area (364, 4800). NA detected: yield.
-
-## NEW VARIABLES
-# biomass_kg_ha_: biomass column in t/ha, stored as kg/ha. Fresh or dry is not stated on every sheet. The grain is described as air dry.
+# write_files: missing variables: yield_moisture, irrigated. out of bounds: plot_area (364, 4800). NA detected: yield.
 
 ## NOT PROCESSED
 # Irrigation, ponding, weeds, pesticide applications, biomass subsamples, soil analysis, and prices.
@@ -163,7 +160,7 @@ On-farm long-term wheat trials at Madhubani, Bihar, rabi seasons 2014-15, 2015-1
 			anthesis_days = take_named(ph, seq_len(nrow(ph)), last_name(names(ph), "anthesis.DAS")),
 			maturity_days = take_named(ph, seq_len(nrow(ph)), last_name(names(ph), "maturity.DAS")),
 			yield = y * 1000,
-			biomass_kg_ha_ = bio * 1000,
+			y_total = bio * 1000,
 			harvest_index = hi,
 			N_fertilizer = take_named(ft, ifr, last_name(names(ft), "^N\\.")),
 			P_fertilizer = take_named(ft, ifr, last_name(names(ft), "P2O5")) / 2.29,

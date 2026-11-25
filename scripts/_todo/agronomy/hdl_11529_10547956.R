@@ -13,13 +13,9 @@
 # Korahiya 2015 and the 2017 Khiari, Korahiya, and Shukhet workbooks name the harvest sheet "13 - Grain Harvest ". The others use "14 - Grain Harvest ".
 
 ## ISSUES
-# write_files: missing variables: yield_moisture, latitude, longitude, irrigated
-# write_files: unknown variables: biomass_kg_ha_
+# write_files: missing variables: yield_moisture, irrigated
 # write_files: out of bounds: plot_area (182, 3640)
 # write_files: NA detected: yield
-
-## NEW VARIABLES
-# biomass_kg_ha_: above-ground biomass from the grain sheet, t/ha converted to kg/ha. Fresh or dry is not stated on the column.
 
 ## NOT PROCESSED
 # Irrigation, ponding, weeds, pesticides, biomass subsamples, soil analysis, prices, and fertilizer product names.
@@ -167,7 +163,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Madhu
 			plot_area = num(r1$Plot.size.m2),
 			yield = y * 1000,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
+			y_total = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
 			anthesis_days = ad,
 			maturity_days = md,

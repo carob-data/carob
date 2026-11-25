@@ -161,6 +161,7 @@ Rules and gotchas:
 - When missing value "flags" are used, consider `read.csv(f, na.strings="nd")` and `carobiner::read.excel(f, na=  )` to automatically transform them. 
 - Consider argument `skip` to skip empty rows
 - Consider `carobiner::read.excel.hdr(f, )` for excel files that have multiple header rows.
+- For messy Excel sheets where a column mixes dates, text, and numbers (which triggers `Expecting numeric ... got a date` warnings in `readxl`), pass `col_types = "text"` to `carobiner::read.excel()` / `carobiner::read.excel.hdr()` and explicitly parse dates (including Excel serials) and numbers afterwards. Never use `suppressWarnings()` to hide read warnings.
 
 
 ### Naming and style convention
@@ -257,6 +258,8 @@ General rules:
 ## 6. Units and common conversions
 
 - **Yield**: kg/ha, as **fresh weight** of `yield_part`. Convert t/ha → kg/ha (`* 1000`). Set `yield_moisture` (%) when known; if all yields are dry or moisture is unknown, consider `yield_isfresh`.
+- **Dry-matter yield vs. `yield_moisture`**: do **not** attach fresh-sample moisture (`100 - DM%`) to a yield that is already reported as dry matter — that double-adjusts moisture. Dry-matter yield has `yield_moisture = 0` and `yield_isfresh = FALSE` (use `dmy_total` / `dmy_residue` / `yield_dry` where appropriate). When total biomass or straw/stover is reported without stating fresh vs. dry, use `y_total` and `y_residue` rather than inventing new variable names.
+- **Equivalent yields (REY, MEY, etc.)**: never store price-scaled equivalent yields (e.g. rice-equivalent or maize-equivalent yield) in `yield` for non-reference crops (such as wheat, maize, or mung bean). Store equivalent yields in a dedicated variable (e.g. `rice_equivalent_yield_`) and only populate `yield` with actual crop harvest weight (or for the reference crop when equivalent yield equals its grain yield).
 - **Yield from production and area**: if `yield` is not reported directly but production and the plot/field **area** are, compute `yield = production / area` (kg/ha).
 - **Area**: hectares. 1 acre = 0.4046863 ha.
 - **Fertilizer**: report `P_fertilizer` and `K_fertilizer` as the weight of the **elements P and K**, *not* the weight of the oxides P2O5 and K2O. Convert with `P = P2O5 / 2.29` and `K = K2O / 1.2051`. Likewise report elemental **N** (and `S_fertilizer`, `lime`) in kg/ha. Compute nutrient amounts from product rate × nutrient fraction (e.g. urea 46% N); nutrient percentages for named products are in the terminag `values_fertilizer_type` table (<https://controvoc.github.io/terminag/table.html?f=values%2Fvalues_fertilizer_type.csv>).
@@ -275,6 +278,7 @@ Add a short `#` comment whenever a computation relies on the codebook, the paper
 Every distinct site needs `longitude`/`latitude`.
 
 - If the data/publication provide coordinates, use them and set `d$geo_from_source <- TRUE`.
+- **Do not leave `country`, `adm1`, or coordinates blank when the dataset title, file name, or station name identifies them** (e.g. a title naming a state or research station). Fill `country`/`adm*` and impute approximate municipality or station coordinates with `geo_from_source = FALSE` (and document the basis in a comment).
 - If the coordinates do not match the country (per a message by `write_files`) check if longitude and latitude are flipped or miss a mius sign
 - If records to not have coordinates, they need to be **georeferenced at the most detailed location level** If there is no site or location variable, follow the Georeferencing page (<https://carob-data.org/contribute/georeference.html>): first normalize `adm*` names to match GADM. When merging consider higher levels as well as lower level names may not be be duplicated. Paste the resulting values into the script as a hard-coded lookup and merge it into `d`.
 In other cases - where there is a "location" or "site" variable, write a note that the script author should manually georeference with Google Maps
@@ -291,7 +295,7 @@ In other cases - where there is a "location" or "site" variable, write a note th
 
 ## 8. Filling gaps from the associated publication
 
-Repository files rarely contain everything. When the dataset links to a paper (a DOI in the metadata, a `publication`, or a citation in the dataset description), read its **Methods / Materials and Methods** (and often the study-area and supplementary sections) to recover information that is missing from, or only coded in, the data files. Treat the publication as an authoritative source and cite it in a `#` comment wherever you use it.
+Repository files rarely contain everything. **First check `ff` for bundled PDFs** — deposits often include the published paper or protocol directly alongside the spreadsheets, and reading them can recover the DOI, experimental design, exact site coordinates, soil properties, plot dimensions, and even catch unit or currency mislabelings in spreadsheet headers (e.g. a header labeled `Rs/ha` whose values are actually `USD/ha` per the paper's tables). When the dataset links to a paper (a DOI in the metadata, a `publication`, or a citation in the dataset description), read its **Methods / Materials and Methods** (and often the study-area and supplementary sections) to recover information that is missing from, or only coded in, the data files. Treat the publication as an authoritative source and cite it in a `#` comment wherever you use it.
 
 Common things the Methods section supplies:
 

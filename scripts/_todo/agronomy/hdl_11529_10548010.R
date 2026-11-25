@@ -6,16 +6,12 @@
 # Grain yield is Gy(t/ha), stored as kg/ha. Harvesting area is 2 on every row. Grain weight in grams divided by that area, as square meters, matches Gy(t/ha).
 # CT is conventional tillage. ZT is zero tillage, stored as land_prep_method none.
 # Harvest index in the file is a ratio. It is stored as percent.
-# Stover and biomass are not labeled fresh or dry.
+# Stover and biomass are not labeled fresh or dry, so they are stored in y_residue and y_total.
 
 ## ISSUES
-# No country column and no geographic coverage. The file name says Choochbehar. Nodes are not georeferenced.
-# No fertilizer, moisture, or dates in the yield sheet.
-# write_files: missing variables: yield_moisture, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: grains_per_cob_ (grain_S?). unknown variables: stover_kg_ha_, biomass_kg_ha_, cob_length_cm_, kernel_rows_.
+# No fertilizer, moisture, or dates in the yield sheet. Coordinates are approximate for Cooch Behar (geo_from_source = FALSE).
 
 ## NEW VARIABLES
-# stover_kg_ha_: stover yield column, t/ha converted to kg/ha. Fresh or dry is not stated.
-# biomass_kg_ha_: biomass column, t/ha converted to kg/ha. Fresh or dry is not stated.
 # cob_length_cm_: length of cob.
 # kernel_rows_: number of kernel rows on the cob.
 # grains_per_cob_: number of grains on the cob.
@@ -79,8 +75,8 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		plant_height = as.numeric(r$HEIGHT...5),
 		seed_weight = as.numeric(r$`1000 GR WEIGHT...14`),
 		harvest_index = as.numeric(r$HI) * 100,
-		stover_kg_ha_ = as.numeric(r$`Stover yield (t/ha)`) * 1000,
-		biomass_kg_ha_ = as.numeric(r$`Biomass (t/ha)`) * 1000,
+		y_residue = as.numeric(r$`Stover yield (t/ha)`) * 1000,
+		y_total = as.numeric(r$`Biomass (t/ha)`) * 1000,
 		cob_length_cm_ = as.numeric(r$`LENGTH OF COB...11`),
 		kernel_rows_ = as.numeric(r$`NO. OF ROWS...10`),
 		grains_per_cob_ = as.numeric(r$`NO, OF GRAINS...12`),

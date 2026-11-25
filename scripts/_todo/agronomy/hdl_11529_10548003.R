@@ -10,8 +10,7 @@
 # Intercrop yield is the Intercrop.t.ha column. The biomass subsample is labeled fresh, so yield_isfresh is TRUE for the intercrop and not set for maize and potato.
 
 ## ISSUES
-# missing variables: yield_moisture, latitude, longitude, irrigated
-# unknown variables: biomass_kg_ha_
+# missing variables: yield_moisture, irrigated
 # out of bounds: plot_area (455, 455)
 
 ## NOT PROCESSED
@@ -130,7 +129,7 @@ Farmer participatory on-farm intercropping of leafy vegetables in maize, compare
 		seed_rate = num(r1$Seedrate.kg.ha),
 		plot_area = num(r1$Plot.size.m2),
 		yield = take(r2, ig, c("Grain.yield.t.ha", "Calculation_Grain.Yield.t.ha")) * 1000,
-		biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
+		y_total = take(r2, ig, "Biomass.t.ha") * 1000,
 		harvest_index = hi,
 		seed_weight = take(r2, ig, "TGW.g"),
 		N_fertilizer = take(r3, ifr, "N.kg.ha"),

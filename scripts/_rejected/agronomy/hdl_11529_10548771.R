@@ -1,6 +1,11 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## REJECTED
+# Duplicate deposit of hdl:11529/10548769 (Rana et al. 2022, Field Crops Research, doi:10.1016/j.fcr.2022.108519).
+# Every data and documentation file (CIMMYT Data-Grain.xlsx, FCR-Rana-Hydrus-2022.pdf, Figures.docx, Tables.doc) is byte-for-byte identical to hdl:11529/10548769, while this later handle has a truncated Dataverse title and abstract.
+# Kept hdl_11529_10548769.R instead.
+
 ## NOTES
 # The grain sheet is rice only, three replicates. Yield is t/ha (at 14% moisture per the bundled paper Rana et al. 2022, Field Crops Research, doi:10.1016/j.fcr.2022.108519), stored as kg/ha.
 # Site, soil, plot size, variety, and management details come from FCR-Rana-Hydrus-2022.pdf: BISA-CIMMYT research farm, Ladhowal, Ludhiana, Punjab, India (30.99 N, 75.44 E, 229 m), sandy loam (pH 8.3, EC 0.51 dS/m), RCBD, plot 25 x 5.4 m (135 m2), cultivar PR-126, previous crop wheat, ZTDSR sown 2019-06-10 at 20 kg/ha and 22.5 cm row spacing with wheat residue retained, PTR transplanted 2019-07-10 without residue.

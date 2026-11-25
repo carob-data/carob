@@ -11,13 +11,8 @@
 # Node spellings differ by year: PuraniGarel/Puranigarel, Dogachhi/Dogachi, Tikapatti/Tikapati.
 
 ## ISSUES
-# No coordinates. No country column.
 # Fertilizer rates are not in this summary. Energy, cost, and emission columns are calculated and not stored.
-# Biomass is not labeled fresh or dry.
-# write_files: missing variables: yield_moisture, country, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: biomass_kg_ha_. contributor:
-
-## NEW VARIABLES
-# biomass_kg_ha_: bm in t/ha, stored as kg/ha. Fresh or dry is not stated.
+# Biomass is not labeled fresh or dry, so it is stored in y_total.
 
 ## NOT PROCESSED
 # Tillage and irrigation hours, fuel, labor, costs, gross return, BCR, and energy columns.
@@ -92,7 +87,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 			planting_date = sown,
 			yield = as.numeric(r$gy) * 1000,
 			harvest_index = hi,
-			biomass_kg_ha_ = as.numeric(r$bm) * 1000,
+			y_total = as.numeric(r$bm) * 1000,
 			irrigation_amount = water,
 			irrigated = !is.na(water) & water > 0,
 			on_farm = TRUE,

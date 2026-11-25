@@ -25,7 +25,7 @@ Different varieties of barley (4 varieties), triticale (4 varieties) and wheat (
 "
 
 	uri <- "hdl:11529/10548673"
-	group <- "agronomy"
+	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,

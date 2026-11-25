@@ -14,13 +14,9 @@
 # The standard workbooks use the sheet "14 - Grain Harvest ".
 
 ## ISSUES
-# write_files: missing variables: yield_moisture, latitude, longitude, irrigated
-# write_files: unknown variables: biomass_kg_ha_
+# write_files: missing variables: yield_moisture, irrigated
 # write_files: out of bounds: plot_area (1, 1333), anthesis_days (78, 278)
 # write_files: NA detected: yield
-
-## NEW VARIABLES
-# biomass_kg_ha_: above-ground biomass from the grain sheet, t/ha converted to kg/ha. Fresh or dry is not stated on the column.
 
 ## NOT PROCESSED
 # Irrigation, ponding, weeds, pesticides, biomass subsamples, soil analysis, prices, and fertilizer product names.
@@ -132,7 +128,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 			seed_weight = num(col("1000 grain wt (g)")),
 			yield = y,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = bio,
+			y_total = bio,
 			harvest_index = hi,
 			anthesis_days = num(col("Days of 50% Anthesis")),
 			maturity_days = NA_real_,
@@ -224,7 +220,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 			plot_area = num(r2$Plot.size.m2),
 			yield = y * 1000,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = take(r3, ig, "Biomass.t.ha") * 1000,
+			y_total = take(r3, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
 			anthesis_days = ad,
 			maturity_days = md,

@@ -14,10 +14,9 @@
 # R-M, R-W, R-W-J, R-Mu-Boro, R-Mu-M, and R-P-M are rice rotations. P is stored as potato.
 
 ## ISSUES
-# Field-book sites have no coordinates. The validation plots do.
+# Field-book sites have no source coordinates (approximate district centroids imputed with geo_from_source = FALSE). Validation plots have source coordinates.
 # Field-book plot size is 400 m2, above the vocabulary maximum of 350.
-# yield_part fiber is not in the vocabulary. Jute yield is the fibre.
-# write_files: unknown variable biomass_kg_ha_. out of bounds plot_area (400, 400). invalid terms yield_part: fiber. NA detected: latitude, longitude.
+# Jute dry bast fiber yield is stored with yield_part = "stems".
 
 ## NOT PROCESSED
 # Rjshahi sheet: a two-cell note, not plot records.
@@ -26,9 +25,6 @@
 # Roundup and Affinity. Affinity is not mapped to an active ingredient.
 # Farmer names.
 # Field-book straw yield. The column is not labeled fresh or dry.
-
-## NEW VARIABLES
-# biomass_kg_ha_: field-book biomass in t/ha, stored as kg/ha. Fresh or dry is not stated.
 
 
 carob_script <- function(path) {
@@ -178,7 +174,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			dmy_residue = NA_real_,
 			dmy_total = NA_real_,
 			dmy_stems = NA_real_,
-			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
+			y_total = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
 			N_fertilizer = take(r3, ifr, "N.kg.ha"),
 			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,
@@ -281,7 +277,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 				dmy_residue = col_like(r, "^Straw yield \\(t/ha\\)") * 1000,
 				dmy_total = col_like(r, "^Biomass \\(t/ha\\)") * 1000,
 				dmy_stems = col_like(r, "Jute stick yield \\(t/ha\\)") * 1000,
-				biomass_kg_ha_ = NA_real_,
+				y_total = NA_real_,
 				harvest_index = hi,
 				N_fertilizer = grab(1),
 				P_fertilizer = grab(2),

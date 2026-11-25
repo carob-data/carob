@@ -14,15 +14,10 @@
 ## ISSUES
 # Latitude and longitude columns on the site sheet are empty. In Phulgama those columns hold cropping-system text, not coordinates.
 # Plot size is 400 m2 on every row. The vocabulary maximum for plot_area is 350.
-# Biomass and straw are not labeled fresh or dry. Harvest index equals grain yield divided by biomass.
+# Biomass and straw are not labeled fresh or dry, so they are stored in y_total and y_residue. Harvest index equals grain yield divided by biomass.
 # Sinojoda phenology has no treatment header. Rows are aligned to the grain-harvest sheet by site and order.
 # Mustard crop-failure rows have no crop name. The crop is taken from the treatment "Rice-Mustard". Those yields are 0. The low-yield message is that failure, not a tons/kg mix-up.
-# Bean in "Rice-Maize+Bean" is not identified beyond "bean".
-# write_files: missing variables: yield_moisture, country, latitude, longitude, irrigated. unknown variables: biomass_kg_ha_, straw_kg_ha_. out of bounds: plot_area (400, 400). invalid terms: crop_rotation: bean. invalid terms: intercrops: bean. low yield (tons not kg?): mustard. contributor:
-
-## NEW VARIABLES
-# biomass_kg_ha_: Biomass.t.ha converted to kg/ha. Fresh or dry is not stated.
-# straw_kg_ha_: Straw.yield.t.ha converted to kg/ha. Fresh or dry is not stated.
+# Bean in "Rice-Maize+Bean" is mapped to "common bean".
 
 ## NOT PROCESSED
 # Daily rainfall, land preparation operations, irrigation, ponding, pesticides, weeds, pests, diseases.
@@ -207,8 +202,8 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 				hi <- pick_num(r2, ig, "HI")
 				ifelse(!is.na(hi) & hi <= 1, hi * 100, hi)
 			},
-			biomass_kg_ha_ = pick_num(r2, ig, "Biomass.t.ha") * 1000,
-			straw_kg_ha_ = pick_num(r2, ig, "Straw.yield.t.ha") * 1000,
+			y_total = pick_num(r2, ig, "Biomass.t.ha") * 1000,
+			y_residue = pick_num(r2, ig, "Straw.yield.t.ha") * 1000,
 			N_fertilizer = N,
 			P_fertilizer = P,
 			K_fertilizer = K,

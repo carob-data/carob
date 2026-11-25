@@ -32,7 +32,7 @@ Several international varieties of Low-ODAP grass pea were evaluated. Some of th
 "
 
 	uri <- "hdl:11529/10548671"
-	group <- "agronomy"
+	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,

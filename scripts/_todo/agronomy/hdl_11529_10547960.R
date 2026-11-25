@@ -12,8 +12,7 @@
 # Two Bhokraha workbooks name the harvest sheet "13.Grain Harvest " and spell the yield column Calulation. Two Saalbani workbooks name it "13 -  Grain harvest".
 
 ## ISSUES
-# missing variables: yield_moisture, latitude, longitude, irrigated
-# unknown variables: biomass_kg_ha_
+# missing variables: yield_moisture, irrigated
 # out of bounds: plot_area (400, 800)
 # NA detected: yield
 
@@ -142,7 +141,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 			plot_area = { pa <- num(r1$Plot.size.m2); pa[!is.na(pa) & pa < 1] <- NA_real_; pa },
 			yield = y * 1000,
 			yield_isfresh = FALSE,
-			biomass_kg_ha_ = take(r2, ig, "Biomass.t.ha") * 1000,
+			y_total = take(r2, ig, "Biomass.t.ha") * 1000,
 			harvest_index = hi,
 			seed_weight = take(r2, ig, "TGW.g"),
 			N_fertilizer = take(r3, ifr, "N.kg.ha"),

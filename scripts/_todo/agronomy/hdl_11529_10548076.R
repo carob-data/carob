@@ -12,12 +12,8 @@
 # Row spacing 0 is empty. One maize harvest date is 2026-05-18 and is not stored.
 
 ## ISSUES
-# Treatment codes are not expanded. Zinc sulfate is not stored. Biomass is not stated as fresh or dry.
+# Treatment codes are not expanded. Zinc sulfate is not stored. Biomass is not stated as fresh or dry, so it is stored in y_total.
 # Mohonpur site 27 is in the maize phenology sheets and has no grain-harvest row.
-# write_files: missing variables: latitude, longitude, irrigated. unknown variables: biomass_kg_ha_. NA detected: yield.
-
-## NEW VARIABLES
-# biomass_kg_ha_: biomass column in t/ha, stored as kg/ha. Fresh or dry is not stated.
 
 ## NOT PROCESSED
 # Irrigation, ponding, weeds, pesticide applications, biomass subsamples, soil analysis, and prices.
@@ -115,7 +111,7 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 			row_spacing = as.numeric(sp),
 			yield = y * 1000,
 			yield_moisture = moist,
-			biomass_kg_ha_ = bio * 1000,
+			y_total = bio * 1000,
 			harvest_index = hi,
 			N_fertilizer = take(r3, ifr, "N.kg.ha"),
 			P_fertilizer = take(r3, ifr, "P2O5.kg.ha") / 2.29,

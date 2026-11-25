@@ -8,7 +8,7 @@
 # N rates in the treatment names are kg N/ha as urea. N0 is 0. PTR received 120 kg N/ha.
 
 ## ISSUES
-# Duplicate deposit: hdl:11529/10548769 and hdl:11529/10548771 contain identical raw files for the same Rana et al. (2022) experiment.
+# Duplicate deposit hdl:11529/10548771 (identical raw files with truncated title/abstract) was moved to scripts/_rejected/agronomy/hdl_11529_10548771.R.
 # P and K rates are not specified in the grain sheet (P and K were applied uniformly; check paper for exact blanket doses if needed).
 
 ## NOT PROCESSED

@@ -8,13 +8,8 @@
 # irri-cm is centimetres of irrigation, stored as mm. ds is an Excel date serial (origin 1899-12-30). The column ctry contains the state Bihar, not a country.
 
 ## ISSUES
-# No country column. The field labeled Country contains Bihar.
 # Plot size on the Cost sheet is often above 350 m2.
-# Biomass is not labeled fresh or dry.
-# write_files: missing variables: yield_moisture, country, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: biomass_kg_ha_. low yield (tons not kg?): red amaranth. location: variable 'country' is missing. NA detected: latitude, longitude.
-
-## NEW VARIABLES
-# biomass_kg_ha_: bm in t/ha, stored as kg/ha, on the maize row. Fresh or dry is not stated.
+# Biomass is not labeled fresh or dry, so it is stored in y_total.
 
 ## NOT PROCESSED
 # Labor, fuel, costs, returns, BCR, energy, and emission columns.
@@ -102,7 +97,7 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 		yield_maize = as.numeric(r$gy) * 1000,
 		yield_other = as.numeric(r$incy) * 1000,
 		system = trimws(r$crop),
-		biomass_kg_ha_ = as.numeric(r$bm) * 1000,
+		y_total = as.numeric(r$bm) * 1000,
 		harvest_index = hi,
 		irrigation_amount = water,
 		latitude = lat,
@@ -130,7 +125,7 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 	other$yield <- other$yield_other
 	other$yield_part <- "leaves"
 	other$yield_isfresh <- TRUE
-	other$biomass_kg_ha_ <- NA_real_
+	other$y_total <- NA_real_
 	other$harvest_index <- NA_real_
 	other$maturity_days <- NA_real_
 	d <- rbind(maize, other)

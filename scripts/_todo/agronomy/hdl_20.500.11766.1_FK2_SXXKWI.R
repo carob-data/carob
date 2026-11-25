@@ -10,10 +10,7 @@
 
 ## ISSUES
 # Coordinates are approximate for the Gumara-Maksegnit watershed (geo_from_source = FALSE); no sorghum grain moisture or planting/harvest dates in the raw files.
-
-## NEW VARIABLES
-# stover_yield_kg_ha_: stover in kg/ha. The dictionary says t/ha and does not say fresh or dry.
-
+# Sorghum stover (t/ha -> kg/ha) is stored in y_residue because fresh vs. dry is not stated.
 
 ## NOT PROCESSED
 # Head weight and head length are per-head measurements, not a per-hectare yield.
@@ -80,7 +77,7 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		yield_moisture = NA_real_,
 		yield_isfresh = NA,
 		yield_part = "grain",
-		stover_yield_kg_ha_ = as.numeric(r1$Stover_yield) * 1000,
+		y_residue = as.numeric(r1$Stover_yield) * 1000,
 		plant_height = as.numeric(r1$Plant_height),
 		seed_weight = as.numeric(r1[["1000sw"]]),
 		geo_from_source = FALSE,
@@ -107,7 +104,7 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		yield_moisture = 0,
 		yield_isfresh = FALSE,
 		yield_part = "aboveground biomass",
-		stover_yield_kg_ha_ = NA_real_,
+		y_residue = NA_real_,
 		plant_height = as.numeric(r2$Plant_height),
 		seed_weight = NA_real_,
 		geo_from_source = FALSE,
