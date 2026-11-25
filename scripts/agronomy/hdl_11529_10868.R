@@ -95,6 +95,13 @@ carob_script <- function(path) {
 	d$yield_isfresh <- as.numeric(NA)
 	d$yield_moisture <- as.numeric(NA)
 	d$treatment <- as.character(d$treatment)
-  
+	
+	### Fixing conflict error and fill missing geo coordinates (Monze Farmers Training Center is located in Zambia not in Zimbabwe)
+	x <- which(is.na(d$longitude)| is.na(d$latitude) | (d$longitude == 27.4414 & d$latitude == -16.2402))
+	d$longitude[x] <-  27.4414                             
+  d$latitude[x] <- -16.2402
+	d$country[x] <- "Zambia"
+	
+	  
   carobiner::write_files(path, meta, d)
 }
