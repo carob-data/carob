@@ -44,16 +44,16 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Long-term trial, Malda, West Bengal",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -65,6 +65,12 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 		out <- rep(NA_character_, length(x))
 		iso <- !is.na(x) & grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}", x)
 		if (any(iso)) out[iso] <- substr(x[iso], 1, 10)
+		ser <- !is.na(x) & grepl("^[0-9]+(\\.[0-9]+)?$", x)
+		if (any(ser)) {
+			v <- as.numeric(x[ser])
+			ok <- v > 20000 & v < 80000
+			out[which(ser)[ok]] <- as.character(as.Date(v[ok], origin="1899-12-30"))
+		}
 		out
 	}
 	num <- function(x) {
@@ -111,6 +117,9 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 			adm1 = "West Bengal",
 			adm2 = "Malda",
 			location = "Manikchak",
+			latitude = 25.077,
+			longitude = 87.901,
+			season = "kharif",
 			trial_id = paste(col("Year"), "Manikchak", col("Site No.")),
 			plot_id = paste(col("Site No."), col("Tmnt")),
 			treatment = as.character(col("Tmnt")),
@@ -139,10 +148,10 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 
 	one <- function(f) {
 		bn <- basename(f)
-		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2))
-		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(bn), skip=4, hdr=2))
-		r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2))
-		r5 <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE)
+		r2 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="4- Stand counts & Phenology", skip=4, hdr=2, col_types="text"))
+		r3 <- as.data.frame(carobiner::read.excel.hdr(f, sheet=grain_sheet(bn), skip=4, hdr=2, col_types="text"))
+		r4 <- as.data.frame(carobiner::read.excel.hdr(f, sheet="6 - Fertilizer amounts ", skip=4, hdr=2, col_types="text"))
+		r5 <- carobiner::read.excel(f, sheet="2 - Site information", col_names=FALSE, col_types="text")
 		cells <- trimws(as.character(unlist(r5[1, ])))
 		cells[is.na(cells)] <- ""
 		raw_c <- header_value(cells, "Country:")
@@ -186,7 +195,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 		crop[grepl("chick", crop)] <- "chickpea"
 		crop[grepl("potato", crop)] <- "potato"
 		part <- rep("grain", length(crop))
-		part[crop %in% c("lentil", "chickpea", "wheat")] <- "seed"
+		part[crop %in% c("lentil", "chickpea")] <- "seed"
 		part[crop == "potato"] <- "tubers"
 		hi <- take(r3, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
@@ -197,8 +206,11 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Malda
 		data.frame(
 			country = country,
 			adm1 = adm1,
-			adm2 = carobiner::fix_name(adm2, "title"),
+			adm2 = "Malda",
 			location = carobiner::fix_name(r2$Node, "title"),
+			latitude = 25.011,
+			longitude = 88.141,
+			season = "kharif",
 			trial_id = paste(r2$Year, r2$Node, r2$Trial.Code),
 			plot_id = paste(r2$Site.No, r2$Tmnt, r2$seq),
 			treatment = r2$Tmnt,

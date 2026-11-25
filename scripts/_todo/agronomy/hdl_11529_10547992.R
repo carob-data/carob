@@ -32,16 +32,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Alternative cropping systems trial, Rajshahi, Bangladesh",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -82,7 +82,11 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		r1 <- r1[!is.na(r1$Crop) & !is.na(r1$Tmnt), ]
 		r2 <- r2[!is.na(r2$Tmnt), ]
 		r3 <- r3[!is.na(r3$Tmnt), ]
-		key <- function(x) paste(x$Site.No, x$Tmnt)
+		add_seq <- function(x) ave(seq_len(nrow(x)), x$Site.No, x$Tmnt, FUN=seq_along)
+		r1$seq <- add_seq(r1)
+		r2$seq <- add_seq(r2)
+		r3$seq <- add_seq(r3)
+		key <- function(x) paste(x$Site.No, x$Tmnt, x$seq)
 		ig <- match(key(r1), key(r2))
 		ifr <- match(key(r1), key(r3))
 		crop <- tolower(trimws(r1$Crop))
@@ -93,12 +97,15 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		part[crop == "potato"] <- "tubers"
 		data.frame(
 			country = country,
+			adm1 = "Rajshahi",
 			adm2 = adm2,
 			location = r1$Node,
+			latitude = 24.374,
+			longitude = 88.604,
 			trial_code = as.character(r1$Trial.Code),
 			season = ifelse(grepl("rabi", r1$Season, ignore.case=TRUE), "rabi", tolower(trimws(r1$Season))),
 			year = as.character(r1$Year),
-			site_no = as.character(r1$Site.No),
+			site_no = paste(r1$Site.No, r1$Tmnt, r1$seq, sep="_"),
 			treatment = r1$Tmnt,
 			crop = crop,
 			variety = r1$Variety,
@@ -133,9 +140,9 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	d$site_no <- NULL
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 	d$yield_isfresh <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

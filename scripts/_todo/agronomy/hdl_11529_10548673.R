@@ -3,13 +3,12 @@
 
 ## NOTES
 # Yields are from the barley, triticale, and wheat sheets in t/ha.
-# Geographic coverage is Mexico, Hidalgo, Progreso de Obregón. The record has no coordinates.
+# Geographic coverage is Mexico, Hidalgo, Progreso de Obregón. Approximate coordinates for Progreso de Obregón are imputed with geo_from_source = FALSE.
 # The title says the trial was irrigated. Emergence dates are written as day/Spanish-month/year.
 # The file name says OI16-17. The emergence dates are in December 2017.
 
 ## ISSUES
-# No coordinates.
-# write_files: missing variables: yield_moisture, latitude, longitude, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date.
+# Coordinates are approximate for Progreso de Obregón (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # ADT_VA workbook: entry list and kilograms of seed, with no area.
@@ -39,8 +38,8 @@ Different varieties of barley (4 varieties), triticale (4 varieties) and wheat (
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.4
 	)
 
@@ -91,6 +90,8 @@ Different varieties of barley (4 varieties), triticale (4 varieties) and wheat (
 	d$country <- "Mexico"
 	d$adm1 <- "Hidalgo"
 	d$location <- "Progreso de Obregón"
+	d$latitude <- 20.249
+	d$longitude <- -99.190
 	d$trial_id <- as.character(as.integer(as.factor(d$crop)))
 	d$on_farm <- NA
 	d$is_survey <- FALSE

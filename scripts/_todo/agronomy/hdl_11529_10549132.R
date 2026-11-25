@@ -6,11 +6,14 @@
 # The variety column has no header. Its values are Panoaya and Albatros.
 # Hundred-kernel weight is converted to g per 1000 kernels.
 # Grain moisture is the content just before shelling.
-# The description places the work at the CIMMYT station in Texcoco.
-# Geographic coverage is empty and the sheet has no country column, so country is not set.
+# The description places the work at the CIMMYT station in Texcoco, Mexico (El Batán); country, adm1, adm2, and approximate station coordinates are imputed with geo_from_source = FALSE.
 
 ## ISSUES
-# write_files: missing variables: yield, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: grain_mechanical_damage (age?). unknown variables: shelling_efficiency.
+# Post-harvest shelling machine comparison; no field grain yield, fertilizer, or planting/harvest dates apply.
+
+## NEW VARIABLES
+# shelling_efficiency_: shelling efficiency (%) from ShellingData.
+# grain_mechanical_damage_: mechanical grain damage (%) from ShellingData.
 
 
 ## NOT PROCESSED
@@ -42,8 +45,8 @@ CIMMYT implemented a study at its station in Texcoco, Mexico to compare the effe
 		response_vars = "germination_rate;seed_weight",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.4
 	)
 
@@ -56,6 +59,13 @@ CIMMYT implemented a study at its station in Texcoco, Mexico to compare the effe
 	rep <- ave(seq_len(nrow(r)), key, FUN=seq_along)
 
 	d <- data.frame(
+		country = "Mexico",
+		adm1 = "México",
+		adm2 = "Texcoco",
+		location = "El Batán",
+		site = "CIMMYT station",
+		latitude = 19.530,
+		longitude = -98.847,
 		trial_id = "1",
 		crop = "maize",
 		yield_part = "grain",
@@ -65,8 +75,8 @@ CIMMYT implemented a study at its station in Texcoco, Mexico to compare the effe
 		yield_moisture = as.numeric(r$Moisture_grain),
 		seed_weight = as.numeric(r$HKW) * 10,
 		germination_rate = as.numeric(r$Germination),
-		shelling_efficiency = as.numeric(r$Shelling_efficiency),
-		grain_mechanical_damage = as.numeric(r$Mechanical_damage),
+		shelling_efficiency_ = as.numeric(r$Shelling_efficiency),
+		grain_mechanical_damage_ = as.numeric(r$Mechanical_damage),
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE

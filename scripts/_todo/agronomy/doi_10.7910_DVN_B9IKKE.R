@@ -14,7 +14,7 @@
 
 ## ISSUES
 # Coordinates, planting dates, fertilizer, irrigation details and drought imposition dates not in the data.
-#   Georeference IRRI (Los Banos, Laguna, Philippines) and ICAR-RCER Patna (Bihar, India).
+#   Georeferenced to IRRI (14.1675, 121.2536, Los Banos, Laguna, Philippines) and ICAR-RCER Patna (25.5941, 85.0844, Bihar, India; geo_from_source = FALSE).
 # Patna yield moisture not stated.
 # IRRI has fewer than 56 plots in several season x treatment combinations (e.g. 32 in 2017WS); missing plots not explained.
 # IRRI GY14 values of 0 (failed plots under drought) are kept.
@@ -64,8 +64,8 @@ Harvest index is an important component of grain yield and is typically reduced 
 		response_vars = "yield;harvest_index", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 1
 	)
 
@@ -169,10 +169,9 @@ Harvest index is an important component of grain yield and is typically reduced 
 	d$yield_part <- "grain"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- NA
+	d$longitude <- ifelse(d$country == "Philippines", 121.2536, 85.0844)
+	d$latitude <- ifelse(d$country == "Philippines", 14.1675, 25.5941)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

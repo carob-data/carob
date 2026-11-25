@@ -6,11 +6,10 @@
 # Treatment codes are the sheet's notation. N0, N120 and N150 are the N rates in the definition block (kg/ha).
 # PCA+ is partial CA without residue and subsurface drip. CA+ is residue-retained CA and subsurface drip. CA is residue-retained CA with furrow irrigation. CT is conventional tillage, residue removed, furrow irrigation.
 # The definition block says residue retention is 25% of the previous wheat residue. The mass is not given.
+# Associated publication: Patra et al. (2023), Agricultural Water Management, doi:10.1016/j.agwat.2023.108308, conducted at the BISA-CIMMYT research farm, Ladhowal, Ludhiana, Punjab, India (30.99 N, 75.44 E; geo_from_source = FALSE because coordinates are not in the workbook).
 
 ## ISSUES
-# The description places the trial in north-west India. The sheet has no country, site, or coordinates, and geographicCoverage is empty.
 # Phosphorus and potassium rates are not in the sheet. Straw yield is not labeled fresh or dry.
-# write_files: missing variables: yield_moisture, country, latitude, longitude, K_fertilizer, P_fertilizer, harvest_date.
 
 ## NOT PROCESSED
 # Straw yield, biological yield, cobs, yield components, photosynthesis, nitrogen uptake, water productivity, and economics.
@@ -31,7 +30,7 @@ The Indo-Gangetic Plains (IGP) in north-west (NW) India are facing a severe decl
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIMMYT",
-		publication = NA,
+		publication = "doi:10.1016/j.agwat.2023.108308",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
@@ -39,8 +38,8 @@ The Indo-Gangetic Plains (IGP) in north-west (NW) India are facing a severe decl
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.5
 	)
 
@@ -96,10 +95,17 @@ The Indo-Gangetic Plains (IGP) in north-west (NW) India are facing a severe decl
 	}
 	d <- do.call(rbind, blocks)
 	d <- merge(d, facts, by="treatment", all.x=TRUE)
+	d$country <- "India"
+	d$adm1 <- "Punjab"
+	d$adm2 <- "Ludhiana"
+	d$location <- "Ladhowal"
+	d$site <- "BISA-CIMMYT farm"
+	d$latitude <- 30.99
+	d$longitude <- 75.44
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$trial_id <- d$planting_date
-	d$on_farm <- NA
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$irrigated <- TRUE
 	d$geo_from_source <- FALSE

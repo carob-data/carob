@@ -34,16 +34,16 @@ On-farm long-term wheat trials at Madhubani, Bihar, rabi seasons 2014-15, 2015-1
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Rabi long-term trial, Madhubani, Bihar",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.8
 	)
 
 	as_date <- function(x) {
@@ -146,6 +146,9 @@ On-farm long-term wheat trials at Madhubani, Bihar, rabi seasons 2014-15, 2015-1
 			adm1 = "Bihar",
 			adm2 = "Madhubani",
 			location = as.character(ph$Node),
+			latitude = 26.354,
+			longitude = 86.071,
+			season = "rabi",
 			trial_id = paste(ph$Year, ph$Node),
 			plot_id = paste(ph$Site.No, ph$Tmnt, ph$seq),
 			treatment = as.character(ph$Tmnt),

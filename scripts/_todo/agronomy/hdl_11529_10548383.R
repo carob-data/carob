@@ -38,16 +38,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "SRFSI alternative cropping systems, Malda",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "crop_rotation",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -218,9 +218,13 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	)
 
 	d <- carobiner::bindr(d1, d2)
+	d$location[d$location == "0"] <- NA_character_
 	d$country <- "India"
 	d$adm1 <- "West Bengal"
 	d$adm2 <- "Malda"
+	d$latitude <- 25.011
+	d$longitude <- 88.141
+	d$season <- "rabi"
 	d$trial_id <- as.character(as.integer(as.factor(paste(d$location, d$season_label))))
 	d$season_label <- NULL
 	d$on_farm <- TRUE

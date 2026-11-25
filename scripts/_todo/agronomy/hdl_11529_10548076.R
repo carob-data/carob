@@ -37,16 +37,16 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Rabi (winter) crops long-term trial, Rangpur, Bangladesh",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.8
 	)
 
 	one <- function(f) {
@@ -98,8 +98,12 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 
 		data.frame(
 			country = "Bangladesh",
+			adm1 = "Rangpur",
 			adm2 = "Rangpur",
 			location = r1$Node,
+			latitude = 25.746,
+			longitude = 89.252,
+			season = "rabi",
 			trial_id = paste(r1$Year, r1$Node),
 			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			treatment = r1$Tmnt,

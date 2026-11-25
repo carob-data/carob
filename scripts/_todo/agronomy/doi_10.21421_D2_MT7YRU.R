@@ -48,6 +48,7 @@
 # sla_: specific leaf area (cm2/g)
 # panicle_yield_: panicle weight (kg/ha)
 # tiller_number_: tillers per plant
+# grain_seq_, stover_seq_, biomass_total_seq_: sequential plant-level grain, stover, and total biomass (kg/ha) in long table
 # Kept only when that sheet has the measurement.
 
 carob_script <- function(path) {
@@ -713,7 +714,9 @@ Sequential observations of agronomical important traits during cropping season f
 		meas <- meas[meas %in% names(h)]
 		d <- merge(d, h[, c("plot_id", "plant_number_", meas)], by = c("plot_id", "plant_number_"), all.x = TRUE)
 	
-		# LAI at final harvest is often empty; do not keep an all-NA column on the wide table.
+		# Keep LAI/sla/leaf/stem dynamics in long; keep final-harvest totals/grain in wide d (no duplicate wide/long columns)
+		drop_d <- intersect(c("dmy_leaves", "dmy_stems", "LAI", "sla_"), names(d))
+		for (v in drop_d) d[[v]] <- NULL
 		for (v in meas) {
 			if (v %in% names(d) && all(is.na(d[[v]]))) d[[v]] <- NULL
 		}
@@ -726,9 +729,15 @@ Sequential observations of agronomical important traits during cropping season f
 		if ("fertilizer_date" %in% names(d) && all(is.na(d$fertilizer_date) | d$fertilizer_date == "")) d$fertilizer_date <- NULL
 		if ("block_id" %in% names(d) && all(is.na(d$block_id) | d$block_id == "")) d$block_id <- NULL
 		if ("stress" %in% names(d) && all(is.na(d$stress))) d$stress <- NULL
+		if ("site" %in% names(d)) {
+			ok_s <- !is.na(d$site) & nzchar(d$site)
+			d$site[ok_s] <- ifelse(grepl("^ICRISAT", d$site[ok_s], ignore.case = TRUE), d$site[ok_s], paste("ICRISAT field", d$site[ok_s]))
+		}
 		if (all(is.na(d$latitude)) || all(is.na(d$longitude))) {
-			d$latitude <- NULL
-			d$longitude <- NULL
+			# Estimated ICRISAT Patancheru station coordinates when absent from the workbook
+			d$latitude <- 17.511
+			d$longitude <- 78.275
+			d$geo_uncertainty <- 2000
 			geo <- FALSE
 		} else {
 			geo <- TRUE
@@ -740,46 +749,13 @@ Sequential observations of agronomical important traits during cropping season f
 		d$trial_id <- "1"
 		d$geo_from_source <- geo
 		d$yield_isfresh <- FALSE
+		d$yield_moisture <- 0
 		d$adm1 <- "Telangana"
 		d$adm2 <- "Sangareddy"
 		# Maturity date is the sheet's maturity column. Descriptions say plants were harvested at maturity.
 		if (!"harvest_date" %in% names(d) && "maturity_date" %in% names(d)) d$harvest_date <- d$maturity_date
-	
-		g$trial_id <- "1"
-		g$crop <- "sorghum"
-		g$yield_part <- "grain"
-		# Keep the time series even when grain is still absent.
-		long_vars <- c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage",
-			"yield", "dmy_residue", "dmy_total", "dmy_leaves", "dmy_stems", "panicle_yield_", "LAI",
-			"harvest_index", "seed_weight", "grain_number_", "sla_", "tiller_number_")
-		long <- g[, intersect(long_vars, names(g))]
-		empty_meas <- c("yield", "dmy_residue", "dmy_total", "dmy_leaves", "dmy_stems", "LAI")
-		empty_meas <- intersect(empty_meas, names(long))
-		if (length(empty_meas)) {
-			has <- apply(long[, empty_meas, drop = FALSE], 1, function(r) any(!is.na(r)))
-			long <- long[has, ]
-		}
-	
-		wth <- read_weather(wth_file, ex$start_year)
-		if (!is.null(wth)) {
-			wth <- wth[!is.na(wth$date), ]
-			if (nrow(wth) == 0) wth <- NULL
-		}
-		if (!is.null(wth)) {
-			wth$country <- "India"
-			wth$location <- "Patancheru"
-			wth$adm1 <- "Telangana"
-			wth$adm2 <- "Sangareddy"
-			wth$geo_from_source <- geo
-			if (geo) {
-				wth$latitude <- d$latitude[1]
-				wth$longitude <- d$longitude[1]
-			}
-			if ("site" %in% names(d)) wth$site <- d$site[1]
-		}
-		# Average one row per plant to one row per group in `by`.
-		# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
-		# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
+
+		# Average destructively sampled final-harvest plants to one wide row per plot (plain vectors, never 1D arrays).
 		mean_by <- function(x, by) {
 			if (!nrow(x)) return(x)
 			if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
@@ -797,27 +773,25 @@ Sequential observations of agronomical important traits during cropping season f
 			num[names(num) %in% by] <- FALSE
 			logi[names(logi) %in% by] <- FALSE
 			for (v in names(x)[num]) {
-				m <- tapply(x[[v]], key, mean_na)
-				m <- unname(m[key[keep]])
+				m <- as.numeric(unname(tapply(x[[v]], key, mean_na)[key[keep]]))
 				if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
 					m <- as.integer(round(m))
 				}
 				out[[v]] <- m
 			}
 			for (v in names(x)[logi]) {
-				same <- tapply(x[[v]], key, function(z) {
+				same <- as.logical(tapply(x[[v]], key, function(z) {
 					z <- z[!is.na(z)]
 					!length(z) || all(z == z[1])
-				})
+				}))
 				if (isTRUE(all(same))) {
-					m <- tapply(x[[v]], key, function(z) {
+					m <- as.logical(unname(tapply(x[[v]], key, function(z) {
 						z <- z[!is.na(z)]
 						if (!length(z)) NA else z[1]
-					})
-					out[[v]] <- unname(m[key[keep]])
+					})[key[keep]]))
+					out[[v]] <- m
 				} else {
-					m <- tapply(as.numeric(x[[v]]), key, mean_na)
-					out[[v]] <- unname(m[key[keep]])
+					out[[v]] <- as.numeric(unname(tapply(as.numeric(x[[v]]), key, mean_na)[key[keep]]))
 				}
 			}
 			for (v in names(x)) {
@@ -837,14 +811,54 @@ Sequential observations of agronomical important traits during cropping season f
 					parts <- c(parts, codes)
 					if (length(parts) == 1) parts else paste(parts, collapse = "; ")
 				})
-				out[[v]] <- unname(u[key[keep]])
+				out[[v]] <- as.character(unname(u[key[keep]]))
 			}
 			rownames(out) <- NULL
 			out
 		}
 
 		d <- mean_by(d, "plot_id")
-		long <- mean_by(long, c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage", "crop", "yield_part"))
+		d$record_id <- seq_len(nrow(d))
+
+		# Keep individual plant-level sequential observations in long linked via record_id (no aggregation, no duplicate wide cols)
+		g <- g[g$plot_id %in% d$plot_id, , drop = FALSE]
+		long <- data.frame(
+			record_id = d$record_id[match(g$plot_id, d$plot_id)],
+			DAP = g$DAP,
+			growth_stage = g$growth_stage,
+			order = g$plant_number_,
+			dmy_leaves = g$dmy_leaves,
+			dmy_stems = g$dmy_stems,
+			LAI = g$LAI,
+			sla_ = g$sla_,
+			grain_seq_ = g$yield,
+			stover_seq_ = g$dmy_residue,
+			biomass_total_seq_ = g$dmy_total
+		)
+		empty_meas <- c("dmy_leaves", "dmy_stems", "LAI", "sla_", "grain_seq_", "stover_seq_", "biomass_total_seq_")
+		has <- apply(long[, empty_meas, drop = FALSE], 1, function(r) any(!is.na(r)))
+		long <- long[has, , drop = FALSE]
+		for (v in empty_meas) {
+			if (all(is.na(long[[v]]))) long[[v]] <- NULL
+		}
+		rownames(long) <- NULL
+
+		wth <- read_weather(wth_file, ex$start_year)
+		if (!is.null(wth)) {
+			wth <- wth[!is.na(wth$date), ]
+			if (nrow(wth) == 0) wth <- NULL
+		}
+		if (!is.null(wth)) {
+			wth$country <- "India"
+			wth$location <- "Patancheru"
+			wth$adm1 <- "Telangana"
+			wth$adm2 <- "Sangareddy"
+			wth$geo_from_source <- geo
+			wth$latitude <- d$latitude[1]
+			wth$longitude <- d$longitude[1]
+			if (!geo) wth$geo_uncertainty <- 2000
+			if ("site" %in% names(d)) wth$site <- d$site[1]
+		}
 
 		list(d = d, long = long, wth = wth, info = ex)
 	}
@@ -869,10 +883,7 @@ Sequential observations of agronomical important traits during cropping season f
 	if ("site" %in% names(d) && all(is.na(d$site))) d$site <- NULL
 	if ("rep" %in% names(d) && all(is.na(d$rep))) d$rep <- NULL
 	if (!is.null(wth) && "site" %in% names(wth) && all(is.na(wth$site))) wth$site <- NULL
-	id_cols <- c("trial_id", "plot_id", "variety", "treatment", "DAP", "growth_stage", "crop", "yield_part")
-	for (v in setdiff(names(long), id_cols)) {
-		if (all(is.na(long[[v]]))) long[[v]] <- NULL
-	}
+	# Empty long measurement columns are already dropped inside rabi_records()
 	tv <- c("variety", "treatment")
 	if (length(unique(d$plant_density[!is.na(d$plant_density)])) > 1) tv <- c(tv, "plant_density")
 	if (length(unique(round(d$N_fertilizer[!is.na(d$N_fertilizer)], 1))) > 1) tv <- c(tv, "N_fertilizer")
@@ -889,9 +900,9 @@ Sequential observations of agronomical important traits during cropping season f
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.25
 	)
 
 	carobiner::write_files(path, meta, d, long = long, wth = wth)

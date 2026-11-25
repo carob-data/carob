@@ -20,16 +20,15 @@
 #   plot water depth, tensiometer, weather (site 2012-14 and long-term 1973-2012), economic analysis, maize/sunflower
 #   head/cob diameter and sunflower seed set per plant.
 # Aman/rabi planting dates are target dates, not observed; aus dates are seedbed sowing dates (transplanted, dates not given).
-# Fertilizer, irrigation and spacing are not documented in the files (see thesis). No coordinates; georeference
-#   PSTU, Dumki, Patuakhali.
+# Fertilizer, irrigation and spacing are not documented in the files (see thesis). Georeferenced to PSTU, Dumki, Patuakhali (22.4642, 90.3822; geo_from_source = FALSE).
 # Duplicate plot codes in the rabi files (e.g. "R1S2C1M1" twice, in place of rep 4); the second occurrence is set to rep 4.
 # Sunflower 2013-15 file: first columns (fresh weights, stover) are identical to the 2012-14 file; possible copy error.
 # "Aus 2014": headers "1000 GW" and "Grain Yield" are swapped relative to the values (col 5 ~4.5 = yield, col 6 ~19 = TGW);
 #   mapped by values.
 # Rice straw yield assumed dry weight (dmy_residue); Aman 2012 straw in kg/ha and HI as fraction, other rice files t/ha and %.
-# season "aus" is not in the season vocabulary.
+# Bangladesh "aus" (pre-monsoon) season mapped to terminag "early wet".
 # Aman 2012 plots are coded by date only (no rabi crop yet), so rabi_crop_ is NA there.
-# write_files: missing coordinates, fertilizer, irrigated, harvest_date; NA in treatment var rabi_crop_; new variables.
+# write_files: missing fertilizer, irrigated, harvest_date; new variables.
 
 ## NEW VARIABLES
 # system_timing_: date level of the system (1-4, = aus sowing date A1-A4 and the subsequent aman/rabi dates)
@@ -99,12 +98,12 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "planting_date;rabi_crop_;mulch",
+		treatment_vars = "planting_date;mulch",
 		response_vars = "yield;dmy_residue;harvest_index;seed_weight", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 42,
 		carob_effort = 1.2
 	)
 
@@ -130,12 +129,12 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 	# column order: panicle density, fertility, florets/panicle, 1000 GW, grain yield, straw yield, HI
 	d1 <- rice("Yield & yield cont char_Aman 2012.xlsx", "aman", 2012, 2:8, 1, 100)
 	d2 <- rice("Yield & yield cont char_Aman 2013.xlsx", "aman", 2013, c(2,3,4,6,5,7,8), 1000, 1)
-	d3 <- rice("Yield & yield cont char_Aus 2013.xlsx", "aus", 2013, 2:8, 1000, 1)
+	d3 <- rice("Yield & yield cont char_Aus 2013.xlsx", "early wet", 2013, 2:8, 1000, 1)
 	# header says 1000 GW in col 5 and grain yield in col 6, but the values are the other way around
-	d4 <- rice("Yield & yield cont char_Aus 2014.xlsx", "aus", 2014, c(2,3,4,6,5,7,8), 1000, 1)
+	d4 <- rice("Yield & yield cont char_Aus 2014.xlsx", "early wet", 2014, c(2,3,4,6,5,7,8), 1000, 1)
 	drice <- rbind(d1, d2, d3, d4)
 	drice$crop <- "rice"
-	drice$variety <- ifelse(drice$season == "aus", "BRRI dhan65", "BRRI dhan44")
+	drice$variety <- ifelse(drice$season == "early wet", "BRRI dhan65", "BRRI dhan44")
 	drice$yield_moisture <- 14
 
 	## maize
@@ -214,7 +213,7 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 	ad <- c("06-20", "07-05", "07-20", "08-05")
 	rd <- c("11-30", "12-15", "12-30", "01-15")
 	i <- d$system_timing_
-	d$planting_date <- ifelse(d$season == "aus", paste0(d$year, "-", md[i]), 
+	d$planting_date <- ifelse(d$season == "early wet", paste0(d$year, "-", md[i]), 
 		ifelse(d$season == "aman", paste0(d$year, "-", ad[i]), 
 		paste0(d$year + (i == 4), "-", rd[i])))
 	d$crop_rotation <- ifelse(is.na(d$rabi_crop_), NA, paste0("rice;rice;", d$rabi_crop_))
@@ -228,6 +227,9 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 	d$adm2 <- "Patuakhali"
 	d$adm3 <- "Dumki"
 	d$location <- "Patuakhali Science and Technology University"
+	d$latitude <- 22.4642
+	d$longitude <- 90.3822
+	d$geo_from_source <- FALSE
 	d$record_id <- 1:nrow(d)
 
 	carobiner::write_files(path, meta, d)

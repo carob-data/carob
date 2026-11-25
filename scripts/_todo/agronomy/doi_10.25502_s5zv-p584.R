@@ -19,14 +19,14 @@
 # One record is district Kampala with coordinates like Kapchorwa.
 # Stake lengths and plants per stake (five subsamples) were not reshaped to a long table.
 # Household production.csv is entirely blank.
-# farm_id FB_ADAP_UG_KAN307 and FB_ADAP_UG_BEAN_388 are each entered twice, with the same values. The household table was reduced to one row per farm. The repeated experiment rows were kept, so write_files still reports duplicate records.
-# write_files: missing carob_contributor, yield, yield_moisture, irrigated, planting_date, harvest_date; unknown staking_method_, intercrop_crop_, n_stakes_4m2_, plant_survival_; plot_area about 5 to 363570 and plant_spacing 4 to 155; fertilizer_type "other"; duplicate coordinates; duplicate records; NA latitude and longitude.
+# farm_id FB_ADAP_UG_KAN307 and FB_ADAP_UG_BEAN_388 are each entered twice with identical values; deduplicated with unique(d).
+# Fertilizer type "other" mapped to terminag "unknown". Intercrops standardized to terminag crop names (dropping generic "Other").
+# write_files: missing carob_contributor, yield, yield_moisture, irrigated, planting_date, harvest_date; unknown staking_method_, n_stakes_4m2_, plant_survival_; plot_area about 5 to 363570 and plant_spacing 4 to 155; duplicate coordinates; NA latitude and longitude.
 
 ## NEW VARIABLES
 # staking_method_: staking method recorded for that plot.
 # n_stakes_4m2_: number of stakes counted on a 2 x 2 m area.
 # plant_survival_: survival class (for example 75-100%).
-# intercrop_crop_: other crops in the legume plot, as recorded.
 
 ## NOT PROCESSED
 # experiment.csv: reasons for practices, soil depth points, drainage, slope, ownership, stake lengths and plants per stake (five each), plot width and length (area is kept), control-plot size, previous-season fertilizer amounts (types of previous fertilizer are not rates).
@@ -61,8 +61,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "plant_survival_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.8
 	)
 
@@ -87,6 +87,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	ft[which(tolower(ft) == "dap")] <- "DAP"
 	ft[which(tolower(ft) == "tsp")] <- "TSP"
 	ft[which(tolower(ft) == "npk")] <- "NPK"
+	ft[which(tolower(ft) == "other")] <- "unknown"
 	prev <- tolower(gsub("_", " ", trimws(r1$crop_1_previous_season)))
 	prev <- carobiner::replace_values(prev,
 		c("bush bean", "climbing bean", "irish potato", "maize", "banana", "millet", "sorghum", "coffee", "cassava", "cowpea", "sweet potato"),
@@ -95,15 +96,29 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	known <- c("common bean", "potato", "maize", "banana", "millet", "sorghum", "coffee", "cassava", "cowpea", "sweetpotato")
 	prev[which(!prev %in% known)] <- NA
 
-	ic <- trimws(r1$with_which_crops_did_the_farmer_intercrop_n2a_plot)
-	ic[which(r1$intercropping_n2a_plot != "y")] <- NA
-	ic[which(ic == "")] <- NA
+	clean_ic <- function(x, flag) {
+		out <- rep("none", length(x))
+		for (i in seq_along(x)) {
+			if (is.na(flag[i]) || flag[i] != "y") next
+			if (is.na(x[i]) || trimws(x[i]) == "") { out[i] <- "unknown"; next }
+			toks <- tolower(strsplit(trimws(x[i]), "\\s+")[[1]])
+			toks <- carobiner::replace_values(toks,
+				c("bush_bean", "pigeon_pea", "other"),
+				c("common bean", "pigeon pea", NA_character_), FALSE)
+			toks <- unique(toks[!is.na(toks) & toks != ""])
+			out[i] <- if (length(toks) > 0) paste(toks, collapse = "; ") else "unknown"
+		}
+		out
+	}
+	ic <- clean_ic(r1$with_which_crops_did_the_farmer_intercrop_n2a_plot, r1$intercropping_n2a_plot)
 
 	n2 <- data.frame(
 		trial_id = as.character(r1$farm_id),
 		plot_id = "n2africa",
 		treatment = "n2africa",
 		crop = "common bean",
+		intercropped = r1$intercropping_n2a_plot == "y",
+		intercrops = ic,
 		variety_type = "climbing bean",
 		variety = trimws(r1$legume_variety),
 		fertilizer_type = ft,
@@ -116,8 +131,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		previous_crop = prev,
 		staking_method_ = trimws(r1$which_staking_method_did_the_farmer_use_n2a_plot),
 		n_stakes_4m2_ = r1$number_of_stakes_on_2x2_m_n2africa_plot,
-		plant_survival_ = trimws(r1$plant_survival_n2africa_plot),
-		intercrop_crop_ = ic
+		plant_survival_ = trimws(r1$plant_survival_n2africa_plot)
 	)
 	n2$variety[which(n2$variety == "")] <- NA
 	n2$staking_method_[which(n2$staking_method_ == "")] <- NA
@@ -134,14 +148,14 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	i_a <- which(unit == "acre")
 	own_m2[i_m] <- r1$area_of_own_legume_plot[i_m]
 	own_m2[i_a] <- r1$area_of_own_legume_plot[i_a] * 4046.8564224
-	ic2 <- trimws(r1$with_which_crops_did_the_farmer_intercrop_own_legume_plot)
-	ic2[which(r1$intercropping_own_legume_plot != "y")] <- NA
-	ic2[which(ic2 == "")] <- NA
+	ic2 <- clean_ic(r1$with_which_crops_did_the_farmer_intercrop_own_legume_plot, r1$intercropping_own_legume_plot)
 	own <- data.frame(
 		trial_id = as.character(r1$farm_id),
 		plot_id = "farmer",
 		treatment = "farmer",
 		crop = ifelse(own_crop %in% c("bush_bean", "climbing_bean"), "common bean", NA_character_),
+		intercropped = r1$intercropping_own_legume_plot == "y",
+		intercrops = ic2,
 		variety_type = vtype,
 		variety = trimws(r1$which_legume_variety_did_the_farmer_plant),
 		fertilizer_type = NA_character_,
@@ -154,8 +168,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		previous_crop = NA_character_,
 		staking_method_ = trimws(r1$which_staking_method_did_the_farmer_use_own_legume_plot),
 		n_stakes_4m2_ = r1$number_of_stakes_on_2x2_m_own_legume_plot,
-		plant_survival_ = trimws(r1$plant_survival_own_legume_plot),
-		intercrop_crop_ = ic2
+		plant_survival_ = trimws(r1$plant_survival_own_legume_plot)
 	)
 	own$variety[which(own$variety == "")] <- NA
 	own$staking_method_[which(own$staking_method_ == "")] <- NA
@@ -165,6 +178,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	planted <- which(r1$did_the_farmer_plant_his_her_own_legume == "y")
 	d <- rbind(n2, own[planted, ])
 	d <- merge(d, g, by = "trial_id", all.x = TRUE)
+	d <- unique(d)
 
 	d$N_fertilizer <- NA_real_
 	d$P_fertilizer <- NA_real_

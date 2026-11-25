@@ -2,29 +2,40 @@
 # license: GPL (>=3)
 
 ## NOTES
-# UNICA potato irrigation experiment. Geographic coverage is Peru, Lima, La Molina. The published bounding box gives only the south and west corner, so that single corner is used for this one site with geo_uncertainty 2000.
-# The dictionary expands DR to drip irrigation and FU to furrow irrigation. Treatment 1 is full irrigation, 2 is a stomatal-conductance threshold of 0.15, and 3 is a threshold of 0.05. Those thresholds are not a fertilizer rate.
-# Harvest workbook weights are fresh and dry mass of one plant (leaf, stem, root, tuber), averaged across plants harvested on the same day. Sequential harvests stay separate. The dictionary shipped with the files does not state the unit, so they are not converted to kg/ha.
+# UNICA potato water-stress and photosynthesis recovery experiment at CIP La Molina, Lima, Peru (24 plots across 2 irrigation methods x 3 stress thresholds).
+# Uses the consolidated 8-sheet workbook Photosynthesis recovery-2017_v2.xlsx with units documented in Documentation_v2.xlsx: Harvest fw/dw are g per plant (mapped to fw_leaves..dw_tubers); Canopy cover CC is % (ground_cover); Irrigation Vol IV is m3 per plot; Ecophysiology Pn (umol CO2 m-2 s-1), gs_max (mol H2O m-2 s-1), Fv'/Fm'; Isotopes and Recovery isotopes D13 (per mil); PRI (dimensionless).
+# Irrigation methods: DR = drip, FU = furrow. Treatments: 1 = full irrigation, 2 = gs_max threshold 0.15, 3 = gs_max threshold 0.05 (per Data_Dictionary.xlsx).
+# Exact planting date (2017-07-05) is verified directly from date - dap across all rows of Irrigation Vol; final harvest at 97 DAP gives harvest_date = "2017-10-10".
+# All plant-level sequential harvests, canopy cover, irrigation events, ecophysiology, PRI, and isotope observations are preserved without aggregation in the long table linked via record_id.
+# Hourly Weather (2352 rows, 2017-07-05 to 2017-10-10) is aggregated to daily wth: VPD kPa -> hPa (* 10), SR W/m2 hourly -> srad kJ/m2/day (sum * 3.6), Pa mbar = hPa, PP and Eo summed daily.
+# Coordinates (-12.076289, -76.948417) come from the CIP Dataverse bounding box (south/west corner) with geo_uncertainty = 2000 m.
 
 ## ISSUES
-# Plant mass has no stated unit, so there is no yield.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_, dry_leaf_, dry_stem_, dry_root_, dry_tuber_.
-
-## NEW VARIABLES
-# fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_: mean fresh mass of the plants harvested that day, unit not stated.
-# dry_leaf_, dry_stem_, dry_root_, dry_tuber_: mean dry mass of the plants harvested that day, unit not stated.
+# Plot area and plant density are not stated in this dataset's files (though the companion Cool Farm Tool dataset doi:10.21223/LNLR9B E1-CIP reports 45 m2), so per-plant tuber weights (g/plant) and per-plot irrigation volumes (m3) are not converted to kg/ha or mm.
+# One cell in Harvest fw-tuber contains the raw typo "20.3.4", which is read as NA.
+# Canopy cover CC reaches 112.69% in the raw sheet (kept as recorded).
+# No fertilizer rates or yield moisture reported.
+# write_files: missing carob_contributor, yield, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer; out of bounds: ground_cover (8.311, 112.692); unknown variables: irrigation_regime_, total_irrigation_volume_m3_, harvest_, tubers_per_plant_, irrigation_volume_m3_, photosynthesis_, gs_max_, fv_fm_, PRI_, sample_material_, sampling_moment_, d13C_discrimination_.
 
 ## NOT PROCESSED
-# Canopy cover, photosynthesis, isotopes, irrigation volume, and PRI workbooks. Irrigation volume is not joined because this table is the sequential harvest, and the volume unit is not applied here.
-# CANOPY COVER-EX17-I.xlsx: not read. sheet hoja 1: ID, DAP, irrigation, treatment, plot, CC. Observation records are missing from d until this file is standardized.
-# Data_Dictionary.xlsx: documentation or a codebook, not an observation table.
-# Documentation_v2.xlsx: not read. sheet Ecophysiology (of 8): Variable name, Abbreviation, Unit, Description, Method, Formula, Reference. Observation records are missing from d until this file is standardized.
-# ECOPHYSIOLOGY-EX17-I.xlsx: not read. sheet Hoja1: ID, date, dap, irrigation, treatment, plot, plant, A, gs. Observation records are missing from d until this file is standardized.
-# HARVEST ISOTOPES-EX17-I.xlsx: not read. sheet Hoja4: ID, harvest, dap, irrigation, treatment, plot, tm, dw, D13. Observation records are missing from d until this file is standardized.
-# IRRIGATION VOLUME-EX17-I.xlsx: not read. sheet Hoja2: ID, date, dap, irrigation, treatment, plot, IV. Observation records are missing from d until this file is standardized.
-# Photosynthesis recovery-2017_v2.xlsx: not read. sheet Ecophysiology (of 8): id, date, dap, irrigation, treatment, plot, plant, Pn, gs_max, Fv'/Fm'. Observation records are missing from d until this file is standardized.
-# PRI EX17-I.xlsx: not read. sheet hoja 1: ID, dap, irrigation, treatment, plot, plant, PRI. Observation records are missing from d until this file is standardized.
-# RECOVERY ISOTOPES-EX17-I.xlsx: not read. sheet hoja 1: ID, dap, ms, irrigation, treatment, plot, tm, dw, D13. Observation records are missing from d until this file is standardized.
+# Legacy v1 individual workbooks (HARVEST-EX17-I.xlsx, CANOPY COVER-EX17-I.xlsx, ECOPHYSIOLOGY-EX17-I.xlsx, HARVEST ISOTOPES-EX17-I.xlsx, IRRIGATION VOLUME-EX17-I.xlsx, PRI EX17-I.xlsx, RECOVERY ISOTOPES-EX17-I.xlsx): superseded by the consolidated Photosynthesis recovery-2017_v2.xlsx.
+# Data_Dictionary.xlsx and Documentation_v2.xlsx: codebooks used to verify units.
+# Weather PAR (umol/s/m2): no matching column in terminag weather variables.
+# Isotope sample dry weight dw (mg): analytical mass for IRMS.
+
+## NEW VARIABLES
+# irrigation_regime_: water-restriction treatment (full irrigation, gs_max 0.15, gs_max 0.05).
+# total_irrigation_volume_m3_: seasonal total irrigation volume per plot (m3).
+# harvest_: sequential harvest number (1 to 6).
+# tubers_per_plant_: number of tubers per harvested plant (count).
+# irrigation_volume_m3_: per-event irrigation volume per plot (m3).
+# photosynthesis_: net photosynthetic rate Pn (umol CO2 m-2 s-1).
+# gs_max_: maximum stomatal conductance (mol H2O m-2 s-1).
+# fv_fm_: light-saturated PSII photochemical efficiency (Fv'/Fm').
+# PRI_: photochemical reflectance index.
+# sample_material_: plant organ sampled for isotope analysis (leaf, tuber).
+# sampling_moment_: sampling timing relative to rewatering (BI = before irrigation, AI = after irrigation).
+# d13C_discrimination_: carbon-13 isotopic discrimination D13 (per mil).
 
 
 carob_script <- function(path) {
@@ -45,28 +56,45 @@ Field experiment to compare physiological performance and crop yield among diffe
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment;irrigation_method",
-		response_vars = "none",
+		treatment_vars = "irrigation_method;irrigation_regime_",
+		response_vars = "fw_tubers;dw_tubers;ground_cover",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.3
 	)
 
-	f <- ff[basename(ff) == "HARVEST-EX17-I.xlsx"]
-	r <- carobiner::read.excel(f)
-	num <- function(x) {
-		z <- trimws(as.character(x))
-		z[!nzchar(z) | z == "NA"] <- NA_character_
-		ok <- is.na(z) | grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
-		z[!ok] <- NA_character_
-		as.numeric(z)
-	}
-	irr <- trimws(as.character(r$irrigation))
-	method <- ifelse(irr == "DR", "drip", ifelse(irr == "FU", "furrow", NA_character_))
+	f <- ff[basename(ff) == "Photosynthesis recovery-2017_v2.xlsx"]
+	nas <- c("", "NA", "20.3.4")
+	r_eco <- carobiner::read.excel(f, sheet="Ecophysiology", na=c("", "NA"))
+	r_cc  <- carobiner::read.excel(f, sheet="Canopy cover", na=c("", "NA"))
+	r_iso <- carobiner::read.excel(f, sheet="Isotopes", na=c("", "NA"))
+	r_rec <- carobiner::read.excel(f, sheet="Revovery isotopes", na=c("", "NA"))
+	r_pri <- carobiner::read.excel(f, sheet="PRI", na=c("", "NA"))
+	r_irr <- carobiner::read.excel(f, sheet="Irrigation Vol", na=c("", "NA"))
+	r_har <- carobiner::read.excel(f, sheet="Harvest", na=nas)
+	r_wth <- carobiner::read.excel(f, sheet="Weather", na=c("", "NA"))
+
+	meth_map <- c(DR="drip", FU="furrow")
+	reg_map <- c("1"="full irrigation", "2"="gs_max 0.15", "3"="gs_max 0.05")
+
+	plots <- unique(data.frame(
+		plot = as.integer(r_har$plot),
+		irr = trimws(as.character(r_har$irrigation)),
+		trt = trimws(as.character(r_har$treatment))
+	))
+	plots <- plots[order(plots$plot), ]
+
+	iv_sum <- tapply(as.numeric(r_irr$IV), as.integer(r_irr$plot), sum, na.rm=TRUE)
+	iv_cnt <- tapply(as.numeric(r_irr$IV), as.integer(r_irr$plot), function(z) sum(!is.na(z) & z > 0))
+	pchar <- as.character(plots$plot)
+
 	d <- data.frame(
+		record_id = seq_len(nrow(plots)),
+		trial_id = "LaMolina_UNICA_2017",
+		plot_id = pchar,
 		country = "Peru",
 		adm1 = "Lima",
 		location = "La Molina",
@@ -77,93 +105,119 @@ Field experiment to compare physiological performance and crop yield among diffe
 		geo_source = "CIP Dataverse bounding box (south and west only)",
 		crop = "potato",
 		variety = "UNICA",
-		treatment = trimws(as.character(r$treatment)),
-		irrigation_method = method,
+		yield_part = "tubers",
+		treatment = paste(plots$irr, plots$trt, sep="_"),
+		irrigation_method = unname(meth_map[plots$irr]),
+		irrigation_regime_ = unname(reg_map[plots$trt]),
 		irrigated = TRUE,
-		DAP = as.integer(num(r$dap)),
-		plot_id = trimws(as.character(r$plot)),
-		plant_number_ = as.integer(num(r$plant)),
-		fresh_leaf_ = num(r[["fw-leaf"]]),
-		fresh_stem_ = num(r[["fw-stem"]]),
-		fresh_root_ = num(r[["fw- root"]]),
-		fresh_tuber_ = num(r[["fw-tuber"]]),
-		dry_leaf_ = num(r[["dw-leaf"]]),
-		dry_stem_ = num(r[["dw-stem"]]),
-		dry_root_ = num(r[["dw-root"]]),
-		dry_tuber_ = num(r[["dw-tuber"]]),
-		trial_id = "LaMolina_UNICA_irrigation",
+		irrigation_number = as.integer(unname(iv_cnt[pchar])),
+		total_irrigation_volume_m3_ = unname(iv_sum[pchar]),
+		planting_date = "2017-07-05",
+		harvest_date = "2017-10-10",
+		harvest_days = 97L,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
-	rownames(d) <- NULL
 
-	# Average one row per plant to one row per group in `by`.
-	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
-	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
-	mean_by <- function(x, by) {
-		if (!nrow(x)) return(x)
-		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
-		if ("record_id" %in% names(x)) x$record_id <- NULL
-		by <- intersect(by, names(x))
-		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
-		mean_na <- function(z) {
-			z <- as.numeric(z)
-			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
-		}
-		keep <- !duplicated(key)
-		out <- x[keep, , drop = FALSE]
-		num <- vapply(x, is.numeric, TRUE)
-		logi <- vapply(x, is.logical, TRUE)
-		num[names(num) %in% by] <- FALSE
-		logi[names(logi) %in% by] <- FALSE
-		for (v in names(x)[num]) {
-			m <- tapply(x[[v]], key, mean_na)
-			m <- unname(m[key[keep]])
-			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
-				m <- as.integer(round(m))
-			}
-			out[[v]] <- m
-		}
-		for (v in names(x)[logi]) {
-			same <- tapply(x[[v]], key, function(z) {
-				z <- z[!is.na(z)]
-				!length(z) || all(z == z[1])
-			})
-			if (isTRUE(all(same))) {
-				m <- tapply(x[[v]], key, function(z) {
-					z <- z[!is.na(z)]
-					if (!length(z)) NA else z[1]
-				})
-				out[[v]] <- unname(m[key[keep]])
-			} else {
-				m <- tapply(as.numeric(x[[v]]), key, mean_na)
-				out[[v]] <- unname(m[key[keep]])
-			}
-		}
-		for (v in names(x)) {
-			if (v %in% by || num[v] || logi[v]) next
-			u <- tapply(as.character(x[[v]]), key, function(z) {
-				z <- z[!is.na(z)]
-				z <- trimws(z)
-				z <- z[nzchar(z)]
-				if (!length(z)) return(NA_character_)
-				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
-					return(as.character(mean(as.Date(z))))
-				}
-				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
-				parts <- character()
-				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
-				codes <- unique(z[!isn])
-				parts <- c(parts, codes)
-				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
-			})
-			out[[v]] <- unname(u[key[keep]])
-		}
-		rownames(out) <- NULL
-		out
+	rid <- function(p) d$record_id[match(as.character(as.integer(p)), d$plot_id)]
+
+	l_har <- data.frame(
+		record_id = rid(r_har$plot),
+		DAP = as.integer(r_har$dap),
+		order = as.integer(r_har$plant),
+		harvest_ = as.integer(r_har$harvest),
+		fw_leaves = as.numeric(r_har[["fw-leaf"]]),
+		fw_stems = as.numeric(r_har[["fw-stem"]]),
+		fw_roots = as.numeric(r_har[["fw- root"]]),
+		fw_tubers = as.numeric(r_har[["fw-tuber"]]),
+		tubers_per_plant_ = as.numeric(r_har$at),
+		dw_leaves = as.numeric(r_har[["dw-leaf"]]),
+		dw_stems = as.numeric(r_har[["dw-stem"]]),
+		dw_roots = as.numeric(r_har[["dw-root"]]),
+		dw_tubers = as.numeric(r_har[["dw-tuber"]])
+	)
+	l_cc <- data.frame(
+		record_id = rid(r_cc$plot),
+		DAP = as.integer(r_cc$DAP),
+		ground_cover = as.numeric(r_cc$CC)
+	)
+	l_irr <- data.frame(
+		record_id = rid(r_irr$plot),
+		date = format(as.Date(r_irr$date), "%Y-%m-%d"),
+		DAP = as.integer(r_irr$dap),
+		irrigation_volume_m3_ = as.numeric(r_irr$IV)
+	)
+	l_eco <- data.frame(
+		record_id = rid(r_eco$plot),
+		date = format(as.Date(r_eco$date), "%Y-%m-%d"),
+		DAP = as.integer(r_eco$dap),
+		order = as.integer(r_eco$plant),
+		photosynthesis_ = as.numeric(r_eco$Pn),
+		gs_max_ = as.numeric(r_eco$gs_max),
+		fv_fm_ = as.numeric(r_eco[["Fv'/Fm'"]])
+	)
+	l_pri <- data.frame(
+		record_id = rid(r_pri$plot),
+		DAP = as.integer(r_pri$dap),
+		order = as.integer(r_pri$plant),
+		PRI_ = as.numeric(r_pri$PRI)
+	)
+	l_iso <- data.frame(
+		record_id = rid(r_iso$plot),
+		DAP = as.integer(r_iso$dap),
+		harvest_ = as.integer(r_iso$harvest),
+		sample_material_ = tolower(trimws(as.character(r_iso$tm))),
+		d13C_discrimination_ = as.numeric(r_iso$D13)
+	)
+	l_rec <- data.frame(
+		record_id = rid(r_rec$plot),
+		DAP = as.integer(r_rec$dap),
+		sample_material_ = tolower(trimws(as.character(r_rec$tm))),
+		sampling_moment_ = trimws(as.character(r_rec$ms)),
+		d13C_discrimination_ = as.numeric(r_rec$D13)
+	)
+
+	dlong <- carobiner::bindr(l_har, l_cc, l_irr, l_eco, l_pri, l_iso, l_rec)
+
+	# Aggregate hourly Weather (2352 rows) to daily wth
+	wdate <- sprintf("%04d-%02d-%02d", as.integer(r_wth$Year), as.integer(r_wth$Month), as.integer(r_wth$Day))
+	ud <- sort(unique(wdate))
+	agg_fun <- function(v, fn) {
+		z <- tapply(as.numeric(v), wdate, function(x) if (all(is.na(x))) NA_real_ else fn(x, na.rm=TRUE))
+		unname(z[ud])
 	}
+	# Circular mean for wind direction (degrees)
+	wdir_mean <- tapply(as.numeric(r_wth$Dir), wdate, function(x) {
+		x <- x[!is.na(x)]
+		if (!length(x)) return(NA_real_)
+		rad <- x * pi / 180
+		ang <- atan2(mean(sin(rad)), mean(cos(rad))) * 180 / pi
+		(ang + 360) %% 360
+	})
+	wth <- data.frame(
+		date = ud,
+		temp = agg_fun(r_wth$Ta, mean),
+		tmin = agg_fun(r_wth$Ta, min),
+		tmax = agg_fun(r_wth$Ta, max),
+		rhum = agg_fun(r_wth$RH, mean),
+		rhmn = agg_fun(r_wth$RH, min),
+		rhmx = agg_fun(r_wth$RH, max),
+		# VPD kPa -> hPa (* 10)
+		vpd = agg_fun(r_wth$VPD, mean) * 10,
+		wspd = agg_fun(r_wth$WS, mean),
+		wdir = unname(wdir_mean[ud]),
+		# Hourly SR (W/m2) summed over 24 h * 3600 s / 1000 = kJ/m2/day
+		srad = agg_fun(r_wth$SR, sum) * 3.6,
+		prec = agg_fun(r_wth$PP, sum),
+		# Pa in mbar = hPa
+		pressure = agg_fun(r_wth$Pa, mean),
+		ETo = agg_fun(r_wth$Eo, sum),
+		country = "Peru",
+		location = "La Molina",
+		latitude = -12.076289,
+		longitude = -76.948417,
+		geo_from_source = TRUE
+	)
 
-	d <- mean_by(d, c("plot_id", "DAP", "treatment", "irrigation_method", "trial_id", "variety", "crop", "location"))
-
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long=dlong, wth=wth)
 }

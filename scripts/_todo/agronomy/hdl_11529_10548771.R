@@ -2,14 +2,14 @@
 # license: GPL (>=3)
 
 ## NOTES
-# The grain sheet is rice only, three replicates. Yield is t/ha, stored as kg/ha.
-# N rates are taken from the treatment code. PTR does not state a nitrogen rate.
-# ZTDSR is zero-till direct-seeded rice. SSD is subsurface drip. PTR is puddled transplanted rice.
-# The title places the work in the Western Indo-Gangetic Plains. The files do not name a country or give coordinates.
+# The grain sheet is rice only, three replicates. Yield is t/ha (at 14% moisture per the bundled paper Rana et al. 2022, Field Crops Research, doi:10.1016/j.fcr.2022.108519), stored as kg/ha.
+# Site, soil, plot size, variety, and management details come from FCR-Rana-Hydrus-2022.pdf: BISA-CIMMYT research farm, Ladhowal, Ludhiana, Punjab, India (30.99 N, 75.44 E, 229 m), sandy loam (pH 8.3, EC 0.51 dS/m), RCBD, plot 25 x 5.4 m (135 m2), cultivar PR-126, previous crop wheat, ZTDSR sown 2019-06-10 at 20 kg/ha and 22.5 cm row spacing with wheat residue retained, PTR transplanted 2019-07-10 without residue.
+# ZTDSR is zero-till direct-seeded rice with flood irrigation. SSD is the same establishment with subsurface drip. PTR is puddled transplanted rice with flood irrigation.
+# N rates in the treatment codes are kg N/ha as urea. PTR received 120 kg N/ha per the paper.
 
 ## ISSUES
-# No country, coordinates, or dates in the grain sheet. PTR has no nitrogen rate, so N_fertilizer is not a treatment variable.
-# write_files: missing variables: yield_moisture, country, latitude, longitude, K_fertilizer, P_fertilizer, planting_date, harvest_date.
+# Duplicate deposit: hdl:11529/10548771 and hdl:11529/10548769 contain identical raw files for the same Rana et al. (2022) experiment.
+# P and K rates are not specified in the grain sheet.
 
 ## NOT PROCESSED
 # FCR-Rana-Hydrus-2022.pdf, Figures.docx, and Tables.doc. They were not read as plot tables.
@@ -30,48 +30,75 @@ Asia. Conventional tillage-based and flood irrigated puddled transplanted rice (
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIMMYT",
-		publication = NA,
+		publication = "doi:10.1016/j.fcr.2022.108519",
 		project = NA,
-		design = NA,
+		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "N_fertilizer;land_prep_method;planting_method;irrigation_method",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.3
 	)
 
 	f <- ff[basename(ff) == "CIMMYT Data-Grain.xlsx"]
-	r <- carobiner::read.excel(f, sheet="Grain", col_names=FALSE)
+	r <- carobiner::read.excel(f, sheet="Grain", col_names=FALSE, col_types="text")
 	lab <- trimws(as.character(r[[1]]))
 	keep <- lab %in% c("ZTDSR-N0", "ZTDSR-N75", "ZTDSR-N112.5", "ZTDSR-N150", "SSD-N0", "SSD-N75", "SSD-N112.5", "SSD-N150", "PTR")
 	r <- r[keep, ]
-	n_from <- function(z) {
-		z <- sub("^SSD-", "", z)
-		z <- sub("^ZTDSR-", "", z)
-		out <- rep(NA_real_, length(z))
-		has <- substr(z, 1, 1) == "N"
-		out[has] <- as.numeric(sub("^N", "", z[has]))
-		out
-	}
+	code <- trimws(as.character(r[[1]]))
+	nrate <- rep(NA_real_, length(code))
+	has_n <- grepl("N[0-9]", code)
+	nrate[has_n] <- as.numeric(sub("^.*N", "", code[has_n]))
+	# Per Rana et al. (2022), PTR received 120 kg N/ha.
+	nrate[code == "PTR"] <- 120
+	prep <- ifelse(grepl("^PTR", code), "puddled", "none")
+	plant <- ifelse(grepl("^PTR", code), "transplanting", "direct seeding")
+	water <- ifelse(grepl("^SSD", code), "subsurface drip", "flood")
 	one_rep <- function(j, rep) {
 		data.frame(
-			location = "Western Indo-Gangetic Plains",
-			trial_id = "rice",
+			country = "India",
+			adm1 = "Punjab",
+			adm2 = "Ludhiana",
+			location = "Ladhowal",
+			site = "BISA-CIMMYT farm",
+			latitude = 30.99,
+			longitude = 75.44,
+			elevation = 229,
+			trial_id = "Ladhowal_2019",
 			rep = rep,
 			crop = "rice",
-			treatment = as.character(r[[1]]),
-			N_fertilizer = n_from(as.character(r[[1]])),
+			variety = "PR-126",
+			previous_crop = "wheat",
+			planting_date = "2019-06-10",
+			transplanting_date = ifelse(grepl("^PTR", code), "2019-07-10", NA_character_),
+			row_spacing = ifelse(grepl("^PTR", code), NA_real_, 22.5),
+			seed_rate = ifelse(grepl("^PTR", code), NA_real_, 20),
+			plot_area = 135,
+			plot_length = 25,
+			plot_width = 5.4,
+			treatment = code,
+			N_fertilizer = nrate,
+			fertilizer_type = ifelse(nrate == 0, "none", "urea"),
+			land_prep_method = prep,
+			planting_method = plant,
+			residue_prevcrop_used = !grepl("^PTR", code),
+			irrigation_method = water,
+			soil_texture = "sandy loam",
+			soil_pH = 8.3,
+			soil_EC = 0.51,
 			yield = as.numeric(r[[j]]) * 1000,
+			yield_moisture = 14,
 			yield_part = "grain",
-			on_farm = NA,
+			on_farm = FALSE,
 			is_survey = FALSE,
 			irrigated = TRUE,
-			geo_from_source = FALSE
+			geo_from_source = TRUE
 		)
 	}
 	d <- rbind(one_rep(3, 1L), one_rep(4, 2L), one_rep(5, 3L))
+	d$plot_id <- paste(d$treatment, d$rep, sep="_")
 	carobiner::write_files(path, meta, d)
 }

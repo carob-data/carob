@@ -9,12 +9,11 @@
 # Harvest population in plants/m2 is stored as plants/ha. Values already in the thousands are not multiplied again.
 # NDVI header cells are Excel serials or calendar dates. Day and month order follows dates in the same workbook where the day is above 12.
 # Sheet names and the variable-description site labels differ by spaces and by "El". They are matched after those differences are removed.
-# Country and coordinates are not in the sheets or in geographicCoverage.
+# The title names Michoacán, so country is Mexico and adm1 is Michoacán. Approximate municipality coordinates are imputed with geo_from_source = FALSE.
 
 ## ISSUES
-# Country and coordinates are not in the sheets or in geographicCoverage.
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE).
 # Elemental phosphorus is not stored. The variable description gives product rates, not a P2O5 percentage.
-# write_files: missing variables: country, latitude, longitude, K_fertilizer, P_fertilizer, harvest_date. contributor:
 
 ## NOT PROCESSED
 # Map sheet and Wheather sheet.
@@ -45,8 +44,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.5
 	)
 
@@ -161,11 +160,11 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	lookup_site <- function(loc, info) {
-		keys <- names(r1)
-		if (loc %in% keys) return(r1[[loc]])
+		keys <- names(info)
+		if (loc %in% keys) return(info[[loc]])
 		want <- site_key(loc)
 		hit <- keys[vapply(keys, site_key, character(1)) == want]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		NULL
 	}
 
@@ -228,6 +227,8 @@ This experiments were established with different rates of nitrogen in order to g
 			}
 			d <- data.frame(
 				crop = "maize",
+				country = "Mexico",
+				adm1 = "Michoacán",
 				location = loc,
 				trial_id = paste(loc, year, sep="_"),
 				plot_id = as.character(r[[which(hdr == "Plot")[1]]]),
@@ -268,6 +269,18 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	d <- do.call(rbind, d_list)
+	# Approximate municipality coordinates in Michoacán (geo_from_source = FALSE).
+	k <- tolower(chartr("áéíóúñü", "aeiounu", d$location))
+	d$latitude <- NA_real_
+	d$longitude <- NA_real_
+	d$latitude[grepl("chavinda", k)] <- 20.008
+	d$longitude[grepl("chavinda", k)] <- -102.456
+	d$latitude[grepl("alvareno|vistahermosa|vista hermosa", k)] <- 20.273
+	d$longitude[grepl("alvareno|vistahermosa|vista hermosa", k)] <- -102.474
+	d$latitude[grepl("indaparapeo|charo", k)] <- 19.789
+	d$longitude[grepl("indaparapeo|charo", k)] <- -100.969
+	d$latitude[grepl("obregon", k)] <- 19.825
+	d$longitude[grepl("obregon", k)] <- -101.040
 	long <- do.call(rbind, long_list)
 	carobiner::write_files(path, meta, d, long=long)
 }

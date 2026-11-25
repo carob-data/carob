@@ -10,9 +10,8 @@
 # NDVI readings are repeated through the season and kept in the long table.
 
 ## ISSUES
-# Several plots have no yield or no coordinates. Sites share the same integer-degree coordinate.
+# Several plots have no yield. Sites with source coordinates share coarse integer-degree values; missing coordinates (e.g. Zempoala) are imputed with approximate municipality centroids (geo_from_source = FALSE).
 # Phosphorus and potassium are not in the workbook.
-# write_files: missing variables: K_fertilizer, P_fertilizer. duplicate coordinates: fewer coordinates than locations. NA detected: yield, latitude, longitude.
 
 ## NOT PROCESSED
 # algorithm Wheat-Guanajuato.xlsx and the Curated data sheet are the calibration calculations, not the plot records.
@@ -43,8 +42,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.6
 	)
 
@@ -162,6 +161,16 @@ This experiments were established with different rates of nitrogen in order to g
 		long[[s]] <- lng
 	}
 	d <- do.call(rbind, wide)
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	if (any(miss)) {
+		k <- tolower(paste(d$location, d$site))
+		d$latitude[miss & grepl("zempoala|jaral", k)] <- 20.312
+		d$longitude[miss & grepl("zempoala|jaral", k)] <- -101.076
+		rem <- is.na(d$latitude) | is.na(d$longitude)
+		d$latitude[rem] <- 20.523
+		d$longitude[rem] <- -100.816
+		d$geo_from_source[miss] <- FALSE
+	}
 	lng <- do.call(rbind, long)
 
 	carobiner::write_files(path, meta, d, long=lng)

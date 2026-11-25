@@ -39,16 +39,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Inter-cropping trial, Rajshahi, Bangladesh",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -117,8 +117,10 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 
 		K <- pick(r3, c("K2O.kg.ha", "K2.Okg.ha")) / 1.2051
 		gypsum <- pick(r3, c("gypsum.kg.ha", "Gypsum.Kg.ha"))
+		veg <- unname(second[as.character(r1$Tmnt)])
 		base <- data.frame(
 			country = "Bangladesh",
+			adm1 = "Rajshahi",
 			adm2 = "Rajshahi",
 			location = "Premtoli",
 			season = "rabi",
@@ -144,13 +146,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			S_fertilizer = gypsum[ifr] * 0.19,
 			Zn_fertilizer = pick(r3, "ZnSO4.kg.ha.1")[ifr],
 			crop = "maize",
+			intercropped = !is.na(veg),
+			intercrops = ifelse(is.na(veg), "none", veg),
 			yield_part = "grain",
 			yield_isfresh = FALSE
 		)
-		veg <- unname(second[base$treatment])
 		veg_rows <- !is.na(veg)
 		leaf <- base[veg_rows, ]
 		leaf$crop <- veg[veg_rows]
+		leaf$intercropped <- TRUE
+		leaf$intercrops <- "maize"
 		leaf$yield_part <- unname(part[leaf$crop])
 		leaf$yield <- pick(r4, "Ccalculaation_Intercrop.t.ha")[ii][veg_rows] * 1000
 		leaf$seed_rate <- pick(r4, "Seed.rate.of.intercrop.kg.ha")[ii][veg_rows]
@@ -169,9 +174,10 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	d$seq <- NULL
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
-	d$geo_from_source[is.na(d$latitude) | is.na(d$longitude)] <- NA
+	miss_geo <- is.na(d$latitude) | is.na(d$longitude)
+	d$geo_from_source <- !miss_geo
+	d$latitude[miss_geo] <- 24.4107
+	d$longitude[miss_geo] <- 88.4323
 
 	carobiner::write_files(path, meta, d)
 }

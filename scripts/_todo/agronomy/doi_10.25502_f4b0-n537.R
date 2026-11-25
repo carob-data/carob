@@ -10,12 +10,12 @@
 # Climbing bean stored as common bean with variety_type "climbing bean". Grain was shelled (crop_1_grain_unshelled N), yield_part seed.
 
 ## ISSUES
-# gps_latitude and gps_longitude are empty. Georeference villages in Kapchorwa (action sites Kapchesombe, Kaptanya, Kiruoko, Siron, Kapchesi).
+# gps_latitude and gps_longitude are empty. Kapchorwa District coordinates (1.4010, 34.4504; geo_from_source = FALSE) used.
 # CKAN coverage_x/coverage_y is one dataset point, not plot coordinates, and was not used.
-# Season codes 2013A/2013B are not in the terminag season list.
+# Season codes 2013A/2013B mapped to terminag "first"/"second".
 # Yield moisture was not recorded. Irrigation was not recorded.
 # One planting and harvest date per farm, applied to every plot on that farm.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; invalid season 2013A/2013B; NA yield; datespan harvest within 45 days of planting; treatment variables variety and inoculated have NA on plots that are only in the harvest file.
+# write_files: missing carob_contributor, yield_moisture, irrigated; NA yield; duplicate coordinates; datespan harvest within 45 days of planting; treatment variables variety and inoculated have NA on plots that are only in the harvest file.
 
 ## NOT PROCESSED
 # a_family_composition.csv: household age-sex counts (not plot production).
@@ -62,8 +62,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -113,13 +113,17 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	loc[which(loc == "")] <- NA
 	adm3 <- carobiner::fix_name(r2$sector_ward, "title")
 	adm3[which(adm3 == "")] <- NA
+	szn <- toupper(trimws(as.character(r2$season)))
+	szn <- ifelse(grepl("A$", szn), "first", ifelse(grepl("B$", szn), "second", NA_character_))
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = szn,
 		country = "Uganda",
-		adm2 = carobiner::fix_name(r2$district, "title"),
+		adm2 = "Kapchorwa",
 		adm3 = adm3,
 		location = loc,
+		latitude = 1.4010,
+		longitude = 34.4504,
 		elevation = r2$gps_altitude,
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)

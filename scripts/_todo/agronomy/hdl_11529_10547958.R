@@ -42,16 +42,16 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "SRFSI long-term trial, Purnea",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.9
 	)
 
 	header_value <- function(cells, label) {
@@ -81,13 +81,13 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		gsub("&amp;", "&", hit, fixed=TRUE)
 	}
 	read_block <- function(f, sheet) {
-		r1 <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE)
+		r1 <- carobiner::read.excel(f, sheet=sheet, n_max=12, col_names=FALSE, col_types="text")
 		first <- trimws(as.character(r1[[1]]))
 		i <- which(first == "Year")[1]
 		if (length(i) == 0 || is.na(i)) i <- 5
 		sk <- i - 1
 		if (sk < 2) sk <- 2
-		carobiner::read.excel.hdr(f, sheet=sheet, skip=sk, hdr=2)
+		carobiner::read.excel.hdr(f, sheet=sheet, skip=sk, hdr=2, col_types="text")
 	}
 	col_one <- function(x, pattern) {
 		nm <- grep(pattern, names(x), value=TRUE)
@@ -149,6 +149,12 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 			out <- rep(NA_character_, length(x))
 			iso <- !is.na(x) & grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}", x)
 			if (any(iso)) out[iso] <- substr(x[iso], 1, 10)
+			ser <- !is.na(x) & grepl("^[0-9]+(\\.[0-9]+)?$", x)
+			if (any(ser)) {
+				v <- as.numeric(x[ser])
+				ok <- v > 20000 & v < 80000
+				out[which(ser)[ok]] <- as.character(as.Date(v[ok], origin="1899-12-30"))
+			}
 		}
 		bad <- !is.na(out) & (out < "2010-01-01" | out > "2020-12-31")
 		out[bad] <- NA_character_
@@ -192,6 +198,8 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		gh$year <- as.character(col_one(gh, "^Year"))
 		gh$season <- as.character(col_one(gh, "^Season"))
 		gh$trial_code <- as.character(col_one(gh, "Trial.Code"))
+		add_seq <- function(s, t) ave(seq_along(s), s, t, FUN=seq_along)
+		gh$seq <- add_seq(gh$site, gh$tmnt)
 		ycol <- grep("yield", names(gh), ignore.case=TRUE, value=TRUE)
 		ycol <- ycol[grepl("t.ha|t/ha", ycol, ignore.case=TRUE)]
 		pref <- ycol[grepl("Grain|Sun.dry|Calculation", ycol)]
@@ -208,8 +216,9 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 			ft$tmnt <- pick_tmnt(ft)
 			ft$site <- as.character(col_one(ft, "^Site"))
 			ft$year <- as.character(col_one(ft, "^Year"))
-			keyg <- paste(gh$site, gh$tmnt, gh$year)
-			keyf <- paste(ft$site, ft$tmnt, ft$year)
+			ft$seq <- add_seq(ft$site, ft$tmnt)
+			keyg <- paste(gh$site, gh$tmnt, gh$year, gh$seq)
+			keyf <- paste(ft$site, ft$tmnt, ft$year, ft$seq)
 			ix <- match(keyg, keyf)
 			nc <- grep("N\\.kg\\.ha", names(ft), value=TRUE)
 			pc <- grep("P2O5\\.kg\\.ha", names(ft), value=TRUE)
@@ -220,7 +229,8 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		}
 		ph$tmnt <- pick_tmnt(ph)
 		ph$site <- as.character(col_one(ph, "^Site"))
-		ixp <- match(paste(gh$site, gh$tmnt), paste(ph$site, ph$tmnt))
+		ph$seq <- add_seq(ph$site, ph$tmnt)
+		ixp <- match(paste(gh$site, gh$tmnt, gh$seq), paste(ph$site, ph$tmnt, ph$seq))
 		variety <- as.character(col_one(ph, "^Variety"))[ixp]
 		variety <- trimws(variety)
 		variety[!nzchar(variety) | variety %in% c("NA", "0")] <- NA_character_
@@ -230,15 +240,24 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		season[!season %in% c("kharif", "rabi")] <- NA_character_
 		crop <- norm_crop(gh$crop)
 		part <- ifelse(crop %in% c("rice", "wheat", "maize"), "grain", "seed")
+		loc <- header_value(cells, "Community/Node:")
+		if (is.na(loc) || tolower(loc) %in% c("kharif", "rabi", "season:", "year:")) {
+			bn <- basename(f)
+			for (cand in c("Dogachi", "Katheli", "Puranigarel", "Tikapatti", "Udaynagar")) {
+				if (grepl(cand, bn, ignore.case=TRUE)) loc <- cand
+			}
+		}
 		data.frame(
 			country = country,
 			adm1 = adm1,
-			adm2 = header_value(cells, "District:"),
-			location = header_value(cells, "Community/Node:"),
+			adm2 = "Purnea",
+			location = loc,
+			latitude = 25.777,
+			longitude = 87.475,
 			year = gh$year,
 			season = season,
 			trial_code = gh$trial_code,
-			plot_id = gh$site,
+			plot_id = paste(gh$site, gh$tmnt, gh$seq, sep="_"),
 			treatment = gh$tmnt,
 			crop = crop,
 			variety = variety,
@@ -281,6 +300,7 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 	d <- d[!is.na(d$treatment) & nzchar(d$treatment) & !is.na(d$crop), ]
 	d$adm2 <- carobiner::fix_name(d$adm2, "title")
 	d$location <- carobiner::fix_name(d$location, "title")
+	d$location[d$location == "Dogachhi"] <- "Dogachi"
 	d$variety <- carobiner::fix_name(d$variety, "title")
 	d$trial_id <- paste(d$location, d$year, d$season, sep="_")
 	d$year <- NULL
@@ -289,6 +309,7 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 	d$is_survey <- FALSE
 	d$geo_from_source <- FALSE
 	d$yield_isfresh <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

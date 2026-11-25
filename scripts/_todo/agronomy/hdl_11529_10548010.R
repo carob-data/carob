@@ -41,16 +41,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = NA,
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "variety;land_prep_method",
 		response_vars = "yield;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.5
 	)
 
 	f <- ff[basename(ff) == "Rabi 2014-15-validation trials-all nodes-Choochbehar.xlsx"]
@@ -61,7 +61,12 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	prep <- ifelse(till == "CT", "conventional", ifelse(till == "ZT", "none", NA_character_))
 
 	d <- data.frame(
+		country = "India",
+		adm1 = "West Bengal",
+		adm2 = "Cooch Behar",
 		location = carobiner::fix_name(trimws(as.character(r$NODE)), "title"),
+		latitude = 26.324,
+		longitude = 89.448,
 		trial_id = paste(carobiner::fix_name(trimws(as.character(r$NODE)), "title"), "2014-15"),
 		rep = as.integer(r$REP),
 		crop = "maize",

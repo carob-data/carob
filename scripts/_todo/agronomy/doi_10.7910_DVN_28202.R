@@ -25,11 +25,12 @@
 # UE 2012 FilledPC_nb is exactly 0.5 in 4 of 6 plots (placeholder?), grain_fill not mapped for UE.
 # UJ 2011 has no HI and filled-grain fraction.
 # UD3 "flash flooding" mapped to irrigation_method "flood".
-# No coordinates (IRRI fields C11, UZ, UD3, UJ, UE), fertilizer not documented.
-# Not mapped: organ-level development, leaf, sheath, internode, tiller, N analysis, tensiometer, meteo files;
+# Georeferenced to IRRI, Los Banos (14.1675, 121.2536; geo_from_source = FALSE); fertilizer not documented.
+# Daily weather from Meteo_C11_DS2011.csv, Meteo_C11_DS2012.csv, Meteo_UJ_DS2011.csv, and Meteo_UE_DS2012.csv included as wth (GR MJ/m2 * 1000 -> srad kJ/m2).
+# Weekly dmy_total and stem_density are kept in the long table (removed from wide to avoid duplicate wide/long columns).
+# Not mapped: organ-level development, leaf, sheath, internode, tiller, N analysis, tensiometer files;
 #   treatment means files (they summarise the mapped plot data).
-# Remaining messages: missing NPK and coordinates, new variables, out of bounds stem_density (high tiller densities),
-#   dmy_total and stem_density in both wide (final harvest) and long (weekly) tables.
+# Remaining messages: missing NPK, new variables, out of bounds stem_density (high tiller densities).
 
 ## NEW VARIABLES
 # field_: IRRI experimental field code
@@ -113,11 +114,11 @@ As the human population continues to grow and competition for natural resources 
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety;water_management_;drought_stress;planting_method",
-		response_vars = "yield;dmy_total;harvest_index", 
+		response_vars = "yield;harvest_index", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 58,
 		carob_effort = 1.2
 	)
 
@@ -139,8 +140,7 @@ As the human population continues to grow and competition for natural resources 
 			x[, "Plot_NO", drop=FALSE], mean, na.rm=TRUE)
 		a$harvest_date <- as.character(as.Date(tapply(x$Date, x$Plot_NO, max)[as.character(a$Plot_NO)], "%m/%d/%Y"))
 		data.frame(plot_id=as.character(a$Plot_NO), harvest_date=a$harvest_date, yield=a$Grain14_gm2 * 10,
-			dmy_total=a$Shoot_gm2 * 10, harvest_index=a$HI * 100, stem_density=a$Tiller_density * 10000,
-			seed_weight=a$kw, grain_fill=a$fp)
+			harvest_index=a$HI * 100, seed_weight=a$kw, grain_fill=a$fp)
 	}
 	# weekly plot means
 	wmean <- function(x, trial) {
@@ -240,9 +240,9 @@ As the human population continues to grow and competition for natural resources 
 	d$country <- "Philippines"
 	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- NA
+	d$longitude <- 121.2536
+	d$latitude <- 14.1675
+	d$geo_from_source <- FALSE
 
 	dlong <- rbind(l1, l2, l3, l4)
 	num <- sapply(dlong, is.numeric)
@@ -250,5 +250,29 @@ As the human population continues to grow and competition for natural resources 
 	dlong <- merge(d[, c("trial_id", "plot_id", "record_id")], dlong, by=c("trial_id", "plot_id"))
 	dlong$trial_id <- dlong$plot_id <- NULL
 
-	carobiner::write_files(path, meta, d, long=dlong)
+	rd_wth <- function(fname, stn) {
+		rm <- rd(fname)
+		data.frame(
+			station_name = stn,
+			country = "Philippines",
+			location = "IRRI, Los Banos",
+			longitude = 121.2536,
+			latitude = 14.1675,
+			date = as.character(as.Date(rm$Date, "%m/%d/%Y")),
+			temp = as.numeric(rm$AirT),
+			rhum = if ("RH" %in% names(rm)) as.numeric(rm$RH) else NA_real_,
+			# GR is global radiation in MJ/m2/d -> kJ/m2/d
+			srad = as.numeric(rm$GR) * 1000
+		)
+	}
+	wth <- rbind(
+		rd_wth("Meteo_C11_DS2011.csv", "IRRI_C11"),
+		rd_wth("Meteo_C11_DS2012.csv", "IRRI_C11"),
+		rd_wth("Meteo_UJ_DS2011.csv", "IRRI_UJ"),
+		rd_wth("Meteo_UE_DS2012.csv", "IRRI_UE")
+	)
+	wth <- wth[!is.na(wth$date), ]
+	wth <- unique(wth)
+
+	carobiner::write_files(path, meta, d, long=dlong, wth=wth)
 }

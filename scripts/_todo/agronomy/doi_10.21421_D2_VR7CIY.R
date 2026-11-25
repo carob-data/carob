@@ -2,48 +2,39 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Station RCBD on Vertisol at ICRISAT field BP 11, Patancheru, rabi 2012-13. Five Streptomyces strains and an uninoculated control.
-# Grain, stover and total dry matter are t/ha in the harvest metadata. Multiplied by 1000 to kg/ha. Grain + stover equals dry matter, so yield_moisture is 0.
-# Soil organic carbon is percent. Total N and available P are ppm, mapped as mg/kg. Samples are 0-15 cm. Microbial biomass C is µg/g and dehydrogenase is µg TPF/g/24 h.
-# Coordinates are the midpoint of the Dataverse bounding box for BP 11. geo_uncertainty is the distance from that midpoint to a corner of the box (about 110 m).
-# 30 DAS and 60 DAS sheets were joined to harvest on treatment and replication. Plot numbers are not the same across sheets.
-# Soil chemistry and biology were recorded for two replications only.
+# Station RCBD on Vertisol at ICRISAT field BP 11, Patancheru, rabi 2012-13. Five Streptomyces strains (CAI-17, CAI-68, CAI-78, KAI-26, KAI-27) plus an uninoculated control (sister trial to 2013-14 doi:10.21421/D2/LFIFZF).
+# Grain, stover, and total dry matter are in t/ha (x1000 -> kg/ha) on a dry basis (Grain + Stover = Dry matter -> yield_isfresh = FALSE, yield_moisture = 0).
+# Coordinates (17.508398, 78.267686) are the midpoint of the Dataverse bounding box for BP 11 (geo_uncertainty = 110 m).
+# Repeated in-season plant measurements (30 DAS and 60 DAS) and rhizosphere soil chemistry/biology (flowering and harvest, 0-15 cm, two replicates) are stored cleanly in the long table linked via record_id, avoiding duplicated per-date column suffixes.
 
 ## ISSUES
-# Fertilizer rates, harvest date and irrigation are not in the files.
-# 30 DAS metadata says nodule dry weight is grams, but the values (21-77) are far above the root dry weight (0.17-0.19 g) and the 2013-14 file records the same trait in mg/plant. The number is kept as recorded and is not converted to kg/ha.
-# Harvest plot numbers are repeated across some treatments, so plot_id is not a unique plot key.
-# Available-P method is not stated. Flowering-stage soil is a second date and is kept under separate names.
-# Per-plant weights and counts were not converted to per-ha because plant density is not reported. Harvested area is given as both 0.9 and 1.5 m2 without saying which plots.
-# One harvest row (CAI-17, rep 2) has no grain, stover or dry matter. It was kept.
-# write_files: missing carob_contributor; missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; unknown variables pod_weight_, pod_number_, seed_mass_, seed_number_, branch_number_, pod_number_60_, leaf_weight_, pod_weight_60_, stem_weight_, root_weight_60_, leaf_area_, nodule_dry_weight_, root_weight_30_, shoot_weight_30_, soil_SOC_flowering_, soil_N_flowering_, soil_P_flowering_, dehydrogenase_; NA detected in yield.
+# Fertilizer rates, harvest date, and irrigation are not in the files.
+# 30 DAS metadata docx says nodule dry weight is grams, but values (21-77) far exceed root dry weight (0.17-0.19 g) and match mg/plant in 2013-14; kept as recorded under nodule_dry_weight_.
+# Plot numbers differ across files (and repeat in harvest), so records are linked by treatment and replication.
+# One harvest row (CAI-17, rep 2) has NA grain/stover/dry matter; kept as recorded.
+# Plant density is not reported and available-P method is not stated.
+# write_files: missing carob_contributor, irrigated, K/N/P_fertilizer, harvest_date; NA yield on 1 row; unknown per-plant variables and dehydrogenase_.
 
 ## NOT PROCESSED
-# All sheets, Treatment no: a numeric code for the strain name already in treatment.
-# Harvest, plot numbers that collide across treatments: kept as plot_id but not used as a key.
-# 30 DAS and 60 DAS, Plot no: not the harvest plot numbers.
-# Soil sheets, Code no / code no: laboratory sample number.
-# 30 DAS metadata lists plant height and branches, but those columns are not in the xlsx.
+# All sheets, Treatment no: numeric treatment code.
+# 30 DAS, 60 DAS, and soil sheets, Plot no / Code no: inconsistent plot ids and lab sample ids.
 
 ## NEW VARIABLES
-# pod_weight_: pod dry weight at harvest, g/plant
-# pod_number_: pods per plant at harvest
-# seed_mass_: seed weight at harvest, g/plant
-# seed_number_: seeds per plant at harvest
-# branch_number_: branches per plant at 60 DAS
-# pod_number_60_: pods per plant at 60 DAS
-# leaf_weight_: leaf weight at 60 DAS, g/plant
-# pod_weight_60_: pod weight at 60 DAS, g/plant
-# stem_weight_: stem weight at 60 DAS, g/plant
-# root_weight_60_: root weight at 60 DAS, g/plant
-# leaf_area_: leaf area at 60 DAS, cm2/plant
-# nodule_dry_weight_: nodule dry weight at 30 DAS, as recorded (see ISSUES)
-# root_weight_30_: root dry weight at 30 DAS, g/plant
-# shoot_weight_30_: shoot dry weight at 30 DAS, g/plant
-# soil_SOC_flowering_: organic carbon at flowering, percent
-# soil_N_flowering_: total N at flowering, mg/kg
-# soil_P_flowering_: available P at flowering, mg/kg
-# dehydrogenase_: dehydrogenase activity, µg TPF/g soil/24 h
+# pod_weight_harvest_g_plant_: pod dry weight at harvest (g/plant).
+# pod_number_harvest_: pods per plant at harvest.
+# seed_mass_g_plant_: seed weight per plant at harvest (g/plant; distinct from 1000-seed weight).
+# seed_number_plant_: seeds per plant at harvest.
+# branch_number_: branches per plant at 60 DAS.
+# pod_number_plant_: pods per plant at 60 DAS.
+# pod_weight_g_plant_: pod weight at 60 DAS (g/plant).
+# leaf_weight_g_: leaf weight at 60 DAS (g/plant).
+# stem_weight_g_plant_: stem weight at 60 DAS (g/plant).
+# root_weight_g_plant_: root dry weight (g/plant, at 30 and 60 DAS in long).
+# leaf_area_cm2_: leaf area at 60 DAS (cm2/plant).
+# nodule_dry_weight_: nodule dry weight at 30 DAS as recorded (docx says g, values 21-77 likely mg/plant).
+# shoot_weight_g_plant_: shoot dry weight at 30 DAS (g/plant).
+# dehydrogenase_: soil dehydrogenase activity at harvest (ug TPF/g soil/24 h).
+
 
 carob_script <- function(path) {
 
@@ -70,9 +61,9 @@ This data set contain replicated observations on PGP capabilities of five strain
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.25
 	)
 
 	f1 <- ff[basename(ff) == "Final Harvest for chickpea on plant growth-promoting broad-spectrum Streptomyces sp.xlsx"]
@@ -89,19 +80,20 @@ This data set contain replicated observations on PGP capabilities of five strain
 	r5 <- carobiner::read.excel(f5, na="NA")
 	r6 <- carobiner::read.excel(f6, na="NA")
 
-	trt <- trimws(r1$Treatment)
+	trt <- trimws(as.character(r1$Treatment))
 	d <- data.frame(
+		record_id = seq_len(nrow(r1)),
 		treatment = trt,
-		rep = as.integer(r1$`Replication number`),
-		plot_id = as.character(r1$`Plot no`),
-		yield = as.numeric(r1$`Grain yield`) * 1000,
-		dmy_residue = as.numeric(r1$`Stover yield`) * 1000,
-		dmy_total = as.numeric(r1$`Dry matter`) * 1000,
-		seed_weight = as.numeric(r1$`Thousand seed weight`),
-		pod_weight_ = as.numeric(r1$`Pod weight`),
-		pod_number_ = as.numeric(r1$`Pod number`),
-		seed_mass_ = as.numeric(r1$`Seed weight`),
-		seed_number_ = as.numeric(r1$`Seed number`),
+		rep = as.integer(r1[["Replication number"]]),
+		plot_id = as.character(r1[["Plot no"]]),
+		yield = as.numeric(r1[["Grain yield"]]) * 1000,
+		dmy_residue = as.numeric(r1[["Stover yield"]]) * 1000,
+		dmy_total = as.numeric(r1[["Dry matter"]]) * 1000,
+		seed_weight = as.numeric(r1[["Thousand seed weight"]]),
+		pod_weight_harvest_g_plant_ = as.numeric(r1[["Pod weight"]]),
+		pod_number_harvest_ = as.numeric(r1[["Pod number"]]),
+		seed_mass_g_plant_ = as.numeric(r1[["Seed weight"]]),
+		seed_number_plant_ = as.numeric(r1[["Seed number"]]),
 		inoculated = trt != "Control",
 		inoculant = ifelse(trt == "Control", NA_character_, trt),
 		crop = "chickpea",
@@ -119,65 +111,64 @@ This data set contain replicated observations on PGP capabilities of five strain
 		is_survey = FALSE,
 		yield_moisture = 0,
 		yield_isfresh = FALSE,
-		# Dataverse bounding box for field BP 11
 		longitude = 78.267686,
 		latitude = 17.508398,
 		geo_uncertainty = 110,
-		geo_from_source = TRUE,
+		geo_from_source = TRUE
+	)
+
+	dkey <- paste(d$treatment, d$rep, sep="|")
+	rid <- function(tvec, rvec) d$record_id[match(paste(trimws(as.character(tvec)), as.integer(rvec), sep="|"), dkey)]
+
+	l30 <- data.frame(
+		record_id = rid(r3$Treatments, r3[["Replication number"]]),
+		DAP = 30L,
+		nodule_plant = as.numeric(r3[["No of nodules per plant"]]),
+		nodule_dry_weight_ = as.numeric(r3[["Nodules dry weight"]]),
+		root_weight_g_plant_ = as.numeric(r3[["Root dry weight"]]),
+		shoot_weight_g_plant_ = as.numeric(r3[["Shoot dry weight"]])
+	)
+	l60 <- data.frame(
+		record_id = rid(r2$Treatment, r2[["Replication number"]]),
+		DAP = 60L,
+		plant_height = as.numeric(r2[["Plant height"]]),
+		branch_number_ = as.numeric(r2[["No of branches"]]),
+		pod_number_plant_ = as.numeric(r2[["Pod number"]]),
+		leaf_weight_g_ = as.numeric(r2[["Leaf weight"]]),
+		pod_weight_g_plant_ = as.numeric(r2[["Pod weight"]]),
+		stem_weight_g_plant_ = as.numeric(r2[["Stem weight"]]),
+		root_weight_g_plant_ = as.numeric(r2[["Root weight"]]),
+		leaf_area_cm2_ = as.numeric(r2[["Leaf area"]])
+	)
+	l_sf <- data.frame(
+		record_id = rid(r5$Treatment, r5[["Replication number"]]),
+		growth_stage = "flowering",
 		depth_top = 0,
-		depth_bottom = 15
+		depth_bottom = 15,
+		soil_SOC = as.numeric(r5[["Organic carbon"]]),
+		soil_N_total = as.numeric(r5$Nitrogen),
+		soil_P = as.numeric(r5$Phosphorus)
 	)
-
-	m60 <- data.frame(
-		treatment = trimws(r2$Treatment),
-		rep = as.integer(r2$`Replication number`),
-		plant_height = as.numeric(r2$`Plant height`),
-		branch_number_ = as.numeric(r2$`No of branches`),
-		pod_number_60_ = as.numeric(r2$`Pod number`),
-		leaf_weight_ = as.numeric(r2$`Leaf weight`),
-		pod_weight_60_ = as.numeric(r2$`Pod weight`),
-		stem_weight_ = as.numeric(r2$`Stem weight`),
-		root_weight_60_ = as.numeric(r2$`Root weight`),
-		leaf_area_ = as.numeric(r2$`Leaf area`)
-	)
-	d <- merge(d, m60, by=c("treatment", "rep"), all.x=TRUE, sort=FALSE)
-
-	m30 <- data.frame(
-		treatment = trimws(r3$Treatments),
-		rep = as.integer(r3$`Replication number`),
-		nodule_plant = as.numeric(r3$`No of nodules per plant`),
-		nodule_dry_weight_ = as.numeric(r3$`Nodules dry weight`),
-		root_weight_30_ = as.numeric(r3$`Root dry weight`),
-		shoot_weight_30_ = as.numeric(r3$`Shoot dry weight`)
-	)
-	d <- merge(d, m30, by=c("treatment", "rep"), all.x=TRUE, sort=FALSE)
-
-	bio <- data.frame(
-		treatment = trimws(r4$Treatment),
-		rep = as.integer(r4$`Replication number`),
-		soil_MBC = as.numeric(r4$`Microbial boimass C`),
-		dehydrogenase_ = as.numeric(r4$Dehydrogenase)
-	)
-	d <- merge(d, bio, by=c("treatment", "rep"), all.x=TRUE, sort=FALSE)
-
-	# ppm as reported for total N and available P
-	sH <- data.frame(
-		treatment = trimws(r6$Treatment),
-		rep = as.integer(r6$`Replication number`),
-		soil_SOC = as.numeric(r6$`Organic carbon`),
+	l_sh <- data.frame(
+		record_id = rid(r6$Treatment, r6[["Replication number"]]),
+		growth_stage = "harvest",
+		depth_top = 0,
+		depth_bottom = 15,
+		soil_SOC = as.numeric(r6[["Organic carbon"]]),
 		soil_N_total = as.numeric(r6$Nitrogen),
 		soil_P = as.numeric(r6$Phosphorus)
 	)
-	d <- merge(d, sH, by=c("treatment", "rep"), all.x=TRUE, sort=FALSE)
-
-	sF <- data.frame(
-		treatment = trimws(r5$Treatment),
-		rep = as.integer(r5$`Replication number`),
-		soil_SOC_flowering_ = as.numeric(r5$`Organic carbon`),
-		soil_N_flowering_ = as.numeric(r5$Nitrogen),
-		soil_P_flowering_ = as.numeric(r5$Phosphorus)
+	l_bio <- data.frame(
+		record_id = rid(r4$Treatment, r4[["Replication number"]]),
+		growth_stage = "harvest",
+		depth_top = 0,
+		depth_bottom = 15,
+		soil_MBC = as.numeric(r4[["Microbial boimass C"]]),
+		dehydrogenase_ = as.numeric(r4$Dehydrogenase)
 	)
-	d <- merge(d, sF, by=c("treatment", "rep"), all.x=TRUE, sort=FALSE)
+	l_sh_all <- merge(l_sh, l_bio, by=c("record_id", "growth_stage", "depth_top", "depth_bottom"), all=TRUE)
 
-	carobiner::write_files(path, meta, d)
+	dlong <- carobiner::bindr(l30, l60, l_sf, l_sh_all)
+
+	carobiner::write_files(path, meta, d, long=dlong)
 }

@@ -14,8 +14,8 @@
 # Zn treatment codes differ by file (T1/T2, Z0/Z1, Z0/Z10, Zn0-Zn3) and their rates are not documented
 #   (masterfile: "control (no Zn) and 4% zinc oxide 5 kg/ha basal"). Zn_fertilizer set to 0 only for Z0/Zn0 codes.
 # N/P/K, planting/harvest dates only documented for Bay 2012WS (Schedule sheet not parsed; dates missing).
-# Coordinates only for Bay (masterfile, assumed valid for all Bay trials); IRRI (Los Banos), Bohol and
-#   Bukidnon (Maramag) need georeferencing.
+# Coordinates for Bay from masterfile (geo_from_source = TRUE); IRRI (14.1675, 121.2536), Bohol (9.8500, 124.1435) and
+#   Maramag, Bukidnon (7.7633, 125.0053) georeferenced with geo_from_source = FALSE.
 # Genotype names are inconsistent across files (e.g. "KP", "KPatong", "Kinandang Patong", "Kinandong Patong";
 #   "IR68144-166" vs "IR68144-2B-2-2-3-1-166"); kept as recorded.
 # Bay 2012WS: the "14%MC (kg/ha)" column (~0.7 t/ha) treats grain yield g/m2 as g/plot; yield taken from
@@ -55,12 +55,12 @@ The data sets reveal grain Zn biofortfication performance of Zn-efficient and Zn
 		project = NA,
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "variety;Zn_fertilizer",
+		treatment_vars = "variety;Zn_treatment_",
 		response_vars = "yield;grain_Zn", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 62,
 		carob_effort = 1
 	)
 
@@ -143,9 +143,15 @@ The data sets reveal grain Zn biofortfication performance of Zn-efficient and Zn
 	d$adm2 <- ifelse(d$location == "Bay", "Bay", ifelse(d$location == "IRRI", "Los Baños", ifelse(d$location == "Maramag", "Maramag", NA)))
 	d$location[d$location == "IRRI"] <- "IRRI, Los Banos"
 
-	# Bay coordinates from the masterfile Metadata sheet
-	d$longitude <- ifelse(d$location == "Bay", 121.290273, NA)
-	d$latitude <- ifelse(d$location == "Bay", 14.176907, NA)
+	# Bay coordinates from the masterfile Metadata sheet; other sites georeferenced
+	geo <- data.frame(
+		location = c("Bay", "IRRI, Los Banos", "Bohol", "Maramag"),
+		latitude = c(14.176907, 14.1675, 9.8500, 7.7633),
+		longitude = c(121.290273, 121.2536, 124.1435, 125.0053)
+	)
+	gi <- match(d$location, geo$location)
+	d$longitude <- geo$longitude[gi]
+	d$latitude <- geo$latitude[gi]
 	d$geo_from_source <- d$location == "Bay"
 
 	# NPK documented for the Bay 2012WS trial only (masterfile "N P K Zn" sheet)

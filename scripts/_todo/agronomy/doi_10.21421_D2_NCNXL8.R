@@ -2,24 +2,22 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Peanut genotypes at ICRISAT, Patancheru, India. The deposit has two of the eight environments named in the description: post-rainy 2009-10 irrigated, and post-rainy 2009-10 rainfed.
-# Post-rainy is stored as season rabi. planting_date is 2009 from the file names (the season is 2009-10).
-# The yield column is pod yield (kg/ha, about 1400 to 6600). yield_part is pod.
-# Iron and zinc are about 30 to 90. That matches mg/kg. grain_Fe and grain_Zn are mg/g, so the values are divided by 1000.
-# Seed oil is about 44 to 55, which matches percent. oil_content is g/kg, so the values are multiplied by 10. Protein is about 20 to 31 percent and is stored as grain_protein.
-# Hundred grain weight (g) times 10 is the thousand-seed weight.
-# The rainfed file has a replication number. The irrigated file does not.
-# Country is India and the site is Patancheru, both from the description. The files have no coordinates. on_farm is FALSE because the description places the experiments at ICRISAT.
+# Groundnut (peanut) biofortification trial of 64 genotypes at ICRISAT Patancheru, India. Two of the eight environments described in the abstract are deposited: post-rainy (rabi) 2009-10 irrigated and rainfed.
+# Pod yield is in kg/ha (1848 to 6640 kg/ha); yield_part = "pod".
+# Seed Fe (30-60 ppm = mg/kg) and Zn (47-91 ppm = mg/kg) are divided by 1000 to mg/g for terminag grain_Fe and grain_Zn.
+# Seed oil (%) is multiplied by 10 to g/kg for terminag oil_content; seed protein (%) is mapped to grain_protein; 100-grain weight (g) * 10 = seed_weight (1000-seed weight, g).
+# Estimated ICRISAT Patancheru coordinates (17.511, 78.275) added with geo_from_source = FALSE and geo_uncertainty = 2000 m.
 
 ## ISSUES
-# The description says eight environments. Only the two 2009-10 workbooks are in this deposit.
-# Genotype in the workbooks is a number, not a name. It is stored as character.
-# grain_Fe is out of bounds (about 0.03 to 0.07 mg/g). The vocabulary minimum is 1 mg/g. The file values are about 30 to 70, which were treated as mg/kg.
-# carob_contributor is unset until someone has read this script.
-# write_files: missing yield_moisture, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. out of bounds grain_Fe (0.031, 0.071).
+# Only two of the eight environments described in the abstract are present in this Dataverse deposit.
+# Genotypes are numeric entry codes in the workbooks (stored as character).
+# Replication number is present in the rainfed workbook only; both workbooks have Block (mapped to block_id).
+# No fertilizer rates, yield moisture, or calendar harvest date in the files.
+# write_files: missing carob_contributor, yield_moisture, K/N/P_fertilizer, harvest_date.
 
 ## NOT PROCESSED
-# Block. There is no block variable. plot_id is the plot number.
+# None.
+
 
 carob_script <- function(path) {
 
@@ -30,19 +28,21 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 	uri <- "doi:10.21421/D2/NCNXL8"
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
+
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "ICRISAT",
 		publication = "doi:10.1017/S0021859614000525",
 		project = NA,
+		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety;irrigated",
-		response_vars = "yield;grain_Fe;grain_Zn;grain_protein;oil_content",
-		carob_effort = 0.4,
-		carob_completion = 55,
+		response_vars = "yield;grain_Fe;grain_Zn;grain_protein;oil_content;shelling_percentage;seed_weight",
+		carob_effort = 0.15,
+		carob_completion = 90,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		notes = "Only two of eight environments are in the deposit. No coordinates in the files. Iron and zinc were treated as mg/kg."
+		carob_LLM = "Gemini 4 Neon",
+		notes = "Only two of eight environments are in the deposit. Fe and Zn converted from mg/kg to mg/g."
 	)
 
 	one <- function(f, trial, irrigated) {
@@ -54,17 +54,26 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 		data.frame(
 			trial_id = trial,
 			plot_id = as.character(r[["Plot No"]]),
+			block_id = as.character(r$Block),
 			country = "India",
+			adm1 = "Telangana",
+			adm2 = "Sangareddy",
 			location = "Patancheru",
+			latitude = 17.511,
+			longitude = 78.275,
+			geo_from_source = FALSE,
+			geo_uncertainty = 2000,
 			crop = "groundnut",
 			variety = as.character(r$Genotype),
 			treatment = as.character(r$Genotype),
 			rep = rep,
 			yield = as.numeric(r[["Pod Yield"]]),
 			yield_part = "pod",
+			# Iron and Zinc in mg/kg (ppm) -> mg/g
 			grain_Fe = as.numeric(r$Iron) / 1000,
 			grain_Zn = as.numeric(r$Zinc) / 1000,
 			grain_protein = as.numeric(r[["Seed Protein Content"]]),
+			# Seed oil in % -> g/kg
 			oil_content = as.numeric(r[["Seed Oil Content"]]) * 10,
 			shelling_percentage = as.numeric(r[["Shelling outturn"]]),
 			seed_weight = as.numeric(r[["Hundred grain weight"]]) * 10,
@@ -72,8 +81,7 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 			season = "rabi",
 			irrigated = irrigated,
 			on_farm = FALSE,
-			is_survey = FALSE,
-			geo_from_source = FALSE
+			is_survey = FALSE
 		)
 	}
 
@@ -81,7 +89,7 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 		one(ff[basename(ff) == "Post rainy 2009-10 Irrigated.xlsx"], "Patancheru_2009_irrigated", TRUE),
 		one(ff[basename(ff) == "Post rainy 2009-10 Rainfed.xlsx"], "Patancheru_2009_rainfed", FALSE)
 	)
-	d$record_id <- as.integer(seq_len(nrow(d)))
+	d$record_id <- seq_len(nrow(d))
 
 	carobiner::write_files(path, meta, d)
 }

@@ -40,16 +40,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = NA,
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "Rabi crops 2015-16-ACST-All nodes-Chochbehar.xlsx"]
@@ -64,7 +64,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	farmer <- trimws(as.character(r$`NAME OF THE FARMER`))
 	ycol <- c("GY (t ha-1)-kharif", "GY (t ha-1)-rabi", "GY (t ha-1)-kharif 1")
 	pcol <- c("FARM GATE PRICE (RS./KG)...5", "FARM GATE PRICE (RS./KG)...10", "FARM GATE PRICE (RS/KG)")
-	sname <- c("kharif", "rabi", "prekharif")
+	sname <- c("kharif", "rabi", "early wet")
 
 	blocks <- vector("list", 3)
 	for (i in 1:3) {
@@ -79,7 +79,10 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		blocks[[i]] <- data.frame(
 			country = "India",
 			adm1 = "West Bengal",
+			adm2 = "Cooch Behar",
 			location = "Cooch Behar",
+			latitude = 26.324,
+			longitude = 89.448,
 			trial_id = "Cooch Behar 2015-16",
 			plot_id = paste(farmer, sys),
 			season = sname[i],

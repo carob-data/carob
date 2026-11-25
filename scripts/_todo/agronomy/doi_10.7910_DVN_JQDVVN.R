@@ -18,8 +18,7 @@
 # g/m2 converted to kg/ha (x10).
 
 ## ISSUES
-# No coordinates or site names in the data. IRRI trials assumed at IRRI, Los Banos (authors' institute);
-#   TARI trial site in Taiwan unknown. Georeference after checking the paper (doi:10.1080/15427528.2025.2515047, not read).
+# No coordinates or site names in the data; georeferenced to IRRI, Los Banos (14.1675, 121.2536, Laguna, Philippines) and TARI, Wufeng, Taichung, Taiwan (24.0315, 120.6950; geo_from_source = FALSE).
 # TARI file: drought treatment management unknown; "2017-I"/"2017-II" mapped to season "first"/"second", year as
 #   planting_date. Cross names "Tainan 11 x IR 91648-B-89-B-82" to "-90" look like spreadsheet auto-increment
 #   errors of "-81"; kept as recorded. Column "selected" (yes for TN 11 only) and "order" not mapped.
@@ -72,8 +71,8 @@ Whereas many indica and rainfed rice-growing regions have historically been cons
 		response_vars = "yield;flowering_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.8
 	)
 
@@ -180,6 +179,11 @@ Whereas many indica and rainfed rice-growing regions have historically been cons
 
 	d$stress <- ifelse(d$treatment %in% c("S", "RSDS (ROS)", "drought"), "drought",
 		ifelse(d$treatment %in% c("WW", "W"), "none", NA))
+	d$adm1 <- ifelse(d$country == "Philippines", "Laguna", "Taichung")
+	d$location[d$country == "Taiwan"] <- "TARI, Wufeng"
+	d$latitude <- ifelse(d$country == "Philippines", 14.1675, 24.0315)
+	d$longitude <- ifelse(d$country == "Philippines", 121.2536, 120.6950)
+	d$geo_from_source <- FALSE
 	d$crop <- "rice"
 	d$yield_part <- "grain"
 	d$yield_moisture <- 14

@@ -15,12 +15,12 @@
 # Varieties are coded V1/V2 only; names unknown.
 # P/K fertilizer, seed rate, irrigation regime not documented.
 # planting_date/harvest_date taken from "Date Start"/"Date End" in the RDM documentation; confirm these are sowing/harvest dates.
-# Location only given as "Upland" (IRRI upland farm, Los Banos, presumably); no coordinates. Georeference.
+# Location only given as "Upland" (IRRI upland farm, Los Banos); georeferenced to IRRI, Los Banos, Laguna (14.1675, 121.2536; geo_from_source = FALSE).
 # yield moisture basis unknown.
 # PN_m2 (panicles/m2) mapped to spike_density (panicles/ha); confirm convention for rice.
 # SLW unit documented as g/cm2 but values (40-70) suggest a different unit; kept as recorded in long table.
 # grain_N is out of bounds for some plots (0.88-1.41 % = 8.8-14.1 mg/g; valid_min 10); left as recorded.
-# write_files: dmy_total is in both wide (maturity, TB_m2) and long (by stage) records; growth_stage is
+# Stage-wise biomass in the long table is stored as dmy_stage_ so it does not duplicate maturity dmy_total in wide records; growth_stage is
 #   not recognized as a time variable for the long table (no DAS/dates given).
 # Per-sample organ weights (STEM, GLA, DW_GLA, Y_L, Rachis, filled/unfilled grain weights and counts), and
 #   WS "PN" at PI/FL/FL-15/PM (unclear what is counted) and an unnamed PH column (10 values) are not mapped.
@@ -61,8 +61,8 @@ N management trial in DSR
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -125,8 +125,12 @@ N management trial in DSR
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$country <- "Philippines"
+	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
 	d$site <- "Upland farm"
+	d$latitude <- 14.1675
+	d$longitude <- 121.2536
+	d$geo_from_source <- FALSE
 
 	# stage-wise observations
 	stack <- function(r, plotcol, cols, stages, var, mult=1) {
@@ -140,7 +144,7 @@ N management trial in DSR
 	st6 <- c("MT", "PI", "BT", "FL", "FL+15", "PM")
 	L1 <- rbind(
 		stack(r1, 4, 5:6, c("PI", "FL"), "plant_height"),
-		stack(r1, 4, 7:10, st4, "dmy_total", 10),
+		stack(r1, 4, 7:10, st4, "dmy_stage_", 10),
 		stack(r1, 4, 11:14, st4, "LAI"),
 		stack(r1, 4, 15:18, st4, "specific_leaf_weight_"),
 		stack(r1, 4, 19:22, st4, "yellow_leaf_dw_"),

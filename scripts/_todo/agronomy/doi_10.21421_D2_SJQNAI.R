@@ -2,16 +2,19 @@
 # license: GPL (>=3)
 
 ## NOTES
-# On-farm sorghum varietal demonstrations under ATASP-1 in the same three Nigerian SCPZs as doi:10.21421/D2/ORJQWZ.
-# The source column "Treatment" is the variety (not a fertilizer treatment).
-# Yield is already kg/ha (GHvYld_C_kgha). A few rows are 0; left as recorded.
+# On-farm sorghum varietal demonstration trials under ATASP-1 across the three Nigerian Staple Crop Processing Zones (SCPZ), 2016 cropping season (sister dataset to published doi:10.21421/D2/ORJQWZ).
+# The source column "Treatment" gives the sorghum variety (standardized: ICSV 111, ICSV 400, Samsorg 44, local).
+# Yield is grain yield in kg/ha (GHvYld_C_kgha). A few rows are 0; kept as recorded.
+# LGA abbreviations expanded to GADM 4.1 names (G/Mallam -> Garum Mallam, M/Madori -> Malam Maduri). Community and LGA coordinates and uncertainties reuse the verified GeoNames + GADM 4.1 tables from published sister script doi:10.21421/D2/ORJQWZ (geo_from_source = FALSE).
 
 ## ISSUES
-# get_data() can time out on dataverse.icrisat.org over IPv6; files were retrieved with IPv4 (curl -4).
-# Fertilizer, planting/harvest dates, and plot size are not in the table.
-# Communities are not georeferenced. Human should georeference; LGA names G/Mallam and M/Madori need expanding.
-# Variety spelling variants were merged (ICSV111/ICSV 111, ICSV400/ICSV 400, samsorg 44/Samsorg 44, local/Local).
-# Description is a .docx; not parsed here.
+# Fertilizer rates, exact planting/harvest dates, irrigation statement, yield moisture, and plot size are not in the table.
+# Communities not found in GeoNames or falling outside their reported GADM 4.1 LGA polygon fall back to their LGA (adm2) point-radius.
+# write_files: missing carob_contributor, yield_moisture, irrigated, K/N/P_fertilizer, harvest_date.
+
+## NOT PROCESSED
+# Description .docx file: background text, no plot data.
+
 
 carob_script <- function(path) {
 
@@ -36,15 +39,15 @@ The Agricultural Transformation Agenda Support Program Phase 1 (AT ASP-1) of the
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 55,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Data file of ICRISAT on Varietal demonstration trial ATASP-1.xlsx"]
 	r <- carobiner::read.excel(f)
 
-	var <- trimws(r$Treatment)
+	var <- trimws(as.character(r$Treatment))
 	var[var %in% c("ICSV111", "ICSV 111")] <- "ICSV 111"
 	var[var %in% c("ICSV400", "ICSV 400")] <- "ICSV 400"
 	var[tolower(var) == "samsorg 44"] <- "Samsorg 44"
@@ -52,9 +55,10 @@ The Agricultural Transformation Agenda Support Program Phase 1 (AT ASP-1) of the
 
 	d <- data.frame(
 		country = "Nigeria",
+		site = carobiner::fix_name(r$SCPZ, "title"),
 		adm1 = carobiner::fix_name(r$State, "title"),
 		adm2 = carobiner::fix_name(r$LGA, "title"),
-		location = r$Community,
+		location = trimws(as.character(r$Community)),
 		variety = var,
 		treatment = var,
 		yield = as.numeric(r$GHvYld_C_kgha),
@@ -65,8 +69,39 @@ The Agricultural Transformation Agenda Support Program Phase 1 (AT ASP-1) of the
 		is_survey = FALSE
 	)
 
-	d$trial_id <- paste(d$adm1, d$adm2, d$location, sep = "_")
+	## LGA names to GADM 4.1
+	d$adm2[d$adm2 == "G/mallam"] <- "Garum Mallam"
+	d$adm2[d$adm2 == "M/madori"] <- "Malam Maduri"
+
+	## Community (GeoNames) and LGA (GADM 4.1) coordinates from sister ATASP-1 script doi:10.21421/D2/ORJQWZ
+	geo_loc <- data.frame(
+		adm2 = c("Gbako", "Lavun", "Lavun", "Lavun", "Wushishi", "Wushishi", "Auyo", "Auyo", "Auyo", "Gwaram", "Gwaram", "Gwaram", "Gwaram", "Hadejia", "Hadejia", "Hadejia", "Hadejia", "Kafin Hausa", "Kafin Hausa", "Malam Maduri", "Malam Maduri", "Malam Maduri", "Malam Maduri", "Malam Maduri", "Bebeji", "Bebeji", "Bunkure", "Dawakin Kudu", "Dawakin Kudu", "Kura", "Kura", "Rano", "Rano", "Rano", "Rano", "Dandi", "Dandi", "Dandi", "Dandi", "Dandi", "Ngaski", "Ngaski", "Ngaski", "Ngaski", "Bagudo", "Bagudo", "Bagudo", "Bagudo", "Bagudo", "Shanga", "Shanga", "Shanga", "Kware", "Kware"),
+		location = c("Shabalegbo", "Kutigi", "Lanle", "Rugachibo", "Makusidi", "Tungankawu", "Auyo", "Ayama", "Gamsarka", "Fagam", "Farin Dutse", "Kila", "Zandam", "Atafi 1", "Atafi 2", "Gagulmari", "Rumfa", "Ruba", "Sarawa", "M/Madori", "Mai Rakumi", "Makaddari", "Shayya", "Tonikutara", "Bebeji", "Gwarmai", "Gafan", "Dawakin Kudu", "Unguwar Duniya", "Dalili", "Dan Hassan", "Rurum S/Gari", "Rurum T/Gari", "Yalwa", "Zurgu", "Fana", "Geza", "Gorun Yamma", "Kamba", "Kyangakwai", "Kambuwa", "Libata", "Ngaski", "Utono", "Buya", "Ganten Tudu", "Kaoje", "Karallaje", "Takalafiya", "Duguraha", "Giron Masa", "Shanga", "Durbawa", "Hamma Ali"),
+		longitude = c(6.0719, 5.5950, 5.6464, 5.6122, 6.1466, 6.0524, 9.9389, 9.8697, 9.8591, 9.9791, 9.9095, 9.7667, 9.8922, 10.0467, 10.0467, 10.0418, 10.0449, 9.8667, 9.9922, 9.8808, 9.9825, 9.8225, 9.8361, 10.0253, 8.2619, 8.2572, 8.4497, 8.5869, 8.6158, 8.3954, 8.5245, 8.4699, 8.4509, 8.5182, 8.5285, 3.9053, 3.8784, 3.6992, 3.6548, 3.7479, 4.9696, 4.5932, 4.8307, 4.6739, 4.0629, 4.2017, 4.1200, 4.0256, 3.9836, 4.5594, 4.7212, 4.5794, 5.3400, 5.3167),
+		latitude = c(9.4432, 9.2010, 9.2272, 9.2682, 9.5754, 9.6679, 12.3333, 12.2671, 12.3128, 11.0485, 11.1889, 11.3333, 11.3464, 12.4479, 12.4479, 12.4557, 12.4504, 12.0197, 12.2614, 12.5647, 12.5842, 12.4961, 12.4450, 12.5203, 11.6675, 11.5297, 11.6736, 11.8372, 11.8781, 11.7680, 11.7853, 11.5159, 11.4510, 11.4086, 11.5476, 11.6932, 12.0124, 11.9725, 11.8517, 11.9692, 10.9133, 10.1495, 10.3748, 10.5837, 11.0755, 11.2194, 11.1823, 11.1986, 11.1827, 11.1667, 11.1026, 11.2137, 13.0639, 13.1667),
+		geo_source = "GeoNames"
+	)
+
+	geo_adm2 <- data.frame(
+		adm1 = c("Jigawa", "Jigawa", "Jigawa", "Jigawa", "Jigawa", "Kano", "Kano", "Kano", "Kano", "Kano", "Kano", "Kebbi", "Kebbi", "Kebbi", "Kebbi", "Kebbi", "Niger", "Niger", "Niger", "Niger", "Niger", "Niger", "Sokoto"),
+		adm2 = c("Auyo", "Gwaram", "Hadejia", "Kafin Hausa", "Malam Maduri", "Bebeji", "Bunkure", "Dawakin Kudu", "Garum Mallam", "Kura", "Rano", "Bagudo", "Dandi", "Ngaski", "Shanga", "Suru", "Agaie", "Gbako", "Katcha", "Lavun", "Mokwa", "Wushishi", "Kware"),
+		lon = c(9.9969, 9.9918, 10.0311, 10.0102, 9.9821, 8.2841, 8.568, 8.6459, 8.373, 8.47, 8.4988, 3.9641, 3.8375, 4.7743, 4.7267, 4.1363, 6.4082, 5.9861, 6.2422, 5.6833, 5.1464, 5.9333, 5.312),
+		lat = c(12.3155, 11.1783, 12.4271, 12.1324, 12.5263, 11.4917, 11.6632, 11.7965, 11.6469, 11.7708, 11.4665, 11.3169, 11.7948, 10.5439, 11.2084, 11.7707, 8.9306, 9.2846, 9.1167, 9.2735, 9.2437, 9.6762, 13.1497),
+		uncertainty = c(32584, 43960, 4913, 27090, 25498, 24763, 18688, 17536, 13222, 16798, 20758, 56649, 35224, 62519, 39141, 41146, 40982, 39850, 55993, 75197, 87356, 40941, 27349),
+		source = "GADM 4.1, adm2"
+	)
+
+	d <- merge(d, geo_loc, by=c("adm2", "location"), all.x=TRUE, sort=FALSE)
+	d <- merge(d, geo_adm2, by=c("adm1", "adm2"), all.x=TRUE, sort=FALSE)
+	i <- is.na(d$longitude)
+	d$longitude[i] <- d$lon[i]
+	d$latitude[i] <- d$lat[i]
+	d$geo_uncertainty <- NA_real_
+	d$geo_uncertainty[i] <- d$uncertainty[i]
+	d$geo_source[i] <- d$source[i]
+	d$lon <- d$lat <- d$uncertainty <- d$source <- NULL
 	d$geo_from_source <- FALSE
+	d$trial_id <- paste(tolower(d$adm2), tolower(d$location), sep="_")
 
 	carobiner::write_files(path, meta, d)
 }

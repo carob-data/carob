@@ -23,11 +23,11 @@
 # Trial 1 has no rice stem/leaf biomass (empty in sheet).
 # herbicide_amount is only set for single-product treatments; sequential rates are in herbicide_rates_.
 # "butachlor" is not in the herbicide vocabulary (kept).
-# P and K fertilizer not reported. No coordinates in paper/data (IRRI farm, Los Banos); georeference.
+# P and K fertilizer not reported. Georeferenced to IRRI experimental farm, Los Banos, Laguna (14.1675, 121.2536; geo_from_source = FALSE).
 # stem_density (tillers) up to 714/m2, above valid_max (3.1e6/ha); left as recorded.
-# write_files: missing yield, longitude/latitude, P/K fertilizer, harvest_date (crop sampled at 35 DAP, not harvested);
-#   NA in treatment vars herbicide_amount (sequential) and herbicide_timing (weedy control);
-#   weed_density/weed_biomass in both wide (totals, excl. corn) and long (per species) tables.
+# Total non-corn weed density/biomass at 35 DAP stored as weed_density_total_/weed_biomass_total_ on wide records so they do not duplicate per-species weed_density/weed_biomass in the long table.
+# write_files: missing yield, yield_moisture, P/K fertilizer, harvest_date (crop sampled at 35 DAP, not harvested);
+#   out of bounds stem_density; unknown variables in NEW VARIABLES.
 
 ## NEW VARIABLES
 # position_: LEFT/RIGHT position in trial 2 (meaning unclear)
@@ -55,12 +55,12 @@ The demand for corn is increasing in Asia for feed and biofuel. It is grown in t
 		project = NA,
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "herbicide_product;herbicide_amount;herbicide_timing",
-		response_vars = "weed_density;weed_biomass;stem_density;LAI;dmy_stems;dmy_leaves",
+		treatment_vars = "herbicide_product",
+		response_vars = "stem_density;LAI;dmy_stems;dmy_leaves",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 1
 	)
 
@@ -101,8 +101,8 @@ The demand for corn is increasing in Asia for feed and biofuel. It is grown in t
 			dmy_leaves = as.numeric(r[[7]]) * 10,
 			corn_density_ = as.numeric(r[[8]]) * 10000,
 			corn_biomass_ = as.numeric(r[[9]]) * 10,
-			weed_density = as.numeric(r[[24]]) * 10000,
-			weed_biomass = as.numeric(r[[25]]) * 10
+			weed_density_total_ = as.numeric(r[[24]]) * 10000,
+			weed_biomass_total_ = as.numeric(r[[25]]) * 10
 		)
 	}
 	d35 <- rbind(dap35(rc1, "1"), dap35(rc2, "2"))
@@ -135,7 +135,11 @@ The demand for corn is increasing in Asia for feed and biofuel. It is grown in t
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$country <- "Philippines"
+	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
+	d$latitude <- 14.1675
+	d$longitude <- 121.2536
+	d$geo_from_source <- FALSE
 	d$yield_part <- "grain"
 	d$record_id <- 1:nrow(d)
 

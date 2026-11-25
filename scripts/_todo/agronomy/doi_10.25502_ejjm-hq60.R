@@ -4,10 +4,10 @@
 ## ISSUES
 # Harvested plot area not recorded; grain weights are kg/plot so yield kg/ha cannot be computed.
 # Fertilizer product amounts not recorded (only type); N/P/K omitted.
-# GPS often 1 decimal degree and sometimes in the wrong country; 538 records missing coordinates.
+# GPS often 1 decimal degree; 538 records missing coordinates. One Uganda row with Ethiopian coordinates (7.7, 37.0) and blank farm_id/place had its coordinates set to NA; one NA-country row at (-3.3, 37.5) assigned to Tanzania.
 # Plot 1/2/3 assumed n2africa / own_legume / control (variable_definitions plot index).
 # farm_id is often NOT_KNOWN; trial_id uses farm_id_correction when present.
-# write_files: missing yield, yield_moisture, N/P/K; unknown grain_weight_plot_ / seed_amount_plot_; NA fertilizer_type/country/lat/lon; coords in Uganda/Ethiopia.
+# write_files: missing yield, yield_moisture, harvest_date, N/P/K; unknown grain_weight_plot_ / seed_amount_plot_; NA fertilizer_type/yield_part/country/lat/lon; duplicate coordinates.
 
 ## NEW VARIABLES
 # grain_weight_plot_ (kg): shelled grain harvested from the plot (area unknown)
@@ -38,8 +38,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "grain_weight_plot_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
 		carob_effort = 0.7
 	)
 
@@ -63,22 +63,29 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	i <- is.na(tid) | tid == ""
 	tid[i] <- r$id[i]
 
+	ctry <- carobiner::fix_name(r$country, "title")
+	lat <- r$gps_homestead_device_latitude_decimal_degrees
+	lon <- r$gps_homestead_device_longitude_decimal_degrees
+	# One NA-country record sits inside the Tanzania cluster (-3.3, 37.5)
+	ctry[is.na(ctry) & !is.na(lat) & lat == -3.3 & lon == 37.5] <- "Tanzania"
+	# One Uganda record has Ethiopian coordinates (7.7, 37.0) with no farm_id/place
+	bad_ug <- !is.na(ctry) & ctry == "Uganda" & !is.na(lat) & lat > 5
+	lat[bad_ug] <- NA
+	lon[bad_ug] <- NA
+
 	base <- data.frame(
-		country = carobiner::fix_name(r$country, "title"),
+		country = ctry,
 		location = r$place,
-		latitude = r$gps_homestead_device_latitude_decimal_degrees,
-		longitude = r$gps_homestead_device_longitude_decimal_degrees,
+		latitude = lat,
+		longitude = lon,
 		elevation = r$gps_homestead_device_altitude_m,
-		geo_from_source = !is.na(r$gps_homestead_device_latitude_decimal_degrees),
+		geo_from_source = !is.na(lat) & !is.na(lon),
 		trial_id = tid,
 		crop = crop,
 		planting_date = to_date(r$date_of_planting_1_date),
-		harvest_date = to_date(r$date_of_planting_2_date),
 		farmer_gender = ifelse(r$hh_head_gender == 0, "male",
 			ifelse(r$hh_head_gender == 1, "female", as.character(NA)))
 	)
-	# date_of_planting_2 is a second calendar event, not harvest; drop it
-	base$harvest_date <- as.character(NA)
 
 	# Three experimental plots per farm
 	p1 <- data.frame(

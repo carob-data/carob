@@ -8,16 +8,15 @@
 # Tillage is stored as conventional when the description says conventional.
 # Harvest population in plants/m2 is stored as plants/ha when the site median is below 100.
 # NDVI header cells are Excel serials or calendar dates. 15-Aug style dates are read as day, month, year.
-# The title names Oaxaca, so the country is Mexico. The sheets and geographicCoverage have no coordinates.
+# The title names Oaxaca, so the country is Mexico and adm1 is Oaxaca. Approximate municipality coordinates are imputed with geo_from_source = FALSE.
 # The Huixtepec sheet is San Pablo Huixtepec in the variable description.
 # Treatment 8 is described as without phosphorus and potassium. The rate cells do not give an oxide percentage.
 # Zaachila in 2013 was rainfed. The note says treatments 1 and 6 in replicate 3 were replanted.
 # San Andrés Sinaxtla 2013 has one irrigation date.
 
 ## ISSUES
-# No coordinates in the sheets or in geographicCoverage. Country is Mexico because the title names Oaxaca.
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE).
 # Product fertilizer rates are not converted to elemental P or K.
-# write_files: missing variables: latitude, longitude, K_fertilizer, P_fertilizer, harvest_date. contributor:
 
 ## NOT PROCESSED
 # Map sheet and Wheather sheet.
@@ -47,8 +46,8 @@ The experiments were established with different rates of nitrogen in order to ge
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.5
 	)
 
@@ -179,20 +178,20 @@ The experiments were established with different rates of nitrogen in order to ge
 	}
 
 	lookup_site <- function(loc, info) {
-		keys <- names(r1)
-		if (length(keys) == 1) return(r1[[keys]])
+		keys <- names(info)
+		if (length(keys) == 1) return(info[[keys]])
 		want <- site_key(loc)
 		keyed <- vapply(keys, site_key, character(1))
 		hit <- keys[keyed == want]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		inside <- vapply(keyed, function(k) {
 			nzchar(want) && nzchar(k) && (grepl(want, k, fixed=TRUE) || grepl(k, want, fixed=TRUE))
 		}, logical(1))
 		hit <- keys[inside]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		pref <- substr(want, 1, 7)
 		hit <- keys[substr(keyed, 1, 7) == pref]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		NULL
 	}
 
@@ -266,6 +265,7 @@ The experiments were established with different rates of nitrogen in order to ge
 			d <- data.frame(
 				crop = "maize",
 				country = "Mexico",
+				adm1 = "Oaxaca",
 				location = loc,
 				trial_id = paste(loc, year, sep="_"),
 				plot_id = as.character(r[[which(hdr == "Plot")[1]]]),
@@ -308,6 +308,22 @@ The experiments were established with different rates of nitrogen in order to ge
 	}
 
 	d <- do.call(rbind, d_list)
+	# Approximate municipality coordinates in Oaxaca (geo_from_source = FALSE).
+	k <- site_key(d$location)
+	d$latitude <- NA_real_
+	d$longitude <- NA_real_
+	d$latitude[grepl("huixtepec", k)] <- 16.826
+	d$longitude[grepl("huixtepec", k)] <- -96.783
+	d$latitude[grepl("sinaxtla", k)] <- 17.468
+	d$longitude[grepl("sinaxtla", k)] <- -97.284
+	d$latitude[grepl("ayoquezco", k)] <- 16.680
+	d$longitude[grepl("ayoquezco", k)] <- -96.835
+	d$latitude[grepl("chocani|tejupan", k)] <- 17.664
+	d$longitude[grepl("chocani|tejupan", k)] <- -97.468
+	d$latitude[grepl("quiane", k)] <- 16.885
+	d$longitude[grepl("quiane", k)] <- -96.785
+	d$latitude[grepl("zaachila", k)] <- 16.950
+	d$longitude[grepl("zaachila", k)] <- -96.750
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$land_prep_method))) d$land_prep_method <- NULL

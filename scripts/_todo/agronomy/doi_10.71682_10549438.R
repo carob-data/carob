@@ -2,26 +2,25 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Seven years at the San Miguel Tlacamama research platform, Oaxaca, Mexico. The title names the country.
-# Latitude and longitude are degrees, minutes, and seconds. Longitude is unsigned. It is stored west, because the platform is in Mexico.
-# Yield_moist is the yield adjusted to 14% for maize and 12% for other grains, in kg/ha from the magnitude. yield_moisture is that basis.
-# The Crop value Bean is cowpea. The variety on those rows is Cowpea, and the treatment table says maize-cowpea.
-# Fert_N, Fert_P, and Fert_K are kilograms of the elements. They are 51, 12, and 15 on every row, including Supermagro-only treatments. The treatment table lists 51-12-15 only for the organic-mineral treatments.
-# Zero tillage is land_prep_method none. Kept residue is residue_prevcrop_used TRUE. Water regime Temporal is rainfed.
-# Row distance and intrarow spacing are both 1 and the legend gives no unit.
-# Mat_days is a date. maturity_days is that date minus the sowing date.
-# Heights below 10 are metres and are stored in centimetres. The cell 3.09.8 is stored as 309.8.
+# Seven-year Conservation Agriculture experiment (2017-2023) at the San Miguel Tlacamama Research Platform, Oaxaca, Mexico. Factorial: crop diversification (M = maize monoculture vs MB = maize-cowpea intercropping), stubble management (R = removed vs K = kept), and fertilization (OF = organic Supermagro biofertilizer vs OMF = Supermagro + NPK 51-12-15 kg/ha).
+# Coordinates are parsed from DMS (unsigned longitude is west -> negated for Oaxaca, Mexico).
+# Yield_moist is grain/seed yield adjusted to 14% moisture for maize and 12% for cowpea (kg/ha); Yield_dry is dry-matter yield (kg/ha -> yield_dry).
+# "Bean" rows in the raw sheet represent cowpea (Variety = Cowpea; Legend = Maize-Cowpea Bean). Intercropped maize and cowpea rows share plot_id/year and carry intercropped = TRUE with intercrops = "cowpea" / "maize".
+# Following the Legend treatment definitions, OF treatments receive organic Supermagro only (fertilizer_used = FALSE, N/P/K_fertilizer = 0) while OMF treatments receive Supermagro + mineral NPK (fertilizer_used = TRUE, N = 51, P = 12, K = 15 kg/ha). The raw sheet repeats 51/12/15 in Fert_N/P/K on OF rows too (see ISSUES).
+# Zero tillage is land_prep_method = "none"; Temporal water regime is irrigated = FALSE. Plant heights < 10 are in meters and converted to cm (* 100); raw typo "3.09.8" is corrected to 309.8 cm.
 
 ## ISSUES
-# Fertilizer columns do not differ between Supermagro and Supermagro plus NPK.
+# Raw sheet columns Fert_N, Fert_P, Fert_K contain 51, 12, 15 on every row including organic-only (OF) treatments, contradicting the Legend ("Supermagro" vs "Supermagro + NPK 51-12-15"). Mineral NPK is set to 0 on OF treatments per Legend and abstract.
+# Soil data (24 plots) and Grain Quality Data (12 maize samples) sheets have no sampling year column, so they cannot be unambiguously assigned to a specific year without risk of duplicating across all 7 seasons; documented in NOT PROCESSED.
+# write_files: missing carob_contributor; some NA yields/dates/densities on failed or unrecorded rows.
 
 ## NOT PROCESSED
-# Soil data, grain quality, and the yearly operations sheets.
-# Cost, price, and profit.
-# Flower_days, described as days between flowering and maturity.
-# Count, about 120, which does not match plants per square meter.
-# Row_dist and Intrarow, both 1, with no unit.
-# Precip and Irrig are empty.
+# Soil data sheet (24 plots: SP, FC, PWP, HC, BD, SOM, P, K, Ca, Mg, Al, S, NO3, pH, CEC, Na, Fe, Zn, Mn, Cu): sampling year not stated in sheet.
+# Grain Quality Data sheet (12 rows: protein, tryptophan, lysine, Fe, Zn, Ca, K, P, ash, starch): harvest year not stated in sheet.
+# Yearly operations sheets (2017-2023): qualitative activity logs.
+# Cost, Price, Gross, Profit (currency unit in Legend is "$/ha" without MXN vs USD confirmation).
+# Flower_days (defined in Legend as days between flowering and maturity, not days to flowering).
+# Count (~120, inconsistent with plants/m2), Row_dist and Intrarow (both 1 without units), Precip and Irrig (empty).
 
 
 carob_script <- function(path) {
@@ -42,20 +41,20 @@ Rainfed maize production in southern Mexico is constrained by climate variabilit
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "yield",
+		treatment_vars = "intercropped;residue_prevcrop_used;fertilizer_used;N_fertilizer;P_fertilizer;K_fertilizer",
+		response_vars = "yield;yield_dry;plant_height;seed_weight",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
+		carob_effort = 0.25
 	)
 
 	dms <- function(x) {
 		x <- as.character(x)
-		x <- gsub("[°º]", " ", x)
-		x <- gsub("[’'`]", " ", x)
-		x <- gsub("[”\"″]", " ", x)
+		x <- gsub("[\u00b0\u00ba]", " ", x)
+		x <- gsub("[\u2019'`]", " ", x)
+		x <- gsub("[\u201d\"\u2033]", " ", x)
 		sp <- strsplit(trimws(x), "[^0-9.]+")
 		out <- rep(NA_real_, length(x))
 		for (i in seq_along(sp)) {
@@ -77,7 +76,6 @@ Rainfed maize production in southern Mexico is constrained by climate variabilit
 		out[iso] <- substr(x[iso], 1, 10)
 		out
 	}
-
 	plain_num <- function(x) {
 		if (is.numeric(x)) return(as.numeric(x))
 		z <- trimws(as.character(x))
@@ -101,42 +99,56 @@ Rainfed maize production in southern Mexico is constrained by climate variabilit
 	crop[r$Crop == "Bean"] <- "cowpea"
 	part <- ifelse(crop == "maize", "grain", "seed")
 	moist <- ifelse(crop == "maize", 14, 12)
-	lon <- dms(r$Longitud)
-	# Unsigned longitude at this Oaxaca platform is west of Greenwich.
-	lon <- -abs(lon)
+	trt <- trimws(as.character(r$Name_tr))
+	is_inter <- grepl("^MB", trt)
+	inter_partner <- ifelse(!is_inter, NA_character_, ifelse(crop == "maize", "cowpea", "maize"))
+	# Per Legend: OF = organic Supermagro only; OMF = Supermagro + NPK (51-12-15)
+	has_npk <- grepl("OMF", trt)
+
+	lon <- -abs(dms(r$Longitud))
 
 	d <- data.frame(
 		country = "Mexico",
 		adm1 = "Oaxaca",
 		location = "San Miguel Tlacamama",
+		LTE_name = "San Miguel Tlacamama Research Platform",
 		trial_id = paste("San Miguel Tlacamama", r$Year),
 		plot_id = as.character(r$Parcela),
 		rep = as.integer(r$Num_Rep),
-		treatment = trimws(as.character(r$Name_tr)),
+		treatment = trt,
 		crop = crop,
+		intercropped = is_inter,
+		intercrops = inter_partner,
 		variety = trimws(as.character(r$Variety)),
-		yield = as.numeric(r$Yield_moist),
+		yield = plain_num(r$Yield_moist),
+		yield_dry = plain_num(r$Yield_dry),
 		yield_moisture = moist,
 		yield_part = part,
+		seed_weight = plain_num(r$Thousand),
 		planting_date = as_date(r$Sowing_date),
+		emergence_date = as_date(r$Emergence_date),
 		harvest_date = as_date(r$Harvest_date),
-		maturity_days = as.numeric(as.Date(r$Mat_days) - as.Date(r$Sowing_date)),
+		maturity_days = as.numeric(as.Date(as_date(r$Mat_days)) - as.Date(as_date(r$Sowing_date))),
 		plant_height = height_cm(r$Height),
 		plant_density = plain_num(r$Plants_m2) * 10000,
-		seed_density = as.numeric(r$Seed_dens),
-		plot_area = as.numeric(r$Area_plot),
-		elevation = as.numeric(r$Altitud),
+		seed_density = plain_num(r$Seed_dens),
+		plot_area = plain_num(r$Area_plot),
+		elevation = plain_num(r$Altitud),
 		latitude = dms(r$Latitud),
 		longitude = lon,
-		N_fertilizer = as.numeric(r$Fert_N),
-		P_fertilizer = as.numeric(r$Fert_P),
-		K_fertilizer = as.numeric(r$Fert_K),
+		OM_used = TRUE,
+		fertilizer_used = has_npk,
+		N_fertilizer = ifelse(has_npk, plain_num(r$Fert_N), 0),
+		P_fertilizer = ifelse(has_npk, plain_num(r$Fert_P), 0),
+		K_fertilizer = ifelse(has_npk, plain_num(r$Fert_K), 0),
 		land_prep_method = "none",
-		residue_prevcrop_used = r$Residue == "Kept",
+		residue_prevcrop_used = trimws(as.character(r$Residue)) == "Kept",
+		previous_crop_residue_perc = plain_num(r$Res_perc),
 		irrigated = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = TRUE
 	)
+
 	carobiner::write_files(path, meta, d)
 }

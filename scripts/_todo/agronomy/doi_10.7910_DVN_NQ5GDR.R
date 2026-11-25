@@ -9,11 +9,11 @@
 # Greenhouse inoculation tables (11, 14) and CIAT-Palmira invernaderos site not processed.
 
 ## ISSUES
-# Site table has place names only (Carimagua, S. Quilichao, Matazul, Palmira, Caldono). Human must georeference; do not guess.
+# Site table has place names only; georeferenced CIAT Santander de Quilichao (3.0167, -76.4833, Cauca, Colombia; geo_from_source = FALSE).
 # Soil (07.MBIO_ANAL_SUE N_TOT, MO by depth), plant height (18), litter, 15N, N-fixation, microbial biomass, and treatment catalog (pastures B.dictyoneura / S.capitata) not processed.
 # P and K rates not in the production table.
 # N_TOT in 07 is soil total N (mg/kg range ~700-2200), not fertilizer — draft() mapping would be wrong.
-# write_files: missing latitude/longitude/geo_from_source; NA yield on 66 of 132 production rows (kept).
+# write_files: missing irrigated, K_fertilizer, P_fertilizer, planting_date; NA yield on 66 of 132 production rows (kept).
 
 ## NEW VARIABLES
 # none
@@ -59,8 +59,8 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 20,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 25,
 		carob_effort = 0.4
 	)
 
@@ -100,6 +100,9 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 	ft[grepl("Urea", r$TRAT, ignore.case=TRUE)] <- "urea"
 	d$fertilizer_type <- ft
 
+	d$latitude <- 3.0167
+	d$longitude <- -76.4833
+	d$geo_from_source <- FALSE
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 

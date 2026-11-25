@@ -8,14 +8,14 @@
 # Herbicide names follow the 2018 all-locations script: Lagon = isoxaflutole;aclonifene, Lifeline = glufosinate-ammonium, Monsoon+Adjuvant = foramsulfuron;thiencarbazone-methyl;cyprosulfamide. Rates in the treatment text are L product/ha.
 # Species names are copied as recorded, including misspellings.
 
+# Station coordinates are from the companion 2018 all-locations file (doi:10.25502/rnbm-3x44/d; geo_from_source = FALSE).
+
 ## ISSUES
-# No yield, planting date, harvest date, crop injury, or coordinates in this file.
-# GPS for these stations is in doi:10.25502/rnbm-3x44/d (UAM, FUNAAB, Ago-Owu, IITA Ibadan, Onne). Not copied here.
-# States to georeference: Benue (UAM), Ogun (FUNAAB), Osun (Ago-Owu), Oyo (IITA Ibadan), Rivers (Onne).
+# No yield, planting date, harvest date, crop injury, or coordinates in this file (station coordinates added from companion doi:10.25502/rnbm-3x44/d).
 # No fertilizer, variety, or irrigation. No publication DOI.
 # cyprosulfamide is kept despite the vocabulary entry having a leading space.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, longitude, latitude, irrigated, N/P/K, planting_date, harvest_date;
-#   NA herbicide_timing on hoe and untreated plots; unknown rate and adjuvant variables; invalid term cyprosulfamide.
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, N/P/K, planting_date, harvest_date;
+#   unknown rate and adjuvant variables; invalid term cyprosulfamide.
 
 ## NOT PROCESSED
 # ID: row number.
@@ -46,12 +46,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		project = "PJ-NA2910",
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "herbicide_product;weeding_times;herbicide_timing",
+		treatment_vars = "herbicide_product;weeding_times",
 		response_vars = "weed_density",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.6
 	)
 
@@ -100,6 +100,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	site <- r$Site
 	site[site == "AgoOwu"] <- "Ago-Owu"
 	site[site == "IITAIbadan"] <- "IITA Ibadan"
+	geo <- data.frame(
+		site = c("UAM", "FUNAAB", "Ago-Owu", "IITA Ibadan", "Onne"),
+		latitude = c(7.87694, 7.23390, 7.26189, 7.59194, 4.72002),
+		longitude = c(8.81639, 3.44490, 4.27013, 3.88342, 7.17646)
+	)
+	gi <- match(site, geo$site)
 
 	d <- data.frame(
 		trial_id = paste(site, r$Year, sep = "_"),
@@ -109,7 +115,10 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		country = "Nigeria",
 		adm1 = r$Loc,
 		location = site,
+		latitude = geo$latitude[gi],
+		longitude = geo$longitude[gi],
 		crop = "cassava",
+		intercropped = FALSE,
 		intercrops = "none",
 		weed_species = trimws(r$WeedSpecies),
 		herbicide_product = product,

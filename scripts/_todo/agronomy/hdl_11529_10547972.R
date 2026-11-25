@@ -32,16 +32,16 @@ On-farm long-term jute trials at Rangpur, Bangladesh, 2015 and 2016.
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Pre-kharif long-term trial, Rangpur, Bangladesh",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.6
 	)
 
 	as_date <- function(x) {
@@ -82,14 +82,19 @@ On-farm long-term jute trials at Rangpur, Bangladesh, 2015 and 2016.
 		hd[!is.na(hd) & hd > "2018-06-05"] <- NA_character_
 		data.frame(
 			country = "Bangladesh",
+			adm1 = "Rangpur",
 			adm2 = "Rangpur",
 			location = r1$Node,
+			latitude = 25.746,
+			longitude = 89.252,
+			season = "early wet",
 			trial_id = paste(r1$Year, r1$Node),
 			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			treatment = r1$Tmnt,
 			crop = "jute",
 			variety = r1$Variety,
-			yield_part = "fiber",
+			# Jute yield is dry bast fiber from stems ("fiber" is not in terminag yield_part)
+			yield_part = "stems",
 			planting_date = as_date(r1$Date.of.seeding.mm.dd.yy),
 			harvest_date = hd,
 			row_spacing = as.numeric(sp),

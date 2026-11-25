@@ -10,7 +10,8 @@
 # Rainfed irrigation cells are stored as not irrigated. A date in an irrigation cell is an irrigation date. Drip irrigation is irrigated, with no date.
 # Harvest population in plants/m2 is stored as plants/ha when the median is below 100. A plants/ha unit is left as printed.
 # NDVI header cells are Excel serials or day/month/year dates. They are kept in the long table.
-# The variable description does not give coordinates.
+# The variable description does not give coordinates; approximate municipality coordinates are imputed with geo_from_source = FALSE.
+# Tillage "conservation agriculture" is mapped to "reduced tillage" in terminag.
 # algorithm maize-Morelos.xlsx is a calibration model, not plot measurements, and is not read.
 # The 2014 workbook names the sheet Data and does not name a municipality, so that location is Morelos.
 # The 2014 weather dates are unix seconds.
@@ -18,8 +19,7 @@
 ## ISSUES
 # Amacuzac 2018 plot size 0.72 m2 is below the 1 m2 minimum, and one plot is 0.552 m2. They are left as printed.
 # Some yield cells are empty.
-# read.excel: Expecting numeric in P4, Q4, R4, S4 and in P28:P32: got a date.
-# write_files: missing variables: latitude, longitude, harvest_date. out of bounds: plot_area (0.552, 16). invalid terms: land_prep_method: conservation agriculture. NA detected: yield. contributor:
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Map sheets.
@@ -50,8 +50,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -178,7 +178,7 @@ This experiments were established with different rates of nitrogen in order to g
 	read_blocks <- function(f, sheets) {
 		s <- sheets[grepl("^Variable Description", sheets)]
 		if (!length(s)) return(list())
-		r1 <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r1 <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE, col_types="text")
 		lab_cols <- c()
 		for (j in seq_len(ncol(r1))) {
 			col <- trimws(as.character(r1[[j]]))
@@ -200,7 +200,7 @@ This experiments were established with different rates of nitrogen in order to g
 			till <- tolower(pick("^Tillage$"))
 			prep <- NA_character_
 			if (!is.na(till) && grepl("conventional", till)) prep <- "conventional"
-			if (!is.na(till) && grepl("conservation", till)) prep <- "conservation agriculture"
+			if (!is.na(till) && grepl("conservation", till)) prep <- "reduced tillage"
 			if (!is.na(till) && grepl("zero", till)) prep <- "none"
 			ir_lab <- grepl("irrigation", lab, ignore.case=TRUE)
 			ir_val <- val[ir_lab]
@@ -259,7 +259,7 @@ This experiments were established with different rates of nitrogen in order to g
 	read_wth <- function(f, sheets) {
 		s <- sheets[trimws(tolower(sheets)) %in% c("wheather", "weather")]
 		if (!length(s)) return(NULL)
-		r <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE, col_types="text")
 		w <- NULL
 		for (i in seq_len(nrow(r))) {
 			cells <- tolower(trimws(as.character(unlist(r[i, ]))))
@@ -298,7 +298,7 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	read_sheet <- function(f, sheet, blocks, year) {
-		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
 		hdr <- trimws(as.character(unlist(r[1, ])))
 		hdr[is.na(hdr)] <- ""
 		unit <- as.character(unlist(r[2, ]))
@@ -418,10 +418,17 @@ This experiments were established with different rates of nitrogen in order to g
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	if (all(is.na(d$fertilizer_type))) d$fertilizer_type <- NULL
-	if (all(is.na(d$latitude)) || all(is.na(d$longitude))) {
-		d$latitude <- NULL
-		d$longitude <- NULL
-		d$geo_from_source <- FALSE
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	if (any(miss)) {
+		nl <- norm(d$location)
+		d$latitude[miss & grepl("miacatlan|tizate", nl)] <- 18.765
+		d$longitude[miss & grepl("miacatlan|tizate", nl)] <- -99.362
+		d$latitude[miss & grepl("amacuzac", nl)] <- 18.599
+		d$longitude[miss & grepl("amacuzac", nl)] <- -99.370
+		rem <- is.na(d$latitude) | is.na(d$longitude)
+		d$latitude[rem] <- 18.750
+		d$longitude[rem] <- -99.250
+		d$geo_from_source[miss] <- FALSE
 	}
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	if (!is.null(long) && nrow(long)) {

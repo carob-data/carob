@@ -38,16 +38,16 @@ In South Asia, wheat is typically grown in favorable environments, although poli
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
-		publication = NA,
+		publication = "doi:10.1016/j.agsy.2015.05.007",
 		project = NA,
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "N_fertilizer;variety",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.5
 	)
 

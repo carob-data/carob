@@ -2,18 +2,18 @@
 # license: GPL (>=3)
 
 ## NOTES
-# The dataset description places the trial on loamy soil in northern Bangladesh.
-# Each row is one season of a cropping sequence. Yield is the rice-equivalent yield column, t/ha converted to kg/ha. It is not the raw yield of wheat, maize, or mung bean.
+# Site, soil, and design details come from the bundled paper (Hoque et al. 2023, Field Crops Research, doi:10.1016/j.fcr.2022.108791): BARI Regional Agricultural Research Station (RARS), Jamalpur, Mymensingh, Bangladesh (24.9419 N, 89.9279 E, 21.6 m), split-plot design, 120 m2 plots, loam soil (47.3% sand, 30.0% silt, 22.7% clay, pH 6.2, SOM 0.77%, total N 0.042% = 420 mg/kg).
+# Each row is one season of a cropping sequence. The System Yield sheet reports rice-equivalent yield (REY, t/ha -> kg/ha). For rice, REY equals actual grain yield and is stored in yield; for wheat, maize, and mung bean, yield is left NA and REY is stored in rice_equivalent_yield_kg_ha_ so price-scaled values are not mixed with actual grain yield.
 # Sequences from the description: RR rice-rice, RMb rice-mung bean, RW rice-wheat, RM rice-maize, RWMb rice-wheat-mung bean, RMMb rice-maize-mung bean.
-# CT is conventional tillage. CA is untilled. ALT is tilled monsoon rice and untilled winter and summer crops. The description states the winter rule and does not mention the summer crop separately.
-# Monsoon is stored as kharif and winter as rabi.
-# No coordinates are in the workbook.
+# CT is conventional tillage. CA is untilled. ALT is tilled monsoon rice and untilled winter and spring crops.
+# Monsoon is stored as kharif, winter as rabi, and spring/summer mung bean (March-June) as early wet.
 
 ## ISSUES
-# write_files: missing variables: on_farm, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: cropping_system_ (crop?). invalid terms: season: summer.
+# Actual grain yields of wheat, maize, and mung bean are not reported directly in the System Yield sheet (only rice-equivalent yields are given), so yield is NA for non-rice crops.
 
 ## NEW VARIABLES
 # cropping_system_: sequence code from the System Yield sheet.
+# rice_equivalent_yield_kg_ha_: rice-equivalent yield (kg/ha) from the System Yield sheet.
 
 ## NOT PROCESSED
 # Calorie and protein yields.
@@ -35,16 +35,16 @@ A field study in northern Bangladesh compared three tillage options and six rice
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
-		publication = NA,
-		project = NA,
-		design = NA,
+		publication = "doi:10.1016/j.fcr.2022.108791",
+		project = "CSISA-BD;SRFSI",
+		design = "split-plot",
 		data_type = "experiment",
 		treatment_vars = "land_prep_method;cropping_system_",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.5
 	)
 
@@ -68,7 +68,7 @@ A field study in northern Bangladesh compared three tillage options and six rice
 		out[part == "rabi" & code == "RMb"] <- "mung bean"
 		out[part == "rabi" & code %in% c("RW", "RWMb")] <- "wheat"
 		out[part == "rabi" & code %in% c("RM", "RMMb")] <- "maize"
-		out[part == "summer" & code %in% c("RWMb", "RMMb")] <- "mung bean"
+		out[part == "early wet" & code %in% c("RWMb", "RMMb")] <- "mung bean"
 		out
 	}
 	prep_of <- function(till, part) {
@@ -77,28 +77,47 @@ A field study in northern Bangladesh compared three tillage options and six rice
 		out[till == "ALT" & part != "kharif"] <- "none"
 		out
 	}
-	add <- function(part, yield) {
+	add <- function(part, rey) {
 		crop <- crop_of(sys, part)
 		keep <- !is.na(crop)
+		cr <- crop[keep]
+		ry <- rey[keep]
 		data.frame(
 			country = "Bangladesh",
+			adm1 = "Mymensingh",
+			adm2 = "Jamalpur",
+			location = "Jamalpur",
+			site = "BARI Regional Agricultural Research Station",
+			latitude = 24.9419,
+			longitude = 89.9279,
+			elevation = 21.6,
 			trial_id = year[keep],
 			rep = rep[keep],
 			season = part,
-			crop = crop[keep],
+			crop = cr,
 			cropping_system_ = sys[keep],
 			land_prep_method = prep_of(till, part)[keep],
 			treatment = paste(sys[keep], till[keep]),
-			yield = yield[keep],
-			yield_part = "grain",
+			plot_area = 120,
+			soil_texture = "loam",
+			soil_sand = 47.3,
+			soil_silt = 30.0,
+			soil_clay = 22.7,
+			soil_pH = 6.2,
+			soil_SOM = 0.77,
+			soil_N_total = 420,
+			yield = ifelse(cr == "rice", ry, NA_real_),
+			rice_equivalent_yield_kg_ha_ = ry,
+			yield_part = ifelse(cr == "mung bean", "seed", "grain"),
+			on_farm = FALSE,
 			is_survey = FALSE,
-			geo_from_source = FALSE
+			geo_from_source = TRUE
 		)
 	}
 	d <- rbind(
 		add("kharif", mon),
 		add("rabi", win),
-		add("summer", summ)
+		add("early wet", summ)
 	)
 	d$plot_id <- paste(d$trial_id, d$rep, d$cropping_system_, d$treatment, d$season, sep="_")
 

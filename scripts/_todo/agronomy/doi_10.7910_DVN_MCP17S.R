@@ -28,9 +28,8 @@
 # 2019WS plot rep not given (plot number kept). 2018DS DTF has "NA" strings (read as NA).
 # Some genotype means are negative (yield down to -700 kg/ha, straw down to -3800 kg/ha), so the means are
 #   probably model-adjusted (BLUE/BLUP) rather than raw means; left as recorded. Check with the authors.
-# No coordinates in data or paper; georeference IRRI experimental farm, Los Banos (other IRRI papers give 14 11'N, 121 15'E).
-# write_files remaining: missing coordinates, harvest_date; NA yield; out of bounds yield and dmy_residue (negative);
-#   missing values in NP_treatment_ (only defined for 2018); unknown (new) variables.
+# No coordinates in data or paper; georeferenced to IRRI experimental farm, Los Banos (14.1675, 121.2536; geo_from_source = FALSE).
+# write_files remaining: missing harvest_date; NA yield; out of bounds yield and dmy_residue (negative); unknown (new) variables.
 
 ## NEW VARIABLES
 # canopy_temperature_: average canopy temperature (C), drought plots
@@ -63,12 +62,12 @@ The aus rice variety group originated in stress‐prone regions and is a promisi
 		project = NA,
 		design = "alpha lattice (2019: RCBD); 3 replications",
 		data_type = "experiment",
-		treatment_vars = "variety;stress;NP_treatment_",
+		treatment_vars = "variety;stress",
 		response_vars = "yield;dmy_residue;flowering_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -180,6 +179,9 @@ The aus rice variety group originated in stress‐prone regions and is a promisi
 	d$country <- "Philippines"
 	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
+	d$latitude <- 14.1675
+	d$longitude <- 121.2536
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

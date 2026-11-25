@@ -5,13 +5,13 @@
 # Grain Yield (Kg/ha) matches the plot yield that was adjusted to 10% moisture, scaled to hectares. yield_moisture is 10.
 # p0 is the treatment without phosphorus. The phosphorus rate for p1 is not in the file, so P_fertilizer is 0 for p0 and left empty for p1.
 # The yield file records pigeon pea only. Soybean is the intercrop named in the treatment, and it is not a separate yield row.
-# Country Malawi is the geographic coverage of the dataset. Golomoti and Nsipe are the sites in the file. There are no coordinates.
+# Country Malawi is the geographic coverage of the dataset. Golomoti (-14.433, 34.600, Dedza) and Nsipe (-14.883, 34.733, Ntcheu) georeferenced with geo_from_source = FALSE.
 # Rows after the trial records are blank and are dropped.
 
 ## ISSUES
 # The phosphorus rate for p1 is not in the file.
-# No planting date, harvest date, or coordinates.
-# write_files: , latitude, longitude, irrigated, K_fertilizer, N_fertilizer, planting_date, harvest_date.
+# No planting date or harvest date.
+# write_files: missing irrigated, K_fertilizer, N_fertilizer, planting_date, harvest_date.
 
 ## NOT PROCESSED
 # 001_pigeonpeaProductivityParameters_PPBNF.csv (biological nitrogen fixation and soil mineral N).
@@ -38,8 +38,8 @@ On-farm pigeon pea, sole and intercropped with inoculated soybean, with and with
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.45
 	)
 
@@ -52,8 +52,11 @@ On-farm pigeon pea, sole and intercropped with inoculated soybean, with and with
 
 	d <- data.frame(
 		country = "Malawi",
+		adm1 = ifelse(r$Site == "Golomoti", "Dedza", "Ntcheu"),
 		trial_id = r$Site,
 		location = r$Site,
+		latitude = ifelse(r$Site == "Golomoti", -14.433, -14.883),
+		longitude = ifelse(r$Site == "Golomoti", 34.600, 34.733),
 		plot_id = paste(r[["Farmer ID"]], r$Rep),
 		rep = as.integer(r$Rep),
 		crop = "pigeon pea",
@@ -61,7 +64,7 @@ On-farm pigeon pea, sole and intercropped with inoculated soybean, with and with
 		yield_part = "seed",
 		treatment = r[["Treatment Description"]],
 		intercropped = inter,
-		intercrops = ifelse(inter, "soybean", NA_character_),
+		intercrops = ifelse(inter, "soybean", "none"),
 		P_fertilizer = ifelse(r[["p level"]] == "p0", 0, NA_real_),
 		yield = r[["Grain Yield (Kg/ha)"]],
 		yield_moisture = 10,

@@ -2,18 +2,16 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Low-ODAP grasspea lines at El Batan, Mexico, 2017. Geographic coverage is Mexico, Estado de Mexico, Texcoco. The protocol places the trial in lote G5 at El Batan.
+# Low-ODAP grasspea lines at El Batan, Mexico, 2017. Geographic coverage is Mexico, Estado de Mexico, Texcoco. The protocol places the trial in lote G5 at El Batan. Approximate CIMMYT El Batán station coordinates are imputed with geo_from_source = FALSE.
 # The protocol is an alpha design with two replicates. Land preparation is narrow permanent beds. Fertilizer is 40 kg P2O5/ha as triple superphosphate and 20 kg N/ha as urea. P is P2O5/2.29. K is 0 because those are the only products listed. Irrigation is listed as temporal, so the trial is rainfed.
 # Grain yield is Yield_12%H2O, already kg/ha, at 12 percent moisture. Biomass Yield_Dry is dry kg/ha. Flowering and maturity in the yield legend are days after emergence.
 # Entry names, accessions, and origins are the protocol table in BV105-17-Grasspea.docx. Entry 25 is vetch.
 # Spike counts per m2 are stored per ha.
 
 ## ISSUES
-# No coordinates.
 # Plot harvest area is below 1 m2 for some plots. The nominal plot in the protocol is 6 m2. The sheet area is kept.
 # Some grain yields are missing.
 # NDVI files are not in this table.
-# write_files: missing variables: latitude, longitude, planting_date, harvest_date. unknown variable: flowering_dae_ (DAE?). unknown variable: maturity_dae_ (DAE?). out of bounds: plot_area (0.15, 13.3), plot_length (0.2, 4.7). NA detected: yield.
 
 ## NEW VARIABLES
 # flowering_dae_: days from emergence to flowering. The yield legend says after emergence.
@@ -46,8 +44,8 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 		response_vars = "yield;dmy_total",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.6
 	)
 
@@ -66,9 +64,12 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 	variety <- key$variety[ik]
 	d <- data.frame(
 		country = "Mexico",
-		adm1 = "Estado de Mexico",
-		location = "El Batan",
+		adm1 = "México",
+		adm2 = "Texcoco",
+		location = "El Batán",
 		site = "G5",
+		latitude = 19.530,
+		longitude = -98.847,
 		trial_id = "El Batan 2017",
 		rep = as.integer(r$Rep),
 		plot_id = paste(r$Rep, variety),

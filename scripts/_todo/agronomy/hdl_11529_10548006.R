@@ -34,16 +34,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Inter-cropping trial, Malda, West Bengal",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.6
 	)
 
 	as_date <- function(x) {
@@ -129,6 +129,8 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			adm1 = "West Bengal",
 			adm2 = "Malda",
 			location = loc,
+			latitude = 25.011,
+			longitude = 88.141,
 			trial_id = paste(loc, r1$Year, r1$seq),
 			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			season = "rabi",
@@ -152,12 +154,17 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 			yield_isfresh = FALSE
 		)
 		base$crop <- "maize"
+		base$intercropped <- !is.na(veg)
+		base$intercrops <- ifelse(is.na(veg), "none", veg)
 		base$yield_part <- "grain"
 		veg_rows <- !is.na(veg)
 		leaf <- base[veg_rows, ]
 		leaf$crop <- veg[veg_rows]
+		leaf$intercropped <- TRUE
+		leaf$intercrops <- "maize"
 		leaf$yield_part <- unname(leaf_part[leaf$crop])
 		leaf$yield <- num(r4$Intercrop.t.ha[ii])[veg_rows] * 1000
+		leaf$yield_isfresh <- TRUE
 		leaf$seed_rate <- num(r4$Seed.rate.of.intercrop.kg.ha[ii])[veg_rows]
 		leaf$variety <- NA_character_
 		leaf$anthesis_days <- NA_real_

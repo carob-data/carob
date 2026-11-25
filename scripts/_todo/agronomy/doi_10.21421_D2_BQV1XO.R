@@ -2,34 +2,31 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Multi-year groundnut reference-collection trials under full irrigation (WW) and water stress (WS) in India and Niger, 2008-2013.
-# Each sheet has a plot-level table on the left. A second block of genotype means (often labeled "mean non-sensitive", and sometimes repeated under the plot table) was not used.
-# Pod and haulm weights in g/m2 were multiplied by 10 to kg/ha. Where the column is named DW, haulm is dmy_residue and yield_moisture is 0. Otherwise haulm is fwy_residue and moisture is unknown.
-# On the HT sheets, columns marked "old-wrong" or "weight / 2m2" were skipped. The columns under "Correct data" are already g/m2 (half of the 2 m2 plot weight).
-# Plants per m2 were multiplied by 10000 to plants/ha. Sheet codes: SC is read as the ICRISAT Sahelian Center at Sadore, Niger; sheets without SC are the India trials. HT is kept only in the trial id because the file does not define it.
-# WW is irrigated. WS is not, and stress is drought. A row treatment of ww or ws overrides the sheet name (the 2012 WW sheet contains both).
-# Plot area is set only where the sheet states it (4.8, 2.1, 2, 1.8 or 1.75 m2).
+# Multi-year groundnut reference-collection trials under full irrigation (WW) and water stress (WS) in India (ICRISAT Patancheru) and Niger (ICRISAT Sahelian Center, Sadore), 2008-2013.
+# Each sheet has a plot-level table on the left. Genotype-mean summary blocks on the right/bottom ("mean non-sensitive") are excluded.
+# Pod and haulm weights in g/m2 are multiplied by 10 to kg/ha. Where column headers specify DW, haulm is mapped to dmy_residue and yield_moisture = 0 (yield_isfresh = FALSE); otherwise fwy_residue and moisture unknown.
+# On HT sheets, "old-wrong" and "weight / 2m2" columns are skipped in favor of "Correct data" g/m2 columns.
+# Plants per m2 are multiplied by 10000 to plants/ha. WW is irrigated (TRUE); WS is not irrigated (FALSE) with stress = "drought". Row-level ww/ws overrides the sheet name (the 2012 WW sheet contains both).
+# Estimated station coordinates added for ICRISAT Patancheru (17.511, 78.275) and ICRISAT Sahelian Center Sadore (13.237, 2.281) with geo_from_source = FALSE and geo_uncertainty = 2000 m.
 
 ## ISSUES
-# The India city is not in the file, and there are no coordinates for either country. SC as Sadore is an interpretation of the sheet code plus the title (Niger and India).
-# HT is not defined in the file.
-# One WS-SC 2008 pod weight is -3 g/m2 (ICG 1274). It was left as recorded, so yield is negative.
-# WW-SC 2009 pod weights reach about 1200 g/m2 (about 12 t/ha), which is very high for groundnut.
-# Niger 2008 sheets have six replications. Fertilizer is not reported.
-# Shelling percent is 100 * subsample seed weight / subsample pod weight on the 2013-14 sheets only.
-# The 2013-14 sheets also show an unlabeled 1.875 next to "per 1.8 m2" (WW) or "per 1.75 m2" (WS). Plot area uses 1.8 and 1.75.
-# About 590 plot rows have no pod weight. One WS-SC 2008 pod weight is negative. Nine SC 2008 haulm weights are negative. One shelling percentage is about 100. Plant density is 0 on a few plots and 3882500 plants/ha for ICG 928, WS 09-10, rep 2.
-# write_files: missing carob_contributor; missing latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; unknown variable seed_yield_; out of bounds plant_density (0-3882500), yield (-30-12329), fwy_residue (-1980-13790), shelling_percentage (up to 100); high groundnut yield 12329 kg/ha; NA detected in yield.
+# Sheet code SC denotes ICRISAT Sahelian Center (Sadore, Niger); non-SC sheets denote ICRISAT Patancheru, India (inferred from ICRISAT groundnut reference-collection trials in India and Niger).
+# Sheet suffix HT is not defined in the workbook (kept in trial_id).
+# One WS-SC 2008 pod weight is -3 g/m2 (ICG 1274) and nine SC 2008 haulm weights are negative; kept as recorded.
+# WW-SC 2009 pod weights reach ~1233 g/m2 (~12.3 t/ha); kept as recorded.
+# ~590 plot rows have NA pod yield; plant density is 0 on a few plots and 3882500 plants/ha for ICG 928 (WS 09-10 rep 2); one shelling percentage is ~100%. Kept as recorded.
+# Fertilizer rates and calendar harvest dates are not reported.
+# write_files: missing carob_contributor, K/N/P_fertilizer, harvest_date; unknown seed_yield_; out of bounds plant_density, yield, fwy_residue, shelling_percentage; high groundnut yield; NA in yield.
 
 ## NOT PROCESSED
-# Right-hand and lower blocks of genotype means, including the "mean non-sensitive" column.
-# Columns marked old-wrong, and the weight/2m2 or g/plot columns, because the g/m2 (or DW/m2) columns were used.
-# 2013-14: No of plants (a count, plot area ambiguous), SS pod number, SS seed number, total seed weight, haulm weight and total pod weight (the DW/m2 columns were used).
-# Row, Sno and Genoid layout indexes.
-# The unlabeled 1.875 factor.
+# Right-hand and lower blocks of genotype means ("mean non-sensitive").
+# Columns marked old-wrong, weight/2m2, or g/plot where g/m2 (or DW/m2) columns are present.
+# 2013-14: No of plants (ambiguous area), SS pod/seed numbers, total seed/haulm/pod weights (DW/m2 columns used).
+# Row, Sno, Genoid layout indexes; unlabeled 1.875 factor.
 
 ## NEW VARIABLES
-# seed_yield_: kernel weight, kg/ha, only on the 2012 SC-HT sheets that report seed g/m2. yield itself is pod weight.
+# seed_yield_: groundnut kernel yield (kg/ha) on the 2012 SC-HT sheets that report seed g/m2 alongside pod yield.
+
 
 carob_script <- function(path) {
 
@@ -49,14 +46,14 @@ Yield and agronomic trait assessment
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "variety;treatment",
-		response_vars = "yield",
+		treatment_vars = "variety;treatment;irrigated",
+		response_vars = "yield;dmy_residue;fwy_residue;shelling_percentage;flowering_days;maturity_days",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 1.2
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
+		carob_effort = 0.25
 	)
 
 	f <- ff[basename(ff) == "Groundnut Ref Set  Field WW WS - India-Niger 2008-13.xlsx"]
@@ -82,7 +79,7 @@ Yield and agronomic trait assessment
 		if (!length(hit)) return(NA_integer_)
 		bad <- grepl("wrong", sp[hit])
 		if (any(!bad)) hit <- hit[!bad]
-		areal <- grepl("m2|m²", nm[hit])
+		areal <- grepl("m2|m\u00b2", nm[hit])
 		if (require_area) {
 			if (!any(areal)) return(NA_integer_)
 			hit <- hit[areal]
@@ -178,7 +175,7 @@ Yield and agronomic trait assessment
 		else if (grepl("2\\.1\\s*m", x$banner)) area <- 2.1
 		else if (grepl("1\\.8\\s*m", x$banner)) area <- 1.8
 		else if (grepl("1\\.75\\s*m", x$banner)) area <- 1.75
-		else if (grepl("2\\s*m²|2m²|\\(2m", x$banner)) area <- 2
+		else if (grepl("2\\s*m\u00b2|2m\u00b2|\\(2m", x$banner)) area <- 2
 		if (grepl("20\\d{2}", sheet)) {
 			planting <- sub(".*(20\\d{2}).*", "\\1", sheet)
 		} else {
@@ -188,7 +185,12 @@ Yield and agronomic trait assessment
 		n <- length(variety)
 		data.frame(
 			country = rep(if (niger) "Niger" else "India", n),
-			location = rep(if (niger) "Sadore" else NA_character_, n),
+			adm1 = rep(if (niger) "Tillaberi" else "Telangana", n),
+			adm2 = rep(if (niger) NA_character_ else "Sangareddy", n),
+			location = rep(if (niger) "Sadore" else "Patancheru", n),
+			latitude = rep(if (niger) 13.237 else 17.511, n),
+			longitude = rep(if (niger) 2.281 else 78.275, n),
+			geo_uncertainty = 2000,
 			trial_id = paste(sheet, toupper(water), sep="_"),
 			planting_date = planting,
 			treatment = toupper(water),

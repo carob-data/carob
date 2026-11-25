@@ -12,11 +12,11 @@
 # DTSOWN (date sown) -> planting_date; DTTRANS -> transplanting_date; DTHARV is the *expected* harvest date (codebook) -> expected_harvest_date_.
 
 ## ISSUES
-# No coordinates. Georeference villages (location) by district; districts spelled as in the data except obvious fixes (e.g. "24th South Parganas" -> "South 24 Parganas"). adm1 (state/division) not given.
+# District-level coordinates added for Bangladesh, India and Nepal districts (geo_from_source = FALSE). adm1 (state/division) not given in raw data.
 # Season in general information is "2009 ..." for all, but sowing dates are 2006, 2008, 2009 and 2011 (Bangladesh mostly 2011; BRRI dhan52 was released in 2010). Check dates/years.
-# About 15% of yield records have no general information, and about 18% do not match a variety in the trial details (even after name normalization); a few farmer x variety names are duplicated.
+# About 15% of yield records have no general information, and about 18% do not match a variety in the trial details (even after name normalization); exact duplicate rows deduplicated with unique(d).
 # 254 India and 23 Bangladesh yield records are NA; some yields are 0 (crop loss?).
-# TYPSTRESS: codebook 1 = submergence, 2 = salinity, 3 = sodicity, but the questionnaire says 3 = drought. Mapped 1 = "flood", 2 = "soil salinity", 3 kept as "sodicity".
+# TYPSTRESS: codebook 1 = submergence, 2 = salinity, 3 = sodicity, while the questionnaire says 3 = drought. Mapped 1 = "flood", 2 = "soil salinity", 3 = "other" (sodicity is not in values_stress_type).
 # FIELDTYP 3 (semi-irrigated) -> irrigated NA. Soil texture combinations (codes 7-19) kept only in soil_type.
 # plot_area (AREA, m2) up to 40000 m2 is outside terminag bounds (max 350); some values may be in another unit. Not changed.
 # Some records have no variety name (write_files "missing values in treatment variable variety"); write_files also reports duplicate records.
@@ -62,8 +62,8 @@ To evaluate the performance of stress-tolerant varieties in farmer's field and c
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.6
 	)
 
@@ -93,7 +93,7 @@ To evaluate the performance of stress-tolerant varieties in farmer's field and c
 		adm2 = trimws(rG$DISTRICT[g]),
 		location = trimws(rG$VILLAGE[g]),
 		season = tolower(gsub("^2009 |T\\.", "", rG$SEASON[g])),
-		stress = c("flood", "soil salinity", "sodicity")[rG$TYPSTRESS[g]],
+		stress = c("flood", "soil salinity", "other")[rG$TYPSTRESS[g]],
 		soil_type = c("loamy", "sandy", "sandy-loamy", "clay", "clay-loam", "loamy-sand", "saline/alkaline",
 			"sandy & clay", "sandy-loamy & saline/alkaline", "sandy, sandy-loamy & clay", "loamy, sandy-loamy & clay",
 			"sandy & sandy-loamy", "clay & saline/alkaline", "clay-loam & saline/alkaline", "sandy loam/clay loam",
@@ -108,9 +108,33 @@ To evaluate the performance of stress-tolerant varieties in farmer's field and c
 
 	d$season[d$season == "wet season"] <- "wet"
 	adm <- c("24th South Parganas"="South 24 Parganas", "Chaipainaw"="Chapai Nawabganj", "Chapainawa"="Chapai Nawabganj",
-		"Jagalsinghpur"="Jagatsinghpur", "Kendrapada"="Kendrapara", "Madhugani"="Madhubani", "Naogoan"="Naogaon")
+		"Jagalsinghpur"="Jagatsinghpur", "Kendrapada"="Kendrapara", "Madhugani"="Madhubani", "Naogoan"="Naogaon",
+		"Mahotari"="Mahottari", "Poligang"="Paliganj")
 	i <- match(d$adm2, names(adm))
 	d$adm2[!is.na(i)] <- adm[i[!is.na(i)]]
+	geo <- data.frame(
+		dist = c("Chapai Nawabganj", "Khulna", "Mymensingh", "Naogaon", "Rajshahi", "Satkhira", "Sherpur",
+			"South 24 Parganas", "Baleswar", "Ballia", "Bhadrak", "Bhojpur", "Darbhanga", "Faizabad",
+			"Golaghat", "Hooghly", "Howrah", "Jagatsinghpur", "Jajpur", "Jehanabad", "Kendrapara",
+			"Madhubani", "Mau", "Muzaffarpur", "Nawada", "Patna", "Paliganj", "Puri", "Samastipur",
+			"Sibsagar", "Unnao", "Vaishali",
+			"Banke", "Dhanusha", "Mahottari", "Rautahat", "Saptari", "Sunsari"),
+		latitude = c(24.60, 22.82, 24.75, 24.80, 24.37, 22.72, 25.02,
+			22.14, 21.49, 25.76, 21.06, 25.47, 26.15, 26.78,
+			26.52, 22.90, 22.59, 20.26, 20.85, 25.21, 20.50,
+			26.35, 25.94, 26.12, 24.89, 25.59, 25.32, 19.81, 25.86,
+			26.98, 26.55, 25.68,
+			28.05, 26.82, 26.78, 26.95, 26.62, 26.63),
+		longitude = c(88.27, 89.55, 90.40, 88.94, 88.60, 89.07, 90.02,
+			88.42, 86.93, 84.15, 86.50, 84.52, 85.90, 82.14,
+			93.97, 88.25, 88.26, 86.17, 86.33, 84.99, 86.42,
+			86.07, 83.56, 85.39, 85.54, 85.14, 84.82, 85.83, 85.78,
+			94.63, 80.49, 85.22,
+			81.62, 85.97, 85.82, 85.30, 86.75, 87.17)
+	)
+	gi <- match(d$adm2, geo$dist)
+	d$latitude <- geo$latitude[gi]
+	d$longitude <- geo$longitude[gi]
 	# Nepal districts are GADM level 3
 	d$adm3 <- ifelse(d$country == "Nepal", d$adm2, NA)
 	d$adm2[d$country == "Nepal"] <- NA
@@ -121,6 +145,7 @@ To evaluate the performance of stress-tolerant varieties in farmer's field and c
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$geo_from_source <- FALSE
+	d <- unique(d)
 
 	carobiner::write_files(path, meta, d)
 }

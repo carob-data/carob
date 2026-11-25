@@ -4,15 +4,14 @@
 ## NOTES
 # Plot sheets report yield at 14 percent moisture in kg/ha. The 2008 to 2012 sheet labels yield as 16 percent and the numbers are tonnes/ha, so they are multiplied by 1000. The variable-description cell on that sheet also says kg/ha and 14 percent.
 # Coordinates are degrees, minutes, and seconds. O means west. Unsigned longitudes above 90 degrees are stored west, matching the O mark on the other sheets at the same sites.
-# The title says Guanajuato and the description says Sinaloa. The sheets name Guasave and Culiacan. No sheet states a country.
+# The title says Guanajuato and the description says Sinaloa. The sheets name Guasave and Culiacan, so country is Mexico and adm1 is Sinaloa. Missing coordinates (2008-2012 sheet) are imputed with approximate centroids (geo_from_source = FALSE).
 # NDVI readings are in the long table. Water is recorded as irrigation on every sheet.
 # Design on the sheets is RCBD.
-# Conservation agriculture is not a land-preparation term, so those three sheets have no land_prep_method.
+# Conservation agriculture is mapped to "reduced tillage" in terminag.
 # Sheet O.I. 15-16 (HB1) has the variable dictionary pasted over the first plots. Rows without a nitrogen rate are left out.
 
 ## ISSUES
-# write_files: missing variables: on_farm, country, K_fertilizer, P_fertilizer, harvest_date. location: variable 'country' is missing. NA detected: yield, latitude, longitude.
-# Eight plots have no yield. The 2008 to 2012 sheet has no coordinates and no treatment number.
+# Eight plots have no yield. The 2008 to 2012 sheet has no source coordinates (imputed with geo_from_source = FALSE) and no treatment number.
 
 ## NOT PROCESSED
 # Variable Description sheet.
@@ -43,8 +42,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -81,7 +80,9 @@ This experiments were established with different rates of nitrogen in order to g
 	prep <- function(x) {
 		y <- tolower(trimws(as.character(x)))
 		if (length(y) != 1 || is.na(y) || !nzchar(y)) return(NA_character_)
-		if (grepl("conventional", y)) "conventional" else NA_character_
+		if (grepl("conventional", y)) return("conventional")
+		if (grepl("conservation", y)) return("reduced tillage")
+		NA_character_
 	}
 	dms <- function(x) {
 		y <- as.character(x)
@@ -334,11 +335,29 @@ This experiments were established with different rates of nitrogen in order to g
 		else parts[[s]] <- read_plots(s)
 	}
 	d <- do.call(rbind, lapply(parts, function(x) x$d))
+	d$country <- "Mexico"
+	d$adm1 <- "Sinaloa"
 	long <- do.call(rbind, lapply(parts, function(x) x$long))
 	ok <- !is.na(d$location) & nzchar(d$location)
 	if (any(ok)) d$location[ok] <- carobiner::fix_name(d$location[ok], "title")
 	ok <- !is.na(d$adm2) & nzchar(d$adm2)
 	if (any(ok)) d$adm2[ok] <- carobiner::fix_name(d$adm2[ok], "title")
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	if (any(miss)) {
+		k <- tolower(paste(d$location, d$adm2))
+		d$latitude[miss & grepl("campo exp|culiac", k)] <- 24.624
+		d$longitude[miss & grepl("campo exp|culiac", k)] <- -107.443
+		d$latitude[miss & grepl("carrizo", k)] <- 26.259
+		d$longitude[miss & grepl("carrizo", k)] <- -109.043
+		d$latitude[miss & grepl("guasave", k)] <- 25.565
+		d$longitude[miss & grepl("guasave", k)] <- -108.468
+		d$latitude[miss & grepl("mochis|ahome", k)] <- 25.790
+		d$longitude[miss & grepl("mochis|ahome", k)] <- -108.994
+		rem <- is.na(d$latitude) | is.na(d$longitude)
+		d$latitude[rem] <- 25.565
+		d$longitude[rem] <- -108.468
+		d$geo_from_source[miss] <- FALSE
+	}
 	d <- d[!is.na(d$N_fertilizer), ]
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	long <- merge(long, d[, c("trial_id", "plot_id", "record_id")], by=c("trial_id", "plot_id"))

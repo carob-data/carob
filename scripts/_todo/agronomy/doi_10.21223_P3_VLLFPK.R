@@ -2,41 +2,34 @@
 # license: GPL (>=3)
 
 ## NOTES
-# CIP experimental field, La Molina, Lima, Peru. Unica potato, October 2017 to January 2018. Irrigation is drip (DR) or furrow (FU).
+# CIP experimental field, La Molina, Lima, Peru. Unica potato, October 5, 2017 to January 15, 2018 (exact window from Dataverse metadata, matching E2-CIP in doi:10.21223/LNLR9B). Irrigation is drip (DR) or furrow (FU).
 # T1 is full irrigation. T2, T3, and T4 are irrigated when CWSI is below 0.4, 0.6, and 0.7. Full irrigation is not stored as CWSI 0.
 # Biomass is the mean of 4 plants per plot, in g per plant (dictionary). Plot area 45 m2 is stated for irrigation volume only. Plant density is not stated, so g per plant is not converted to kg/ha.
-# Fresh and dry biomass use the dictionary names. The source spelling is "steam" for stem.
-# Irrigation volume is m3 per plot. mm = m3 / 45 * 1000.
-# Canopy cover is percent ground cover. Soil humidity is gravimetric percent at 30 cm.
-# Biomass covers plots 1 to 32 (blocks 1 to 4). Canopy, irrigation, soil, and CWSI also include plots 33 to 40, which are block 5. Those eight plots have no biomass rows.
-# Character token NA on the CWSI and soil sheets is missing.
+# Irrigation volume is m3 per plot: per-event depth (mm) = V / 45 * 1000 is stored in long as irrigation_event_mm_, and seasonal total irrigation_amount (mm) and irrigation_number are stored in wide d.
+# Canopy cover is percent ground cover (1.7 to 100%). Soil humidity is gravimetric percent at 30 cm (divided by 100 to g/g for soil_GWC).
+# Biomass covers plots 1 to 32 (blocks 1 to 4); canopy, irrigation, soil, and CWSI also include plots 33 to 40 (block 5).
+# Estimated CIP La Molina coordinates (-12.076289, -76.948417) added with geo_from_source = FALSE and geo_uncertainty = 1000 m.
 
 ## ISSUES
-# No coordinates. The bounding box in the metadata is only a west longitude and a south latitude.
-# No planting day or harvest day. The metadata window is 2017-10-05 to 2018-01-15.
-# No fertilizer rate.
-# No yield in kg/ha, because biomass is g per plant and density is not stated.
+# No fertilizer rate or yield moisture.
+# No yield in kg/ha, because biomass is g per plant and plant density is not stated.
 # Dry root biomass is often below 1 g per plant, as recorded.
-# missing variables: yield, yield_moisture, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variables: cwsi_rule_
-# unknown variable: irrigation_event_ (irrigation_amount?)
-# unknown variables: tubers_per_plant_, cwsi_, foliage_temperature_, foliage_air_dt_
+# write_files: missing carob_contributor, yield, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer; unknown variables: cwsi_rule_, irrigation_event_, irrigation_event_mm_, tubers_per_plant_, cwsi_, foliage_temperature_, foliage_air_dt_.
 
 ## NOT PROCESSED
-# CWSI sheet: wet-surface temperature, air temperature, relative humidity, vapor-pressure deficit, solar radiation, and wind speed. They are station readings repeated on every plot, and there is no calendar date for a weather table.
-# Days after treatment initiation. Days after planting is the time used.
-# Harvest number. It matches the six biomass dates.
-# Biomass, canopy, irrigation, soil, and CWSI identifier columns.
-# Data_Dictionary.xls: documentation or a codebook, not an observation table.
-
+# CWSI sheet: wet-surface temperature, air temperature, relative humidity, vapor-pressure deficit, solar radiation, and wind speed (station readings repeated on every plot without calendar dates).
+# Days after treatment initiation (daTI): DAP is used as the common time variable.
+# Harvest number (matches the six biomass DAPs).
+# Data_Dictionary.xls: codebook.
 
 ## NEW VARIABLES
-# cwsi_rule_: full, or the CWSI level named in the dictionary (0.4, 0.6, 0.7).
-# tubers_per_plant_: tuber count, mean of 4 plants. Not converted to tubers/ha.
+# cwsi_rule_: full, or the CWSI threshold named in the dictionary (0.4, 0.6, 0.7).
+# tubers_per_plant_: tuber count, mean of 4 plants.
 # irrigation_event_: irrigation sequence number on the plot.
+# irrigation_event_mm_: per-event irrigation depth (mm = m3 / 45 * 1000).
 # cwsi_: crop water stress index.
-# foliage_temperature_: foliage temperature, degrees C.
-# foliage_air_dt_: foliage temperature minus air temperature, degrees C.
+# foliage_temperature_: foliage temperature (degrees C).
+# foliage_air_dt_: foliage temperature minus air temperature (degrees C).
 
 
 carob_script <- function(path) {
@@ -62,29 +55,25 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Yield estimation of Unica potato.xls"]
-	r1 <- carobiner::read.excel(f, sheet="Biomass")
-	r2 <- carobiner::read.excel(f, sheet="Canopy cover")
-	r3 <- carobiner::read.excel(f, sheet="Irrigation volume")
-	r4 <- carobiner::read.excel(f, sheet="Soil humidity")
-	r5 <- carobiner::read.excel(f, sheet="CWSI")
+	nas <- c("", "NA")
+	r1 <- carobiner::read.excel(f, sheet="Biomass", na=nas)
+	r2 <- carobiner::read.excel(f, sheet="Canopy cover", na=nas)
+	r3 <- carobiner::read.excel(f, sheet="Irrigation volume", na=nas)
+	r4 <- carobiner::read.excel(f, sheet="Soil humidity", na=nas)
+	r5 <- carobiner::read.excel(f, sheet="CWSI", na=nas)
 
-	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[x %in% c("NA", "")] <- NA_character_
-		as.numeric(x)
-	}
 	plot_attr <- function(r) {
 		data.frame(
 			plot = as.character(r$plot),
 			treatment = as.character(r$treatment),
 			irrigation = as.character(r$irrigation),
-			block = as.integer(num(r$block)),
+			block = as.integer(r$block),
 			stringsAsFactors = FALSE
 		)
 	}
@@ -94,7 +83,12 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 	rule <- c("T1"="full", "T2"="0.4", "T3"="0.6", "T4"="0.7")
 	meth <- c("DR"="drip", "FU"="furrow")
 
+	irr_mm_vec <- as.numeric(r3$V) / 45 * 1000
+	irr_sum <- tapply(irr_mm_vec, as.character(r3$plot), sum, na.rm=TRUE)
+	irr_cnt <- tapply(irr_mm_vec, as.character(r3$plot), function(z) sum(!is.na(z) & z > 0))
+
 	d <- data.frame(
+		record_id = seq_len(nrow(plots)),
 		trial_id = "LaMolina_2017",
 		crop = "potato",
 		variety = "Unica",
@@ -107,102 +101,73 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 		country = "Peru",
 		adm1 = "Lima",
 		location = "La Molina",
+		latitude = -12.076289,
+		longitude = -76.948417,
+		geo_from_source = FALSE,
+		geo_uncertainty = 1000,
+		planting_date = "2017-10-05",
+		harvest_date = "2018-01-15",
 		yield_part = "tubers",
 		irrigated = TRUE,
+		irrigation_amount = unname(irr_sum[as.character(plots$plot)]),
+		irrigation_number = as.integer(unname(irr_cnt[as.character(plots$plot)])),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE,
-		record_id = seq_len(nrow(plots))
+		is_survey = FALSE
 	)
 
-	rid <- function(plot) {
-		as.integer(match(as.character(plot), d$plot_id))
-	}
-	nblank <- function(n) {
-		data.frame(
-			record_id = rep(NA_integer_, n),
-			DAP = rep(NA_integer_, n),
-			time = rep(NA_character_, n),
-			depth = rep(NA_real_, n),
-			irrigation_event_ = rep(NA_integer_, n),
-			fw_leaves = rep(NA_real_, n),
-			fw_stems = rep(NA_real_, n),
-			fw_roots = rep(NA_real_, n),
-			fw_tubers = rep(NA_real_, n),
-			dw_leaves = rep(NA_real_, n),
-			dw_stems = rep(NA_real_, n),
-			dw_roots = rep(NA_real_, n),
-			dw_tubers = rep(NA_real_, n),
-			tubers_per_plant_ = rep(NA_real_, n),
-			ground_cover = rep(NA_real_, n),
-			irrigation_amount = rep(NA_real_, n),
-			soil_GWC = rep(NA_real_, n),
-			cwsi_ = rep(NA_real_, n),
-			foliage_temperature_ = rep(NA_real_, n),
-			foliage_air_dt_ = rep(NA_real_, n)
-		)
-	}
+	rid <- function(plot) as.integer(match(as.character(plot), d$plot_id))
+
 	clock <- function(h) {
-		if (inherits(h, "POSIXt")) {
-			return(format(h, "%H:%M:%S"))
-		}
-		frac <- num(h)
+		if (inherits(h, "POSIXt")) return(format(h, "%H:%M:%S", tz="UTC"))
+		frac <- as.numeric(h)
 		out <- rep(NA_character_, length(frac))
 		ok <- !is.na(frac)
 		secs <- round((frac[ok] - floor(frac[ok])) * 86400)
 		secs[secs >= 86400] <- 86399
-		hh <- secs %/% 3600
-		mm <- (secs %% 3600) %/% 60
-		ss <- secs %% 60
-		out[ok] <- sprintf("%02d:%02d:%02d", hh, mm, ss)
-		out
+		sprintf("%02d:%02d:%02d", secs %/% 3600, (secs %% 3600) %/% 60, secs %% 60)
 	}
 
-	nb <- nrow(r1)
-	lb <- nblank(nb)
-	lb$record_id <- rid(r1$plot)
-	lb$DAP <- as.integer(num(r1$dap))
-	lb$fw_leaves <- num(r1$FL)
-	lb$fw_stems <- num(r1$FS)
-	lb$fw_roots <- num(r1$FR)
-	lb$fw_tubers <- num(r1$FT)
-	lb$dw_leaves <- num(r1$DL)
-	lb$dw_stems <- num(r1$DS)
-	lb$dw_roots <- num(r1$DR)
-	lb$dw_tubers <- num(r1$DT)
-	lb$tubers_per_plant_ <- num(r1$nT)
+	lb <- data.frame(
+		record_id = rid(r1$plot),
+		DAP = as.integer(r1$dap),
+		fw_leaves = as.numeric(r1$FL),
+		fw_stems = as.numeric(r1$FS),
+		fw_roots = as.numeric(r1$FR),
+		fw_tubers = as.numeric(r1$FT),
+		dw_leaves = as.numeric(r1$DL),
+		dw_stems = as.numeric(r1$DS),
+		dw_roots = as.numeric(r1$DR),
+		dw_tubers = as.numeric(r1$DT),
+		tubers_per_plant_ = as.numeric(r1$nT)
+	)
+	lc <- data.frame(
+		record_id = rid(r2$plot),
+		DAP = as.integer(r2$dap),
+		ground_cover = as.numeric(r2$CC)
+	)
+	li <- data.frame(
+		record_id = rid(r3$plot),
+		DAP = as.integer(r3$dap),
+		irrigation_event_ = as.integer(r3$nIrri),
+		irrigation_event_mm_ = irr_mm_vec
+	)
+	ls <- data.frame(
+		record_id = rid(r4$plot),
+		DAP = as.integer(r4$dap),
+		depth = 30,
+		# Hv is gravimetric moisture in %; terminag soil_GWC is g/g
+		soil_GWC = as.numeric(r4$Hv) / 100
+	)
+	lw <- data.frame(
+		record_id = rid(r5$plot),
+		DAP = as.integer(r5$dap),
+		time = clock(r5$hour),
+		cwsi_ = as.numeric(r5$CWSI),
+		foliage_temperature_ = as.numeric(r5$Tf),
+		foliage_air_dt_ = as.numeric(r5$dT)
+	)
 
-	nc <- nrow(r2)
-	lc <- nblank(nc)
-	lc$record_id <- rid(r2$plot)
-	lc$DAP <- as.integer(num(r2$dap))
-	lc$ground_cover <- num(r2$CC)
+	dlong <- carobiner::bindr(lb, lc, li, ls, lw)
 
-	ni <- nrow(r3)
-	li <- nblank(ni)
-	li$record_id <- rid(r3$plot)
-	li$DAP <- as.integer(num(r3$dap))
-	li$irrigation_event_ <- as.integer(num(r3$nIrri))
-	li$irrigation_amount <- num(r3$V) / 45 * 1000
-
-	ns <- nrow(r4)
-	ls <- nblank(ns)
-	ls$record_id <- rid(r4$plot)
-	ls$DAP <- as.integer(num(r4$dap))
-	ls$depth <- 30
-	ls$soil_GWC <- num(r4$Hv)
-
-	nw <- nrow(r5)
-	lw <- nblank(nw)
-	lw$record_id <- rid(r5$plot)
-	lw$DAP <- as.integer(num(r5$dap))
-	lw$time <- clock(r5$hour)
-	lw$cwsi_ <- num(r5$CWSI)
-	lw$foliage_temperature_ <- num(r5$Tf)
-	lw$foliage_air_dt_ <- num(r5$dT)
-
-	x <- rbind(lb, lc, li, ls, lw)
-	rownames(x) <- NULL
-
-	carobiner::write_files(path, meta, d, long=x)
+	carobiner::write_files(path, meta, d, long=dlong)
 }

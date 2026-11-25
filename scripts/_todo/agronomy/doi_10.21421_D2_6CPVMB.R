@@ -2,37 +2,34 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Station chickpea trial of four Bacillus isolates (SBI-23, VBI-19, VBI-23, VBI-4) plus an uninoculated control. ICRISAT, 2013-14 post-rainy season. Field is BP-13B; a glasshouse run is in the same plant file.
-# Wide table is the field harvest at 100 DAS. Stover and grain are t/ha (x1000 = kg/ha). The docx says dry matter is g/m2, but on every harvest row it equals stover + grain in t/ha, so it is treated as t/ha and yield is the dry component.
-# Glasshouse at 30 and 90 DAS, and the field at 60 DAS, are additional rows. They have no grain yield. No plant density, so g/plant is not converted to kg/ha.
-# Soil (flowering = 60 DAS, harvest = 100 DAS, two replicates, 0-15 cm) is the long table: organic carbon (%), total N and available P (ppm), dehydrogenase (µg TPF g-1 24 h-1), microbial biomass C (µg/g).
+# Station chickpea trial of four Bacillus isolates (SBI-23, VBI-19, VBI-23, VBI-4) plus an uninoculated control at ICRISAT Patancheru (field BP-13B and glasshouse), 2013-14 post-rainy season.
+# Wide table d has one row per plot (15 field plots with 100 DAS harvest yields + 15 glasshouse plots). Stover and grain yields are in t/ha (x1000 -> kg/ha). On every harvest row, Dry matter equals Stover + Grain in t/ha (dry basis -> yield_isfresh = FALSE, yield_moisture = 0).
+# Repeated in-season plant measurements (field 60 DAS; glasshouse 30 and 90 DAS) and rhizosphere soil properties (field 60 and 100 DAS, 0-15 cm, two replicates) are stored in the long table linked via record_id.
+# Estimated ICRISAT Patancheru coordinates (17.511, 78.275) added with geo_from_source = FALSE and geo_uncertainty = 2000 m.
 
 ## ISSUES
-# No coordinates, variety, fertilizer, or irrigation. Georeference ICRISAT BP-13B, Patancheru, Telangana, India. The season predates the state of Telangana.
-# Plot size is "4 m x 3 ridges", not m2. Design is not named.
-# Glasshouse root length is about 3400-3900 (docx: cm), so it is a scanned total, not a taproot. Root volume is labeled cm2.
-# Nodule weight is mg/plant. One glasshouse plant at 30 DAS is missing most scores.
-# The draft metadata listed JNTU as well as ICRISAT. This script follows the ICRISAT Dataverse publisher.
-# In vitro antagonism and biochemical ratings are not crop measurements.
-# nodule_weight_mg_plant_ is mg/plant, not nodule_weight (kg/ha).
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, N/P/K, harvest_date; unknown per-plant variables; NA yield on rows that are not the field harvest; DAP, rep and seed_treatment also sit on the soil long table.
+# No variety, fertilizer rates, irrigation statement, or exact calendar harvest date in the files.
+# Plot size is "4 m x 3 ridges" (area in m2 not stated) and plant density is not given, so per-plant weights remain per plant.
+# Glasshouse root length is ~3400-3900 cm (total scanned root length); root volume is labeled cm2 in source docx.
+# Glasshouse rows have no grain yield (yield is NA on those rows).
+# write_files: missing carob_contributor, irrigated, K/N/P_fertilizer, harvest_date; NA yield on glasshouse plots; unknown per-plant variables and dehydrogenase_.
 
 ## NOT PROCESSED
-# Effect of bacterial isolated from compost and rhizosphere soils.xlsx: Isolate, Method, Rhizoctonia bataticola6, Rhizoctonia bataticola24, Rhizoctonia bataticola115, FOC, S.rolfsii. Dual-culture scores.
-# Plant growth promoting and biocontrol traits of bacterial isolates.xlsx: Sid, Cellulase, Lipase, Protaeses, HCN, IAA, Glu. In vitro ratings and concentrations.
-# Soil column Time ("At flowering" / "At harvesting") matches Days after sowing 60 / 100, so only DAP is kept.
-# Metadata docx files: unit notes used above.
+# Effect of bacterial isolated from compost and rhizosphere soils.xlsx: in vitro dual-culture antagonism scores.
+# Plant growth promoting and biocontrol traits of bacterial isolates.xlsx: in vitro biochemical ratings (siderophore, cellulase, lipase, protease, HCN, IAA, glucanase).
+# Soil column Time ("At flowering" / "At harvesting") duplicates Days after sowing (60 / 100).
+# Metadata docx files: documentation used to verify units.
 
 ## NEW VARIABLES
-# nodule_weight_mg_plant_: nodule weight (mg/plant)
-# leaf_area_cm2_: leaf area (cm2)
-# leaf_weight_g_: leaf weight (g)
-# stem_weight_g_plant_: stem weight (g/plant)
-# root_length_cm_: root length as recorded (cm)
-# root_volume_cm2_: root volume as labeled (cm2)
-# pod_weight_g_: pod dry weight (g)
-# pod_number_plant_: pods per plant
-# dehydrogenase_: dehydrogenase (µg TPF g-1 soil 24 h-1)
+# nodule_weight_mg_plant_: nodule dry weight (mg/plant).
+# leaf_area_cm2_: leaf area (cm2/plant).
+# leaf_weight_g_: leaf weight (g/plant).
+# stem_weight_g_plant_: stem weight (g/plant).
+# root_length_cm_: scanned total root length (cm/plant).
+# root_volume_cm2_: root volume as labeled in source (cm2/plant).
+# pod_weight_g_: pod dry weight (g/plant).
+# pod_number_plant_: pods per plant (count).
+# dehydrogenase_: soil dehydrogenase activity (ug TPF g-1 soil 24 h-1).
 
 
 carob_script <- function(path) {
@@ -54,95 +51,117 @@ This data set contains replicated observations of selected bacterial isolates (V
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "seed_treatment",
-		response_vars = "yield;dmy_residue;dmy_total",
+		response_vars = "yield;dmy_residue;dmy_total;plant_height;nodule_plant",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.25
 	)
 
 	f <- ff[basename(ff) == "Effect of the four selected bacterial isolated from compost and rhizosphere soils .xlsx"]
 	r <- carobiner::read.excel(f, na="NA")
-	rh <- r[r$Location == "Field" & r$`Days after sowing` == 100, ]
-	trt <- trimws(rh$Treatment)
+	r$Treatment <- trimws(as.character(r$Treatment))
+	r$Location <- trimws(as.character(r$Location))
+	r$rep <- as.integer(r[["Replication number"]])
+	r$dap <- as.integer(r[["Days after sowing"]])
 
-	d <- data.frame(
+	rh <- r[r$Location == "Field" & r$dap == 100, ]
+	dfield <- data.frame(
 		trial_id = "Patancheru_2013",
 		country = "India",
 		adm1 = "Telangana",
+		adm2 = "Sangareddy",
 		location = "Patancheru",
 		site = "ICRISAT field BP-13B",
+		latitude = 17.511,
+		longitude = 78.275,
+		geo_from_source = FALSE,
+		geo_uncertainty = 2000,
 		crop = "chickpea",
-		treatment = trt,
-		seed_treatment = trt,
-		inoculant = ifelse(trt == "Control", NA_character_, trt),
-		inoculated = trt != "Control",
-		rep = as.integer(rh$`Replication number`),
+		treatment = rh$Treatment,
+		seed_treatment = rh$Treatment,
+		inoculant = ifelse(rh$Treatment == "Control", NA_character_, rh$Treatment),
+		inoculated = rh$Treatment != "Control",
+		rep = rh$rep,
 		planting_date = "2013",
 		harvest_days = 100,
-		DAP = 100L,
-		yield = as.numeric(rh$`Grain yield`) * 1000,
-		dmy_residue = as.numeric(rh$`Stover yield`) * 1000,
-		dmy_total = as.numeric(rh$`Dry matter`) * 1000,
+		yield = as.numeric(rh[["Grain yield"]]) * 1000,
+		dmy_residue = as.numeric(rh[["Stover yield"]]) * 1000,
+		dmy_total = as.numeric(rh[["Dry matter"]]) * 1000,
 		yield_part = "seed",
 		yield_isfresh = FALSE,
+		yield_moisture = 0,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
 
-	rp <- r[!(r$Location == "Field" & r$`Days after sowing` == 100), ]
-	tp <- trimws(rp$Treatment)
-	fieldp <- rp$Location == "Field"
-	dplant <- data.frame(
-		trial_id = ifelse(fieldp, "Patancheru_2013", "glasshouse_2013"),
+	rgh <- unique(r[r$Location != "Field", c("Treatment", "rep")])
+	dgh <- data.frame(
+		trial_id = "glasshouse_2013",
 		country = "India",
 		adm1 = "Telangana",
+		adm2 = "Sangareddy",
 		location = "Patancheru",
-		site = ifelse(fieldp, "ICRISAT field BP-13B", "ICRISAT glasshouse"),
+		site = "ICRISAT glasshouse",
+		latitude = 17.511,
+		longitude = 78.275,
+		geo_from_source = FALSE,
+		geo_uncertainty = 2000,
 		crop = "chickpea",
-		treatment = tp,
-		seed_treatment = tp,
-		inoculant = ifelse(tp == "Control", NA_character_, tp),
-		inoculated = tp != "Control",
-		rep = as.integer(rp$`Replication number`),
+		treatment = rgh$Treatment,
+		seed_treatment = rgh$Treatment,
+		inoculant = ifelse(rgh$Treatment == "Control", NA_character_, rgh$Treatment),
+		inoculated = rgh$Treatment != "Control",
+		rep = rgh$rep,
 		planting_date = "2013",
-		DAP = as.integer(rp$`Days after sowing`),
-		nodule_plant = as.numeric(rp$`Nodule number plant`),
-		nodule_weight_mg_plant_ = as.numeric(rp$`Nodule weight`),
-		leaf_area_cm2_ = as.numeric(rp$`Leaf area`),
-		leaf_weight_g_ = as.numeric(rp$`Leaf weight`),
-		stem_weight_g_plant_ = as.numeric(rp$`Stem weight`),
-		plant_height = as.numeric(rp$`Plant height`),
-		root_length_cm_ = as.numeric(rp$`Root length`),
-		root_volume_cm2_ = as.numeric(rp$`Root volume`),
-		pod_weight_g_ = as.numeric(rp$`Pod dry weight`),
-		pod_number_plant_ = as.numeric(rp$`Pod number`),
 		yield_part = "seed",
 		yield_isfresh = FALSE,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
-	d <- carobiner::bindr(d, dplant)
+
+	d <- carobiner::bindr(dfield, dgh)
+	d$record_id <- seq_len(nrow(d))
+
+	dkey <- paste(d$trial_id, d$seed_treatment, d$rep, sep="|")
+
+	# Repeated plant measurements (field 60 DAS; glasshouse 30 and 90 DAS) in long
+	rp <- r[!(r$Location == "Field" & r$dap == 100), ]
+	ptrial <- ifelse(rp$Location == "Field", "Patancheru_2013", "glasshouse_2013")
+	l_plant <- data.frame(
+		record_id = d$record_id[match(paste(ptrial, rp$Treatment, rp$rep, sep="|"), dkey)],
+		DAP = rp$dap,
+		nodule_plant = as.numeric(rp[["Nodule number plant"]]),
+		nodule_weight_mg_plant_ = as.numeric(rp[["Nodule weight"]]),
+		leaf_area_cm2_ = as.numeric(rp[["Leaf area"]]),
+		leaf_weight_g_ = as.numeric(rp[["Leaf weight"]]),
+		stem_weight_g_plant_ = as.numeric(rp[["Stem weight"]]),
+		plant_height = as.numeric(rp[["Plant height"]]),
+		root_length_cm_ = as.numeric(rp[["Root length"]]),
+		root_volume_cm2_ = as.numeric(rp[["Root volume"]]),
+		pod_weight_g_ = as.numeric(rp[["Pod dry weight"]]),
+		pod_number_plant_ = as.numeric(rp[["Pod number"]])
+	)
 
 	f1 <- ff[basename(ff) == "Effect of the selected isolates on soil minerals.xlsx"]
 	r1 <- carobiner::read.excel(f1, na="NA")
-	dsoil <- data.frame(
-		trial_id = "Patancheru_2013",
-		seed_treatment = trimws(r1$Treatment),
-		rep = as.integer(r1$`Replication number`),
-		DAP = as.integer(r1$`Days after sowing`),
+	l_soil <- data.frame(
+		record_id = d$record_id[match(paste("Patancheru_2013", trimws(as.character(r1$Treatment)), as.integer(r1[["Replication number"]]), sep="|"), dkey)],
+		DAP = as.integer(r1[["Days after sowing"]]),
 		depth_top = 0,
 		depth_bottom = 15,
-		soil_SOC = as.numeric(r1$`Organic Carbon`),
+		soil_SOC = as.numeric(r1[["Organic Carbon"]]),
 		soil_N_total = as.numeric(r1$Nitrogen),
 		soil_P = as.numeric(r1$Phosphorus),
-		dehydrogenase_ = as.numeric(r1$`Dehydogen activity`),
-		soil_MBC = as.numeric(r1$`Microbial Biological Carbon`)
+		dehydrogenase_ = as.numeric(r1[["Dehydogen activity"]]),
+		soil_MBC = as.numeric(r1[["Microbial Biological Carbon"]])
 	)
 
-	carobiner::write_files(path, meta, d, long=dsoil)
+	dlong <- carobiner::bindr(l_plant, l_soil)
+	rownames(d) <- NULL
+	rownames(dlong) <- NULL
+
+	carobiner::write_files(path, meta, d, long=dlong)
 }

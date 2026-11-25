@@ -10,10 +10,10 @@
 ## ISSUES
 # Only Matazul yield rows processed. Treatment catalog, Culticore maize/rice dates, and Pronata farm soil chemistry not merged into yield.
 # Soil physics tables (texture, penetration, infiltration, Ksat, bulk density, soil moisture, 29.FIS_ANAL_SUE) not processed.
-# Site list includes Caldono farms, Carimagua, CIAT S. Quilichao, Pronata fincas, and San Dionisio (Matagalpa, Nicaragua) without coordinates. Human must georeference.
+# Site list includes Caldono farms, Carimagua, CIAT S. Quilichao, Pronata fincas, and San Dionisio (Matagalpa, Nicaragua) without coordinates. Finca Matazul (Puerto Lopez, Meta, Colombia) georeferenced (4.1500, -72.6500; geo_from_source = FALSE).
 # Pasto llanero mapped to pasture; species is likely Urochloa humidicola / Brachiaria dictyoneura.
 # P/K and lime from Pronata "Cal NNNN kgr/ha" treatments not applied (those treatments are not in the yield table).
-# write_files: missing latitude/longitude/geo_from_source; NA yield for Pasto llanero rows (kept).
+# write_files: missing irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date; NA yield for Pasto llanero rows (kept).
 
 ## NEW VARIABLES
 # none
@@ -84,8 +84,8 @@ To organize the data, three big blocks were established: one block for hillsides
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 15,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 22,
 		carob_effort = 0.4
 	)
 
@@ -116,6 +116,9 @@ To organize the data, three big blocks were established: one block for hillsides
 		harvest_date = as.character(as.Date(r$FECH_EVA, format="%d-%b-%y"))
 	)
 
+	d$latitude <- 4.1500
+	d$longitude <- -72.6500
+	d$geo_from_source <- FALSE
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 

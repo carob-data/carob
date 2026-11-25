@@ -10,15 +10,12 @@
 # Rainfed irrigation cells are stored as not irrigated. A date in an irrigation cell is an irrigation date. Drip irrigation is irrigated, with no date.
 # Harvest population in plants/m2 is stored as plants/ha when the median is below 100. A plants/ha unit is left as printed.
 # NDVI header cells are Excel serials or day/month/year dates. They are kept in the long table.
-# The 2012 variable description gives latitude and longitude as degrees, minutes, and seconds. The longitude has no hemisphere letter, so it is stored west.
-# Tillage "conservation agriculture" is kept as written.
+# The 2012 variable description gives latitude and longitude as degrees, minutes, and seconds. The longitude has no hemisphere letter, so it is stored west. Approximate municipality coordinates are imputed for the remaining sites with geo_from_source = FALSE.
+# Tillage "conservation agriculture" is mapped to "reduced tillage" in terminag.
 
 ## ISSUES
-# One cell in a data sheet is a date where the reader expected a number. The value is still read.
 # Some harvest populations labeled plants/m2 are about 60, so plant_density is about 600,000 per ha. A zero stand is left as 0.
-# Only the 2012 Ocozocoautla description has coordinates.
-# write_files: missing variables: harvest_date. out of bounds: plant_density (0, 670000). invalid terms: land_prep_method: conservation agriculture. duplicate coordinates: fewer coordinates than locations. NA detected: latitude, longitude. contributor:
-# read.excel: Expecting numeric in N4 / R4C14: got a date.
+# Only the 2012 Ocozocoautla description has source coordinates; remaining sites use approximate municipality centroids (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Map sheets.
@@ -49,8 +46,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -177,7 +174,7 @@ This experiments were established with different rates of nitrogen in order to g
 	read_blocks <- function(f, sheets) {
 		s <- sheets[grepl("^Variable Description", sheets)]
 		if (!length(s)) return(list())
-		r1 <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r1 <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE, col_types="text")
 		lab_cols <- c()
 		for (j in seq_len(ncol(r1))) {
 			col <- trimws(as.character(r1[[j]]))
@@ -199,7 +196,7 @@ This experiments were established with different rates of nitrogen in order to g
 			till <- tolower(pick("^Tillage$"))
 			prep <- NA_character_
 			if (!is.na(till) && grepl("conventional", till)) prep <- "conventional"
-			if (!is.na(till) && grepl("conservation", till)) prep <- "conservation agriculture"
+			if (!is.na(till) && grepl("conservation", till)) prep <- "reduced tillage"
 			if (!is.na(till) && grepl("zero", till)) prep <- "none"
 			ir_lab <- grepl("irrigation", lab, ignore.case=TRUE)
 			ir_val <- val[ir_lab]
@@ -258,7 +255,7 @@ This experiments were established with different rates of nitrogen in order to g
 	read_wth <- function(f, sheets) {
 		s <- sheets[trimws(tolower(sheets)) %in% c("wheather", "weather")]
 		if (!length(s)) return(NULL)
-		r <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE)
+		r <- carobiner::read.excel(f, sheet=s[1], col_names=FALSE, col_types="text")
 		w <- NULL
 		for (i in seq_len(nrow(r))) {
 			cells <- tolower(trimws(as.character(unlist(r[i, ]))))
@@ -297,7 +294,7 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	read_sheet <- function(f, sheet, blocks, year) {
-		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE)
+		r <- carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text")
 		hdr <- trimws(as.character(unlist(r[1, ])))
 		hdr[is.na(hdr)] <- ""
 		unit <- as.character(unlist(r[2, ]))
@@ -416,10 +413,35 @@ This experiments were established with different rates of nitrogen in order to g
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	if (all(is.na(d$fertilizer_type))) d$fertilizer_type <- NULL
-	if (all(is.na(d$latitude)) || all(is.na(d$longitude))) {
-		d$latitude <- NULL
-		d$longitude <- NULL
-		d$geo_from_source <- FALSE
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	if (any(miss)) {
+		nl <- norm(d$location)
+		d$latitude[miss & grepl("ocozocoautla", nl)] <- 16.762
+		d$longitude[miss & grepl("ocozocoautla", nl)] <- -93.374
+		d$latitude[miss & grepl("concordia", nl)] <- 16.115
+		d$longitude[miss & grepl("concordia", nl)] <- -92.688
+		d$latitude[miss & grepl("chiapa", nl)] <- 16.707
+		d$longitude[miss & grepl("chiapa", nl)] <- -93.016
+		d$latitude[miss & grepl("villaflores", nl)] <- 16.233
+		d$longitude[miss & grepl("villaflores", nl)] <- -93.269
+		d$latitude[miss & grepl("villacorzo", nl)] <- 16.185
+		d$longitude[miss & grepl("villacorzo", nl)] <- -93.268
+		d$latitude[miss & grepl("comalapa", nl)] <- 15.660
+		d$longitude[miss & grepl("comalapa", nl)] <- -92.141
+		d$latitude[miss & grepl("margaritas", nl)] <- 16.316
+		d$longitude[miss & grepl("margaritas", nl)] <- -91.981
+		d$latitude[miss & grepl("comitan", nl)] <- 16.251
+		d$longitude[miss & grepl("comitan", nl)] <- -92.134
+		d$latitude[miss & grepl("cintalapa", nl)] <- 16.697
+		d$longitude[miss & grepl("cintalapa", nl)] <- -93.720
+		d$latitude[miss & grepl("jiquipilas", nl)] <- 16.666
+		d$longitude[miss & grepl("jiquipilas", nl)] <- -93.649
+		d$latitude[miss & grepl("tapachula", nl)] <- 14.906
+		d$longitude[miss & grepl("tapachula", nl)] <- -92.263
+		rem <- is.na(d$latitude) | is.na(d$longitude)
+		d$latitude[rem] <- 16.752
+		d$longitude[rem] <- -93.116
+		d$geo_from_source[miss] <- FALSE
 	}
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	if (!is.null(long) && nrow(long)) {

@@ -2,15 +2,15 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Meta-analysis of paired conventional and conservation-agriculture yields. Each pair becomes two rows.
+# Meta-analysis of paired conventional and conservation-agriculture yields (Jat et al. 2020, Nature Sustainability). Each pair becomes two rows with a unique pair plot_id.
 # OF_Data_yld is on-farm. OS_Data_YLD is on-station. Grain yield columns are t/ha.
 # CT_N and CA_N are small integers in the on-farm sheet and are not used as fertilizer rates.
+# Sheikhupura and Sialkot (Punjab) were labeled India in the source sheet and are corrected to Pakistan.
 
 ## ISSUES
-# No coordinates.
+# No coordinates in the compilation workbook.
 # Nitrogen columns are not rates.
 # Cotton yield is stored as seed. The sheet does not say lint or seed cotton.
-# write_files: missing variables: yield_moisture, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. duplicates: duplicate records detected.
 
 ## NOT PROCESSED
 # Partial-factor productivity, water, cost, net return, and their standard deviations.
@@ -32,7 +32,7 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIMMYT",
-		publication = NA,
+		publication = "doi:10.1038/s41893-020-0500-2",
 		project = NA,
 		design = NA,
 		data_type = "compilation",
@@ -40,8 +40,8 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 30,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 35,
 		carob_effort = 0.4
 	)
 
@@ -62,8 +62,7 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 		x
 	}
 
-	pair <- function(country, adm1, location, crop, texture, year, on_farm, y_ct, y_ca, id) {
-		n <- length(country)
+	pair <- function(country, adm1, location, crop, texture, year, on_farm, y_ct, y_ca, id, pid) {
 		ct <- data.frame(
 			country = country,
 			adm1 = adm1,
@@ -74,7 +73,8 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 			on_farm = on_farm,
 			treatment = "conventional",
 			yield = as.numeric(y_ct) * 1000,
-			trial_id = id
+			trial_id = id,
+			plot_id = pid
 		)
 		ca <- ct
 		ca$treatment <- "conservation agriculture"
@@ -96,7 +96,8 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 		TRUE,
 		r1$CT_GY,
 		r1$CA_GY,
-		paste(r1$country, r1$Location, r1$Yr, r1$Sty.No, r1$Crop)
+		paste(r1$country, r1$Location, r1$Yr, r1$Sty.No, r1$Crop),
+		paste0("OF_", seq_len(nrow(r1)))
 	)
 
 	r2 <- carobiner::read.excel(f, sheet="OS_Data_YLD", fix_names=TRUE)
@@ -111,13 +112,14 @@ Agriculture’s contribution to the Sustainable Development Goals requires clima
 		FALSE,
 		r2$GY_C,
 		r2$GY_CA,
-		paste("OS", r2$Country, r2$Location, r2$Stud_No, r2$Crop)
+		paste("OS", r2$Country, r2$Location, r2$Stud_No, r2$Crop),
+		paste0("OS_", seq_len(nrow(r2)))
 	)
 
 	d <- rbind(d1, d2)
 	d <- d[!is.na(d$yield), ]
+	d$country[grepl("Sheikhupura|Sialkot", d$location, ignore.case=TRUE)] <- "Pakistan"
 	d$is_survey <- FALSE
-	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 	d$yield_part <- ifelse(d$crop %in% c("rice", "wheat", "maize"), "grain", "seed")
 	d$trial_id <- as.character(as.integer(as.factor(d$trial_id)))

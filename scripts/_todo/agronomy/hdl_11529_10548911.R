@@ -2,18 +2,16 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Long-term conservation-agriculture experiment. The title places it in eastern India, so the country is India. The workbook has no district and no coordinates.
+# Long-term conservation-agriculture experiment (Dutta et al. 2023, Agricultural Systems, doi:10.1016/j.agsy.2023.103641). Site details from the bundled PDF: Bihar Agricultural University (BAU), Sabour, Bhagalpur, Bihar, India (25.2611 N, 87.0450 E, 37 m), RCBD, 48 m2 plots, clay loam soil, SRFSI project.
 # Info-sheet codes: ZT zero tillage, PB permanent beds, CT conventional tillage. CT also mentions puddling in rice. The row is a whole cropping system, so land preparation is stored as conventional and puddling is not added as a second method.
 # The Info sheet spells Miaze and Permanenet. The data sheet spells Maize-chickpea and the tillage code is PB.
 # Yield columns are maize-equivalent yield in t/ha, not the grain yield of one component crop. They are stored in kg/ha under new names.
-# Cost, gross return, and net return are labeled Rs/ha. The numbers are about 200 to 630, which is small for rupees per hectare. They are stored as printed.
-# Sheet3 is empty. The PDF is the paper and is not a data table.
+# Cost, gross return, and net return headers in the workbook say Rs/ha, but the bundled paper (p. 6, Table 5) confirms the values are in USD/ha (at 1 USD = 74 INR), so they are stored under *_usd_ha_.
+# Sheet3 is empty.
 
 ## ISSUES
 # Maize-equivalent yield is not the grain yield of one crop, so crop and yield are not filled.
 # The season label is not a controlled season name.
-# Costs labeled Rs/ha are about 200 to 630 and are stored as printed.
-# write_files: missing variables: crop, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: cropping_system_ (crop?). unknown variable: season_label_ (season?). unknown variables: kharif_mey_kg_ha_, rabi_mey_kg_ha_, system_mey_kg_ha_, kharif_rainfall_mm_, rabi_rainfall_mm_, system_rainfall_mm_, kharif_labour_days_, rabi_labour_days_, system_labour_days_, kharif_cost_rs_ha_, rabi_cost_rs_ha_, system_cost_rs_ha_, kharif_gross_return_rs_ha_, rabi_gross_return_rs_ha_, system_gross_return_rs_ha_, kharif_net_return_rs_ha_, rabi_net_return_rs_ha_, system_net_return_rs_ha_, kharif_bc_ratio_, rabi_bc_ratio_, system_bc_ratio_, kharif_input_water_mm_, rabi_input_water_mm_, system_input_water_mm_, kharif_iwp_kg_m3_, rabi_iwp_kg_m3_, system_iwp_kg_m3_, kharif_protein_t_ha_, rabi_protein_t_ha_, system_protein_t_ha_. contributor:
 
 ## NEW VARIABLES
 # cropping_system_: cropping system named on the data sheet.
@@ -30,15 +28,15 @@
 # kharif_labour_days_: kharif labour, mandays.
 # rabi_labour_days_: rabi labour, mandays.
 # system_labour_days_: system labour, mandays.
-# kharif_cost_rs_ha_: kharif cost of production, as printed under Rs/ha.
-# rabi_cost_rs_ha_: rabi cost of production, as printed under Rs/ha.
-# system_cost_rs_ha_: system cost of production, as printed under Rs/ha.
-# kharif_gross_return_rs_ha_: kharif gross return, as printed under Rs/ha.
-# rabi_gross_return_rs_ha_: rabi gross return, as printed under Rs/ha.
-# system_gross_return_rs_ha_: system gross return, as printed under Rs/ha.
-# kharif_net_return_rs_ha_: kharif net return, as printed under Rs/ha.
-# rabi_net_return_rs_ha_: rabi net return, as printed under Rs/ha.
-# system_net_return_rs_ha_: system net return, as printed under Rs/ha.
+# kharif_cost_usd_ha_: kharif cost of production, USD/ha (labeled Rs/ha in sheet header; confirmed USD/ha in Table 5 of Dutta et al. 2023).
+# rabi_cost_usd_ha_: rabi cost of production, USD/ha.
+# system_cost_usd_ha_: system cost of production, USD/ha.
+# kharif_gross_return_usd_ha_: kharif gross return, USD/ha.
+# rabi_gross_return_usd_ha_: rabi gross return, USD/ha.
+# system_gross_return_usd_ha_: system gross return, USD/ha.
+# kharif_net_return_usd_ha_: kharif net return, USD/ha.
+# rabi_net_return_usd_ha_: rabi net return, USD/ha.
+# system_net_return_usd_ha_: system net return, USD/ha.
 # kharif_bc_ratio_: kharif benefit-cost ratio.
 # rabi_bc_ratio_: rabi benefit-cost ratio.
 # system_bc_ratio_: system benefit-cost ratio.
@@ -70,16 +68,16 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
-		publication = NA,
-		project = NA,
-		design = NA,
+		publication = "doi:10.1016/j.agsy.2023.103641",
+		project = "SRFSI",
+		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "land_prep_method",
 		response_vars = "kharif_mey_kg_ha_;rabi_mey_kg_ha_;system_mey_kg_ha_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.6
 	)
 
@@ -106,8 +104,17 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 
 	d <- data.frame(
 		country = "India",
+		adm1 = "Bihar",
+		adm2 = "Bhagalpur",
+		location = "Sabour",
+		site = "Bihar Agricultural University",
+		latitude = 25.2611,
+		longitude = 87.0450,
+		elevation = 37,
 		trial_id = season,
 		rep = as.integer(num(col("^Replication$"))),
+		plot_area = 48,
+		soil_texture = "clay loam",
 		land_prep_method = land,
 		cropping_system_ = sys,
 		season_label_ = season,
@@ -120,15 +127,15 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 		kharif_labour_days_ = num(col("^Kharif labour")),
 		rabi_labour_days_ = num(col("^Rabi labour")),
 		system_labour_days_ = num(col("^System labour")),
-		kharif_cost_rs_ha_ = num(col("^Kharif Cost")),
-		rabi_cost_rs_ha_ = num(col("^Rabi Cost")),
-		system_cost_rs_ha_ = num(col("^System Cost")),
-		kharif_gross_return_rs_ha_ = num(col("^Kharif Gross")),
-		rabi_gross_return_rs_ha_ = num(col("^Rabi Gross")),
-		system_gross_return_rs_ha_ = num(col("^System Gross")),
-		kharif_net_return_rs_ha_ = num(col("^Kharif Net")),
-		rabi_net_return_rs_ha_ = num(col("^Rabi Net")),
-		system_net_return_rs_ha_ = num(col("^System Net")),
+		kharif_cost_usd_ha_ = num(col("^Kharif Cost")),
+		rabi_cost_usd_ha_ = num(col("^Rabi Cost")),
+		system_cost_usd_ha_ = num(col("^System Cost")),
+		kharif_gross_return_usd_ha_ = num(col("^Kharif Gross")),
+		rabi_gross_return_usd_ha_ = num(col("^Rabi Gross")),
+		system_gross_return_usd_ha_ = num(col("^System Gross")),
+		kharif_net_return_usd_ha_ = num(col("^Kharif Net")),
+		rabi_net_return_usd_ha_ = num(col("^Rabi Net")),
+		system_net_return_usd_ha_ = num(col("^System Net")),
 		kharif_bc_ratio_ = num(col("^Kharif B:C")),
 		rabi_bc_ratio_ = num(col("^Rabi B:C")),
 		system_bc_ratio_ = num(col("^System B:C")),
@@ -143,7 +150,7 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 		system_protein_t_ha_ = num(col("^System Protein")),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE
+		geo_from_source = TRUE
 	)
 	d <- d[!is.na(d$land_prep_method) & !is.na(d$cropping_system_), ]
 

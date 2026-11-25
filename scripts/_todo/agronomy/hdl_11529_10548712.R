@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Maize nitrogen-rate trials for a GreenSeeker calibration in Querétaro. The title names the state. Country is Mexico. The workbooks do not give coordinates.
+# Maize nitrogen-rate trials for a GreenSeeker calibration in Querétaro. The title names the state. Country is Mexico and adm1 is Querétaro. Approximate municipality coordinates are imputed with geo_from_source = FALSE.
 # Yield is already kg/ha at 14% moisture.
 # Nitrogen is Total N when that column is present, otherwise N at planting. A trailing N on values such as 0N is removed. A zero rate stays 0.
 # Triple superphosphate product rates use 19.23% elemental P from the fertilizer vocabulary. A dash in the rate cell is 0.
@@ -11,9 +11,8 @@
 # The variable description names one site. Variety, planting date, tillage, and fertilizer rates from that sheet are applied only when the site name matches the data sheet.
 
 ## ISSUES
-# No coordinates. K-Mag rates are not converted. Some plots have no yield. A recorded plant density of 0 is below the vocabulary minimum. One NDVI cell was written 0,893 and is stored as 0.893.
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE). K-Mag rates are not converted. Some plots have no yield. A recorded plant density of 0 is below the vocabulary minimum. One NDVI cell was written 0,893 and is stored as 0.893.
 # The 2016 Pedro Escobedo harvest population is already plants per hectare, so it is not multiplied by 10000.
-# write_files: missing variables: latitude, longitude, K_fertilizer, harvest_date. out of bounds: plant_density (0, 120000). NA detected: yield.
 
 ## NOT PROCESSED
 # Map sheets.
@@ -43,8 +42,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.7
 	)
 
@@ -189,9 +188,10 @@ This experiments were established with different rates of nitrogen in order to g
 		loc <- trimws(sub("^Data[- ]*", "", trimws(sheet)))
 		loc <- carobiner::fix_name(loc, "title")
 		year <- sub(".*([0-9]{4}).*", "\\1", basename(f))
-		use <- !is.null(r1) && nzchar(r1$site) && grepl(norm(r1$site), norm(loc), fixed=TRUE)
+		use <- !is.null(info) && nzchar(info$site) && grepl(norm(info$site), norm(loc), fixed=TRUE)
 		d <- data.frame(
 			country = "Mexico",
+			adm1 = "Querétaro",
 			location = loc,
 			trial_id = paste(loc, year),
 			plot_id = if (is.na(i_plot)) NA_character_ else as.character(body[[i_plot]]),
@@ -204,13 +204,13 @@ This experiments were established with different rates of nitrogen in order to g
 			yield = yield,
 			yield_moisture = 14,
 			yield_part = "grain",
-			variety = if (use) r1$variety else NA_character_,
-			planting_date = if (use) r1$planting_date else NA_character_,
-			land_prep_method = if (use) r1$land_prep_method else NA_character_,
-			P_fertilizer = if (use) r1$P_fertilizer else NA_real_,
-			K_fertilizer = if (use) r1$K_fertilizer else NA_real_,
-			irrigation_dates = if (use) r1$irrigation_dates else NA_character_,
-			irrigated = if (use) r1$irrigated else NA,
+			variety = if (use) info$variety else NA_character_,
+			planting_date = if (use) info$planting_date else NA_character_,
+			land_prep_method = if (use) info$land_prep_method else NA_character_,
+			P_fertilizer = if (use) info$P_fertilizer else NA_real_,
+			K_fertilizer = if (use) info$K_fertilizer else NA_real_,
+			irrigation_dates = if (use) info$irrigation_dates else NA_character_,
+			irrigated = if (use) info$irrigated else NA,
 			on_farm = NA,
 			is_survey = FALSE,
 			geo_from_source = FALSE
@@ -257,6 +257,18 @@ This experiments were established with different rates of nitrogen in order to g
 		w <- read_wth(f, sheets)
 		if (!is.null(w) && nrow(w)) wth <- if (is.null(wth)) w else rbind(wth, w)
 	}
+	# Approximate municipality coordinates in Querétaro (geo_from_source = FALSE).
+	k <- norm(chartr("áéíóúñü", "aeiounu", tolower(d$location)))
+	d$latitude <- 20.499
+	d$longitude <- -100.143
+	d$latitude[grepl("sanjuandelrio", k)] <- 20.389
+	d$longitude[grepl("sanjuandelrio", k)] <- -99.996
+	d$latitude[grepl("marques", k)] <- 20.630
+	d$longitude[grepl("marques", k)] <- -100.280
+	d$latitude[grepl("colon", k)] <- 20.783
+	d$longitude[grepl("colon", k)] <- -100.050
+	d$latitude[grepl("tequisquiapan", k)] <- 20.523
+	d$longitude[grepl("tequisquiapan", k)] <- -99.892
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	d$record_id <- as.integer(seq_len(nrow(d)))

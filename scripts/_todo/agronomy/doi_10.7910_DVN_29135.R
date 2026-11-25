@@ -14,7 +14,7 @@
 # The paper is paywalled and was not read: site (IRRI, Los Banos assumed from authors), upland/lowland
 # environment of 08DS and 09DS, the meaning of 08DS trt "r" (assumed drought stress) and the stress type of
 # 06DS_U (control or stress?) need to be checked in the Methods. Planting dates, fertilizer and design also.
-# No coordinates in the data; georeference IRRI experiment station, Los Banos, Laguna.
+# No coordinates in the data; georeferenced to IRRI experiment station, Los Banos, Laguna (14.1675, 121.2536; geo_from_source = FALSE).
 # Standard errors per entry (SE columns) are not mapped. 09DS yield frequency table not mapped (summary).
 # 06DS_U has negative TDMY and HI values for 4 entries (e.g. R 900), and many 0 yields (entries that did not
 #   flower/mature by 150 DAS per the sheet note); left as recorded.
@@ -46,8 +46,8 @@ N/A
 		response_vars = "yield;dmy_total;harvest_index;flowering_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.6
 	)
 
@@ -94,11 +94,13 @@ N/A
 	d$yield_moisture <- 14
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
 
 	d$country <- "Philippines"
 	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
+	d$latitude <- 14.1675
+	d$longitude <- 121.2536
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

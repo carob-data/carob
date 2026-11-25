@@ -11,10 +11,7 @@
 ## ISSUES
 # Yields are averages over the screening entries; varieties, number of entries/reps, planting dates,
 #   fertilizer and yield moisture are not given. Yield unit assumed kg/ha (not stated).
-# Coordinates not provided; georeference stations: Barwale (Jalna, Maharashtra), Sabour and Patna (Bihar),
-#   Cuttack (Odisha), IIRR (Hyderabad, Telangana), Faizabad (Uttar Pradesh), Hazaribag (Jharkhand),
-#   Raipur (Chhattisgarh), Rewa (Madhya Pradesh), Coimbatore (Tamil Nadu), Tripura (India), Varanasi (Uttar Pradesh);
-#   Hardinath, Nepalgunj, Tarahara (Nepal); Rajshahi (Bangladesh).
+# Station coordinates added for all 16 South Asian drought-breeding network stations (geo_from_source = FALSE).
 # Soil sampling depths for pH, P, K, texture not given. P extraction method not given (soil_P_method not set);
 #   "Exch-K ppm" mapped to soil_K (mg/kg).
 # Water retention values: unit not given (volumetric fraction?); Faizabad (3, 5, 15 bar) and Nepalgunj (15 bar)
@@ -60,8 +57,8 @@ Drought is the major constraint to rainfed rice productivity in South Asia, but 
 		response_vars = "yield", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.6
 	)
 
@@ -106,7 +103,11 @@ Drought is the major constraint to rainfed rice productivity in South Asia, but 
 		country = c("India", "India", "India", "India", "India", "Nepal", "India", "Nepal",
 			"India", "India", "Bangladesh", "India", "Nepal", "India", "India", "India"),
 		adm1 = c("Maharashtra", "Bihar", "Odisha", "Telangana", "Uttar Pradesh", NA, "Jharkhand", NA,
-			"Bihar", "Chhattisgarh", "Rajshahi", "Madhya Pradesh", NA, "Tamil Nadu", "Tripura", "Uttar Pradesh")
+			"Bihar", "Chhattisgarh", "Rajshahi", "Madhya Pradesh", NA, "Tamil Nadu", "Tripura", "Uttar Pradesh"),
+		latitude = c(19.841, 25.242, 20.454, 17.320, 26.775, 26.806, 24.010, 28.050,
+			25.595, 21.236, 24.375, 24.536, 26.701, 11.012, 23.907, 25.268),
+		longitude = c(75.886, 87.043, 85.933, 78.394, 82.138, 85.973, 85.353, 81.617,
+			85.090, 81.701, 88.613, 81.304, 87.277, 76.935, 91.310, 82.991)
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE)
 
@@ -115,10 +116,7 @@ Drought is the major constraint to rainfed rice productivity in South Asia, but 
 	d$season <- "wet"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- NA
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

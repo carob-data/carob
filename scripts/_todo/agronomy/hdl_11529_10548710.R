@@ -8,18 +8,17 @@
 # Tillage is stored as conventional when the description says conventional.
 # Harvest population in plants/m2 is stored as plants/ha when the site median is below 100.
 # NDVI header cells are Excel serials or calendar dates. 15-Aug style dates are read as day, month, year.
-# The title names Edo. México, so the country is Mexico. The sheets and geographicCoverage have no coordinates.
+# The title names Edo. México, so the country is Mexico and adm1 is México (Tlaxcala for Huamantla). Approximate municipality coordinates are imputed with geo_from_source = FALSE.
 # El Batán 2014 states 40 kg/ha of P2O5. That rate is stored as elemental P. The same cell for potassium is empty.
 # The 2014 preplant cell is "41780 after rain fed", so that site is stored as not irrigated.
 # The 2015 planting cell is "May 28 and 29 , 2015", so no single planting date is stored.
-# Texcoco 2012 tillage is conservation agriculture. That is not a land-preparation term, so it is left blank.
+# Texcoco 2012 tillage is conservation agriculture, mapped to "reduced tillage" in terminag.
 # The variable description spells Tejupilco as Tejupilgo.
 
 ## ISSUES
-# No coordinates in the sheets or in geographicCoverage. Country is Mexico because the title names Edo. México.
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE).
 # Product rates of triple superphosphate and potassium chloride are not converted. Elemental P is stored only for El Batán 2014, from 40 kg/ha of P2O5.
 # One NDVI cell is a period and two NDVI cells are dates. Those are not stored.
-# write_files: missing variables: latitude, longitude, K_fertilizer, harvest_date. contributor:
 
 ## NOT PROCESSED
 # Map sheet and Wheather sheet.
@@ -50,8 +49,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.5
 	)
 
@@ -182,20 +181,20 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	lookup_site <- function(loc, info) {
-		keys <- names(r1)
-		if (length(keys) == 1) return(r1[[keys]])
+		keys <- names(info)
+		if (length(keys) == 1) return(info[[keys]])
 		want <- site_key(loc)
 		keyed <- vapply(keys, site_key, character(1))
 		hit <- keys[keyed == want]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		inside <- vapply(keyed, function(k) {
 			nzchar(want) && nzchar(k) && (grepl(want, k, fixed=TRUE) || grepl(k, want, fixed=TRUE))
 		}, logical(1))
 		hit <- keys[inside]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		pref <- substr(want, 1, 7)
 		hit <- keys[substr(keyed, 1, 7) == pref]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		NULL
 	}
 
@@ -249,6 +248,7 @@ This experiments were established with different rates of nitrogen in order to g
 			till <- if (is.null(meta_s)) NA_character_ else meta_s$tillage
 			land <- rep(NA_character_, nrow(r))
 			if (!is.na(till) && grepl("conventional", tolower(till))) land[] <- "conventional"
+			if (!is.na(till) && grepl("conservation", tolower(till))) land[] <- "reduced tillage"
 			irr_txt <- if (is.null(meta_s)) NA_character_ else meta_s$irrigation
 			saw_rain <- FALSE
 			dates <- character()
@@ -272,6 +272,7 @@ This experiments were established with different rates of nitrogen in order to g
 			d <- data.frame(
 				crop = "maize",
 				country = "Mexico",
+				adm1 = if (grepl("huamantla", loc, ignore.case=TRUE)) "Tlaxcala" else "México",
 				location = loc,
 				trial_id = paste(loc, year, sep="_"),
 				plot_id = as.character(r[[which(hdr == "Plot")[1]]]),
@@ -314,6 +315,26 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	d <- do.call(rbind, d_list)
+	# Approximate municipality coordinates (geo_from_source = FALSE).
+	k <- site_key(d$location)
+	d$latitude <- NA_real_
+	d$longitude <- NA_real_
+	d$latitude[grepl("tejupilco", k)] <- 18.906
+	d$longitude[grepl("tejupilco", k)] <- -100.153
+	d$latitude[grepl("chapingo|texcoco", k)] <- 19.493
+	d$longitude[grepl("chapingo|texcoco", k)] <- -98.884
+	d$latitude[grepl("batan", k)] <- 19.530
+	d$longitude[grepl("batan", k)] <- -98.847
+	d$latitude[grepl("metepec", k)] <- 19.251
+	d$longitude[grepl("metepec", k)] <- -99.605
+	d$latitude[grepl("cocotitlan", k)] <- 19.234
+	d$longitude[grepl("cocotitlan", k)] <- -98.864
+	d$latitude[grepl("huamantla", k)] <- 19.314
+	d$longitude[grepl("huamantla", k)] <- -97.923
+	d$latitude[grepl("juchitepec", k)] <- 19.094
+	d$longitude[grepl("juchitepec", k)] <- -98.880
+	d$latitude[grepl("temantla", k)] <- 19.201
+	d$longitude[grepl("temantla", k)] <- -98.868
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$land_prep_method))) d$land_prep_method <- NULL

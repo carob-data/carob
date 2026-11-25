@@ -3,14 +3,13 @@
 
 ## NOTES
 # Sorghum with undersown vetch. Grain yield is already kg/ha. Stover is t/ha and is stored as kg/ha. The dictionary does not say whether stover is fresh or dry.
-# Vetch forage is dry-matter yield in t/ha, stored as kg/ha. yield_moisture for vetch is 100 minus the dry-matter percentage. Sorghum grain has no moisture value.
-# Treatment 1 is sole sorghum. Treatments 2 to 7 are sorghum with vetch. Row spacing is taken from the treatment text where it is stated.
+# Vetch forage is dry-matter yield in t/ha, stored as kg/ha in both yield and dmy_total with yield_moisture = 0 and yield_isfresh = FALSE (previous script incorrectly set yield_moisture = 100 - DM% on a dry-matter yield). Sorghum grain has no moisture value.
+# Treatment 1 is sole sorghum (intercrops = "none"). Treatments 2 to 7 are sorghum with vetch. Row spacing is taken from the treatment text where it is stated.
 # The dictionary gives collection periods (March 2014 to February 2015, and March 2015 to January 2016). Those are not planting and harvest dates.
-# This dataset does not name the site. The project is in north-western Ethiopia.
+# ICARDA-ARARI project on land degradation in north-western Ethiopia (Gumara-Maksegnit watershed, North Gondar, Amhara; approximate watershed coordinates imputed with geo_from_source = FALSE).
 
 ## ISSUES
-# No coordinates, no site name, and no sorghum grain moisture.
-# write_files: , on_farm, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: stover_yield_kg_ha_.
+# Coordinates are approximate for the Gumara-Maksegnit watershed (geo_from_source = FALSE); no sorghum grain moisture or planting/harvest dates in the raw files.
 
 ## NEW VARIABLES
 # stover_yield_kg_ha_: stover in kg/ha. The dictionary says t/ha and does not say fresh or dry.
@@ -43,8 +42,8 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.45
 	)
 
@@ -64,15 +63,22 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 	d1 <- data.frame(
 		trial_id = paste0("year", r1$Year),
 		country = "Ethiopia",
+		adm1 = "Amhara",
+		adm2 = "North Gondar",
+		location = "Gumara-Maksegnit",
+		latitude = 12.392,
+		longitude = 37.559,
 		plot_id = paste(r1$Year, r1$Treatment, r1$Replication, sep="_"),
 		rep = r1$Replication,
 		crop = "sorghum",
 		treatment = unname(lab[as.character(r1$Treatment)]),
 		row_spacing = unname(space[as.character(r1$Treatment)]),
 		intercropped = r1$Treatment != 1,
-		intercrops = ifelse(r1$Treatment == 1, NA_character_, "vetch"),
+		intercrops = ifelse(r1$Treatment == 1, "none", "vetch"),
 		yield = as.numeric(r1$Grain_yield),
+		dmy_total = NA_real_,
 		yield_moisture = NA_real_,
+		yield_isfresh = NA,
 		yield_part = "grain",
 		stover_yield_kg_ha_ = as.numeric(r1$Stover_yield) * 1000,
 		plant_height = as.numeric(r1$Plant_height),
@@ -84,6 +90,11 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 	d2 <- data.frame(
 		trial_id = paste0("year", r2$Year),
 		country = "Ethiopia",
+		adm1 = "Amhara",
+		adm2 = "North Gondar",
+		location = "Gumara-Maksegnit",
+		latitude = 12.392,
+		longitude = 37.559,
 		plot_id = paste(r2$Year, r2$Treatment, r2$Replication, sep="_"),
 		rep = r2$Replication,
 		crop = "vetch",
@@ -92,7 +103,9 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		intercropped = TRUE,
 		intercrops = "sorghum",
 		yield = as.numeric(r2$Dry_matter_forage_yield) * 1000,
-		yield_moisture = 100 - as.numeric(r2$Dry_matter_percentage),
+		dmy_total = as.numeric(r2$Dry_matter_forage_yield) * 1000,
+		yield_moisture = 0,
+		yield_isfresh = FALSE,
 		yield_part = "aboveground biomass",
 		stover_yield_kg_ha_ = NA_real_,
 		plant_height = as.numeric(r2$Plant_height),

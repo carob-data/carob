@@ -7,15 +7,14 @@
 # crop_1_weight_grain is treated as kg for the same reason. Grain unshelled Y is pod; N is seed. Groundnut is pod.
 # SSP product kg/plot to elemental P with terminag fraction 8.74%. None or amount 0 is 0 N, P and K.
 # Organic types mapped where the name is clear (farmyard manure, cattle dung, poultry manure). Insecticide names and "upper cort" were not mapped to an organic fertilizer.
-# No GPS. Soil n.perc treated as percent N (* 10000 = mg/kg). oc.perc mapped to soil_SOC. ecec mapped to soil_CEC. District names ending in LGA stored as adm2.
+# No GPS in raw data; LGA-level coordinates added for all 11 Kaduna/Kano LGAs (geo_from_source = FALSE). Soil n.perc mapped to soil_N_total (* 10000 = mg/kg). oc.perc mapped to soil_SOC. ecec mapped to soil_ECEC. p_olsen.ppm mapped to soil_P with soil_P_method = "Olsen". District names ending in LGA stored as adm2.
 
 ## ISSUES
 # Confirm that area and grain weight are m2 and kg. They are not named with units.
-# GPS and altitude are empty. Georeference LGAs and villages (Bichi, Bunkure, Dawakin Kudu, Garko, Gaya, Giwa, Igabi, Kachia, Soba, Ungogo, Zango Kataf).
 # "Upper cort" / "Uper cort" and insecticide names in the organic-fertilizer column were dropped rather than guessed.
-# Season text includes "2011" and "Raining season/ 2011", which are not terminag season names.
+# Season text "Raining season/ 2011" mapped to "wet"; bare year "2011" set to NA.
 # Yield moisture and irrigation were not recorded.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; treatment, variety and inoculated have NA; plot_area up to 1250 m2; invalid season "2011" and "Raining season/ 2011"; datespan 10 harvests within 45 days of planting; high cowpea and soybean yields; NA yield.
+# write_files: missing carob_contributor, yield_moisture, irrigated; treatment, variety and inoculated have NA; plot_area up to 1250 m2; datespan 10 harvests within 45 days of planting; high cowpea and soybean yields; duplicate coordinates; NA yield.
 
 ## NOT PROCESSED
 # a_general.csv: age, education, farm size, legume flags. gps columns are empty.
@@ -56,8 +55,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -98,14 +97,29 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	adm <- trimws(r2$district)
 	adm <- gsub(" [Ll][Gg][Aa]$", "", adm)
+	adm <- carobiner::fix_name(adm, "title")
 	loc <- carobiner::fix_name(r2$vilage, "title")
 	loc[which(loc == "")] <- NA
+	geo <- data.frame(
+		adm2 = c("Zango Kataf", "Kachia", "Soba", "Giwa", "Igabi",
+			"Bunkure", "Bichi", "Garko", "Ungogo", "Dawakin Kudu", "Gaya"),
+		adm1 = c(rep("Kaduna", 5), rep("Kano", 6)),
+		latitude = c(9.783, 9.873, 10.981, 11.317, 10.806,
+			11.700, 12.234, 11.653, 12.091, 11.835, 11.861),
+		longitude = c(8.383, 7.954, 8.058, 7.450, 7.714,
+			8.550, 8.241, 8.803, 8.496, 8.598, 9.003)
+	)
+	gi <- match(adm, geo$adm2)
+	szn <- ifelse(grepl("rain", tolower(as.character(r2$season))), "wet", NA_character_)
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = szn,
 		country = "Nigeria",
-		adm2 = carobiner::fix_name(adm, "title"),
+		adm1 = geo$adm1[gi],
+		adm2 = adm,
 		location = loc,
+		latitude = geo$latitude[gi],
+		longitude = geo$longitude[gi],
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)
 
@@ -187,14 +201,15 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		soil_sand = r8$sand.perc,
 		soil_silt = r8$silt.perc,
 		soil_clay = r8$clay.perc,
-		soil_N = r8$n.perc * 10000,
+		soil_N_total = r8$n.perc * 10000,
 		soil_P = r8$p_olsen.ppm,
+		soil_P_method = ifelse(!is.na(r8$p_olsen.ppm), "Olsen", NA_character_),
 		soil_K_exch = r8$k.cmol_per_kg,
 		soil_Ca_exch = r8$ca.cmol_per_kg,
 		soil_Mg_exch = r8$mg.cmol_per_kg,
 		soil_Na_exch = r8$na.cmol_per_kg,
 		soil_Zn = r8$zn.ppm,
-		soil_CEC = r8$ecec.cmol_per_kg
+		soil_ECEC = r8$ecec.cmol_per_kg
 	)
 
 	d <- merge(d1, d6, by = c("trial_id", "plot_id"), all = TRUE)

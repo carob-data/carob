@@ -10,10 +10,11 @@
 # Rainfed irrigation cells are stored as not irrigated. A date in an irrigation cell is an irrigation date. Drip irrigation is irrigated, with no date.
 # Harvest population in plants/m2 is stored as plants/ha when the median is below 100. A plants/ha unit is left as printed.
 # NDVI header cells are Excel serials or day/month/year dates. They are kept in the long table.
-# The variable description does not give coordinates. Irrigation is drip, with no date. The potassium rate is a dash, stored as 0.
+# The variable description does not give coordinates; approximate municipality coordinates are imputed with geo_from_source = FALSE. Irrigation is drip, with no date. The potassium rate is a dash, stored as 0.
+# Tillage "conservation agriculture" is mapped to "reduced tillage" in terminag.
 
 ## ISSUES
-# write_files: missing variables: latitude, longitude, harvest_date. contributor:
+# Coordinates are approximate municipality centroids (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Map sheets.
@@ -44,8 +45,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -194,7 +195,7 @@ This experiments were established with different rates of nitrogen in order to g
 			till <- tolower(pick("^Tillage$"))
 			prep <- NA_character_
 			if (!is.na(till) && grepl("conventional", till)) prep <- "conventional"
-			if (!is.na(till) && grepl("conservation", till)) prep <- "conservation agriculture"
+			if (!is.na(till) && grepl("conservation", till)) prep <- "reduced tillage"
 			if (!is.na(till) && grepl("zero", till)) prep <- "none"
 			ir_lab <- grepl("irrigation", lab, ignore.case=TRUE)
 			ir_val <- val[ir_lab]
@@ -402,10 +403,17 @@ This experiments were established with different rates of nitrogen in order to g
 	if (all(is.na(d$K_fertilizer))) d$K_fertilizer <- NULL
 	if (all(is.na(d$P_fertilizer))) d$P_fertilizer <- NULL
 	if (all(is.na(d$fertilizer_type))) d$fertilizer_type <- NULL
-	if (all(is.na(d$latitude)) || all(is.na(d$longitude))) {
-		d$latitude <- NULL
-		d$longitude <- NULL
-		d$geo_from_source <- FALSE
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	if (any(miss)) {
+		nl <- norm(d$location)
+		d$latitude[miss & grepl("tamuin", nl)] <- 22.005
+		d$longitude[miss & grepl("tamuin", nl)] <- -98.781
+		d$latitude[miss & grepl("ebano", nl)] <- 22.216
+		d$longitude[miss & grepl("ebano", nl)] <- -98.379
+		rem <- is.na(d$latitude) | is.na(d$longitude)
+		d$latitude[rem] <- 22.156
+		d$longitude[rem] <- -100.986
+		d$geo_from_source[miss] <- FALSE
 	}
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	if (!is.null(long) && nrow(long)) {

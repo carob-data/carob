@@ -13,21 +13,19 @@
 # Species are numeric codes. Names are not in this download.
 # Dates are parsed per column. Maize harvest includes 25/10/2020, so that column is day/month/year and 8/10/2020 is 8 October. Observation dates include 9/14/2020, so those columns are month/day/year.
 # Monocrop treatment codes are 1-8 and intercrop codes are 1-5. They are kept as codes. trial_id separates monocrop and intercrop so the codes are not pooled.
-# States for IITA (Oyo), Ago-Owu (Osun) and Onne (Rivers) are the states used for those site names in doi:10.25502/rnbm-3x44/d and doi:10.25502/g4vs-5z61/d. Ijaye is not in those files.
+# States and station coordinates for IITA (Oyo: 7.4918, 3.9087), Ago-Owu (Osun: 7.2619, 4.2701), and Onne (Rivers: 4.7200, 7.1765) match doi:10.25502/g4vs-5z61/d; Ijaye is in Oyo State (7.628, 3.829); geo_from_source = FALSE.
 # This package has no net-plot column, so plot_area is not filled from the other Bayer dataset.
 # Long rows are attached to the cassava row (yield missing). The maize row of an intercrop plot has the same plot_id.
 
 ## ISSUES
 # No treatment legend, so Monsoon, paraquat, hoe and the 2020 no-sprayhood treatment cannot be assigned to codes 1-8. herbicide_product is omitted. Do not guess.
-# No cassava root yield in this download. No crop-injury column, fertilizer, variety, irrigation, planting date, or coordinates.
+# No cassava root yield in this download. No crop-injury column, fertilizer, variety, irrigation, planting date, or coordinates in the raw files.
 # Do not use the CKAN coverage point (9.60 E, 8.00 N); that is not a trial site.
-# Georeference: IITA (Oyo), Ijaye (state not in this file or the 2018/2019 site lists), Ago-Owu (Osun), Onne (Rivers).
 # Some observation dates fall in January 2020 because that column is month/day/year. Left as parsed; they sit oddly next to 8-15 WAP.
 # No publication DOI.
-# write_files: missing carob_contributor, longitude, latitude, irrigated, N/P/K, planting_date;
+# write_files: missing carob_contributor, irrigated, N/P/K, planting_date;
 #   NA yield on cassava rows and on intercrop plots with no maize harvest (Ago-Owu, Onne);
 #   unknown variables in NEW VARIABLES. sprout_density_ is a sprout count, not shrub_density; maize_density_ is not vine_density.
-# Terminag GitHub 403 warnings, if printed, are from the vocabulary check.
 
 ## NOT PROCESSED
 # TrtNo: a running index, not the treatment (TRT / Trt / TrT is the treatment).
@@ -74,8 +72,8 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		response_vars = "yield;plant_density",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 48,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.8
 	)
 
@@ -106,8 +104,13 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			ifelse(k %in% c("intercrop", "intecrop", "cassmaizentecrop", "cassavamaize"), "intercrop", NA_character_))
 	}
 	adm_of <- function(loc) {
-		ifelse(loc == "IITA", "Oyo", ifelse(loc == "Ago-Owu", "Osun", ifelse(loc == "Onne", "Rivers", NA_character_)))
+		ifelse(loc %in% c("IITA", "Ijaye"), "Oyo", ifelse(loc == "Ago-Owu", "Osun", ifelse(loc == "Onne", "Rivers", NA_character_)))
 	}
+	geo <- data.frame(
+		location = c("IITA", "Ijaye", "Ago-Owu", "Onne"),
+		latitude = c(7.4918, 7.6280, 7.2619, 4.7200),
+		longitude = c(3.9087, 3.8290, 4.2701, 7.1765)
+	)
 	parse_dates <- function(x) {
 		x <- trimws(as.character(x))
 		x[is.na(x) | x == ""] <- NA
@@ -198,8 +201,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	d$rep <- as.integer(d$rep)
 	d$plot_key <- paste(d$location, d$system, d$plot_id, sep = "|")
 	d$adm1 <- adm_of(d$location)
+	gi <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[gi]
+	d$longitude <- geo$longitude[gi]
 	d$country <- "Nigeria"
 	d$crop <- "cassava"
+	d$intercropped <- d$system == "intercrop"
 	d$intercrops <- ifelse(d$system == "intercrop", "maize", "none")
 	d$yield_part <- "roots"
 	d$yield_isfresh <- TRUE

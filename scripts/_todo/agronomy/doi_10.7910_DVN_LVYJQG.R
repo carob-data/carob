@@ -61,8 +61,8 @@ By responding to the variable soil environments in which they are grown, the roo
 		response_vars = "yield;dmy_total;harvest_index", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 1
 	)
 

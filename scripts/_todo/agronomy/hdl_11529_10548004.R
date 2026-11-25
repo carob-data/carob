@@ -36,16 +36,16 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Intercropping trial, Purnea, Bihar",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "Inter-cropping 2015-16-LT-all nodes-Purnea.xlsx"]
@@ -90,6 +90,7 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 	water <- as.numeric(r[["irri-cm"]]) * 10
 	loc <- carobiner::fix_name(tolower(trimws(r$node)), "title")
 	base <- data.frame(
+		country = "India",
 		adm1 = "Bihar",
 		adm2 = "Purnea",
 		location = loc,
@@ -109,16 +110,26 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 		far = r[["Far-id"]]
 	)
 	base$irrigated <- !is.na(base$irrigation_amount) & base$irrigation_amount > 0
-	base$geo_from_source <- !is.na(base$latitude) & !is.na(base$longitude)
+	miss_geo <- is.na(base$latitude) | is.na(base$longitude)
+	base$geo_from_source <- !miss_geo
+	base$latitude[miss_geo] <- 25.777
+	base$longitude[miss_geo] <- 87.475
 
 	maize <- base
 	maize$crop <- "maize"
+	maize$intercropped <- maize$system != "Sole Maize"
+	maize$intercrops <- ifelse(maize$system == "Sole Maize", "none",
+		ifelse(maize$system == "Maize+Coriander", "coriander", "red amaranth"))
 	maize$yield <- maize$yield_maize
 	maize$yield_part <- "grain"
+	maize$yield_isfresh <- FALSE
 	other <- base[base$system != "Sole Maize", ]
 	other$crop <- ifelse(other$system == "Maize+Coriander", "coriander", "red amaranth")
+	other$intercropped <- TRUE
+	other$intercrops <- "maize"
 	other$yield <- other$yield_other
 	other$yield_part <- "leaves"
+	other$yield_isfresh <- TRUE
 	other$biomass_kg_ha_ <- NA_real_
 	other$harvest_index <- NA_real_
 	other$maturity_days <- NA_real_
@@ -130,12 +141,6 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 	d$far <- NULL
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$yield_isfresh <- FALSE
-	if (all(is.na(d$latitude))) {
-		d$latitude <- NULL
-		d$longitude <- NULL
-		d$geo_from_source <- FALSE
-	}
 
 	carobiner::write_files(path, meta, d)
 }

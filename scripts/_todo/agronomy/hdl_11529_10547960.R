@@ -39,16 +39,16 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Long-term trial, Sunsari, Nepal",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.8
 	)
 
 	as_date <- function(x) {
@@ -123,8 +123,12 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Sunsa
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
 		data.frame(
 			country = "Nepal",
+			adm1 = "Koshi",
 			adm2 = "Sunsari",
 			location = r1$Node,
+			latitude = 26.628,
+			longitude = 87.175,
+			season = "kharif",
 			trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
 			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			treatment = r1$Tmnt,

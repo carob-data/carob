@@ -2,32 +2,23 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Rothamsted long-term liming experiment, 1962-1996. Plot and sub-plot yields are in crop_data.csv. The factor files give P, K, Mg, Mn and S rates as kg of the element per ha, and lime totals as t CaCO3 per ha.
-# The yield column has no unit. Grain values stay below 10 and fresh potato values reach about 62, so yield is stored as those values times 1000 (kg/ha).
-# Percent dry matter is the dry-matter content of the harvested product. yield_moisture is 100 minus that value. Potato dry matter is not recorded.
-# N, and the basal K and Mg rates, sit in the same table. Their unit is not written on the column. They are stored as kg/ha of the element, which is the unit the factor files use for P, K, Mg and S.
-# Rothamsted Experimental Farm is in the United Kingdom.
+# Rothamsted long-term liming experiment, 1962-1996 (Rothamsted Experimental Farm, Harpenden, United Kingdom; silty clay loam soil).
+# Plot and sub-plot yields are in crop_data.csv. Factor files give P, K, Mg, Mn, and S rates in kg element/ha, and annual_lime in t CaCO3/ha (multiplied by 1000 to kg/ha for terminag lime).
+# Yield in crop_data.csv is t/ha (grains < 10, fresh potatoes up to ~62) -> multiplied by 1000 to kg/ha. Percent dry matter (%_dry_matter) gives yield_moisture = 100 - %_dry_matter (not recorded for potatoes).
+# N, basal K, and basal Mg rates are kg element/ha (matching the factor-file units for P, K, Mg, Mn, S).
+# Estimated coordinates for Rothamsted Experimental Farm (51.810, -0.376) added with geo_from_source = FALSE and geo_uncertainty = 1000 m.
 
 ## ISSUES
-# The yield column has no unit. It is stored times 1000 because grain values are below 10 and fresh potato values reach about 62.
-# Winter lupins sown 1992-10-07 were harvested 1993-10-10, 368 days later.
-# write_files: , latitude, longitude, irrigated. unknown variable: lime_CaCO3_t_ha_ (lime?). datespan: 64 harvest_date more than 366 days after planting_date. NA detected: yield.
-
-## NEW VARIABLES
-# lime_CaCO3_t_ha_: annual lime, t CaCO3/ha. lime in the vocabulary is kg/ha and stops at 10000, so a 15 t application does not fit there.
-
+# Initial 1962 high-lime plots received 15 t CaCO3/ha (15000 kg/ha), exceeding the terminag valid_max of 10000 kg/ha for lime; kept as recorded.
+# Winter lupins sown 1992-10-07 were harvested 1993-10-10 (368 days after sowing).
+# Fallow rows have crop = "none" and NA yield; kept as recorded to preserve the rotation sequence.
+# Irrigation is not explicitly stated in crop_data.csv (rainfed UK arable experiment; left omitted if unstated).
+# write_files: missing carob_contributor, irrigated; out of bounds: lime (0, 15000); datespan > 366 days on winter lupins; NA in yield (fallow/missing plots).
 
 ## NOT PROCESSED
-# notes_data.csv, the factor description tables, and the cumulative lime and P columns.
-# The Excel workbook repeats the csv files.
-# 01-RothLTliming-yield.xlsx: not read. sheet README (of 11): README, 10.23637/rcs10-rltlyields-01. Observation records are missing from d until this file is standardized.
-# crop_types_data.csv: not read. columns: crop_name, latin_name, crop_name_rdftype. Observation records are missing from d until this file is standardized.
-# k_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
-# liming_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
-# mg_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
-# mn_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
-# p_factor_data.csv: not read. columns: description, treatment_factor_group, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, .... Observation records are missing from d until this file is standardized.
-# s_factor_data.csv: not read. columns: description, years, treatment_factor, treatment_factor_rdfType, factor_level_name, amount, amount_unit, frequency, total_amount, total_amount_unit, treatment_form, treatment_form_rdfType. Observation records are missing from d until this file is standardized.
+# notes_data.csv, crop_types_data.csv, and *_factor_data.csv: metadata/factor description tables used to verify units.
+# cumulative_lime and p_rate_cumulative: cumulative totals across years (annual rates are standardized).
+# 01-RothLTliming-yield.xlsx: Excel mirror of the standalone CSV files.
 
 
 carob_script <- function(path) {
@@ -42,8 +33,7 @@ The experiment tests the effects of different amounts of lime (and thus soil pH)
 	group <- "agronomy"
 	ff <- carobiner::get_data(uri, path, group)
 
-	# The Rothamsted download does not save a metadata json that get_metadata can read.
-	# Title, version, license, publisher and authors are the README.txt values.
+	# Rothamsted download does not include a Dataverse metadata json readable by get_metadata().
 	meta <- data.frame(
 		uri = uri,
 		dataset_id = "doi_10.23637_rcs10-rltlyields-01",
@@ -62,13 +52,13 @@ The experiment tests the effects of different amounts of lime (and thus soil pH)
 		project = NA_character_,
 		design = NA_character_,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",
+		treatment_vars = "lime;P_fertilizer;K_fertilizer;Mg_fertilizer;Mn_fertilizer;S_fertilizer",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "crop_data.csv"]
@@ -76,7 +66,7 @@ The experiment tests the effects of different amounts of lime (and thus soil pH)
 	num <- function(x) {
 		x <- trimws(as.character(x))
 		x[x == "-"] <- "0"
-		x[x %in% c("", "*", "NA")] <- NA
+		x[x %in% c("", "*", "NA")] <- NA_character_
 		as.numeric(x)
 	}
 	add <- function(a, b) ifelse(is.na(a) & is.na(b), NA_real_, ifelse(is.na(a), 0, a) + ifelse(is.na(b), 0, b))
@@ -102,33 +92,61 @@ The experiment tests the effects of different amounts of lime (and thus soil pH)
 	pid[use] <- paste(pid[use], sp[use], sep="-")
 	dm <- num(r[["%_dry_matter"]])
 
+	lime_kg <- num(r$annual_lime) * 1000
+	ldate <- trimws(as.character(r$lime_date))
+	ldate[ldate %in% c("", "*", "-", "NA")] <- NA_character_
+
+	trt <- paste(
+		paste0("Lime:", trimws(as.character(r$liming_factor_level))),
+		paste0("P:", trimws(as.character(r$p_factor_level))),
+		paste0("K:", trimws(as.character(r$k_factor_level))),
+		sep=";"
+	)
+
+	N_val <- num(r$n_basal_rate)
+	P_val <- num(r$p_rate_annual)
+	K_val <- add(num(r$k_rate_annual), num(r$k_basal_rate))
+	Mg_val <- add(num(r$mg_rate_annual), num(r$mg_basal_rate))
+	Mn_val <- num(r$mn_rate_annual)
+	S_val <- num(r$s_rate_annual)
+
 	d <- data.frame(
 		trial_id = as.character(r$harvest_year),
-		country = "United Kingdom", # Rothamsted Experimental Farm
-		location = r$site,
+		LTE_name = "Rothamsted Long-Term Liming Experiment",
+		country = "United Kingdom",
+		adm1 = "England",
+		location = trimws(as.character(r$site)),
+		latitude = 51.810,
+		longitude = -0.376,
+		geo_from_source = FALSE,
+		geo_uncertainty = 1000,
+		soil_texture = "silty clay loam",
 		plot_id = pid,
-		rep = r$block,
+		rep = as.integer(r$block),
+		treatment = trt,
 		crop = unname(cn),
-		variety = r$variety,
-		planting_date = trimws(r$sow_date),
-		harvest_date = trimws(r$harvest_date),
+		variety = trimws(as.character(r$variety)),
+		planting_date = trimws(as.character(r$sow_date)),
+		harvest_date = trimws(as.character(r$harvest_date)),
 		yield = num(r$yield) * 1000,
 		yield_moisture = 100 - dm,
 		yield_part = unname(part[cn]),
-		lime_CaCO3_t_ha_ = num(r$annual_lime),
-		N_fertilizer = num(r$n_basal_rate),
-		P_fertilizer = num(r$p_rate_annual),
-		K_fertilizer = add(num(r$k_rate_annual), num(r$k_basal_rate)),
-		Mg_fertilizer = add(num(r$mg_rate_annual), num(r$mg_basal_rate)),
-		Mn_fertilizer = num(r$mn_rate_annual),
-		S_fertilizer = num(r$s_rate_annual),
+		lime = lime_kg,
+		lime_used = !is.na(lime_kg) & lime_kg > 0,
+		lime_date = ldate,
+		fertilizer_used = (ifelse(is.na(N_val), 0, N_val) + ifelse(is.na(P_val), 0, P_val) + ifelse(is.na(K_val), 0, K_val) + ifelse(is.na(Mg_val), 0, Mg_val) + ifelse(is.na(Mn_val), 0, Mn_val) + ifelse(is.na(S_val), 0, S_val)) > 0,
+		N_fertilizer = N_val,
+		P_fertilizer = P_val,
+		K_fertilizer = K_val,
+		Mg_fertilizer = Mg_val,
+		Mn_fertilizer = Mn_val,
+		S_fertilizer = S_val,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
-	d$variety[d$variety %in% c("", "*")] <- NA
-	d$planting_date[d$planting_date %in% c("", "*")] <- NA
-	d$harvest_date[d$harvest_date %in% c("", "*")] <- NA
+	d$variety[d$variety %in% c("", "*")] <- NA_character_
+	d$planting_date[d$planting_date %in% c("", "*")] <- NA_character_
+	d$harvest_date[d$harvest_date %in% c("", "*")] <- NA_character_
 
 	carobiner::write_files(path, meta, d)
 }

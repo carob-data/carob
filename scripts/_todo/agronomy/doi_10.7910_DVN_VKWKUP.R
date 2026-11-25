@@ -724,8 +724,8 @@ The dataset reported here was created to analyze the value of physiological trai
 		response_vars = "yield;dmy_total",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 1.5
 	)
 
@@ -801,11 +801,12 @@ The dataset reported here was created to analyze the value of physiological trai
 		latitude = wm$latitude,
 		elevation = wm$elevation,
 		date = as.character(r5$W_DATE),
-		srad = as.numeric(r5$SRAD),
+		# ICASA SRAD is MJ/m2/d -> terminag srad kJ/m2/d; VPRSD is kPa -> terminag vapr hPa
+		srad = as.numeric(r5$SRAD) * 1000,
 		tmax = as.numeric(r5$TMAX),
 		tmin = as.numeric(r5$TMIN),
 		prec = as.numeric(r5$RAIN),
-		vapr = as.numeric(r5$VPRSD),
+		vapr = as.numeric(r5$VPRSD) * 10,
 		# km/d to m/s
 		wspd = as.numeric(r5$WIND) / 86.4
 	)

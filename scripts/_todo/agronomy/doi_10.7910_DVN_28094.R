@@ -13,8 +13,8 @@
 #   table (one row per plot x soil layer), linked by record_id.
 
 ## ISSUES
-# No coordinates in data or paper. Georeference IRRI, Los Banos (Laguna, Philippines) and ARS Paramakudi
-#   (Ramanathapuram, Tamil Nadu, India).
+# No coordinates in data or paper; georeferenced to IRRI, Los Banos (14.1675, 121.2536, Laguna, Philippines) and ARS Paramakudi
+#   (9.5469, 78.5906, Ramanathapuram, Tamil Nadu, India; geo_from_source = FALSE).
 # Fertilizer: "FERTILIZER APPLIED = yes" but no rates; N/P/K left out.
 # Yield moisture: description says "with a moisture..." (truncated in the sheet); 14% assumed by IRRI convention?
 #   Not set; verify. 2008DS yields are very low (mostly < 1.5 t/ha), check units.
@@ -85,8 +85,8 @@ The rapid progress in genotyping of rice must be matched by advances in phenotyp
 		response_vars = "yield;dmy_residue;harvest_index;flowering_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 52,
 		carob_effort = 1
 	)
 
@@ -193,7 +193,11 @@ The rapid progress in genotyping of rice must be matched by advances in phenotyp
 	irri <- grepl("IRRI", d$trial_id)
 	d$country <- ifelse(irri, "Philippines", "India")
 	d$adm1 <- ifelse(irri, "Laguna", "Tamil Nadu")
+	d$adm2 <- ifelse(irri, "Los Baños", "Ramanathapuram")
 	d$location <- ifelse(irri, "IRRI, Los Banos", "ARS Paramakudi")
+	d$latitude <- ifelse(irri, 14.1675, 9.5469)
+	d$longitude <- ifelse(irri, 121.2536, 78.5906)
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d, long=dlong)
 }

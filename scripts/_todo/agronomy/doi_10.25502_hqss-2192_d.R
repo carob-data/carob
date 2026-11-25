@@ -15,9 +15,9 @@
 # Eight grain weights are above 100 kg (maximum 2694) and yields from those rows are not credible.
 # sector_ward mixes region names (Northern, Upper East, Upper West) and local codes. It was not stored as adm3. District spellings are not reconciled to GADM.
 # plot_treatment contains many free-text codes and Excel #NAME? values (set to NA).
-# Season value 2012 is not in the terminag season list.
+# Season value "2012" is a year rather than a terminag season name and was omitted (planting_date holds the year).
 # Yield moisture and irrigation were not recorded.
-# write_files: missing carob_contributor, yield_moisture, irrigated; variety, inoculated and fertilizer_type have NA; yield up to 1347000 and P_fertilizer up to about 577; invalid season 2012; 16 harvests within 45 days of planting; high cowpea and soybean yields; duplicate coordinates; NA yield, latitude, longitude.
+# write_files: missing carob_contributor, yield_moisture, irrigated; variety, inoculated and fertilizer_type have NA; yield up to 1347000 and P_fertilizer up to about 577; 16 harvests within 45 days of planting; high cowpea and soybean yields; duplicate coordinates; NA yield, latitude, longitude.
 
 ## NOT PROCESSED
 # a_family_composition.csv, a_livestock.csv: household composition and livestock.
@@ -58,8 +58,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 58,
 		carob_effort = 1
 	)
 
@@ -104,7 +104,6 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	loc[which(loc == "")] <- NA
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
 		country = "Ghana",
 		adm2 = carobiner::fix_name(r2$district, "title"),
 		location = loc,

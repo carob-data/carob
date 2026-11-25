@@ -9,11 +9,11 @@
 # Manure mapped to farmyard manure; Control organic fertilizer mapped to none. Grain was shelled, yield_part seed.
 
 ## ISSUES
-# GPS columns are empty. sector_ward is empty. Georeference villages in Kole (Aparangwen, Apongimalo, Apumi, Omoladyang, Omoladyang Dani).
-# Season code 2013a is not in the terminag season list.
+# GPS columns are empty. sector_ward is empty. Kole District / Bala sub-county coordinates (2.2667, 32.7833; geo_from_source = FALSE) used.
+# Season code 2013a mapped to terminag "first".
 # Yield moisture and irrigation were not recorded.
 # One planting and harvest date per farm, applied to every plot. Some fertilizer years are not real dates (values such as 503) and are dropped by the date check.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; invalid season 2013a.
+# write_files: missing carob_contributor, yield_moisture, irrigated; duplicate coordinates.
 
 ## NOT PROCESSED
 # a_family_composition.csv, a_livestock.csv, a_technician.csv, a_inputs.csv (no rows): household and enumerator fields.
@@ -55,8 +55,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.6
 	)
 
@@ -97,10 +97,12 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	loc[which(loc == "")] <- NA
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = "first",
 		country = "Uganda",
 		adm2 = carobiner::fix_name(r2$district, "title"),
 		location = loc,
+		latitude = 2.2667,
+		longitude = 32.7833,
 		elevation = r2$gps_altitude,
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)

@@ -47,16 +47,16 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=3,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "SRFSI zero-tillage maize weed management",
+		project = "SRFSI",
 		design = "split plot",
 		data_type = "experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.9
 	)
 
 	num <- function(x) {
@@ -274,21 +274,35 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 		"6-Rabi maize 2015-16-herbicide trial-RARS-Sunsari.xlsx",
 		"6-Rabi maize 2016-17-herbicide trial-SRFSI-RARST-Sunsari.xlsx"
 	)]
+	station_info <- function(bn) {
+		if (grepl("Rangpur", bn, ignore.case=TRUE)) return(list(country="Bangladesh", adm1="Rangpur", adm2="Rangpur", location="OFRD-Rangpur", lat=25.746, lon=89.252))
+		if (grepl("Rajshahi", bn, ignore.case=TRUE)) return(list(country="Bangladesh", adm1="Rajshahi", adm2="Rajshahi", location="RWRC-Rajshahi", lat=24.374, lon=88.604))
+		if (grepl("Dinajpur", bn, ignore.case=TRUE)) return(list(country="Bangladesh", adm1="Rangpur", adm2="Dinajpur", location="WRC-Dinajpur", lat=25.741, lon=88.672))
+		if (grepl("behar", bn, ignore.case=TRUE)) return(list(country="India", adm1="West Bengal", adm2="Cooch Behar", location="UBKV-Pundibari", lat=26.403, lon=89.386))
+		if (grepl("BAU-Bihar", bn, ignore.case=TRUE)) return(list(country="India", adm1="Bihar", adm2="Bhagalpur", location="BAU-Sabour", lat=25.261, lon=87.045))
+		if (grepl("Sunsari", bn, ignore.case=TRUE)) return(list(country="Nepal", adm1="Koshi", adm2="Sunsari", location="RARS-Tarahara", lat=26.701, lon=87.277))
+		list(country=NA_character_, adm1=NA_character_, adm2=NA_character_, location=NA_character_, lat=NA_real_, lon=NA_real_)
+	}
+
 	parts <- list()
 	for (f in ff) {
 		hv <- fieldbook(f)
+		if (is.null(hv)) hv <- rangpur(f)
 		if (!is.null(hv)) {
+			st <- station_info(basename(f))
+			hv$country <- st$country
+			hv$adm1 <- st$adm1
+			hv$adm2 <- st$adm2
+			miss_loc <- is.na(hv$location) | !nzchar(hv$location)
+			hv$location[miss_loc] <- st$location
+			hv$latitude <- st$lat
+			hv$longitude <- st$lon
 			parts[[length(parts) + 1]] <- hv
-		} else {
-			st <- rangpur(f)
-			if (!is.null(st)) parts[[length(parts) + 1]] <- st
 		}
 	}
 	d <- do.call(rbind, parts)
 	okloc <- !is.na(d$location) & nzchar(d$location)
 	d$location[okloc] <- carobiner::fix_name(d$location[okloc], "title")
-	okadm <- !is.na(d$adm2) & nzchar(d$adm2)
-	d$adm2[okadm] <- carobiner::fix_name(d$adm2[okadm], "title")
 	d <- d[!is.na(d$treatment) & nzchar(d$treatment), ]
 	d$trial_id <- paste(d$location, d$year, sep="_")
 	d$plot_id <- paste(d$trial_id, d$rep, d$plot_id, d$treatment, sep="_")
@@ -299,7 +313,6 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 	d$stress <- "weeds"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
 	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)

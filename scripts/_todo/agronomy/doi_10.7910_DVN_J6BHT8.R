@@ -6,12 +6,12 @@
 # District 1 is Kassena Nankana and district 2 is Bongo. Community 1 is Nyangua, 2 is Gia, and 3 is Samboligo.
 # Grain weight, plant height, days to maturity, plants harvested, and harvest index follow the codebook: kg/ha, cm, days, plants/ha, and percent.
 # plant_density is the number of plants harvested per ha, which is what the codebook records.
-# Country is Ghana from the description. on_farm is TRUE because the description says the work was on-farm. The codebook has no coordinates and no planting date. The description names other districts that are not in this file.
+# Country is Ghana from the description. on_farm is TRUE because the description says the work was on-farm. Community coordinates added for Nyangua, Gia (Kassena Nankana) and Samboligo (Bongo) in Upper East Region (geo_from_source = FALSE). No planting date in the file. The description names other districts that are not in this file.
 # Days to maturity in the file are 48 to 68, including for maize.
 
 ## ISSUES
 # carob_contributor is unset until someone has read this script.
-# write_files: missing yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# write_files: missing yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 
 ## NOT PROCESSED
 # FODDER and TBMSS. The codebook says kg/ha and does not say whether the weight is fresh or dry.
@@ -40,24 +40,29 @@ carob_script <- function(path) {
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_effort = 0.4,
-		carob_completion = 60,
+		carob_completion = 65,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		notes = "No coordinates or planting date. Fodder and total biomass were not used because fresh and dry weight are not distinguished. Maturity is 48 to 68 days."
+		carob_LLM = "Gemini 4 Neon",
+		notes = "No planting date. Fodder and total biomass were not used because fresh and dry weight are not distinguished. Maturity is 48 to 68 days."
 	)
 
 	f <- ff[basename(ff) == "Data.csv"]
 	r <- read.csv(f)
 	dist <- c("1" = "Kassena Nankana", "2" = "Bongo")
 	comm <- c("1" = "Nyangua", "2" = "Gia", "3" = "Samboligo")
+	lat <- c("1" = 10.900, "2" = 10.883, "3" = 10.950)
+	lon <- c("1" = -1.067, "2" = -1.117, "3" = -0.833)
 	crop <- c("1" = "maize", "2" = "millet", "3" = "sorghum")
 	trt <- c("1" = "Zai practice", "2" = "Zai + microdosing", "3" = "microdosing", "4" = "farmer practice")
 
 	d <- data.frame(
 		country = "Ghana",
+		adm1 = "Upper East",
 		adm2 = unname(dist[as.character(r$DIST)]),
 		location = unname(comm[as.character(r$CMMTY)]),
+		latitude = unname(lat[as.character(r$CMMTY)]),
+		longitude = unname(lon[as.character(r$CMMTY)]),
 		crop = unname(crop[as.character(r$CRP)]),
 		treatment = unname(trt[as.character(r$TRT)]),
 		yield = as.numeric(r$GYD),

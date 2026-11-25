@@ -10,15 +10,15 @@
 # Organic amount is kg on the plot. compost+farmyard spellings mapped to terminag and joined with "; ".
 
 ## ISSUES
-# GPS columns are empty. Georeference villages in Kayonza and Kabarondo (sectors Kabarondo, Nyamirama, Rukara, Rwinkwavu).
+# GPS columns are empty; sector-level coordinates added for Kabarondo, Nyamirama, Rukara and Rwinkwavu in Kayonza District (geo_from_source = FALSE).
 # NPK grade unknown.
 # No harvest activity for soybean or maize, so those harvest dates are NA. Bean harvest uses "Date of harvest of beans" and "Date of harvest(beans)".
 # Cassava harvest can be more than a year after planting.
-# Season codes 2012A and 2012B are not in the terminag season list.
-# OM type "synthetic" is not an organic fertilizer and was left as recorded.
+# Season codes 2012A and 2012B mapped to terminag "first" and "second".
+# OM type "synthetic" is not an organic fertilizer and was mapped to "none".
 # Area column is not named m2.
 # Yield moisture and irrigation were not recorded. Plots with no harvest row have yield NA; yield_part is seed for bean and soybean on those rows.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; variety and fertilizer_type have NA; yield 0 to 200000 and row_spacing 40 to 200 out of bounds; invalid season 2012A/2012B; OM_type "synthetic"; 14 harvests within 45 days of planting and 138 more than 366 days after; high cassava and common bean yields; NA yield.
+# write_files: missing carob_contributor, yield_moisture, irrigated; variety and fertilizer_type have NA; yield 0 to 200000 and row_spacing 40 to 200 out of bounds; 14 harvests within 45 days of planting and 138 more than 366 days after; high cassava and common bean yields; duplicate coordinates; NA yield.
 
 ## NOT PROCESSED
 # a_farmer_group.csv: group name and purpose.
@@ -59,8 +59,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -85,7 +85,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	clean_om <- function(x) {
 		x <- tolower(trimws(x))
-		x[is.na(x)] <- "none"
+		x[is.na(x) | x == "synthetic"] <- "none"
 		x <- gsub("faramyard", "farmyard", x)
 		x <- gsub("farmyatd", "farmyard", x)
 		x <- gsub("farmyard  manure", "farmyard manure", x)
@@ -111,13 +111,25 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	loc <- carobiner::fix_name(r2$vilage, "title")
 	loc[which(loc == "")] <- NA
+	adm3 <- carobiner::fix_name(r2$sector_ward, "title")
+	geo <- data.frame(
+		adm3 = c("Kabarondo", "Nyamirama", "Rukara", "Rwinkwavu"),
+		latitude = c(-2.0167, -1.9500, -1.8000, -1.9667),
+		longitude = c(30.5667, 30.5333, 30.5000, 30.6167)
+	)
+	gi <- match(adm3, geo$adm3)
+	szn <- toupper(trimws(as.character(r2$season)))
+	szn <- ifelse(grepl("A$", szn), "first", ifelse(grepl("B$", szn), "second", NA_character_))
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = szn,
 		country = "Rwanda",
-		adm2 = carobiner::fix_name(r2$district, "title"),
-		adm3 = carobiner::fix_name(r2$sector_ward, "title"),
+		adm1 = "Eastern",
+		adm2 = "Kayonza",
+		adm3 = adm3,
 		location = loc,
+		latitude = ifelse(is.na(gi), -1.8550, geo$latitude[gi]),
+		longitude = ifelse(is.na(gi), 30.5200, geo$longitude[gi]),
 		elevation = r2$gps_altitude,
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)
@@ -229,9 +241,12 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	leg <- data.frame(
 		trial_id = d$trial_id, plot_id = d$plot_id, season = d$season,
-		country = d$country, adm2 = d$adm2, adm3 = d$adm3, location = d$location,
+		country = d$country, adm1 = d$adm1, adm2 = d$adm2, adm3 = d$adm3, location = d$location,
+		latitude = d$latitude, longitude = d$longitude,
 		elevation = d$elevation, farmer_gender = d$farmer_gender,
-		crop = d$crop, variety_type = d$variety_type, variety = d$variety,
+		crop = d$crop, intercropped = !is.na(d$crop_2),
+		intercrops = ifelse(!is.na(d$crop_2), d$crop_2, "none"),
+		variety_type = d$variety_type, variety = d$variety,
 		previous_crop = d$previous_crop, inoculated = d$inoculated,
 		OM_type = d$OM_type, OM_kg = d$OM_kg, fertilizer_type = d$fertilizer_type, fert_kg = d$fert_kg,
 		plot_area = d$plot_area, yield = d$yield, yield_part = d$yield_part,
@@ -242,6 +257,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	leg$harvest_date[which(leg$crop != "common bean")] <- NA
 	comp <- leg
 	comp$crop <- d$crop_2
+	comp$intercropped <- TRUE
+	comp$intercrops <- d$crop
 	comp$variety_type <- NA
 	comp$variety <- d$variety_2
 	comp$plot_area <- d$plot_area_2

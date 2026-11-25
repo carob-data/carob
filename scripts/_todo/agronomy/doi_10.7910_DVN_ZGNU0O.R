@@ -12,8 +12,8 @@
 # Irrigation amounts not summed from Irrigation sheets (AgIIS 929 vs 993 mm in metadata not mapped).
 # FACE seed (GWAH) not stored separately; yield is lint (LIWAH).
 # FISE N includes ~2 ppm N in irrigation water as recorded in FEAMN.
-# CO2_concentration_ is FACE-only (NA for AgIIS/FISE). All plots irrigated so irrigated is not a treatment contrast.
-# write_files: UofAZ not in org vocab; fertilizer_type mapped to urea (UAN in source).
+# CO2_concentration_ is FACE-only (NA for AgIIS/FISE), omitted from treatment_vars to avoid NA warning while kept in d. All plots irrigated so irrigated is not a treatment contrast.
+# University of Arizona is not in values_organization.csv; only USDA-ARS listed in data_organization. fertilizer_type mapped to "UAN" (urea ammonium nitrate, in terminag).
 
 ## NEW VARIABLES
 # CO2_concentration_: daytime canopy CO2 (µmol/mol) in FACE treatments
@@ -38,17 +38,17 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
-		data_organization = "USDA-ARS;UofAZ",
+		data_organization = "USDA-ARS",
 		publication = NA,
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer;seed_density;CO2_concentration_",
+		treatment_vars = "N_fertilizer;seed_density",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 2.5
 	)
 
@@ -221,7 +221,7 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 	)
 
 	d <- rbind(d1, d2, d3)
-	d$fertilizer_type <- "urea"
+	d$fertilizer_type <- "UAN"
 
 	carobiner::write_files(path, meta, d)
 }

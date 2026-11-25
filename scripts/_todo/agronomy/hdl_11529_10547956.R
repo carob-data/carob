@@ -43,16 +43,16 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Madhu
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Long-term trial, Madhubani, Bihar",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -138,7 +138,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Madhu
 		crop[grepl("chick", crop)] <- "chickpea"
 		crop[grepl("potato", crop)] <- "potato"
 		part <- rep("grain", length(crop))
-		part[crop %in% c("lentil", "chickpea", "wheat")] <- "seed"
+		part[crop %in% c("lentil", "chickpea")] <- "seed"
 		part[crop == "potato"] <- "tubers"
 		hi <- take(r2, ig, "HI")
 		hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
@@ -151,6 +151,9 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Madhu
 			adm1 = adm1,
 			adm2 = carobiner::fix_name(adm2, "title"),
 			location = carobiner::fix_name(r1$Node, "title"),
+			latitude = 26.354,
+			longitude = 86.071,
+			season = "kharif",
 			trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
 			plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 			treatment = r1$Tmnt,

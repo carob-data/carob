@@ -69,12 +69,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		project = "PJ-NA2910",
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "herbicide_product;weeding_times;herbicide_timing",
+		treatment_vars = "herbicide_product;weeding_times",
 		response_vars = "yield;fwy_stems;plant_density;stem_density",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 74,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
 		carob_effort = 0.8
 	)
 
@@ -140,6 +140,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		longitude = as.numeric(r$Long),
 		geo_from_source = TRUE,
 		crop = "cassava",
+		intercropped = inter,
 		intercrops = ifelse(inter, "maize", "none"),
 		yield = num(r$RootYldtha) * 1000,
 		yield_part = "roots",

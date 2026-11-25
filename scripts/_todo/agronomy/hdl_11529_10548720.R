@@ -7,9 +7,10 @@
 # The potassium rate in that sheet is a dash, stored as 0.
 # NDVI columns are repeated dates and are kept in the long table. One NDVI header date is before planting.
 
+# The title names Yucatán and the sheet names Muna; country is Mexico, adm1 is Yucatán, and approximate coordinates for Muna are imputed with geo_from_source = FALSE.
+
 ## ISSUES
-# write_files: missing variables: country, latitude, longitude, harvest_date.
-# The workbook names the site Muna and does not give a country or coordinates. geographicCoverage is empty.
+# Coordinates are approximate for Muna, Yucatán (geo_from_source = FALSE).
 # One NDVI column is dated before the planting date recorded in the variable description.
 ## NOT PROCESSED
 # Map sheet plot layout.
@@ -38,8 +39,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
 		carob_effort = 0.4
 	)
 
@@ -69,7 +70,11 @@ This experiments were established with different rates of nitrogen in order to g
 
 	d <- data.frame(
 		crop = "maize",
+		country = "Mexico",
+		adm1 = "Yucatán",
 		location = "Muna",
+		latitude = 20.486,
+		longitude = -89.713,
 		plot_id = as.character(r[[1]]),
 		rep = as.integer(r[[2]]),
 		treatment = as.character(r[[4]]),

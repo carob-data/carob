@@ -2,34 +2,29 @@
 # license: GPL (>=3)
 
 ## NOTES
-# La Molina, Lima, Peru. Coordinates are the dataset bounding box (southLatitude -12.076289, westLongitude -76.948417).
-# TY is t/ha (dictionary). Stored as kg/ha. Fresh tuber yield; moisture is not stated.
-# WRIT6w and WRIT8w are water-restriction initiation at 6 and 8 weeks after planting (Read me sheet). PRD25, PRD50, DI50, and FI are the irrigation regimes.
-# RWC, chlorophyll (SPAD), and osmotic potential are repeated on days after treatment (Read me: DAT). They stay in the long table.
-# Weather sheet GRad is MJ m-2 d-1. Stored as srad in kJ m-2.
+# Associated publication found by title/author match: Yactayo et al. (2013), Agricultural Water Management 123:65-72 (doi:10.1016/j.agwat.2013.03.009).
+# La Molina, Lima, Peru. Coordinates (-12.076289, -76.948417) come from the CIP Dataverse geographic metadata.
+# TY is fresh tuber yield in t/ha (converted to kg/ha * 1000). WUE (kg fresh tuber per m3 water) is mapped to terminag WP_irrigation.
+# CWD (m3/ha) is cumulative irrigation water depth applied (verified by TY * 1000 / CWD = WUE and arid La Molina rainfall ~0 mm); CWD / 10 converts m3/ha to irrigation_amount in mm.
+# WRIT6w and WRIT8w are water-restriction initiation at 6 weeks (42 DAP) and 8 weeks (56 DAP) after planting (note: the Read me sheet accidentally swaps 6w/8w text relative to the abstract and paper; abstract/paper definitions are used).
+# RWC, SPAD, and leaflet osmotic potential (OP) were measured repeatedly by days after treatment (DAT); stored in long table linked via record_id with DAP = 42 + DAT (WRIT6w) or 56 + DAT (WRIT8w).
+# Weather sheet GRad is MJ m-2 d-1, converted to srad in kJ m-2 (* 1000).
+# Exact planting/harvest days are not in the workbook; collection window in Dataverse metadata is 2009-06-01 to 2009-11-30, so planting_date = "2009-06" and harvest_date = "2009-11".
 
 ## ISSUES
-# CWD is m3/ha. The dictionary does not say it is applied irrigation, so it is not converted to irrigation_amount.
-# No planting or harvest date in the workbook. Collection window in the metadata is 2009-06-01 to 2009-11-30.
-# No fertilizer rates.
-# The site is not labeled on-farm. La Molina is treated as a station (on_farm FALSE).
-# Long rows use dat_ (days after treatment). That name is not in the date/DAP/depth list, so the time check remains.
-# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: unknown variable irrigation_timing_ (timing?); unknown variables irrigation_regime_, wue_, cwd_, dat_, op_, rwc_.
-# write_files: time/depth: no time/depth variables in long records?
+# No fertilizer rates or yield moisture reported in the workbook.
+# write_files: missing carob_contributor, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer; unknown variables: irrigation_timing_, irrigation_regime_, dat_, rwc_, op_.
 
 ## NOT PROCESSED
-# Dictionary_OA_Yactayo.xlsx: variable definitions, used to read units.
-# WUE is kept as wue_. Plot-level water-use efficiency, kg fresh tuber per m3.
+# Dictionary_OA_Yactayo.xlsx and Read me sheet: variable definitions used to verify units and treatments.
 
 ## NEW VARIABLES
-# irrigation_timing_: water-restriction initiation code (WRIT6w, WRIT8w)
-# irrigation_regime_: PRD25, PRD50, DI50, or FI
-# wue_: water use efficiency, kg/m3
-# cwd_: recorded CWD, m3/ha
-# dat_: days after treatment
-# rwc_: relative water content, percent
-# op_: leaflet osmotic potential, MPa
+# irrigation_timing_: water-restriction initiation timing (WRIT6w = 6 weeks after planting, WRIT8w = 8 weeks after planting).
+# irrigation_regime_: irrigation treatment (FI = full irrigation, DI50 = 50% deficit, PRD50 = 50% partial root-zone drying, PRD25 = 25% PRD).
+# dat_: days after initiation of water-restriction treatment.
+# rwc_: leaf relative water content (%).
+# op_: leaflet osmotic potential (MPa).
+
 
 carob_script <- function(path) {
 
@@ -45,18 +40,18 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=5,
 		data_organization = "CIP",
-		publication = NA,
+		publication = "doi:10.1016/j.agwat.2013.03.009",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "irrigation_timing_;irrigation_regime_",
-		response_vars = "yield",
+		response_vars = "yield;WP_irrigation;SPAD",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.55
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Datos Yactayo et al_2013 (PRD).xlsx"]
@@ -95,10 +90,12 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 	cwd <- read_block("CWD")
 
 	d <- data.frame(
+		record_id = seq_len(nrow(ty)),
 		crop = "potato",
 		irrigation_timing_ = trimws(as.character(ty$T)),
 		irrigation_regime_ = trimws(as.character(ty$TRT)),
 		block_id = trimws(as.character(ty$B)),
+		rep = as.integer(sub("^B", "", trimws(as.character(ty$B)))),
 		yield = as.numeric(ty[["TY (t ha-1)"]]) * 1000,
 		yield_part = "tubers",
 		yield_isfresh = TRUE,
@@ -110,6 +107,8 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 		geo_from_source = TRUE,
 		geo_source = "Dataverse bounding box",
 		trial_id = "LaMolina_2009",
+		planting_date = "2009-06",
+		harvest_date = "2009-11",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		irrigated = TRUE
@@ -120,8 +119,9 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 	wue_key <- paste(trimws(as.character(wue$T)), trimws(as.character(wue$B)), trimws(as.character(wue$TRT)))
 	cwd_key <- paste(trimws(as.character(cwd$T)), trimws(as.character(cwd$B)), trimws(as.character(cwd$TRT)))
 	key <- paste(d$irrigation_timing_, d$block_id, d$irrigation_regime_)
-	d$wue_ <- as.numeric(wue[["WUE (Kg m-3)"]][match(key, wue_key)])
-	d$cwd_ <- as.numeric(cwd[["CWD (m3 ha−1)"]][match(key, cwd_key)])
+	d$WP_irrigation <- as.numeric(wue[["WUE (Kg m-3)"]][match(key, wue_key)])
+	# CWD (m3/ha) / 10 = mm cumulative irrigation applied
+	d$irrigation_amount <- as.numeric(cwd[["CWD (m3 ha\u22121)"]][match(key, cwd_key)]) / 10
 
 	phys_long <- function(sheet, value_name) {
 		out <- list()
@@ -130,9 +130,12 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 			dats <- setdiff(names(r1), id)
 			dats <- dats[grepl("DAT$", dats, ignore.case=TRUE)]
 			for (j in dats) {
+				timing <- trimws(as.character(r1$T))
+				dat_val <- as.integer(sub("DAT$", "", j, ignore.case=TRUE))
 				piece <- data.frame(
-					plot_id = paste(trimws(as.character(r1$T)), trimws(as.character(r1$TRT)), trimws(as.character(r1$B)), sep="_"),
-					dat_ = as.integer(sub("DAT$", "", j, ignore.case=TRUE))
+					plot_id = paste(timing, trimws(as.character(r1$TRT)), trimws(as.character(r1$B)), sep="_"),
+					DAP = ifelse(timing == "WRIT6w", 42L, 56L) + dat_val,
+					dat_ = dat_val
 				)
 				piece[[value_name]] <- as.numeric(r1[[j]])
 				out[[length(out) + 1]] <- piece
@@ -144,18 +147,19 @@ Partial root-zone drying (PRD) is an irrigation technique which has shown increa
 	rwc <- phys_long("RWC", "rwc_")
 	sp <- phys_long("Chl SPAD", "SPAD")
 	op <- phys_long("OP", "op_")
-	dlong <- merge(rwc, sp, by=c("plot_id", "dat_"), all=TRUE)
-	dlong <- merge(dlong, op, by=c("plot_id", "dat_"), all=TRUE)
+	dlong <- merge(rwc, sp, by=c("plot_id", "DAP", "dat_"), all=TRUE)
+	dlong <- merge(dlong, op, by=c("plot_id", "DAP", "dat_"), all=TRUE)
 	dlong <- dlong[dlong$plot_id %in% d$plot_id, ]
-	dlong$order <- match(dlong$dat_, sort(unique(dlong$dat_)))
-	dlong <- dlong[order(dlong$plot_id, dlong$order), ]
+	dlong$record_id <- d$record_id[match(dlong$plot_id, d$plot_id)]
+	dlong$plot_id <- NULL
+	dlong <- dlong[order(dlong$record_id, dlong$DAP), ]
 	rownames(dlong) <- NULL
 
 	r2 <- carobiner::read.excel(f, sheet="Weather data")
 	wth <- data.frame(
 		date = as.character(as.Date(r2$Date)),
-		tmax = as.numeric(r2[["T max(°C)"]]),
-		tmin = as.numeric(r2[["T min (°C)"]]),
+		tmax = as.numeric(r2[["T max(\u00b0C)"]]),
+		tmin = as.numeric(r2[["T min (\u00b0C)"]]),
 		srad = as.numeric(r2[["GRad (MJ*m2)"]]) * 1000,
 		prec = as.numeric(r2[["PP (mm)"]]),
 		rhum = as.numeric(r2[["RH (%)"]]),

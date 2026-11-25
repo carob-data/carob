@@ -46,16 +46,16 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=2,
 		data_organization = "CIMMYT;NARC",
 		publication = NA,
-		project = "Alternative cropping systems trial, Dhanusha",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.7
 	)
 
 	to_date <- function(x) {
@@ -92,7 +92,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		out[grepl("mung", x) & grepl("wheat", x)] <- "rice;wheat;mung bean"
 		out[grepl("mung", x) & grepl("lentil", x)] <- "rice;lentil;mung bean"
 		out[grepl("spinach", x)] <- "rice;maize_spinach"
-		out[grepl("bean", x) & !grepl("mung", x)] <- "rice;maize_bean"
+		out[grepl("bean", x) & !grepl("mung", x)] <- "rice;maize_common bean"
 		left <- is.na(out)
 		out[left & grepl("mustard", x)] <- "rice;mustard"
 		out[left & grepl("lentil", x)] <- "rice;lentil"
@@ -139,7 +139,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		prep[grepl("CT", tmnt)] <- "conventional"
 
 		inter <- rep(NA_character_, length(tmnt))
-		inter[grepl("Bean", tmnt) & !grepl("mung", tmnt, ignore.case=TRUE)] <- "bean"
+		inter[grepl("Bean", tmnt) & !grepl("mung", tmnt, ignore.case=TRUE)] <- "common bean"
 		inter[grepl("Spinach", tmnt)] <- "spinach"
 
 		seed_nm <- grep("^Date.of.seeding", names(r1), value=TRUE)
@@ -179,7 +179,12 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		variety[variety %in% c("", "-", "NA", "0")] <- NA
 
 		data.frame(
+			country = "Nepal",
+			adm1 = "Madhesh",
+			adm2 = "Dhanusha",
 			location = carobiner::fix_name(r1$Node, "title"),
+			latitude = 26.820,
+			longitude = 85.970,
 			season = "rabi",
 			trial_id = paste(r1$Node, r1$Year),
 			plot_id = paste(r1$Site.No, tmnt, r1$seq),

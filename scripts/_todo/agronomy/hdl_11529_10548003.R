@@ -36,16 +36,16 @@ Farmer participatory on-farm intercropping of leafy vegetables in maize, compare
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Inter-cropping trial, Madhubani, Bihar",
+		project = "SRFSI",
 		design = NA,
-		data_type = "experiment",
+		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.7
 	)
 
 	as_date <- function(x) {
@@ -103,15 +103,25 @@ Farmer participatory on-farm intercropping of leafy vegetables in maize, compare
 	part <- ifelse(crop == "potato", "tubers", "grain")
 	hi <- take(r2, ig, "HI")
 	hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
+	iname <- r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop
+	r4 <- r4[!is.na(r4$Tmnt) & !is.na(iname) & nzchar(trimws(as.character(iname))), ]
+	ic_map <- tolower(trimws(as.character(r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop)))
+	ic_hit <- match(paste(r1$Site.No, r1$Tmnt), paste(r4$Site.No, r4$Tmnt))
+	ic_for_main <- ic_map[ic_hit]
 	d <- data.frame(
 		country = "India",
 		adm1 = "Bihar",
 		adm2 = "Madhubani",
 		location = r1$Node,
+		latitude = 26.354,
+		longitude = 86.071,
+		season = "rabi",
 		trial_id = paste(r1$Year, r1$Node, r1$Trial.Code),
 		plot_id = paste(r1$Site.No, r1$Tmnt, r1$seq),
 		treatment = r1$Tmnt,
 		crop = crop,
+		intercropped = !is.na(ic_for_main),
+		intercrops = ifelse(is.na(ic_for_main), "none", ic_for_main),
 		variety = r1$Variety,
 		yield_part = part,
 		planting_date = as_date(r1$Date.of.seeding.dd.mm.yy),
@@ -134,22 +144,27 @@ Farmer participatory on-farm intercropping of leafy vegetables in maize, compare
 		geo_from_source = FALSE
 	)
 
-	iname <- r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop
-	r4 <- r4[!is.na(r4$Tmnt) & !is.na(iname) & nzchar(trimws(as.character(iname))), ]
 	if (nrow(r4) > 0) {
 		icn <- tolower(trimws(as.character(r4$Crop.information.and.phenology.of.inter.crop_Name.of.Inter.Crop)))
 		ihd <- as_date(r4$Date.of.harvest.dd.mm.yy)
 		ihd[!is.na(ihd) & ihd > "2018-06-05"] <- NA_character_
-		loc <- r1$Node[match(paste(r4$Site.No, r4$Tmnt), paste(r1$Site.No, r1$Tmnt))]
+		im <- match(paste(r4$Site.No, r4$Tmnt), paste(r1$Site.No, r1$Tmnt))
+		loc <- r1$Node[im]
+		main_c <- crop[im]
 		d2 <- data.frame(
 			country = "India",
 			adm1 = "Bihar",
 			adm2 = "Madhubani",
 			location = loc,
+			latitude = 26.354,
+			longitude = 86.071,
+			season = "rabi",
 			trial_id = paste(r4$Year, "intercrop", r4$Site.No, r4$Tmnt),
 			plot_id = paste(r4$Site.No, r4$Tmnt, "intercrop"),
 			treatment = r4$Tmnt,
 			crop = icn,
+			intercropped = TRUE,
+			intercrops = main_c,
 			variety = r4$Variety,
 			yield_part = "aboveground biomass",
 			planting_date = as_date(r4$Date.of.seeding.dd.mm.yy),

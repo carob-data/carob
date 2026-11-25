@@ -37,13 +37,13 @@ Although multi-location testing is rarely used to assess potential donor lines/l
 		response_vars = "yield;plant_height;flowering_days;harvest_index",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.7
 	)
 
 	f <- ff[basename(ff) == "Drought Donors MASTER all 3 sets agronomic 04072025.xlsx"]
-	r <- carobiner::read.excel(f, sheet = "Drought Donors MASTER", na = c("NF", "Missing", "NA"))
+	r <- carobiner::read.excel(f, sheet = "Drought Donors MASTER", na = c("", "NF", "Missing", "NA"))
 
 	seas <- as.character(r$Season)
 	d <- data.frame(

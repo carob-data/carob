@@ -5,9 +5,9 @@
 # On-farm legume plots in northern Nigeria, 2012. Treatments A-D are control, P fertilizer, inoculant, and P plus inoculant, where that column is filled.
 # The crop column is empty. Crop is taken from the variety name: TGX/TXG soybean, Samnut groundnut, IT and related codes cowpea. Other names, including Local, stay without a crop.
 # Yield uses weight_kg and area_harvested_m2. weight_grain mixes kg and mudu and was not converted.
-# SSP product kg/plot to elemental P with terminag fraction 8.74%. NPK grade is unknown so nutrients stay NA when the amount is positive. "Phosphorus" is kept as recorded, without a guessed product fraction. None or amount 0 is 0 N, P and K. Groundnut yield_part is pod. A blank mineral type is left blank unless the amount is 0.
+# SSP product kg/plot to elemental P with terminag fraction 8.74%. NPK grade is unknown so nutrients stay NA when the amount is positive. "Phosphorus" mapped to "unknown" (no product name). None or amount 0 is 0 N, P and K. Groundnut yield_part is pod. A blank mineral type is left blank unless the amount is 0.
 # Organic amounts with a "ton"/"tons" suffix are multiplied by 1000. SSP entered as an organic fertilizer is not treated as organic matter.
-# GPS zeros set to NA. Soil n.perc treated as percent N (* 10000 = mg/kg). oc.perc is soil_SOC. Mehlich P (p_mehlich.ppm) is stored as soil_P. ecec is stored as soil_CEC.
+# GPS zeros set to NA. Soil n.perc mapped to soil_N_total (* 10000 = mg/kg). oc.perc is soil_SOC. Mehlich P (p_mehlich.ppm) stored as soil_P with soil_P_method = "Mehlich". ecec stored as soil_ECEC; cu/mn/fe/exch_acidity also mapped.
 # LGA names in action_site stored as adm2 (the district column is the word Nigeria).
 
 ## ISSUES
@@ -17,11 +17,11 @@
 # plot_size text such as "10 x 15" was not parsed; harvested m2 was used.
 # Elevation includes values far above 5000 m. They were left as recorded.
 # Wards in sector_ward were not mapped to adm3.
-# Season 2012 is not in the terminag season list. Harvested area of 0 m2 was set to NA so fertilizer rates are not infinite.
+# Season "2012" is a year rather than a terminag season name and was omitted (planting_date holds the year). Harvested area of 0 m2 was set to NA so fertilizer rates are not infinite.
 # A few harvest rows have no match in a_general.csv. Country is Nigeria for those rows. Elevation includes 21611 m.
 # SSP on a small harvested area gives P_fertilizer up to about 2331 kg/ha. That rate was left as calculated.
 # Yield moisture and irrigation were not recorded.
-# write_files: missing carob_contributor, yield_moisture, irrigated; treatment, variety and inoculated have NA; invalid fertilizer_type "phosphorus"; invalid season 2012; elevation and P_fertilizer out of bounds; datespan 7 harvests within 45 days of planting; high cowpea, groundnut and soybean yields; duplicate coordinates; NA yield, latitude, longitude.
+# write_files: missing carob_contributor, yield_moisture, irrigated; treatment, variety and inoculated have NA; elevation and P_fertilizer out of bounds; datespan 7 harvests within 45 days of planting; high cowpea, groundnut and soybean yields; duplicate coordinates; NA yield, latitude, longitude.
 
 ## NOT PROCESSED
 # a_family_composition.csv, a_livestock.csv, a_technician.csv, a_inputs.csv: household, livestock, enumerator, input purchases.
@@ -62,8 +62,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 62,
 		carob_effort = 1
 	)
 
@@ -137,7 +137,6 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	loc[which(loc == "")] <- NA
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
 		country = "Nigeria",
 		adm2 = adm,
 		location = loc,
@@ -161,7 +160,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	ft[which(ft %in% c("none", "nil", "no", "cow dung"))] <- "none"
 	ft[which(ft %in% c("ssp", "sssp"))] <- "SSP"
 	ft[which(ft == "npk")] <- "NPK"
-	ft[which(ft == "phosphorus")] <- "phosphorus"
+	ft[which(ft == "phosphorus")] <- "unknown"
 	om <- tolower(trimws(r1$org_fertilizer_type))
 	om[is.na(om)] <- "none"
 	om[which(om %in% c("ssp", "nil", "none", "no"))] <- "none"
@@ -223,14 +222,19 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		soil_sand = r8$sand.perc,
 		soil_silt = r8$silt.perc,
 		soil_clay = r8$clay.perc,
-		soil_N = r8$n.perc * 10000,
+		soil_N_total = r8$n.perc * 10000,
 		soil_P = r8$p_mehlich.ppm,
+		soil_P_method = ifelse(!is.na(r8$p_mehlich.ppm), "Mehlich", NA_character_),
 		soil_K_exch = r8$k.cmol_per_kg,
 		soil_Ca_exch = r8$ca.cmol_per_kg,
 		soil_Mg_exch = r8$mg.cmol_per_kg,
 		soil_Na_exch = r8$na.cmol_per_kg,
 		soil_Zn = r8$zn.ppm,
-		soil_CEC = r8$ecec.cmol_per_kg
+		soil_Cu = r8$cu.ppm,
+		soil_Mn = r8$mn.ppm,
+		soil_Fe = r8$fe.ppm,
+		soil_ex_acidity = r8$exch_acidity.cmol_per_kg,
+		soil_ECEC = r8$ecec.cmol_per_kg
 	)
 
 	d <- merge(d1, d5h, by = c("trial_id", "plot_id"), all = TRUE)

@@ -10,9 +10,9 @@
 
 ## ISSUES
 # No plot area, so these harvests are not kg/ha.
-# No coordinates. Georeference Githiga, Jijenge and Njothi, Murang'a, Kenya.
+# Exact village coordinates for Githiga, Jijenge and Njothi in Murang'a County are not in the file; Murang'a County centroid (-0.7210, 37.1526) used.
 # N/P/K and irrigation are not reported.
-# write_files: missing yield, longitude, latitude, N/P/K, irrigated, harvest_date.
+# write_files: missing yield, yield_moisture, N/P/K, irrigated, harvest_date; unknown seedling_type_, harvest_week_, harvest_kg_, harvest_bunches_.
 
 ## NOT PROCESSED
 # Farmers_name: empty.
@@ -46,8 +46,8 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 		response_vars = "harvest_kg_;harvest_bunches_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.5,
 		notes = NA
 	)
@@ -102,12 +102,15 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 	long$record_id <- match(long$record_id, ids)
 	d$country <- "Kenya"
 	d$adm1 <- "Murang'a"
+	d$latitude <- -0.7210
+	d$longitude <- 37.1526
+	d$geo_from_source <- FALSE
+	d$geo_uncertainty <- 15000
 	d$trial_id <- paste(d$location, "2023", sep="_")
 	d$planting_date <- "2023"
 	d$yield_part <- "leaves"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
-	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d, long=long)
 }

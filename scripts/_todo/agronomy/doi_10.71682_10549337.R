@@ -2,23 +2,23 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Split nitrogen on wheat at Irapuato and Pénjamo. Country is Mexico in the geographic coverage.
-# The coverage names the cities and does not give coordinates.
-# Cycle 1 is the 2016-2017 season and cycle 2 is 2017-2018. planting_date is the first year of that season.
-# Treatments 2 and 4 are both labelled 33-33-33. Treatment 2 is 210 kg N/ha and treatment 4 is 300 kg N/ha.
-# Treatment 5 nitrogen is the total in Datos sensor for that site, variety, and sensor year (2017 for cycle 1, 2018 for cycle 2).
-# RA is used as grain yield. A 3 m2 harvest area makes the values a kg/ha grain yield, not grams per plot.
-# The useful plot is 1.5 x 2 m.
+# Split nitrogen application on strong-gluten bread wheat (Cisne F2016, Alondra F2014, Luminaria F2012) under Conservation Agriculture at Irapuato and Pénjamo (Guanajuato, Bajío region, Mexico) across 2016-2017 and 2017-2018 fall-winter cycles.
+# Experimental design stated in sheet "Distribución de tratamientos": split-plot RCBD with 3 replications (main plot = N splitting, subplot = variety; useful harvested area = 1.5 x 2 m = 3 m2).
+# Variable definitions from sheet "Introducción": RA = grain yield (kg/ha); gpmc = grains/m2; epmc = spikes/m2 (x10000 -> spike_density /ha); gpe = grains/spike; mil = 1000-grain weight (g -> seed_weight); Bio = total biomass (t/ha -> x1000 y_total kg/ha); prot = grain protein (%); alt = plant height (cm); spad 1 & spad 2 = SPAD readings (65 DAS and second timing, preserved in long table linked via record_id).
+# Treatments 2 and 4 are both split 33-33-33 at 210 and 300 kg N/ha respectively; Treatment 5 uses GreenSeeker optical-sensor N totals from sheet "Datos sensor" by location, variety, and harvest year; Treatment 6 is unfertilized control (0 kg N/ha).
+# Estimated city coordinates added for Irapuato (20.677, -101.356) and Pénjamo (20.431, -101.722) with geo_from_source = FALSE and geo_uncertainty = 5000 m.
 
 ## ISSUES
-# write_files: missing variables: on_farm, yield_moisture, latitude, longitude, irrigated, K_fertilizer, P_fertilizer, harvest_date.
-
+# No exact calendar planting/harvest dates, P/K fertilizer rates, irrigation amounts, or grain yield moisture in the workbook.
+# Sheet "Introducción" labels both spad 1 and spad 2 as 65 DAS (likely a copy-paste typo for spad 2); both readings are preserved in long with order = 1 (DAP = 65) and order = 2.
+# write_files: missing carob_contributor, yield_moisture, irrigated, K_fertilizer, P_fertilizer, harvest_date; unknown grains_m2_.
 
 ## NOT PROCESSED
-# Biomass, grains per square metre, grains per spike, protein, height, SPAD, and nitrogen-use efficiency.
-# The abbreviation of those columns is not defined in the dictionary.
-# Principal-component and genotype-by-environment matrices.
-# Field randomization map.
+# Matriz CP and Matriz IGA descriptions in Introducción: derived analysis matrices (PCA/SREG) of the same Matriz ANOVA records.
+# Field randomization layout map in Distribución de tratamientos.
+
+## NEW VARIABLES
+# grains_m2_: number of grains per square meter (count/m2).
 
 
 carob_script <- function(path) {
@@ -37,22 +37,24 @@ Research on the effect of split nitrogen application on wheat grain yield and qu
 		data_organization = "CIMMYT",
 		publication = NA,
 		project = NA,
-		design = NA,
+		design = "split-plot RCBD",
 		data_type = "experiment",
-		treatment_vars = "treatment;variety",
-		response_vars = "yield",
+		treatment_vars = "N_fertilizer;N_splits;variety;treatment",
+		response_vars = "yield;y_total;grain_protein;plant_height;seed_weight;spike_density;grains_per_spike;SPAD",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.25
 	)
 
 	f <- ff[basename(ff) == "BD-TrigoFuerte-Baj-2024 b.xlsx"]
 	r <- carobiner::read.excel(f, sheet="Matriz ANOVA")
 
 	variety <- c("1"="Cisne F2016", "2"="Alondra F2014", "3"="Luminaria F2012")
-	location <- c("1"="Irapuato", "2"="Pénjamo")
+	location <- c("1"="Irapuato", "2"="P\u00e9njamo")
+	lat_map <- c("1"=20.677, "2"=20.431)
+	lon_map <- c("1"=-101.356, "2"=-101.722)
 	season <- c("1"="2016", "2"="2017")
 	sensor_year <- c("1"="2017", "2"="2018")
 	treat <- c(
@@ -63,39 +65,66 @@ Research on the effect of split nitrogen application on wheat grain yield and qu
 		"5"="sensor",
 		"6"="control"
 	)
-	n_fixed <- c("1"=210, "2"=210, "3"=210, "4"=300, "5"=NA, "6"=0)
+	n_fixed <- c("1"=210, "2"=210, "3"=210, "4"=300, "5"=NA_real_, "6"=0)
+	n_splits <- c("1"=2L, "2"=3L, "3"=2L, "4"=3L, "5"=NA_integer_, "6"=0L)
 
 	# Totals from Datos sensor, kg N/ha, for the optical-sensor treatment only.
 	sensor <- data.frame(
-		location = rep(c("Irapuato", "Pénjamo"), each=6),
+		location = rep(c("Irapuato", "P\u00e9njamo"), each=6),
 		year = rep(c("2017", "2018"), each=3, times=2),
 		variety = rep(c("Cisne", "Alondra", "Luminaria"), times=4),
 		n_sensor = c(185, 215, 203, 241, 266, 203, 275, 216, 218, 226, 213, 229)
 	)
 
+	loc_code <- as.character(r$Localidad)
 	code <- as.character(r$Tratamiento)
 	d <- data.frame(
-		trial_id = paste(location[as.character(r$Localidad)], season[as.character(r$Ciclo)], sep="-"),
+		record_id = seq_len(nrow(r)),
+		trial_id = paste(unname(location[loc_code]), unname(season[as.character(r$Ciclo)]), sep="-"),
 		country = "Mexico",
 		adm1 = "Guanajuato",
-		location = location[as.character(r$Localidad)],
-		planting_date = season[as.character(r$Ciclo)],
+		location = unname(location[loc_code]),
+		latitude = unname(lat_map[loc_code]),
+		longitude = unname(lon_map[loc_code]),
+		geo_from_source = FALSE,
+		geo_uncertainty = 5000,
+		planting_date = unname(season[as.character(r$Ciclo)]),
 		crop = "wheat",
 		yield_part = "grain",
-		variety = variety[as.character(r$Genotipo)],
+		variety = unname(variety[as.character(r$Genotipo)]),
 		treatment = unname(treat[code]),
-		rep = as.integer(r$Repetición),
+		rep = as.integer(r[["Repetici\u00f3n"]]),
 		yield = as.numeric(r$RA),
+		y_total = as.numeric(r$Bio) * 1000,
+		grains_m2_ = as.numeric(r$gpmc),
+		spike_density = as.numeric(r$epmc) * 10000,
+		grains_per_spike = as.numeric(r$gpe),
+		seed_weight = as.numeric(r$mil),
+		grain_protein = as.numeric(r$prot),
+		plant_height = as.numeric(r$alt),
 		N_fertilizer = unname(n_fixed[code]),
+		N_splits = unname(n_splits[code]),
+		land_prep_method = "none",
 		plot_area = 3,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		plot_length = 2,
+		plot_width = 1.5,
+		on_farm = FALSE,
+		is_survey = FALSE
 	)
 	short <- sub(" F.*", "", d$variety)
-	sy <- sensor_year[as.character(r$Ciclo)]
+	sy <- unname(sensor_year[as.character(r$Ciclo)])
 	key <- paste(d$location, short, sy)
 	skey <- paste(sensor$location, sensor$variety, sensor$year)
 	d$N_fertilizer[d$treatment == "sensor"] <- sensor$n_sensor[match(key, skey)][d$treatment == "sensor"]
+	d$fertilizer_used <- d$N_fertilizer > 0
 
-	carobiner::write_files(path, meta, d)
+	# Preserve both SPAD measurement timings in long table linked via record_id
+	dlong <- rbind(
+		data.frame(record_id = d$record_id, order = 1L, DAP = 65L, SPAD = as.numeric(r[["spad 1"]])),
+		data.frame(record_id = d$record_id, order = 2L, DAP = NA_integer_, SPAD = as.numeric(r[["spad 2"]]))
+	)
+	dlong <- dlong[!is.na(dlong$SPAD), ]
+	rownames(dlong) <- NULL
+
+	carobiner::write_files(path, meta, d, long=dlong)
 }

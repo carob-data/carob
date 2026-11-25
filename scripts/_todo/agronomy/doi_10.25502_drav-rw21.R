@@ -14,23 +14,21 @@
 # Observation files in this package label the observation date HarvestDate. That column is an observation date except in the two harvest files.
 # Dates are parsed per column: a value with day > 12 is day/month/year (25/10/2020); a value with month > 12 is month/day/year (6/16/2021, 9/14/2020). If a column has only one of those, the remaining ambiguous values follow it.
 # Monocrop treatment codes are 1-8 and intercrop codes are 1-5. They are kept as codes. trial_id separates monocrop and intercrop so the codes are not pooled.
-# States for IITA (Oyo), Ago-Owu (Osun) and Onne (Rivers) are the states used for those site names in doi:10.25502/rnbm-3x44/d and doi:10.25502/g4vs-5z61/d. Ijaye is not in those files.
+# States and station coordinates for IITA (Oyo: 7.4918, 3.9087), Ago-Owu (Osun: 7.2619, 4.2701), and Onne (Rivers: 4.7200, 7.1765) match doi:10.25502/g4vs-5z61/d; Ijaye is in Oyo State (7.628, 3.829); geo_from_source = FALSE.
 # Net plot area is the NetPltm2 column (19.2 m2).
 # Long rows are attached to the cassava row. The maize row of an intercrop plot has the same plot_id.
 
 ## ISSUES
 # No treatment legend, so Monsoon, paraquat, hoe and the 2020 no-sprayhood treatment cannot be assigned to codes 1-8. herbicide_product is omitted. Do not guess.
-# No crop-injury column, no fertilizer, variety, irrigation, or planting date. No coordinates. Do not use the CKAN coverage point (9.60 E, 8.00 N); that is not a trial site.
-# Georeference: IITA (Oyo), Ijaye (state not in this file or the 2018/2019 site lists), Ago-Owu (Osun), Onne (Rivers).
+# No crop-injury column, no fertilizer, variety, irrigation, or planting date. No coordinates in raw files. Do not use the CKAN coverage point (9.60 E, 8.00 N); that is not a trial site.
 # Onne has weed and sprout records but no cassava harvest. Maize harvest covers IITA and Ijaye only, so Ago-Owu intercrop maize yield is missing.
 # Some observation dates fall in January 2020 because that column is month/day/year. Left as parsed; they sit oddly next to 8-15 WAP.
 # fwy_stems exceeds 21000 kg/ha on some plots (StmWttha up to about 25.5 t/ha). Left as recorded.
 # cyprosulfamide is not in this file (treatments are codes).
 # No publication DOI.
-# write_files: missing carob_contributor, longitude, latitude, irrigated, N/P/K, planting_date;
+# write_files: missing carob_contributor, irrigated, N/P/K, planting_date;
 #   NA yield (Onne, and Ago-Owu maize); out of bounds fwy_stems (up to about 25.5 t/ha);
 #   unknown variables in NEW VARIABLES. sprout_density_ is a sprout count, not shrub_density; maize_density_ is not vine_density.
-# Terminag GitHub 403 warnings, if printed, are from the vocabulary check.
 
 ## NOT PROCESSED
 # cassava-harvest-intercrop.csv: duplicate of the intercrop rows in cassava-harvest-monocrop.csv.
@@ -81,8 +79,8 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		response_vars = "yield;fwy_stems;plant_density",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 58,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 1.2
 	)
 
@@ -113,8 +111,13 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 			ifelse(k %in% c("intercrop", "intecrop", "cassmaizentecrop", "cassavamaize"), "intercrop", NA_character_))
 	}
 	adm_of <- function(loc) {
-		ifelse(loc == "IITA", "Oyo", ifelse(loc == "Ago-Owu", "Osun", ifelse(loc == "Onne", "Rivers", NA_character_)))
+		ifelse(loc %in% c("IITA", "Ijaye"), "Oyo", ifelse(loc == "Ago-Owu", "Osun", ifelse(loc == "Onne", "Rivers", NA_character_)))
 	}
+	geo <- data.frame(
+		location = c("IITA", "Ijaye", "Ago-Owu", "Onne"),
+		latitude = c(7.4918, 7.6280, 7.2619, 4.7200),
+		longitude = c(3.9087, 3.8290, 4.2701, 7.1765)
+	)
 	parse_dates <- function(x) {
 		x <- trimws(as.character(x))
 		x[is.na(x) | x == ""] <- NA
@@ -205,8 +208,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	d$rep <- as.integer(d$rep)
 	d$plot_key <- paste(d$location, d$system, d$plot_id, sep = "|")
 	d$adm1 <- adm_of(d$location)
+	gi <- match(d$location, geo$location)
+	d$latitude <- geo$latitude[gi]
+	d$longitude <- geo$longitude[gi]
 	d$country <- "Nigeria"
 	d$crop <- "cassava"
+	d$intercropped <- d$system == "intercrop"
 	d$intercrops <- ifelse(d$system == "intercrop", "maize", "none")
 	d$yield_part <- "roots"
 	d$yield_isfresh <- TRUE

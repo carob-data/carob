@@ -2,12 +2,12 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# GPS lat/lon empty; georeference villages in Burera and Gakenke.
+# GPS lat/lon empty; district-level coordinates added for Burera (-1.4833, 29.8333) and Gakenke (-1.7000, 29.7833), Northern Province, Rwanda (geo_from_source = FALSE).
 # crop_2 empty; maize rows treated as sole maize (may be intercrops).
 # Stover weights all 0.
 # mineral_fert_amount assumed kg product per plot.
-# Soil chemistry present but many Mehlich columns empty; pH/SOC/texture merged.
-# write_files: missing longitude/latitude/yield_moisture; 2 harvest dates >366 days after planting; common bean yield to 12500 kg/ha left as recorded; NA yield_part when crop missing.
+# Soil chemistry present (pH, SOC, soil_N_total, texture, Olsen P with soil_P_method, Mg_exch); many Mehlich columns empty.
+# write_files: missing yield_moisture; 2 harvest dates >366 days after planting; common bean yield to 12500 kg/ha left as recorded; duplicate coordinates; NA yield_part when crop missing.
 
 
 
@@ -46,8 +46,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 68,
 		carob_effort = 0.8
 	)
 
@@ -69,12 +69,23 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	r6 <- read.csv(f6, na.strings = c("", "NA"))
 	r7 <- read.csv(f7, na.strings = c("", "NA"))
 
+	adm2 <- carobiner::fix_name(r8$district, "title")
+	geo <- data.frame(
+		adm2 = c("Burera", "Gakenke"),
+		latitude = c(-1.4833, -1.7000),
+		longitude = c(29.8333, 29.7833)
+	)
+	gi <- match(adm2, geo$adm2)
 	d0 <- data.frame(
 		trial_id = r8$farm_id,
+		season = "first",
 		country = "Rwanda",
-		adm2 = carobiner::fix_name(r8$district, "title"),
+		adm1 = "Northern",
+		adm2 = adm2,
 		adm3 = carobiner::fix_name(r8$sector_ward, "title"),
 		location = carobiner::fix_name(r8$vilage, "title"),
+		latitude = geo$latitude[gi],
+		longitude = geo$longitude[gi],
 		elevation = r8$gps_altitude,
 		farmer_gender = tolower(r8$gender_of_farmer)
 	)
@@ -145,14 +156,15 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		trial_id = r6$farm_id,
 		soil_pH = r6$ph,
 		soil_SOC = r6$oc.perc,
-		soil_N = r6$n.perc * 10000,
+		soil_N_total = r6$n.perc * 10000,
 		soil_sand = r6$sand.perc,
 		soil_silt = r6$silt.perc,
 		soil_clay = r6$clay.perc,
 		soil_P = r6$p_olsen.ppm,
+		soil_P_method = ifelse(!is.na(r6$p_olsen.ppm), "Olsen", NA_character_),
 		soil_Mg_exch = r6$mg.cmol_per_kg
 	)
-	# n.perc is %; terminag soil_N is mg/kg (~ppm). % * 10000 = mg/kg. Check: 0.20% = 2000 mg/kg.
+	# n.perc is % total N; terminag soil_N_total is mg/kg (~ppm). % * 10000 = mg/kg. Check: 0.20% = 2000 mg/kg.
 
 	d7 <- data.frame(
 		trial_id = r7$farm_id,

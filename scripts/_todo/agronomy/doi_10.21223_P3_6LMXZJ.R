@@ -2,24 +2,21 @@
 # license: GPL (>=3)
 
 ## NOTES
-# On-farm potato yields at three sectors in Northern Rwanda. Each treatment was replicated four times. Season is 1 or 2. The year is not in the file.
-# KIRUNDO and KINIGI are fresh tuber yield in t/ha, stored as one row per variety. Yield is t/ha * 1000.
-# Season 1 is stored as first and season 2 as second.
-# The dictionary defines CTRL as no fungicide and no insecticide with clean seed, F as fungicide only with clean seed, I as insecticide only with clean seed, and F+I as both with clean seed.
-# The data value Farmer is not in that list. The dictionary's remaining definition is FF+I, fungicide and insecticide with farmer seed, so Farmer is read that way.
-# Altitude was measured with a GPS. The file has no coordinates.
+# On-farm potato yields of KIRUNDO and KINIGI at three sectors in Northern Rwanda (Gataraga, Ntaruka, Nyange) across two seasons. Each treatment was replicated on four farmers' fields per sector (Farmer1..Farmer12).
+# KIRUNDO and KINIGI are fresh tuber yields in t/ha, reshaped to one row per variety and converted to kg/ha (* 1000).
+# Season 1 is mapped to "first" and season 2 to "second".
+# Dictionary defines: CTRL = no fungicide, no insecticide, clean seed; F = fungicide only, clean seed; I = insecticide only, clean seed; F+I = fungicide + insecticide, clean seed; FF+I = fungicide + insecticide, farmer seed (coded as "Farmer" in the data table).
+# Sector administrative units (Northern Province; Musanze and Burera districts) and approximate sector-center coordinates are estimated with geo_from_source = FALSE and geo_uncertainty = 5000 m. Altitude (m) was measured by GPS in the raw file.
 
 ## ISSUES
-# No coordinates. The three sectors (Gataraga, Ntaruka, Nyange) still need a manual georeference.
-# No planting date and no year.
-# No fertilizer rate and no irrigation statement.
-# No yield moisture.
-# The dictionary says four treatments and then defines five, including FF+I, which is not a value in the table.
-# write_files: missing yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. NA in yield.
+# No planting date, harvest date, or calendar year in the raw data or metadata.
+# No fertilizer rate, irrigation statement, or yield moisture reported.
+# Many rows have NA yield (e.g., plots not harvested or failed); retained as recorded.
+# The dictionary states four treatments and lists five codes, labeling farmer practice as FF+I while the data table uses "Farmer".
+# write_files: missing carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; NA in yield.
 
 ## NOT PROCESSED
-# Farmers name.
-# Data_dictionary.xls: documentation or a codebook, not an observation table.
+# Data_dictionary.xls: codebook used to interpret treatments and units.
 
 
 carob_script <- function(path) {
@@ -45,9 +42,9 @@ On-farm potato tuber yields of KIRUNDO and KINIGI along an altitude gradient in 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
+		carob_effort = 0.15
 	)
 
 	f <- ff[basename(ff) == "Data_onfarm_yield_Rwanda.xls"]
@@ -63,11 +60,33 @@ On-farm potato tuber yields of KIRUNDO and KINIGI along an altitude gradient in 
 	)
 	i <- match(trimws(as.character(r$Treatment)), leg$treatment)
 
+	# Estimated sector centers in Northern Province, Rwanda
+	geo <- data.frame(
+		location = c("Gataraga", "Ntaruka", "Nyange"),
+		adm1 = "Northern",
+		adm2 = c("Musanze", "Burera", "Musanze"),
+		latitude = c(-1.483, -1.460, -1.500),
+		longitude = c(29.556, 29.740, 29.660)
+	)
+	loc <- carobiner::fix_name(r$Location, "title")
+	g <- match(loc, geo$location)
+	seas <- unname(c("1" = "first", "2" = "second")[as.character(r$Season)])
+	farmer <- trimws(as.character(r[["Farmers name"]]))
+
 	one <- function(variety, yield) {
 		data.frame(
-			location = carobiner::fix_name(r$Location, "title"),
-			season = c("1" = "first", "2" = "second")[as.character(r$Season)],
-			elevation = as.numeric(r$"Altitude (m)"),
+			trial_id = paste(loc, seas, sep="_"),
+			plot_id = paste(farmer, seas, trimws(as.character(r$Treatment)), variety, sep="_"),
+			country = "Rwanda",
+			adm1 = geo$adm1[g],
+			adm2 = geo$adm2[g],
+			location = loc,
+			latitude = geo$latitude[g],
+			longitude = geo$longitude[g],
+			geo_from_source = FALSE,
+			geo_uncertainty = 5000,
+			elevation = as.numeric(r[["Altitude (m)"]]),
+			season = seas,
 			rep = as.integer(r$Rep),
 			treatment = trimws(as.character(r$Treatment)),
 			fungicide_used = leg$fungicide_used[i],
@@ -78,17 +97,14 @@ On-farm potato tuber yields of KIRUNDO and KINIGI along an altitude gradient in 
 			yield = as.numeric(yield) * 1000,
 			yield_part = "tubers",
 			yield_isfresh = TRUE,
-			country = "Rwanda",
-			trial_id = paste(carobiner::fix_name(r$Location, "title"), c("1" = "first", "2" = "second")[as.character(r$Season)], sep="_"),
 			on_farm = TRUE,
-			is_survey = FALSE,
-			geo_from_source = FALSE
+			is_survey = FALSE
 		)
 	}
 
 	d <- rbind(
-		one("KIRUNDO", r$"KIRUNDO (t/ha)"),
-		one("KINIGI", r$"KINIGI (t/ha)")
+		one("KIRUNDO", r[["KIRUNDO (t/ha)"]]),
+		one("KINIGI", r[["KINIGI (t/ha)"]])
 	)
 	rownames(d) <- NULL
 

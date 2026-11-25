@@ -10,13 +10,14 @@
 # Organic fertilizer amount is kg on the plot, converted with harvested area. Farmyard/compost spellings mapped to terminag. "Synthetic" left as recorded.
 
 ## ISSUES
-# GPS columns are empty. Georeference villages in Kayonza district, sectors Nyamirama and Rukara.
+# GPS columns are empty; sector-level coordinates added for Nyamirama and Rukara in Kayonza District (geo_from_source = FALSE).
 # NPK grade is unknown, so N/P/K are NA wherever mineral_fert_amount > 0.
 # Area unit is not named on crop_1_area_harvested; m2 is inferred from plot_size and the series.
 # Cassava "grain" weight may be fresh roots; moisture was not recorded.
-# Season code 2011B is not in the terminag season list.
+# Season code 2011B mapped to terminag "second".
+# OM_type "organic fertilizer" mapped to "unknown"; "synthetic" mapped to "none" (not organic).
 # One planting date per farm. Bean and cassava harvest dates are separate activities.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; invalid season 2011B; OM_type "organic fertilizer" and "synthetic" not in terminag; row_spacing up to 200 cm; 6 cassava harvest dates more than 366 days after planting.
+# write_files: missing carob_contributor, yield_moisture, irrigated; row_spacing up to 200 cm; duplicate coordinates; 6 cassava harvest dates more than 366 days after planting.
 
 ## NOT PROCESSED
 # a_farmer_group.csv: group name and purpose.
@@ -56,8 +57,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -96,13 +97,23 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 
 	loc <- carobiner::fix_name(r2$vilage, "title")
 	loc[which(loc == "")] <- NA
+	adm3 <- carobiner::fix_name(r2$sector_ward, "title")
+	geo <- data.frame(
+		adm3 = c("Nyamirama", "Rukara"),
+		latitude = c(-1.9500, -1.8000),
+		longitude = c(30.5333, 30.5000)
+	)
+	gi <- match(adm3, geo$adm3)
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = "second",
 		country = "Rwanda",
+		adm1 = "Eastern",
 		adm2 = carobiner::fix_name(r2$district, "title"),
-		adm3 = carobiner::fix_name(r2$sector_ward, "title"),
+		adm3 = adm3,
 		location = loc,
+		latitude = ifelse(is.na(gi), -1.8550, geo$latitude[gi]),
+		longitude = ifelse(is.na(gi), 30.5200, geo$longitude[gi]),
 		elevation = r2$gps_altitude,
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)
@@ -117,9 +128,10 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d7 <- data.frame(trial_id = as.character(r7$farm_id), previous_crop = prev)
 
 	om <- tolower(trimws(r1$organic_fert_type))
-	om[is.na(om)] <- "none"
+	om[is.na(om) | om == "synthetic"] <- "none"
 	om[which(om %in% c("farmyard", "farmyard manure"))] <- "farmyard manure"
 	om[which(om == "compost")] <- "compost"
+	om[which(om == "organic fertilizer")] <- "unknown"
 	ft <- trimws(r1$mineral_fert_type)
 	ft[is.na(ft)] <- "none"
 	ft <- toupper(ft)
@@ -209,12 +221,17 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		plot_id = d$plot_id,
 		season = d$season,
 		country = d$country,
+		adm1 = d$adm1,
 		adm2 = d$adm2,
 		adm3 = d$adm3,
 		location = d$location,
+		latitude = d$latitude,
+		longitude = d$longitude,
 		elevation = d$elevation,
 		farmer_gender = d$farmer_gender,
 		crop = "common bean",
+		intercropped = !is.na(d$crop_2),
+		intercrops = ifelse(!is.na(d$crop_2), d$crop_2, "none"),
 		variety_type = "bush bean",
 		variety = d$variety,
 		previous_crop = d$previous_crop,
@@ -235,6 +252,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	)
 	cas <- bean
 	cas$crop <- "cassava"
+	cas$intercropped <- TRUE
+	cas$intercrops <- "common bean"
 	cas$variety_type <- NA
 	cas$variety <- d$variety_2
 	cas$plot_area <- d$plot_area_2

@@ -16,14 +16,14 @@
 # gps_latitude and gps_longitude are empty. gps_altitude is 3381-3517 with no unit (implausible as metres for Oyam) and is not used as elevation.
 
 ## ISSUES
-# No plot coordinates. Georeference villages in Oyam, Minakulu action site: Adwar, Agungu arac, Agungu araca, Alati B, Omolo, Zericho. Parish/sector is Atek (58 farms), Zericho (1), and one farm with sector and village blank. Dataset JSON coverage_x/coverage_y (1.37333, 32.29028) is one dataset point, not used.
+# No plot coordinates; Oyam District / Minakulu sub-county coordinates (2.4167, 32.4500; geo_from_source = FALSE) used. Dataset JSON coverage_x/coverage_y (1.37333, 32.29028) is one dataset point, not used.
 # One TSP plot is 1.38 kg; the other TSP plots are 0.38 kg. Left as recorded.
 # gps_altitude not converted (unit not stated).
 # previous crop "peas" mapped to pea; in this region it may be pigeon pea. "Simsim/sorghum" and "Cotton/beans" kept as two crops in previous_crop.
 # Two farms have harvest 4 Jan 2013 and 13 Jan 2013, before planting in September 2013 (8 plot rows). One farm has harvest 30 Dec 2014, 466 days after planting (4 plot rows). Dates left as recorded.
 # Farmer assessment scores are 1-3 with no legend.
 # chemicals_used is only Y/N; no product, so herbicide/insecticide/fungicide are FALSE rather than named products.
-# write_files: missing carob_contributor, yield_moisture, geo_from_source, latitude, longitude, irrigated.
+# write_files: missing carob_contributor, yield_moisture, irrigated; duplicate coordinates.
 # write_files: unknown variables germination_class_ (a class, not germination_rate), yield_score_, labour_score_, weediness_score_, pest_score_, overall_score_, earlier_crop_, soil_fertility_farmer_, soil_drainage_farmer_, farm_area_ha_, soil_conservation_.
 # write_files: datespan, 8 plot rows with harvest before or within 45 days of planting, and 4 plot rows with harvest more than 366 days later (see above).
 
@@ -80,8 +80,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 1
 	)
 
@@ -117,6 +117,9 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		adm2 = "Oyam",
 		adm3 = carobiner::fix_name(adm3, "title"),
 		location = carobiner::fix_name(loc, "title"),
+		latitude = 2.4167,
+		longitude = 32.4500,
+		geo_from_source = FALSE,
 		season = "second",
 		farmer_gender = tolower(trimws(r2$gender_of_farmer)),
 		farm_area_ha_ = as.numeric(r2$farm_size_acre) * 0.4046863

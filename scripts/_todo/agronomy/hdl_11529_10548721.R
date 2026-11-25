@@ -9,12 +9,11 @@
 # One NDVI header is 26/08/203. That year is not usable, so that reading is left out.
 # Harvest population in plants/m2 is stored as plants/ha.
 # NDVI header cells are Excel serials or calendar dates.
-# Country and coordinates are not in the sheets or in geographicCoverage.
+# The title names Quintana Roo and the sheets name Othón P. Blanco; country is Mexico, adm1 is Quintana Roo, and approximate municipality coordinates are imputed with geo_from_source = FALSE.
 
 ## ISSUES
-# Country and coordinates are not in the sheets or in geographicCoverage.
+# Coordinates are approximate for Othón P. Blanco, Quintana Roo (geo_from_source = FALSE).
 # Elemental phosphorus is not stored. The variable description gives product rates, not a P2O5 percentage.
-# write_files: missing variables: country, latitude, longitude, K_fertilizer, P_fertilizer, harvest_date. contributor:
 
 ## NOT PROCESSED
 # Map sheet and Wheather sheet.
@@ -45,8 +44,8 @@ This experiments were established with different rates of nitrogen in order to g
 		response_vars = "yield;NDVI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.5
 	)
 
@@ -161,11 +160,11 @@ This experiments were established with different rates of nitrogen in order to g
 	}
 
 	lookup_site <- function(loc, info) {
-		keys <- names(r1)
-		if (loc %in% keys) return(r1[[loc]])
+		keys <- names(info)
+		if (loc %in% keys) return(info[[loc]])
 		want <- site_key(loc)
 		hit <- keys[vapply(keys, site_key, character(1)) == want]
-		if (length(hit) == 1) return(r1[[hit]])
+		if (length(hit) == 1) return(info[[hit]])
 		NULL
 	}
 
@@ -221,7 +220,11 @@ This experiments were established with different rates of nitrogen in order to g
 			}
 			d <- data.frame(
 				crop = "maize",
+				country = "Mexico",
+				adm1 = "Quintana Roo",
 				location = loc,
+				latitude = 18.500,
+				longitude = -88.296,
 				trial_id = paste(loc, year, sep="_"),
 				plot_id = as.character(r[[which(hdr == "Plot")[1]]]),
 				rep = as.integer(num(r[[which(hdr == "Rep")[1]]])),

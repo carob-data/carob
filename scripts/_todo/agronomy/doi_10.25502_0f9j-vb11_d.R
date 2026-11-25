@@ -10,16 +10,16 @@
 # StpAcre is stems per acre. stem_density = StpAcre / 0.4046863.
 # Avg_psh is in the same range as MaxSh_cm, so it was used as plant_height in cm.
 # Coordinates and altitude are in the file. Shinyanya was spelled Shinyanga (the same region is also spelled correctly in the file).
+# Region "Ruaha" with District Newala (-10.7445, 39.2936) corrected to adm1 "Mtwara". Missing coordinates for Kurusanga, Bunda District (Mara) filled with Bunda centroid (-2.0500, 33.8667, geo_from_source = FALSE).
 
 ## ISSUES
 # What CTRL, CSE and QDSR mean in the certified-vs-recycled contrast is only the dictionary text above.
 # tRwt_kg, plot_size and FRY do not reconcile. Plot area may not be the harvested area.
-# Ruaha is stored as adm1 as written; it is not a current Tanzanian region name.
 # One form puts Golomoti-style issues aside: district "Mtwara Rural" has a trailing space, fixed with trimws.
 # Age (0-30) has no unit.
 # N/P/K and irrigation are not reported. planting_date is the study year 2020 only.
 # Disease and mite scores were not checked against a published 1-5 or percent scale. Some incidence values may exceed 100.
-# write_files: plot_area out of bounds; missing N/P/K and irrigated.
+# write_files: plot_area out of bounds; missing yield_moisture, N/P/K, irrigated, harvest_date; NA yield; unknown ae_zone_, cuttings_per_ha_, cgm_severity_, cgm_incidence_, tissue_.
 
 ## NOT PROCESSED
 # Age: unit not stated.
@@ -60,8 +60,8 @@ Evaluation of yield benefits of certified cassava seed.
 		response_vars = "yield;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8,
 		notes = NA
 	)
@@ -86,14 +86,22 @@ Evaluation of yield benefits of certified cassava seed.
 
 	adm1 <- trimws(r$Region)
 	adm1[tolower(adm1) == "shinyanya"] <- "Shinyanga"
+	adm1[tolower(adm1) == "ruaha"] <- "Mtwara"
+
+	lat <- num(r$Lat)
+	lon <- num(r$Long)
+	gfs <- !is.na(lat) & !is.na(lon)
+	miss <- is.na(lat) & trimws(r$District) == "Bunda"
+	lat[miss] <- -2.0500
+	lon[miss] <- 33.8667
 
 	d <- data.frame(
 		country = "Tanzania",
 		adm1 = carobiner::fix_name(adm1, "title"),
 		adm2 = carobiner::fix_name(trimws(r$District), "title"),
 		location = carobiner::fix_name(trimws(r$Village), "title"),
-		latitude = num(r$Lat),
-		longitude = num(r$Long),
+		latitude = lat,
+		longitude = lon,
 		elevation = num(r$Altitude),
 		trial_id = paste(trimws(r$Region), trimws(r$Village), "2020", sep="_"),
 		planting_date = "2020",
@@ -114,7 +122,7 @@ Evaluation of yield benefits of certified cassava seed.
 		yield_isfresh = TRUE,
 		on_farm = TRUE,
 		is_survey = FALSE,
-		geo_from_source = !is.na(num(r$Lat)) & !is.na(num(r$Long)),
+		geo_from_source = gfs,
 		record_id = seq_len(nrow(r))
 	)
 	# one trial per village, not per seed class

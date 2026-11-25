@@ -2,39 +2,34 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Station rice trial of five Streptomyces seed/plant inoculants (CAI-17, CAI-68, CAI-78, KAI-26, KAI-27) plus an uninoculated control. ICRISAT B1 rice field, Patancheru.
-# "Field harvest analysis.xlsx" is the plot table. Grain, stover and dry matter are g/m2 (x10 = kg/ha). On every row grain + stover = dry matter, so yield is the dry component. Total tillers are per m2. Panicles are per plant. Panicle length is cm.
-# Soil on the same row: organic carbon (%), total N and available P (ppm = mg/kg), microbial biomass C and N (µg/g), dehydrogenase (µg TPF g-1 24 h-1).
-# "Effect of Streptomyces strains on the morphology-3-4-6.xlsx" has the same values (the replication column name differs by a space) and is not read again.
-# Root length, volume and weight by layer (0-15 and 15-30 cm) are the long table.
+# Station rice trial of five Streptomyces seed/plant inoculants (CAI-17, CAI-68, CAI-78, KAI-26, KAI-27) plus an uninoculated control on ICRISAT field B1, Patancheru, India.
+# Field harvest analysis.xlsx: grain, stover, and total dry matter are in g/m2 (x10 -> kg/ha). Grain + stover = dry matter on every row -> dry basis (yield_isfresh = FALSE, yield_moisture = 0). Total tillers are per m2; panicles per plant; panicle length in cm.
+# Harvest rhizosphere soil (0-15 cm) sits on the same rows: soil_SOC (%), soil_N_total and soil_P (ppm = mg/kg), soil_MBC and soil_MBN (ug/g), dehydrogenase (ug TPF g-1 24 h-1).
+# Root length, volume, and weight by depth layer (0-15 and 15-30 cm) are stored in the long table linked via record_id.
+# Estimated ICRISAT Patancheru coordinates (17.511, 78.275) added with geo_from_source = FALSE and geo_uncertainty = 2000 m.
+# Effect of Streptomyces strains on the morphology-3-4-6.xlsx duplicates Field harvest analysis.xlsx and is not read twice.
 
 ## ISSUES
-# No coordinates, season, variety, fertilizer, or irrigation statement. Georeference ICRISAT B1 rice field, Patancheru, Telangana, India.
-# Publication DOI is 10.1139/cjm-2013-0287. The paper was not used to fill management that is absent from the files.
-# Root length unit in the docx is "mm−2", which is ambiguous, and the numbers (about 400-8000) match "Effect of the six actinomycetes on the development in Rice.xlsx" in doi:10.21421/D2/NWZJVP, whose docx says m m−2. Stored as recorded under root_length_mm_m2_.
-# Filled grain count and filled grain weight have no per-panicle or per-plant statement. Some panicle and grain-count cells are empty.
-# Design is not named in this record.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, N/P/K, planting_date, harvest_date; unknown panicle, tiller, grain and root variables; rep and seed_treatment also sit on the root long table.
+# No season/year, variety, fertilizer rates, irrigation statement, or experimental design in the files.
+# Root length docx unit says "mm-2", which is ambiguous; numeric range (400-8000) matches m/m2 in sister dataset doi:10.21421/D2/NWZJVP. Stored as recorded under root_length_m_m2_.
+# Filled grain count and weight have no stated per-panicle vs per-plant basis; some cells are NA.
+# write_files: missing carob_contributor, irrigated, K/N/P_fertilizer, planting_date, harvest_date; unknown panicle, tiller, grain, dehydrogenase, and root variables.
 
 ## NOT PROCESSED
 # Effect of Streptomyces strains on the morphology-3-4-6.xlsx: duplicate of Field harvest analysis.xlsx.
-# Effect of  temperature tolerance to antibiotics.xlsx: Actinomycetes, Temperature, Reading. In vitro growth scores.
-# Effect of  tolerance to antibiotics.xlsx: Treatment (antibiotic), Antibiotics (concentration). In vitro.
-# Effect of  tolerance to fungicides.xlsx: Treatment (fungicide), Fungicide (score). In vitro.
-# Effect of tolerance to pH.xlsx: Treatment (pH), Pouvair Hydrogene (score). In vitro.
-# Effect of tolerance to salinity.xlsx: Parts per million, Salinity (score). In vitro. The "ppm" column is the NaCl level, not soil N.
+# In vitro tolerance assays (temperature, antibiotics, fungicides, pH, salinity): lab isolates, not crop field records.
 # Metadata docx files: unit notes used above.
 
 ## NEW VARIABLES
-# panicles_plant_: panicles per plant
-# panicle_length_cm_: panicle length (cm)
-# filled_grain_count_: filled grain count, unit not stated
-# filled_grain_weight_g_: filled grain weight (g), basis not stated
-# tillers_m2_: tillers per m2
-# dehydrogenase_: dehydrogenase (µg TPF g-1 soil 24 h-1)
-# root_length_mm_m2_: root length as recorded; docx unit mm−2 (see ISSUES)
-# root_volume_cm3_m2_: root volume (cm3/m2)
-# root_weight_g_m2_: root weight (g/m2), fresh vs dry not stated
+# panicles_plant_: panicles per plant.
+# panicle_length_cm_: panicle length (cm).
+# filled_grain_count_: filled grain count (basis not stated).
+# filled_grain_weight_g_: filled grain weight (g; basis not stated).
+# tillers_m2_: tillers per m2.
+# dehydrogenase_: soil dehydrogenase activity (ug TPF g-1 soil 24 h-1).
+# root_length_m_m2_: root length per area as recorded (docx writes mm-2; matches m/m2 in sister dataset).
+# root_volume_cm3_m2_: root volume (cm3/m2).
+# root_weight_g_m2_: root weight (g/m2).
 
 
 carob_script <- function(path) {
@@ -60,62 +55,68 @@ The dataset contains five strains of Streptomyces (CAI-17, CAI-68, CAI-78, KAI-2
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Field harvest analysis.xlsx"]
 	r <- carobiner::read.excel(f, na="NA")
-	trt <- trimws(r$`Treatment`)
+	trt <- trimws(as.character(r$Treatment))
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
 		trial_id = "Patancheru_B1",
 		country = "India",
 		adm1 = "Telangana",
+		adm2 = "Sangareddy",
 		location = "Patancheru",
 		site = "ICRISAT field B1",
+		latitude = 17.511,
+		longitude = 78.275,
+		geo_from_source = FALSE,
+		geo_uncertainty = 2000,
 		crop = "rice",
 		treatment = trt,
 		seed_treatment = trt,
 		inoculant = ifelse(trt == "Control", NA_character_, trt),
 		inoculated = trt != "Control",
-		rep = as.integer(r$`Replication  number`),
-		plant_height = as.numeric(r$`Plant height`),
-		panicles_plant_ = as.numeric(r$`Total panicle`),
-		panicle_length_cm_ = as.numeric(r$`Panicle length`),
-		filled_grain_count_ = as.numeric(r$`Filled grain count`),
-		filled_grain_weight_g_ = as.numeric(r$`Filled grain weight`),
-		tillers_m2_ = as.numeric(r$`Total tillers`),
-		yield = as.numeric(r$`Grain yield`) * 10,
-		dmy_residue = as.numeric(r$`Stover yield`) * 10,
-		dmy_total = as.numeric(r$`Dry matter`) * 10,
+		rep = as.integer(r[["Replication  number"]]),
+		plant_height = as.numeric(r[["Plant height"]]),
+		panicles_plant_ = as.numeric(r[["Total panicle"]]),
+		panicle_length_cm_ = as.numeric(r[["Panicle length"]]),
+		filled_grain_count_ = as.numeric(r[["Filled grain count"]]),
+		filled_grain_weight_g_ = as.numeric(r[["Filled grain weight"]]),
+		tillers_m2_ = as.numeric(r[["Total tillers"]]),
+		yield = as.numeric(r[["Grain yield"]]) * 10,
+		dmy_residue = as.numeric(r[["Stover yield"]]) * 10,
+		dmy_total = as.numeric(r[["Dry matter"]]) * 10,
 		soil_MBC = as.numeric(r$MBC),
 		soil_MBN = as.numeric(r$MBN),
 		dehydrogenase_ = as.numeric(r$Dehydrogenase),
 		soil_N_total = as.numeric(r$Nitrogen),
 		soil_P = as.numeric(r$Phosphorus),
-		soil_SOC = as.numeric(r$`Organic carbon`),
+		soil_SOC = as.numeric(r[["Organic carbon"]]),
 		yield_part = "grain",
 		yield_isfresh = FALSE,
+		yield_moisture = 0,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
 
 	f1 <- ff[basename(ff) == "Effect of Streptomyces strains root development of rice.xlsx"]
 	r1 <- carobiner::read.excel(f1, na="NA")
-	depth <- r1$Depth
-	long <- data.frame(
-		trial_id = "Patancheru_B1",
-		seed_treatment = trimws(r1$Treatment),
-		rep = as.integer(r1$`Replication number`),
+	dkey <- paste(d$seed_treatment, d$rep, sep="|")
+	rkey <- paste(trimws(as.character(r1$Treatment)), as.integer(r1[["Replication number"]]), sep="|")
+	depth <- as.character(r1$Depth)
+	dlong <- data.frame(
+		record_id = d$record_id[match(rkey, dkey)],
 		depth_top = as.numeric(sub("-.*", "", depth)),
 		depth_bottom = as.numeric(sub(".*-", "", depth)),
-		root_length_mm_m2_ = as.numeric(r1$`Root length`),
-		root_volume_cm3_m2_ = as.numeric(r1$`Root volume`),
-		root_weight_g_m2_ = as.numeric(r1$`Root weight`)
+		root_length_m_m2_ = as.numeric(r1[["Root length"]]),
+		root_volume_cm3_m2_ = as.numeric(r1[["Root volume"]]),
+		root_weight_g_m2_ = as.numeric(r1[["Root weight"]])
 	)
 
-	carobiner::write_files(path, meta, d, long=long)
+	carobiner::write_files(path, meta, d, long=dlong)
 }

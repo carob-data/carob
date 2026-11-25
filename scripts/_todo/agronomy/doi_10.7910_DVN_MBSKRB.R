@@ -20,7 +20,7 @@
 #   RLD assumed cm/cm3 (paper), "Fine_*" assumed % fine roots, "Length" assumed cm per core segment. Verify.
 # SDW max 9575 g/m2 (one plot) is likely a typo; left as recorded.
 # CT (canopy temperature) only measured in drought plots; the measurement date(s) are not given.
-# Fertilizer "40-40-40 kg/ha NPK" taken as elemental N, P, K; may be N-P2O5-K2O. Verify.
+# Fertilizer "40-40-40 kg/ha NPK" converted from N-P2O5-K2O (standard IRRI 14-14-14 complete fertilizer convention) to elemental P (40/2.29) and K (40/1.2051).
 # Lysimeter (greenhouse) and gel-imaging (growth chamber) data from the paper are not in this dataset.
 # Duke University (co-author institute) not in the data_organization vocabulary; only IRRI used.
 # write_files remaining: missing harvest_date; NA yield (1 record); unknown (new) variables.
@@ -64,8 +64,8 @@ water use related traits, flowering time and root system architecture in the fie
 		response_vars = "yield;dmy_residue;flowering_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 80,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 82,
 		carob_effort = 0.5
 	)
 
@@ -108,10 +108,10 @@ water use related traits, flowering time and root system architecture in the fie
 	d$row_spacing <- 25
 	d$plant_spacing <- 20
 
-	# Grondin et al. 2018: 40-40-40 kg/ha NPK basal + 40 kg N/ha as ammonium sulfate (21% N, 24% S)
+	# Grondin et al. 2018: 40-40-40 kg/ha N-P2O5-K2O basal + 40 kg N/ha as ammonium sulfate (21% N, 24% S)
 	d$N_fertilizer <- 80
-	d$P_fertilizer <- 40
-	d$K_fertilizer <- 40
+	d$P_fertilizer <- 40 / 2.29
+	d$K_fertilizer <- 40 / 1.2051
 	d$S_fertilizer <- 40 / 0.21 * 0.24
 	d$fertilizer_type <- "NPK; DAS"
 

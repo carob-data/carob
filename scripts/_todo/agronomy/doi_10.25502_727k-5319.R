@@ -10,12 +10,12 @@
 # Climbing bean stored as common bean with variety_type "climbing bean". Grain was shelled (crop_1_grain_unshelled N), yield_part seed.
 
 ## ISSUES
-# gps_latitude and gps_longitude are empty. sector_ward is empty. Georeference villages in Kapchorwa (action sites Kapchesi, Kapchesombe, Kaptanya, Kiruoko, Siron).
+# gps_latitude and gps_longitude are empty. sector_ward is empty. Kapchorwa District coordinates (1.4010, 34.4504; geo_from_source = FALSE) used.
 # CKAN coverage_x/coverage_y is one dataset point, not plot coordinates, and was not used.
-# Season code 2013A is not in the terminag season list. Inoculant was N on every plot. Organic fertilizer type is manure but the amount is empty.
+# Season code 2013A mapped to terminag "first". Inoculant was N on every plot. Organic fertilizer type is manure but the amount is empty.
 # Yield moisture was not recorded. Irrigation was not recorded.
 # One planting and harvest date per farm, applied to every plot on that farm.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated; invalid season 2013A; NA yield.
+# write_files: missing carob_contributor, yield_moisture, irrigated; duplicate coordinates; NA yield.
 
 ## NOT PROCESSED
 # a_family_composition.csv: household age-sex counts (not plot production).
@@ -62,8 +62,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.8
 	)
 
@@ -115,11 +115,13 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	adm3[which(adm3 == "")] <- NA
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
+		season = "first",
 		country = "Uganda",
 		adm2 = carobiner::fix_name(r2$district, "title"),
 		adm3 = adm3,
 		location = loc,
+		latitude = 1.4010,
+		longitude = 34.4504,
 		elevation = r2$gps_altitude,
 		farmer_gender = tolower(trimws(r2$gender_of_farmer))
 	)

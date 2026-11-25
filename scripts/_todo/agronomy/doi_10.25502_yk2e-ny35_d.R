@@ -12,13 +12,14 @@
 # Lagon = isoxaflutole;aclonifene. Monsoon Active = foramsulfuron;thiencarbazone-methyl;cyprosulfamide. Paraquat = paraquat dichloride, with no rate in the file.
 # Species names are copied as recorded.
 
+# Station coordinates are from the companion 2019 all-locations file (doi:10.25502/g4vs-5z61/d; geo_from_source = FALSE).
+
 ## ISSUES
-# No yield, dates, crop injury, or coordinates. GPS for these sites is in doi:10.25502/g4vs-5z61/d and was not copied.
-# Georeference: Benue (Ucha), Ogun (FUNAAB), Osun (Ago-Owu), Oyo (IITA), Rivers (Onne).
+# No yield, dates, crop injury, or coordinates in this file (station coordinates added from companion doi:10.25502/g4vs-5z61/d).
 # No PostApplWAT column, so herbicide_timing is omitted. No fertilizer, variety, or irrigation. No publication DOI.
 # The header shift should be confirmed by the data owner; the mapping above is from matching UniqueIDs to the all-locations file.
 # cyprosulfamide stays unspaced; the vocabulary entry has a leading space.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, longitude, latitude, irrigated, N/P/K, planting_date, harvest_date;
+# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, N/P/K, planting_date, harvest_date;
 #   unknown rate variables; invalid term cyprosulfamide.
 
 ## NOT PROCESSED
@@ -54,8 +55,8 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		response_vars = "weed_density",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 52,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 62,
 		carob_effort = 0.7
 	)
 
@@ -107,6 +108,12 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 	site <- r$Site
 	site[site == "AgoOwu"] <- "Ago-Owu"
 	site[site == "Ucha_Makurdi"] <- "Ucha"
+	geo <- data.frame(
+		site = c("Ucha", "FUNAAB", "Ago-Owu", "IITA", "Onne"),
+		latitude = c(7.7790, 7.2340, 7.2619, 7.4918, 4.7200),
+		longitude = c(8.6242, 3.4451, 4.2701, 3.9087, 7.1765)
+	)
+	gi <- match(site, geo$site)
 	inter <- r$Cropsystem == "Intercrop"
 
 	d <- data.frame(
@@ -116,7 +123,10 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		country = "Nigeria",
 		adm1 = r$Loc,
 		location = site,
+		latitude = geo$latitude[gi],
+		longitude = geo$longitude[gi],
 		crop = "cassava",
+		intercropped = inter,
 		intercrops = ifelse(inter, "maize", "none"),
 		weed_species = trimws(r$WeedSpecies),
 		herbicide_product = product,

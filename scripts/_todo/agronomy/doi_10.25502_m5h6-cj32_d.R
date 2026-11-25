@@ -7,16 +7,16 @@
 # area_harvested_m2 is m2. weight_kg is 0 throughout; weight_grain is used as kg (values such as 1-3 kg on a few m2). About 80 weights are hundreds to thousands on 4-8 m2 and give impossible yields if they are kg; they were not recoded as grams.
 # DAP product kg/plot to elemental N (18%) and P (20.1%) using the harvested area. Compost amount is kg on the plot.
 # Field GPS kept. Where latitude is above 20 and longitude is below 20 the pair is swapped (Ethiopia lon is about 33-48).
-# Soil: pH, texture, Olsen P, exchangeable cations, CEC, Zn. n.perc treated as percent N and multiplied by 10000 to mg/kg. Total carbon (tc) is not soil organic carbon and was not mapped to soil_SOC.
+# Soil: pH, texture, Olsen P (with soil_P_method = "Olsen"), exchangeable cations, CEC, Zn. n.perc mapped to soil_N_total (* 10000 = mg/kg). Total carbon (tc.perc) mapped to soil_C_total.
 
 ## ISSUES
 # Confirm weight_grain unit. Median yield is a few t/ha, but many records exceed 20 t/ha.
 # plot_size is text (100m2, 10x10, 3m*4m) and was not used; harvested area was used for yield and fertilizer rate.
 # Some GPS points are still outside Ethiopia after the swap, or are missing.
 # Woreda was stored in adm2; GADM Ethiopia often has woreda at adm3. Action site was not assigned to an admin level.
-# Season value 2013 is not in the terminag season list.
+# Season value "2013" is a year rather than a terminag season name and was omitted (planting_date holds the year).
 # "Field pea" was mapped to pea. Yield moisture and irrigation were not recorded.
-# write_files: missing carob_contributor, yield_moisture, irrigated; variety and inoculated have NA; yield up to about 4e6; invalid season 2013; 8 harvests within 45 days of planting; high faba bean yield; duplicate coordinates; NA yield, latitude, longitude.
+# write_files: missing carob_contributor, yield_moisture, irrigated; variety and inoculated have NA; yield up to about 4e6; 8 harvests within 45 days of planting; high faba bean yield; duplicate coordinates; NA yield, latitude, longitude.
 
 ## NOT PROCESSED
 # a_family_composition.csv, a_livestock.csv, a_technician.csv: household and enumerator fields.
@@ -62,8 +62,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.9
 	)
 
@@ -114,7 +114,6 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	loc[which(loc == "")] <- NA
 	d0 <- data.frame(
 		trial_id = as.character(r2$farm_id),
-		season = as.character(r2$season),
 		country = "Ethiopia",
 		adm2 = carobiner::fix_name(r2$district, "title"),
 		location = loc,
@@ -196,11 +195,13 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 	d8 <- data.frame(
 		trial_id = as.character(r8$farm_id),
 		soil_pH = r8$ph,
+		soil_C_total = r8$tc.perc,
 		soil_sand = r8$sand.perc,
 		soil_silt = r8$silt.perc,
 		soil_clay = r8$clay.perc,
-		soil_N = r8$n.perc * 10000,
+		soil_N_total = r8$n.perc * 10000,
 		soil_P = r8$p_olsen.ppm,
+		soil_P_method = ifelse(!is.na(r8$p_olsen.ppm), "Olsen", NA_character_),
 		soil_K_exch = r8$k.cmol_per_kg,
 		soil_Ca_exch = r8$ca.cmol_per_kg,
 		soil_Mg_exch = r8$mg.cmol_per_kg,

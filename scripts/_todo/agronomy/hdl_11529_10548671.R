@@ -3,7 +3,7 @@
 
 ## NOTES
 # International Low-ODAP grasspea nursery IGYT-LO-2016 at El Batán. Biomass is in the Calculation sheet.
-# Country is Mexico and the state and city are Estado de Mexico / Texcoco, from geographicCoverage. The station name El Batán is in the dataset title. No coordinates are in the files.
+# Country is Mexico and the state and city are Estado de Mexico / Texcoco, from geographicCoverage. The station name El Batán is in the dataset title. Approximate CIMMYT El Batán station coordinates are imputed with geo_from_source = FALSE.
 # Fresh yield (kg/ha) is total biomass weight (g) / harvest area (m2) * 10.
 # Dry yield is the Yield_Dry column. It matches fresh yield times (1 - subsample moisture). The separate "yld kg /ha" column does not match that calculation and is not used.
 # Subsample moisture is a fraction in the sheet and is stored as a percent.
@@ -13,10 +13,8 @@
 # The nursery year is 2016. Harvest was on 28 Apr, 3 May, 18 May, and 22 May 2017, depending on maturity, and is not recorded per plot.
 
 ## ISSUES
-# No coordinates.
 # The four harvest dates are not assigned to plots.
 # Fresh aboveground biomass reaches about 34 t/ha. That is what the weights and areas give, so it was left as recorded.
-# write_files: missing variables: latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. high crop yield: grass pea: 33656.338028169. contributor:
 
 ## NOT PROCESSED
 # The "yld kg /ha" column. It is not the dry yield computed from total weight, area, and subsample moisture.
@@ -47,8 +45,8 @@ Several international varieties of Low-ODAP grass pea were evaluated. Some of th
 		response_vars = "yield;dmy_total",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.5
 	)
 
@@ -82,7 +80,10 @@ Several international varieties of Low-ODAP grass pea were evaluated. Some of th
 		country = "Mexico",
 		adm1 = "México",
 		adm2 = "Texcoco",
-		location = "El Batan",
+		location = "El Batán",
+		site = "CIMMYT station",
+		latitude = 19.530,
+		longitude = -98.847,
 		trial_id = "IGYT-LO-2016",
 		rep = as.integer(r$REP),
 		variety_code = as.character(as.integer(r$Entry)),

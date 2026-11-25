@@ -2,33 +2,29 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Station chickpea (ICCV 2) trial of four actinomycete seed inoculants (SAI-13, SAI-29, VAI-7, VAI-40) plus an uninoculated control. ICRISAT BP-13B, 2013-14 post-rainy season.
-# Agronomic file: stover and grain are t/ha (x1000 = kg/ha). The docx says dry matter is g/m2, but on every row it equals stover + grain in t/ha, so it is treated as t/ha and yield is the dry component.
-# Nodules, leaf area, leaf weight, pods, shoot weight and plant height sit on the same row. The abstract says those scores were taken at 60 DAS. Weights are g/plant. No plant density, so they stay per plant.
-# Seed number is per plant. The column "Seed weight" is 194-204. The docx says g/plant, which cannot be, with 64-90 seeds per plant; those numbers are the 1000-seed weight range used in the sister chickpea files. Mapped to seed_weight.
-# Soil at 60 and 100 DAS (two replicates) is the long table. Organic carbon is %. Nitrogen and phosphorus are ppm.
+# Station chickpea (ICCV 2) trial of four actinomycete seed inoculants (SAI-13, SAI-29, VAI-7, VAI-40) plus an uninoculated control at ICRISAT BP-13B, Patancheru, 2013-14 post-rainy season.
+# Stover, grain, and total dry matter are in t/ha (x1000 -> kg/ha). On every row, Dry matter equals Stover + Grain in t/ha (dry basis -> yield_isfresh = FALSE, yield_moisture = 0).
+# Nodules, leaf area, leaf weight, pods, shoot weight, and plant height were recorded at 60 DAS (abstract) on the same agronomic table; per-plant weights remain per plant because plant density is not reported.
+# "Seed weight" values (194-204) match 1000-seed weight (g) as in sister chickpea files (mapped to seed_weight; docx states g/plant, which is inconsistent with 64-90 seeds/plant).
+# Rhizosphere soil at 60 and 100 DAS (0-15 cm, two replicates) is stored in the long table linked via record_id: organic carbon (%), total N and available P (ppm = mg/kg).
+# Estimated ICRISAT Patancheru coordinates (17.511, 78.275) added with geo_from_source = FALSE and geo_uncertainty = 2000 m.
 
 ## ISSUES
-# No coordinates. Georeference ICRISAT BP-13B, Patancheru, Telangana, India.
-# Fertilizer and irrigation are not in the files. Plot size is "4 m x 3 ridges", not m2.
-# Confirm seed_weight: docx says g/plant, values are 194-204.
-# Nitrogen is not labeled total vs extractable. Mapped to soil_N_total because it is 650-790 ppm, the same range as related files that call it total N. Confirm.
-# 100 DAS is described as crop maturity, so harvest_days is 100. The harvest file itself has no date column.
-# Design is not named.
-# In vitro antagonism and enzyme scores are not crop measurements.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, N/P/K, harvest_date; unknown per-plant variables; rep and seed_treatment also sit on the soil long table.
+# Fertilizer rates, irrigation statement, experimental design, and calendar harvest date are not in the files. Plot size is "4 m x 3 ridges" (area in m2 not stated).
+# Confirm seed_weight (194-204 g per 1000 seeds vs docx label g/plant) and soil_N_total (650-790 ppm, matching total N in sister ICRISAT files).
+# write_files: missing carob_contributor, irrigated, K/N/P_fertilizer, harvest_date; unknown per-plant variables.
 
 ## NOT PROCESSED
-# Antagonistic potential of the four actinomycetes.xlsx: Method, FOC, Rhizoctonia bataticola 6, Rhizoctonia bataticola 24, Rhizoctonia bataticola 115, S.rolfsii. Dual-culture scores.
-# Production of extracellular enzymes and plant growth.xlsx: Lipase, Protaese, Chitinase, Sid, Hydrocyanic acid, Cellulase, Glu, IAA. In vitro ratings and concentrations.
-# Metadata docx files: unit notes used above.
+# Antagonistic potential of the four actinomycetes.xlsx: in vitro dual-culture ratings.
+# Production of extracellular enzymes and plant growth.xlsx: in vitro enzyme/metabolite ratings.
+# Metadata docx files: documentation used to verify units.
 
 ## NEW VARIABLES
-# leaf_area_cm2_: leaf area (cm2); docx writes cm−2
-# leaf_weight_g_: leaf weight (g/plant)
-# pod_number_plant_: pods per plant
-# shoot_weight_g_plant_: shoot weight (g/plant)
-# seed_number_plant_: seeds per plant
+# leaf_area_cm2_: leaf area at 60 DAS (cm2/plant).
+# leaf_weight_g_: leaf weight at 60 DAS (g/plant).
+# pod_number_plant_: pods per plant at 60 DAS.
+# shoot_weight_g_plant_: shoot weight at 60 DAS (g/plant).
+# seed_number_plant_: seeds per plant at harvest.
 
 
 carob_script <- function(path) {
@@ -54,59 +50,67 @@ A total of 89 actinomycetes were screened for their antago-nistic activity again
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Effect of the four actinomycetes on agronomic performance.xlsx"]
 	r <- carobiner::read.excel(f, na="NA")
-	trt <- trimws(r$Treatments)
+	trt <- trimws(as.character(r$Treatments))
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
 		trial_id = "Patancheru_2013",
 		country = "India",
 		adm1 = "Telangana",
+		adm2 = "Sangareddy",
 		location = "Patancheru",
 		site = "ICRISAT field BP-13B",
+		latitude = 17.511,
+		longitude = 78.275,
+		geo_from_source = FALSE,
+		geo_uncertainty = 2000,
 		crop = "chickpea",
 		variety = "ICCV 2",
 		treatment = trt,
 		seed_treatment = trt,
 		inoculant = ifelse(trt == "Control", NA_character_, trt),
 		inoculated = trt != "Control",
-		rep = as.integer(r$`Replication number`),
+		rep = as.integer(r[["Replication number"]]),
 		planting_date = "2013",
 		harvest_days = 100,
-		nodule_plant = as.numeric(r$`Nod number per plant`),
-		leaf_area_cm2_ = as.numeric(r$`Leaf area`),
-		leaf_weight_g_ = as.numeric(r$`Leaf weight`),
-		pod_number_plant_ = as.numeric(r$`Pod number per plant`),
-		shoot_weight_g_plant_ = as.numeric(r$`Shoot weight`),
-		plant_height = as.numeric(r$`Plant height`),
-		seed_weight = as.numeric(r$`Seed weight`),
-		seed_number_plant_ = as.numeric(r$`Number of seeds`),
-		yield = as.numeric(r$`Grain yield`) * 1000,
-		dmy_residue = as.numeric(r$`Stover yield`) * 1000,
-		dmy_total = as.numeric(r$`Dry matter`) * 1000,
+		nodule_plant = as.numeric(r[["Nod number per plant"]]),
+		leaf_area_cm2_ = as.numeric(r[["Leaf area"]]),
+		leaf_weight_g_ = as.numeric(r[["Leaf weight"]]),
+		pod_number_plant_ = as.numeric(r[["Pod number per plant"]]),
+		shoot_weight_g_plant_ = as.numeric(r[["Shoot weight"]]),
+		plant_height = as.numeric(r[["Plant height"]]),
+		seed_weight = as.numeric(r[["Seed weight"]]),
+		seed_number_plant_ = as.numeric(r[["Number of seeds"]]),
+		yield = as.numeric(r[["Grain yield"]]) * 1000,
+		dmy_residue = as.numeric(r[["Stover yield"]]) * 1000,
+		dmy_total = as.numeric(r[["Dry matter"]]) * 1000,
 		yield_part = "seed",
 		yield_isfresh = FALSE,
+		yield_moisture = 0,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
 
 	f1 <- ff[basename(ff) == "Effect of the four actinomycetes on rhizosphere.xlsx"]
 	r1 <- carobiner::read.excel(f1, na="NA")
-	long <- data.frame(
-		trial_id = "Patancheru_2013",
-		seed_treatment = trimws(r1$Treatments),
-		rep = as.integer(r1$`Replication number`),
-		DAP = as.integer(sub(" days", "", r1$`Days after sowing`)),
+	dkey <- paste(d$seed_treatment, d$rep, sep="|")
+	skey <- paste(trimws(as.character(r1$Treatments)), as.integer(r1[["Replication number"]]), sep="|")
+	dlong <- data.frame(
+		record_id = d$record_id[match(skey, dkey)],
+		DAP = as.integer(sub(" days", "", as.character(r1[["Days after sowing"]]))),
+		depth_top = 0,
+		depth_bottom = 15,
 		soil_N_total = as.numeric(r1$Nitrogen),
 		soil_P = as.numeric(r1$Phosphorus),
-		soil_SOC = as.numeric(r1$`Organic Carbon`)
+		soil_SOC = as.numeric(r1[["Organic Carbon"]])
 	)
 
-	carobiner::write_files(path, meta, d, long=long)
+	carobiner::write_files(path, meta, d, long=dlong)
 }

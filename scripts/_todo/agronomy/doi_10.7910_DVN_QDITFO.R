@@ -13,10 +13,11 @@
 ## ISSUES
 # The C11 (flooded) and UJ/UE (aerobic) development/meteo files and the 2011 greenhouse experiment (BG10)
 #   are not mapped (no yield in this dataset; harvest of these trials appears to be in doi:10.7910/DVN/28202).
-# No coordinates in the data (IRRI, Los Banos, field UZ); fertilizer management not documented.
+# Georeferenced to IRRI, Los Banos (14.1675, 121.2536; geo_from_source = FALSE); fertilizer management not documented.
+# Daily weather from 2012DS UZ1density Meteo.csv and 2013DS UZ1density Meteo.csv included as wth (GR MJ/m2 * 1000 -> srad kJ/m2).
 # stem_density from tiller counts exceeds the vocabulary maximum at the highest densities (up to ~1700 tillers/m2).
-# Not mapped: leaf-level area/SLA, sheath, phenology (leaf appearance), N concentration (2013) and meteo files.
-# Remaining messages: missing NPK, coordinates; out of bounds stem_density; new variables.
+# Not mapped: leaf-level area/SLA, sheath, phenology (leaf appearance), N concentration (2013).
+# Remaining messages: missing NPK; out of bounds stem_density; new variables.
 
 ## NEW VARIABLES
 # spikelet_density_: total spikelets per m2
@@ -105,8 +106,8 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 		response_vars = "yield", 
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 1
 	)
 
@@ -153,9 +154,9 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 	d$adm1 <- "Laguna"
 	d$location <- "IRRI, Los Banos"
 	d$site <- "UZ field"
-	d$longitude <- as.numeric(NA)
-	d$latitude <- as.numeric(NA)
-	d$geo_from_source <- NA
+	d$longitude <- 121.2536
+	d$latitude <- 14.1675
+	d$geo_from_source <- FALSE
 
 	bio <- function(year) {
 		f2 <- ff[basename(ff) == paste0("Biomass_mean_plot_UZ1density_DS", year, ".csv")]
@@ -177,5 +178,23 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 	dlong$trial_id <- NULL
 	dlong$plot_id <- NULL
 
-	carobiner::write_files(path, meta, d, long=dlong)
+	rd_wth <- function(fname) {
+		rm <- read.csv(ff[basename(ff) == fname])
+		data.frame(
+			station_name = "IRRI_UZ",
+			country = "Philippines",
+			location = "IRRI, Los Banos",
+			longitude = 121.2536,
+			latitude = 14.1675,
+			date = as.character(as.Date(rm$Date, "%m/%d/%Y")),
+			temp = as.numeric(rm$AirT),
+			rhum = if ("RH" %in% names(rm)) as.numeric(rm$RH) else NA_real_,
+			srad = as.numeric(rm$GR) * 1000
+		)
+	}
+	wth <- rbind(rd_wth("2012DS UZ1density Meteo.csv"), rd_wth("2013DS UZ1density Meteo.csv"))
+	wth <- wth[!is.na(wth$date), ]
+	wth <- unique(wth)
+
+	carobiner::write_files(path, meta, d, long=dlong, wth=wth)
 }

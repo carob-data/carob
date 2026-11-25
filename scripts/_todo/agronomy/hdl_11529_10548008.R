@@ -44,17 +44,17 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Rabi validation trials, Rangpur, Bangladesh",
+		project = "SRFSI",
 		design = NA,
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment;variety",
 		response_vars = "yield",
 		carob_contributor = "Fredy Chimire",
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.8,
-		notes = "Field-book coordinates are empty. Validation-sheet latitude and longitude headers are swapped on most sheets. K.kg.ha is K2O."
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.9,
+		notes = "Field-book coordinates imputed at Rangpur district level; validation-sheet latitude and longitude headers are swapped on most sheets. K.kg.ha is K2O. Jute yield is dry bast fiber stored with yield_part = 'stems'."
 	)
 
 	as_date <- function(x) {
@@ -153,10 +153,11 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 
 		data.frame(
 			country = "Bangladesh",
+			adm1 = "Rangpur",
 			adm2 = "Rangpur",
 			location = loc,
-			latitude = NA_real_,
-			longitude = NA_real_,
+			latitude = 25.746,
+			longitude = 89.252,
 			geo_from_source = FALSE,
 			trial_id = paste(r1$Year, loc, crop),
 			plot_id = paste(r1$Year, loc, r1$Site.No, r1$Tmnt),
@@ -226,7 +227,8 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 				other[both] <- tolower(trimws(vapply(bits, `[`, "", 2)))
 			}
 			crop[crop == "rice"] <- "rice"
-			part <- ifelse(crop == "mustard", "seed", ifelse(crop == "jute", "fiber", "grain"))
+			# Jute yield is dry bast fiber from stems ("fiber" is not in terminag yield_part)
+			part <- ifelse(crop == "mustard", "seed", ifelse(crop == "jute", "stems", "grain"))
 			prep <- if ("Tillage" %in% names(r)) prep_from(r$Tillage) else rep(NA_character_, nrow(r))
 			seas <- tolower(trimws(as.character(r$Season)))
 			seas[grepl("kharif|khaif", seas)] <- "kharif"
@@ -254,10 +256,11 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 
 			data.frame(
 				country = "Bangladesh",
+				adm1 = "Rangpur",
 				adm2 = carobiner::fix_name(r$District, "title"),
 				location = loc,
-				latitude = lat,
-				longitude = lon,
+				latitude = ifelse(is.na(lat) | is.na(lon), 25.746, lat),
+				longitude = ifelse(is.na(lat) | is.na(lon), 89.252, lon),
 				geo_from_source = !is.na(lat) & !is.na(lon),
 				trial_id = paste(r$Year, seas, loc, crop),
 				plot_id = paste(s, loc, seq_len(nrow(r))),

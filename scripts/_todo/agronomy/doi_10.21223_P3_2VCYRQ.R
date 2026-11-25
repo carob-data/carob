@@ -2,26 +2,30 @@
 # license: GPL (>=3)
 
 ## NOTES
-# UNICA potato, drip irrigation, La Molina, June to September 2018. T1 is full irrigation, T2 is CWSI below 0.4, T3 is CWSI below 0.7. Five blocks.
-# Dictionary: biomass is the mean of 4 plants per plot. It does not state grams or kilograms. Canopy cover is described as a percentage; the values are between 0 and 1.
-# Coordinates are the Dataverse point (south -12.076289, west -76.948417).
+# UNICA potato under drip irrigation at National Agrarian University La Molina (UNALM), Lima, Peru (June-September 2018). Five blocks; T1 = full irrigation, T2 = CWSI < 0.4, T3 = CWSI < 0.7.
+# Dictionary.xls states units explicitly: FL, FS, FR, FT, DL, DS, DR, DT are in g per plant (mapped to terminag fw_leaves..dw_tubers); CC is % ground cover (0.1 to 100%, mapped to ground_cover); Hv is gravimetric soil humidity in % (divided by 100 to g/g for soil_GWC); V is irrigation volume in m3 per plot; Tf, Tw, Ta, dT are degrees C; CWSI is dimensionless.
+# Coordinates (-12.076289, -76.948417) come from the CIP Dataverse geographic metadata.
+# Biomass, canopy cover, soil humidity, irrigation volumes, and CWSI thermography are all repeated by DAP and stored in the long table linked via record_id.
 
 ## ISSUES
-# Biomass cannot be converted to kg/ha: the mass unit is not stated and the plot area is not given.
-# Irrigation volume has no unit.
-# CWSI hour values are not usable clock times.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: harvest_, irrigation_volume_, fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_, tuber_number_, dry_leaf_, dry_stem_, dry_root_, dry_tuber_, canopy_cover_, cwsi_.
+# Plot area and plant density are not stated in Data.xls or Dictionary.xls, so per-plant tuber fresh weight (g/plant) and per-plot irrigation volume (m3) cannot be converted to kg/ha and mm.
+# No fertilizer rates or exact calendar planting/harvest dates (only June-September 2018).
+# write_files: missing carob_contributor, yield, yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer; unknown variables: cwsi_rule_, harvest_, tubers_per_plant_, irrigation_event_, irrigation_volume_m3_, cwsi_, foliage_temperature_, foliage_air_dt_.
 
 ## NOT PROCESSED
-# CWSI sheet sensor columns other than CWSI (foliage and air temperature, humidity, vapour pressure, PAR, solar radiation, wind). Units are not in the dictionary.
-# Irrigation daTI and nIrri: timing indexes. The volume is kept.
+# CWSI sheet meteorological columns (Tw, Ta, RH, es, VPD, PAR, SR, ws, wd): repeated across all plots at measurement hours without calendar dates for a daily weather table.
+# Irrigation daTI (days after treatment initiation): DAP is used as the common time variable.
+# Dictionary.xls: variable definitions and units.
 
 ## NEW VARIABLES
-# fresh_leaf_, fresh_stem_, fresh_root_, fresh_tuber_, dry_leaf_, dry_stem_, dry_root_, dry_tuber_: biomass per plant. Unit is not stated.
-# tuber_number_: tubers per plant.
-# canopy_cover_: canopy cover as recorded.
-# irrigation_volume_: irrigation volume per plot. Unit is not stated.
-# cwsi_: crop water stress index.
+# cwsi_rule_: irrigation threshold rule (full, 0.4, or 0.7 CWSI).
+# harvest_: sequential harvest number (1 to 18).
+# tubers_per_plant_: number of tubers per plant.
+# irrigation_event_: sequential irrigation event number per plot.
+# irrigation_volume_m3_: irrigation volume applied per plot (m3).
+# cwsi_: crop water stress index from thermography (dimensionless).
+# foliage_temperature_: canopy foliage temperature (degrees C).
+# foliage_air_dt_: foliage minus air temperature difference (degrees C).
 
 
 carob_script <- function(path) {
@@ -42,85 +46,111 @@ The objective of this study was to evaluate the UNICA potato crop variety's yiel
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "fresh_tuber_",
+		treatment_vars = "cwsi_rule_",
+		response_vars = "fw_tubers;dw_tubers;ground_cover;soil_GWC",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
+		carob_effort = 0.2
 	)
 
 	f <- ff[basename(ff) == "Data.xls"]
+	nas <- c("", "NA", "NULL")
+	r1 <- carobiner::read.excel(f, sheet="Biomass", na=nas)
+	r2 <- carobiner::read.excel(f, sheet="Canopy cover", na=nas)
+	r3 <- carobiner::read.excel(f, sheet="Soil humidity", na=nas)
+	r4 <- carobiner::read.excel(f, sheet="Irrigation", na=nas)
+	r5 <- carobiner::read.excel(f, sheet="CWSI", na=nas)
+
 	lab <- c(T1="T1 full irrigation", T2="T2 CWSI < 0.4", T3="T3 CWSI < 0.7")
-	r1 <- carobiner::read.excel(f, sheet="Biomass")
-	r2 <- carobiner::read.excel(f, sheet="Canopy cover")
-	r3 <- carobiner::read.excel(f, sheet="Soil humidity")
-	r4 <- carobiner::read.excel(f, sheet="Irrigation")
-	r5 <- carobiner::read.excel(f, sheet="CWSI")
+	rule <- c(T1="full", T2="0.4", T3="0.7")
 
-	d <- unique(data.frame(
-		plot_id = as.character(r1$plot),
-		block_id = as.character(r1$block),
-		treatment = unname(lab[as.character(r1$treatment)])
+	plots <- unique(data.frame(
+		plot = as.integer(r1$plot),
+		block = as.integer(r1$block),
+		code = trimws(as.character(r1$treatment))
 	))
-	d$record_id <- as.integer(d$plot_id)
-	d$crop <- "potato"
-	d$variety <- "Unica"
-	d$country <- "Peru"
-	d$adm1 <- "Lima"
-	d$location <- "La Molina"
-	d$latitude <- -12.076289
-	d$longitude <- -76.948417
-	d$geo_from_source <- TRUE
-	d$planting_date <- "2018-06"
-	d$harvest_date <- "2018-09"
-	d$irrigated <- TRUE
-	d$trial_id <- "LaMolina_2018"
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
+	plots <- plots[order(plots$plot), ]
 
-	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[!nzchar(x) | x %in% c("NA", "NULL")] <- NA_character_
-		as.numeric(x)
+	irr_n <- tapply(as.numeric(r4$V), as.integer(r4$plot), function(z) sum(!is.na(z) & z > 0))
+
+	d <- data.frame(
+		record_id = seq_len(nrow(plots)),
+		trial_id = "LaMolina_2018",
+		plot_id = as.character(plots$plot),
+		block_id = as.character(plots$block),
+		rep = plots$block,
+		treatment = unname(lab[plots$code]),
+		cwsi_rule_ = unname(rule[plots$code]),
+		crop = "potato",
+		variety = "Unica",
+		yield_part = "tubers",
+		country = "Peru",
+		adm1 = "Lima",
+		location = "La Molina",
+		latitude = -12.076289,
+		longitude = -76.948417,
+		geo_from_source = TRUE,
+		planting_date = "2018-06",
+		harvest_date = "2018-09",
+		irrigated = TRUE,
+		irrigation_method = "drip",
+		irrigation_number = as.integer(unname(irr_n[as.character(plots$plot)])),
+		on_farm = FALSE,
+		is_survey = FALSE
+	)
+
+	rid <- function(p) d$record_id[match(as.character(p), d$plot_id)]
+
+	hh <- r5$hour
+	if (inherits(hh, "POSIXt")) {
+		hh <- format(hh, "%H:%M:%S", tz="UTC")
+	} else {
+		hh <- trimws(as.character(hh))
 	}
+
 	b <- data.frame(
-		record_id = as.integer(r1$plot),
+		record_id = rid(r1$plot),
 		DAP = as.integer(r1$dap),
 		harvest_ = as.integer(r1$harvest),
-		fresh_leaf_ = num(r1$FL),
-		fresh_stem_ = num(r1$FS),
-		fresh_root_ = num(r1$FR),
-		fresh_tuber_ = num(r1$FT),
-		tuber_number_ = num(r1$nT),
-		dry_leaf_ = num(r1$DL),
-		dry_stem_ = num(r1$DS),
-		dry_root_ = num(r1$DR),
-		dry_tuber_ = num(r1$DT)
+		fw_leaves = as.numeric(r1$FL),
+		fw_stems = as.numeric(r1$FS),
+		fw_roots = as.numeric(r1$FR),
+		fw_tubers = as.numeric(r1$FT),
+		tubers_per_plant_ = as.numeric(r1$nT),
+		dw_leaves = as.numeric(r1$DL),
+		dw_stems = as.numeric(r1$DS),
+		dw_roots = as.numeric(r1$DR),
+		dw_tubers = as.numeric(r1$DT)
 	)
-	c <- data.frame(
-		record_id = as.integer(r2$plot),
+	cc <- data.frame(
+		record_id = rid(r2$plot),
 		DAP = as.integer(r2$dap),
-		canopy_cover_ = num(r2$CC)
+		ground_cover = as.numeric(r2$CC)
 	)
-	h <- data.frame(
-		record_id = as.integer(r3$plot),
+	sh <- data.frame(
+		record_id = rid(r3$plot),
 		DAP = as.integer(r3$dap),
-		soil_GWC = num(r3$Hv)
+		# Hv is gravimetric moisture in %; terminag soil_GWC is g/g
+		soil_GWC = as.numeric(r3$Hv) / 100
 	)
-	v <- data.frame(
-		record_id = as.integer(r4$plot),
+	ir <- data.frame(
+		record_id = rid(r4$plot),
 		DAP = as.integer(r4$dap),
-		irrigation_volume_ = num(r4$V)
+		irrigation_event_ = as.integer(r4$nIrri),
+		irrigation_volume_m3_ = as.numeric(r4$V)
 	)
-	w <- data.frame(
-		record_id = as.integer(r5$plot),
+	cw <- data.frame(
+		record_id = rid(r5$plot),
 		DAP = as.integer(r5$dap),
-		cwsi_ = num(r5$CWSI)
+		time = hh,
+		cwsi_ = as.numeric(r5$CWSI),
+		foliage_temperature_ = as.numeric(r5$Tf),
+		foliage_air_dt_ = as.numeric(r5$dT)
 	)
-	dlong <- carobiner::bindr(b, c, h, v, w)
+	dlong <- carobiner::bindr(b, cc, sh, ir, cw)
 
 	carobiner::write_files(path, meta, d, long=dlong)
 }

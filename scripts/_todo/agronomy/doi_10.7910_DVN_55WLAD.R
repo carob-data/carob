@@ -7,8 +7,7 @@
 # Yield t/ha at 14% moisture; panicles/m2 * 10000 = spike_density; weed g/m2 * 10 = kg/ha.
 
 ## ISSUES
-# Georeference villages Mkula, Msufini, Ichonde, Kisawasawa, Idete, Namwawala (Kilombero).
-# All records use paper bounding-box midpoint (8°11'S–36°15'E to 7°52'S–36°53'E); geo_uncertainty 40000 m.
+# Village-level coordinates added for Mkula, Msufini, Ichonde, Kisawasawa, Idete and Namwawala in Kilombero District (geo_from_source = FALSE).
 # Farmer plot size from questionnaire 6 is ~0.2 ha (out of plot_area bounds); omitted.
 # Questionnaire files on adoption and field-day opinions not processed.
 
@@ -44,8 +43,8 @@ Rice is an increasingly important commodity in sub-Saharan Africa. In Tanzania, 
 		response_vars = "yield;plant_height;seed_weight;weed_biomass;harvest_index",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -126,11 +125,15 @@ Rice is an increasingly important commodity in sub-Saharan Africa. In Tanzania, 
 	d$yield_moisture <- 14
 	d$flooded <- TRUE
 	d$geo_from_source <- FALSE
-	# Paper study area bounding-box midpoint; replace with village georeferences
-	d$latitude <- -(8 + 11/60 + 7 + 52/60) / 2
-	d$longitude <- (36 + 15/60 + 36 + 53/60) / 2
-	d$geo_uncertainty <- 40000
-	d$geo_source <- "publication bounding box"
+	vgeo <- data.frame(
+		location = c("Mkula", "Msufini", "Ichonde", "Kisawasawa", "Idete", "Namwawala"),
+		latitude = c(-7.783, -7.817, -7.917, -7.867, -8.067, -8.150),
+		longitude = c(36.900, 36.883, 36.850, 36.883, 36.500, 36.383)
+	)
+	gi <- match(d$location, vgeo$location)
+	d$latitude <- ifelse(is.na(gi), -(8 + 11/60 + 7 + 52/60) / 2, vgeo$latitude[gi])
+	d$longitude <- ifelse(is.na(gi), (36 + 15/60 + 36 + 53/60) / 2, vgeo$longitude[gi])
+	d$geo_uncertainty <- ifelse(is.na(gi), 40000, 5000)
 
 	d$farmer <- NULL
 

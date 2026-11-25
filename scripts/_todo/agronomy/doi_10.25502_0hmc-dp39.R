@@ -2,13 +2,13 @@
 # license: GPL (>=3)
 
 ## ISSUES
-# GPS lat/lon columns empty; georeference villages (Lushoto, Hai, Arumeru).
+# GPS lat/lon columns empty; district-level coordinates added for Lushoto, Hai, Arumeru and Moshi/Himo wards (geo_from_source = FALSE).
 # weight_grain mixed "g"/"gm"/bare numbers; treated as grams.
 # area_harvested_m2 is 0 for some plots; plot_size used when it looks like m2 (not "6m10").
 # TSP amounts such as 9gm per 16 m2 give very low P rates; check N2Africa protocol.
 # crop column often blank; filled as common bean from non-missing plot crops.
 # harvest month sometimes missing.
-# write_files: missing longitude/latitude/yield_moisture; NA yield when area unknown; NA variety/inoculated/fertilizer_type.
+# write_files: missing yield_moisture; NA yield when area unknown; NA variety/inoculated/fertilizer_type.
 
 
 
@@ -51,8 +51,8 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 62,
 		carob_effort = 0.9
 	)
 
@@ -105,16 +105,35 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		v
 	}
 
+	adm2 <- carobiner::fix_name(r6$district, "title")
+	adm2[adm2 == ""] <- NA
+	loc <- carobiner::fix_name(r6$vilage, "title")
+	loc[loc == ""] <- NA
+	ward <- tolower(trimws(r6$sector_ward))
+	# Infer district from village/ward when district is blank
+	adm2[is.na(adm2) & (grepl("himo|rauya|makuyun", ward) | grepl("rauya|makuyun", tolower(loc)))] <- "Moshi"
+	adm2[is.na(adm2) & (grepl("kware", ward) | grepl("kware|mungushi|kimashuku|kwasadala|lambo", tolower(loc)))] <- "Hai"
+	adm2[is.na(adm2) & grepl("baga|boheloi|hambalai|kongei|mshizii", tolower(loc))] <- "Lushoto"
+	adm2[is.na(adm2) & grepl("leguruki", tolower(loc))] <- "Arumeru"
+	geo <- data.frame(
+		adm2 = c("Lushoto", "Hai", "Arumeru", "Moshi"),
+		adm1 = c("Tanga", "Kilimanjaro", "Arusha", "Kilimanjaro"),
+		latitude = c(-4.7833, -3.3000, -3.3667, -3.3833),
+		longitude = c(38.2833, 37.2167, 36.8500, 37.5333)
+	)
+	gi <- match(adm2, geo$adm2)
+
 	d0 <- data.frame(
 		trial_id = r6$farm_id,
 		country = "Tanzania",
-		adm2 = carobiner::fix_name(r6$district, "title"),
-		location = carobiner::fix_name(r6$vilage, "title"),
+		adm1 = geo$adm1[gi],
+		adm2 = adm2,
+		location = loc,
+		latitude = geo$latitude[gi],
+		longitude = geo$longitude[gi],
 		elevation = as.numeric(gsub(" meter", "", r6$gps_altitude)),
 		farmer_gender = tolower(r6$gender_of_farmer)
 	)
-	d0$adm2[d0$adm2 == ""] <- NA
-	d0$location[d0$location == ""] <- NA
 
 	d5 <- data.frame(
 		trial_id = r5$farm_id,
