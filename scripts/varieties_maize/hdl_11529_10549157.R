@@ -1,8 +1,11 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+ ## ISSUE
 
-# need to find out where the three locations are.
+ ## The experiment was done under three Mega-Environments in Mexico: Subtropic, Tropic, and Highlands of Mexico but the location are not specified
+ ### No longitude and latitude provided 
+ ### No paper related find out 
 
 
 carob_script <- function(path){
