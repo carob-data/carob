@@ -4,8 +4,8 @@
  ## ISSUE
 
  ## The experiment was done under three Mega-Environments in Mexico: Subtropic, Tropic, and Highlands of Mexico but the location are not specified
- ### No longitude and latitude provided 
- ### No paper related find out 
+ ### No longitude and latitude provided and paper does not specify them
+ ### related paper doi:10.2135/cropsci2017.03.0145 and data hdl:11529/10934
 
 
 carob_script <- function(path){
@@ -23,7 +23,7 @@ Every year, the MasAgro maize component of the Sustainable Modernization of Trad
   
   meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
 		data_organization = "CIMMYT",
-		publication = NA,
+		publication = "doi:10.1371/journal.pone.0328872",
 		project = "MasAgro",
 		data_type = "experiment",
 		treatment_vars = "variety_type",
