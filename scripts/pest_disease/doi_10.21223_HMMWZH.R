@@ -179,25 +179,26 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 	  date = rep(bmdate, each=nrow(r5)),
 	  dmy_total = as.numeric(unlist(r5[, bmcol]))              # kg/ha; 0 when the canopy was dead
 	)
+
+# we have hourly weather, no need to keep daily weather 
+#	## d8: daily weather (r8); 1999-12-08, -09, -10 are copies of 12-13, 12-14, 12-26 (kept)
+#	d8 <- data.frame(
+#	  date = as.character(as.Date(r8$...1)),
+#	  temp = r8$`T prom.`,
+#	  tmax = r8$`T Hi prom.`,                  # mean of the hourly maxima
+#	  tmin = r8$`T low prom`,                  # mean of the hourly minima
+#	  rhum = r8$`% HR prom.`,
+#	  prec = r8$`Rain/d`,
+#	  rhum90_hours = r8$`Hora Hr>90`,
+#	  temp_rhum90_ = r8$`T prom. HR>90`,
+#	  leaf_wet_hours = r8$`Hr de LW>=1`
+#	)
+#	d8 <- d8[!is.na(d8$date), ]                  # summary row
 	
-	## d8: daily weather (r8); 1999-12-08, -09, -10 are copies of 12-13, 12-14, 12-26 (kept)
-	d8 <- data.frame(
-	  date = as.character(as.Date(r8$...1)),
-	  temp = r8$`T prom.`,
-	  tmax = r8$`T Hi prom.`,                  # mean of the hourly maxima
-	  tmin = r8$`T low prom`,                  # mean of the hourly minima
-	  rhum = r8$`% HR prom.`,
-	  prec = r8$`Rain/d`,
-	  rhum90_hours = r8$`Hora Hr>90`,
-	  temp_rhum90_ = r8$`T prom. HR>90`,
-	  leaf_wet_hours = r8$`Hr de LW>=1`
-	)
-	d8 <- d8[!is.na(d8$date), ]                  # summary row
-	
-	## d9: hourly weather (r9); "Time" is a fraction of a day, but a running count of days in the gap-filled stretch
+	## wth: hourly weather (r9); "Time" is a fraction of a day, but a running count of days in the gap-filled stretch
 	tday <- as.numeric(difftime(r9$Time, as.POSIXct("1899-12-31", tz="UTC"), units="days"))
 	compass <- c("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
-	d9 <- data.frame(
+	wth <- data.frame(
 	  date = as.character(as.Date(r9$Date)),
 	  time = sprintf("%02d:00", round(24 * (tday %% 1))),
 	  temp = r9$Temp,
@@ -214,21 +215,18 @@ The effect of nitrogen (N) fertilization on the development of potato late bligh
 	  wdir = (match(r9$Dir, compass) - 1) * 22.5, #Nice # 22.5 is a standard compass interval
 	  leaf_wetness = r9$Leaf
 	)
-	d9 <- d9[!is.na(d9$date), ]                  # totals row
-	
-	## combine
-	d <- d1
-	
+	wth <- wth[!is.na(wth$date), ]                  # totals row
+		
 	dlong <- merge(d1long, d3, by=c("plot_id", "date"), all=TRUE)
 	dlong <- merge(dlong, d5, by=c("plot_id", "date"), all=TRUE)
 	dlong$DAE <- as.integer(as.Date(dlong$date) - emergence)
 	
-	wth <- carobiner::bindr(d8, d9)
+#	wth <- carobiner::bindr(d8, d9)
 	wth$country <- "Peru"
 	wth$location <- "Oxapampa"
 	wth$latitude <- -10.5919
 	wth$longitude <- -75.3833
 	wth$geo_from_source <- TRUE
 	
-	carobiner::write_files(path, meta, d, long=dlong, wth=wth)
+	carobiner::write_files(path, meta, d1, long=dlong, wth=wth)
 }
