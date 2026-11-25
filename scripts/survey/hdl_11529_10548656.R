@@ -27,7 +27,9 @@ carob_script <- function(path) {
 
 	do_LCAS <- carobiner::get_function("do_LCAS", path, group)
 	d <- do_LCAS(r)
-	
+	i <- d$location == "Fatehpur"
+	d$longitude[i] <- 83.293 ## from the non missing coordinate of the same location in the raw data 
+	d$latitude[i] <- 25.213
     carobiner::write_files(path, meta, d)
 }
 
