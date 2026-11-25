@@ -2,22 +2,29 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Rice yield (t/ha) and total weed biomass (g/m2) from the biomass workbook, stored as kg/ha (biomass times 10). The file does not say whether weed biomass is fresh or dry.
-# F2 is 80 kg/ha of NPK 11/22/16 (metadata sheet). N is 8.8 kg/ha. P and K use the oxide factors (P2O5/2.29, K2O/1.2051). F1 is manure only, so mineral N, P, and K are 0.
-# Manure is described as 5 to 10 t DM/ha, a range, so OM_amount is not set. OM_used is TRUE.
-# Country Madagascar, state Vakinankaratra, and city Ivory are the dataset geographicCoverage. The description says rainfed rice, so irrigated is FALSE. No coordinates are in the files.
-# Weed cover (percent) by days after sowing is the long table. Species rows are cover greater than 0.
+# Rainfed upland rice trial at Ivory, Vakinankaratra, Mid-West Madagascar over three seasons (Nov 2015 - Apr 2018; harvest years 2016-2018).
+# Coordinates (19°33'S, 46°25'E; ~930 m a.s.l.) from Rafenomanjato et al. (2023), doi:10.1111/wre.12578.
+# F1 is farmyard manure (5-10 t DM/ha; range only, so OM_amount is omitted). F2 is F1 plus 80 kg/ha NPK 11-22-16 (N = 8.8 kg/ha; P = 80*0.22/2.29; K = 80*0.16/1.2051).
+# Soil cover treatments: CT (conventional tillage) vs NT (no-tillage with Stylosanthes guianensis living cover crop).
+# Weed management treatments: weedy, weed-free (weeds removed regularly), and weed-stylo-free (NT only: both weeds and stylosanthes sprouts removed).
+# Rice grain yield and shoot biomass (t/ha) are converted to kg/ha (* 1000). Weed and stylosanthes biomass (g/m2) are converted to kg/ha (* 10).
+# 200-grain weight (full grains) is 4.2-5.9 g (metadata says "g.m-2", a typo for g); multiplied by 5 for 1000-seed weight (seed_weight).
+# Weed cover (%) and individual weed species cover (%) by days after sowing (DAS) are stored in the long table (species with cover > 0). Stylosanthes guianensis cover is kept separately in stylo_cover_.
 
 ## ISSUES
-# shoot t/ha is not defined in the metadata sheet, so it is not mapped. Tillers, panicles, and holes have no plot area. No coordinates or dates in the files.
-# write_files: missing variables: project. missing variables: yield_moisture, geo_from_source, latitude, longitude, planting_date, harvest_date. unknown variables: species_cover_.
-
-## NOT PROCESSED
-# shoot t/ha, 200-grain weights (g/m2, not a seed weight), striga counts, and tiller and panicle counts.
-# DataWeedRiceYield_AntsaPhDthesis_Metadata.xlsx: documentation or a codebook, not an observation table.
+# Exact sowing/harvest dates, rice cultivar, and plot area (for 105 planting holes) are not in the data files; planting_date and harvest_date are recorded at year-month precision (Nov-Apr per dataset description).
+# Yield moisture basis (fresh vs dry) and whether weed/shoot biomass are fresh or dry are not stated in the metadata sheet.
+# Individual grass, broadleaved, and sedge biomass breakdowns and per-plot hole/tiller/panicle/striga counts (lacking plot area) are not mapped.
 
 ## NEW VARIABLES
-# species_cover_: percent cover of one species on a survey date. Zeros are omitted.
+# weed_management_: weed management treatment level (weedy, weed-free, weed-stylo-free)
+# stylo_biomass_: biomass of Stylosanthes guianensis cover crop at rice harvest (kg/ha)
+# stylo_cover_: percent ground cover of Stylosanthes guianensis on a survey date (%)
+
+## NOT PROCESSED
+# WeedBiomass&RiceYield: nb.holes, missing.plant, zero.panic, white.panic, nb.till, nb.panic (counts per 105-hole plot without plot area); grass, broadleaved, sedge (biomass breakdown of tot.weeds); 200 grains empty.
+# WeedCover: WeedStyloCover (combined weed + stylosanthes cover).
+# DataWeedRiceYield_AntsaPhDthesis_Metadata.xlsx: codebook, not an observation table.
 
 
 carob_script <- function(path) {
@@ -35,84 +42,109 @@ This dataset contains weed cover observation in rainfed rice field considering o
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIRAD",
 		publication = "doi:10.1111/wre.12578",
+		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment;land_prep_method;N_fertilizer",
-		response_vars = "yield;weed_biomass;weed_cover",
+		treatment_vars = "land_prep_method;N_fertilizer;P_fertilizer;K_fertilizer;weeding_done;weed_management_",
+		response_vars = "yield;y_residue;seed_weight;sterility_index;weed_biomass;weed_cover",
 		carob_contributor = NA,
+		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_completion = 80,
+		carob_effort = 0.5
 	)
 
 	f1 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedBiomassRiceYield.xlsx"]
 	f2 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedCover.xlsx"]
-	r1 <- carobiner::read.excel(f1)
-	r2 <- carobiner::read.excel(f2)
+	r1 <- carobiner::read.excel(f1, na=c("", "NA", "n.a"))
+	r2 <- carobiner::read.excel(f2, na=c("", "NA", "n.a"))
 
-	r1$weed_management_ <- gsub("-", ".", r1$weeds)
-	r1$N_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.11, 0)
-	r1$P_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.22 / 2.29, 0)
-	r1$K_fertilizer <- ifelse(r1$ferti == "F2", 80 * 0.16 / 1.2051, 0)
-	r1$fertilizer_type <- ifelse(r1$ferti == "F2", "NPK", "none")
+	wm <- gsub("\\.", "-", trimws(as.character(r1$weeds)))
+	yr <- as.integer(r1$year)
+	pct_empty <- as.numeric(r1$pourcent.empty)
 
 	d <- data.frame(
-		trial_id = paste("Ivory", r1$year, sep = "_"),
-		plot_id = paste(r1$year, r1$block, r1$soil, r1$ferti, r1$weed_management_, r1$replicates, sep = "_"),
+		trial_id = paste("Ivory", yr, sep="_"),
+		plot_id = paste(yr, r1$block, r1$soil, r1$ferti, wm, r1$replicates, sep="_"),
 		crop = "rice",
 		country = "Madagascar",
-		location = "Ivory",
 		adm1 = "Vakinankaratra",
+		location = "Ivory",
+		# Coordinates and elevation from Rafenomanjato et al. (2023), doi:10.1111/wre.12578 (19°33'S, 46°25'E)
+		longitude = 46.4167,
+		latitude = -19.55,
+		elevation = 930,
+		geo_from_source = TRUE,
+		# Seasons ran from Nov to Apr (Nov 2015 - Apr 2018)
+		planting_date = paste0(yr - 1L, "-11"),
+		harvest_date = paste0(yr, "-04"),
 		block_id = as.character(r1$block),
 		rep = as.integer(r1$replicates),
+		treatment = paste(r1$soil, r1$ferti, wm, sep="_"),
 		land_prep_method = ifelse(r1$soil == "CT", "conventional", "none"),
-		N_fertilizer = r1$N_fertilizer,
-		P_fertilizer = r1$P_fertilizer,
-		K_fertilizer = r1$K_fertilizer,
-		fertilizer_type = r1$fertilizer_type,
+		fertilizer_used = r1$ferti == "F2",
+		fertilizer_type = ifelse(r1$ferti == "F2", "NPK", "none"),
+		# F2 = 80 kg/ha NPK 11-22-16 (oxide P2O5 and K2O converted to elemental P and K)
+		N_fertilizer = ifelse(r1$ferti == "F2", 80 * 0.11, 0),
+		P_fertilizer = ifelse(r1$ferti == "F2", 80 * 0.22 / 2.29, 0),
+		K_fertilizer = ifelse(r1$ferti == "F2", 80 * 0.16 / 1.2051, 0),
 		OM_used = TRUE,
-		treatment = r1$weed_management_,
-		weeding_done = r1$weed_management_ != "weedy",
-		intercrops = ifelse(r1$soil == "NT", "stylosanthes", "none"),
-		intercropped = r1$soil == "NT",
+		OM_type = "farmyard manure",
+		weed_management_ = wm,
+		weeding_done = wm != "weedy",
+		cover_crop = ifelse(r1$soil == "NT", "stylosanthes", "none"),
+		cover_crop_used = r1$soil == "NT",
+		intercrops = ifelse(r1$soil == "NT" & wm != "weed-stylo-free", "stylosanthes", "none"),
+		intercropped = r1$soil == "NT" & wm != "weed-stylo-free",
 		yield = as.numeric(r1$yield) * 1000,
 		yield_part = "grain",
+		y_residue = as.numeric(r1[["shoot t/ha"]]) * 1000,
+		# 200 full grains weight (g) * 5 -> 1000-grain weight (g)
+		seed_weight = as.numeric(r1[["200 grains full"]]) * 5,
+		sterility_index = pct_empty,
+		grain_fill = 100 - pct_empty,
 		weed_biomass = as.numeric(r1$tot.weeds) * 10,
+		stylo_biomass_ = as.numeric(r1$stylo) * 10,
+		striga_infected = as.numeric(r1$striga) > 0,
 		irrigated = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
 
-	r2$weeds <- gsub("-", ".", r2$weeds)
-	r2$plot_id <- paste(r2$year, r2$block, r2[["soil management"]], r2$fertilization, r2$weeds, r2$replicates, sep = "_")
-	r2 <- r2[r2$plot_id %in% d$plot_id, ]
+	wm2 <- gsub("\\.", "-", trimws(as.character(r2$weeds)))
+	pid2 <- paste(as.integer(r2$year), r2$block, r2[["soil management"]], r2$fertilization, wm2, r2$replicates, sep="_")
+	keep2 <- pid2 %in% d$plot_id
+	r2k <- r2[keep2, ]
+	pid2 <- pid2[keep2]
+
 	tot <- data.frame(
-		plot_id = r2$plot_id,
-		DAP = as.integer(r2$DAS),
-		weed_cover = as.numeric(r2$WeedCover)
+		plot_id = pid2,
+		DAP = as.integer(r2k$DAS),
+		weed_cover = as.numeric(r2k$WeedCover),
+		stylo_cover_ = as.numeric(r2k[["Stylosanthes guianensis"]]),
+		weed_species = NA_character_,
+		weed_species_cover = NA_real_
 	)
-	idcols <- c("year", "DAS", "block", "fertilization", "soil management", "weeds", "replicates", "WeedStyloCover", "WeedCover", "plot_id")
-	spp <- setdiff(names(r2), idcols)
+
+	idcols <- c("year", "DAS", "block", "fertilization", "soil management", "weeds", "replicates", "WeedStyloCover", "WeedCover", "Stylosanthes guianensis")
+	spp <- setdiff(names(r2k), idcols)
 	sp <- vector("list", length(spp))
 	for (i in seq_along(spp)) {
-		v <- as.numeric(r2[[spp[i]]])
+		v <- as.numeric(r2k[[spp[i]]])
 		k <- !is.na(v) & v > 0
 		if (!any(k)) next
 		sp[[i]] <- data.frame(
-			plot_id = r2$plot_id[k],
-			DAP = as.integer(r2$DAS[k]),
+			plot_id = pid2[k],
+			DAP = as.integer(r2k$DAS[k]),
+			weed_cover = NA_real_,
+			stylo_cover_ = NA_real_,
 			weed_species = spp[i],
-			species_cover_ = v[k]
+			weed_species_cover = v[k]
 		)
 	}
 	sp <- sp[!vapply(sp, is.null, logical(1))]
 	sp <- do.call(rbind, sp)
-	tot$weed_species <- NA_character_
-	tot$species_cover_ <- NA_real_
-	sp$weed_cover <- NA_real_
-	cols <- c("plot_id", "DAP", "weed_cover", "weed_species", "species_cover_")
-	long <- rbind(tot[, cols], sp[, cols])
+	long <- rbind(tot, sp)
 
-	carobiner::write_files(path, meta, d, long = long)
+	carobiner::write_files(path, meta, d, long=long)
 }

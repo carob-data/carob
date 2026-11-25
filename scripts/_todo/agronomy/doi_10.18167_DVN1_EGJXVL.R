@@ -2,43 +2,34 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Measured grain yields are Trials_yield_observation.csv in the calibration folder. The definition file gives the unit as t dry matter per ha, so yield is times 1000 and yield_moisture is 0. Model outputs and the virtual-experiment files are not used.
-# The yield file is one quoted field per line. It is unquoted before reading. id_treatment +C+N is the fertilizer code C1N1, and the same for the other three combinations.
-# fe_n, fe_p, and fe_k are kg/ha of the elements, summed over the applications on that row. Blank cells on a matched fertilizer row are treated as 0. Organic amount is om_amount_DW in t/ha, times 1000.
-# Countries are the ones on the yield rows: Côte d'Ivoire, Kenya, and Zimbabwe. site_general_info spells Ivory Cost for the Gagnoa site. Coordinates and elevation are that site table.
+# Measured grain yields (Trials_yield_observation.csv) and SOC stocks (Trials_SOC_observations.csv) from four long-term rainfed maize experiments in sub-Saharan Africa: Gagnoa (Côte d'Ivoire), Embu and Machanga (Kenya), and Murewa (Zimbabwe), from Couëdel et al. (2026), Global Change Biology, doi:10.1111/gcb.70720.
+# Only observed trial data and calibration inputs are processed; crop model simulations and virtual climate-change scenarios are excluded.
+# Yield is reported in t dry matter/ha (summary_data_definition.xlsx), so yield is multiplied by 1000, yield_moisture = 0, and yield_isfresh = FALSE.
+# Treatments combine organic amendment (+C/-C) and mineral nitrogen (+N/-N), corresponding to fertilizer/OM codes C1N1, C1N0, C0N1, C0N0.
+# Mineral N, P, and K (fe_n, fe_p, fe_k) are elemental kg/ha summed over up to three applications; blank cells on matched rows are 0.
+# Fertilizer type "CaNH4NO2" at Machanga is a typo for "CaNH4NO3" (CAN); "ammonium nitrate" is mapped to "AN", "super-phosphate" to "SSP", and "PK fertiliser" kept as "PK".
+# Organic amendment amounts (om_amount_DW, t DW/ha) are converted to kg/ha (* 1000); om_type is compost at Gagnoa and manure (farmyard manure) at Embu, Machanga, and Murewa. N_organic, P_organic, and K_organic are computed from dry-weight amount and nutrient concentrations (% DW).
+# Phenology dates (emergence, anthesis -> flowering_date, physiological maturity, harvest) come from obs_phenology.csv.
+# Topsoil properties come from soil_general_info.csv and soil_layers_characterisctics_corrected.xlsx (first soil layer per site).
+# Daily weather data for all four sites are read from Models_inputs/weather/*.txt (solar radiation MJ/m2 -> kJ/m2).
 
 ## ISSUES
-# Some yield cells are empty and are kept.
-# write_files: missing irrigated, harvest_date. invalid terms: fertilizer_type: ammonium nitrate, CaNH4NO2, CaNH4NO3, PK fertiliser, super-phosphate. NA detected: yield.
+# Ten yield rows in Trials_yield_observation.csv have missing yield values and are kept.
+# "PK" (from "PK fertiliser") is not in the terminag fertilizer_type vocabulary.
+# K_organic reaches 650 kg K/ha on Gagnoa compost plots (10.96 t DW/ha at 5.93% K), exceeding terminag's upper bound of 300 kg/ha.
+# Trials_SOC_observations.csv reports SOC stock in t C/ha for topsoil (0-20 cm at Gagnoa and Murewa; 0-15 cm at Embu and Machanga), linked to the nearest season record_id per site and treatment. Converted to g/m2 (* 100), values (1164-5691 g/m2) exceed terminag's current valid_max of 1000 for soil_C_stock.
+
+## NEW VARIABLES
+# None.
 
 ## NOT PROCESSED
-# Trials_models_yield_simulations.csv, Trials_models_SOC_simulations.csv, and Models_ouputs_simulation_scenarios.csv.
-# Virtual_experiments_models_input_outputs.
-# Soil-layer files, residue_initial, soil_preparation, and the DSSAT weather files.
-# time_from_start on the yield file.
-# obs_phenology.csv: not read. columns: id_season;id_tratnt;pdate;pdate_doy;emergence_date;emergence_date_doy;anthesis_date;anthesis_date_doy;physio_maturity_date;physio_maturity_date_DOY;harvest_date;harvest_date_doy. Observation records are missing from d until this file is standardized.
-# phenology_info.csv: not read. columns: id_site;crop;cultivar;cul_note;gdd_emerg_anthesis;gdd_anthesis_maturity. Observation records are missing from d until this file is standardized.
-# soil_general_info.csv: not read. columns: id_site;id_soil;texture;slope;soil_type;max_root_depth;cropping history. Observation records are missing from d until this file is standardized.
-# soil_layers_characterisctics_corrected.xlsx: not read. sheet Feuil1 (of 2): id_soil, layer_base_depth, layer_thickness, lower_limit, drained_upper_limit, saturation, Or, alpha, n, bulk_density, clay, silt, .... Observation records are missing from d until this file is standardized.
-# soil_layers_initial.csv: not read. columns: soil_id;id_treatment;layer_base_depth;ini_Nmin_conc;ini_Nmin_amount;ini_soc_conc;ini_soc_conc_sd;ini_soc_amount;ini_soc_amount_sd;ini_son_conc;ini_son conc_sd;ini_son_amount;ini_son_amount_sd. Observation records are missing from d until this file is standardized.
-# ICGA - Copie.txt: not read. columns: Station #: ICGA, , , , , , . Observation records are missing from d until this file is standardized.
-# ICGA.txt: not read. columns: Station #: ICGA, , , , , , . Observation records are missing from d until this file is standardized.
-# KEEM.txt: not read. columns: Station #: KEEM. Observation records are missing from d until this file is standardized.
-# KEMA.txt: not read. columns: Station #: KEMA, , , , , , . Observation records are missing from d until this file is standardized.
-# ZIMU.txt: not read. columns: Station #: ZIMU, , , , , , . Observation records are missing from d until this file is standardized.
-# Trials_SOC_observations.csv: not read. columns: "id_site", "Date", "id_treatment", "SOC", "time_from_start". Observation records are missing from d until this file is standardized.
-# READ.ME.txt: documentation or a codebook, not an observation table.
-# summary_data_definition.xlsx: documentation or a codebook, not an observation table.
-# crop_sequence_SA.csv: not read. columns: id_site, id_season, planting_year, season, crop. Observation records are missing from d until this file is standardized.
-# mineral_fertilisation_SA.csv: not read. columns: id_site;season;Ninput;fedate_doy1;fe_type1;fe_applic_note1;fe_depth1;fe_n1;fe_p1;fe_k1;fedate_doy2;fe_type2;fe_applic_note2;fe_depth2;fe_n2;fe_p2;fe_k2;fedate_doy3;fe_type3;fe_applic_note3;fe_depth3;fe_n3;fe_p3;fe_k3. Observation records are missing from d until this file is standardized.
-# organic_amendment_SA.csv: not read. columns: id_site, season, Cinput, omdate_doy, om_type, om_note, om_amount_DW, om_ms_content, om_carbon_conc_DW, om_n_conc, om_p_conc, om_k_conc. Observation records are missing from d until this file is standardized.
-# planting_SA.csv: not read. columns: id_site;season;crop;cultivar;cul_note;pdate_doy;plant_population;row_spacing;planting_depth. Observation records are missing from d until this file is standardized.
-# soil_layers_initial_SA.csv: not read. columns: soil_id;layer_base_depth;ini_Nmin_amount;ini_soc_conc;ini_soc_amount;ini_son_conc;ini_son_amount. Observation records are missing from d until this file is standardized.
-# soil_preparation_SA.csv: not read. columns: id_site, season, sprep_doy, sprep_type, sprep_implement, sprep_depth, sprep_doy2, sprep_implement2, sprep_type2, sprep_depth2. Observation records are missing from d until this file is standardized.
-# ICGA_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
-# KEEM_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
-# KEMA_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
-# ZIMU_SA.WTH: not read. .wth file. Observation records are missing from d until this file is standardized.
+# Trials_models_yield_simulations.csv, Trials_models_SOC_simulations.csv, Models_ouputs_simulation_scenarios.csv, Virtual_experiments_models_input_outputs/*: simulated/modeled outputs and virtual scenarios (not observed data).
+# soil_layers_characterisctics_corrected.xlsx: deeper soil layers beyond the topsoil layer and van Genuchten hydraulic parameters (Or, alpha, n, coarse_fraction).
+# soil_layers_initial.csv: initial treatment-specific Nmin, SOC, and SON stocks by layer.
+# phenology_info.csv: GDD model parameters.
+# residue_initial.csv: initial surface/root residue (all 0 after fallow).
+# ICGA - Copie.txt: duplicate copy of ICGA.txt.
+# READ.ME.txt, summary_data_definition.xlsx: documentation / codebook.
 
 
 carob_script <- function(path) {
@@ -55,17 +46,17 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
-		publication = NA,
+		publication = "doi:10.1111/gcb.70720",
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer;OM_amount",
+		treatment_vars = "treatment;N_fertilizer;OM_amount;OM_type",
 		response_vars = "yield",
-		carob_LLM = "Cursor Grok 4.7",
 		carob_contributor = NA,
+		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
-		carob_completion = 45,
-		carob_effort = 0.6
+		carob_completion = 85,
+		carob_effort = 0.7
 	)
 
 	read_semi <- function(f) {
@@ -82,97 +73,271 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 		read.csv(text=paste(lines, collapse="\n"), check.names=FALSE, na.strings=c("", "NA", "na"))
 	}
 	sum3 <- function(a, b, c) {
-		a <- as.numeric(a)
-		b <- as.numeric(b)
-		c <- as.numeric(c)
-		a[is.na(a)] <- 0
-		b[is.na(b)] <- 0
-		c[is.na(c)] <- 0
+		a <- as.numeric(a); a[is.na(a)] <- 0
+		b <- as.numeric(b); b[is.na(b)] <- 0
+		c <- as.numeric(c); c[is.na(c)] <- 0
 		a + b + c
+	}
+	mdy_iso <- function(x) {
+		x <- trimws(as.character(x))
+		x[!nzchar(x)] <- NA_character_
+		as.character(as.Date(x, "%m/%d/%Y"))
 	}
 
 	f1 <- ff[basename(ff) == "Trials_yield_observation.csv"]
-	y <- read_yield(f1)
-	y$site_code <- substr(y$id_season, 1, 4)
-	y$fert_code <- y$id_treatment
-	y$fert_code <- gsub("+C", "C1", y$fert_code, fixed=TRUE)
-	y$fert_code <- gsub("-C", "C0", y$fert_code, fixed=TRUE)
-	y$fert_code <- gsub("+N", "N1", y$fert_code, fixed=TRUE)
-	y$fert_code <- gsub("-N", "N0", y$fert_code, fixed=TRUE)
-
-	f2 <- ff[basename(ff) == "planting.csv"]
-	plant <- read_semi(f2)
-	f3 <- ff[basename(ff) == "crop_sequence.csv"]
-	r1 <- read.csv(f3, check.names=FALSE)
-	f4 <- ff[basename(ff) == "site_general_info.csv"]
-	r2 <- read.csv(f4, check.names=FALSE)
+	f2 <- ff[basename(ff) == "crop_sequence.csv"]
+	f3 <- ff[basename(ff) == "planting.csv"]
+	f4 <- ff[basename(ff) == "obs_phenology.csv"]
 	f5 <- ff[basename(ff) == "mineral_fertilisation.csv"]
-	fert <- read_semi(f5)
 	f6 <- ff[basename(ff) == "organic_amendment.csv"]
-	om <- read_semi(f6)
+	f7 <- ff[basename(ff) == "soil_preparation.csv"]
+	f8 <- ff[basename(ff) == "site_general_info.csv"]
+	f9 <- ff[basename(ff) == "soil_general_info.csv"]
+	f10 <- ff[basename(ff) == "soil_layers_characterisctics_corrected.xlsx"]
+	f11 <- ff[basename(ff) == "Trials_SOC_observations.csv"]
 
-	fert$N_fertilizer <- sum3(fert$fe_n1, fert$fe_n2, fert$fe_n3)
-	fert$P_fertilizer <- sum3(fert$fe_p1, fert$fe_p2, fert$fe_p3)
-	fert$K_fertilizer <- sum3(fert$fe_k1, fert$fe_k2, fert$fe_k3)
-	pick_type <- function(a, b, c) {
-		mapply(function(x, y, z) {
-			v <- unique(trimws(c(x, y, z)))
-			v <- v[!is.na(v) & nzchar(v)]
-			if (length(v) == 0) "none" else paste(v, collapse=";")
-		}, as.character(a), as.character(b), as.character(c), USE.NAMES=FALSE)
-	}
-	fert$fertilizer_type <- pick_type(fert$fe_type1, fert$fe_type2, fert$fe_type3)
-	fert <- fert[, c("id_season", "id_treatment", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type")]
-	names(fert)[names(fert) == "id_treatment"] <- "fert_code"
+	r1 <- read_yield(f1)
+	r2 <- read.csv(f2, check.names=FALSE, na.strings=c("", "NA", "na"))
+	r3 <- read_semi(f3)
+	r4 <- read_semi(f4)
+	r5 <- read_semi(f5)
+	r6 <- read_semi(f6)
+	r7 <- read.csv(f7, check.names=FALSE, na.strings=c("", "NA", "na"))
+	r8 <- read.csv(f8, check.names=FALSE, na.strings=c("", "NA", "na"))
+	r9 <- read_semi(f9)
+	r10 <- carobiner::read.excel(f10, sheet="Feuil1")
 
-	om$OM_amount <- as.numeric(om$om_amount_DW) * 1000
-	om$OM_amount[is.na(om$OM_amount)] <- 0
-	om <- om[, c("id_season", "id_treatment", "OM_amount")]
-	names(om)[names(om) == "id_treatment"] <- "fert_code"
+	# Yield table
+	fert_code <- r1$id_treatment
+	fert_code <- gsub("+C", "C1", fert_code, fixed=TRUE)
+	fert_code <- gsub("-C", "C0", fert_code, fixed=TRUE)
+	fert_code <- gsub("+N", "N1", fert_code, fixed=TRUE)
+	fert_code <- gsub("-N", "N0", fert_code, fixed=TRUE)
 
-	crop <- r1[, c("id_season", "crop")]
-	crop$crop[crop$crop == "fallow"] <- "none"
-	plant <- plant[, c("id_season", "pdate", "plant_population", "row_spacing")]
-
-	d <- merge(y, crop, by="id_season", all.x=TRUE)
-	d <- merge(d, plant, by="id_season", all.x=TRUE)
-	d <- merge(d, fert, by=c("id_season", "fert_code"), all.x=TRUE)
-	d <- merge(d, om, by=c("id_season", "fert_code"), all.x=TRUE)
-	d <- merge(d, r2[, c("id_site", "site_name", "latitude", "longitude", "elevation")], by.x="site_code", by.y="id_site", all.x=TRUE)
-
-	country <- c(ICGA="Côte d'Ivoire", KEEM="Kenya", KEMA="Kenya", ZIMU="Zimbabwe")
-	part <- c(maize="grain", soybean="seed", none="none")
-	when <- as.Date(d$pdate, "%m/%d/%Y")
-
-	d <- data.frame(
-		trial_id = d$id_season,
-		country = unname(country[d$site_code]),
-		location = as.character(d$site_name),
-		latitude = as.numeric(d$latitude),
-		longitude = as.numeric(d$longitude),
-		elevation = as.numeric(d$elevation),
-		geo_from_source = TRUE,
-		crop = d$crop,
-		treatment = d$id_treatment,
-		yield = as.numeric(d$Yield) * 1000,
-		yield_part = unname(part[d$crop]),
-		yield_moisture = 0,
-		planting_date = as.character(when),
-		N_fertilizer = d$N_fertilizer,
-		P_fertilizer = d$P_fertilizer,
-		K_fertilizer = d$K_fertilizer,
-		fertilizer_type = d$fertilizer_type,
-		OM_amount = d$OM_amount,
-		OM_used = d$OM_amount > 0,
-		OM_type = ifelse(d$OM_amount > 0, "compost", "none"),
-		plant_density = as.numeric(d$plant_population) * 10000,
-		row_spacing = as.numeric(d$row_spacing),
-		on_farm = FALSE,
-		is_survey = FALSE
+	d1 <- data.frame(
+		trial_id = r1$id_season,
+		site_code = substr(r1$id_season, 1, 4),
+		fert_code = fert_code,
+		treatment = r1$id_treatment,
+		yield = as.numeric(r1$Yield) * 1000
 	)
-	d$OM_type[is.na(d$OM_amount)] <- NA_character_
-	d$OM_used[is.na(d$OM_amount)] <- NA
-	d$fertilizer_type[is.na(d$fertilizer_type)] <- NA_character_
 
-	carobiner::write_files(path, meta, d)
+	# Crop sequence and previous crop per site
+	prev_crop <- rep("fallow", nrow(r2))
+	for (i in seq_len(nrow(r2))) {
+		if (i > 1 && r2$id_site[i] == r2$id_site[i - 1]) {
+			prev_crop[i] <- r2$crop[i - 1]
+		}
+	}
+	prev_crop[prev_crop == "fallow"] <- "none"
+	d2 <- data.frame(
+		trial_id = r2$id_season,
+		crop = ifelse(r2$crop == "fallow", "none", r2$crop),
+		previous_crop = prev_crop
+	)
+
+	# Planting details
+	d3 <- data.frame(
+		trial_id = r3$id_season,
+		variety = as.character(r3$cultivar),
+		variety_type = as.character(r3$cul_note),
+		planting_date = mdy_iso(r3$pdate),
+		plant_density = as.numeric(r3$plant_population) * 10000,
+		row_spacing = as.numeric(r3$row_spacing),
+		planting_depth = as.numeric(r3$planting_depth)
+	)
+
+	# Observed phenology (emergence, anthesis -> flowering, maturity, harvest)
+	d4 <- data.frame(
+		trial_id = r4$id_season,
+		fert_code = r4$id_tratnt,
+		emergence_date = mdy_iso(r4$emergence_date),
+		flowering_date = mdy_iso(r4$anthesis_date),
+		maturity_date = mdy_iso(r4$physio_maturity_date),
+		harvest_date = mdy_iso(r4$harvest_date)
+	)
+
+	# Mineral fertilization
+	ft_map <- c(
+		"urea" = "urea",
+		"ammonium nitrate" = "AN",
+		"CaNH4NO3" = "CAN",
+		# CaNH4NO2 at Machanga is a typo for CaNH4NO3 (CAN)
+		"CaNH4NO2" = "CAN",
+		"super-phosphate" = "SSP",
+		"PK fertiliser" = "PK"
+	)
+	ft_vec <- mapply(function(a, b, c) {
+		v <- unique(unname(ft_map[trimws(c(a, b, c))]))
+		v <- v[!is.na(v)]
+		if (length(v) == 0) "none" else paste(v, collapse="; ")
+	}, as.character(r5$fe_type1), as.character(r5$fe_type2), as.character(r5$fe_type3), USE.NAMES=FALSE)
+
+	n1 <- as.numeric(r5$fe_n1); n2 <- as.numeric(r5$fe_n2); n3 <- as.numeric(r5$fe_n3)
+	n_splits <- as.integer((!is.na(n1) & n1 > 0) + (!is.na(n2) & n2 > 0) + (!is.na(n3) & n3 > 0))
+	Nf <- sum3(r5$fe_n1, r5$fe_n2, r5$fe_n3)
+	Pf <- sum3(r5$fe_p1, r5$fe_p2, r5$fe_p3)
+	Kf <- sum3(r5$fe_k1, r5$fe_k2, r5$fe_k3)
+
+	d5 <- data.frame(
+		trial_id = r5$id_season,
+		fert_code = r5$id_treatment,
+		N_fertilizer = Nf,
+		P_fertilizer = Pf,
+		K_fertilizer = Kf,
+		N_splits = n_splits,
+		fertilizer_used = (Nf + Pf + Kf) > 0,
+		fertilizer_type = ft_vec
+	)
+
+	# Organic amendments (dry-weight basis in t/ha -> kg/ha; nutrient conc in % DW)
+	om_amt <- as.numeric(r6$om_amount_DW) * 1000
+	om_amt[is.na(om_amt)] <- 0
+	om_map <- c(compost = "compost", manure = "farmyard manure")
+	om_t <- unname(om_map[trimws(as.character(r6$om_type))])
+	om_t[is.na(om_t) | om_amt == 0] <- "none"
+	d6 <- data.frame(
+		trial_id = r6$id_season,
+		fert_code = r6$id_treatment,
+		OM_amount = om_amt,
+		OM_used = om_amt > 0,
+		OM_type = om_t,
+		N_organic = ifelse(om_amt > 0, om_amt * as.numeric(r6$om_n_conc) / 100, 0),
+		P_organic = ifelse(om_amt > 0, om_amt * as.numeric(r6$om_p_conc) / 100, 0),
+		K_organic = ifelse(om_amt > 0, om_amt * as.numeric(r6$om_k_conc) / 100, 0)
+	)
+
+	# Soil preparation
+	imp_map <- function(x) {
+		x <- trimws(as.character(x))
+		out <- rep(NA_character_, length(x))
+		out[grepl("cultivator", x, ignore.case=TRUE)] <- "cultivator"
+		out[grepl("hand hoe", x, ignore.case=TRUE)] <- "hoe"
+		out[grepl("mouldboard plough", x, ignore.case=TRUE)] <- "mouldboard plough"
+		out
+	}
+	imp1 <- imp_map(r7$sprep_implement)
+	imp2 <- imp_map(r7$sprep_implement2)
+	imp <- mapply(function(a, b) {
+		v <- unique(c(a, b))
+		v <- v[!is.na(v)]
+		if (length(v) == 0) NA_character_ else paste(v, collapse="; ")
+	}, imp1, imp2, USE.NAMES=FALSE)
+	d7 <- data.frame(
+		trial_id = r7$id_season,
+		land_prep_method = ifelse(!is.na(r7$sprep_type), "tillage", NA_character_),
+		land_prep_implement = imp,
+		tillage_depth = as.numeric(r7$sprep_depth),
+		land_prep_date = mdy_iso(r7$sprep)
+	)
+
+	# Site & topsoil properties (first layer per site)
+	country_map <- c(ICGA = "Côte d'Ivoire", KEEM = "Kenya", KEMA = "Kenya", ZIMU = "Zimbabwe")
+	tex_map <- c("sandy clay loam" = "sandy clay loam", "sandy soil" = "sand", "clay soil" = "clay")
+	top <- r10[!duplicated(r10$id_soil), ]
+	d_site <- merge(
+		data.frame(
+			site_code = r8$id_site,
+			country = unname(country_map[r8$id_site]),
+			location = trimws(as.character(r8$site_name)),
+			latitude = as.numeric(r8$latitude),
+			longitude = as.numeric(r8$longitude),
+			elevation = as.numeric(r8$elevation),
+			geo_from_source = TRUE
+		),
+		data.frame(
+			site_code = r9$id_site,
+			soil_type = trimws(as.character(r9$soil_type)),
+			soil_texture = unname(tex_map[trimws(as.character(r9$texture))])
+		),
+		by="site_code", all.x=TRUE
+	)
+	d_soil <- data.frame(
+		site_code = top$id_soil,
+		depth_top = 0,
+		depth_bottom = as.numeric(top$layer_base_depth),
+		soil_bd = as.numeric(top$bulk_density),
+		soil_clay = as.numeric(top$clay),
+		soil_silt = as.numeric(top$silt),
+		soil_sand = as.numeric(top$sand),
+		soil_CEC = as.numeric(top$cec),
+		# summary_data_definition.xlsx: P_extractable is mg/kg, K/Ca_extractable are me/100g = cmol(+)/kg
+		soil_P = as.numeric(top[["P_extractable%"]]),
+		soil_K_exch = as.numeric(top[["K_extractable%"]]),
+		soil_Ca_exch = as.numeric(top[["Ca_extractable%"]]),
+		soil_pH = as.numeric(top$pH_water),
+		soil_SOC = as.numeric(top[["organic_C%"]]),
+		# % -> mg/kg (* 10000)
+		soil_N_total = as.numeric(top[["organic_N%"]]) * 10000,
+		soil_FC = as.numeric(top$drained_upper_limit),
+		soil_PWP = as.numeric(top$lower_limit)
+	)
+	d_site <- merge(d_site, d_soil, by="site_code", all.x=TRUE)
+
+	d <- merge(d1, d2, by="trial_id", all.x=TRUE)
+	d <- merge(d, d3, by="trial_id", all.x=TRUE)
+	d <- merge(d, d4, by=c("trial_id", "fert_code"), all.x=TRUE)
+	d <- merge(d, d5, by=c("trial_id", "fert_code"), all.x=TRUE)
+	d <- merge(d, d6, by=c("trial_id", "fert_code"), all.x=TRUE)
+	d <- merge(d, d7, by="trial_id", all.x=TRUE)
+	d <- merge(d, d_site, by="site_code", all.x=TRUE)
+
+	part_map <- c(maize = "grain", soybean = "seed", none = "none")
+	d$yield_part <- unname(part_map[d$crop])
+	d$yield_moisture <- 0
+	d$yield_isfresh <- FALSE
+	# Rainfed long-term experiments (Couëdel et al. 2026)
+	d$irrigated <- FALSE
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
+	d$record_id <- seq_len(nrow(d))
+
+	# Observed SOC time series (t C/ha -> g/m2: * 100), matched to nearest season record_id per site x treatment
+	r11 <- read.csv(f11, fileEncoding="latin1")
+	soc_site <- c("Côte d'Ivoire" = "ICGA", "Kenya-Embu" = "KEEM", "Kenya-Machanga" = "KEMA", "Zimbabwe" = "ZIMU")
+	sc <- unname(soc_site[r11$id_site])
+	d_pdate <- as.Date(d$planting_date)
+	soc_date <- as.Date(r11$Date)
+	rec_id <- integer(nrow(r11))
+	for (i in seq_len(nrow(r11))) {
+		cand <- which(d$site_code == sc[i] & d$treatment == r11$id_treatment[i] & !is.na(d_pdate))
+		rec_id[i] <- d$record_id[cand[which.min(abs(d_pdate[cand] - soc_date[i]))]]
+	}
+	long <- data.frame(
+		record_id = rec_id,
+		date = as.character(r11$Date),
+		# t C/ha * 100 = g C/m2 (topsoil: 0-20 cm Gagnoa/Murewa, 0-15 cm Embu/Machanga)
+		soil_C_stock = as.numeric(r11$SOC) * 100
+	)
+
+	d$site_code <- NULL
+	d$fert_code <- NULL
+
+	# Daily weather files (Models_inputs/weather/*.txt)
+	wfiles <- ff[basename(ff) %in% c("ICGA.txt", "KEEM.txt", "KEMA.txt", "ZIMU.txt")]
+	wlist <- lapply(wfiles, function(wf) {
+		sid <- sub("\\.txt$", "", basename(wf))
+		rw <- read.table(wf, skip=4, header=FALSE,
+			col.names=c("year", "doy", "srad", "tmax", "tmin", "rhum", "prec", "wspd"))
+		data.frame(
+			station_id = sid,
+			country = unname(country_map[sid]),
+			location = d_site$location[match(sid, d_site$site_code)],
+			longitude = d_site$longitude[match(sid, d_site$site_code)],
+			latitude = d_site$latitude[match(sid, d_site$site_code)],
+			elevation = d_site$elevation[match(sid, d_site$site_code)],
+			geo_from_source = TRUE,
+			date = as.character(as.Date(paste0(rw$year - 1L, "-12-31")) + rw$doy),
+			# MJ/m2 -> kJ/m2
+			srad = as.numeric(rw$srad) * 1000,
+			tmax = as.numeric(rw$tmax),
+			tmin = as.numeric(rw$tmin),
+			rhum = as.numeric(rw$rhum),
+			prec = as.numeric(rw$prec),
+			wspd = as.numeric(rw$wspd)
+		)
+	})
+	wth <- do.call(rbind, wlist)
+
+	carobiner::write_files(path, meta, d, long=long, wth=wth)
 }

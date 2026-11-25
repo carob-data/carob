@@ -23,13 +23,10 @@
 # 3. Cotton yield is seed cotton; yield_part is set to "lint" for lack of a better term.
 # 4. Some values are implausible and were not changed: very high yields for small areas, and fertilizer amounts above 1000 kg/ha.
 # 5. Irrigation durations above 24 hours were set to NA.
+# 6. Eleven dry-season rows have irrigation_interval < 0.25 days (0.011-0.083, from e7a = 12-90 per Day and 85 per Week, likely season totals entered as daily/weekly frequencies); left intact (out of bounds) for the author to decide whether to set to NA.
 
 ## NEW VARIABLES
-# Provisional water variables, proposed in controvoc/terminag PR #15 (without the trailing underscore):
-# irrigation_interval_: days between irrigation events
-# irrigation_duration_: average duration of one irrigation event (hours)
-# waterlogging_: Was the plot waterlogged? (021)
-# well_type_: type of well when the source is groundwater
+# None (irrigation_interval, irrigation_duration, waterlogging, and well_type are now in terminag).
 
 ## NOT PROCESSED
 # Soil fertility, slope, erosion, distance, tractor use, land value and decision maker (018). Groundwater depth (021) is only a class (<7, 8-50, >50 m).
@@ -329,10 +326,14 @@ Collaborators on this project include Texas A&M University, the International Wa
 		irrigation_fulfullment = low(txt(r5$e8)),
 		dur = num(r5$e9a),
 		dunit = txt(r5$e9b),
-		waterlogging_ = txt(r5$e10) == "Yes"
+		waterlogging = txt(r5$e10) == "Yes"
 	)
 	g$irrigation_source[which(g$irrigation_source %in% c("other (specify)", "na"))] <- NA
+	g$irrigation_source[which(g$irrigation_source == "harvested water")] <- "harvested rainwater"
 	g$irrigation_lifting[which(g$irrigation_lifting %in% c("other (specify)", "na"))] <- NA
+	g$irrigation_lifting[which(g$irrigation_lifting == "hand bucket/hose")] <- "manual"
+	g$irrigation_lifting[which(g$irrigation_lifting == "hand/foot pump")] <- "manual pump"
+	g$irrigation_lifting[which(g$irrigation_lifting == "tractor pump")] <- "motorized pump"
 
 	methods <- c(
 		"Bucket/hose/watering can" = "manual", "Surface/flooding" = "surface",
@@ -342,25 +343,26 @@ Collaborators on this project include Texas A&M University, the International Wa
 	g$irrigation_method <- unname(methods[g$method])
 	g$irrigation_method[which(!g$irrigated)] <- "none"
 
-	wells <- c("Drilled" = "borehole", "Hand-dug" = "hand-dug well")
-	g$well_type_ <- unname(wells[g$well])
-	g$well_type_[which(g$irrigation_source != "groundwater")] <- NA
+	wells <- c("Drilled" = "borehole", "Hand-dug" = "hand-dug well", "Don?t know" = "unknown")
+	g$well_type <- unname(wells[g$well])
+	g$well_type[which(g$irrigation_source != "groundwater")] <- NA
 
 	# times per period to days between irrigations
+	# 11 dry-season rows have e7a = 12-90/Day or 85/Week (< 0.25 days, likely season totals); left intact as out-of-bounds for review
 	days <- c(Day = 1, Week = 7, "Two weeks" = 14, Month = 30)
-	g$irrigation_interval_ <- unname(days[g$per]) / g$freq
-	g$irrigation_interval_[which(g$freq <= 0)] <- NA
+	g$irrigation_interval <- unname(days[g$per]) / g$freq
+	g$irrigation_interval[which(g$freq <= 0)] <- NA
 
-	g$irrigation_duration_ <- ifelse(g$dunit == "Hours", g$dur, NA)
+	g$irrigation_duration <- ifelse(g$dunit == "Hours", g$dur, NA)
 	i <- which(g$dunit == "Minutes")
-	g$irrigation_duration_[i] <- g$dur[i] / 60
-	g$irrigation_duration_[which(g$irrigation_duration_ <= 0 | g$irrigation_duration_ > 24)] <- NA
+	g$irrigation_duration[i] <- g$dur[i] / 60
+	g$irrigation_duration[which(g$irrigation_duration <= 0 | g$irrigation_duration > 24)] <- NA
 
 	g$irrigation_fulfullment[which(!g$irrigated | g$irrigation_fulfullment %in% c("", "na"))] <- NA
-	g$waterlogging_[which(!g$irrigated)] <- NA
+	g$waterlogging[which(!g$irrigated)] <- NA
 
 	g <- g[!is.na(g$plot) & !duplicated(g[, keys]), c(keys, "irrigated", "irrigation_source", "irrigation_method", "irrigation_lifting",
-		"irrigation_interval_", "irrigation_duration_", "irrigation_fulfullment", "waterlogging_", "well_type_")]
+		"irrigation_interval", "irrigation_duration", "irrigation_fulfullment", "waterlogging", "well_type")]
 	d <- merge(d, g, by = keys, all.x = TRUE)
 
 ### family labour (person-days per plot x season x crop)

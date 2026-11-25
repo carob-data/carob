@@ -15,9 +15,6 @@
 # No tuber yield in the data (only total biomass); yield left NA.
 
 ## NEW VARIABLES
-# rhum90_hours: hours per day with relative humidity > 90% (h)
-# temp_rhum90_: mean temperature during those hours (C)
-# leaf_wet_hours: hours per day with leaf wetness (h)
 # leaf_wetness: hourly leaf wetness index, 0 (dry) to 15 (wet)
 
 ## NOT PROCESSED
