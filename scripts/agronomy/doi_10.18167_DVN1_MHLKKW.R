@@ -56,26 +56,27 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  OM_amount = r1b$Compost_tDM * 1000, # tDM/ha to kg/ha; Treat_Compost_tDM is theoretical 
 	  N_fertilizer = r1b$Treat_Fertilizer_kgN,
 	  yield = r1b$Grain_yield * 1000,
-	  #crop_cycle = r1b$Cycle, # ??
 	  soil_C_litter = r1b$ABG_tC * 1000,
 	  dmy_roots = r1b$Root_DM * 1000, # tDM/ha to kg/ha
 	  dmy_residue = r1b$Straw_DM * 1000, # tDM/ha to kg/ha
 	  residue_C = r1b$Straw_tC*1000,#r1b$Compost_tC
-	  crop =  tolower(r1b$Crop) 
+	  crop =  tolower(r1b$Crop) ,
+	  cycle = r1b$Cycle
 	)
-
-	d1$crop[d1$crop == "fallow"] <- "none"
+  
+	## Crop = second == "Bare fallow" # from paper
+	d1$crop[d1$crop == "fallow"| d1$crop == "second"] <- "none"
 	d1$OM_used <- r1b$Treat_Compost_tDM > 0
 	d1$OM_type <- ifelse(d1$OM_used, "compost", "none")
 	d1$fertilizer_used <- r1b$Treat_Fertilizer_kgN > 0
 #	d1$fertilizer_type <- NA
-	d1$residue_C[d1$residue_C == 0] <- NA
+	#d1$residue_C[d1$residue_C == 0] <- NA
 
 	d2 <- data.frame(
 	  plot_id = as.character(r1c$ID),
 	  date = as.character(r1c$Date),
-	  #treatment = as.character(r1c$Traitement),
-	  #rep = as.integer(ifelse(r1c$Replicate == "Composite", NA, r1c$Replicate)),
+	  treatment = as.character(r1c$Traitement),
+	  rep = as.integer(gsub("Composite", NA, r1c$Replicate)),
 	  soil_pH = as.numeric(r1c$pH_water),
 	  soil_pH_KCl = as.numeric(r1c$pH_KCl),
 	  soil_K_exch = as.numeric(r1c$K_ech_cmole_kg),
@@ -109,12 +110,7 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	#d3$Proportion_C <- rd1$Proportion_N_sol_g_kg
 	#d3$C_N_ratio <- rd1$C_N
 	
-	wth <- data.frame(
-		date = as.Date(r1e$Date),
-		prec = r1e$Rain
-	)
-	
-	d <- merge(d1, d2, by = c("plot_id", "date"), all.x = TRUE)
+	d <- merge(d1, d2, by = c("plot_id", "date", "rep", "treatment"), all.x = TRUE)
 
 #	d <- merge(d, d3, by = c("treatment", "rep"), all = TRUE)
 	
@@ -126,19 +122,34 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	# article has 06°08' N, 5°56' W (6.133, -5.9333, Hotel Le Flamboyan)
 	# but the (now CNRA) research station is at 6.1329, -5.9017
 	# geo_uncertainty set to 500 m
-	d$longitude <- -5.9017
-	d$latitude <- 6.1329
-	d$geo_uncertainty = 500 
-	d$geo_source = "Google Maps"
+	## Use the geo coordinate from paper
+	d$longitude <- -5.9333
+	d$latitude <- 6.133
+	d$geo_uncertainty <- 500 
+	d$geo_from_source <- TRUE
+	
+	# weather data 
+	wth <- data.frame(
+	  date = as.character(r1e$Date),
+	  prec = r1e$Rain,
+	  country = "Côte d'Ivoire",
+	  location = "Institut des Savanes (IDESSA), Gagnoa research station", 
+	  longitude =  -5.9333,
+	  latitude = 6.133,
+	  geo_uncertainty = 500, 
+	  geo_from_source = TRUE
+	)
   
-	d$geo_from_source <- FALSE ## within a few km though
-	d$planting_date <- d$harvest_date <- NA
+	### from paper
+	d$planting_date <- ifelse(d$cycle=="First", paste0(d$date, "-04"), paste0(d$date, "-08"))
+	d$harvest_date <- ifelse(d$cycle=="First", paste0(d$date, "-08"), paste0(as.numeric(d$date)+1, "-01"))
 	d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA) 
+	d$cycle <- NULL
 	
 	d$yield_part <- "grain"
 	d$yield_isfresh <- FALSE 
-	d$yield_moisture <- 0
+	d$yield_moisture <- NA
 	
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, wth = wth)
 }
 
