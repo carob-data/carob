@@ -40,12 +40,12 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		design = "BNI translocation lines vs recurrent parents; N 0/75/150 kg/ha",
 		data_type = "on-station experiment",
 		treatment_vars = "variety;N_fertilizer",
-		response_vars = "yield",
+		response_vars = "yield;heading_days;flowering_days;maturity_days;plant_height;seed_weight;spike_density;germination_rate;ground_cover",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -54,10 +54,12 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		ifelse(grepl("CSMONO3B|Lr#n|BNI", x, ignore.case=TRUE), "improved", "check")
 	}
 
-	## Nepal, Bhairahawa (NWRP)
+	## Nepal, Bhairahawa (NWRP); col_types="text" avoids mixed date/numeric warnings in NDVI headers
 	f1 <- ff[basename(ff) == "Yield Trial + Bhairahawa 2024_25 NEPAL.xlsx"]
-	r1 <- carobiner::read.excel(f1, sheet="BNI trial CropSustaiN")
+	r1 <- carobiner::read.excel(f1, sheet="BNI trial CropSustaiN", col_types="text")
 	r1 <- r1[!is.na(r1$Genotypes), ]
+	sow_txt <- trimws(as.character(r1[["Days of Sowing"]]))
+	sow1 <- ifelse(grepl("^[0-9.]+$", sow_txt), as.numeric(sow_txt), NA_real_)
 	d1 <- data.frame(
 		country = "Nepal",
 		location = "Bhairahawa",
@@ -66,7 +68,7 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		variety_code = as.character(r1[["ENTRY NO."]]),
 		N_fertilizer = as.numeric(r1[["Nitrogen Level"]]),
 		rep = as.integer(gsub("[^0-9]", "", r1$Rep)),
-		planting_date = as.character(as.Date(r1[["Days of Sowing"]])),
+		planting_date = as.character(as.Date(sow1, origin="1899-12-30")),
 		germination_rate = as.numeric(r1[["Emergence %"]]),
 		ground_cover = as.numeric(r1[["GC%"]]),
 		heading_days = as.numeric(r1[["Days to Heading"]]),
@@ -116,6 +118,7 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		variety_code = as.character(r3[[2]]),
 		N_fertilizer = as.numeric(r3[[5]]),
 		rep = as.integer(r3[[4]]),
+		planting_date = "2024",
 		heading_days = as.numeric(r3[[6]]),
 		flowering_days = as.numeric(r3[[7]]),
 		maturity_days = as.numeric(r3[[8]]),

@@ -36,12 +36,12 @@ Data on winter wheat from a long term trial on cereal production for the period 
 		design = "variety trial",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
+		response_vars = "yield;grain_protein",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.8
 	)
 
@@ -50,6 +50,7 @@ Data on winter wheat from a long term trial on cereal production for the period 
 	hv <- DBI::dbReadTable(con, "harvest_variety_view")
 	fert <- DBI::dbReadTable(con, "farm_op_fertilisation_view")
 	plant <- DBI::dbReadTable(con, "farm_operation_seedingplanting_tbl")
+	harv <- DBI::dbReadTable(con, "farm_operation_harvest_tbl")
 	qual <- DBI::dbReadTable(con, "harvest_quality_ind_tbl")
 	w <- DBI::dbReadTable(con, "weather_data_daily_tbl")
 	DBI::dbDisconnect(con)
@@ -110,6 +111,12 @@ Data on winter wheat from a long term trial on cereal production for the period 
 	plt$planting_date <- as.character(as.Date(plt$planting_date))
 	d$planting_date <- NULL
 	d <- merge(d, plt, by="site_id", all.x=TRUE)
+
+	hrv <- harv[!is.na(harv$operation_date), c("fk_site_id", "operation_date")]
+	hrv <- hrv[!duplicated(hrv$fk_site_id), ]
+	names(hrv) <- c("site_id", "harvest_date")
+	hrv$harvest_date <- as.character(as.Date(hrv$harvest_date))
+	d <- merge(d, hrv, by="site_id", all.x=TRUE)
 
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE

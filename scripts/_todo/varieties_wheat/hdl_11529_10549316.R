@@ -38,11 +38,11 @@ Grain Yield and Grain Protein data of CIMMYT Elite Spring Wheat lines with the B
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
+		response_vars = "yield;flowering_days;maturity_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.8
 	)
 
@@ -168,6 +168,13 @@ Grain Yield and Grain Protein data of CIMMYT Elite Spring Wheat lines with the B
 	blocks <- blocks[!vapply(blocks, is.null, TRUE)]
 	d <- do.call(carobiner::bindr, blocks)
 	d <- d[!is.na(d$yield), ]
+	geo <- data.frame(
+		location = c("El Batan", "Obregon", "Toluca"),
+		adm1 = c("México", "Sonora", "México"),
+		latitude = c(19.530, 27.371, 19.229),
+		longitude = c(-98.847, -109.930, -99.551)
+	)
+	d <- merge(d, geo, by="location", all.x=TRUE)
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	carobiner::write_files(path, meta, d)
 }

@@ -45,14 +45,15 @@ The database contains location, weather, soil, management techniques, sorghum cr
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
 		publication = NA,
+		project = NA,
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;dmy_total",
+		response_vars = "yield;dmy_total;seed_weight;plant_height;LAI",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 1.0
 	)
 
@@ -98,6 +99,11 @@ The database contains location, weather, soil, management techniques, sorghum cr
 	cty <- c("BF" = "Burkina Faso", "ML" = "Mali", "SN" = "Senegal")
 	r3$country <- unname(cty[r3$countrycode])
 	r3$sitename <- utf8(r3$sitename)
+	# One Bama Vallée du Kou trial lacks a weather-station link; fill from same station's coordinates
+	r3$geo_from_source <- !is.na(r3$wslat) & !is.na(r3$wslong)
+	miss <- is.na(r3$wslat) & r3$sitename == "Bama Vallée du Kou"
+	r3$wslat[miss] <- 11.38
+	r3$wslong[miss] <- -4.38
 
 	fert <- r7[r7$itklib == "fertilizin", c("trialcode", "Product", "itkval")]
 	fert$product <- toupper(trimws(fert$Product))
@@ -146,7 +152,7 @@ The database contains location, weather, soil, management techniques, sorghum cr
 	d <- merge(r1, gy, by = "plotcode", all.x = TRUE)
 	d <- merge(d, tb, by = "plotcode", all.x = TRUE)
 	d <- merge(d, sw, by = "plotcode", all.x = TRUE)
-	d <- merge(d, r3[, c("trialcode", "country", "sitename", "wslat", "wslong", "wsalt", "wscode")], by = "trialcode", all.x = TRUE)
+	d <- merge(d, r3[, c("trialcode", "country", "sitename", "wslat", "wslong", "wsalt", "wscode", "geo_from_source")], by = "trialcode", all.x = TRUE)
 	d <- merge(d, fm[, c("trialcode", "N_fertilizer", "P_fertilizer", "K_fertilizer", "fertilizer_type", "om")], by = "trialcode", all.x = TRUE)
 	d <- merge(d, sow[, c("trialcode", "planting_date", "plant_density")], by = "trialcode", all.x = TRUE)
 
@@ -163,7 +169,7 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		latitude = d$wslat,
 		longitude = d$wslong,
 		elevation = d$wsalt,
-		geo_from_source = TRUE,
+		geo_from_source = d$geo_from_source,
 		station_id = as.character(d$wscode),
 		planting_date = d$planting_date,
 		plant_density = d$plant_density,

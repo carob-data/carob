@@ -36,11 +36,11 @@ Preliminary yield and agronomic trial data collected from 6 different trials car
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;plant_height",
+		response_vars = "yield;plant_height;heading_days;flowering_days;maturity_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
 		carob_effort = 0.4
 	)
 
@@ -95,7 +95,13 @@ Preliminary yield and agronomic trial data collected from 6 different trials car
 	d$treatment <- d$variety
 	d$crop <- "wheat"
 	d$yield_part <- "grain"
+	d$country <- "Mexico"
+	d$adm1 <- "Sonora"
 	d$location <- "Obregon"
+	d$site <- "CENEB"
+	d$latitude <- 27.371
+	d$longitude <- -109.930
+	d$planting_date <- "2024"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$geo_from_source <- FALSE

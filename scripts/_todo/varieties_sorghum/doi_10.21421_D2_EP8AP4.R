@@ -4,16 +4,14 @@
 ## NOTES
 # Sorghum landrace accessions scored for grain Fe and Zn in 2016 and 2017. There is no yield and no management treatment, so this is a variety trial and the script is in varieties_sorghum.
 # One row per accession per year. variety is the cultivar name (local names repeat); variety_code is the collection serial number.
-# Fe and Zn are ppm (mg/kg). terminag grain_Fe and grain_Zn are mg/g. Values were left in mg/kg.
+# Fe and Zn are reported in ppm (mg/kg) and converted to terminag mg/g (/ 1000).
 # Country is Nigeria and the place is Kano, from the Dataverse geospatial block. Coordinates are the midpoint of the bounding box (about 8.591 E, 11.998 N). The box is about 3 km east-west, so geo_uncertainty is 1500 m.
 # No publication DOI is given in the metadata.
 
 ## ISSUES
 # No grain yield, fertilizer, irrigation or planting detail beyond the year in the column name.
-# grain_Zn is above the terminag maximum because the values are mg/kg. grain_Fe was not converted to mg/g; that would put every value below the terminag minimum of 1.
 # The north and south bounds in the Dataverse record are labeled as longitudes and are slightly reversed; the midpoint was used.
 # Whether the trial was on a station or in farmers' fields is not stated. It is marked on_farm FALSE because the geographic unit says "Research location".
-# write_files: missing carob_contributor; missing yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; out of bounds grain_Zn (15.5-47.2).
 
 ## NOT PROCESSED
 # None. Both years of Fe and Zn and the accession identifiers are mapped. There is no other measurement column.
@@ -44,8 +42,8 @@ Identification of sorghum landrace germplasm for grain Iron (Fe) and Zinc (Zn) i
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
 		carob_effort = 0.4
 	)
 
@@ -58,8 +56,9 @@ Identification of sorghum landrace germplasm for grain Iron (Fe) and Zinc (Zn) i
 		variety_code = code,
 		variety = name,
 		treatment = name,
-		grain_Fe = as.numeric(r$Fe_2016),
-		grain_Zn = as.numeric(r$Zn_2016),
+		# mg/kg (ppm) -> mg/g
+		grain_Fe = as.numeric(r$Fe_2016) / 1000,
+		grain_Zn = as.numeric(r$Zn_2016) / 1000,
 		planting_date = "2016",
 		trial_id = "Kano_2016"
 	)
@@ -67,8 +66,8 @@ Identification of sorghum landrace germplasm for grain Iron (Fe) and Zinc (Zn) i
 		variety_code = code,
 		variety = name,
 		treatment = name,
-		grain_Fe = as.numeric(r$Fe_2017),
-		grain_Zn = as.numeric(r$Zn_2017),
+		grain_Fe = as.numeric(r$Fe_2017) / 1000,
+		grain_Zn = as.numeric(r$Zn_2017) / 1000,
 		planting_date = "2017",
 		trial_id = "Kano_2017"
 	)

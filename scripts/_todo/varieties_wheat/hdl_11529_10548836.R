@@ -2,15 +2,17 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Cleaned line means from ESWYT, HTWYT, IDYN, and SAWYT used in the 2021 Nature Plants paper.
-# yld is between about 0.1 and 11, so it is stored as t/ha converted to kg/ha.
+# Cleaned line means from ESWYT, HTWYT, IDYN, and SAWYT used in the 2021 Nature Plants paper (compilation of CIMMYT spring wheat nurseries).
+# yld is in t/ha (converted to kg/ha). Negative yields (18 rows down to -0.074 t/ha) are set to NA.
 # lat and lon are in the files. There is no country column and geographicCoverage does not name the trial countries.
-# dayofsow and dayofhar are day-of-year. When harvest day-of-year is earlier than sowing day-of-year, harvest is the next calendar year. Seasons that remain shorter than 45 days are stored as recorded. Values outside day 1-366 are not used as dates.
+# yearofsow and dayofsow give the sowing date; dayofhar is days from sowing to harvest (median 23 days after maturity), so harvest_date = planting_date + dayofhar (for plausible 45-365 days; corrupt values like -8 and 11087 are set to NA).
 # IDYN rows are durum. The other nurseries are not given a variety type.
 # Publication DOI is in the dataset metadata: doi:10.1038/s41477-021-00988-w
 
 ## ISSUES
-# write_files: missing variables: yield_moisture, country, K_fertilizer, N_fertilizer, P_fertilizer out of bounds: yield (-74, 17866), heading_days (0, 278), anthesis_days (43, 230), maturity_days (1, 354) datespan: 15786 records with harvest_date within 45 days of planting_date location: variable 'country' is missing NA detected: yield contributor:
+# Compilation of ESWYT, HTWYT, IDYN, and SAWYT trials that may overlap with individual CIMMYT nursery scripts in scripts/varieties_wheat/.
+# No country column in the CSVs (678 unique lat/lon sites worldwide).
+# 18 negative yields and corrupt heading/maturity/harvest day values (<25, <45, or >365 days) were set to NA.
 
 ## NOT PROCESSED
 # sim_head, sim_anth, sim_matu, matu1, and head1. The sim_ columns are model output.
@@ -35,13 +37,13 @@ A standard quantitative genetic model was used to examine how genotype-environme
 		publication = "doi:10.1038/s41477-021-00988-w",
 		project = "ESWYT, HTWYT, IDYN, and SAWYT",
 		design = NA,
-		data_type = "experiment",
+		data_type = "compilation",
 		treatment_vars = "variety_code",
-		response_vars = "yield",
+		response_vars = "yield;heading_days;anthesis_days;maturity_days;harvest_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.4
 	)
 
@@ -75,13 +77,23 @@ A standard quantitative genetic model was used to examine how genotype-environme
 		lat <- num(r$lat)
 		lon <- num(r$lon)
 		sow <- as.integer(num(r$dayofsow))
-		har <- as.integer(num(r$dayofhar))
-		yr <- as.integer(num(r$year))
+		har_days <- num(r$dayofhar)
+		yr <- as.integer(num(r$yearofsow))
 		sow[!is.na(sow) & (sow < 1 | sow > 366)] <- NA_integer_
-		har[!is.na(har) & (har < 1 | har > 366)] <- NA_integer_
-		hyr <- yr
-		cross <- !is.na(sow) & !is.na(har) & har < sow
-		hyr[cross] <- yr[cross] + 1
+		# dayofhar is days from sowing to harvest; drop corrupt values outside 45-365 days
+		har_days[!is.na(har_days) & (har_days < 45 | har_days > 365)] <- NA_real_
+		pdate <- doy_date(yr, sow)
+		hdate <- rep(NA_character_, length(pdate))
+		okh <- !is.na(pdate) & !is.na(har_days)
+		if (any(okh)) hdate[okh] <- as.character(as.Date(pdate[okh]) + as.integer(round(har_days[okh])))
+		yld <- num(r$yld) * 1000
+		yld[!is.na(yld) & yld < 0] <- NA_real_
+		hd <- num(r$head)
+		hd[!is.na(hd) & hd < 25] <- NA_real_
+		ad <- num(r$anth)
+		ad[!is.na(ad) & ad < 30] <- NA_real_
+		md <- num(r$matu)
+		md[!is.na(md) & md < 45] <- NA_real_
 		data.frame(
 			crop = "wheat",
 			variety_type = vtype,
@@ -89,13 +101,14 @@ A standard quantitative genetic model was used to examine how genotype-environme
 			variety = variety,
 			treatment = g,
 			trial_id = paste(nursery, e, r$year),
-			yield = num(r$yld) * 1000,
+			yield = yld,
 			yield_part = "grain",
-			planting_date = doy_date(yr, sow),
-			harvest_date = doy_date(hyr, har),
-			heading_days = num(r$head),
-			anthesis_days = num(r$anth),
-			maturity_days = num(r$matu),
+			planting_date = pdate,
+			harvest_date = hdate,
+			heading_days = hd,
+			anthesis_days = ad,
+			maturity_days = md,
+			harvest_days = har_days,
 			latitude = lat,
 			longitude = lon,
 			geo_from_source = !is.na(lat) & !is.na(lon),
@@ -114,6 +127,7 @@ A standard quantitative genetic model was used to examine how genotype-environme
 	d <- do.call(rbind, lapply(ff, one))
 	keep <- !is.na(d$variety_code) | !is.na(d$yield)
 	d <- d[keep, ]
+	d <- unique(d)
 	d$geo_from_source[is.na(d$latitude) | is.na(d$longitude)] <- FALSE
 	carobiner::write_files(path, meta, d)
 }
