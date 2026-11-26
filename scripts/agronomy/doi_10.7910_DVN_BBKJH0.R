@@ -13,7 +13,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
    data_organization = "AfricaRice",
    publication = NA,
    project = "EiA",
@@ -68,7 +68,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
     d$fertilizer_type <- ifelse(d$fertilizer_used, "NPK;urea", "none") # In some experiments, no fertilizer was applied. For such, fertilizer_type is set to "none"
     
     d$season <- ifelse(d$season=="dry season","dry","wet")
-    d$planting_method <- ifelse(d$planting_method=="direct","direct seeding","transplanted")
+    d$planting_method <- ifelse(d$planting_method=="direct","direct seeding","transplanting")
     d$country <- gsub("Cote d'Ivoire","Côte d'Ivoire",d$country)
     d$on_farm <- TRUE
     d$is_survey <- FALSE
@@ -76,6 +76,30 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
     d$crop <- "rice"
     d$yield_part <- "grain"
     d$yield_moisture <- 14
+    
+    ### fixing incorrect coordinates (conflict errors) 
+    i <- grepl("Bama", d$adm1) & grepl("Burkina Faso", d$country)
+    d$longitude[i] <- -abs(d$longitude[i])
+    i <- grepl("Sikasso", d$adm1) & grepl("Mali", d$country)
+    d$longitude[i] <- -abs(d$longitude[i])
+    
+    geo <- data.frame(
+      country = c(rep("Sierra Leone", 3), "Ghana" , "Nigeria"),
+      adm1 = c( "North West", "Southern", "North West",  "Northern", "Nasarawa"),
+      lon = c( -12.0352, -11.9802, -12.70098, -0.2859, 8.1873	),
+      lat = c( 7.7798, 9.1373, 9.12379,  9.4628, 8.4989	),
+      geo_uncertainty = c(117178, 153729, NA,  145430, 158136),
+      geo_source = c(rep("GADM 4.1, adm1", 2), "Google Maps", rep("GADM 4.1, adm1", 2)),
+      geo_from = FALSE
+    )
+    
+    d <- merge(d, geo, by = c("adm1", "country"), all.x = TRUE)
+    x <- !is.na(d$lon) & (is.na(d$longitude) | d$longitude %in% c(-8.4622, -8.7155, -8.6588, -8.7168, -8.6579, -8.6941, -8.7180, -8.9488, -8.9484, -8.9487, -8.9493, -8.9490, -9.0620, -9.0560, -9.1022, -8.5745, -8.5226, -9.1143, -9.0378, -8.1359, -8.4646, -8.5243, -8.5276, -8.5245, -8.5050, -8.4660, -7.3014, -7.3010, -7.2112, -7.2916, -7.2826, -7.2640, -7.2621, -7.2550, 1.1190))
+    
+    d$longitude[x] <- d$lon[x]
+    d$latitude[x] <- d$lat[x]
+    d$geo_from_source[x] <- d$geo_from[x]
+    d$lon <- d$lat <- d$geo_from <- NULL
     
 	carobiner::write_files(path, meta, d)
 }
