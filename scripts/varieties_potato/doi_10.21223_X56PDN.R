@@ -13,7 +13,7 @@ Dataset for: Assessment of at least 200 lines from LBHT x LTVR population in two
 "
 
 	uri <- "doi:10.21223/X56PDN"
-	group <- "varieties_other"
+	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,

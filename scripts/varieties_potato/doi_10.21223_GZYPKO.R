@@ -13,7 +13,7 @@ The dataset contains data about a participatory variety trial on selected clones
 "
 
 	uri <- "doi:10.21223/GZYPKO"
-	group <- "varieties_other"
+	group <- "varieties_potato"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,

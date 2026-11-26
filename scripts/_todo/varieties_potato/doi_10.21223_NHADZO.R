@@ -36,7 +36,7 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 "
 
 	uri <- "doi:10.21223/NHADZO"
-	group <- "varieties_other"
+	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,

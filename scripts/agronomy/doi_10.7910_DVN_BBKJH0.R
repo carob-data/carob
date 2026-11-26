@@ -1,7 +1,10 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## ISSUES
+## NOTES
+
+#The abstract says rates are N, P2O5, and K2O, while the dictionary defines elemental P and K. The script follows the dictionary and does not mention the conflict. land_prep_method uses the filler unknown.
+
 
 carob_script <- function(path) {
   
@@ -13,7 +16,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
    data_organization = "AfricaRice",
    publication = NA,
    project = "EiA",
@@ -24,7 +27,7 @@ This dataset provides a detailed, plot-level record of rice agronomic practices 
    carob_contributor = "Blessing Dzuda; Kora Simperegui",
    carob_effort = NA,
    carob_date = "2025-05-30",
-   notes = "LLM-review: [low, metadata] The abstract says rates are N, P2O5, and K2O, while the dictionary defines elemental P and K. The script follows the dictionary and does not mention the conflict. land_prep_method uses the filler unknown.", 
+   notes = NA, 
    design = NA
   )
   

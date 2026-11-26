@@ -13,7 +13,7 @@ Cassava germplasm development at CIAT is centered on the development of improved
 "
 
 	uri <- "doi:10.7910/DVN/FBX5DH"
-	group <- "varieties_other"
+	group <- "varieties_cassava"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=7,

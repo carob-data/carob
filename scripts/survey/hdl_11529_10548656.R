@@ -1,7 +1,17 @@
 # R script for "carob"
 
-carob_script <- function(path) { 
-  
+## ISSUES
+# - herbicide_product contains active ingredients not yet in terminag (e.g., oxadiargyl, ethoxysulfuron)
+#   and occasional rare farmer free-text brand/misspelled names.
+# - insecticide_product contains active ingredients not yet in terminag (e.g., profenofos, triazophos,
+#   triflumezopyrim) and many rare farmer free-text trade names.
+# - A small number of records have extreme mineral fertilizer rates (e.g., N_fertilizer > 600 kg/ha,
+#   Zn_fertilizer > 100 kg/ha, S_fertilizer > 250 kg/ha) from raw survey plot-unit or entry outliers.
+# - O.largestPlotGPS.Altitude is not mapped to elevation because raw mobile GPS altitudes are
+#   uncalibrated (median 1 m across inland India, min -223 m).
+
+carob_script <- function(path) {
+
 "Landscape Diagnostic Survey (LDS) data contains current rice production practices of rice applied by 8,355 farmers in eight states of India. The objective of collecting this data is to bridge the existing data-gap and to generate data-based evidence that can help in evidence-based planning. The LDS is designed in a way that data is collected from randomly selected farmers spread uniformly within a KVK (government extension system) domain/district. Survey questionnaire captures all production practices applied by farmers from land preparation to harvesting, including detailed sections on rice establishment, fertilizer use, weed control and irrigation application. Data is captured through electronically enabled Open Data Kit (ODK) tool on mobile phone or tablet. (2021-12-01)"
 
 	uri <- "hdl:11529/10548656"
@@ -19,17 +29,21 @@ carob_script <- function(path) {
 		carob_date="2024-01-27",
 		carob_effort = NA
 	)
-	  	  
-	f <- ff[basename(ff)=="CSISA_IND_LDS_Rice_2018_Data.csv"]
-	r <- read.csv(f)
-	r <- carobiner::change_names(r, c("X", "X.1"), c("O.largestPlotGPS.Latitude", "O.largestPlotGPS.Longitude"))
 
+	f <- ff[basename(ff)=="CSISA_IND_LDS_Rice_2018_Data.csv"]
+	r <- read.csv(f, na.strings=c("", "NA"))
+	r <- carobiner::change_names(r, c("X", "X.1"), c("O.largestPlotGPS.Latitude", "O.largestPlotGPS.Longitude"))
 
 	do_LCAS <- carobiner::get_function("do_LCAS", path, group)
 	d <- do_LCAS(r)
-	i <- d$location == "Fatehpur"
-	d$longitude[i] <- 83.293 ## from the non missing coordinate of the same location in the raw data 
-	d$latitude[i] <- 25.213
-    carobiner::write_files(path, meta, d)
+
+	# Only one Fatehpur record (Harischandrapur II, Maldah, West Bengal) has missing GPS;
+	# impute from the other observations of the same village ("Fatepur") in Harischandrapur II.
+	i <- is.na(d$longitude) & d$location == "Fatehpur" & d$adm2 == "Maldah"
+	d$longitude[i] <- 87.861
+	d$latitude[i] <- 25.305
+	d$geo_from_source[i] <- FALSE
+
+	carobiner::write_files(path, meta, d)
 }
 

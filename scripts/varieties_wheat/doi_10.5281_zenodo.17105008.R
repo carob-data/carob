@@ -13,7 +13,7 @@ Data on spring wheat from a long term trial on cereal production for the period 
 "
 
 	uri <- "doi:10.5281/zenodo.17105008"
-	group <- "varieties_other"
+	group <- "varieties_wheat"
 	ff  <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=8, minor=NA,

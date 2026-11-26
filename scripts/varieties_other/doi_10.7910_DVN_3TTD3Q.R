@@ -2,30 +2,32 @@
 # license: GPL (>=3)
 
 ## NOTES
-# 2015 mangrove participatory evaluation trials (PET) at two sites in Gambia. One row per genotype.
-# Dictionnary.txt: YIELD is paddy at 14% moisture, t/ha (stored as kg/ha). FLWR is days to 50% flowering. PLTHGT and PNL are cm. GW1000 is g per 1000 grains.
+# 2015 rainfed-upland participatory evaluation trials (PET). One row per genotype at each site.
+# Dictionnary.txt: YIELD is paddy at 14% moisture, t/ha (stored as kg/ha). FLWR and MATURITY are days. PLTHGT and PNL are cm. GW1000 is g per 1000 grains.
 # No replicate column. Values are fractional, so they are not single-plot records. Replicates were not filled in.
-# Production system is M (mangrove) on every row. Trial is PET on every row.
-# Named-site trials, so on_farm is FALSE.
+# Every row is production system RU, so irrigated is FALSE. Trial is PET on every row.
+# Cote d'Ivoire is stored as Côte d'Ivoire. Guinea Conakry is stored as Guinea. FarakoBa is stored as Farako Ba, matching the file name.
+# Mali (Longorola) reports maturity days and height, and does not report flowering. Boukoko does not report plant height.
+# Named-site trials, so on_farm is FALSE. The description also mentions a later farmer-field stage that is not in these files.
 
 ## ISSUES
-# Mangrove is not described as irrigated or rainfed, so irrigated is omitted.
-# No coordinates in the workbooks or the supplementary PDF. Kaiaf and Lamin Abuko still need georeferencing.
+# No coordinates in the workbooks or the supplementary PDF. Sites still need georeferencing.
 # No fertilizer rates. Year is 2015, but planting and harvest dates are not reported.
 # No genotype is labeled as a check.
-# write_files: ; missing variables: geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
+# Grain weight is absent for Farako Ba, Longorola, and Sabon Daga. Panicle length is absent for Sowe, Farako Ba, and Longorola.
+# write_files: ; missing variables: geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown variables: panicle_length_.
 
 ## NOT PROCESSED
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.
-# 2015-M-PET-Supplementary information.pdf: LSD, heritability, and p-value. Trial statistics, not plot or genotype rows.
-# PS and Trial: constant (M and PET).
+# 2015-RU-PET-Supplementary information.pdf: LSD, heritability, and p-value. Trial statistics, not plot or genotype rows.
+# PS and Trial: constant (RU and PET).
 # Year: the trial year (2015), stored as planting_date.
 
 
 carob_script <- function(path) {
 
 "
-2015 Africa-wide Breeding Task Force Trials for Mangrove - PET
+2015 Africa-wide Breeding Task Force Trials for Rainfed Upland - PET
 
 In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice involving National Agricultural Research System (NARS) from about 30 countries. The objectives of the network are to evaluate the stability of traits incorporated in breeding processes and to identify varieties best fit to growth conditions in target regions and to markets. The Task Force also accumulates data on performance of new elite lines, thereby facilitating varietal release procedures. Furthermore, by exposing breeders from NARS and farmers to these elite lines during the testing phase, dissemination will be facilitated.
 
@@ -38,7 +40,7 @@ The second phase (PET, Participatory Evaluation Trial) serves to evaluate and co
 Further, NARS evaluated these lines in at least three sites per country and during one or more growing seasons, depending on varietal release requirements. All stakeholders are again invited to get acquainted with the new lines and voice their opinion to help select lines for further advancement. Among the 10 lines, farmers are invited to select three lines and cultivate these in their own fields, together with a common check and their own variety.
 "
 
-	uri <- "doi:10.7910/DVN/RYODX5"
+	uri <- "doi:10.7910/DVN/3TTD3Q"
 	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -49,17 +51,16 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;plant_height;seed_weight;panicle_length",
+		response_vars = "yield;flowering_days;plant_height;seed_weight;maturity_days;panicle_length",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	process <- carobiner::get_function("process_africarice_btf", path, group)
-	# mangrove rice, not irrigated
 	d <- process(ff, year = 2015, irrigated = FALSE)
 
 	carobiner::write_files(path, meta, d)

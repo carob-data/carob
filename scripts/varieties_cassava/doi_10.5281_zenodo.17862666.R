@@ -13,7 +13,7 @@ This dataset provides field and environmental data from multi-location cassava t
 "
 
   uri <- "doi:10.5281/zenodo.17862666"
-	group <- "varieties_other"
+	group <- "varieties_cassava"
 	ff  <- carobiner::get_data(uri, path, group)
 
 

@@ -55,11 +55,11 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height;seed_weight;maturity_days;panicle_length",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	process <- carobiner::get_function("process_africarice_btf", path, group)

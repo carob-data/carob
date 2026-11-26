@@ -12,7 +12,7 @@ Yield evaluation for 15 advanced clones from LBHT x LTVR population 2018 growing
 
   
    uri <- "doi:10.21223/BYNPRW"
-   group <- "varieties_other"
+   group <- "varieties_potato"
    ff <- carobiner::get_data(uri, path, group)
    
    meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,

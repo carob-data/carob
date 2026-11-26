@@ -2,30 +2,31 @@
 # license: GPL (>=3)
 
 ## NOTES
-# 2017 rainfed-lowland multi-environment trial. Each BLUP workbook is a genotype-by-site matrix, not plot records.
-# One row per genotype and site column. Yield is kg/ha, flowering is days, height is cm: site means are about 3000-8000, 80-124 and 70-150, so the figures are not t/ha.
-# Institute is kept on the location when the header names one (Ibadan AfricaRice, Mbe AfricaRice).
-# Combined-All, on the height and yield sheets, is the all-site aggregate. The flowering sheet has no combined column. Flowering is blank for Nigeria-Edozhigi and Guinea-Seredou.
+# 2017 rainfed-upland multi-environment trial. Each BLUP workbook is a genotype-by-site matrix, not plot records.
+# One row per genotype and site column. Yield is kg/ha, flowering is days, height is cm: site means are about 900-6400, 60-110 and 89-111, so the figures are not t/ha.
+# Combined-G1 is Nigeria-Ibadan and Nigeria-Sabon Daga. Combined-G2 is Benin-Kpakpazounme and Benin-Sowe. Combined-G3 is Burkina faso-Banfora and Burkina Faso-Farakoba.
+# Flowering is blank for Nigeria-Mokwa. Height is blank for Benin-Kpakpazounme and Burkina Faso-Lesso. The margin note lists Guinea sites as "Bordo, Bordo, Diankana" and does not name Banakalan; locations follow the column headers.
 
 ## ISSUES
 # No coordinates, planting or harvest dates, fertilizer rates, or yield moisture. Dataverse productionDate is 2016-12-31; the trial year is the 2017 title.
 # on_farm is FALSE because the 2017 text says the farmer adoption trial was removed. The sheets do not flag each hub.
-# Check varieties are yellow cell fill only (the sheet spells it "highlted"). That fill was not read.
-# Statistics sheets say 3 replicates where a site was analysed. Those were not expanded into plot rows.
-# Some genotype-by-site cells are blank. ART248-1-56-1-B-B at Mbe (AfricaRice) has a flowering BLUP and no yield or height.
-# write_files: missing carob_contributor; missing yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; NA detected: yield.
+# Check varieties are yellow cell fill only. That fill was not read.
+# Statistics sheets say 3 replicates where a site was analysed. Flowering at Nigeria-Mokwa and height at Kpakpazounme and Lesso have no replicate count. Those were not expanded into plot rows.
+# Some genotype-by-site cells are blank, so yield is missing where only flowering or height was published.
+# The flowering footer labels the third statistic LCS rather than LSD.
+# write_files: missing carob_contributor; missing yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
 
 ## NOT PROCESSED
-# BLUP-Flowering, BLUP-Height and BLUP-Yield footer rows Heritability, Mean and LSD: the same summaries as the statistics workbooks, not genotypes.
-# BLUP column Combined-All on the height and yield sheets: multi-site aggregate, not a location.
-# Margin notes (site counts and the yellow-check note): not records.
-# Statistics-Flowering-2017-Rainfed-Lowland.xls, Statistics-Height-2017-Rainfed-Lowland.xls, Statistics-Yield-2017-Rainfed-Lowland.xls: Heritability, Mean, LSD, Replicates, P-value (Genotype), Variance (Genotype), Variance (Residual) by site. ANOVA only.
-# Supplementary Materials - Rainfed Lowland 2017.pdf: font-encoded print of the tables, not a separate data table.
+# BLUP-Flowering, BLUP-Height and BLUP-Yield footer rows Heritability, Mean and LSD (LCS on the flowering sheet): the same summaries as the statistics workbooks, not genotypes.
+# BLUP columns Combined-G1, Combined-G2, Combined-G3 and Combined-All: multi-site aggregates, not a location.
+# Margin notes (site counts and "Checks are highlighted in yellow"): not records.
+# Statistics-Flowering-2017-Rainfed-Upland.xls, Statistics-Height-2017-Rainfed-Upland.xls, Statistics-Yield-2017-Rainfed-Upland.xls: Heritability, Mean, LSD, Replicates, P-value (Genotype), Variance (Genotype), Variance (Residual) by site. ANOVA only.
+# Supplementary Materials - Rainfed Upland 2017.pdf: font-encoded print of the tables, not a separate data table.
 
 carob_script <- function(path) {
 
 "
-2017 Africa-wide Breeding Task Force Trials for Rainfed Lowland
+2017 Africa-wide Breeding Task Force Trials for Rainfed Upland
 
 Objective and Requirement of MET by Breeding Task Force:
 
@@ -38,7 +39,7 @@ Explanations of the changes
 1. The number of entries is reduced to ensure better conduct of the trials and higher quality data. 1.1 For each sub-region (WCA and ESA), a maximum of 29 new entries per production system (irrigated lowland, rainfed lowland, rainfed upland, mangrove and high-elevation) is considered to enter the BTF (Phase I, former MET) each year. 1.2 After evaluation and data analysis, a maximum of 10 entries is selected for further evaluation (Phase II, former PET). 1.3 After evaluation and data analysis, a maximum of 3 entries is selected for further evaluation (Phase III, former PAT). 2. Materials from Phase I, II and III are combined into a single trial (up to 42 test entries every year). 3. Participatory varietal selection (PVS) may be conducted in the single trial (one replication may be chosen for the PVS). 4. The single trial is conducted in three different locations in each participating country and in priority in the Hubs. 5. The Farmers Adoption Trial (FAT) and Validation AfricaRice Trial (VAT) is removed from the BTF scheme. Where required, further testing of selected entries in farmers' fields will be ideally handled by NARS with the assistance of Rice Agronomy Task Force.
 "
 
-	uri <- "doi:10.7910/DVN/VJZFT6"
+	uri <- "doi:10.7910/DVN/DS4ZFW"
 	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -50,12 +51,12 @@ Explanations of the changes
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height",
-		notes = "Variety-by-location BLUPs from the 2017 rainfed lowland trial, not plot replicates.",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		notes = "Variety-by-location BLUPs from the 2017 rainfed upland trial, not plot replicates.",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	process <- carobiner::get_function("process_africarice_blup", path, group)

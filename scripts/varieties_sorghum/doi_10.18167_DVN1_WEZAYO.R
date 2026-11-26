@@ -50,11 +50,11 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;dmy_total;seed_weight;plant_height;LAI",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	# Timestamps in these files are month/day/year (for example 6/10/2014).

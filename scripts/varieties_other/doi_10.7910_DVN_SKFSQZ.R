@@ -52,11 +52,11 @@ Explanations of the changes
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height",
 		notes = "Variety-by-location BLUPs from the 2017 irrigated lowland trial, not plot replicates.",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	process <- carobiner::get_function("process_africarice_blup", path, group)
