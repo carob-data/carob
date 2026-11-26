@@ -7,24 +7,16 @@
 # C_org is percent (Walkley-Black) and is soil_SOC. P_avail is ppm (Olsen, modified Dabin) and is soil_P.
 # K, Ca and Mg are Metson exchangeable cmol/kg.
 # The description says soil was taken at 0-30 cm, so soil rows use that depth.
-# Leaf N, P, K, Ca and Mg are percent and are stored as mg/g (x 10). Leaf Fe, Mn, B, Cu, Mo and Zn are ppm; those terminag leaf_* fields are mg/g, so the ppm values are kept under their own names.
-# Produc is dry bean yield in kg/ha (leaf-file note). Coordinates are Lon and Lat in both files.
+# Leaf N, P, K, Ca and Mg are percent and are stored as mg/g (x 10). Leaf Fe, Mn, B, Cu, Zn and Mo are ppm (mg/kg) and are converted to mg/g (/ 1000) to match terminag crop_chemistry units.
+# Produc is dry bean yield in kg/ha (leaf-file note). Leaf samples were collected in March 2015 (description). Coordinates are Lon and Lat in both files.
 # Country is geographicCoverage Côte d'Ivoire, also named in the title. region is stored as location, not as an admin unit.
 # The cited paper has no DOI in the Dataverse record (agritrop URL only).
 
 ## ISSUES
-# soil_Zn reaches 376 mg/kg. Leaf P in mg/g goes below 1 because some leaf P percents are under 0.1. Leaf micronutrients stay in ppm columns.
+# soil_Zn reaches 376 mg/kg; left as reported.
 # Soil rows have no yield or yield_part because those fields are only in the leaf file.
 # The Dataverse record has French and English descriptions; yuri::cleaner is collapsed to one string inside this script so get_metadata can build the citation.
-# write_files: unknown variable leaf_Fe_ppm_; unknown variable leaf_Mn_ppm_; unknown variable leaf_B_ppm_; unknown variable leaf_Cu_ppm_; unknown variable leaf_Zn_ppm_; unknown variables leaf_Mo_ppm_; out of bounds soil_Zn (0.13, 376), leaf_P (0.84, 2.7); NA detected yield, yield_part.
-
-## NEW VARIABLES
-# leaf_Fe_ppm_: leaf iron (ppm)
-# leaf_Mn_ppm_: leaf manganese (ppm)
-# leaf_B_ppm_: leaf boron (ppm)
-# leaf_Cu_ppm_: leaf copper (ppm)
-# leaf_Mo_ppm_: leaf molybdenum (ppm)
-# leaf_Zn_ppm_: leaf zinc (ppm)
+# write_files: out of bounds soil_Zn (0.13, 376); NA detected yield, yield_part.
 
 ## NOT PROCESSED
 # C_N: ratio of the carbon and nitrogen columns already mapped
@@ -65,12 +57,12 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
-		carob_LLM = "Cursor Grok 4.7",
+		treatment_vars = NA,
+		response_vars = NA,
+		carob_LLM = "Gemini 4 Neon",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_completion = 70,
+		carob_completion = 80,
 		carob_effort = 0.6
 	)
 
@@ -100,8 +92,7 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		soil_Mn = as.numeric(r1$Mn),
 		soil_Cu = as.numeric(r1$Cu),
 		soil_Zn = as.numeric(r1$Zn),
-		soil_B = as.numeric(r1$B),
-		record_type = "soil"
+		soil_B = as.numeric(r1$B)
 	)
 	# depth 0-30 cm from the dataset description. N_tot percent to mg/kg. C_org is percent.
 
@@ -114,6 +105,8 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		location = trimws(as.character(r2$region)),
 		country = "Côte d'Ivoire",
 		crop = "cocoa",
+		# Description: leaf samples collected in March 2015
+		date = "2015-03",
 		yield = as.numeric(r2$Produc),
 		yield_part = "seed",
 		yield_moisture = 0,
@@ -122,19 +115,16 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		leaf_K = as.numeric(r2$K) * 10,
 		leaf_Ca = as.numeric(r2$Ca) * 10,
 		leaf_Mg = as.numeric(r2$Mg) * 10,
-		leaf_Fe_ppm_ = as.numeric(r2$Fe),
-		leaf_Mn_ppm_ = as.numeric(r2$Mn),
-		leaf_B_ppm_ = as.numeric(r2$B),
-		leaf_Cu_ppm_ = as.numeric(r2$Cu),
-		leaf_Mo_ppm_ = as.numeric(r2$Mo),
-		leaf_Zn_ppm_ = as.numeric(r2$Zn),
-		record_type = "leaf"
+		# ppm (mg/kg) -> mg/g
+		leaf_Fe = as.numeric(r2$Fe) / 1000,
+		leaf_Mn = as.numeric(r2$Mn) / 1000,
+		leaf_B = as.numeric(r2$B) / 1000,
+		leaf_Cu = as.numeric(r2$Cu) / 1000,
+		leaf_Mo = as.numeric(r2$Mo) / 1000,
+		leaf_Zn = as.numeric(r2$Zn) / 1000
 	)
 
-	for (nm in setdiff(names(d2), names(d1))) d1[[nm]] <- NA
-	for (nm in setdiff(names(d1), names(d2))) d2[[nm]] <- NA
-	d <- rbind(d1, d2)
-	d$record_type <- NULL
+	d <- carobiner::bindr(d1, d2)
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 	d$geo_from_source <- TRUE

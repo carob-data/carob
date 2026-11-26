@@ -32,22 +32,28 @@ Measured variables include: land cover, tree and shrub densities, tree biodivers
 		project = "LDSF Nile-Congo Sentinel Landscape",
 		design = "LDSF spatially stratified randomized plots",
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
+		treatment_vars = NA,
+		response_vars = NA,
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Kericho ldsf for database.csv"]
-	r <- read.csv(f, check.names=FALSE)
+	r <- read.csv(f, check.names=FALSE, na.strings=c("", "NA"))
 
-	cult <- as.integer(r$PlotCultMgd)
+	cult <- tolower(trimws(as.character(r$PlotCultMgd)))
+	fl <- tolower(trimws(as.character(r$PlotFlood)))
+	slope <- rowMeans(cbind(as.numeric(r$SlopeDn), as.numeric(r$SlopeUp)), na.rm=TRUE)
+	slope[is.nan(slope)] <- NA_real_
+	sdate <- carobiner::parse_dates(r$Date, order="mdy")
+
 	d <- data.frame(
 		country = carobiner::fix_name(r$Country, "title"),
+		adm1 = "Kericho",
 		location = carobiner::fix_name(r$Site, "title"),
 		plot_id = as.character(r$Plot),
 		sample_id = paste(r$Site, r$Cluster, r$Plot, sep="_"),
@@ -56,10 +62,13 @@ Measured variables include: land cover, tree and shrub densities, tree biodivers
 		elevation = as.numeric(r$Altitude),
 		geo_uncertainty = as.numeric(r$Accuracy),
 		geo_from_source = TRUE,
-		date = as.character(as.Date(r$Date, tryFormats=c("%m/%d/%Y", "%m/%d/%y", "%Y-%m-%d"))),
+		date = sdate,
+		soil_sample_date = sdate,
 		land_form = r$MajLform,
 		landscape_position = r$PosTopoSeq,
-		on_farm = cult %in% 1,
+		land_slope = slope,
+		flooded = ifelse(fl == "yes", TRUE, ifelse(fl == "no", FALSE, NA)),
+		on_farm = ifelse(cult == "yes", TRUE, ifelse(cult == "no", FALSE, NA)),
 		is_survey = TRUE
 	)
 

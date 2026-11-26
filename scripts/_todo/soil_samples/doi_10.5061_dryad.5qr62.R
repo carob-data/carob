@@ -8,15 +8,11 @@
 # pH in WeeklyKCl files is stored as soil_pH_KCl because the file name says KCl. Profile files only say pH, so that column is soil_pH and the extract is not named.
 
 ## ISSUES
-# No coordinates. Some profile depths are deeper than 200 cm. One nitrate value is slightly negative.
-# write_files: , latitude, longitude. unknown variables: inorganic_N_kg_ha_. out of bounds: depth_top (0, 350), depth_bottom (15, 400), soil_NO3 (-0.004, 86.615), soil_NH4 (0, 72.953).
-
-## NEW VARIABLES
-# inorganic_N_kg_ha_: inorganic N stock, kg/ha, from kgNperha.
-
+# Some profile depths are deeper than 200 cm (0-400 cm profiles). One nitrate value is slightly negative (-0.004 mg/kg, blank correction); kept as reported.
+# write_files: out of bounds depth_top (0, 350), depth_bottom (15, 400), soil_NO3 (-0.004, 86.615), soil_NH4 (0, 72.953).
 
 ## NOT PROCESSED
-# 2014_CIAT_DP.csv. Stock15cm and Yr1NO3, Yr1NH4.
+# 2014_CIAT_DP.csv: lacks site/plot identifier. Stock15cm and Yr1NO3, Yr1NH4.
 
 
 carob_script <- function(path) {
@@ -37,10 +33,12 @@ Fertilizer trials were established on a clayey soil in Yala, Kenya, and on a san
 		project = NA,
 		design = NA,
 		data_type = "experiment",
+		treatment_vars = "treatment; N_fertilizer",
+		response_vars = "soil_NO3; soil_NH4; soil_N_min_total",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.5
 	)
 
@@ -62,10 +60,14 @@ Fertilizer trials were established on a clayey soil in Yala, Kenya, and on a san
 	}
 	site <- c(KE = "Yala", TZ = "Tumbi")
 	country <- c(KE = "Kenya", TZ = "Tanzania")
+	# Exact study site coordinates from Tully et al. (2016), doi:10.1890/15-1518.1
+	# Yala, Kenya: 0°09'39.9" N, 34°40'18.1" E; Tumbi, Tanzania: 5°04'34.1" S, 32°41'33.8" E
+	lat_map <- c(KE = 0.1611, TZ = -5.0761)
+	lon_map <- c(KE = 34.6717, TZ = 32.6927)
 	nrate <- function(x) {
 		x <- trimws(as.character(x))
+		x[tolower(x) %in% c("glir", "gliricidia", "")] <- NA_character_
 		x <- sub(" N$", "", x)
-		x[!grepl("^[0-9.]+$", x)] <- NA
 		num(x)
 	}
 
@@ -85,15 +87,19 @@ Fertilizer trials were established on a clayey soil in Yala, Kenya, and on a san
 		yr <- if ("Year" %in% names(r)) as.character(r$Year) else rep(NA_character_, nrow(r))
 		locname <- unname(site[code])
 		trt <- trimws(as.character(r$Treatment))
+		dt <- if ("Date" %in% names(r)) when(r$Date) else rep(NA_character_, nrow(r))
 		data.frame(
 			country = unname(country[code]),
 			location = locname,
+			latitude = unname(lat_map[code]),
+			longitude = unname(lon_map[code]),
 			trial_id = ifelse(is.na(yr), locname, paste(locname, yr, sep="_")),
 			plot_id = if ("Plot" %in% names(r)) paste(r$Plot, if ("Block" %in% names(r)) r$Block else "", sep="-") else NA_character_,
 			crop = "maize",
 			treatment = trt,
 			N_fertilizer = nrate(trt),
-			date = if ("Date" %in% names(r)) when(r$Date) else NA_character_,
+			date = dt,
+			soil_sample_date = dt,
 			depth_top = top,
 			depth_bottom = bot,
 			soil_NO3 = num(r$ConcNO3),
@@ -101,8 +107,8 @@ Fertilizer trials were established on a clayey soil in Yala, Kenya, and on a san
 			soil_bd = bd,
 			soil_pH_KCl = if (topsoil) ph else NA_real_,
 			soil_pH = if (topsoil) NA_real_ else ph,
-			inorganic_N_kg_ha_ = if ("kgNperha" %in% names(r)) num(r$kgNperha) else rep(NA_real_, nrow(r)),
-			geo_from_source = FALSE,
+			soil_N_min_total = if ("kgNperha" %in% names(r)) num(r$kgNperha) else rep(NA_real_, nrow(r)),
+			geo_from_source = TRUE,
 			is_survey = FALSE,
 			on_farm = FALSE
 		)

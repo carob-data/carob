@@ -13,8 +13,9 @@
 # pH method is not identified per row, so soil_pH may mix water and KCl.
 # Iron, copper, zinc and boron are 0/1 flags in this file, not the ppm concentrations named in the dictionary.
 # Some pH, EC, organic matter, Olsen P and base-saturation values sit outside the terminag range. They are left as recorded.
-# 16 rows have no coordinates.
-# write_files: missing carob_contributor. out of bounds: soil_pH (3.2, 10.46), soil_EC (0.02, 42.4), soil_SOM (0.03, 50.9), soil_P (0.7, 503.7), soil_BS (5, 101). invalid terms: soil_texture organic soil. duplicate coordinates: fewer coordinates than locations. NA detected: latitude, longitude.
+# 16 rows had no coordinates: 10 Peru rows are filled with admin centroids (geo_from_source = FALSE), while 6 rows have Country = "Peru" and Adm1 = "Paraguay" (contradictory geography, left with NA coordinates for human review).
+# 6 rows have Soil texture = "Organic soil"; moved to soil_type with soil_texture = NA.
+# write_files: missing carob_contributor; out of bounds soil_pH, soil_EC, soil_SOM, soil_P, soil_BS; NA detected latitude, longitude (6 contradictory Peru/Paraguay rows).
 
 ## NOT PROCESSED
 # Date of submittion, Date of reporting, Sheet Reception, Researcher: lab administration, not the sample.
@@ -46,12 +47,12 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
+		treatment_vars = NA,
+		response_vars = NA,
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
 		carob_effort = 0.6
 	)
@@ -68,6 +69,8 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 	tex <- tolower(trimws(as.character(r[["Soil texture"]])))
 	tex[tex == "silt loam"] <- "silty loam"
 	tex[!nzchar(tex)] <- NA_character_
+	stype <- ifelse(tex %in% "organic soil", "organic soil", NA_character_)
+	tex[tex %in% "organic soil"] <- NA_character_
 
 	k_ppm <- as.numeric(r[["Extractable Potassium (ppm)"]])
 	k_kg <- as.numeric(r[["Extractable Potassium (kg/ha)"]])
@@ -80,6 +83,7 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 	d <- data.frame(
 		sample_id = as.character(r$Id),
 		date = as.character(r$Year),
+		soil_sample_date = as.character(r$Year),
 		country = trimws(as.character(r$Country)),
 		adm1 = carobiner::fix_name(as.character(r$Adm1), "title"),
 		adm2 = carobiner::fix_name(as.character(r$Adm2), "title"),
@@ -99,6 +103,7 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 		soil_silt = as.numeric(r$Lime),
 		soil_clay = as.numeric(r$Clay),
 		soil_texture = tex,
+		soil_type = stype,
 		soil_CEC = as.numeric(r[["Cation exchange capacity"]]),
 		soil_Ca_exch = as.numeric(r[["Exchangeable Calcium"]]),
 		soil_Mg_exch = as.numeric(r[["Exchangeable Magnesium"]]),
@@ -111,6 +116,20 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 
 	d$geo_from_source <- NA
 	d$geo_from_source[!is.na(d$longitude) & !is.na(d$latitude)] <- TRUE
+
+	# Admin centroids for the 10 Peru rows missing GPS (excluding 6 contradictory Country=Peru, Adm1=Paraguay rows)
+	geo <- data.frame(
+		adm2 = c("Junin", "Satipo", "Oxapampa", "Lima", "Huancayo"),
+		lon_est = c(-75.99, -74.64, -75.40, -76.95, -75.21),
+		lat_est = c(-11.16, -11.25, -10.58, -12.08, -12.07)
+	)
+	miss <- is.na(d$longitude) | is.na(d$latitude)
+	gi <- match(d$adm2[miss], geo$adm2)
+	fill <- which(miss)[!is.na(gi)]
+	d$longitude[fill] <- geo$lon_est[gi[!is.na(gi)]]
+	d$latitude[fill] <- geo$lat_est[gi[!is.na(gi)]]
+	d$geo_from_source[fill] <- FALSE
+
 	d$is_survey <- TRUE
 	d$on_farm <- NA
 

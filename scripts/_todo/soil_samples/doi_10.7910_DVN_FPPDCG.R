@@ -12,10 +12,10 @@
 # Infrared MIR.csv has one absorbance at each wavenumber. The column names run from about 600 to 7500 cm-1. The long table is sample_id, wavenumber, and absorbance.
 
 ## ISSUES
-# The site table cannot be joined: it has no SSN. Northing and Easting are projected coordinates and the file does not give the reference system.
-# Phosphorus above 200 mg/kg is kept.
+# The site table cannot be joined: it has no SSN, and its Northing/Easting columns mix scales without CRS. Approximate Western Kenya basin centroid (Nyando, Yala, Nzoia; geo_from_source = FALSE) is used.
+# Phosphorus above 200 mg/kg is kept as reported.
 # Two spectra, 2248_545 and 2248_546, have no wet chemistry row. Two wet chemistry rows, 2248_563 and 2248_564, have no spectrum.
-# write_files: out of bounds: soil_P (1, 467). NA detected: latitude, longitude. time/depth: no time/depth variables in long records? duplicates: duplicate variables in wide and long data: sample_id.
+# write_files: out of bounds soil_P (1, 467); time/depth (long table is MIR spectra indexed by wavenumber).
 
 ## NOT PROCESSED
 # Wkiemp site characteristics.csv. Land use, field texture, slope, elevation, Northing, and Easting. No shared sample id.
@@ -39,11 +39,11 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 		project = "WKIEMP",
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
+		treatment_vars = NA,
+		response_vars = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
 		carob_effort = 0.6
 	)
@@ -51,11 +51,14 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 	f <- ff[basename(ff) == "Wet Chemistry.csv"]
 	r <- read.csv(f, na.strings = c("", "NA"))
 
+	# Approximate Western Kenya study-area centroid (lower/middle Nyando, Yala, and lower Nzoia basins; Sila et al. 2017)
 	d <- data.frame(
 		sample_id = as.character(r$SSN),
 		country = "Kenya",
-		latitude = NA_real_,
-		longitude = NA_real_,
+		location = "Western Kenya",
+		latitude = -0.09,
+		longitude = 34.76,
+		geo_uncertainty = 60000,
 		geo_from_source = FALSE,
 		soil_N_total = r$Total_Nitrogen * 10000,
 		soil_C_total = r$Total_Carbon,
@@ -90,8 +93,10 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 		add[] <- NA
 		add$sample_id <- miss
 		add$country <- "Kenya"
-		add$latitude <- NA_real_
-		add$longitude <- NA_real_
+		add$location <- "Western Kenya"
+		add$latitude <- -0.09
+		add$longitude <- 34.76
+		add$geo_uncertainty <- 60000
 		add$geo_from_source <- FALSE
 		add$is_survey <- TRUE
 		d <- rbind(d, add)
@@ -103,7 +108,6 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 	n <- nrow(r1)
 	long <- data.frame(
 		record_id = d$record_id[match(rep(ssn, times=length(wave)), d$sample_id)],
-		sample_id = rep(ssn, times=length(wave)),
 		wavenumber = rep(wave, each=n),
 		absorbance = absb
 	)

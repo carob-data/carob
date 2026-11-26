@@ -41,7 +41,7 @@ The objective of the study was to decompose the rice yield gap into an efficienc
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
-		data_organization = "IRRI",
+		data_organization = "IRRI; WUR",
 		publication = "doi:10.1016/j.eja.2016.06.017",
 		project = "Central Luzon Loop Survey",
 		design = NA,
@@ -51,7 +51,7 @@ The objective of the study was to decompose the rice yield gap into an efficienc
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
 		carob_effort = 0.4
 	)
@@ -109,6 +109,7 @@ The objective of the study was to decompose the rice yield gap into an efficienc
 	)
 
 	d <- carobiner::bindr(d1, d2)
+	d$soil_sample_date <- d$date
 	d$country <- "Philippines"
 	d$trial_id <- paste(d$hhid, d$field_id, sep="_")
 	d$on_farm <- TRUE

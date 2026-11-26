@@ -12,15 +12,15 @@
 # Publication DOI is 10.1111/sum.12457.
 
 ## ISSUES
-# Fertilizer history and trial site names are not columns. No coordinates.
-# Olsen P and total P both exceed the terminag maxima on these Andosols. Olsen-Dabin is kept out of soil_P.
-# write_files: missing latitude, longitude; unknown variable soil_P_Olsen_Dabin_; unknown variable soil_P_CaCl2_; unknown variable soil_P_water_mg_L_; unknown variable soil_P_DGT_mg_L_; out of bounds soil_P (2.5, 282.432), soil_P_total (1830, 5830).
+# Fertilizer history and trial site names are not columns. Exact plot coordinates are not published in doi:10.1111/sum.12457; approximate Reunion Island coordinates are used (geo_from_source = FALSE).
+# Olsen P and total P both exceed the terminag maxima on these volcanic Andosols; kept as reported. Olsen-Dabin is kept out of soil_P.
+# write_files: unknown variables soil_P_Olsen_Dabin_, soil_P_CaCl2_, soil_P_water_, soil_P_DGT_; out of bounds soil_P (2.5, 282.432), soil_P_total (1830, 5830).
 
 ## NEW VARIABLES
 # soil_P_Olsen_Dabin_: inorganic P by the Olsen-Dabin extraction (mg/kg)
 # soil_P_CaCl2_: inorganic P extracted in 0.001 M CaCl2 (mg/kg)
-# soil_P_water_mg_L_: water-extractable inorganic P (mg/L)
-# soil_P_DGT_mg_L_: DGT inorganic P (mg/L)
+# soil_P_water_: water-extractable inorganic P (mg/L)
+# soil_P_DGT_: DGT inorganic P (mg/L)
 
 ## NOT PROCESSED
 # Dataverse_Nobile et al_SUM_180919.xlsx: same extractions as the 230323 file, without P-total
@@ -45,12 +45,12 @@ Five field trials where mineral and organic fertilizers were applied for a decad
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
-		carob_LLM = "Cursor Grok 4.7",
+		treatment_vars = NA,
+		response_vars = NA,
+		carob_LLM = "Gemini 4 Neon",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_completion = 60,
+		carob_completion = 65,
 		carob_effort = 0.5
 	)
 
@@ -66,6 +66,10 @@ Five field trials where mineral and organic fertilizers were applied for a decad
 
 	d <- data.frame(
 		country = "Réunion",
+		# Approximate Réunion Island centroid (exact trial coordinates not in doi:10.1111/sum.12457)
+		latitude = -21.115,
+		longitude = 55.536,
+		geo_uncertainty = 30000,
 		sample_id = paste(r$Number, r$Replicate, sep="-"),
 		rep = as.integer(r$Replicate),
 		soil_type = r[["Soil type"]],
@@ -73,14 +77,13 @@ Five field trials where mineral and organic fertilizers were applied for a decad
 		soil_P_method = "Olsen",
 		soil_P_Olsen_Dabin_ = num(r[["Pi-Olsen-Dabin"]]),
 		soil_P_CaCl2_ = num(r[["Pi-CaCl2"]]),
-		soil_P_water_mg_L_ = num(r[["Pi-water"]]),
-		soil_P_DGT_mg_L_ = num(r[["Pi-DGT"]]),
+		soil_P_water_ = num(r[["Pi-water"]]),
+		soil_P_DGT_ = num(r[["Pi-DGT"]]),
 		soil_P_total = num(r[["P-total"]]) * 1000,
 		on_farm = FALSE,
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
-	# country from geographicCoverage. geo_from_source FALSE: no coordinates in the table.
 
 	carobiner::write_files(path, meta, d)
 }

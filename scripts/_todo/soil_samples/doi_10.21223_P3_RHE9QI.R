@@ -44,13 +44,13 @@ The measured variables included pH (1:1 soil–water suspension), electrical con
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "none",
-		response_vars = "none",
+		treatment_vars = NA,
+		response_vars = NA,
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 85,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 90,
 		carob_effort = 0.4
 	)
 
@@ -60,7 +60,12 @@ The measured variables included pH (1:1 soil–water suspension), electrical con
 	d <- data.frame(
 		sample_id = as.character(r$ID),
 		country = "Peru",
+		adm1 = "La Libertad",
+		adm2 = "Sánchez Carrión",
 		location = "Chugay",
+		# Abstract: sampled in August 2022
+		date = "2022-08",
+		soil_sample_date = "2022-08",
 		latitude = as.numeric(r$Lat),
 		longitude = as.numeric(r$Lon),
 		elevation = as.numeric(r$Elv),
