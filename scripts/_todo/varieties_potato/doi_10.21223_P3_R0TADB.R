@@ -3,16 +3,13 @@
 
 ## NOTES
 # Each data row is one clone in one set. A second header near the bottom repeats the checks, with a control-class column inserted. That block is read on its own columns.
-# Natural field infection is the percent of plants infected. The header states that unit. The three trials are the long table. Zero is kept. Pend is treated as not recorded. The check block has no first or second trial percent, so only its third trial is stored.
-# Reaction type is the word on the sheet. The dictionary lists those words on a 1 to 7 scale (extreme resistance through hypersensitive). The sheet does not store the numbers.
-# The extreme-resistance columns are words (Positive, Negative, Mosaic, Necrosis, and combinations). The abstract says that test is done in a greenhouse. The spellings are kept as written, including Mosaico and the spacing variants.
-# The title and the sheet do not name a place. The Dataverse box is La Molina, Lima, Peru. Country and coordinates are not stored.
+# Natural field infection is the percent of plants infected, stored in the long table as disease_incidence (%) with disease = "potato virus X" and order = 1..3.
+# Reaction type is stored in virus_severity. Extreme-resistance greenhouse observations are kept in pvx_test_1_ and pvx_test_2_.
+# Dataverse geographic coverage is CIP La Molina, Lima, Peru (-12.078, -76.946, geo_from_source = FALSE).
 
 ## ISSUES
-# No yield, fertilizer, irrigation, planting date, or coordinates.
+# No yield, fertilizer, irrigation, or calendar planting dates (Dataverse collection window is 1999 to 2017).
 # Reaction type uses both "Extreme Resistance" and "Extreme resistance".
-# The collection window in the Dataverse record is 1999 to 2017. The sheet has set numbers, not years.
-# write_files: missing yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: primary_trait_, check_role_, pvx_test_1_, pvx_test_2_, infected_plants_pct_. The long table has no date or depth column.
 
 ## NOT PROCESSED
 # Data_Dictionary.xls, other than the reaction categories and the statement that the crop is potato.
@@ -22,9 +19,8 @@
 ## NEW VARIABLES
 # primary_trait_: breeding group on the clone row (TPS, LB, BW, and the other sheet labels).
 # check_role_: control class on the check block (Resistant, Susceptible, Resistant2).
-# pvx_test_1_: first extreme-resistance observation, as written.
-# pvx_test_2_: second extreme-resistance observation, as written.
-# infected_plants_pct_: percent of plants infected in that trial. order is 1, 2, or 3.
+# pvx_test_1_: first extreme-resistance greenhouse observation, as written.
+# pvx_test_2_: second extreme-resistance greenhouse observation, as written.
 
 
 carob_script <- function(path) {
@@ -47,13 +43,13 @@ Field evaluation trials for relative resistance requires the testing material to
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "infected_plants_pct_;virus_severity",
+		response_vars = "disease_incidence;virus_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.55
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "Potato Virus X.xls"]
@@ -82,7 +78,8 @@ Field evaluation trials for relative resistance requires the testing material to
 			data.frame(
 				record_id = record_id[keep],
 				order = t,
-				infected_plants_pct_ = val[keep]
+				disease = "potato virus X",
+				disease_incidence = as.character(val[keep])
 			)
 		})
 		parts <- parts[!vapply(parts, is.null, logical(1))]
@@ -139,6 +136,11 @@ Field evaluation trials for relative resistance requires the testing material to
 		pct_long(d2$record_id, ctrl, 5:7)
 	)
 	d <- rbind(d1, d2)
+	d$country <- "Peru"
+	d$adm1 <- "Lima"
+	d$location <- "La Molina"
+	d$latitude <- -12.078
+	d$longitude <- -76.946
 	rownames(d) <- NULL
 	rownames(long) <- NULL
 

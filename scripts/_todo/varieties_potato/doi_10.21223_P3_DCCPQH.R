@@ -36,9 +36,9 @@
 # Minicore_NIRRG_171017.tif: image, not a data table.
 
 ## NEW VARIABLES
-# ftw_: FTW as recorded
-# dtw_: DTW as recorded
-# dm_recorded_: DM as recorded
+# plant_id_: individual plant identifier within block
+# ftw_: fresh tuber weight per plant as recorded
+# dtw_: dry tuber weight per plant as recorded
 
 carob_script <- function(path) {
 
@@ -59,13 +59,13 @@ Field experiment to assess physiological performance of 24 different genotypes, 
 		design = "augmented",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "ftw_",
+		response_vars = "ftw_;dtw_;yield_moisture",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Minicore_2017_v2.xlsx"]
@@ -84,7 +84,10 @@ Field experiment to assess physiological performance of 24 different genotypes, 
 		DAP = as.integer(round(num(r$DAP))),
 		ftw_ = num(r$FTW),
 		dtw_ = num(r$DTW),
-		dm_recorded_ = num(r$DM),
+		# DM is recorded as a proportion (0.16-0.294), convert to % moisture
+		yield_moisture = 100 - num(r$DM) * 100,
+		planting_date = "2017-07",
+		harvest_date = "2017-11",
 		country = "Peru",
 		adm1 = "Lima",
 		location = "La Molina",

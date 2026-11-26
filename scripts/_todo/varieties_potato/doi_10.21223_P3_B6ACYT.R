@@ -3,19 +3,16 @@
 
 ## NOTES
 # Potato pest and disease records from Peru. The dictionary describes departments, provinces, and districts as the administrative divisions of Peru, and the title states the crop was grown in Peru.
-# The screening sheet records foliage severity on 14 dates. Dates are Excel serials and days after planting are printed on the same columns. Planting date is the evaluation date minus that day count; every column gives the same planting date. AUDPC and rAUDPC are the sheet values, not recomputed. The severity scale is not stated, so the readings stay as late_blight_severity_.
-# The incidence sheet is one row per sampled plant. Place codes do not match the place names on the geographic sheet, so those coordinates are not copied onto the plants. SFLate Blight is visual foliage severity with no scale in the dictionary (values exceed 100). IFLate Blight is 0 or 1.
+# The screening sheet records foliage late blight severity (%) on 14 dates. Dates are Excel serials and DAP are printed on the same columns. Planting date is the evaluation date minus DAP. AUDPC is divided by 100 to convert %-days to fraction-days (terminag standard, matching process_cip_lbvars).
+# The incidence sheet is one row per sampled plant. Place codes do not match the place names on the geographic sheet, so those coordinates are not copied onto the plants.
 
 ## ISSUES
-# Geographic sheet places are Quinua, Quichas, Candelaria, and Gochachupan, with degrees-minutes-seconds and no hemisphere letter. Incidence place codes are CC, KL1, KL2, KPP, KT, QA, QC, QE, and QJ. There is no crosswalk, so coordinates are omitted.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: place_code_, foliage_late_blight_severity_, late_blight_affected_, tuber_number_, late_blight_severity_. out of bounds: AUDPC (206.5, 4732).
+# Geographic sheet places are Quinua, Quichas, Candelaria, and Gochachupan, with DMS and no hemisphere letter. Incidence place codes are CC, KL1, KL2, KPP, KT, QA, QC, QE, and QJ. There is no crosswalk, so coordinates are omitted.
+# SFLate Blight on the field_incidence sheet has some values exceeding 100 (kept as recorded in disease_severity).
 
 ## NEW VARIABLES
-# late_blight_severity_: screening-sheet severity at one evaluation. Scale is not stated.
 # place_code_: incidence locality code.
-# foliage_late_blight_severity_: SFLate Blight as recorded.
-# late_blight_affected_: TRUE when IFLate Blight is 1 and FALSE when it is 0.
-# tuber_number_: tuber number harvested. This is a count, not a yield.
+# tuber_number_: tuber number harvested per plant (count, not yield).
 
 ## NOT PROCESSED
 # Early blight, Andean potato weevil, flea beetle, leaf beetle, Rhizoctonia, virus columns, and tuber-rot proportions. The dictionary says visual estimation and does not give a unit.
@@ -43,13 +40,13 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		design = NA,
 		data_type = "compilation",
 		treatment_vars = "variety",
-		response_vars = "AUDPC;rAUDPC",
+		response_vars = "AUDPC;rAUDPC;disease_severity;disease_incidence",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.55
 	)
 
 	f <- ff[basename(ff) == "Data_pests_and_diseases_incidence.xls"]
@@ -87,7 +84,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		treatment = variety,
 		trial_id = "late_blight_screening",
 		planting_date = planting,
-		AUDPC = num(body[[audpc_col]]),
+		AUDPC = num(body[[audpc_col]]) / 100,
 		rAUDPC = num(body[[raudpc_col]]),
 		country = "Peru",
 		crop = "potato",
@@ -99,21 +96,26 @@ The major pests and diseases were identified and quantified on thirteen potato l
 	d1$record_id <- seq_len(nrow(d1))
 	longs <- lapply(seq_along(ev), function(i) {
 		j <- ev[i]
+		sev <- num(body[[j]])
+		keep <- !is.na(sev)
 		data.frame(
-			record_id = d1$record_id,
+			record_id = d1$record_id[keep],
+			order = i,
 			date = format(when[i], "%Y-%m-%d"),
 			DAP = dap[i],
-			late_blight_severity_ = num(body[[j]]),
-			disease = "potato late blight"
+			disease = "potato late blight",
+			disease_severity = as.character(sev[keep]),
+			severity_scale = "0-100",
+			disease_incidence = NA_character_
 		)
 	})
-	dlong <- do.call(rbind, longs)
-	dlong <- dlong[!is.na(dlong$late_blight_severity_), ]
-	dlong$record_id <- as.integer(dlong$record_id)
-	dlong$DAP <- as.integer(dlong$DAP)
+	dlong1 <- do.call(rbind, longs)
+	dlong1$record_id <- as.integer(dlong1$record_id)
+	dlong1$DAP <- as.integer(dlong1$DAP)
 
 	r2 <- as.data.frame(carobiner::read.excel(f, sheet=sh[2]))
 	affected <- num(r2[["IFLate Blight"]])
+	sf_sev <- num(r2[["SFLate Blight"]])
 	d2 <- data.frame(
 		variety = txt(r2$Variety),
 		rep = NA_integer_,
@@ -129,16 +131,27 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		on_farm = TRUE,
 		is_survey = FALSE,
 		place_code_ = txt(r2[["Place code"]]),
-		foliage_late_blight_severity_ = num(r2[["SFLate Blight"]]),
-		late_blight_affected_ = ifelse(affected == 1, TRUE, ifelse(affected == 0, FALSE, NA)),
 		tuber_number_ = num(r2[["Tuber number harvested"]])
 	)
-	d2 <- d2[!is.na(d2$variety), ]
+	keep2 <- !is.na(d2$variety)
+	d2 <- d2[keep2, ]
+	affected <- affected[keep2]
+	sf_sev <- sf_sev[keep2]
 	d1$place_code_ <- NA_character_
-	d1$foliage_late_blight_severity_ <- NA_real_
-	d1$late_blight_affected_ <- NA
 	d1$tuber_number_ <- NA_real_
 	d2$record_id <- seq_len(nrow(d2)) + nrow(d1)
+	dlong2 <- data.frame(
+		record_id = as.integer(d2$record_id),
+		order = 1L,
+		date = NA_character_,
+		DAP = NA_integer_,
+		disease = "potato late blight",
+		disease_severity = ifelse(is.na(sf_sev), NA_character_, as.character(sf_sev)),
+		severity_scale = NA_character_,
+		disease_incidence = ifelse(is.na(affected), NA_character_, ifelse(affected == 1, "100", ifelse(affected == 0, "0", NA_character_)))
+	)
+	dlong2 <- dlong2[!is.na(dlong2$disease_severity) | !is.na(dlong2$disease_incidence), ]
+	dlong <- rbind(dlong1, dlong2)
 	d <- rbind(d1, d2)
 	rownames(d) <- NULL
 	rownames(dlong) <- NULL

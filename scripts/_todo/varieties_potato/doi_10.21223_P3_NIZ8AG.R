@@ -6,7 +6,7 @@
 # Installation: RCBD, 10 plants, plot 2.7 m2, 0.30 m between plants, 0.90 m between rows. Spacing is stored in cm. The abstract says one hill per plot. The installation count is used.
 # Planting and harvest dates are the Crop_management rows of those types. They match the Minimal begin and end dates. Several vine-killing rows repeat the planting date, so that row is not used.
 # Country, admin names, locality, elevation, and coordinates are the Minimal values. The abstract elevations differ (Ccasapata 3766 vs 3765, Sotopampa 3730 vs 3754, Ccollpaccasa 4068 vs 4067, La Victoria 3216 vs 3265, Rangra 4105 vs 3323).
-# The Ccollpaccasa longitude in Minimal is -14.75289. That point is not in Peru. The Dataverse box lists -74.75289. The workbook value is kept.
+# The Ccollpaccasa longitude in Minimal is -14.75289 (Atlantic Ocean, 1-digit typo for -74.75289 in the Dataverse bounding box); corrected to -74.75289 with geo_from_source = FALSE for Ccollpaccasa.
 # Soil "Lime" plus sand and clay sums to 100, so Lime is stored as silt. Texture: Franco arcilloso(s) clay loam, Franco arenoso sandy loam, Franco loam.
 # Electrical conductivity is labeled mmh/cm and stored as mS/cm. CaCO3 is percent and stored as g/kg. CEC is Meq/100 g, the same scale as cmol/kg.
 # Field history: cebada and the Sotopampa spelling cabada are barley, haba is faba bean, papa is potato, descanso is fallow (none). crop_rotation runs from season t-5 to t-1, separated with ";" because that is how multiple crop values are checked.
@@ -18,7 +18,7 @@
 # The abstract says the trials were in 2010. Planting was November or December 2009.
 # Mariscal Caceres is the Conayca locality. The abstract names Conayca.
 # Junin, San Agustin, and Mariscal Caceres should be checked against GADM.
-# write_files: missing yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_. coordinates not on land: Peru.
+# write_files: missing yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_ascorbate_dw_, tuber_ascorbate_fw_.
 
 ## NOT PROCESSED
 # Weather_data is empty. The original weather sheet is 30-minute temperature and humidity, with no rain column.
@@ -32,8 +32,8 @@
 
 
 ## NEW VARIABLES
-# ascorbic_acid_mg_100g_dw_: ascorbic acid, mg/100 g dry weight.
-# ascorbic_acid_mg_100g_fw_: ascorbic acid, mg/100 g fresh weight.
+# tuber_ascorbate_dw_: ascorbic acid, mg/100 g dry weight.
+# tuber_ascorbate_fw_: ascorbic acid, mg/100 g fresh weight.
 
 
 carob_script <- function(path) {
@@ -55,13 +55,13 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 		design = "Randomized Complete Block Design (RCBD)",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "ascorbic_acid_mg_100g_dw_;ascorbic_acid_mg_100g_fw_;yield_moisture",
+		response_vars = "vitamin_C;tuber_ascorbate_dw_;yield_moisture",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.8
 	)
 
 	clean <- function(x) {
@@ -125,8 +125,8 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 			treatment = variety,
 			rep = as.integer(r$REP),
 			plot_id = as.character(r$PLOT),
-			ascorbic_acid_mg_100g_dw_ = as.numeric(r$ASC_DW),
-			ascorbic_acid_mg_100g_fw_ = as.numeric(r$ASC_FW),
+			tuber_ascorbate_dw_ = as.numeric(r$ASC_DW),
+			vitamin_C = as.numeric(r$ASC_FW),
 			yield_moisture = 100 - as.numeric(r$DM),
 			plot_area = as.numeric(w[["Plot size (m2)"]]),
 			plant_spacing = as.numeric(w[["Distance between plants (m)"]]) * 100,
@@ -169,6 +169,10 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 		"TVIT200912_SOTOP_Stability_Field.xls"
 	)
 	d <- do.call(rbind, lapply(files, function(bn) one(ff[basename(ff) == bn])))
+	# Fix workbook typo: Ccollpaccasa longitude -14.75289 (Atlantic) -> -74.75289 (Dataverse box)
+	i_cc <- !is.na(d$longitude) & abs(d$longitude - (-14.75289)) < 0.01
+	d$longitude[i_cc] <- -74.75289
+	d$geo_from_source[i_cc] <- FALSE
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

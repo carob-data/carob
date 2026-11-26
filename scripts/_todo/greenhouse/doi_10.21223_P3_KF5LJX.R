@@ -2,28 +2,17 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Greenhouse late-blight assays of potato landraces. The title says the landraces are from Peru. The sheets do not name the greenhouse or give coordinates.
-# Severity at 3, 5, and 7 days after inoculation is the percent foliage affected. Those three readings are the long table.
-# rAUDPC on the sheet matches the relative area under that curve on a 0 to 1 scale. One row, CIP702568 rep 1, is stored as 5 although the severities 0, 50, and 100 imply 0.5.
-# Variety is the material-list name when the accession number matches, otherwise the label on the screening sheet. Tomasa, Yungay, and Chucmarina are labels, not CIP numbers. The abstract names Chucmarina and Tomasa Condemayta as the controls.
+# Greenhouse late-blight assays of potato landraces at CIP Huancayo, Junin, Peru (-12.0264, -75.2449, geo_from_source = FALSE from Dataverse geographic coverage).
+# Severity at 3, 5, and 7 days after inoculation (% foliage affected) is stored in the long table under disease = "potato late blight", disease_severity, severity_scale = "0-100", with order = 1..3 and days_after_inoculation_.
+# rAUDPC on the sheet is on a 0 to 1 scale. One row (CIP702568 rep 1) is recorded as 5 although severities 0, 50, 100 imply 0.5; left as recorded.
+# Variety is the material-list name when the accession number matches, otherwise the screening-sheet label. Taxon full name is stored in variety_type.
 
 ## ISSUES
-# No coordinates, fertilizer, irrigation, yield, or planting date.
-# The Dataverse place is Huancayo, Junin. That place is not in the screening sheet.
-# Dataverse lists Perez et al. 2014, Plant Disease 98:1530-1533. publication is left empty.
-# write_files: missing yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: taxon_, dai_, late_blight_pct_. out of bounds: rAUDPC (0, 5). The long table has no date or depth column.
-
-## NOT PROCESSED
-# Data_dictionary.xls. The severity and rAUDPC definitions used above.
-# Material-list parents, cycle, and the empty control flag. The screening label is the variety.
-# Family and genus. Every row is Solanaceae, Solanum.
-# The screening sheet has no AUDPC column. rAUDPC is the value that was stored.
-
+# Greenhouse screen: no fertilizer, irrigation, yield, or planting date.
+# One rAUDPC value is 5 (out of 0-1 bounds); kept as recorded.
 
 ## NEW VARIABLES
-# taxon_: taxon name on the screening sheet.
-# dai_: days after inoculation for one late-blight reading.
-# late_blight_pct_: percent of foliage affected at that reading.
+# days_after_inoculation_: days after inoculation (3, 5, or 7).
 
 
 carob_script <- function(path) {
@@ -45,13 +34,13 @@ The wild and cultivated species of potato have been utilized in potato breeding 
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "rAUDPC;late_blight_pct_",
+		response_vars = "rAUDPC;disease_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.45
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.5
 	)
 
 	f <- ff[basename(ff) == "Data_screening_for_resistance.xls"]
@@ -76,12 +65,18 @@ The wild and cultivated species of potato have been utilized in potato breeding 
 		crop = "potato",
 		variety = variety,
 		variety_code = acc,
+		variety_type = clean(r[["Taxon full name"]]),
 		treatment = variety,
-		taxon_ = clean(r[["Taxon full name"]]),
 		rep = as.integer(r$Rep),
 		plot_id = paste(r$Experiment, acc, r$Rep, sep="-"),
 		rAUDPC = as.numeric(r$rAUDPC),
+		pathogen = "Phytophthora infestans",
 		country = "Peru",
+		adm1 = "Junín",
+		adm2 = "Huancayo",
+		location = "Huancayo",
+		latitude = -12.0264,
+		longitude = -75.2449,
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
@@ -90,11 +85,17 @@ The wild and cultivated species of potato have been utilized in potato breeding 
 	d$record_id <- seq_len(nrow(d))
 
 	scores <- c("3 DAI"=3L, "5 DAI"=5L, "7 DAI"=7L)
-	long <- lapply(names(scores), function(nm) {
+	long <- lapply(seq_along(scores), function(i) {
+		nm <- names(scores)[i]
+		sev <- as.numeric(r[[nm]])
+		keep <- !is.na(sev)
 		data.frame(
-			record_id = d$record_id,
-			dai_ = scores[[nm]],
-			late_blight_pct_ = as.numeric(r[[nm]])
+			record_id = d$record_id[keep],
+			order = i,
+			DAI = as.integer(scores[[nm]]),
+			disease = "potato late blight",
+			disease_severity = as.character(sev[keep]),
+			severity_scale = "0-100"
 		)
 	})
 	long <- do.call(rbind, long)

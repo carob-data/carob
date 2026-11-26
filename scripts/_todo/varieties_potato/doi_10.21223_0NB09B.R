@@ -2,24 +2,20 @@
 # license: GPL (>=3)
 
 ## NOTES
-# The raw folder has the Ayacucho workbook only (Quishuarcancha). The description also names Huancayo. That site is not in this folder. The material list has 192 clones, not the 340 accessions named in the description.
-# Place, elevation, coordinates, and dates are the Minimal sheet. Design, plot size 1.8 m2, spacing 0.25 m by 0.90 m, and planting density are the Installation sheet. Begin date and the planting row are both 2007-11-21. The Minimal end date is 2008-05-26. The crop-management harvest row is 2008-06-15, and that date is used as harvest_date. Vine killing has no date and no product.
-# ASC_DW and ASC_FW have no units in this workbook. They are stored under tuber chemistry names without a unit conversion. DM is not labeled either. In other CIP vitamin C fieldbooks the matching column is percent dry matter, so yield_moisture is 100 minus DM.
+# The raw folder has the Ayacucho workbook only (Quishuarcancha). Processed with shared CIP HIDAP helper process_cip_lbvars(), then augmented with Crop_management harvest date, Material List species acronym (variety_type), and Fieldbook ASC_DW / ASC_FW / DM.
+# ASC_DW and ASC_FW have no units printed in this workbook; kept as tuber_ascorbate_dw_ and tuber_ascorbate_fw_. DM (%) is stored as yield_moisture = 100 - DM.
 
 ## ISSUES
-# No yield.
+# No yield, fertilizer rates, or irrigation reported.
 # Huancayo is named in the description and is not in the raw folder.
 # Soil_analysis has no measurements. Weather_data is empty.
-# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: tuber_ascorbate_dw_, tuber_ascorbate_fw_.
 
 ## NEW VARIABLES
-# tuber_ascorbate_dw_, tuber_ascorbate_fw_: ASC_DW and ASC_FW. Unit is not labeled in this file.
+# tuber_ascorbate_dw_, tuber_ascorbate_fw_: ASC_DW and ASC_FW (unit not printed in workbook).
 
 ## NOT PROCESSED
 # Summary by clone, Original-VitaminC, Tabla Ayacucho, and Var List: summaries or source tables already represented by the fieldbook.
-# Code Laboratory.
-# Soil_analysis and Weather_data: no measurements.
-# Crop_management products: none are recorded.
+# Code Laboratory, empty Soil_analysis and Weather_data, Crop_management rows without products.
 
 
 carob_script <- function(path) {
@@ -45,77 +41,37 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
+		carob_effort = 0.4
 	)
 
+	proc <- carobiner::get_function("process_cip_lbvars", path, group)
 	f <- ff[basename(ff) == "TVIT200711_QUISCH_Ayacucho_Gon_Stn_Field.xls"]
-	num <- function(x) as.numeric(as.character(x))
-	one <- function(sheet, name) {
-		hit <- sheet$Value[trimws(as.character(sheet$Factor)) == name]
-		if (length(hit) == 0) return(NA_character_)
-		x <- hit[1]
-		if (inherits(x, "POSIXt") || inherits(x, "Date")) return(format(x, "%Y-%m-%d"))
-		trimws(as.character(x))
-	}
-
-	r1 <- carobiner::read.excel(f, sheet="Minimal")
-	r2 <- carobiner::read.excel(f, sheet="Installation")
+	d <- proc(f)
 	r3 <- carobiner::read.excel(f, sheet="Material List")
 	r4 <- carobiner::read.excel(f, sheet="Fieldbook")
 	r5 <- carobiner::read.excel(f, sheet="Crop_management")
 
-	code <- trimws(as.character(r3[["Institutional number"]]))
-	vname <- gsub("\u00a0", " ", as.character(r3[["Clone or variety name"]]), fixed=TRUE)
-	vname <- trimws(vname)
-	vname[!nzchar(vname)] <- NA_character_
-	species <- trimws(as.character(r3[["Species acronym"]]))
-	alias <- data.frame(variety_code=code, variety=vname, variety_type=species)
-	alias <- alias[!duplicated(alias$variety_code), ]
-
-	r4$variety_code <- trimws(as.character(r4$INSTN))
-	r4 <- merge(r4, alias, by="variety_code", all.x=TRUE)
-	r4$variety[is.na(r4$variety) | !nzchar(r4$variety)] <- r4$variety_code[is.na(r4$variety) | !nzchar(r4$variety)]
+	sp_map <- setNames(trimws(as.character(r3[["Species acronym"]])), trimws(as.character(r3[["Institutional number"]])))
+	d$variety_type <- unname(sp_map[d$variety_code])
+	d$variety <- trimws(gsub("\u00a0", " ", d$variety, fixed=TRUE))
+	d$treatment <- d$variety
+	d$tuber_ascorbate_dw_ <- as.numeric(r4$ASC_DW)
+	d$tuber_ascorbate_fw_ <- as.numeric(r4$ASC_FW)
+	d$yield_moisture <- 100 - as.numeric(r4$DM)
 
 	harvest_row <- r5$Date[trimws(as.character(r5[["Intervention type"]])) == "Harvest"]
-	harvest_date <- harvest_row[1]
-	if (inherits(harvest_date, "POSIXt") || inherits(harvest_date, "Date")) {
-		harvest_date <- format(harvest_date, "%Y-%m-%d")
-	} else {
-		harvest_date <- trimws(as.character(harvest_date))
+	if (length(harvest_row) > 0 && !is.na(harvest_row[1])) {
+		d$harvest_date <- if (inherits(harvest_row[1], "POSIXt") || inherits(harvest_row[1], "Date")) {
+			format(harvest_row[1], "%Y-%m-%d")
+		} else {
+			trimws(as.character(harvest_row[1]))
+		}
 	}
-
-	d <- data.frame(
-		variety_code = r4$variety_code,
-		variety = r4$variety,
-		variety_type = r4$variety_type,
-		treatment = r4$variety,
-		rep = as.integer(r4$REP),
-		plot_id = as.character(r4$PLOT),
-		country = one(r1, "Country"),
-		adm1 = one(r1, "Admin1"),
-		adm2 = one(r1, "Admin2"),
-		adm3 = one(r1, "Admin3"),
-		location = one(r1, "Locality"),
-		elevation = num(one(r1, "Elevation")),
-		latitude = num(one(r1, "Latitude")),
-		longitude = num(one(r1, "Longitude")),
-		geo_from_source = TRUE,
-		planting_date = one(r1, "Begin date"),
-		harvest_date = harvest_date,
-		trial_id = "Quishuarcancha_2007",
-		plot_area = num(one(r2, "Plot size (m2)")),
-		plant_spacing = num(one(r2, "Distance between plants (m)")) * 100,
-		row_spacing = num(one(r2, "Distance between rows (m)")) * 100,
-		seed_density = num(one(r2, "Planting density (plants/Ha)")),
-		tuber_ascorbate_dw_ = num(r4$ASC_DW),
-		tuber_ascorbate_fw_ = num(r4$ASC_FW),
-		yield_moisture = 100 - num(r4$DM),
-		crop = "potato",
-		on_farm = NA,
-		is_survey = FALSE
-	)
+	d$trial_id <- "Quishuarcancha_2007"
+	d$on_farm <- NA
+	d$irrigated <- NA
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
 	d$record_id <- seq_len(nrow(d))
 	rownames(d) <- NULL

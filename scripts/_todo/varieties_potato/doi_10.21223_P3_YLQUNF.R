@@ -2,27 +2,20 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Fe CONT. and Zn CONT. use two header rows. Dry matter, iron, and zinc are the row-2 labels.
-# Iron and zinc in mg/kg DW and mg/100FW are stored with those header units. They are not a yield.
-# Locality and year are one text field, for example Huancayo-2005. Rows for Huancayo use the bounding box southLatitude -12.0264, westLongitude -75.2449.
+# Fe CONT. and Zn CONT. use two header rows plus a repeated control-block header row (Control / CIP Number) near the bottom; those header rows are filtered out.
+# Dry matter (%) is stored as yield_moisture = 100 - DM. Iron and zinc are stored in mg/kg DW and mg/100g FW.
+# Locality and year are one text field (e.g. Huancayo-2005, La Victoria-2005). La Victoria is the CIP experimental station in Huancayo, Junin, Peru (-12.0264, -75.2449).
 # Vitamin C is described in the abstract and is not a column in this workbook.
-# Country Peru is the geographic coverage.
 
 ## ISSUES
-# Dry matter has no unit in the header.
-# No yield, fertilizer, or a calendar planting date.
-# Rows with a blank clone were removed. Huancayo uses the published box. Other localities have no coordinates.
-# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: unknown variables: eval_label_, dm_recorded_, tuber_Fe_dw_, tuber_Fe_fw_, tuber_Zn_dw_, tuber_Zn_fw_.
-# write_files: duplicate coordinates: fewer coordinates than locations. NA detected: latitude, longitude. duplicates: duplicate records detected.
+# No yield, fertilizer, irrigation, or calendar planting/harvest date.
 
 ## NEW VARIABLES
-# dm_recorded_: dry matter as recorded
-# tuber_Fe_dw_: iron, mg/kg DW
-# tuber_Fe_fw_: iron, mg/100FW as labeled
-# tuber_Zn_dw_: zinc, mg/kg DW
-# tuber_Zn_fw_: zinc, mg/100FW as labeled
-# eval_label_: locality and year text
+# tuber_Fe_dw_: iron concentration, mg/kg DW
+# tuber_Fe_fw_: iron concentration, mg/100g FW
+# tuber_Zn_dw_: zinc concentration, mg/kg DW
+# tuber_Zn_fw_: zinc concentration, mg/100g FW
+# eval_label_: locality and year text as recorded
 
 
 ## NOT PROCESSED
@@ -47,29 +40,37 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "tuber_Fe_dw_;tuber_Zn_dw_",
+		response_vars = "yield_moisture;tuber_Fe;tuber_Zn",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
+		carob_effort = 0.45
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for micronutrient content Data.xls"]
 	one <- function(sheet) {
-		r <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE))
+		r <- as.data.frame(carobiner::read.excel(f, sheet=sheet, col_names=FALSE, col_types="text"))
 		y <- r[3:nrow(r), ]
+		t1 <- trimws(as.character(y[[1]]))
+		v1 <- trimws(as.character(y[[2]]))
+		# Drop embedded Control/CIP Number sub-headers and blank rows
+		keep <- !is.na(v1) & nzchar(v1) & !(t1 %in% c("Set", "Control")) & !(v1 %in% c("Clone", "CIP Number"))
+		y <- y[keep, ]
 		num <- function(v) {
-			y <- trimws(as.character(v))
-			y[y %in% c("", "NA", ".", "-")] <- NA_character_
-			as.numeric(y)
+			z <- trimws(as.character(v))
+			ok <- !is.na(z) & grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
+			out <- rep(NA_real_, length(z))
+			out[ok] <- as.numeric(z[ok])
+			out
 		}
 		lab <- trimws(as.character(y[[11]]))
+		lab[!nzchar(lab)] <- NA_character_
 		data.frame(
 			trial_id = trimws(as.character(y[[1]])),
 			variety = trimws(as.character(y[[2]])),
-			dm_recorded_ = num(y[[4]]),
+			yield_moisture = 100 - num(y[[4]]),
 			dw = num(y[[6]]),
 			fw = num(y[[8]]),
 			eval_label_ = lab
@@ -77,26 +78,37 @@ Iron (Fe), zinc (Zn) and vitamins A and C are among the most widespread nutrient
 	}
 	fe <- one("Fe CONT.")
 	zn <- one("Zn CONT.")
-	names(fe)[names(fe) == "dw"] <- "tuber_Fe_dw_"
+	fe$dw <- fe$dw / 1000
+	zn$dw <- zn$dw / 1000
+	names(fe)[names(fe) == "dw"] <- "tuber_Fe"
 	names(fe)[names(fe) == "fw"] <- "tuber_Fe_fw_"
-	names(zn)[names(zn) == "dw"] <- "tuber_Zn_dw_"
+	names(zn)[names(zn) == "dw"] <- "tuber_Zn"
 	names(zn)[names(zn) == "fw"] <- "tuber_Zn_fw_"
-	key <- c("trial_id", "variety", "eval_label_")
-	d <- merge(fe, zn[, c(key, "tuber_Zn_dw_", "tuber_Zn_fw_")], by=key, all=TRUE)
+	fe$location <- sub("-[0-9]{4}(-[0-9]{4})?$", "", fe$eval_label_)
+	zn$location <- sub("-[0-9]{4}(-[0-9]{4})?$", "", zn$eval_label_)
+	fe$year_ <- sub("^.*-([0-9]{4}(-[0-9]{4})?)$", "\\1", fe$eval_label_)
+	zn$year_ <- sub("^.*-([0-9]{4}(-[0-9]{4})?)$", "\\1", zn$eval_label_)
+	fe$row_seq_ <- ave(seq_len(nrow(fe)), fe$trial_id, fe$variety, fe$year_, FUN=seq_along)
+	zn$row_seq_ <- ave(seq_len(nrow(zn)), zn$trial_id, zn$variety, zn$year_, FUN=seq_along)
+	key <- c("trial_id", "variety", "year_", "row_seq_")
+	d <- merge(fe, zn[, c(key, "tuber_Zn", "tuber_Zn_fw_")], by=key, all=TRUE)
+	d$row_seq_ <- NULL
+	d$year_ <- NULL
 	d$crop <- "potato"
 	d$treatment <- d$variety
 	d$country <- "Peru"
-	d$location <- sub("-[0-9]{4}$", "", d$eval_label_)
-	huancayo <- grepl("Huancayo", d$location)
-	d$latitude <- ifelse(huancayo, -12.0264, NA_real_)
-	d$longitude <- ifelse(huancayo, -75.2449, NA_real_)
-	d$geo_from_source <- huancayo
-	d$geo_source <- ifelse(huancayo, "Dataverse bounding box for Huancayo", NA_character_)
+	d$adm1 <- "Junín"
+	d$adm2 <- "Huancayo"
+	d$location[is.na(d$location) | !nzchar(d$location)] <- "Huancayo"
+	# La Victoria is CIP's Huancayo station (-12.0264, -75.2449)
+	d$latitude <- -12.0264
+	d$longitude <- -75.2449
+	d$geo_from_source <- grepl("Huancayo", d$location)
+	d$geo_source <- ifelse(d$geo_from_source, "Dataverse bounding box for Huancayo", "CIP Huancayo (La Victoria)")
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$irrigated <- NA
-	d$plot_id <- paste(d$trial_id, d$variety, d$eval_label_, sep="_")
-	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
+	d$record_id <- seq_len(nrow(d))
+	d$plot_id <- as.character(d$record_id)
 
 	carobiner::write_files(path, meta, d)
 }

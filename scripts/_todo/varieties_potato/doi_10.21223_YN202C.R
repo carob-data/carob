@@ -2,19 +2,18 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Open-field late blight trial of the HERLB population at Santa Catalina, Quito, Ecuador, rainy season 2023. Elevation 3050 m and the augmented row-column design are in the description. The Dataverse box publishes only south -0.36897 and west -78.55568.
-# LB1 to LB4 are percent foliage. The crop-management log dates LB1 on 2023-05-02 at 92 DAP, then LB2, LB3, and LB4 at 98, 112, and 130 DAP. Planting date is that LB1 date minus 92 days. The harvest row has no date.
-# AUDPC is stored as recorded. "-" is missing. Some LB cells say Muerta (dead). That word is kept in disease_severity and is not changed to 100. TTWP_Kg is kilograms per plot. The log says 3-hill plots and does not give plot area, so yield in kg/ha is not calculated.
-# Fungicide and insecticide names are in the log without a dose.
+# Open-field late blight trial of the HERLB population at Santa Catalina, Quito, Ecuador, rainy season 2023. Elevation 3050 m and the augmented row-column design are in the description.
+# LB1 to LB4 are percent foliage at 92, 98, 112, and 130 DAP. Planting date is LB1 date minus 92 days.
+# AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150). Some LB cells say Muerta (dead), kept in disease_severity. TTWP_Kg is kg/plot (3-hill plots, no plot area).
 
 ## ISSUES
-# No plot area, so tuber weight stays in kilograms per plot.
+# No plot area, so tuber weight stays in kg/plot (ttwp_).
+# rAUDPC reaches 1.07 (slightly above 1); left as recorded.
 # No fertilizer rate and no harvest date.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: ttwp_kg_, ttwp_g_, tuber_number_. out of bounds: AUDPC (0, 4065), rAUDPC (0, 1.07).
 
 ## NEW VARIABLES
-# ttwp_kg_: total tuber weight, kg per plot.
-# ttwp_g_: TTWP_gr as recorded. The dictionary says tuber weight and does not give the unit in the unit column.
+# ttwp_: total tuber weight (kg per 3-hill plot).
+# ttwp_alt_: TTWP_gr as recorded (unit not stated in dictionary).
 # tuber_number_: TNTP, tuber number per plot.
 
 ## NOT PROCESSED
@@ -46,9 +45,9 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.45
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.5
 	)
 
 	num <- function(x) {
@@ -91,10 +90,10 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		geo_source = "CIP Dataverse bounding box (south and west only)",
 		planting_date = planting,
 		trial_id = "SantaCatalina_2023",
-		AUDPC = num(r1$AUDPC),
+		AUDPC = num(r1$AUDPC) / 100,
 		rAUDPC = num(r1$rAUDPC),
-		ttwp_kg_ = num(r1$TTWP_Kg),
-		ttwp_g_ = num(r1$TTWP_gr),
+		ttwp_ = num(r1$TTWP_Kg),
+		ttwp_alt_ = num(r1$TTWP_gr),
 		tuber_number_ = num(r1$TNTP),
 		pathogen = "Phytophthora infestans",
 		stress = "disease",

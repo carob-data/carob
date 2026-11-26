@@ -5,14 +5,11 @@
 # Rows are the Fieldbook of 01_Field_book_CRW_late_blight_resistant.xlsx.
 # Variety names for the checks come from 03_Check-data. Other entries keep the CIP number.
 # Parents are 02_Pedigree, matched on accession number.
-# The field book stores missing AUDPC as the text NA.
+# AUDPC in percent-days (0-3680) is divided by 100 to match the terminag fraction-days standard (0-150).
 # Crop is potato: the checks are named potato varieties and the trait is late blight.
 
 ## ISSUES
 # No country, coordinates, planting date, harvest date, fertilizer, or yield.
-# AUDPC in this field book exceeds the vocabulary maximum of 150. Values are not rescaled. Missing AUDPC is the text NA.
-# write_files: ; yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: out of bounds: AUDPC (0, 3680).
 
 ## NOT PROCESSED
 # rowgroup, colgroup, row, and col are field-layout positions. plot_id is built from them. They are not a stated replicate factor.
@@ -41,9 +38,9 @@ New CWR LB- resistant sources
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.4
 	)
 
 	f1 <- ff[basename(ff) == "01_Field_book_CRW_late_blight_resistant.xlsx"]
@@ -70,7 +67,7 @@ New CWR LB- resistant sources
 		AUDPC = {
 			a <- trimws(as.character(r$AUDPC))
 			a[a %in% c("NA", "")] <- NA_character_
-			as.numeric(a)
+			as.numeric(a) / 100
 		},
 		disease = "potato late blight",
 		pathogen = "Phytophthora infestans",
@@ -78,6 +75,7 @@ New CWR LB- resistant sources
 		trial_id = "CWR_LB",
 		on_farm = NA,
 		is_survey = FALSE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
 	d$female_parent <- NA_character_

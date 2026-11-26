@@ -11,10 +11,8 @@
 # No fertilizer, yield, planting date, or harvest date.
 # Many field-infection cells are empty. The sheet also writes Pend where a score was not taken. Those cells are missing.
 # The control block at the bottom of the sheet uses a different column order (cultivar name, then field replicates, then greenhouse trials).
-# Meloidogyne incognita is not in the pathogen vocabulary, so the name is kept in the notes.
+# Meloidogyne incognita is not yet in terminag values_pest; kept in pest_species per Carob guidelines so maintainers can add it.
 # Rows 210-212 name a reaction class and have no cultivar or CIP number. They are not plot records.
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variables: set_, primary_trait_, field_rep1_, field_rep2_, field_rep3_, field_avg_, greenhouse_trial1_, greenhouse_trial2_, reaction_, record_type_
 
 ## NOT PROCESSED
 # Data_Dictionary.xls.
@@ -28,7 +26,7 @@ Dataset for: Standard Evaluation Trial for Root Knot Nematode
 Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic leaves that wilt quickly in warm weather is typical. Infected roots show knots or galls of variable size depending on the extent of the damage. Tubers may also become infected and show galls, deformations, or internal symptoms of nematode disease. Strong attacks cause the early death of infected plants (CIP, 1996). Root Knot Nematode (Meloidogyne incognita) resistance trials were conducted for 205 clones at two endemic places. The set experiments include natural field exposure and greenhouse pot test. Different reactions type was recording: highly susceptible, moderately susceptible, susceptible and moderately resistant.
 "
 
-	uri <- "doi:10.21223/P3_U7PHJX"
+	uri <- "doi:10.21223/P3/U7PHJX"
 	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -43,9 +41,9 @@ Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "Root Knot Nematode.xls"]
@@ -120,6 +118,7 @@ Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic
 		geo_from_source = FALSE
 	)
 	d <- rbind(d1, d2)
+	d$pest_species <- "Meloidogyne incognita"
 	d$record_id <- seq_len(nrow(d))
 	rownames(d) <- NULL
 

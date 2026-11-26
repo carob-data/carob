@@ -47,12 +47,12 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 		design = "Randomized Complete Block Design (RCBD)",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield_moisture;specific_gravity_",
+		response_vars = "yield_moisture;specific_gravity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.45
 	)
 
@@ -72,12 +72,13 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 	piece <- function(env, dm, sg) {
 		data.frame(
 			trial_id = paste0("set", set, "_", gsub(" ", "_", env)),
+			country = "Peru",
 			crop = "potato",
 			variety = clone,
 			treatment = clone,
 			environment_ = env,
 			yield_moisture = 100 - num(dm),
-			specific_gravity_ = num(sg),
+			specific_gravity = num(sg),
 			on_farm = FALSE,
 			is_survey = FALSE,
 			geo_from_source = FALSE
@@ -91,7 +92,7 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 		piece("highland dry", r[[7]], r[[14]]),
 		piece("highland rain", r[[8]], r[[15]])
 	)
-	d <- d[!(is.na(d$yield_moisture) & is.na(d$specific_gravity_)), ]
+	d <- d[!(is.na(d$yield_moisture) & is.na(d$specific_gravity)), ]
 	rownames(d) <- NULL
 
 	carobiner::write_files(path, meta, d)

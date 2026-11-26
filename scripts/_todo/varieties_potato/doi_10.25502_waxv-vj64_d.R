@@ -13,7 +13,6 @@
 # No variety names and no weighed yield. A randomization list is needed before variety can be filled.
 # Bacterial-wilt and preference questions that are not the best/worst yield or overall choice were not reshaped (see NOT PROCESSED).
 # N/P/K, irrigation, planting date and harvest date are not in the file.
-# write_files: missing yield (and N/P/K, irrigated, planting_date, harvest_date). Variety values are A/B/C.
 
 ## NOT PROCESSED
 # Telephone, consent, device IMEI, submission UUID, enumerator fields.
@@ -49,8 +48,8 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 		response_vars = "best_yield_",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.7,
 		notes = NA
 	)

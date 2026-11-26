@@ -3,13 +3,17 @@
 
 ## NOTES
 # Greenhouse late-blight screen of potato landraces at CIP-Lima, May to December 2019.
-# The description says severity was read 4 and 6 days after inoculation. LB1 is stored at 4 days and LB2 at 6 days.
-# AUDPC and rAUDPC are used as recorded. The dictionary does not say to rescale them.
+# The description says severity was read 4 and 6 days after inoculation (stored with order 1, 2 and days_after_inoculation_ = 4, 6).
+# AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150).
+# CIP-Lima coordinates (-12.078, -76.946, geo_from_source = FALSE) added from description.
 
 ## ISSUES
-# No yield, fertilizer, or coordinates. CIP-Lima still needs a georeference.
-# AUDPC reaches 180, above the terminag maximum of 150. Values are left as recorded.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: saudpc_, isolate_. out of bounds: AUDPC (0, 180).
+# Greenhouse screen: no yield, fertilizer, irrigation, or harvest date.
+
+## NEW VARIABLES
+# isolate_: Phytophthora infestans isolate identifier.
+# saudpc_: standardized susceptibility scale (SAUDPC) as recorded.
+# days_after_inoculation_: days after inoculation (4 or 6).
 
 ## NOT PROCESSED
 # Experiment, Taxon code, Family, Genus, Taxon full name, SAUDPC_mean: taxonomy or a mean of SAUDPC.
@@ -41,9 +45,9 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]
@@ -58,7 +62,7 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		treatment = trimws(as.character(r$Accesion_number)),
 		rep = as.integer(r$Rep),
 		isolate_ = trimws(as.character(r$Isolate)),
-		AUDPC = as.numeric(r$AUDPC),
+		AUDPC = as.numeric(r$AUDPC) / 100,
 		rAUDPC = as.numeric(r$rAUDPC),
 		saudpc_ = as.numeric(r$SAUDPC)
 	)
@@ -71,7 +75,11 @@ This data set includes information of late blight severity readings at 4 and 6 d
 
 	d$crop <- "potato"
 	d$country <- "Peru"
-	d$location <- "CIP Lima"
+	d$adm1 <- "Lima"
+	d$location <- "CIP-Lima"
+	d$latitude <- -12.078
+	d$longitude <- -76.946
+	d$geo_from_source <- FALSE
 	d$planting_date <- "2019"
 	d$trial_id <- paste("CIP_Lima_2019", d$isolate_, sep="_")
 	d$on_farm <- FALSE
@@ -80,8 +88,8 @@ This data set includes information of late blight severity readings at 4 and 6 d
 	d$pathogen <- "Phytophthora infestans"
 
 	pieces <- list(
-		data.frame(record_id=id, DAP=4L, disease_severity=as.character(r$LB1)),
-		data.frame(record_id=id, DAP=6L, disease_severity=as.character(r$LB2))
+		data.frame(record_id=id, order=1L, DAI=4L, disease_severity=as.character(r$LB1)),
+		data.frame(record_id=id, order=2L, DAI=6L, disease_severity=as.character(r$LB2))
 	)
 	dlong <- do.call(rbind, pieces)
 	dlong <- dlong[!is.na(dlong$disease_severity) & nzchar(dlong$disease_severity), ]

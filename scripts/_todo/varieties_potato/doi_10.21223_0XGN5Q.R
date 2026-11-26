@@ -12,7 +12,10 @@
 # Crop management lists fertilizing, weed, pest, disease, and irrigation with no product and no rate.
 # No tuber yield in the files.
 # The laboratory year in the data file is 2008. The trial was planted in 2007.
-# write_files: , yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ascorbic_acid_mg_100g_dw_, ascorbic_acid_mg_100g_fw_.
+
+## NEW VARIABLES
+# tuber_ascorbate_dw_: tuber ascorbic acid concentration (mg/100g dry weight).
+# tuber_ascorbate_fw_: tuber ascorbic acid concentration (mg/100g fresh weight).
 
 ## NOT PROCESSED
 # 02_Material_list and the fieldbook Material List: identifier crosswalk. Variety is the accession name when it is filled, otherwise the institutional number.
@@ -41,12 +44,12 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		design = "Randomized Complete Block Design (RCBD)",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "ascorbic_acid_mg_100g_dw_;ascorbic_acid_mg_100g_fw_;yield_moisture",
+		response_vars = "vitamin_C;tuber_ascorbate_dw_;yield_moisture",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.4
 	)
 
@@ -66,7 +69,7 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		treatment = variety,
 		rep = as.integer(r$REP),
 		country = "Peru",
-		adm1 = "Junin",
+		adm1 = "Junín",
 		adm2 = "Huancayo",
 		adm3 = "San Agustin",
 		location = "La Victoria",
@@ -81,9 +84,9 @@ An analysis of vitamin C concentration was performed on 29 promising potato clon
 		plant_spacing = 0.30 * 100,
 		row_spacing = 0.90 * 100,
 		plant_density = 37037,
-		# units from the fieldbook sheet 2008_Sets 5_Hyo
-		ascorbic_acid_mg_100g_dw_ = as.numeric(r$ASC_DW),
-		ascorbic_acid_mg_100g_fw_ = as.numeric(r$ASC_FW),
+		# units from the fieldbook sheet 2008_Sets 5_Hyo: mg/100g DW and mg/100g FW
+		tuber_ascorbate_dw_ = as.numeric(r$ASC_DW),
+		vitamin_C = as.numeric(r$ASC_FW),
 		yield_moisture = 100 - as.numeric(r$PDM),
 		on_farm = FALSE,
 		is_survey = FALSE

@@ -43,13 +43,13 @@ Assessment of the current status of agronomy practices in potato cultivation in 
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "adm2",
-		response_vars = "elevation",
+		treatment_vars = "none",
+		response_vars = "none",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 40,
 		carob_effort = 0.4
 	)
 

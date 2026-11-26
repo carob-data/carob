@@ -2,25 +2,24 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Plot rows are the Fieldbook of PTYL200507_MUG.xls. TTYNA and MTYNA are t/ha in 03_Data_dictionary.xlsx. Stored as kg/ha.
-# Coordinates, elevation, dates, design, and planting density are the Minimal and Installation sheets.
-# Daily weather is Weather_daily (temperature only).
+# Plot rows are processed from PTYL200507_MUG.xls (Mugerero) using the shared CIP HIDAP helper process_cip_lbvars().
+# process_cip_lbvars() computes yield and yield_marketable (kg/ha from TTWP/MTWP and plot_size), yield_moisture (100 - AVDM), plant_density, tuber_density, seed_density, spacing, soil_pH, soil_SOM, and joins 02_Material_list.xlsx (variety names and pedigree).
+# Daily weather is read from Weather_daily (temperature only).
 
 ## ISSUES
-# The abstract says "Completely Randomized Block Design". The Installation sheet says "Randomized Complete Block Design (RCBD)". The sheet text is used.
-# Crop_management dates are all 2006-09-01. Minimal begin and end are 2005-07-21 and 2005-10-21. Minimal dates are used.
-# Weather_daily includes 2006 as well as 2005. Rows are kept as recorded.
-# No fertilizer or irrigation. The site is not labeled on-farm or station.
+# The abstract says "Completely Randomized Block Design". The Installation sheet says "Randomized Complete Block Design (RCBD)".
+# Weather_daily includes 2006 as well as 2005; rows are kept as recorded.
+# No fertilizer or irrigation rates reported. The site is not labeled on-farm or station.
 # Longitude is published as 29.3 (one decimal).
-# write_files: ; yield_moisture, K_fertilizer, N_fertilizer, P_fertilizer.
 
 ## NOT PROCESSED
 # 01_data_yield_Mugurero_2005.xlsx: flat export of the same Fieldbook.
-# Fieldbook per-plot counts and weights (NTP, NPE, NPH, PPH, tuber counts, TTWP, MTWP, TTYA, ATW, ATMW). Plot area is not in the file.
-# AVDM: not defined in the dictionary sheet.
-# Soil_analysis, Hobo_data, Weather_data, Weather_Original, Weather_monthly, Summary by clone, Charts, Ranks by Clone, TTYA, MTWP, MTYA summary sheets.
+# Hobo_data, Weather_data, Weather_Original, Weather_monthly, Summary by clone, Charts, Ranks by Clone, TTYA/MTWP/MTYA summary sheets.
 # Weather_daily n_sample and TSD.
-# 02_Material_list.xlsx: not read. sheet Sheet1: Numeration, Institutional number, Clone or variety name, Code of clone, Female Institutional number, Female code, Male Institutional number, Male code. Observation records are missing from d until this file is standardized.
+# 03_Data_dictionary.xlsx: documentation or a codebook, not an observation table.
+
+## NEW VARIABLES
+# none
 
 carob_script <- function(path) {
 
@@ -41,59 +40,23 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 		design = "Randomized complete block design",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;yield_marketable",
+		response_vars = "yield;yield_marketable;yield_moisture",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.4
 	)
 
+	proc <- carobiner::get_function("process_cip_lbvars", path, group)
 	f <- ff[basename(ff) == "PTYL200507_MUG.xls"]
-	r1 <- carobiner::read.excel(f, sheet="Minimal")
-	kv <- stats::setNames(as.character(r1$Value), trimws(as.character(r1$Factor)))
-	r2 <- carobiner::read.excel(f, sheet="Installation")
-	ik <- stats::setNames(as.character(r2$Value), trimws(as.character(r2$Factor)))
-	r <- carobiner::read.excel(f, sheet="Fieldbook")
-	r3 <- carobiner::read.excel(f, sheet="Material List")
-	name <- trimws(as.character(r3[["Clone or variety name"]]))
-	code <- trimws(as.character(r3[["Institutional number"]]))
-	name[!nzchar(name)] <- NA_character_
-	m <- match(trimws(as.character(r$INSTN)), code)
-	variety <- trimws(as.character(r$INSTN))
-	ok <- !is.na(m) & !is.na(name[m])
-	variety[ok] <- name[m[ok]]
-
-	d <- data.frame(
-		crop = "potato",
-		plot_id = as.character(r$PLOT),
-		rep = as.integer(r$REP),
-		variety_code = trimws(as.character(r$INSTN)),
-		variety = variety,
-		treatment = variety,
-		yield = as.numeric(r$TTYNA) * 1000,
-		yield_marketable = as.numeric(r$MTYNA) * 1000,
-		yield_part = "tubers",
-		yield_isfresh = TRUE,
-		country = kv[["Country"]],
-		adm1 = kv[["Admin1"]],
-		adm2 = kv[["Admin2"]],
-		location = kv[["Locality"]],
-		elevation = as.numeric(kv[["Elevation"]]),
-		latitude = as.numeric(kv[["Latitude"]]),
-		longitude = as.numeric(kv[["Longitude"]]),
-		planting_date = as.character(as.Date(kv[["Begin date"]])),
-		harvest_date = as.character(as.Date(kv[["End date"]])),
-		plant_density = as.numeric(ik[["Planting density (plants/Ha)"]]),
-		trial_id = paste(kv[["Locality"]], "2005"),
-		on_farm = NA,
-		is_survey = FALSE,
-		irrigated = NA,
-		geo_from_source = TRUE,
-		geo_uncertainty = 12000,
-		geo_source = "HIDAP Minimal sheet"
-	)
+	d <- proc(f)
+	d$treatment <- d$variety
+	d$on_farm <- NA
+	d$irrigated <- NA
+	d$geo_uncertainty <- 12000
+	d$geo_source <- "HIDAP Minimal sheet"
 
 	r4 <- carobiner::read.excel(f, sheet="Weather_daily")
 	wth <- data.frame(

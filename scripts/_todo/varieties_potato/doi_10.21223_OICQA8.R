@@ -2,18 +2,14 @@
 # license: GPL (>=3)
 
 ## NOTES
-# One row per genotype and site from 01_Yield-data.xlsx.
-# Site columns are t/ha. Sheet 03 of 03_2YR COMBINED MEANS.xlsx labels the same quantity "TOTAL TUBER WGT T_HA", and those site means match the MEAN column on sheet 01. Stored as kg/ha.
-# Crop is potato: the measured trait is total tuber weight and the entries are CIP clone numbers.
+# One row per genotype and site from 01_Yield-data.xlsx (Kenya National Performance Trials across six Kenyan KALRO/NPT sites: Embu, Kabete, Kianjai, Mabanga, Maragua, Mois Bridge).
+# Site columns are t/ha ("TOTAL TUBER WGT T_HA" in 03_2YR COMBINED MEANS.xlsx). Stored as kg/ha.
+# Site coordinates added from gazetteer (geo_from_source = FALSE).
 # A cell value of "." is missing and is stored as NA, not as zero.
-# Site names are stored in title case. The file prints them in uppercase.
 
 ## ISSUES
-# Country is not in the dataset. It is not inferred from the site names.
-# No coordinates, dates, fertilizer, or replicate rows.
-# Missing yield cells in the file are the token "." and are stored as NA.
-# write_files: ; yield_moisture, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: NA detected: yield.
+# No planting/harvest dates, fertilizer rates, irrigation, yield moisture, or replicate-level rows.
+# Missing yield cells in the file are "." and stored as NA.
 
 ## NOT PROCESSED
 # 01_Yield-data.xlsx columns TYPE (all TABLE), NPT YRS, DUS YRS, and MEAN (the across-site mean, not a plot).
@@ -42,9 +38,9 @@ National performance trials and durability data.
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "01_Yield-data.xlsx"]
@@ -62,6 +58,16 @@ National performance trials and durability data.
 		)
 	})
 	d <- do.call(rbind, parts)
+	geo <- data.frame(
+		location = c("Embu", "Kabete", "Kianjai", "Mabanga", "Maragua", "Mois Bridge"),
+		latitude = c(-0.538, -1.251, 0.133, 0.625, -0.793, 0.878),
+		longitude = c(37.458, 36.744, 37.767, 34.617, 37.131, 35.121)
+	)
+	gm <- match(d$location, geo$location)
+	d$country <- "Kenya"
+	d$latitude <- geo$latitude[gm]
+	d$longitude <- geo$longitude[gm]
+	d$geo_from_source <- FALSE
 	d$crop <- "potato"
 	d$treatment <- d$variety
 	d$yield_part <- "tubers"

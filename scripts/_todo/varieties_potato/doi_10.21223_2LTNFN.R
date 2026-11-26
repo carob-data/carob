@@ -12,8 +12,12 @@
 # Plot size and spacing are blank in the Installation sheet.
 # Crop management has no product and no rate.
 # No tuber yield.
-# Dry matter in the mineral file and the vitamin C file are not the same number for the same clone and replicate. Both are kept.
-# write_files: , yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: the tuber mineral, dry-matter, and ascorbic-acid columns named with a trailing underscore.
+# Dry matter in the mineral file and the vitamin C file differ slightly for the same clone/rep; mineral-file dry matter is mapped to yield_moisture (100 - DM) and vitamin-C-file dry matter is kept in dm_vitamin_c_.
+
+## NEW VARIABLES
+# tuber_<element>_fw_: tuber mineral concentration (mg/100g fresh weight) for Fe, Mn, B, Cu, Zn, Ca, Mg, K, P, S, Na. (Dry-weight minerals are stored in standard tuber_<element> columns in mg/g DW; fresh-weight ascorbic acid in vitamin_C in mg/100g FW.)
+# tuber_ascorbate_dw_: tuber ascorbic acid concentration (mg/100g dry weight).
+# dm_vitamin_c_: dry matter percentage from the vitamin C file (%).
 
 ## NOT PROCESSED
 # 04_Datadictionary.txt, Lists, Notes, Summary by clone, ICPAES Results: definitions, summaries, or a laboratory layout that is not one row per plot.
@@ -41,13 +45,13 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		design = "Completely Randomized Design (CRD)",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "dry_matter_minerals_percent_;tuber_Fe_mg_kg_dw_;tuber_Zn_mg_kg_dw_;ascorbic_acid_mg_100g_fw_",
+		response_vars = "yield_moisture;tuber_Fe;tuber_Zn;vitamin_C",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
+		carob_effort = 0.55
 	)
 
 	num <- function(x) {
@@ -88,7 +92,7 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		treatment = variety,
 		rep = as.integer(r1$REP),
 		country = "Peru",
-		adm1 = "Junin",
+		adm1 = "Junín",
 		adm2 = "Jauja",
 		adm3 = "Muqui",
 		location = "Muqui",
@@ -99,37 +103,38 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		geo_from_source = TRUE,
 		planting_date = "2003-12-04",
 		harvest_date = "2004-05-04",
-		dry_matter_minerals_percent_ = num(r1[[mc[13]]]),
-		tuber_Fe_mg_kg_dw_ = num(r1[[mc[14]]]),
-		tuber_Fe_mg_100g_fw_ = num(r1[[mc[15]]]),
-		tuber_Mn_mg_kg_dw_ = num(r1[[mc[16]]]),
-		tuber_Mn_mg_100g_fw_ = num(r1[[mc[17]]]),
-		tuber_B_mg_kg_dw_ = num(r1[[mc[18]]]),
-		tuber_B_mg_100g_fw_ = num(r1[[mc[19]]]),
-		tuber_Cu_mg_kg_dw_ = num(r1[[mc[20]]]),
-		tuber_Cu_mg_100g_fw_ = num(r1[[mc[21]]]),
-		tuber_Zn_mg_kg_dw_ = num(r1[[mc[22]]]),
-		tuber_Zn_mg_100g_fw_ = num(r1[[mc[23]]]),
-		tuber_Ca_mg_kg_dw_ = num(r1[[mc[24]]]),
-		tuber_Ca_mg_100g_fw_ = num(r1[[mc[25]]]),
-		tuber_Mg_mg_kg_dw_ = num(r1[[mc[26]]]),
-		tuber_Mg_mg_100g_fw_ = num(r1[[mc[27]]]),
-		tuber_K_mg_kg_dw_ = num(r1[[mc[28]]]),
-		tuber_K_mg_100g_fw_ = num(r1[[mc[29]]]),
-		tuber_P_mg_kg_dw_ = num(r1[[mc[30]]]),
-		tuber_P_mg_100g_fw_ = num(r1[[mc[31]]]),
-		tuber_S_mg_kg_dw_ = num(r1[[mc[32]]]),
-		tuber_S_mg_100g_fw_ = num(r1[[mc[33]]]),
-		tuber_Na_mg_kg_dw_ = num(r1[[mc[34]]]),
-		tuber_Na_mg_100g_fw_ = num(r1[[mc[35]]]),
-		tuber_Al_mg_kg_dw_ = num(r1[[mc[36]]]),
-		tuber_Cd_mg_kg_dw_ = num(r1[[mc[37]]]),
-		tuber_Mo_mg_kg_dw_ = num(r1[[mc[38]]]),
-		tuber_Co_mg_kg_dw_ = num(r1[[mc[39]]]),
-		tuber_Ni_mg_kg_dw_ = num(r1[[mc[40]]]),
-		ascorbic_acid_mg_100g_dw_ = num(r2[[names(r2)[13]]][vi]),
-		ascorbic_acid_mg_100g_fw_ = num(r2[[names(r2)[14]]][vi]),
-		dry_matter_vitamin_c_percent_ = num(r2[[names(r2)[15]]][vi]),
+		yield_moisture = 100 - num(r1[[mc[13]]]),
+		# Dry-weight minerals converted from mg/kg to mg/g (terminag standard)
+		tuber_Fe = num(r1[[mc[14]]]) / 1000,
+		tuber_Fe_fw_ = num(r1[[mc[15]]]),
+		tuber_Mn = num(r1[[mc[16]]]) / 1000,
+		tuber_Mn_fw_ = num(r1[[mc[17]]]),
+		tuber_B = num(r1[[mc[18]]]) / 1000,
+		tuber_B_fw_ = num(r1[[mc[19]]]),
+		tuber_Cu = num(r1[[mc[20]]]) / 1000,
+		tuber_Cu_fw_ = num(r1[[mc[21]]]),
+		tuber_Zn = num(r1[[mc[22]]]) / 1000,
+		tuber_Zn_fw_ = num(r1[[mc[23]]]),
+		tuber_Ca = num(r1[[mc[24]]]) / 1000,
+		tuber_Ca_fw_ = num(r1[[mc[25]]]),
+		tuber_Mg = num(r1[[mc[26]]]) / 1000,
+		tuber_Mg_fw_ = num(r1[[mc[27]]]),
+		tuber_K = num(r1[[mc[28]]]) / 1000,
+		tuber_K_fw_ = num(r1[[mc[29]]]),
+		tuber_P = num(r1[[mc[30]]]) / 1000,
+		tuber_P_fw_ = num(r1[[mc[31]]]),
+		tuber_S = num(r1[[mc[32]]]) / 1000,
+		tuber_S_fw_ = num(r1[[mc[33]]]),
+		tuber_Na = num(r1[[mc[34]]]) / 1000,
+		tuber_Na_fw_ = num(r1[[mc[35]]]),
+		tuber_Al = num(r1[[mc[36]]]) / 1000,
+		tuber_Cd = num(r1[[mc[37]]]) / 1000,
+		tuber_Mo = num(r1[[mc[38]]]) / 1000,
+		tuber_Co = num(r1[[mc[39]]]) / 1000,
+		tuber_Ni = num(r1[[mc[40]]]) / 1000,
+		tuber_ascorbate_dw_ = num(r2[[names(r2)[13]]][vi]),
+		vitamin_C = num(r2[[names(r2)[14]]][vi]),
+		dm_vitamin_c_ = num(r2[[names(r2)[15]]][vi]),
 		on_farm = FALSE,
 		is_survey = FALSE
 	)

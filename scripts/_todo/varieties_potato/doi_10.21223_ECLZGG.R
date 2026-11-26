@@ -2,15 +2,21 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Yield evaluation of clones at Musanze station, Rwanda, season 2016A. The abstract names the site and the season.
-# The dictionary states TWTG in g, TWTKG in kg, and TWTH in tonnes. Those are the same total tuber weight. tuber_weight_kg_ is TWTKG.
-# NT_I, NT_II, and NT_III are tuber counts in the size classes the dictionary writes as <30 cm, 30-60 cm, and >60 cm. The matching NMT columns are weights in g.
+# Yield evaluation of clones at Musanze station, Rwanda (-1.500, 29.633, geo_from_source = FALSE), season 2016A.
+# 05_Map_Mel_4798.xlsx gives planting date "PD: 22.3.16" (stored as planting_date = "2016-03-22").
+# The dictionary states TWTG in g, TWTKG in kg, and TWTH in tonnes. Those are the same total tuber weight; stored as tuber_weight_ (kg/plot).
+# NT_I, NT_II, and NT_III are tuber counts in the three size classes (<30, 30-60, >60 mm, written cm in dictionary), and NMT_I..III are weights (g).
 
 ## ISSUES
-# The dictionary describes YIELD only as "yield", with no unit. It is not the same number as the kilogram or tonne columns, and it is not a constant plot area times TWTKG. It is stored as yield_recorded_ and is not mapped to yield.
-# No coordinates. Musanze station still needs georeferencing.
-# No fertilizer rate, irrigation statement, or a planting or harvest date. A map sheet has a column title "PD: 22.3.16", which is not used as a planting date.
-# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: season_ (season?). unknown variable: yield_recorded_ (yield?). unknown variables: tuber_n_lt_30cm_, tuber_wt_g_lt_30cm_, tuber_n_30_60cm_, tuber_wt_g_30_60cm_, tuber_n_gt_60cm_, tuber_wt_g_gt_60cm_, tuber_n_total_, tuber_weight_kg_.
+# The dictionary describes YIELD only as "yield", with no unit, and it is not a constant plot area times TWTKG; stored as yield_recorded_ rather than yield (kg/ha).
+# No fertilizer rate, irrigation statement, or harvest date.
+
+## NEW VARIABLES
+# tuber_n_class1_, tuber_n_class2_, tuber_n_class3_: tuber count per plot in size classes I (<30), II (30-60), and III (>60).
+# tuber_wt_class1_, tuber_wt_class2_, tuber_wt_class3_: tuber weight per plot (g) in size classes I, II, and III.
+# tuber_n_total_: total tuber count per plot (NTT).
+# tuber_weight_: total tuber weight per plot (kg, TWTKG).
+# yield_recorded_: YIELD column as recorded (unit not stated).
 
 ## NOT PROCESSED
 # 03_Summary: a summary table.
@@ -43,13 +49,13 @@ Evaluation of yield parameters of 6 clones introduced to Rwanda as processing va
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "tuber_weight_kg_",
+		response_vars = "tuber_weight_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "01_Data_Mel_4798.xlsx"]
@@ -60,8 +66,13 @@ Evaluation of yield parameters of 6 clones introduced to Rwanda as processing va
 	d <- data.frame(
 		trial_id = "Musanze_2016A",
 		country = "Rwanda",
+		adm1 = "Northern Province",
+		adm2 = "Musanze",
 		location = "Musanze",
-		season_ = "2016A",
+		latitude = -1.500,
+		longitude = 29.633,
+		planting_date = "2016-03-22",
+		season = "first",
 		crop = "potato",
 		variety = variety,
 		variety_code = variety,
@@ -69,14 +80,14 @@ Evaluation of yield parameters of 6 clones introduced to Rwanda as processing va
 		rep = as.integer(r$REP),
 		block_id = as.character(r$BLOCK),
 		plot_id = as.character(r$PLOT),
-		tuber_n_lt_30cm_ = as.numeric(r$NT_I),
-		tuber_wt_g_lt_30cm_ = as.numeric(r$NMT_I),
-		tuber_n_30_60cm_ = as.numeric(r$NT_II),
-		tuber_wt_g_30_60cm_ = as.numeric(r$NMT_II),
-		tuber_n_gt_60cm_ = as.numeric(r$NT_III),
-		tuber_wt_g_gt_60cm_ = as.numeric(r$NMT_III),
+		tuber_n_class1_ = as.numeric(r$NT_I),
+		tuber_wt_class1_ = as.numeric(r$NMT_I),
+		tuber_n_class2_ = as.numeric(r$NT_II),
+		tuber_wt_class2_ = as.numeric(r$NMT_II),
+		tuber_n_class3_ = as.numeric(r$NT_III),
+		tuber_wt_class3_ = as.numeric(r$NMT_III),
 		tuber_n_total_ = as.numeric(r$NTT),
-		tuber_weight_kg_ = as.numeric(r$TWTKG),
+		tuber_weight_ = as.numeric(r$TWTKG),
 		yield_recorded_ = as.numeric(r$YIELD),
 		on_farm = FALSE,
 		is_survey = FALSE,

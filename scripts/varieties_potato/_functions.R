@@ -32,30 +32,35 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	
 	plot_size <- as.numeric(n$`plot_size_(m2)`)
 	plot_adj <- 10000 / plot_size
-     
-  	if (grepl("/", m$begin_date)) {
-		i <- is.na(m$begin_date)
-		m$begin_date <- as.character(as.Date(m$begin_date,format = "%d/%m/%Y"))
-		j <- is.na(m$begin_date)
-		if (sum(j) > sum(i)) warning("NAs introduced in begin_date")
-  	}
-	if (grepl("/", m$end_date)) {
-		if (grepl("-", m$end_date)) {
-			# taking the last one, should perhaps take the average (doi_10.21223_KNC22E.R)
-			m$end_date <- strsplit(m$end_date, "-")[[1]][2]
+
+	parse_hidap_date <- function(x, label) {
+		if (is.null(x) || length(x) == 0 || is.na(x[1])) return(NA_character_)
+		x <- x[1]
+		if (inherits(x, "POSIXt") || inherits(x, "Date")) {
+			return(as.character(as.Date(x)))
 		}
-		i <- is.na(m$end_date)
-		m$end_date <- as.character(as.Date(m$end_date,format = "%d/%m/%Y"))
-		j <- is.na(m$end_date)
-		if (sum(j) > sum(i)) warning("NAs introduced in End_date")
+		x <- trimws(as.character(x))
+		if (!nzchar(x)) return(NA_character_)
+		if (grepl("/", x)) {
+			if (grepl("-", x)) {
+				# taking the last one, should perhaps take the average (doi_10.21223_KNC22E.R)
+				x <- strsplit(x, "-")[[1]][2]
+			}
+			dval <- as.character(as.Date(x, format = "%d/%m/%Y"))
+			if (is.na(dval)) warning(paste("NAs introduced in", label))
+			return(dval)
+		}
+		if (grepl("^[0-9]{5}(\\.0+)?$", x)) {
+			return(as.character(as.Date(as.numeric(x), origin = "1899-12-30")))
+		}
+		x
 	}
+	m$begin_date <- parse_hidap_date(m$begin_date, "begin_date")
+	m$end_date <- parse_hidap_date(m$end_date, "End_date")
+
 	d <- data.frame(
 		rep = as.integer(r$rep),
-		variety = r$instn,
-		yield = as.numeric(r$ttwp) * plot_adj,
-		yield_marketable = as.numeric(r$mtwp) * plot_adj,
-		#we record the number of plants planted and harvested instead
-		#yield_adjusted = as.numeric(r$ttya) * plot_adj,
+		variety = trimws(as.character(r$instn)),
 		country = m$country,
 		adm1 = m$admin1,
 		adm2 = m$admin2,
@@ -72,6 +77,15 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		plant_spacing = as.numeric(n$`distance_between_plants_(m)`) * 100,
 		trial_id = trimws(gsub(".xls|.xlsx", "", basename(filename)))
 	)
+	if (!is.na(plot_size)) {
+		d$plot_area <- plot_size
+	}
+	if (!is.null(r$ttwp)) {
+		d$yield <- as.numeric(r$ttwp) * plot_adj
+	}
+	if (!is.null(r$mtwp)) {
+		d$yield_marketable <- as.numeric(r$mtwp) * plot_adj
+	}
 	if (!is.null(r$npe)) {
 		# number of plants emerged
 		d$plant_density <- as.numeric(r$npe) * plot_adj
@@ -116,45 +130,92 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	if (!is.na(i)) {
 		soil <- carobiner::read.excel(filename, sheet=i)
 		names(soil) <- gsub(" ", "_", trimws(tolower(names(soil))))
-		d$soil_pH <- soil$soil_ph
-		d$soil_SOM <- soil$organic_matter
+		if (!is.null(soil$soil_ph)) d$soil_pH <- soil$soil_ph
+		if (!is.null(soil$organic_matter)) d$soil_SOM <- soil$organic_matter
+		if (is.null(soil$soil_ph) && all(c("abbreviature", "data1") %in% names(soil))) {
+			sget <- function(nm) {
+				hit <- soil$data1[tolower(trimws(as.character(soil$abbreviature))) == tolower(nm)]
+				if (length(hit) == 0) return(NA_real_)
+				val <- trimws(as.character(hit[1]))
+				if (!is.na(val) && grepl("^-?[0-9]+(\\.[0-9]+)?$", val)) as.numeric(val) else NA_real_
+			}
+			sv <- list(
+				soil_pH = sget("Soil PH"),
+				soil_SOM = sget("Organic matter"),
+				soil_P = sget("Phosphorus"),
+				soil_K = sget("Potassium"),
+				soil_sand = sget("Sand"),
+				soil_silt = sget("Silt"),
+				soil_clay = sget("Clay")
+			)
+			for (k in names(sv)) if (!is.na(sv[[k]])) d[[k]] <- sv[[k]]
+		}
 	}
-	
 
 	fm <- list.files(dirname(filename), pattern="material_list", ignore.case=TRUE, full.names=TRUE)
+	ml <- NULL
 	if (length(fm) > 1) {
 		stop("multiple material files")
 	} else if (length(fm) == 1) {
 		if (grepl("\\.xlsx?$", fm, ignore.case=TRUE)) {
-			m <- carobiner::read.excel(fm, na="")
-			m[] <- lapply(m, function(x) trimws(as.character(x)))
+			ml <- carobiner::read.excel(fm, na="")
+			ml[] <- lapply(ml, function(x) trimws(as.character(x)))
 			# "Female code" -> "Female.code" as with read.delim
-			names(m) <- make.names(names(m))
+			names(ml) <- make.names(names(ml))
 		} else {
-			m <- utils::read.delim(fm, colClasses="character", na.strings="", strip.white=TRUE)
+			ml <- utils::read.delim(fm, colClasses="character", na.strings="", strip.white=TRUE)
 		}
-		names(m) <- tolower(names(m))
-		fem <- ifelse(is.na(m$female.code), m$female.institutional.number, m$female.code)
-		mal <- ifelse(is.na(m$male.code), m$male.institutional.number, m$male.code)
-		i <- match(d$variety, m$institutional.number)
+	} else {
+		ms <- which(tolower(gsub(" ", "_", trimws(sheets))) == "material_list")
+		if (length(ms) == 1) {
+			ml <- carobiner::read.excel(filename, sheet=ms, na=c("", "NA"))
+			ml[] <- lapply(ml, function(x) {
+				x <- trimws(as.character(x))
+				x[!nzchar(x)] <- NA_character_
+				x
+			})
+			names(ml) <- make.names(names(ml))
+		}
+	}
+	if (!is.null(ml)) {
+		names(ml) <- tolower(names(ml))
+		pick_col <- function(cands) {
+			hit <- intersect(cands, names(ml))
+			if (length(hit) == 0) rep(NA_character_, nrow(ml)) else ml[[hit[1]]]
+		}
+		key <- pick_col(c("institutional.number", "accession_number", "accession.number"))
+		vname <- pick_col(c("clone.or.variety.name", "accession_name", "accession.name"))
+		vcode <- pick_col(c("accession_code", "accession.code", "code.of.clone"))
+		fc <- pick_col(c("female.code", "female_code"))
+		fi <- pick_col(c("female.institutional.number", "female_accenumb", "female.accenumb"))
+		mc <- pick_col(c("male.code", "male_code"))
+		mi <- pick_col(c("male.institutional.number", "male_accenumb", "male.accenumb"))
+		fem <- ifelse(is.na(fc), fi, fc)
+		mal <- ifelse(is.na(mc), mi, mc)
+		i <- match(d$variety, key)
 		if (!(all(is.na(i)))) {
 			j <- !is.na(i)
 			k <- i[j]
-			d$female_parent[j] <- fem[k]
-			d$male_parent[j] <- mal[k]
-			d$variety_pedigree[j] <- paste(fem[k], mal[k], sep=" x ")
-			nm <- m$clone.or.variety.name[i]
+			if (any(!is.na(fem[k]))) d$female_parent[j] <- fem[k]
+			if (any(!is.na(mal[k]))) d$male_parent[j] <- mal[k]
+			if (any(!is.na(fem[k]) & !is.na(mal[k]))) {
+				ped <- ifelse(!is.na(fem[k]) & !is.na(mal[k]), paste(fem[k], mal[k], sep=" x "), NA_character_)
+				d$variety_pedigree[j] <- ped
+			}
+			nm <- vname[i]
+			nm[is.na(nm)] <- vcode[i][is.na(nm)]
 			d$variety_code <- d$variety
 			d$variety[!is.na(nm)] <- nm[!is.na(nm)]
 		}
 	}
-    d$is_survey <- FALSE
-    d$irrigated <- FALSE
-    d$crop <- "potato"
-    d$yield_part <- "tubers"
-	d$yield_isfresh <- TRUE
-	
-    d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$is_survey <- FALSE
+	d$irrigated <- FALSE
+	d$crop <- "potato"
+	if (!is.null(d$yield)) {
+		d$yield_part <- "tubers"
+		d$yield_isfresh <- TRUE
+	}
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	d
 }
 

@@ -8,13 +8,12 @@
 # The Dataverse bounding box publishes only south -7.785575 and west -77.854397. That is one point for the dataset, not a coordinate of each field, so latitude and longitude are omitted.
 
 ## ISSUES
-# No yield in kg/ha. Row length is unknown.
-# La Soledad and San Salvador need georeferencing. The bounding box is not used as a field coordinate.
-# No variety, fertilizer, irrigation, or planting and harvest dates. DAP is days after planting, not a calendar date.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: row_yield_kg_, plants_per_row_.
+# No yield in kg/ha (row length is unknown; stored in row_yield_ in kg/row).
+# Chugay district coordinates (-7.786, -77.854) assigned from Dataverse metadata / gazetteer (geo_from_source = FALSE) since individual field coordinates are not in the tables.
+# No variety, fertilizer, irrigation, or calendar planting/harvest dates (DAP only).
 
 ## NEW VARIABLES
-# row_yield_kg_: harvested weight of the row, kilograms.
+# row_yield_: harvested tuber weight per row (kg/row).
 # plants_per_row_: number of plants in the row.
 
 ## NOT PROCESSED
@@ -45,9 +44,9 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.4
 	)
 
 	f1 <- ff[basename(ff) == "01_yield.xlsx"]
@@ -73,6 +72,8 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		adm3 = "Chugay",
 		trial_id = loc$location[match(ids, loc$ID_QGIS)],
 		location = loc$location[match(ids, loc$ID_QGIS)],
+		latitude = -7.786,
+		longitude = -77.854,
 		geo_from_source = FALSE,
 		on_farm = NA,
 		is_survey = FALSE
@@ -88,14 +89,14 @@ The aim of this dataset is to generate a database for estimating potato yield us
 		record_id = r2$ID_QGIS,
 		DAP = as.integer(r2$DAP),
 		SPAD = as.numeric(spad),
-		row_yield_kg_ = NA_real_,
+		row_yield_ = NA_real_,
 		plants_per_row_ = NA_real_
 	)
 	long_y <- data.frame(
 		record_id = r1$ID_QGIS,
 		DAP = as.integer(r1$DAP),
 		SPAD = NA_real_,
-		row_yield_kg_ = as.numeric(r1[["Yield (Kg/Row)"]]),
+		row_yield_ = as.numeric(r1[["Yield (Kg/Row)"]]),
 		plants_per_row_ = as.numeric(r1[["Number plants"]])
 	)
 	dlong <- rbind(long_s, long_y)

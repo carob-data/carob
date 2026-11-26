@@ -2,13 +2,15 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Diploid potato clones at Holetta, Ethiopia. Country, admin units, locality, elevation, and coordinates are the Minimal sheet of the yield workbook.
-# TTWP is the yield column. The sheet does not state the unit, so the number was not multiplied. TTYA is empty in this file.
-# FeDW, ZnDw, and DM are accession-level mineral values joined by accession number. Their units are not stated on the minerals sheet.
+# Diploid potato clones at Holetta, Ethiopia during the 2015 irrigation season. Country, admin units, locality, elevation, and coordinates are on the Minimal sheet of the yield workbook.
+# TTWP and MTWP are total and marketable tuber weight per plot (kg/plot for 20 planted tubers, ~0.3-0.5 kg/plant in TTWPL). No plot area is recorded in the file, so they are stored in ttwp_ and mtwp_ rather than yield (kg/ha). TTYA is empty.
+# FeDW, ZnDw, and DM are accession-level mineral values joined by accession number. DM (%) is mapped to yield_moisture = 100 - DM.
+# End_date in Minimal is 15/07/2015 (stored as harvest_date = "2015-07-15").
 
 ## ISSUES
-# Begin_date is an Excel serial and End_date is 15/07/2015. They were not used as planting and harvest dates.
-# write_files: missing carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: block_id, fe_dw_, zn_dw_, dm_. low yield (tons not kg?): potato.
+# No plot area is reported in Minimal, so yield in kg/ha cannot be computed from kg/plot (TTWP/MTWP).
+# Begin_date in Minimal is Excel serial 42250 (2015-09-03), which is after End_date (2015-07-15); omitted as planting_date.
+# No fertilizer rates reported.
 
 ## NOT PROCESSED
 # NTP, NPH, category weights, insect counts, and the material list. The element-description dictionary is documentation.
@@ -16,7 +18,10 @@
 # 4029_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# fe_dw_, zn_dw_, dm_: mineral sheet columns, unit not stated.
+# ttwp_: total tuber weight per plot (kg/plot, 20 tubers planted)
+# mtwp_: marketable tuber weight per plot (kg/plot)
+# tuber_Fe_dw_: tuber iron concentration on dry-weight basis (mg/kg DW, unit not printed on sheet)
+# tuber_Zn_dw_: tuber zinc concentration on dry-weight basis (mg/kg DW, unit not printed on sheet)
 
 
 carob_script <- function(path) {
@@ -38,13 +43,13 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
+		response_vars = "ttwp_;mtwp_;yield_moisture;tuber_Fe_dw_;tuber_Zn_dw_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.45
 	)
 
 	num <- function(x) {
@@ -64,20 +69,24 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 	r2 <- carobiner::read.excel(f2, sheet="Minerals_2015")
 	minr <- data.frame(
 		variety = chr(r2$ACCENUMB),
-		fe_dw_ = num(r2$FeDW),
-		zn_dw_ = num(r2$ZnDw),
-		dm_ = num(r2$DM)
+		tuber_Fe_dw_ = num(r2$FeDW),
+		tuber_Zn_dw_ = num(r2$ZnDw),
+		yield_moisture = 100 - num(r2$DM)
 	)
 	minr <- minr[!is.na(minr$variety) & !duplicated(minr$variety), ]
 	d <- data.frame(
 		variety = chr(r1$ACCENUMB),
 		treatment = chr(r1$ACCENUMB),
 		block_id = chr(r1$BLOCK),
-		yield = num(r1$TTWP)
+		plot_id = as.character(seq_len(nrow(r1))),
+		ttwp_ = num(r1$TTWP),
+		mtwp_ = num(r1$MTWP)
 	)
 	d <- merge(d, minr, by="variety", all.x=TRUE)
 	d$crop <- "potato"
 	d$yield_part <- "tubers"
+	d$irrigated <- TRUE
+	d$harvest_date <- "2015-07-15"
 	d$country <- "Ethiopia"
 	d$adm1 <- "Oromiya"
 	d$adm2 <- "Finifine zuria"
@@ -87,7 +96,7 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 	d$latitude <- 8.88333
 	d$longitude <- 38.38333
 	d$geo_from_source <- TRUE
-	d$trial_id <- paste0("Holetta_2015_", seq_len(nrow(d)))
+	d$trial_id <- "Holetta_2015"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d <- d[!is.na(d$variety), ]

@@ -3,18 +3,14 @@
 
 ## NOTES
 # Each data row is one clone in one set. A second header at the bottom repeats the checks, with a control-class column. That block is read on its own columns.
-# The three evaluations in each of three trials are the long table. The sheet values are already means across plants. Pend is treated as not recorded. Trial averages, the last mean and max, the count of evaluations, and the mean of all evaluations are the summaries of those scores and are not stored again.
-# The dictionary calls the scale an SES 5 point scale and then lists six classes, from 1 (extreme resistant, 0 percent) to 6 (highly susceptible). The abstract describes a 1 to 3 plant scale. Scores on the sheet reach 5, so they are not on that 3-point scale. They are stored as recorded.
-# Percent symptomatic tubers is the first-trial column. Tuber latent infection is the separate percent column.
-# The title and the sheet do not name a place. The Dataverse record lists Carhuaz and La Molina. Country and coordinates are not stored.
-# One check code is stored as 380389.09999999998.
+# The three evaluations in each of three trials are the long table (disease = "bacterial wilt", disease_severity, order = 1..9).
+# Percent symptomatic tubers is stored in tuber_infection_ (%), and latent infection in tuber_latent_ (%).
+# Dataverse record lists Peru (Carhuaz and La Molina); country = "Peru", geo_from_source = FALSE (specific site per set not stated).
 
 ## ISSUES
-# No yield, fertilizer, irrigation, planting date, or coordinates.
+# No yield, fertilizer, irrigation, planting date (collection window 1998-2001), or per-row site coordinates.
 # Reaction type uses both "Moderately susceptible" and "Moderately Susceptible".
-# The collection window in the Dataverse record is 1998 to 2001. The sheet has set numbers, not years.
-# The abstract's 3-point wilt scale does not match the scores.
-# write_files: missing yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: primary_trait_, check_role_, tuber_infection_pct_, tuber_latent_pct_, bw_trial_, eval_, wilt_score_. The long table has no date or depth column.
+# The abstract's 3-point wilt scale does not match the 1-5 scores in the sheet.
 
 ## NOT PROCESSED
 # The dictionary, other than the scale description and the statement that the crop is potato.
@@ -25,12 +21,10 @@
 ## NEW VARIABLES
 # primary_trait_: breeding group on the clone row.
 # check_role_: control class on the check block.
-# tuber_infection_pct_: percent symptomatic tubers on the first-trial block.
-# tuber_latent_pct_: percent latent tuber infection.
-# bw_trial_: 1, 2, or 3.
-# eval_: 1, 2, or 3 within that trial.
-# order on the long table is (trial - 1) * 3 + eval.
-# wilt_score_: mean wilt score at that evaluation.
+# tuber_infection_: percent symptomatic tubers on the first-trial block (%).
+# tuber_latent_: percent latent tuber infection (%).
+# bw_trial_: trial number (1, 2, or 3).
+# eval_: evaluation number (1, 2, or 3) within that trial.
 
 
 carob_script <- function(path) {
@@ -52,13 +46,13 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "wilt_score_;disease_severity",
+		response_vars = "disease_severity;tuber_infection_;tuber_latent_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.65
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for Bacterial Wilt Resistance Data.xls"]
@@ -91,7 +85,8 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 					order = (t - 1L) * 3L + e,
 					bw_trial_ = t,
 					eval_ = e,
-					wilt_score_ = val[keep]
+					disease = "bacterial wilt",
+					disease_severity = as.character(val[keep])
 				)
 			}
 		}
@@ -115,11 +110,13 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 		treatment = variety_m,
 		primary_trait_ = txt(m[[3]]),
 		check_role_ = NA_character_,
-		tuber_infection_pct_ = num(m[[8]]),
-		tuber_latent_pct_ = num(m[[21]]),
-		disease_severity = txt(m[[22]]),
+		tuber_infection_ = num(m[[8]]),
+		tuber_latent_ = num(m[[21]]),
+		reaction_ = txt(m[[22]]),
 		plot_id = paste(clean(m[[1]]), variety_m, sep="-"),
+		pathogen = "Ralstonia solanacearum",
 		stress = "disease",
+		country = "Peru",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE
@@ -132,11 +129,13 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 		treatment = variety_c,
 		primary_trait_ = NA_character_,
 		check_role_ = txt(c[[2]]),
-		tuber_infection_pct_ = num(c[[9]]),
-		tuber_latent_pct_ = num(c[[21]]),
-		disease_severity = txt(c[[22]]),
+		tuber_infection_ = num(c[[9]]),
+		tuber_latent_ = num(c[[21]]),
+		reaction_ = txt(c[[22]]),
 		plot_id = paste(clean(c[[1]]), code_c, sep="-"),
+		pathogen = "Ralstonia solanacearum",
 		stress = "disease",
+		country = "Peru",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE

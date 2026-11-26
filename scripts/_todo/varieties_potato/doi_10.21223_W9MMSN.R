@@ -20,7 +20,6 @@
 # 04_Datadictionary.txt: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# dm_pct_: dry matter, percent, from the column header
 # tuber_Fe_dw_: iron, mg/kg DW
 # tuber_Fe_fw_: iron, mg/100g FW
 # tuber_Zn_dw_: zinc, mg/kg DW
@@ -42,15 +41,15 @@ Mineral and vitamin C assessments were conducted on five potato varieties: Canch
 		data_organization = "CIP",
 		publication = NA,
 		project = NA,
-		design = NA,
+		design = "CRD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "dm_pct_;tuber_Fe_dw_;tuber_Zn_dw_",
+		response_vars = "yield_moisture;tuber_Fe;tuber_Zn",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.4
 	)
 
@@ -73,11 +72,12 @@ Mineral and vitamin C assessments were conducted on five potato varieties: Canch
 		variety_code = trimws(as.character(pick("^INSTN$"))),
 		variety = trimws(as.character(pick("^Accession name$"))),
 		rep = as.integer(pick("^REP$")),
-		dm_pct_ = num(pick("Dry matter")),
-		tuber_Fe_dw_ = num(pick("^Fe \\(mg/kg,DW\\)$")),
+		yield_moisture = 100 - num(pick("Dry matter")),
+		tuber_Fe = num(pick("^Fe \\(mg/kg,DW\\)$")) / 1000,
 		tuber_Fe_fw_ = num(pick("^Fe .*mg/100g,FW")),
-		tuber_Zn_dw_ = num(pick("^Zn \\(mg/kg,DW\\)$")),
+		tuber_Zn = num(pick("^Zn \\(mg/kg,DW\\)$")) / 1000,
 		tuber_Zn_fw_ = num(pick("^Zn .*mg/100g,FW")),
+		planting_date = "2004",
 		country = trimws(as.character(pick("^Country$"))),
 		adm1 = trimws(as.character(pick("^Departament$"))),
 		adm2 = trimws(as.character(pick("^Province$"))),

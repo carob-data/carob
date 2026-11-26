@@ -3,14 +3,13 @@
 
 ## NOTES
 # Plot-level fieldbooks for five Rwanda sites. Bugeshi and Muhoza keep site details on a sheet named Minimal. Burera, Gihonga, and Nyabihu keep the same key-value block on a Summary sheet.
-# TTWP is stored as yield. The fieldbook does not state the unit, and the values are about 0 to 13, so they were not multiplied by 1000.
-# The summary workbook has site means of several hundred. That is a different scale, so those means were not put in yield.
-# Coordinates in the site sheets are degrees and decimal minutes, with S and E. South is stored as a negative latitude. Elevation text such as 2159m is stored as meters.
+# 4034_DataDictionary defines TTWP as total tuber weight per plot (kg/plot). Four sites report Plot size on Minimal/Summary (Burera 9.6 m2, Gihonga 8.4 m2, Muhoza 8.4 m2, Nyabihu 2.1 m2), so yield (kg/ha) = TTWP * 10000 / plot_area. Bugeshi has no plot size on Minimal, so yield is NA there and raw kg/plot is kept in ttwp_.
+# Coordinates in the site sheets are degrees and decimal minutes, with S and E. South is stored as a negative latitude. Elevation text such as 2159m is stored as meters. Bugeshi coordinates (Rubavu district) are added from gazetteer (geo_from_source = FALSE).
 
 ## ISSUES
-# Bugeshi has no latitude or longitude. That site still needs georeferencing.
-# Muhoza Admin3 is written MuhozaSector in the sheet.
-# write_files: missing carob_contributor, yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. low yield (tons not kg?): potato. NA detected: latitude, longitude (Bugeshi). TTWP was not multiplied because the fieldbook does not state the unit.
+# Nyabihu Summary lists Plot size = 2.1, number row per plot = 3, number tuber per plot = 30. Confirm whether 2.1 m2 is the full plot area or one row (3 * 2.1 = 6.3 m2); using 2.1 m2 yields up to 87 t/ha.
+# Bugeshi has no Plot size in Minimal, so yield is NA for Bugeshi (raw kg/plot stored in ttwp_).
+# No fertilizer rates, irrigation, or yield moisture reported.
 
 ## NOT PROCESSED
 # 4034_Summary_yield2014.xlsx: site means on a different numeric scale from fieldbook TTWP, and the unit is not stated.
@@ -20,7 +19,7 @@
 # 4034_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# None beyond yield.
+# ttwp_: total tuber weight per plot (kg/plot) as recorded in the fieldbook.
 
 
 carob_script <- function(path) {
@@ -46,9 +45,9 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.5
 	)
 
 	num <- function(x) {
@@ -111,16 +110,20 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 			if (!length(hit)) NA_character_ else chr(r1[[2]][hit[1]])
 		}
 		r <- carobiner::read.excel(f, sheet=books$fieldbook[i])
+		ps <- num(val("Plot size"))
+		ttwp <- num(r$TTWP)
 		data.frame(
 			variety = chr(r$INSTN),
 			treatment = chr(r$INSTN),
 			rep = as.integer(num(r$REP)),
-			yield = num(r$TTWP),
+			plot_area = ps,
+			ttwp_ = ttwp,
+			yield = if (!is.na(ps) && ps > 0) ttwp * 10000 / ps else NA_real_,
 			country = val("Country"),
 			adm1 = val("Admin1"),
-			adm2 = val("Admin2"),
-			adm3 = val("Admin3"),
-			location = val("Locality"),
+			adm2 = trimws(sub("\\s+District$", "", val("Admin2"))),
+			adm3 = trimws(sub("Sector$", "", val("Admin3"))),
+			location = trimws(sub("\\s+village$", "", val("Locality"), ignore.case=TRUE)),
 			elevation = elev(val("Elevation")),
 			latitude = dms(val("Latitude")),
 			longitude = dms(val("Longitude")),
@@ -132,10 +135,15 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 	d <- d[!is.na(d$variety), ]
 	d$crop <- "potato"
 	d$yield_part <- "tubers"
+	d$yield_isfresh <- TRUE
 	d$trial_id <- paste(d$location, d$planting_date)
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	# Bugeshi sector, Rubavu District, Rwanda
+	bug <- is.na(d$latitude) & grepl("Bugeshi", d$adm3, ignore.case=TRUE)
+	d$latitude[bug] <- -1.583
+	d$longitude[bug] <- 29.400
 
 	carobiner::write_files(path, meta, d)
 }

@@ -50,8 +50,8 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.6
 	)
 
@@ -96,7 +96,9 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 
 	d$crop <- "potato"
 	d$country <- "Peru"
+	d$adm1 <- "Pasco"
 	d$location <- "Oxapampa"
+	d$planting_date <- "2022"
 	d$elevation <- 1810
 	d$latitude <- as.numeric(sval("Latitude"))
 	d$longitude <- as.numeric(sval("Longitude"))

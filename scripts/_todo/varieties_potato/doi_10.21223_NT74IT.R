@@ -2,14 +2,15 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Association-panel trial in Ica, Peru, 2017. The description states an augmented block design and two water regimes, NI and REC.
-# Data S6 defines TTYA as TTWPL * plant density * 1000 and does not say whether that product is t/ha or kg/ha. The number is stored as yield without multiplying by 1000.
-# Metabolite columns are the NMR signals in Data S2. The sheet does not state the unit. They are one row per genotype and water regime, not per plot.
+# Association-panel trial in Ica, Peru, 2017. The description states an augmented block design and two water regimes, NI (normal irrigation) and REC (water deficit with recovery).
+# TTYA (0..45.02, median 10.18) is total tuber yield adjusted in t/ha (matching TTWPL median 0.275 kg/plant * ~37,037 plants/ha / 1000). Stored as kg/ha (TTYA * 1000).
+# TDMC (11.39..29.27 %) is tuber dry matter content, stored as yield_moisture = 100 - TDMC.
+# Metabolite columns are the NMR signals in Data S2 (unit not stated). They are one row per genotype and water regime.
+# Ica, Peru coordinates added from gazetteer (geo_from_source = FALSE).
 
 ## ISSUES
-# No coordinates for the Ica field.
-# No fertilizer rates.
-# write_files: missing carob_contributor, yield_moisture, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: water_regime_, ttwp_, and the metabolite columns. low yield (tons not kg?): potato. NA detected: yield.
+# No exact planting/harvest calendar dates (only year 2017) and no fertilizer rates.
+# Data S2 metabolite rows are stacked separately from Data S1 morphological rows (so yield is NA on metabolite rows).
 
 ## NOT PROCESSED
 # Data S3 SNP marker set and Data S4 fumarate-associated genes: marker tables, not plot phenotypes.
@@ -44,12 +45,12 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 		design = "augmented block",
 		data_type = "experiment",
 		treatment_vars = "variety;water_regime_",
-		response_vars = "yield",
+		response_vars = "yield;yield_moisture",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.5
 	)
 
@@ -85,7 +86,8 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 	d1 <- data.frame(
 		variety = chr(r1$INSTN),
 		water_regime_ = chr(r1$Treatment),
-		yield = num(r1$TTYA),
+		yield = num(r1$TTYA) * 1000,
+		yield_moisture = 100 - num(r1$TDMC),
 		ttwp_ = num(r1$TTWP)
 	)
 	ped <- data.frame(
@@ -109,10 +111,17 @@ All 258 genotypes of the potato association panel were grown in a field trial in
 	d$treatment <- paste(d$variety, d$water_regime_)
 	d$crop <- "potato"
 	d$yield_part <- "tubers"
+	d$yield_isfresh <- TRUE
+	d$irrigated <- TRUE
+	d$planting_date <- "2017"
 	d$country <- "Peru"
 	d$adm1 <- "Ica"
 	d$location <- "Ica"
-	d$trial_id <- paste("Ica_2017", d$variety, d$water_regime_, seq_len(nrow(d)), sep="_")
+	d$latitude <- -14.0678
+	d$longitude <- -75.7286
+	d$geo_from_source <- FALSE
+	d$trial_id <- "Ica_2017"
+	d$plot_id <- as.character(seq_len(nrow(d)))
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 

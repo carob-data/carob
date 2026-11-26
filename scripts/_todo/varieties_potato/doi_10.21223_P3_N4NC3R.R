@@ -19,9 +19,9 @@
 # 02_Data_dictionary_costs.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# harvest_kg_improved_: measured improved-potato harvest, kg
-# harvest_kg_native_: measured native-potato harvest, kg
-# mashua_harvest_kg_: measured mashua harvest, kg
+# harvest_improved_: measured improved-potato harvest (kg)
+# harvest_native_: measured native-potato harvest (kg)
+# mashua_harvest_: measured mashua harvest (kg)
 # variety_improved_: Variedad_PMEJ
 # variety_native_: Variedad_PNAT
 
@@ -44,13 +44,13 @@ This dataset comes from an exploratory field study with 21 farmers in the distri
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
-		response_vars = "harvest_kg_improved_",
+		response_vars = "harvest_improved_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 25,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 30,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "01_Data_ economic profitability.xlsx"]
@@ -60,13 +60,14 @@ This dataset comes from an exploratory field study with 21 farmers in the distri
 		crop = "potato",
 		variety_improved_ = trimws(as.character(r$Variedad_PMEJ)),
 		variety_native_ = trimws(as.character(r$Variedad_PNAT)),
-		harvest_kg_improved_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_PMEJ),
-		harvest_kg_native_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_PNAT),
-		mashua_harvest_kg_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_MASH),
+		harvest_improved_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_PMEJ),
+		harvest_native_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_PNAT),
+		mashua_harvest_ = num(r$Cantidad_cosecha_medida_TOTAL_KG_MASH),
 		country = "Peru",
 		trial_id = "Pazos_Quilcas",
 		on_farm = TRUE,
 		is_survey = TRUE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
 	d$plot_id <- as.character(seq_len(nrow(d)))

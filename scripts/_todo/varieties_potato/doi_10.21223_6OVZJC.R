@@ -8,10 +8,17 @@
 # Replication is coded rep-1 and rep-2. A dash is missing.
 
 ## ISSUES
-# No coordinates. Huancavelica needs georeferencing.
-# No yield, fertilizer, irrigation, or planting and harvest dates.
+# Huancavelica, Peru coordinates (-12.787, -74.973) added from gazetteer (geo_from_source = FALSE).
+# No yield, fertilizer, irrigation, or exact planting/harvest calendar dates (year 2015 only).
 # Dry matter in the genotype file is two replicate columns and is not joined, because it is not one value per sensory row.
-# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: storage_ (dmy_storage?). unknown variables: sample_code_, panelist_, session_, attribute_, sensory_score_.
+
+## NEW VARIABLES
+# storage_: post-harvest state ("fresh" or "after_storage").
+# sample_code_: sample identifier linking to genotype table.
+# panelist_: trained panelist identifier.
+# session_: sensory evaluation session identifier.
+# attribute_: sensory attribute evaluated (sourness, bitterness, sweetness, potato flavour, savouriness, texture).
+# sensory_score_: unstructured 0-10 panelist score.
 
 ## NOT PROCESSED
 # Dataset Sensory Analysis - genotypes.xlsx: dry matter replicates, species, flesh color, and processing notes. The genotype name is used.
@@ -41,9 +48,9 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
+		carob_effort = 0.4
 	)
 
 	f1 <- ff[basename(ff) == "Dataset Sensory Analysis - data.xlsx"]
@@ -66,6 +73,9 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		country = "Peru",
 		adm1 = "Huancavelica",
 		location = "Huancavelica",
+		latitude = -12.787,
+		longitude = -74.973,
+		planting_date = "2015",
 		crop = "potato",
 		variety = variety,
 		variety_type = trimws(as.character(r$potato_type)),

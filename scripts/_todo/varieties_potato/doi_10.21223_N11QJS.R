@@ -54,15 +54,15 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 		data_organization = "CIP",
 		publication = "doi:10.4160/9789290605935",
 		project = NA,
-		design = NA,
+		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "fe_dw_mean_",
+		response_vars = "fe_dw_mean_;zn_dw_mean_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 30,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 35,
 		carob_effort = 0.4
 	)
 
@@ -86,9 +86,12 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 		fe_dw_mean_ = num(y$Mean_FEDW),
 		zn_dw_mean_ = num(y$Mean_ZNDW),
 		country = "Peru",
+		plot_area = 9.72,
+		row_spacing = 90,
 		trial_id = "PVS_sierra",
-		on_farm = NA,
+		on_farm = TRUE,
 		is_survey = FALSE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
 	d$treatment <- d$variety

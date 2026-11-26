@@ -47,13 +47,13 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		design = "CRD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "tuber_Fe_dw_;tuber_Zn_dw_;tuber_ascorbate_dw_",
+		response_vars = "tuber_Fe;tuber_Zn;vitamin_C",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
+		carob_effort = 0.5
 	)
 
 	read_txt <- function(f) {
@@ -66,9 +66,9 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		r1
 	}
 	col_one <- function(x, pattern) {
-		hit <- grep(pattern, names(r1))
-		if (length(hit) != 1) return(rep(NA_real_, nrow(r1)))
-		z <- trimws(as.character(r1[[hit]]))
+		hit <- grep(pattern, names(x))
+		if (length(hit) != 1) return(rep(NA_real_, nrow(x)))
+		z <- trimws(as.character(x[[hit]]))
 		# Below-detection results are stored as "< 0.2" and similar. They are missing concentrations, not zeros.
 		z[grepl("^<", z)] <- NA_character_
 		as.numeric(z)
@@ -79,8 +79,8 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		for (el in elements) {
 			dw <- paste0("^", el, " \\(mg/kg, ?DW\\)?$")
 			fw <- paste0("^", el, " \\(mg/100 ?g, ?FW\\)?$")
-			if (length(grep(dw, names(r1))) == 1) out[[paste0("tuber_", el, "_dw_")]] <- col_one(r1, dw)
-			if (length(grep(fw, names(r1))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(r1, fw)
+			if (length(grep(dw, names(x))) == 1) out[[paste0("tuber_", el)]] <- col_one(x, dw) / 1000
+			if (length(grep(fw, names(x))) == 1) out[[paste0("tuber_", el, "_fw_")]] <- col_one(x, fw)
 		}
 		as.data.frame(out)
 	}
@@ -136,7 +136,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 	vv <- data.frame(
 		key = paste(vinst, as.integer(v$REP)),
 		tuber_ascorbate_dw_ = col_one(v, "Ascorbic acid.*DW"),
-		tuber_ascorbate_fw_ = col_one(v, "Ascorbic acid.*FW"),
+		vitamin_C = col_one(v, "Ascorbic acid.*FW"),
 		tuber_dry_matter_vitamin_ = col_one(v, "^Percentage Dry matter")
 	)
 	vv <- vv[!duplicated(vv$key), ]

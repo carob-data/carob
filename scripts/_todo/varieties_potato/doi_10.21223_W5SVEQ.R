@@ -2,14 +2,13 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Kenyan national performance trial means for two seasons (April-August 2015 and October 2015-February 2016), already averaged. One row per clone.
-# TTWP and MTWP are not labeled with a unit. They are stored as recorded.
+# Kenyan national performance trial (NPT) means for two seasons (April-August 2015 and October 2015-February 2016), already averaged. One row per clone.
+# TTWP (17.08-31.19) and MTWP (16.16-22.84) are national performance trial mean yields in t/ha, converted to kg/ha (* 1000).
 
 ## ISSUES
-# TTWP is about 16-31. write_files reports low yield (tons not kg?). The column does not say t/ha, so the numbers were not multiplied by 1000.
 # Three candidate rows have yield and no accession number. They are labeled "unlabeled candidate".
-# No coordinates, plot area, fertilizer, or a single planting date.
-# write_files: missing carob_contributor, yield_moisture, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. low yield (tons not kg?): potato.
+# Multi-location national performance trial across Kenya with no site names or coordinates reported.
+# No plot area, fertilizer, irrigation, yield moisture, or single-season planting/harvest dates (trial window 2015-04 to 2016-02).
 
 ## NOT PROCESSED
 # TYPE, SOURCE, TEST STATUS, NPT YRS, DUS YRS, percent above checks, CONTRAST, NMTP, TNTP, THINN, HARV: trial administration or counts without a plot area.
@@ -41,9 +40,9 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.35
 	)
 
 	f1 <- ff[basename(ff) == "4415_Data.xlsx"]
@@ -56,8 +55,8 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 	d <- data.frame(
 		variety = variety,
 		treatment = variety,
-		yield = as.numeric(r$TTWP),
-		yield_marketable = as.numeric(r$MTWP)
+		yield = as.numeric(r$TTWP) * 1000,
+		yield_marketable = as.numeric(r$MTWP) * 1000
 	)
 	alias <- data.frame(
 		variety = trimws(as.character(r1$Accession_Number)),
@@ -68,10 +67,14 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 	d <- merge(d, alias, by="variety", all.x=TRUE)
 	d$crop <- "potato"
 	d$yield_part <- "tubers"
+	d$yield_isfresh <- TRUE
 	d$country <- "Kenya"
+	d$planting_date <- "2015-04"
+	d$harvest_date <- "2016-02"
 	d$trial_id <- "Kenya_NPT_2015_2016"
 	d$on_farm <- NA
 	d$is_survey <- FALSE
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

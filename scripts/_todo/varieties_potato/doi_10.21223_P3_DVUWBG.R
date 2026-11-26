@@ -9,11 +9,10 @@
 # Trophic group is stored in lower case.
 
 ## ISSUES
-# No coordinates in the file.
+# Cañete, Lima, Peru coordinates (-13.077, -76.386) added from gazetteer (geo_from_source = FALSE).
 # The landscape treatment (simple Cañete versus complex Ihuanco) is not on the specimen rows. The trophic workbook has those totals, and using it as well as the specimen sheet would double count.
 # No fertilizer rate, irrigation statement, or yield.
 # The long table has no sampling date. order is the row order in the specimen sheet.
-# write_files: missing yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. time/depth: no time/depth variables in long records. unknown variables: trap_type_, arthropod_order_ (suggested name order), arthropod_family_, arthropod_taxon_, arthropod_guild_, arthropod_count_.
 
 ## NOT PROCESSED
 # subchapter 2.1_Trophic groups dataset.xlsx. Landscape sums of the specimen counts.
@@ -52,9 +51,9 @@ The study was conducted during the winter cropping season (from July to November
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
-		carob_effort = 0.45
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 40,
+		carob_effort = 0.5
 	)
 
 	f <- ff[basename(ff) == "subchapter 2.1_Arthropod community dataset.xls"]
@@ -73,6 +72,8 @@ The study was conducted during the winter cropping season (from July to November
 		adm1 = "Lima",
 		adm2 = "Cañete",
 		location = "Cañete",
+		latitude = -13.077,
+		longitude = -76.386,
 		# Description: July to November 2006.
 		planting_date = "2006-07",
 		harvest_date = "2006-11",

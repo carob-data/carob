@@ -62,9 +62,9 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.55
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 72,
+		carob_effort = 0.65
 	)
 
 	num <- function(x) as.numeric(as.character(x))
@@ -76,7 +76,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		trimws(as.character(x))
 	}
 	soil_val <- function(soil, abbrev) {
-		hit <- r5$Data1[trimws(as.character(r5$Abbreviture)) == abbrev]
+		hit <- soil$Data1[trimws(as.character(soil$Abbreviture)) == abbrev]
 		if (length(hit) == 0) return(NA_real_)
 		num(hit[1])
 	}

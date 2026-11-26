@@ -2,16 +2,14 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Greenhouse inoculations at CIP-Lima, June to December 2019. The description says severity was read 4 and 6 days after inoculation. Those are LB1 and LB2, kept in the long table.
+# Greenhouse inoculations at CIP-Lima, June to December 2019. The description says severity was read 4 and 6 days after inoculation. Those are LB1 and LB2, kept in the long table (severity_scale = "0-100").
+# AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150).
 # Genotype is a within-accession index (1 to 180) reused across accessions. It is stored as genotype_, not as a field replicate. The accession number is the variety. Four experiment-accession-genotype combinations occur twice. record_id keeps those rows.
-# Country Peru and location CIP-Lima are in the description. The files have no coordinates.
+# Country Peru and CIP-Lima coordinates (-12.078, -76.946, geo_from_source = FALSE) added from description.
 
 ## ISSUES
 # Greenhouse variety screen. No yield, fertilizer, or field plot.
-# CIP-Lima needs a coordinate if one is added later. None is in the files.
-# AUDPC scale is not stated. Values reach 190 and are stored as recorded. LB readings reach 90. The unit is not stated.
 # SAUDPC reaches 11.8, so it is not the 0-1 sAUDPC term and not a 0-9 scale. It is kept as late_blight_saudpc_.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: late_blight_saudpc_, genotype_, days_after_inoculation_. out of bounds: AUDPC (0, 190).
 
 ## NEW VARIABLES
 # genotype_: genotype index within an accession.
@@ -49,9 +47,9 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in Peruvian wild potato species  2019.xlsx"]
@@ -69,10 +67,13 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		treatment = variety,
 		genotype_ = rep,
 		country = "Peru",
+		adm1 = "Lima",
 		location = "CIP-Lima",
+		latitude = -12.078,
+		longitude = -76.946,
 		planting_date = "2019",
 		trial_id = paste("CIP-Lima", experiment, "2019"),
-		AUDPC = as.numeric(r$AUDPC),
+		AUDPC = as.numeric(r$AUDPC) / 100,
 		rAUDPC = as.numeric(r$rAUDPC),
 		late_blight_saudpc_ = as.numeric(r$SAUDPC),
 		pathogen = "Phytophthora infestans",
@@ -86,8 +87,9 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		data.frame(
 			record_id = d$record_id,
 			order = as.integer(order),
-			days_after_inoculation_ = day,
+			DAI = as.integer(day),
 			disease_severity = as.character(values),
+			severity_scale = "0-100",
 			disease = "potato late blight"
 		)
 	}

@@ -13,7 +13,8 @@
 
 ## ISSUES
 # No fertilizer, irrigation, harvest date, or CIP-Quito coordinates. The abstract gives CIP-Quito as 3058 m.
-# write_files: missing yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: mechanical_damage_, tuber_code_, source_field_m2_, seed_tuber_weight_g_, sprout_number_, emerged_, stem_number_, misshapen_, immature_, pvx_, pvy_, pvs_, plrv_, aplv_, apmov_, pva_, pyvv_, tubers_gt80g_, tubers_61_80g_, tubers_41_60g_, tubers_lt40g_, weight_gt80g_, weight_61_80g_, weight_41_60g_, weight_lt40g_, stage_, disorder_, measure_, percent_. out of bounds: plant_height (0, 10850). The long table has no date or depth column. The suggestions age and order are different variables and were not used.
+# plant_height has one value recorded as 108.5 (m -> 10850 cm, likely entered in cm); kept as recorded.
+# Several diseases and pests in the long table (Andean potato latent virus, Andean potato mottle virus, potato yellow vein virus, black leg, black scurf, fusarium, silver scurf, powdery scab, Andean potato weevil, potato tuber moth, white grub, wireworm, flea beetle) are not yet in terminag values_disease / values_pest; kept in disease / pest_species per Carob guidelines so maintainers can add them.
 
 ## NOT PROCESSED
 # Brote. It is not in the dictionary.
@@ -23,22 +24,19 @@
 
 ## NEW VARIABLES
 # tuber_code_: tuber number on the sheet. It is not unique inside a field.
-# seed_source: farmer seed source.
-# source_field_m2_: area of the farmer field, m2.
-# seed_tuber_weight_g_: seed tuber weight, g.
+# source_field_area_: area of the farmer field (m2).
+# seed_tuber_weight_: seed tuber fresh weight (g).
 # sprout_number_: sprouts on the seed tuber.
 # emerged_: 1 if the plant had emerged at 45 days.
 # stem_number_: stems per plant.
 # misshapen_: 1 if the seed tuber was misshapen.
 # mechanical_damage_: 1 if the seed tuber was mechanically damaged.
 # immature_: 1 if the seed tuber was immature.
-# pvx_, pvy_, pvs_, plrv_, aplv_, apmov_, pva_, pyvv_: 1 if that virus was detected on the seed tuber.
-# tubers_gt80g_, tubers_61_80g_, tubers_41_60g_, tubers_lt40g_: progeny tuber counts per plant in those fresh-weight classes.
-# weight_gt80g_, weight_61_80g_, weight_41_60g_, weight_lt40g_: progeny weight in those classes, g per plant.
-# stage_: seed or progeny.
-# disorder_: the pest or disease named in the dictionary.
-# measure_: severity (percent of tuber area) or incidence (percent of tubers).
-# percent_: that percentage.
+# tubers_class1_, tubers_class2_, tubers_class3_, tubers_class4_: progeny tuber counts per plant (>80 g, 61-80 g, 41-60 g, <40 g).
+# weight_class1_, weight_class2_, weight_class3_, weight_class4_: progeny tuber fresh weight per plant in those size classes (g/plant).
+# stage_: seed (order = 1) or progeny (order = 2).
+# defect_: physiological/mechanical tuber defect (cracking, misshapen, mechanical damage) in long table.
+# defect_pct_: percentage severity or incidence for physiological/mechanical tuber defects.
 
 
 carob_script <- function(path) {
@@ -60,13 +58,13 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "variety",
-		response_vars = "plant_height;seed_tuber_weight_g_;weight_gt80g_",
+		response_vars = "plant_height;seed_tuber_weight_;weight_class1_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.9
 	)
 
 	f1 <- ff[basename(ff) == "Losses yield determination.xls"]
@@ -125,9 +123,9 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		latitude = dms(r2$Latitude)[gi],
 		longitude = dms(r2$Longitude)[gi],
 		seed_source = trimws(as.character(r2[["Seed source"]][gi])),
-		source_field_m2_ = as.numeric(r2[[area_col]][gi]),
+		source_field_area_ = as.numeric(r2[[area_col]][gi]),
 		planting_date = "2010-10",
-		seed_tuber_weight_g_ = num(r1$Peso),
+		seed_tuber_weight_ = num(r1$Peso),
 		sprout_number_ = num(r1$NumBrote),
 		emerged_ = flag(r1$Emerg),
 		stem_number_ = num(r1$Num_tallos),
@@ -135,22 +133,14 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		misshapen_ = flag(r1$Deformidad),
 		mechanical_damage_ = flag(r1$D_mecanico),
 		immature_ = flag(r1$Pelona),
-		pvx_ = flag(r1$PVX),
-		pvy_ = flag(r1$PVY),
-		pvs_ = flag(r1$PVS),
-		plrv_ = flag(r1$PLRV),
-		aplv_ = flag(r1$APLV),
-		apmov_ = flag(r1$APMoV),
-		pva_ = flag(r1$PVA),
-		pyvv_ = flag(r1$PYVV),
-		tubers_gt80g_ = num(r1$Num_prim),
-		tubers_61_80g_ = num(r1$Num_seg),
-		tubers_41_60g_ = num(r1$Num_ter),
-		tubers_lt40g_ = num(r1$Num_cuar),
-		weight_gt80g_ = num(r1$P_prim),
-		weight_61_80g_ = num(r1$P_seg),
-		weight_41_60g_ = num(r1$P_ter),
-		weight_lt40g_ = num(r1$P_cuar),
+		tubers_class1_ = num(r1$Num_prim),
+		tubers_class2_ = num(r1$Num_seg),
+		tubers_class3_ = num(r1$Num_ter),
+		tubers_class4_ = num(r1$Num_cuar),
+		weight_class1_ = num(r1$P_prim),
+		weight_class2_ = num(r1$P_seg),
+		weight_class3_ = num(r1$P_ter),
+		weight_class4_ = num(r1$P_cuar),
 		stress = "pests;disease",
 		on_farm = TRUE,
 		is_survey = TRUE,
@@ -158,46 +148,88 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 	)
 	d$record_id <- seq_len(nrow(d))
 
+	# Seed-tuber virus ELISA (0/1 -> 0/100% incidence), disease, pest, and defect records in long table
+	virus_specs <- list(
+		list("PVX", "potato virus X"),
+		list("PVY", "potato virus Y"),
+		list("PVS", "potato virus S"),
+		list("PLRV", "potato leafroll virus"),
+		list("PVA", "potato virus A"),
+		list("APLV", "Andean potato latent virus"),
+		list("APMoV", "Andean potato mottle virus"),
+		list("PYVV", "potato yellow vein virus")
+	)
+	vparts <- lapply(virus_specs, function(sp) {
+		val <- flag(r1[[sp[[1]]]])
+		keep <- !is.na(val)
+		data.frame(
+			record_id = d$record_id[keep],
+			order = 1L,
+			stage_ = "seed",
+			disease = sp[[2]],
+			disease_incidence = as.character(val[keep] * 100)
+		)
+	})
+
+	# kind: "disease", "pest", or "defect"; measure: "severity" or "incidence"
 	specs <- list(
-		list("Pie_Negro", "seed", "black leg", "severity"),
-		list("Agrietamiento", "seed", "cracking", "severity"),
-		list("Rhizoctoniasis", "seed", "black scurf", "severity"),
-		list("Fusariosis", "seed", "fusarium", "severity"),
-		list("Mancha_plateada", "seed", "silver scurf", "severity"),
-		list("Ronia", "seed", "powdery scab", "severity"),
-		list("Gusano_blanco", "seed", "Andean weevil", "severity"),
-		list("Polilla", "seed", "tuber moth", "severity"),
-		list("Cutzo", "seed", "white grub", "severity"),
-		list("Gusano_alambre", "seed", "wireworm", "severity"),
-		list("Pulguilla", "seed", "flea beetle", "severity"),
-		list("S_Rhizoc", "progeny", "black scurf", "severity"),
-		list("S_Fusarium", "progeny", "fusarium", "severity"),
-		list("S_Gusano_blanco", "progeny", "Andean weevil", "severity"),
-		list("S_Cutzo", "progeny", "white grub", "severity"),
-		list("S_Agrietamiento", "progeny", "cracking", "severity"),
-		list("I_Deformes", "progeny", "misshapen", "incidence"),
-		list("I_Danio_Mec", "progeny", "mechanical damage", "incidence"),
-		list("I_Erwinia", "progeny", "black leg", "incidence"),
-		list("I_Rhizoc", "progeny", "black scurf", "incidence"),
-		list("I_Fusarium", "progeny", "fusarium", "incidence"),
-		list("I_Gusano_blanco", "progeny", "Andean weevil", "incidence"),
-		list("I_Cutzo", "progeny", "white grub", "incidence"),
-		list("I_Agrietamiento", "progeny", "cracking", "incidence")
+		list("Pie_Negro", "seed", 1L, "disease", "black leg", "severity"),
+		list("Agrietamiento", "seed", 1L, "defect", "cracking", "severity"),
+		list("Rhizoctoniasis", "seed", 1L, "disease", "black scurf", "severity"),
+		list("Fusariosis", "seed", 1L, "disease", "fusarium", "severity"),
+		list("Mancha_plateada", "seed", 1L, "disease", "silver scurf", "severity"),
+		list("Ronia", "seed", 1L, "disease", "powdery scab", "severity"),
+		list("Gusano_blanco", "seed", 1L, "pest", "Andean potato weevil", "severity"),
+		list("Polilla", "seed", 1L, "pest", "potato tuber moth", "severity"),
+		list("Cutzo", "seed", 1L, "pest", "white grub", "severity"),
+		list("Gusano_alambre", "seed", 1L, "pest", "wireworm", "severity"),
+		list("Pulguilla", "seed", 1L, "pest", "flea beetle", "severity"),
+		list("S_Rhizoc", "progeny", 2L, "disease", "black scurf", "severity"),
+		list("S_Fusarium", "progeny", 2L, "disease", "fusarium", "severity"),
+		list("S_Gusano_blanco", "progeny", 2L, "pest", "Andean potato weevil", "severity"),
+		list("S_Cutzo", "progeny", 2L, "pest", "white grub", "severity"),
+		list("S_Agrietamiento", "progeny", 2L, "defect", "cracking", "severity"),
+		list("I_Deformes", "progeny", 2L, "defect", "misshapen", "incidence"),
+		list("I_Danio_Mec", "progeny", 2L, "defect", "mechanical damage", "incidence"),
+		list("I_Erwinia", "progeny", 2L, "disease", "black leg", "incidence"),
+		list("I_Rhizoc", "progeny", 2L, "disease", "black scurf", "incidence"),
+		list("I_Fusarium", "progeny", 2L, "disease", "fusarium", "incidence"),
+		list("I_Gusano_blanco", "progeny", 2L, "pest", "Andean potato weevil", "incidence"),
+		list("I_Cutzo", "progeny", 2L, "pest", "white grub", "incidence"),
+		list("I_Agrietamiento", "progeny", 2L, "defect", "cracking", "incidence")
 	)
 	parts <- lapply(specs, function(sp) {
 		val <- r1[[sp[[1]]]]
 		if (sp[[1]] == "Rhizoctoniasis") val[trimws(val) == "0,1"] <- "0.1"
 		pct <- num(val)
 		keep <- !is.na(pct)
-		data.frame(
+		out <- data.frame(
 			record_id = d$record_id[keep],
-			stage_ = sp[[2]],
-			disorder_ = sp[[3]],
-			measure_ = sp[[4]],
-			percent_ = pct[keep]
+			order = sp[[3]],
+			stage_ = sp[[2]]
 		)
+		if (sp[[4]] == "disease") {
+			out$disease <- sp[[5]]
+			if (sp[[6]] == "severity") {
+				out$disease_severity <- as.character(pct[keep])
+				out$severity_scale <- "0-100"
+			} else {
+				out$disease_incidence <- as.character(pct[keep])
+			}
+		} else if (sp[[4]] == "pest") {
+			out$pest_species <- sp[[5]]
+			if (sp[[6]] == "severity") {
+				out$pest_severity <- as.character(pct[keep])
+			} else {
+				out$pest_incidence <- as.integer(round(pct[keep]))
+			}
+		} else {
+			out$defect_ <- sp[[5]]
+			out$defect_pct_ <- pct[keep]
+		}
+		out
 	})
-	long <- do.call(rbind, parts)
+	long <- do.call(carobiner::bindr, c(vparts, parts))
 	rownames(d) <- NULL
 	rownames(long) <- NULL
 

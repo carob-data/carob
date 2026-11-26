@@ -10,11 +10,9 @@
 
 ## ISSUES
 # Biomass is per plant, so yield in kg/ha is not computed.
-# No fertilizer and no planting or harvest calendar date. The metadata window is May-September 2013.
+# No fertilizer and no exact planting/harvest day (metadata window May-September 2013 stored as 2013-05 / 2013-09).
 # The bounding box gives only the south and west edges, to 0.1 degree.
 # The photosynthesis dictionary prints two different units on the intrinsic water-use row. A/gs is stored as recorded.
-# write_files: ; yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: unknown variables: narea_, A_, tio_days_, harvest_number_, agb_g_, tb_g_, leaflet_d13c_, tuber_d13c_, gs_, ags_.
 
 ## NOT PROCESSED
 # none beyond the dictionary workbooks, which were used for units.
@@ -22,15 +20,16 @@
 # Data_Dictionary_Photosynthesis_isotopes.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
+# water_regime_: water treatment (C = well-watered control, S = water-deficit stress at 50% of control soil moisture)
 # tio_days_: days after tuber initiation onset
 # harvest_number_: harvest 1 to 6 in the biomass file
-# narea_: leaf N, g/m2
-# agb_g_: dry aboveground biomass, g/plant
-# tb_g_: dry tuber biomass, g/plant
-# leaflet_d13c_: leaflet 13C discrimination, per mil
-# tuber_d13c_: tuber 13C discrimination, per mil
-# gs_: stomatal conductance, mol H2O m-2 s-1
-# A_: net photosynthesis, mmol CO2 m-2 s-1
+# narea_: leaf N (g/m2)
+# agb_: dry aboveground biomass (g/plant)
+# tb_: dry tuber biomass (g/plant)
+# leaflet_d13c_: leaflet 13C discrimination (per mil)
+# tuber_d13c_: tuber 13C discrimination (per mil)
+# gs_: stomatal conductance (mol H2O m-2 s-1)
+# A_: net photosynthesis (mmol CO2 m-2 s-1)
 # ags_: intrinsic water-use efficiency, A/gs as recorded
 
 carob_script <- function(path) {
@@ -51,14 +50,14 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "agb_g_;tb_g_",
+		treatment_vars = "variety;water_regime_",
+		response_vars = "agb_;tb_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.45
 	)
 
 	blank <- function(x) {
@@ -76,19 +75,21 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 	dh <- data.frame(
 		plot_id = paste("H", blank(r1$ID), sep="_"),
 		variety = blank(r1$Genotype),
-		treatment = blank(r1$Treatment),
+		water_regime_ = blank(r1$Treatment),
+		treatment = paste(blank(r1$Genotype), blank(r1$Treatment)),
 		tio_days_ = num(r1[["Days after TIO"]]),
 		harvest_number_ = num(r1$Harvest),
 		narea_ = num(r1$Narea),
-		agb_g_ = num(r1$AGB),
-		tb_g_ = num(r1$TB),
+		agb_ = num(r1$AGB),
+		tb_ = num(r1$TB),
 		leaflet_d13c_ = num(r1$DeltaLeaflet),
 		tuber_d13c_ = num(r1$DeltaT)
 	)
 	dp <- data.frame(
 		plot_id = paste("P", blank(r2$ID), sep="_"),
 		variety = blank(r2$Genotype),
-		treatment = blank(r2$Treatment),
+		water_regime_ = blank(r2$Treatment),
+		treatment = paste(blank(r2$Genotype), blank(r2$Treatment)),
 		tio_days_ = num(r2[["Days after TIO"]]),
 		gs_ = num(r2$gs),
 		A_ = num(r2$A),
@@ -104,7 +105,9 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 	d$geo_from_source <- TRUE
 	d$geo_uncertainty <- 12000
 	d$geo_source <- "Dataverse bounding box edges southLatitude 12.1 and westLongitude 77, signs applied"
-	d$stress <- ifelse(d$treatment == "S", "drought", "none")
+	d$planting_date <- "2013-05"
+	d$harvest_date <- "2013-09"
+	d$stress <- ifelse(d$water_regime_ == "S", "drought", "none")
 	d$trial_id <- "LaMolina_greenhouse_2013"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE

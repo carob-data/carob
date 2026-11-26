@@ -56,8 +56,8 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 		response_vars = "yield;yield_marketable",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.9,
 		notes = NA
 	)
@@ -96,8 +96,16 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 		)
 	}
 	d <- do.call(rbind, parts)
+	geo <- data.frame(
+		adm2 = c("Nyabihu", "Nyamagabe", "Gicumbi"),
+		latitude = c(-1.653, -2.467, -1.617),
+		longitude = c(29.507, 29.567, 30.067)
+	)
+	gm <- match(d$adm2, geo$adm2)
 	d$country <- "Rwanda"
 	d$location <- d$adm3
+	d$latitude <- geo$latitude[gm]
+	d$longitude <- geo$longitude[gm]
 	d$crop <- "potato"
 	d$yield_part <- "tubers"
 	d$yield_isfresh <- TRUE

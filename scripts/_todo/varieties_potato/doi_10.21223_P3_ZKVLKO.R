@@ -9,21 +9,16 @@
 # The material list has no variety names, and many species fields say "in revision", so the variety is the institutional number.
 
 ## ISSUES
-# No coordinates, fertilizer rate, irrigation statement, or yield.
-# Oxapampa as a province should be checked against GADM. It is stored as the location, with adm1 Pasco.
-# The score sequence has no date, so the long table uses order rather than a day count.
-# write_files: missing yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variable late_blight_pct_. The long table has no date or depth column.
+# No fertilizer rate, irrigation statement, calendar dates (year only), or yield.
+# Oxapampa, Pasco, Peru coordinates (-10.5775, -75.4017) added from gazetteer (geo_from_source = FALSE).
+# The score sequence has no date, so the long table uses order (1..7).
 
 ## NOT PROCESSED
 # 04_BLUEs_by_env.csv. Those are model estimates, not the plot measurements.
 # Row and column coordinates of the field plan, beyond using them as plot_id.
 # Material-list genus, species, and ploidy. The species column is incomplete.
-# 05_Material_list.csv: not read. columns: INSTN, genus, species, subtaxa, acronym, ploidy, pop, notes. Observation records are missing from d until this file is standardized.
-# 06_Variables.csv: not read. columns: Abrev, Variable. Observation records are missing from d until this file is standardized.
-
-
-## NEW VARIABLES
-# late_blight_pct_: percent of foliage affected by late blight at one score in the trial sequence.
+# 05_Material_list.csv: not read. columns: INSTN, genus, species, subtaxa, acronym, ploidy, pop, notes.
+# 06_Variables.csv: not read. columns: Abrev, Variable.
 
 
 carob_script <- function(path) {
@@ -43,13 +38,13 @@ Dataset for: Raw and analyzed late blight resistance data from three field trial
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "rAUDPC;AUDPC",
+		response_vars = "rAUDPC;AUDPC;disease_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
-		carob_effort = 0.55
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.6
 	)
 
 	one <- function(f, year) {
@@ -64,9 +59,12 @@ Dataset for: Raw and analyzed late blight resistance data from three field trial
 			plot_id = paste(r$ROW, r$COL, sep="-"),
 			rAUDPC = as.numeric(r$rAUDPC),
 			AUDPC = as.numeric(r$AUDPC) / 100,
+			pathogen = "Phytophthora infestans",
 			country = "Peru",
 			adm1 = "Pasco",
 			location = "Oxapampa",
+			latitude = -10.5775,
+			longitude = -75.4017,
 			planting_date = year,
 			stress = "disease",
 			on_farm = FALSE,
@@ -75,13 +73,17 @@ Dataset for: Raw and analyzed late blight resistance data from three field trial
 		)
 		lbs <- grep("^LB[0-9]+$", names(r), value=TRUE)
 		long <- lapply(lbs, function(nm) {
+			sev <- as.numeric(r[[nm]])
+			keep <- !is.na(sev)
 			data.frame(
-				trial_id = d$trial_id,
-				plot_id = d$plot_id,
-				rep = d$rep,
-				variety = d$variety,
+				trial_id = d$trial_id[keep],
+				plot_id = d$plot_id[keep],
+				rep = d$rep[keep],
+				variety = d$variety[keep],
 				order = as.integer(sub("^LB", "", nm)),
-				late_blight_pct_ = as.numeric(r[[nm]])
+				disease = "potato late blight",
+				disease_severity = as.character(sev[keep]),
+				severity_scale = "0-100"
 			)
 		})
 		long <- do.call(rbind, long)

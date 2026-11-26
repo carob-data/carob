@@ -10,10 +10,10 @@
 ## ISSUES
 # No yield in the mineral sheet.
 # Vitamin C, phenolics, and morphology workbooks are separate evaluations and are not joined.
-# write_files: missing carob_contributor, yield, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: the tuber mineral columns (mg/kg dry weight and mg/100 g fresh weight).
 
 ## NEW VARIABLES
-# tuber_<element>_mg_kg_dw_ and tuber_<element>_mg_100g_fw_: tuber minerals in the units printed in the header.
+# tuber_<element>_dw_: tuber mineral concentration (mg/kg dry weight).
+# tuber_<element>_fw_: tuber mineral concentration (mg/100g fresh weight).
 
 ## NOT PROCESSED
 # TVIT, TPHEN, and TMORP workbooks.
@@ -42,12 +42,12 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "none",
+		response_vars = "yield_moisture;tuber_Fe;tuber_Zn",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
 		carob_effort = 0.5
 	)
 
@@ -109,8 +109,8 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 	for (el in elems) {
 		dw <- col(paste0("^", el, " +\\(mg/kg"))
 		fw <- col(paste0("^", el, " +\\(mg/100g"))
-		d[[paste0("tuber_", tolower(el), "_mg_kg_dw_")]] <- dw
-		if (!all(is.na(fw))) d[[paste0("tuber_", tolower(el), "_mg_100g_fw_")]] <- fw
+		d[[paste0("tuber_", el)]] <- dw / 1000
+		if (!all(is.na(fw))) d[[paste0("tuber_", el, "_fw_")]] <- fw
 	}
 	d <- d[!is.na(d$variety), ]
 	rownames(d) <- NULL

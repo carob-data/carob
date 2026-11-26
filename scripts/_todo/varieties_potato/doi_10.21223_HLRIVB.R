@@ -6,9 +6,8 @@
 # Observation dates are calendar dates. There is no yield.
 
 ## ISSUES
-# No yield or management. The group still expects a yield column.
-# Some rows are identical in the source file.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. duplicate records detected.
+# No yield or management.
+# Source file contains multiple distinct variety_observation_id entries with identical attributes; preserved via record_id.
 
 ## NOT PROCESSED
 # numeration, variety_id, user_id, location_id: internal ids. The second latitude and longitude copy the first.
@@ -38,9 +37,9 @@ This dataset contains information from the monitoring of native potatoes registe
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "01_data_monitoreo_Patacancha_Cusco.xlsx"]
@@ -55,6 +54,7 @@ This dataset contains information from the monitoring of native potatoes registe
 	alt[!nzchar(alt)] <- NA_character_
 
 	d <- data.frame(
+		record_id = as.integer(r$variety_observation_id),
 		variety = trimws(as.character(r$variety_name)),
 		variety_alt = alt,
 		hhid = as.character(r$farmer_id),

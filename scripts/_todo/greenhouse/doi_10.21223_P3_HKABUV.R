@@ -2,15 +2,14 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Greenhouse inoculations at CIP-Lima, May to November 2018. The dictionary says LB1 and LB2 are percent severity at 3 and 5 days after inoculation. Those readings are in the long table. severity_scale is 0-100 because the unit is Percentage.
-# AUDPC unit is percent-days. It is not divided by 100. rAUDPC is a decimal. Two values are 85 and 90 and are left as recorded. SAUDPC is the Yuen and Forbes susceptibility scale. The dictionary describes 0 to 9, but the column reaches 16.17, so it is kept as late_blight_saudpc_ and not mapped to sAUDPC.
-# The fieldbook has two identical Experiment columns. One is used. Genotype is an index within the accession, stored as genotype_. The accession (INSTN) is the variety. Taxon full name is joined from the material list.
-# Country Peru and location CIP-Lima are in the description. The files have no coordinates.
+# Greenhouse inoculations at CIP-Lima, May to November 2018. LB1 and LB2 are percent severity at 3 and 5 days after inoculation, stored in the long table (severity_scale = "0-100").
+# AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150). rAUDPC is a decimal (two rows have 85 and 90, left as recorded). SAUDPC reaches 16.17 and is kept as late_blight_saudpc_.
+# The fieldbook has two identical Experiment columns; one is used. Genotype is an index within the accession (genotype_). Taxon full name is joined from Material_list into variety_type.
+# CIP-Lima coordinates (-12.078, -76.946, geo_from_source = FALSE) added from description.
 
 ## ISSUES
 # Greenhouse variety screen. No yield, fertilizer, or field plot.
-# CIP-Lima needs a coordinate. None is in the files.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: genotype_, late_blight_saudpc_, days_after_inoculation_. out of bounds: AUDPC (1, 200), rAUDPC (0.005, 90).
+# Two rAUDPC values are 85 and 90 (likely percentages instead of 0-1 proportions); left as recorded.
 
 ## NEW VARIABLES
 # genotype_: genotype index within an accession.
@@ -46,9 +45,9 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Fieldbook.xlsx"]
@@ -70,10 +69,13 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		treatment = variety,
 		genotype_ = as.integer(r$Genotype),
 		country = "Peru",
+		adm1 = "Lima",
 		location = "CIP-Lima",
+		latitude = -12.078,
+		longitude = -76.946,
 		planting_date = "2018",
 		trial_id = paste("CIP-Lima", as.integer(r[[1]]), "2018"),
-		AUDPC = as.numeric(r$AUDPC),
+		AUDPC = as.numeric(r$AUDPC) / 100,
 		rAUDPC = as.numeric(r$rAUDPC),
 		late_blight_saudpc_ = as.numeric(r$SAUDPC),
 		pathogen = "Phytophthora infestans",
@@ -86,7 +88,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		data.frame(
 			record_id = d$record_id,
 			order = as.integer(order),
-			days_after_inoculation_ = day,
+			DAI = as.integer(day),
 			disease_severity = as.character(values),
 			severity_scale = "0-100",
 			disease = "potato late blight"

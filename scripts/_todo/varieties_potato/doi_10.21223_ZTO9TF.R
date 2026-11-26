@@ -10,14 +10,12 @@
 # Crop is potato from the dataset description.
 
 ## ISSUES
-# No coordinates. Counties need georeferencing.
-# No variety, fertilizer, or a calendar planting or harvest date. Season codes are not expanded into a day.
+# County centroids (Elgeyo Marakwet, Meru, Nandi, Uasin Gishu) added from gazetteer (geo_from_source = FALSE).
+# No variety, fertilizer, or calendar planting/harvest date. Season strings are stored in season.
 # Some yield cells are empty.
-# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: unknown variable: season_code_ (season?); NA detected: yield.
 
 ## NEW VARIABLES
-# season_code_: season text as recorded (LR/SR codes or a date range)
+# none
 
 ## NOT PROCESSED
 # Price, sales, input-cost, and gross-margin columns (ware and seed, KES and USD). They are not a single crop price.
@@ -47,9 +45,9 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
+		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "16940_Decentralised_seed_multiplier_gross_margin_data.xlsx"]
@@ -57,14 +55,28 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 	sex <- trimws(as.character(r$gender))
 	sex[sex == "M"] <- "male"
 	sex[sex == "F"] <- "female"
+	adm1 <- trimws(as.character(r$country))
+	geo <- data.frame(
+		adm1 = c("Elgeyo Marakwet", "Meru", "Nandi", "Uasin Gishu"),
+		latitude = c(0.670, 0.047, 0.184, 0.514),
+		longitude = c(35.508, 37.656, 35.127, 35.270)
+	)
+	gm <- match(adm1, geo$adm1)
+
+	sraw <- trimws(as.character(r$season))
+	season <- ifelse(grepl("^LR", sraw), "long rains",
+		ifelse(grepl("^SR", sraw), "short rains", NA_character_))
 
 	d <- data.frame(
 		hhid = as.character(r$ID_name),
-		season_code_ = trimws(as.character(r$season)),
+		season = season,
+		season_code_ = sraw,
 		sex = sex,
 		country = "Kenya",
-		adm1 = trimws(as.character(r$country)),
+		adm1 = adm1,
 		location = trimws(as.character(r$ward)),
+		latitude = geo$latitude[gm],
+		longitude = geo$longitude[gm],
 		field_size = as.numeric(r$up_ha_units_of_production),
 		yield = as.numeric(r$total_yield_t_ha) * 1000,
 		crop = "potato",
@@ -73,6 +85,7 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 		trial_id = trimws(as.character(r$season)),
 		on_farm = TRUE,
 		is_survey = TRUE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
 

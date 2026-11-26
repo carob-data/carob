@@ -2,16 +2,14 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Rows are the 2015 summary in 4030_Data.xlsx. The header is two rows. Accession_Number, FeDw, ZnDW, DM, TTWPL, NMTP.
-# TTWPL in CIP field books is kilograms per plot. It is not converted to kg/ha. Plot area is not in this summary.
-# FeDw, ZnDW, and DM are stored as recorded. The summary header does not print the unit.
-# Country Rwanda is in the dataset title. No coordinates are published.
+# Rows are the 2015 3-site summary in 4030_Data.xlsx (Accession_Number, FeDw, ZnDW, DM, TTWPL, NMTP).
+# TTWPL in CIP field books is total tuber weight per plant (kg/plant); kept in ttwpl_ since no plot area or density is reported.
+# DM (%) is mapped to yield_moisture = 100 - DM; FeDw and ZnDW are stored in tuber_Fe_dw_ and tuber_Zn_dw_.
+# Country Rwanda is in the dataset title. Multi-site summary across 3 sites with no coordinates.
 
 ## ISSUES
-# Sites need georeferencing.
-# No fertilizer or dates. The 2016 workbooks are planting lists without yield.
-# write_files: ; yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: unknown variables: fe_recorded_, zn_recorded_, dm_recorded_, ttwpl_kg_.
+# Multi-site summary across 3 unnamed sites in Rwanda; no coordinates, fertilizer, irrigation, or exact planting/harvest dates (year 2015 only).
+# The 2016 workbooks are planting lists without yield.
 
 ## NOT PROCESSED
 # 4030_Kinigi_2016_.xlsx and 4030_Sigira_2016.xlsx: block, plot, and clone lists without a yield.
@@ -21,10 +19,9 @@
 # 4030_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# fe_recorded_: FeDw as recorded
-# zn_recorded_: ZnDW as recorded
-# dm_recorded_: DM as recorded
-# ttwpl_kg_: TTWPL, treated as kg/plot from the CIP field-book name, not converted
+# tuber_Fe_dw_: FeDw as recorded (mg/kg dry weight, unit not printed on summary header).
+# tuber_Zn_dw_: ZnDW as recorded (mg/kg dry weight, unit not printed on summary header).
+# ttwpl_: TTWPL as recorded (kg/plant).
 
 carob_script <- function(path) {
 
@@ -45,13 +42,13 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "fe_recorded_;ttwpl_kg_",
+		response_vars = "tuber_Fe_dw_;tuber_Zn_dw_;yield_moisture;ttwpl_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
-		carob_effort = 0.3
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
+		carob_effort = 0.35
 	)
 
 	f <- ff[basename(ff) == "4030_Data.xlsx"]
@@ -65,14 +62,16 @@ Summary of mineral content for Iron, Zinc and yield parameters over 3 sites in R
 	d <- data.frame(
 		crop = "potato",
 		variety = trimws(as.character(y[[2]])),
-		fe_recorded_ = num(y[[3]]),
-		zn_recorded_ = num(y[[4]]),
-		dm_recorded_ = num(y[[5]]),
-		ttwpl_kg_ = num(y[[6]]),
+		tuber_Fe_dw_ = num(y[[3]]),
+		tuber_Zn_dw_ = num(y[[4]]),
+		yield_moisture = 100 - num(y[[5]]),
+		ttwpl_ = num(y[[6]]),
 		country = "Rwanda",
+		planting_date = "2015",
 		trial_id = "Rwanda_2015",
 		on_farm = NA,
 		is_survey = FALSE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
 	d$treatment <- d$variety

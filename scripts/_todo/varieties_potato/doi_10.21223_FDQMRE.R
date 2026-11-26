@@ -3,19 +3,16 @@
 
 ## NOTES
 # Survey of farmers' seed tubers in Cotopaxi, Ecuador, September to October 2018. The abstract names the province and the crop.
-# The virus sheet is one row per plantlet (Obs). Location and altitude come from ID_Information, matched on sample ID and variety.
-# Presence columns are 0 for absence and 1 for presence, as the dictionary says for the same kind of score.
-# Altitude is stored as elevation.
-# sample_id in the vocabulary identifies a soil sample. The seed-lot code stays sample_id_.
+# The virus sheet is one row per plantlet (Obs). Six DAS-ELISA virus presence columns (0/1) are stored in the long table as disease_incidence (0 or 100 %) under disease.
+# Canton centroids (Latacunga, Pujilí, Salcedo, Saquisilí) added from gazetteer (geo_from_source = FALSE).
+# Altitude is stored as elevation. sample_id_ keeps the seed-lot ID.
 
 ## ISSUES
-# No coordinates. The cantons need georeferencing.
-# Variety is not an applied treatment. It is the variety of the seed lot, and it is the treatment variable because it is what differs among rows.
-# September to October 2018 is not a planting or harvest date.
+# Andean potato latent virus and Andean potato mottle virus are not yet in terminag values_disease; kept in disease per Carob guidelines so maintainers can add them.
+# September to October 2018 is the survey date, not a planting or harvest date.
 # No yield and no fertilizer rate.
 # Insects_Fungi.csv has no header. It has 16 fields and the dictionary names 15 scores, so the columns were not assigned.
 # The nematode sheet was not mapped. It is a subset of soil samples and was not joined to the seed lots.
-# write_files: , yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: sample_id_ (sample_id?). unknown variables: obs_, virus_pvx_, virus_pvs_, virus_pvy_, virus_plrv_, virus_aplv_, virus_apmov_.
 
 ## NOT PROCESSED
 # Insects_Fungi.csv and Nematodes.csv.
@@ -44,13 +41,13 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "variety",
-		response_vars = "virus_pvx_",
+		response_vars = "disease_incidence",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
+		carob_effort = 0.5
 	)
 
 	f1 <- ff[basename(ff) == "ID_Information.csv"]
@@ -63,12 +60,24 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 	m <- match(vk, ik)
 	variety <- trimws(as.character(r2$Variety))
 
+	loc <- trimws(as.character(r1$Location[m]))
+	lat <- ifelse(grepl("latacunga", loc, ignore.case=TRUE), -0.9352,
+		ifelse(grepl("pujil", loc, ignore.case=TRUE), -0.9576,
+		ifelse(grepl("salcedo", loc, ignore.case=TRUE), -1.0455,
+		ifelse(grepl("saquisil", loc, ignore.case=TRUE), -0.8399, -0.9352))))
+	lon <- ifelse(grepl("latacunga", loc, ignore.case=TRUE), -78.6155,
+		ifelse(grepl("pujil", loc, ignore.case=TRUE), -78.6964,
+		ifelse(grepl("salcedo", loc, ignore.case=TRUE), -78.5906,
+		ifelse(grepl("saquisil", loc, ignore.case=TRUE), -78.6670, -78.6155))))
+
 	d <- data.frame(
 		trial_id = "Cotopaxi_seed_2018",
 		country = "Ecuador",
 		adm1 = "Cotopaxi",
-		adm2 = trimws(as.character(r1$Location[m])),
-		location = trimws(as.character(r1$Location[m])),
+		adm2 = loc,
+		location = loc,
+		latitude = lat,
+		longitude = lon,
 		elevation = as.numeric(r1$Altitude[m]),
 		crop = "potato",
 		variety = variety,
@@ -76,17 +85,30 @@ Seed degeneration (PSD)  threats potato production in developing countries. PSD 
 		record_id = seq_len(nrow(r2)),
 		sample_id_ = trimws(as.character(r2$ID)),
 		obs_ = as.integer(r2$Obs),
-		virus_pvx_ = as.integer(r2$Presence_PVX),
-		virus_pvs_ = as.integer(r2$Presence_PVS),
-		virus_pvy_ = as.integer(r2$Presence_PVY),
-		virus_plrv_ = as.integer(r2$Presence_PLRV),
-		virus_aplv_ = as.integer(r2$Presence_APLV),
-		virus_apmov_ = as.integer(r2$Presence_APMoV),
 		stress = "disease",
 		on_farm = TRUE,
 		is_survey = TRUE,
 		geo_from_source = FALSE
 	)
 
-	carobiner::write_files(path, meta, d)
+	vspecs <- list(
+		list("Presence_PVX", "potato virus X"),
+		list("Presence_PVS", "potato virus S"),
+		list("Presence_PVY", "potato virus Y"),
+		list("Presence_PLRV", "potato leafroll virus"),
+		list("Presence_APLV", "Andean potato latent virus"),
+		list("Presence_APMoV", "Andean potato mottle virus")
+	)
+	dlong <- do.call(rbind, lapply(seq_along(vspecs), function(i) {
+		val <- as.integer(r2[[vspecs[[i]][[1]]]])
+		keep <- !is.na(val)
+		data.frame(
+			record_id = d$record_id[keep],
+			order = i,
+			disease = vspecs[[i]][[2]],
+			disease_incidence = as.character(val[keep] * 100)
+		)
+	}))
+
+	carobiner::write_files(path, meta, d, long=dlong)
 }

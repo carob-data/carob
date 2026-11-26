@@ -3,18 +3,13 @@
 
 ## NOTES
 # Rows are sheet Data in 12582_Data.xlsx.
-# TTYA is the only tuber-yield column. The dictionary names it TbYldAj_Cp_tha, scale t/ha (adjusted). Stored as kg/ha.
-# AUDPC in this dictionary is a numerical scale with upper limit 6000, not the fraction scale used by the vocabulary (0-150). Values are not rescaled.
-# rAUDPC is the relative AUDPC (dictionary scale 0-1).
-# RLB is the late-blight resistance class (text).
-# Country Kenya is the dataset geographic coverage. The data sheet has no coordinates.
+# TTYA is the only tuber-yield column (t/ha adjusted -> kg/ha).
+# AUDPC in percent-days (0-3030) is divided by 100 to match the terminag fraction-days standard (0-150).
+# rAUDPC is the relative AUDPC (0-1). RLB is the late-blight resistance class.
+# Kenya site coordinates (Njabini, Limuru, University of Nairobi) added from gazetteer (geo_from_source = FALSE).
 
 ## ISSUES
-# Njabini, Limuru, and the University of Nairobi need georeferencing.
-# No planting or harvest date and no fertilizer.
-# AUDPC follows the dictionary scale (upper limit 6000). Vocabulary maximum is 150.
-# write_files: ; yield_moisture, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: out of bounds: AUDPC (0, 3030).
+# No planting or harvest date, fertilizer rates, irrigation, or yield moisture reported.
 
 ## NOT PROCESSED
 # Material_List Population and Accession_Code. Female and male parents are mapped when the institutional number matches.
@@ -41,13 +36,13 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "treatment;variety",
-		response_vars = "yield;rAUDPC",
+		response_vars = "yield;AUDPC;rAUDPC",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.45
 	)
 
 	f <- ff[basename(ff) == "12582_Data.xlsx"]
@@ -68,7 +63,7 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		yield = as.numeric(r$TTYA) * 1000,
 		yield_part = "tubers",
 		yield_isfresh = TRUE,
-		AUDPC = as.numeric(r$AUDPC),
+		AUDPC = as.numeric(r$AUDPC) / 100,
 		rAUDPC = as.numeric(r$rAUDPC),
 		disease = "potato late blight",
 		pathogen = "Phytophthora infestans",
@@ -79,8 +74,15 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		trial_id = trimws(as.character(r$SITE)),
 		on_farm = NA,
 		is_survey = FALSE,
+		geo_from_source = FALSE,
 		irrigated = NA
 	)
+	d$latitude <- ifelse(grepl("Njabini", d$location, ignore.case=TRUE), -0.717,
+		ifelse(grepl("Limuru", d$location, ignore.case=TRUE), -1.107,
+		ifelse(grepl("Nairobi|UON|Kabete", d$location, ignore.case=TRUE), -1.253, NA_real_)))
+	d$longitude <- ifelse(grepl("Njabini", d$location, ignore.case=TRUE), 36.667,
+		ifelse(grepl("Limuru", d$location, ignore.case=TRUE), 36.643,
+		ifelse(grepl("Nairobi|UON|Kabete", d$location, ignore.case=TRUE), 36.743, NA_real_)))
 	d$female_parent <- NA_character_
 	d$male_parent <- NA_character_
 	ok <- !is.na(m)

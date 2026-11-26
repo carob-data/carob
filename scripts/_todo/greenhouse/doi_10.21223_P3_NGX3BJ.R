@@ -2,15 +2,17 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Greenhouse late blight screening of potato landraces at CIP-Lima, May to December 2018.
-# The dictionary says LB1 and LB2 are percent severity at 3 and 5 days after inoculation. Those two readings are the long table.
-# AUDPC is in percent-days. That is not the fraction-based AUDPC term, so it is stored as audpc_pct_days_.
-# rAUDPC is the relative value, a decimal. The susceptibility scale Saudpc is the 0 to 9 scale described in the dictionary. It is not the sAUDPC term, which runs from 0 to 1.
+# Greenhouse late blight screening of potato landraces at CIP-Lima, Peru (-12.078, -76.946, geo_from_source = FALSE), May to December 2018.
+# LB1 and LB2 are percent severity at 3 and 5 days after inoculation, stored in the long table under disease = "potato late blight", disease_severity, severity_scale = "0-100", order = 1..2.
+# AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150).
+# rAUDPC is the relative value (0-1). Saudpc is the 0 to 9 susceptibility scale (stored in saudpc_ rather than 0-1 sAUDPC).
 
 ## ISSUES
-# The abstract names CIP-Lima and does not name a country, coordinates, fertilizer, irrigation, or planting and harvest dates. May to December 2018 is the experiment period.
-# No yield.
-# write_files: , yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: audpc_pct_days_ (AUDPC?). unknown variable: saudpc_ (sAUDPC?). time/depth: no time/depth variables in long records? unknown variables: dai_, severity_percent_.
+# Greenhouse screen: no yield, fertilizer, irrigation, or harvest date.
+
+## NEW VARIABLES
+# saudpc_: 0-9 susceptibility scale (Saudpc) as recorded.
+# days_after_inoculation_: days after inoculation (3 or 5).
 
 ## NOT PROCESSED
 # Material_list: taxon names for the accessions.
@@ -25,7 +27,7 @@ Dataset for: Screening for resistance to late blight in traditional landraces un
 This data set includes information of late blight severity readings at 3 and 5 days after inoculation under greenhouse conditions, calculated values of Area Under Disease Progress Curve (AUDPC) and Relative Area Under Disease Progress Curve (rAUDPC)  from experiments carried out in CIP-Lima during May to December 2018. Vegetal material tested were potato landraces accessions hold in CIP's potato germplasm.
 "
 
-	uri <- "doi:10.21223/P3_NGX3BJ"
+	uri <- "doi:10.21223/P3/NGX3BJ"
 	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -36,13 +38,13 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "severity_percent_",
+		response_vars = "AUDPC;rAUDPC;disease_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Fieldbook _V1.xlsx"]
@@ -51,17 +53,24 @@ This data set includes information of late blight severity readings at 3 and 5 d
 	variety <- trimws(as.character(r$INSTN))
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
 		trial_id = "CIP_Lima_LB_2018",
-		location = "Lima",
+		country = "Peru",
+		adm1 = "Lima",
+		location = "CIP-Lima",
+		latitude = -12.078,
+		longitude = -76.946,
+		planting_date = "2018",
 		crop = "potato",
 		variety = variety,
 		variety_code = variety,
 		treatment = variety,
 		rep = as.integer(r$REP),
 		plot_id = paste(variety, r$REP, sep="_"),
-		audpc_pct_days_ = as.numeric(r$AUDPC),
+		AUDPC = as.numeric(r$AUDPC) / 100,
 		rAUDPC = as.numeric(r$rAUDPC),
 		saudpc_ = as.numeric(r$Saudpc),
+		pathogen = "Phytophthora infestans",
 		stress = "disease",
 		on_farm = FALSE,
 		is_survey = FALSE,
@@ -69,9 +78,10 @@ This data set includes information of late blight severity readings at 3 and 5 d
 	)
 
 	dlong <- rbind(
-		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 3, severity_percent_ = as.numeric(r$LB1)),
-		data.frame(plot_id = d$plot_id, trial_id = d$trial_id, dai_ = 5, severity_percent_ = as.numeric(r$LB2))
+		data.frame(record_id = d$record_id, order = 1L, DAI = 3L, disease = "potato late blight", disease_severity = as.character(as.numeric(r$LB1)), severity_scale = "0-100"),
+		data.frame(record_id = d$record_id, order = 2L, DAI = 5L, disease = "potato late blight", disease_severity = as.character(as.numeric(r$LB2)), severity_scale = "0-100")
 	)
+	dlong <- dlong[!is.na(dlong$disease_severity), ]
 
 	carobiner::write_files(path, meta, d, long=dlong)
 }

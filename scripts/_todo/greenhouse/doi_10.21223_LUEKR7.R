@@ -10,10 +10,12 @@
 ## ISSUES
 # Collection sites of the accessions are not in the fieldbook.
 # No fertilizer, irrigation, planting date, harvest date, or plot yield.
-# A few descriptor abbreviations in the dictionary are blank. Those columns use the variable name.
-# Some rows have no accession id, so the treatment variable variety is missing there.
-# leaf_S, flesh_color, and weed_species were suggested for a few names. Those terms are not the descriptor that was scored, so the dictionary names were kept.
-# write_files: , yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable variety. unknown variables: the morphological descriptor columns, species_, and tuber_weight_g_.
+# Legend/footnote rows at the bottom of the fieldbook (id is NA) are excluded.
+
+## NEW VARIABLES
+# species_: Solanum species name.
+# tuber_weight_: average tuber weight (g, AvTbWg_Cp_g).
+# Plus 38 morphological descriptor score columns (ending in _) named after the data dictionary.
 
 ## NOT PROCESSED
 # 02 and 03 material lists: the same accessions summarized.
@@ -46,9 +48,9 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
+		carob_effort = 0.45
 	)
 
 	slug <- function(x) {
@@ -66,9 +68,12 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 	vname <- trimws(as.character(r1[["Variable name"]]))
 	vname[39] <- "flower_size"
 	# Average tuber weight is in grams in the abbreviation AvTbWg_Cp_g
-	vname[vname == "Average of tuber weight"] <- "tuber_weight_g"
+	vname[vname == "Average of tuber weight"] <- "tuber_weight"
 	cols <- slug(vname)
 	variety <- trimws(as.character(r$id))
+	keep <- !is.na(variety) & nzchar(variety)
+	r <- r[keep, ]
+	variety <- variety[keep]
 
 	d <- data.frame(
 		trial_id = "INIAP_wild_potato",
@@ -90,8 +95,8 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 	for (i in seq_along(cols)) {
 		d[[cols[i]]] <- trimws(as.character(r[[paste0("D", i)]]))
 	}
-	wt <- d$tuber_weight_g_
-	d$tuber_weight_g_ <- as.numeric(ifelse(grepl("^[0-9.]+$", wt), wt, NA))
+	wt <- d$tuber_weight_
+	d$tuber_weight_ <- as.numeric(ifelse(grepl("^[0-9.]+$", wt), wt, NA))
 
 	carobiner::write_files(path, meta, d)
 }

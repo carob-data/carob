@@ -2,17 +2,18 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Standard evaluation of advanced clones for leaf miner fly. The abstract says the readings are the accumulative percentage of foliage damage, three readings on two exposures, under intermediate and high pressure.
-# The sheet has two header rows under the column names. Those rows are dropped. Reaction type is the summary class on each clone.
+# Standard evaluation of advanced clones for leaf miner fly (Liriomyza huidobrensis). Accumulative percentage of foliage damage (three readings on two exposures under intermediate and high pressure) is stored in the long table under pest_species = "Liriomyza huidobrensis", pest_severity (% foliage damage).
+# The sheet has two header rows under the column names. Those rows are dropped. Reaction type is stored in reaction_.
 
 ## ISSUES
-# The dataset coverage gives degree-and-minute positions for Cañete and Ica, not one trial coordinate. Sites need georeferencing.
+# Liriomyza huidobrensis is not yet in terminag values_pest; kept in pest_species per Carob guidelines so maintainers can add it.
+# Dataverse coverage gives Cañete and Ica without linking sets to sites; no per-row coordinates assigned.
 # No fertilizer, irrigation statement, planting date, harvest date, or yield.
-# Country is Peru from the dataset geographic coverage.
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variables: reaction_
-# time/depth: no time/depth variables in long records?
-# unknown variables: pressure_, exposure_, foliar_damage_percent_
+
+## NEW VARIABLES
+# reaction_: leaf miner fly resistance reaction class as recorded.
+# pressure_: pest infestation pressure ("intermediate" or "high").
+# exposure_: exposure season number (1 or 2).
 
 ## NOT PROCESSED
 # Primary Trait.
@@ -27,7 +28,7 @@ Dataset for: Standard Evaluation Trial for Leaf Miner Fly
 Adult females of L. huidobrensis use their ovipositor to make holes on the top and bottom sides of the leaves, causing the production of exudates that feed adult males and females. The larval stage is the most destructive because the mining reduces the photosynthetic ability of the plant. Larval damage in a growing plant follows a well-established pattern: the larvae attack the plant from the bottom, and later the rest of the plant becomes infested as well. The rate and level of infestation of plants are affected by varietal differences, age, and the physiological state of the plant. The procedure for evaluation of advanced clones to Leaf Miner Fly (LMF) resistance involves trials over 2 seasons under moderate and high adult infestation. All evaluation trials include a susceptible local variety as a control. However, in the case of evaluation under high infestation, a resistant variety should be included as well. The LMF population level was monitored to study the population dynamic throughout the experimental exposure. Three readings of the accumulative percentage of foliage damage were made randomly on 5 individuals plants within each experimental plot to determine the level of resistance. Evaluation for Leaf Miner Fly resistance was conducted for 205 advance clones. The results showing different reaction types (susceptible, highly susceptible, resistant, moderately resistant and highly resistant).
 "
 
-	uri <- "doi:10.21223/P3_E6A7NG"
+	uri <- "doi:10.21223/P3/E6A7NG"
 	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -38,13 +39,13 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "foliar_damage_percent_",
+		response_vars = "pest_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.35
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "Leaf Miner Fly.xls"]
@@ -57,6 +58,7 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 	reaction <- trimws(as.character(r[["Reaction Type"]]))
 
 	d <- data.frame(
+		record_id = seq_along(clone),
 		trial_id = "LMF_standard_evaluation",
 		country = "Peru",
 		crop = "potato",
@@ -75,7 +77,7 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 	blocks <- data.frame(
 		start = c(4, 7, 10, 13),
 		pressure = c("intermediate", "intermediate", "high", "high"),
-		exposure = c(1, 2, 1, 2)
+		exposure = c(1L, 2L, 1L, 2L)
 	)
 	parts <- list()
 	for (b in seq_len(nrow(blocks))) {
@@ -84,18 +86,19 @@ Adult females of L. huidobrensis use their ovipositor to make holes on the top a
 			val <- rep(NA_real_, length(raw))
 			numok <- !is.na(raw) & grepl("^-?[0-9]+(\\.[0-9]+)?$", raw)
 			val[numok] <- as.numeric(raw[numok])
+			keep <- !is.na(val)
+			if (!any(keep)) next
 			parts[[length(parts) + 1]] <- data.frame(
-				plot_id = d$plot_id,
+				record_id = d$record_id[keep],
+				order = (b - 1L) * 3L + ev,
 				pressure_ = blocks$pressure[b],
 				exposure_ = blocks$exposure[b],
-				order = ev,
-				foliar_damage_percent_ = val
+				pest_species = "Liriomyza huidobrensis",
+				pest_severity = as.character(val[keep])
 			)
 		}
 	}
 	dlong <- do.call(rbind, parts)
-	dlong <- dlong[!is.na(dlong$foliar_damage_percent_), ]
-	dlong$trial_id <- d$trial_id[1]
 	rownames(dlong) <- NULL
 
 	carobiner::write_files(path, meta, d, long = dlong)

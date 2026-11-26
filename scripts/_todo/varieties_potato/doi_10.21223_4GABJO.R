@@ -14,7 +14,7 @@
 # No variety, yield, fertilizer rate, or irrigation statement.
 # Bolivar is stored as Bolívar. Other place spellings are as in the file and should be checked against GADM, including Pujili.
 # Some evaluations have no interval temperature.
-# write_files: missing yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variables: farmer_code_, trap_place_, install_date_ (suggested name date), interval_tmean_, interval_tmin_ (suggested name tmin), interval_tmax_ (suggested name tmax), days_below_5c_, days_above_25c_. invalid terms pest_species: Phthorimaea operculella, Symmetrischema tangolias, Tecia solanivora.
+# Phthorimaea operculella, Symmetrischema tangolias, and Tecia solanivora are not yet in terminag values_pest; kept in pest_species per Carob guidelines so maintainers can add them.
 
 ## NOT PROCESSED
 # Weather_field_experiment.xlsx: hourly temperature and humidity. The weather table has no hour column.
@@ -58,8 +58,8 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.9
 	)
 

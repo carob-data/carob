@@ -2,28 +2,26 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Clone-level virus reactions, late-blight rAUDPC, and marketable tuber weight at 80, 100 and 120 days. Not plot replicates.
-# The Dataverse geographic coverage is Peru. The late-blight columns are named Yunnan 2015 and Yunnan 2016.
-# Marketable tuber weight has no unit.
+# Clone-level virus reactions (PVX, PVY, PLRV, PVS in long table), late-blight rAUDPC in Yunnan, China (2015, 2016), and marketable tuber weight at 80, 100 and 120 DAP. Not plot replicates.
+# Virus resistance and early bulking trials are assigned to CIP-Lima, Peru (-12.078, -76.946, geo_from_source = FALSE); Yunnan late blight trials are assigned to Yunnan, China (25.04, 102.71, geo_from_source = FALSE).
+# Marketable tuber weight (mtwp_) has no unit stated.
 
 ## ISSUES
-# Country for the Yunnan columns is not stated. Rows use the dataset country, Peru. Confirm whether those trials were in China.
-# No coordinates, dates, or fertilizer.
-# rAUDPC includes -0.003, below 0. Left as recorded.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: pvx_class_, pvy_class_, plrv_class_, pvs_class_, pvx_infection_, pvy_infection_, plrv_infection_, pvs_infection_, mtwp_. out of bounds rAUDPC (-0.003, 0.924).
+# No calendar planting/harvest dates, yield in kg/ha, or fertilizer rates.
+# rAUDPC includes -0.003 (slightly below 0); left as recorded.
+# Virus percentage infection in raw data is stored as proportion (0-1); multiplied by 100 for disease_incidence (%).
 
 ## NOT PROCESSED
-# Virus absorbance and infected-plant counts: the resistance class and the infection proportion are kept.
+# Virus absorbance and infected-plant counts: the resistance class and the infection percentage are kept.
 # SLOPE and the early-bulking label: derived from the three tuber weights.
 # Material list pedigree.
 # 13394_DataDictionary_ElementDescription.xlsx: documentation or a codebook, not an observation table.
 # 13394_DataDictionary_UniqueIdentifier.xlsx: documentation or a codebook, not an observation table.
-# 13394_Material_List.xlsx: not read. sheet Material_List: Numeration, Accession_Number, Accession_Name, Accession_Code, Scale_audpc, Family_AcceNumb, Female_AcceNumb, Male_AcceNumb, Population, Cycle, Is_control, Seed_source, .... Observation records are missing from d until this file is standardized.
+# 13394_Material_List.xlsx: not read. sheet Material_List: Numeration, Accession_Number, Accession_Name, Accession_Code, Scale_audpc, Family_AcceNumb, Female_AcceNumb, Male_AcceNumb, Population, Cycle, Is_control, Seed_source, ....
 
 ## NEW VARIABLES
-# pvx_class_, pvy_class_, plrv_class_, pvs_class_: resistance class as recorded.
-# pvx_infection_, pvy_infection_, plrv_infection_, pvs_infection_: infection proportion as recorded.
-# mtwp_: marketable tuber weight. Unit is not stated.
+# resistance_class_: virus resistance reaction class as recorded in the virus resistance sheet.
+# mtwp_: marketable tuber weight at 80, 100, and 120 DAP (unit not stated).
 
 
 carob_script <- function(path) {
@@ -45,13 +43,13 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "rAUDPC",
+		response_vars = "rAUDPC;disease_incidence;mtwp_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.5
 	)
 
 	f <- ff[basename(ff) == "13394_Data.xlsx"]
@@ -69,28 +67,54 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		record_id = as.integer(seq_len(nrow(r1))),
 		variety = trimws(as.character(r1$ACCENUMB)),
 		treatment = trimws(as.character(r1$ACCENUMB)),
-		pvx_class_ = trimws(as.character(r1$PVX)),
-		pvy_class_ = trimws(as.character(r1$PVY)),
-		plrv_class_ = trimws(as.character(r1$PLRV)),
-		pvs_class_ = trimws(as.character(r1$PVS)),
-		pvx_infection_ = num(r1[["Percentage of PVX infection"]]),
-		pvy_infection_ = num(r1[["Percentage of PVY infection"]]),
-		plrv_infection_ = num(r1[["Percentage of PLRV infection"]]),
-		pvs_infection_ = num(r1[["Percentage of PVS infection"]]),
+		country = "Peru",
+		adm1 = "Lima",
+		location = "La Molina",
+		latitude = -12.078,
+		longitude = -76.946,
 		trial_id = "virus"
 	)
+	vspecs <- list(
+		list("potato virus X", "PVX", "Percentage of PVX infection"),
+		list("potato virus Y", "PVY", "Percentage of PVY infection"),
+		list("potato leafroll virus", "PLRV", "Percentage of PLRV infection"),
+		list("potato virus S", "PVS", "Percentage of PVS infection")
+	)
+	vlong <- do.call(rbind, lapply(seq_along(vspecs), function(i) {
+		sp <- vspecs[[i]]
+		cls <- trimws(as.character(r1[[sp[[2]]]]))
+		cls[!nzchar(cls) | cls == "NA"] <- NA_character_
+		inf <- num(r1[[sp[[3]]]])
+		# Source values are proportions (0-1); convert to percentage
+		if (any(!is.na(inf)) && max(inf, na.rm=TRUE) <= 1) inf <- inf * 100
+		keep <- !is.na(cls) | !is.na(inf)
+		if (!any(keep)) return(NULL)
+		data.frame(
+			record_id = d1$record_id[keep],
+			order = i,
+			disease = sp[[1]],
+			disease_incidence = ifelse(is.na(inf[keep]), NA_character_, as.character(round(inf[keep], 2))),
+			resistance_class_ = cls[keep]
+		)
+	}))
 
 	d2 <- data.frame(
 		record_id = as.integer(seq_len(nrow(r2)) + nrow(r1)),
 		variety = trimws(as.character(r2$ACCENUMB)),
 		treatment = trimws(as.character(r2$ACCENUMB)),
 		rAUDPC = num(r2$rAUDPC_Yunnan2015),
+		country = "China",
+		adm1 = "Yunnan",
 		location = "Yunnan",
+		latitude = 25.04,
+		longitude = 102.71,
+		planting_date = "2015",
 		trial_id = "late_blight_2015"
 	)
 	d2b <- d2
 	d2b$record_id <- as.integer(seq_len(nrow(r2)) + nrow(r1) + nrow(r2))
 	d2b$rAUDPC <- num(r2$rAUDPC_Yunnan2016)
+	d2b$planting_date <- "2016"
 	d2b$trial_id <- "late_blight_2016"
 
 	id <- as.integer(seq_len(nrow(r3)) + nrow(r1) + 2L * nrow(r2))
@@ -98,6 +122,11 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 		record_id = id,
 		variety = trimws(as.character(r3$ACCENUMB)),
 		treatment = trimws(as.character(r3$ACCENUMB)),
+		country = "Peru",
+		adm1 = "Lima",
+		location = "La Molina",
+		latitude = -12.078,
+		longitude = -76.946,
 		trial_id = "early_bulking"
 	)
 	wts <- c("MTWP 80 days after planting", "MTWP 100 days after planting", "MTWP 120 days after planting")
@@ -109,12 +138,13 @@ This dataset contains the evaluation of the International Potato Center (CIP) ad
 			mtwp_ = num(r3[[wts[i]]])
 		)
 	})
-	dlong <- do.call(rbind, pieces)
-	dlong <- dlong[!is.na(dlong$mtwp_), ]
+	mlong <- do.call(rbind, pieces)
+	mlong <- mlong[!is.na(mlong$mtwp_), ]
+	dlong <- carobiner::bindr(vlong, mlong)
 
 	d <- carobiner::bindr(d1, d2, d2b, d3)
 	d$crop <- "potato"
-	d$country <- "Peru"
+	d$geo_from_source <- FALSE
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$stress <- "disease"

@@ -2,21 +2,18 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Standard evaluation trials of CIP potato clones for late blight. Sites in the sheet are Oxapampa, Comas, and Monobamba. The description does not name a country, so country is omitted.
-# Dictionary trait LB1 to LB7 is the percent of foliage affected. The AUDPC method scale is %/day, so AUDPC is kept as recorded and is not divided by 100.
-# sAUDPC in this sheet is the predicted susceptibility scale described in the abstract (standard cultivar 1 to 9), not the 0-1 fraction term. It is stored as late_blight_saudpc_.
-# OXA-1, OXA-2, OXA-3, COM-1, COM-2, and MONO-1 are the site-trial AUDPC columns. ENV averages and the reaction block repeat those trials and are not a second set of plots.
-# Sequential readings (1st, 2nd, ...) have no date, so the reading number is the time index on the long table.
+# Standard evaluation trials of CIP potato clones for late blight at three Peruvian highland sites: Oxapampa (Pasco), Comas (Junín), and Monobamba (Junín). Coordinates added from gazetteer (geo_from_source = FALSE).
+# Dictionary trait LB1 to LB7 is percent foliage affected. AUDPC in percent-days is divided by 100 to match the terminag fraction-days standard (0-150).
+# sAUDPC in this sheet is the predicted susceptibility scale (1 to 9), not the 0-1 fraction term; stored as late_blight_saudpc_.
+# OXA-1, OXA-2, OXA-3, COM-1, COM-2, and MONO-1 are the site-trial AUDPC columns. Sequential readings (1st, 2nd, ...) are stored in the long table with order = 1, 2, ...
 
 ## ISSUES
-# No coordinates and no fertilizer rates. Country is not stated in the file or the description.
+# No fertilizer rates, irrigation, yield, or calendar planting/harvest dates (year only).
 # Rows whose clone cell is a dash are blank labels and are not records. Set is the replicate when it is an integer.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, country, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date. unknown variable: late_blight_saudpc_ (sAUDPC?). unknown variables: primary_trait_, reading_. out of bounds: AUDPC (0, 4581).
 
 ## NEW VARIABLES
-# late_blight_saudpc_: susceptibility scale printed as sAUDPC. The abstract defines it on the 1 to 9 standard-cultivar scale.
+# late_blight_saudpc_: susceptibility scale printed as sAUDPC (1 to 9 standard-cultivar scale).
 # primary_trait_: the PT code (for example TPS or LB).
-# reading_: foliage-reading number (1, 2, 3, ...). The header "4rh" is read as 4.
 
 ## NOT PROCESSED
 # Reaction columns and ENV 1 / ENV 2 averages. They summarize the same site trials.
@@ -47,9 +44,9 @@ One of the most notorious and economically devastating  disease of potatoes is l
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
+		carob_effort = 0.55
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for Late Blight Resistance_Data.xls"]
@@ -102,18 +99,30 @@ One of the most notorious and economically devastating  disease of potatoes is l
 			location = site_of(block),
 			trial_number = trial_of(block),
 			planting_date = ifelse(grepl("^[0-9]{4}$", year), year, NA_character_),
-			AUDPC = num(body[[j]]),
+			AUDPC = num(body[[j]]) / 100,
 			late_blight_saudpc_ = num(body[[j + 1]])
 		)
 	})
 	d <- do.call(rbind, parts)
 	d <- d[!is.na(d$AUDPC) | !is.na(d$late_blight_saudpc_), ]
+	geo <- data.frame(
+		location = c("Oxapampa", "Comas", "Monobamba"),
+		adm1 = c("Pasco", "Junín", "Junín"),
+		latitude = c(-10.5775, -11.747, -11.356),
+		longitude = c(-75.4017, -75.131, -75.344)
+	)
+	gm <- match(d$location, geo$location)
+	d$country <- "Peru"
+	d$adm1 <- geo$adm1[gm]
+	d$latitude <- geo$latitude[gm]
+	d$longitude <- geo$longitude[gm]
 	d$crop <- "potato"
 	d$treatment <- d$variety
 	d$trial_id <- paste(d$location, d$trial_number, sep="_")
 	d$record_id <- seq_len(nrow(d))
 	d$trial_number <- NULL
 	d$pathogen <- "Phytophthora infestans"
+	d$stress <- "disease"
 	d$geo_from_source <- FALSE
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
@@ -137,7 +146,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 		data.frame(
 			trial_id = tid,
 			row_i = row_i,
-			reading_ = as.integer(sub("[^0-9].*$", "", lab3[j])),
+			order = as.integer(sub("[^0-9].*$", "", lab3[j])),
 			disease_severity = sev,
 			disease = "potato late blight",
 			severity_scale = "0-100"
@@ -145,9 +154,9 @@ One of the most notorious and economically devastating  disease of potatoes is l
 	})
 	dlong <- do.call(rbind, longs)
 	dlong <- merge(dlong, link, by=c("trial_id", "row_i"), all.x=FALSE)
-	dlong <- dlong[!is.na(dlong$disease_severity), c("record_id", "reading_", "disease_severity", "disease", "severity_scale")]
+	dlong <- dlong[!is.na(dlong$disease_severity), c("record_id", "order", "disease_severity", "disease", "severity_scale")]
 	dlong$record_id <- as.integer(dlong$record_id)
-	dlong$reading_ <- as.integer(dlong$reading_)
+	dlong$order <- as.integer(dlong$order)
 	rownames(d) <- NULL
 	rownames(dlong) <- NULL
 

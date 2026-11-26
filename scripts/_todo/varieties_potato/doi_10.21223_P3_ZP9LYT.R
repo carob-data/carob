@@ -2,16 +2,15 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Seed-demand survey of 150 potato producers in Ecuador. Country is Ecuador. The crop is potato.
-# The dictionary says a3_sexo is 1 for female and 0 for male, c5_altura is meters above sea level, c8_papa is hectares of potato, and c9_riego is 0 for yes and 1 for no.
-# survey_answers1 and survey_answers2 have the same X1 codes in the same order. This table uses the household sheet. Province, canton, parish, and community are the place names.
+# Seed-demand survey of 150 potato producers in five Ecuadorian provinces (Cañar, Carchi, Chimborazo, Cotopaxi, Tungurahua). Province centroids added from gazetteer (geo_from_source = FALSE).
+# The dictionary says a3_sexo is 1 for female and 0 for male, c5_altura is meters above sea level, c8_papa is hectares of potato (stored in potato_area_), and c9_riego is 0 for yes and 1 for no.
 
 ## ISSUES
-# No latitude or longitude.
-# No yield. c8_papa is area, not kg/ha.
+# No yield or fertilizer rates; c8_papa is potato area (ha), not yield.
 # The interview sheets have no data table.
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variables: potato_area_ha_
+
+## NEW VARIABLES
+# potato_area_: farmer potato area (ha).
 
 ## NOT PROCESSED
 # survey_answers2 and the parcel-by-variety block on survey_answers1. Those columns are preference and plot codes, not a yield.
@@ -28,7 +27,7 @@ Replication data for: Demand of high quality seed in Ecuador
 The use of high quality seed is one of the current strategies to increase seed and food security in the highlands of Ecuador. Unfortunately, poor information about farmers' demand of high quality seed limits the implementation of this strategy. For this reason, this study aimed to investigate the characteristics of the demand of high quality seed in the country. To do this, 150 potato producers were surveyed using the rapid market assessment in five Ecuadorian provinces: Cañar, Carchi, Chimborazo, Cotopaxi, and Tungurahua (data in 'survey_answers1' and 'survey_answers2' sheet). Also, 13 interviews were carried out with experts that are involved in the seed value chain (data in the sheets referring to interviews and in the report associated to this study).
 "
 
-	uri <- "doi:10.21223/P3_ZP9LYT"
+	uri <- "doi:10.21223/P3/ZP9LYT"
 	group <- "varieties_potato"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -38,14 +37,14 @@ The use of high quality seed is one of the current strategies to increase seed a
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "adm1",
-		response_vars = "elevation",
+		treatment_vars = "none",
+		response_vars = "none",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
-		carob_effort = 0.4
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 40,
+		carob_effort = 0.45
 	)
 
 	f <- ff[basename(ff) == "Surveys.xls"]
@@ -58,19 +57,29 @@ The use of high quality seed is one of the current strategies to increase seed a
 	irrigated[!is.na(riego) & riego == 0] <- TRUE
 	irrigated[!is.na(riego) & riego == 1] <- FALSE
 
+	adm1 <- trimws(as.character(r$c1_provin))
+	geo <- data.frame(
+		adm1 = c("Cañar", "Canar", "Carchi", "Chimborazo", "Cotopaxi", "Tungurahua"),
+		latitude = c(-2.559, -2.559, 0.783, -1.664, -0.935, -1.254),
+		longitude = c(-78.938, -78.938, -77.883, -78.654, -78.615, -78.623)
+	)
+	gm <- match(tolower(adm1), tolower(geo$adm1))
+
 	d <- data.frame(
 		trial_id = "Ecuador_seed_demand",
 		hhid = trimws(as.character(r$X1)),
 		country = "Ecuador",
-		adm1 = trimws(as.character(r$c1_provin)),
+		adm1 = adm1,
 		adm2 = trimws(as.character(r$c2_canton)),
 		adm3 = trimws(as.character(r$c3_parroq)),
 		location = trimws(as.character(r$c4_comun)),
+		latitude = geo$latitude[gm],
+		longitude = geo$longitude[gm],
 		crop = "potato",
 		sex = unname(sex),
 		age = as.numeric(r$a2_edad),
 		elevation = as.numeric(r$c5_altura),
-		potato_area_ha_ = as.numeric(r$c8_papa),
+		potato_area_ = as.numeric(r$c8_papa),
 		irrigated = irrigated,
 		on_farm = TRUE,
 		is_survey = TRUE,

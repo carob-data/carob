@@ -7,8 +7,7 @@
 
 ## ISSUES
 # Sites need georeferencing once the lowland and highland labels are tied to La Molina and Junin.
-# No yield and no fertilizer.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: environment_, chipping_color_, reducing_sugar_mg_dl_, oil_absorption_pct_.
+# No yield, fertilizer, or calendar dates.
 
 ## NOT PROCESSED
 # Pigment and the AVG columns in Standard Evaluation Trial for chipping quality Data.xls.
@@ -17,9 +16,9 @@
 
 ## NEW VARIABLES
 # environment_: lowland winter, lowland spring, highland dry, or highland rain.
-# chipping_color_: score as recorded.
-# reducing_sugar_mg_dl_: mg/dL.
-# oil_absorption_pct_: percent.
+# chipping_color_: chip color score as recorded.
+# reducing_sugar_: reducing sugar content (mg/dL).
+# oil_absorption_: oil absorption (%).
 
 
 carob_script <- function(path) {
@@ -41,12 +40,12 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "chipping_color_",
+		response_vars = "chipping_color;reducing_sugar_;oil_absorption_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.4
 	)
 
@@ -65,9 +64,9 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 			variety = variety,
 			treatment = variety,
 			environment_ = env,
-			chipping_color_ = num(r[[color]]),
-			reducing_sugar_mg_dl_ = if (is.na(sugar)) NA_real_ else num(r[[sugar]]),
-			oil_absorption_pct_ = num(r[[oil]])
+			chipping_color = num(r[[color]]),
+			reducing_sugar_ = if (is.na(sugar)) NA_real_ else num(r[[sugar]]),
+			oil_absorption_ = num(r[[oil]])
 		)
 	}
 	d <- rbind(
@@ -77,12 +76,14 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 		piece("highland rain", 8, 13, 20)
 	)
 	d <- d[!is.na(d$variety) & nzchar(d$variety), ]
-	d <- d[!(is.na(d$chipping_color_) & is.na(d$reducing_sugar_mg_dl_) & is.na(d$oil_absorption_pct_)), ]
+	d <- d[!(is.na(d$chipping_color) & is.na(d$reducing_sugar_) & is.na(d$oil_absorption_)), ]
 	d$crop <- "potato"
 	d$country <- "Peru"
-	d$trial_id <- paste("chipping", d$variety, d$environment_, seq_len(nrow(d)), sep="_")
+	d$trial_id <- paste("chipping", d$environment_, sep="_")
+	d$plot_id <- as.character(seq_len(nrow(d)))
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
+	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }
