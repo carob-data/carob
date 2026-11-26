@@ -4,6 +4,9 @@
 ## ISSUES
 #1. Missing data(NA) from raw dataset in fertilizers,yield,longitude,latitude.
 # On-farm status is not in the file and the studies are heterogeneous, so on_farm is not set.
+
+## 168 rows still have missing adm3, location, and geographic coordinates (longitude and latitude)
+
 carob_script <- function(path) {
 
 
@@ -251,6 +254,24 @@ carob_script <- function(path) {
 
 	d$trial_id <- substr(d$reference, 1, 12)
 	
+	### fill missing lon and lat with adm3 available 
+	
+	geo <- data.frame(
+	  adm3 = c("Mosop", "Nandi Hills", "Aldai", "Chesumei", "Tinderet", "Emgwen"),
+	  lon = c(35.9225, 35.1655, 34.976, 35.1077, 35.2654,35.1011),
+	  lat = c(-0.2658, 0.1150, 0.058, 0.2740, -0.0183, 0.1863),
+	  geo_uncertainty = c(15105, 7235, rep(NA, 4)),
+	  geo_source = c(rep("GADM 4.1, adm3", 2), rep(NA, 4)),
+	  geo_from = FALSE
+	)
+	
+	d <- merge(d, geo, by = "adm3", all.x = TRUE)
+	x <- !is.na(d$lon) 
+	
+	d$longitude[x] <- d$lon[x]
+	d$latitude[x] <- d$lat[x]
+	d$geo_from_source[x] <- d$geo_from[x]
+	d$lon <- d$lat <- d$geo_from <- NULL
 
 	carobiner::write_files(path, meta, d)
 }
