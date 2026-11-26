@@ -3,6 +3,7 @@
 
 ## ISSUES
 # No location below country level exists in the source.
+# All rows have missing longitude and latitude coordinates.
 # No planting_date in the source - only HarvestDate is available.
 # Root fresh weights are kilograms per plot and plot area is not in the file, so yield was not computed.
 #
@@ -25,7 +26,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		project = "ACAI",
 		design = NA,
 		data_type = "on-farm experiment",
-		treatment_vars = "intercrop;plant_density;N_fertilizer;P_fertilizer;K_fertilizer;land_prep_method",
+		treatment_vars = "intercrops;plant_density;N_fertilizer;P_fertilizer;K_fertilizer;land_prep_method",
 		response_vars = "yield;yield_marketable;root_infection", 
 		carob_contributor = "Premrose Masunungure",
 		carob_date = "2026-07-17",
@@ -49,7 +50,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		fertilizer = r$Fertilizer,
 		plant_density=r$cassava_density,
 		intercrops=ifelse(!is.na(r$maize_density), "maize", "none"),
-		intercroped=r$maize_density > 0,
+		intercropped=r$maize_density > 0,
 		intercrop_density =ifelse(r$maize_density > 0, r$maize_density, 0),
 		harvest_date = as.character(as.Date(r$HarvestDate, format = "%d/%m/%Y")),
 		variety = ifelse(trimws(r$Variety) == "", NA, r$Variety),
@@ -67,7 +68,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		plant_density=r$maize_density,
 		intercrop_density =ifelse(r$cassava_density > 0, r$cassava_density, 0),	
 		intercrops=ifelse(r$cassava_density > 0, "cassava", "none"),
-		intercroped=r$cassava_density > 0
+		intercropped =r$cassava_density > 0
 	)
 	d2 <- d2[!is.na(d2$plant_density), ]
 	
@@ -79,11 +80,13 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	d$fertilizer_type <- paste0("urea;", frt1[,2])
 	d$fertilizer_type[grepl("none", d$fertilizer_type)] <- ""
 	d$fertilizer_type <- gsub("MOP", "KCl", d$fertilizer_type)
-
+  d$fertilizer_type[d$fertilizer_type==""] <- NA
+  
 	frt2 <- do.call(rbind, strsplit(frt1[,1], ":"))
 	d$N_fertilizer <- as.numeric(frt2[,1])
 	d$P_fertilizer <- as.numeric(frt2[,2])
 	d$K_fertilizer <- as.numeric(frt2[,3])
+	d$fertilizer <- NULL
 		
 	d$on_farm <- NA
 	d$is_survey <- FALSE
