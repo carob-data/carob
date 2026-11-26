@@ -45,108 +45,13 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		response_vars = "yield;flowering_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
 		carob_effort = 0.5
 	)
 
-	norm_key <- function(x) {
-		x <- trimws(x)
-		sub("^AFricaRice-", "AfricaRice-", x)
-	}
-
-	blup_long <- function(f, varname) {
-		r <- carobiner::read.excel(f, col_names=FALSE)
-		hdr <- norm_key(as.character(unlist(r[1, ])))
-		variety <- trimws(as.character(r[[1]]))
-		drop_lab <- c("Heritability", "Mean", "LSD", "CV", "STATISTIC", "Statistic", "Genotype")
-		keep <- seq_len(nrow(r)) > 1
-		keep <- keep & !is.na(variety) & nzchar(variety)
-		keep <- keep & !variety %in% drop_lab
-		keep <- keep & !startsWith(variety, "-")
-		keep <- keep & !startsWith(variety, "Low yields")
-		out <- list()
-		for (j in seq_len(ncol(r))[-1]) {
-			lab <- hdr[j]
-			if (is.na(lab) || !nzchar(lab)) next
-			if (startsWith(lab, "Combined")) next
-			if (grepl("highlighted|Supplementary", lab)) next
-			# Header text makes the whole column character. Data rows are numbers or blank.
-			vals <- r[[j]][keep]
-			if (is.character(vals)) {
-				vals <- trimws(vals)
-				vals[!nzchar(vals)] <- NA_character_
-			}
-			vals <- as.numeric(vals)
-			piece <- data.frame(
-				variety = variety[keep],
-				loc_key = lab
-			)
-			piece[[varname]] <- vals
-			out[[length(out) + 1]] <- piece
-		}
-		if (length(out) == 0) {
-			stop("no location columns in ", basename(f))
-		}
-		x <- do.call(rbind, out)
-		if (any(duplicated(x[, c("variety", "loc_key")]))) {
-			stop("duplicate variety-location in ", basename(f))
-		}
-		x
-	}
-
-	f1 <- ff[basename(ff) == "BLUP-Yield-2018-Mangrove.xls"]
-	f2 <- ff[basename(ff) == "BLUP-Flowering-2018-Mangrove.xls"]
-	f3 <- ff[basename(ff) == "BLUP-Height-2018-Mangrove.xls"]
-
-	d <- blup_long(f1, "yield")
-	d <- merge(d, blup_long(f2, "flowering_days"), by=c("variety", "loc_key"), all=TRUE)
-	d <- merge(d, blup_long(f3, "plant_height"), by=c("variety", "loc_key"), all=TRUE)
-
-	sites <- data.frame(
-		loc_key = c(
-			"AfricaRice-Senegal-Ndiaye", "Gambia-Geneir", "Gambia-Kaiaf",
-			"Guinea-Khayta", "Guinea-Koba", "Nigeria-Ondo",
-			"Sierra Leone-Kychom", "Sierra Leone-Rokupr", "Sierra Leone-Thormoya"
-		),
-		country = c(
-			"Senegal", "Gambia", "Gambia",
-			"Guinea", "Guinea", "Nigeria",
-			"Sierra Leone", "Sierra Leone", "Sierra Leone"
-		),
-		location = c(
-			"AfricaRice Ndiaye", "Geneir", "Kaiaf",
-			"Khayta", "Koba", "Ondo",
-			"Kychom", "Rokupr", "Thormoya"
-		)
-	)
-
-	bad <- setdiff(unique(d$loc_key), sites$loc_key)
-	if (length(bad) > 0) {
-		stop("unmapped location: ", paste(bad, collapse=", "))
-	}
-	d <- merge(d, sites, by="loc_key", all.x=TRUE)
-
-	use <- !(is.na(d$yield) & is.na(d$flowering_days) & is.na(d$plant_height))
-	d <- d[use, ]
-	d <- d[order(d$country, d$location, d$variety), ]
-	rownames(d) <- NULL
-
-	d <- data.frame(
-		crop = "rice",
-		variety = d$variety,
-		treatment = d$variety,
-		country = d$country,
-		location = d$location,
-		yield = d$yield,
-		flowering_days = d$flowering_days,
-		plant_height = d$plant_height,
-		yield_part = "grain",
-		trial_id = paste(d$location, "2018"),
-		on_farm = FALSE,
-		is_survey = FALSE,
-		irrigated = NA
-	)
+	process <- carobiner::get_function("process_africarice_blup", path, group)
+	d <- process(ff, year = 2018, irrigated = FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

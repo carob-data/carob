@@ -47,7 +47,7 @@ A total of 53 accessions were evaluated for sweetpotato virus disease resistance
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
 		carob_effort = 0.3
 	)
@@ -70,6 +70,7 @@ A total of 53 accessions were evaluated for sweetpotato virus disease resistance
 		elisa_2_ = txt(7),
 		trial_id = "screenhouse_SPVD",
 		stress = "disease",
+		disease = "sweetpotato virus",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		irrigated = NA

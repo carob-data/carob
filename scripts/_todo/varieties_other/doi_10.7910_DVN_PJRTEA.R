@@ -23,10 +23,7 @@
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.
 # 2015-RL-PET-Suppleentary information.pdf: LSD, heritability, and p-value. Trial statistics, not plot or genotype rows.
 # PS and Trial, including the two Trial columns in the Seredou file: constant production system RL and trial type PET.
-# Year: the trial year, not a planting or harvest date.
-
-## NEW VARIABLES
-# panicle_length_: panicle length, cm (dictionary PNL). See ISSUES for Karfiguela.
+# Year: the trial year (2015), stored as planting_date.
 
 
 carob_script <- function(path) {
@@ -56,64 +53,17 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;plant_height;seed_weight;maturity_days",
+		response_vars = "yield;flowering_days;plant_height;seed_weight;maturity_days;panicle_length",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.6
 	)
 
-	f1 <- ff[basename(ff) %in% c(
-		"2015-RL-PET-Burkina Faso-Banfora.xlsx",
-		"2015-RL-PET-Burkina Faso-Karfiguela.xlsx",
-		"2015-RL-PET-Cote d'Ivoire-Gagnoa.xlsx",
-		"2015-RL-PET-Guinea-Seredou.xlsx",
-		"2015-RL-PET-Mali-Longorola.xlsx",
-		"2015-RL-PET-Nigeria-Edozhigi.xlsx"
-	)]
-	f1 <- f1[order(basename(f1))]
-	d <- lapply(f1, function(f) {
-		r <- carobiner::read.excel(f)
-		num <- function(col) {
-			if (col %in% names(r)) as.numeric(r[[col]]) else rep(NA_real_, nrow(r))
-		}
-		raw_variety <- trimws(as.character(r$Genotype))
-		is_check <- grepl("\\([Cc]heck\\)", raw_variety) | raw_variety == "LOCAL CHECK"
-		variety <- trimws(sub("\\s*\\([Cc]heck\\)", "", raw_variety))
-		country <- trimws(as.character(r$Country))
-		country <- gsub("Cote d'Ivoire", "Côte d'Ivoire", country, fixed=TRUE)
-		country <- gsub("Guinea Conakry", "Guinea", country, fixed=TRUE)
-		data.frame(
-			country = country,
-			location = trimws(as.character(r$Site)),
-			season = tolower(trimws(as.character(r$Season))),
-			variety = variety,
-			treatment = variety,
-			is_check = is_check,
-			flowering_days = num("FLWR"),
-			maturity_days = num("MATURITY"),
-			plant_height = num("PLTHGT"),
-			seed_weight = num("GW1000"),
-			panicle_length_ = num("PNL"),
-			# Dictionnary.txt: paddy yield at 14% moisture, t/ha
-			yield = as.numeric(r$YIELD) * 1000
-		)
-	})
-	d <- do.call(rbind, d)
-
-	d$variety_type <- ifelse(d$is_check, "check", NA_character_)
-	d$is_check <- NULL
-	d$crop <- "rice"
-	d$yield_part <- "grain"
-	# Dictionnary.txt: 14% humidity
-	d$yield_moisture <- 14
-	d$yield_isfresh <- FALSE
-	d$irrigated <- FALSE
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	d$trial_id <- as.character(as.integer(as.factor(paste(d$country, d$location, d$season))))
+	process <- carobiner::get_function("process_africarice_btf", path, group)
+	d <- process(ff, year = 2015, irrigated = FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

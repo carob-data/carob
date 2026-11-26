@@ -10,15 +10,12 @@
 
 ## ISSUES
 # No fertilizer rate and no irrigation statement.
-# Start, end, and length of season in the file are NDVI metrics, not planting and harvest dates.
-# missing variables: yield_moisture, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variable: origin_latitude_ (latitude?)
-# unknown variable: origin_longitude_ (longitude?)
-# unknown variable: origin_elevation_ (elevation?)
-# unknown variable: yield_plant_g_ (yield?)
-# unknown variable: seed_weight_100_g_ (seed_weight?)
-# unknown variables: pod_length_cm_, pod_width_cm_, pods_per_plant_, days_to_harvest_
-# seed_weight in the vocabulary is thousand-seed weight. TSWHS is hundred-seed weight, so it stays under its own name.
+# Start, end, and length of season in the file are NDVI metrics, not exact planting and harvest dates; trial span 2022-2023 is stored as planting_date/harvest_date years.
+
+## NEW VARIABLES
+# origin_latitude_, origin_longitude_, origin_elevation_: accession collecting-site coordinates (decimal degrees) and altitude (m).
+# yield_plant_: seed yield per plant (g/plant), from YPLA.
+# pods_per_plant_: total number of pods per plant, from TNPP.
 
 ## NOT PROCESSED
 # 02_Frequency of QC.xlsx: frequencies of qualitative scores, not one row per accession.
@@ -47,12 +44,12 @@ Tarwi (Lupinus mutabilis S.) is a legume native to the andes that stands out for
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
+		response_vars = "yield;seed_weight;harvest_days",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 35,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.4
 	)
 
@@ -64,13 +61,15 @@ Tarwi (Lupinus mutabilis S.) is a legume native to the andes that stands out for
 	d <- data.frame(
 		trial_id = "SantaAna_tarwi_2022",
 		country = "Peru",
-		adm1 = "Junin",
+		adm1 = "Junín",
 		adm2 = "Huancayo",
 		location = "Santa Ana",
 		# dataset geographic coverage for the Santa Ana trial: one west longitude and one south latitude
 		latitude = -12.01177,
 		longitude = -75.22156,
 		geo_from_source = TRUE,
+		planting_date = "2022",
+		harvest_date = "2023",
 		crop = "tarwi",
 		variety = variety,
 		variety_code = variety,
@@ -79,13 +78,14 @@ Tarwi (Lupinus mutabilis S.) is a legume native to the andes that stands out for
 		origin_longitude_ = as.numeric(r$Longitude),
 		origin_elevation_ = as.numeric(r$Altitude),
 		yield = as.numeric(r$YPLO),
-		yield_plant_g_ = as.numeric(r$YPLA),
+		yield_plant_ = as.numeric(r$YPLA),
 		yield_part = "seed",
-		seed_weight_100_g_ = as.numeric(r$TSWHS),
-		pod_length_cm_ = as.numeric(r$PLMS),
-		pod_width_cm_ = as.numeric(r$PWMS),
+		# TSWHS is 100-seed weight (g) -> *10 for 1000-seed weight
+		seed_weight = as.numeric(r$TSWHS) * 10,
+		pod_length = as.numeric(r$PLMS),
+		pod_width = as.numeric(r$PWMS),
 		pods_per_plant_ = as.numeric(r$TNPP),
-		days_to_harvest_ = as.numeric(r$DH),
+		harvest_days = as.numeric(r$DH),
 		on_farm = FALSE,
 		is_survey = FALSE
 	)

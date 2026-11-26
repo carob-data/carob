@@ -8,14 +8,13 @@
 # Treatments are optimum irrigation and late-season drought. Drought plots were irrigated until 110 days after planting.
 
 ## ISSUES
-# The files do not name the crop. Clone names are kept as variety.
 # Urea 46N:0P:0K was applied three weeks after planting. The rate in kg/ha is not stated.
-# The trial ran from 28 March 2019 to 18 October 2019. Those dates are not labeled planting and harvest.
 # No yield in this workbook.
 # Standard deviations of the image pixels are not mapped.
-# missing variables: crop, yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variable: ndvi_green_ (NDVI?)
-# unknown variables: irrigation_regime_, field_row_, field_col_, canopy_temp_c_, chlorophyll_index_
+
+## NEW VARIABLES
+# irrigation_regime_: irrigation treatment (OI = optimum irrigation, LSD = late-season drought).
+# field_row_, field_col_: plot row and column coordinates in the field layout.
 
 ## NOT PROCESSED
 # Image_description columns for format, flight altitude, pixel size, and image width and height. Longitude and latitude are used.
@@ -41,13 +40,13 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "irrigation_regime_",
-		response_vars = "ground_cover",
+		treatment_vars = "variety;irrigation_regime_",
+		response_vars = "ground_cover;NDVI;NDVI_green;canopy_temperature;chlorophyll_index",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.4
 	)
 
@@ -69,10 +68,14 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		latitude = as.numeric(r1$Lat[1]),
 		longitude = as.numeric(r1$Lon[1]),
 		geo_from_source = TRUE,
+		# Same CIP sweetpotato check clones (Resisto, 199062.1, Xitsekele, Xiadla xakau) as 1st experiment doi:10.21223/WJWMZB
+		crop = "sweetpotato",
 		variety = variety,
 		variety_code = variety,
 		treatment = regime,
 		irrigation_regime_ = regime,
+		planting_date = "2019-03-28",
+		harvest_date = "2019-10-18",
 		rep = as.integer(r[[4]]),
 		plot_id = as.character(r[[1]]),
 		field_row_ = as.integer(r[[2]]),
@@ -81,10 +84,10 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		plant_spacing = 0.3 * 100,
 		row_spacing = 0.9 * 100,
 		DAP = as.integer(r1$DAP[1]),
-		canopy_temp_c_ = as.numeric(r[["Canopy Temperature (°C)"]]),
+		canopy_temperature = as.numeric(r[["Canopy Temperature (°C)"]]),
 		NDVI = as.numeric(r$NDVI),
-		ndvi_green_ = as.numeric(r$NDVIgreen),
-		chlorophyll_index_ = as.numeric(r$CI),
+		NDVI_green = as.numeric(r$NDVIgreen),
+		chlorophyll_index = as.numeric(r$CI),
 		ground_cover = as.numeric(r$Coberture),
 		irrigated = TRUE,
 		on_farm = FALSE,

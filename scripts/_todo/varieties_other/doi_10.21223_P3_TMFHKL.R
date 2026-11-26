@@ -8,10 +8,8 @@
 # A 2017 paper is cited (hdl:10568/83093) without a DOI.
 
 ## ISSUES
-# DM has no unit. It is kept as recorded.
-# Cooking and storage rows have no site, so they have no coordinates.
+# Cooking and storage rows have no trial site recorded (roots came from La Molina and San Ramon), so latitude/longitude are NA on those rows.
 # No yield, fertilizer, or dates.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: dm_, tuber_Fe_, tuber_Zn_, storage_code_. NA detected: latitude, longitude.
 
 ## NOT PROCESSED
 # Material_List_genotypes: pedigree columns. The accession number is the variety.
@@ -19,10 +17,8 @@
 # Data_dictionary.xls: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# tuber_Fe_: iron in the root, mg/100 g fresh weight.
-# tuber_Zn_: zinc in the root, mg/100 g fresh weight.
-# dm_: dry-matter column as recorded. Unit is not stated.
-# storage_code_: storage treatment code (T0-T3). Meaning is not in the file.
+# cooking_method_: cooking treatment (Raw, Boiled, Baked).
+# storage_code_: storage treatment code (T0-T3). Exact duration is not defined in the workbook.
 
 
 carob_script <- function(path) {
@@ -44,12 +40,12 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety;treatment",
-		response_vars = "beta_carotene",
+		response_vars = "beta_carotene;vitamin_A;tuber_Fe;tuber_Zn",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.45
 	)
 
@@ -73,9 +69,10 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		treatment = trimws(as.character(r1$INSTN)),
 		rep = as.integer(r1$REP),
 		beta_carotene = as.numeric(r1$BCFW),
-		tuber_Fe_ = as.numeric(r1$FeFW),
-		tuber_Zn_ = as.numeric(r1$ZnFW),
-		dm_ = as.numeric(r1$DM),
+		# mg/100g FW -> mg/g DW using DM (%): (val / 100) / (DM / 100) = val / DM
+		tuber_Fe = as.numeric(r1$FeFW) / as.numeric(r1$DM),
+		tuber_Zn = as.numeric(r1$ZnFW) / as.numeric(r1$DM),
+		yield_moisture = 100 - as.numeric(r1$DM),
 		trial_id = paste(trimws(as.character(r1$ENVIRONMENT)), "composition")
 	)
 	d1 <- merge(d1, sites, by="environment", all.x=TRUE)
@@ -86,10 +83,11 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 	d2 <- data.frame(
 		variety = trimws(as.character(r2$INSTN)),
 		treatment = trimws(as.character(r2$TYPE)),
+		cooking_method_ = trimws(as.character(r2$TYPE)),
 		rep = as.integer(r2$REP),
 		beta_carotene = as.numeric(r2$BCFW),
 		vitamin_A = as.numeric(r2[["Pro-vitamin A (ug RAE/100g FW)"]]),
-		dm_ = as.numeric(r2$DM),
+		yield_moisture = 100 - as.numeric(r2$DM),
 		trial_id = "cooking",
 		country = "Peru",
 		geo_from_source = NA,
@@ -102,7 +100,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		storage_code_ = trimws(as.character(r3$TREATMENT)),
 		rep = as.integer(r3$REP),
 		beta_carotene = as.numeric(r3$BCFW),
-		dm_ = as.numeric(r3$DM),
+		yield_moisture = 100 - as.numeric(r3$DM),
 		trial_id = "storage",
 		country = "Peru",
 		geo_from_source = NA,

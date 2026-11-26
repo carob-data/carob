@@ -18,9 +18,10 @@
 # Data_dictionary_CWR_Sweetpotato.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# dat_: value in the dat column
-# fw_: fresh weight as recorded
-# dw_: dry weight as recorded
+# water_regime_: water stress priming treatment (primed vs non-primed).
+# dat_: value in the dat column.
+# fw_: fresh weight as recorded (pot/plant basis; unit not stated in sheet).
+# dw_: dry weight as recorded (pot/plant basis; unit not stated in sheet).
 
 carob_script <- function(path) {
 
@@ -40,13 +41,13 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 		project = NA,
 		design = "completely randomized",
 		data_type = "experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "variety;water_regime_",
 		response_vars = "fw_;dw_",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.35
 	)
 
@@ -60,7 +61,7 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 
 	num <- function(x) {
 		y <- trimws(as.character(x))
-		y[!nzchar(y) | y %in% c("NA", ".")] <- NA_character_
+		y[!nzchar(y) | y %in% c("NA", ".", "-")] <- NA_character_
 		as.numeric(y)
 	}
 	d <- data.frame(
@@ -69,6 +70,9 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 		variety_code = txt(r[["Accession number"]]),
 		variety = txt(r[["Accession number"]]),
 		treatment = txt(r$Treatment),
+		water_regime_ = txt(r$Treatment),
+		planting_date = "2018-07",
+		harvest_date = "2018-12",
 		dat_ = num(r$dat),
 		fw_ = num(r$fw),
 		dw_ = num(r$dw),

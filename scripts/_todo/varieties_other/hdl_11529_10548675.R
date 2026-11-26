@@ -39,8 +39,8 @@ Evaluation of different varieties of barley, triticale and wheat in Valles Altos
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
 		carob_effort = 0.4
 	)
 
@@ -95,11 +95,17 @@ Evaluation of different varieties of barley, triticale and wheat in Valles Altos
 		flowering_days = num(x[[6]]),
 		maturity_days = days,
 		yield = num(x[[8]]) * 1000,
-		yield_part = part,
+		yield_part = "grain",
 		on_farm = NA,
 		is_survey = FALSE,
 		irrigated = NA,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("Ajoloapan", "Apan", "Carranza", "Coatepec", "Juchitepec", "Lerma", "Nanacamilpa"),
+		latitude = c(19.969, 19.711, 19.920, 19.376, 19.092, 19.286, 19.493),
+		longitude = c(-99.048, -98.452, -98.960, -98.854, -98.878, -99.512, -98.535)
+	)
+	d <- merge(d, geo, by="location", all.x=TRUE)
 	carobiner::write_files(path, meta, d)
 }

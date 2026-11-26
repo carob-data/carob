@@ -8,8 +8,9 @@
 # Pod, haulm, and biomass weights are g/plant means. They are not converted to kg/ha. 100-seed weight (g) is stored as seed_weight (g/1000 seeds).
 
 ## ISSUES
-# No plot area or plant density, so there is no yield in kg/ha. No fertilizer, planting date, or coordinates. Plant height was measured in 2021 only.
-# write_files: missing variables: project. missing variables: yield, yield_moisture, yield_part, geo_from_source, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: audpc_ (AUDPC?). unknown variable: pod_length_ (plot_length?). unknown variable: pod_width_ (plot_width?). unknown variables: biomass_plant_, pod_weight_, haulm_weight_, pod100_weight_, pod_constriction_, pod_beak_. invalid terms: disease: early leaf spot.
+# No plot area or plant density, so there is no yield in kg/ha. No fertilizer rates. Plant height was measured in 2021 only.
+# Exact planting/harvest days are not stated; rainy season July-October is encoded as YYYY-07 and YYYY-10.
+# AUDPC values are 164-268 (outside terminag AUDPC 0-150 scale), so kept in audpc_.
 
 ## NOT PROCESSED
 # SNP columns. D1F (days to first flower). The chromosome and cM rows.
@@ -18,7 +19,7 @@
 # audpc_: area under the disease progress curve (readme), for early leaf spot.
 # biomass_plant_, pod_weight_, haulm_weight_: g/plant means (BT, PGo, PF).
 # pod100_weight_: 100-pod weight, g (P100Go).
-# pod_length_ and pod_width_: mm, 2020 only (LGo, lGo). pod_constriction_ and pod_beak_: 2020 scores (Cons, Bec).
+# pod_constriction_ and pod_beak_: 2020 scores (Cons, Bec).
 
 
 carob_script <- function(path) {
@@ -36,14 +37,15 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
 		publication = NA,
+		project = NA,
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "flowering_days;plant_height;seed_weight",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.5
 	)
 
@@ -70,6 +72,9 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 		out <- data.frame(
 			variety = r$Genotype,
 			trial_id = paste("Nioro", yr),
+			# rainy season (July-October) per abstract
+			planting_date = paste0(yr, "-07"),
+			harvest_date = paste0(yr, "-10"),
 			flowering_days = num(r[[paste0("D50F", suf)]]),
 			audpc_ = num(r[[paste0("AUDPC", suf)]]),
 			biomass_plant_ = num(r[[paste0("BT", suf)]]),
@@ -80,8 +85,9 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 		)
 		if (yr == 2021) out$plant_height <- num(r$HP_2021)
 		if (yr == 2020) {
-			out$pod_length_ <- num(r$LGo_2020)
-			out$pod_width_ <- num(r$lGo_2020)
+			# readme: LGo and lGo in mm -> cm
+			out$pod_length <- num(r$LGo_2020) / 10
+			out$pod_width <- num(r$lGo_2020) / 10
 			out$pod_constriction_ <- num(r$Cons_2020)
 			out$pod_beak_ <- num(r$Bec_2020)
 		}
@@ -89,9 +95,9 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 	}
 
 	fill <- function(x) {
-		need <- c("plant_height", "pod_length_", "pod_width_", "pod_constriction_", "pod_beak_")
+		need <- c("plant_height", "pod_length", "pod_width", "pod_constriction_", "pod_beak_")
 		for (nm in need) if (is.null(x[[nm]])) x[[nm]] <- NA
-		x[, c("variety", "trial_id", "flowering_days", "audpc_", "biomass_plant_", "pod_weight_",
+		x[, c("variety", "trial_id", "planting_date", "harvest_date", "flowering_days", "audpc_", "biomass_plant_", "pod_weight_",
 			"haulm_weight_", "pod100_weight_", "seed_weight", need)]
 	}
 	d <- rbind(fill(one_year(2020)), fill(one_year(2021)), fill(one_year(2022)))
@@ -101,6 +107,11 @@ This dataset relates to the paper \"Mapping QTLs for early leafspot resistance a
 	d$variety_pedigree <- "Fleur11 x (A. ipaensis x A. correntina)4x"
 	d$country <- "Senegal"
 	d$location <- "Nioro"
+	# Nioro du Rip research station coordinates
+	d$latitude <- 13.750
+	d$longitude <- -15.783
+	d$geo_from_source <- FALSE
+	d$irrigated <- FALSE
 	d$disease <- "early leaf spot"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE

@@ -42,8 +42,8 @@ Evaluation of wheat, barley and triticale elite lines for Bajio region in Centra
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.5
 	)
 
@@ -111,23 +111,29 @@ Evaluation of wheat, barley and triticale elite lines for Bajio region in Centra
 	)
 
 	d1$flowering_days <- NA_real_
-	d1$planting_date <- NA_character_
+	d1$planting_date <- "2016"
 	d1$harvest_date <- NA_character_
 	d1$N_fertilizer <- NA_real_
 	d1$P_fertilizer <- NA_real_
 	d1$K_fertilizer <- NA_real_
 	d3$flowering_days <- NA_real_
-	d3$planting_date <- NA_character_
+	d3$planting_date <- "2016"
 	d3$harvest_date <- NA_character_
 	d3$N_fertilizer <- NA_real_
 	d3$P_fertilizer <- NA_real_
 	d3$K_fertilizer <- NA_real_
 	d <- rbind(d1, d2, d3)
+	geo <- data.frame(
+		location = c("Irapuato", "Yuriria", "Manuel Doblado"),
+		latitude = c(20.677, 20.211, 20.728),
+		longitude = c(-101.356, -101.132, -101.950)
+	)
+	d <- merge(d, geo, by="location", all.x=TRUE)
 	d$country <- "Mexico"
 	d$adm1 <- "Guanajuato"
 	d$crop <- "wheat"
 	d$treatment <- d$variety
-	d$yield_part <- "seed"
+	d$yield_part <- "grain"
 	d$trial_id <- d$location
 	d$on_farm <- NA
 	d$is_survey <- FALSE

@@ -51,8 +51,8 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 		response_vars = "yield;plant_height;flowering_days;maturity_days;seed_weight",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.6,
 		notes = NA
 	)
@@ -64,6 +64,9 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 		trial_id = r$FILE_NAME,
 		location = "Arcturus",
 		country = "Zimbabwe",
+		# SEEDCO, Arcturus, Zimbabwe
+		latitude = -17.783,
+		longitude = 31.317,
 		planting_date = "2018",
 		rep = as.integer(r$REP_NO),
 		block_id = as.character(r$BLOCK_NO),

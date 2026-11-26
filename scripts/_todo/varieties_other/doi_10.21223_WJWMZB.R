@@ -19,11 +19,8 @@
 # Data_Dictionary_Moz1.xlsx: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# canopy_temperature_: mean canopy temperature (C).
-# ndvi_: mean NDVI.
-# ndvi_green_: mean green NDVI.
-# ci_: the CI column. Unit is not stated.
-# cover_percent_: canopy cover (%).
+# irrigation_regime_: water-stress regime from the five treatments.
+# fertilizer_applied_: whether NPK fertilizer was applied (TRUE/FALSE; rate not stated).
 
 
 carob_script <- function(path) {
@@ -46,13 +43,13 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 		project = NA,
 		design = "row-column",
 		data_type = "experiment",
-		treatment_vars = "variety;treatment",
-		response_vars = "canopy_temperature_;ndvi_",
+		treatment_vars = "variety;irrigation_regime_;fertilizer_applied_",
+		response_vars = "NDVI;NDVI_green;canopy_temperature;chlorophyll_index;ground_cover",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.45
 	)
 
@@ -65,11 +62,11 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 			treatment = trimws(as.character(r[[2]])),
 			variety = trimws(as.character(r[[3]])),
 			date = date,
-			canopy_temperature_ = as.numeric(r[[4]]),
-			ndvi_ = as.numeric(r[[6]]),
-			ndvi_green_ = as.numeric(r[[8]]),
-			ci_ = as.numeric(r[[10]]),
-			cover_percent_ = as.numeric(r[[12]])
+			canopy_temperature = as.numeric(r[[4]]),
+			NDVI = as.numeric(r[[6]]),
+			NDVI_green = as.numeric(r[[8]]),
+			chlorophyll_index = as.numeric(r[[10]]),
+			ground_cover = as.numeric(r[[12]])
 		)
 	}
 	x <- rbind(
@@ -81,7 +78,10 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 	checks <- c("199062.1", "Nhacoongo 1", "Caromex", "Xiadlaxakau", "TIS2534", "Irene", "Xitsekele")
 	d <- x[!duplicated(x$record_id), c("record_id", "plot_id", "treatment", "variety")]
 	d$variety_type <- ifelse(d$variety %in% checks, "check", NA_character_)
+	d$fertilizer_applied_ <- grepl("fert", d$treatment, ignore.case=TRUE)
+	d$irrigation_regime_ <- trimws(sub("\\s*\\+.*|\\s*&.*|\\s*fert.*", "", d$treatment, ignore.case=TRUE))
 	d$crop <- "sweetpotato"
+	d$plot_area <- 25
 	d$country <- "Mozambique"
 	d$adm1 <- "Maputo"
 	d$adm2 <- "Boane"
@@ -94,7 +94,7 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 
-	dlong <- x[, c("record_id", "date", "canopy_temperature_", "ndvi_", "ndvi_green_", "ci_", "cover_percent_")]
+	dlong <- x[, c("record_id", "date", "canopy_temperature", "NDVI", "NDVI_green", "chlorophyll_index", "ground_cover")]
 
 	carobiner::write_files(path, meta, d, long=dlong)
 }

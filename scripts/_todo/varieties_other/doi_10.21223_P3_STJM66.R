@@ -7,13 +7,12 @@
 # SPAD at 98 and 123 days after planting is in the long table. There is no calendar planting date and no coordinate.
 
 ## ISSUES
-# The Cusco trial site needs georeferencing.
-# TSW is stored in the recorded numbers. The dictionary says g/1000 seeds. Most values are far above a quinoa thousand-seed weight in grams and were not rescaled.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: plant_sample_, panicle_diameter_, primary_branches_, stem_diameter_, leaf_length_, leaf_width_, petiole_length_, panicle_length_, panicle_density_. out of bounds: seed_weight (3.876, 6035).
+# Coordinates are approximate for UNSAAC, Cusco (geo_from_source = FALSE).
+# TSW has 998 values between 2123 and 6035 and 2 values at 3.876 and 4.069 (mg/1000 seeds or decimal-separator shift); values > 100 are divided by 1000 to yield g/1000 seeds (2.12-6.04 g).
 
 ## NEW VARIABLES
 # plant_sample_: plant measured within the plot (REP).
-# panicle_diameter_, stem_diameter_, leaf_length_, leaf_width_, petiole_length_, panicle_length_: cm.
+# panicle_diameter_, leaf_length_, leaf_width_, petiole_length_: cm.
 # primary_branches_: number of primary branches.
 # panicle_density_: panicles per m2.
 
@@ -45,8 +44,8 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.35
 	)
 
@@ -55,6 +54,9 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 	num <- function(x) as.numeric(as.character(x))
 
 	variety <- trimws(as.character(r$Accession))
+	tsw <- num(r$TSW)
+	# 998 of 1000 values are 2123-6035 (mg per 1000 seeds / decimal-separator shift) vs 3.876, 4.069 g
+	tsw <- ifelse(!is.na(tsw) & tsw > 100, tsw / 1000, tsw)
 	d <- data.frame(
 		record_id = seq_len(nrow(r)),
 		trial_id = "Cusco_quinoa",
@@ -65,21 +67,24 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		variety = variety,
 		treatment = variety,
 		country = "Peru",
+		adm1 = "Cusco",
 		location = "Cusco",
+		latitude = -13.522,
+		longitude = -71.959,
 		yield = num(r$SY) * 1000,
 		yield_part = "seed",
-		seed_weight = num(r$TSW),
+		seed_weight = tsw,
 		plant_height = num(r$PLH),
 		panicle_diameter_ = num(r$PAD),
 		primary_branches_ = num(r$NPB),
-		stem_diameter_ = num(r$STD),
+		stem_diameter = num(r$STD),
 		leaf_length_ = num(r$LEL),
 		leaf_width_ = num(r$LEW),
 		petiole_length_ = num(r$PEL),
-		panicle_length_ = num(r$PAL),
+		panicle_length = num(r$PAL),
 		panicle_density_ = num(r$PDE),
 		geo_from_source = FALSE,
-		on_farm = NA,
+		on_farm = FALSE,
 		is_survey = FALSE
 	)
 

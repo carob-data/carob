@@ -45,8 +45,8 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 45,
 		carob_effort = 0.45
 	)
 
@@ -116,9 +116,14 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 		potato(f3, "Rakai"),
 		potato(f4, "Kabale")
 	)
-	okc <- !is.na(d$residence_country_) & grepl("^[A-Za-z][A-Za-z .'-]+$", d$residence_country_)
-	d$country <- NA_character_
-	d$country[okc] <- tools::toTitleCase(tolower(d$residence_country_[okc]))
+	d$country <- "Uganda"
+	geo <- data.frame(
+		trial_place_ = c("Kamwenge", "Lira", "Rakai", "Kabale"),
+		latitude = c(0.187, 2.250, -0.707, -1.249),
+		longitude = c(30.454, 32.900, 31.404, 29.989),
+		geo_from_source = FALSE
+	)
+	d <- merge(d, geo, by="trial_place_", all.x=TRUE)
 	d$is_survey <- TRUE
 	d$on_farm <- FALSE
 	d$trial_id <- paste(d$trial_place_, d$consumer_, d$variety, seq_len(nrow(d)), sep="_")

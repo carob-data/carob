@@ -21,21 +21,9 @@
 
 ## NOT PROCESSED
 # PS and Trial are RL and MET on every row.
-# Year is 2016 on every row and is not a planting date.
 # 2016-RL-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
 # Benin Lema PNL is 109-320 and Ghana Nobewan PNL is 84-140. Those are not panicle lengths in cm (other sites are about 16-28 cm). Not converted and not stored as panicle_length_.
 # Tillers, biomass, and spikelet fertility are not in these workbooks.
-# 2016-RL-Benin-Lema.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Burkina Faso-Banfora.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotypes, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Cote d'Ivoire-Gagnoa.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Ghana-Nobewan.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Guinea-Seredou.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Mali-Sikasso.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Nigeria-Edozhigi.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, FLWR, PNL, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-RL-MET-Sierra Leone-Rokupr.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, YIELD. Observation records are missing from d until this file is standardized.
-
-## NEW VARIABLES
-# panicle_length_: panicle length (cm), from PNL, except Lema and Nobewan
 
 
 carob_script <- function(path) {
@@ -63,49 +51,17 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;plant_height;seed_weight;panicle_length_",
+		response_vars = "yield;flowering_days;plant_height;seed_weight;panicle_length",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
 		carob_effort = 0.5
 	)
 
-	xlfiles <- grep("\\.xlsx$", ff, value=TRUE)
-	d <- vector("list", length(xlfiles))
-	for (i in seq_along(xlfiles)) {
-		r <- carobiner::read.excel(xlfiles[i])
-		names(r) <- tolower(names(r))
-		variety <- if ("genotype" %in% names(r)) r$genotype else r$genotypes
-		# Lema (109-320) and Nobewan (84-140) are not panicle lengths in cm
-		pnl <- NA_real_
-		if ("pnl" %in% names(r) && !(trimws(r$site[1]) %in% c("Lema", "Nobewan"))) {
-			pnl <- as.numeric(r$pnl)
-		}
-		d[[i]] <- data.frame(
-			country = ifelse(trimws(r$country) == "Cote d'Ivoire", "C\u00f4te d'Ivoire", trimws(r$country)),
-			location = trimws(r$site),
-			season = tolower(trimws(r$season)),
-			variety = trimws(variety),
-			flowering_days = if ("flwr" %in% names(r)) as.numeric(r$flwr) else NA_real_,
-			plant_height = if ("plthgt" %in% names(r)) as.numeric(r$plthgt) else NA_real_,
-			seed_weight = if ("gw1000" %in% names(r)) as.numeric(r$gw1000) else NA_real_,
-			panicle_length_ = pnl,
-			yield = as.numeric(r$yield) * 1000
-		)
-	}
-	d <- do.call(rbind, d)
-
-	d$trial_id <- as.character(as.integer(as.factor(paste(d$country, d$location, d$season))))
-	d$treatment <- d$variety
-	d$crop <- "rice"
-	d$yield_part <- "grain"
-	# Dictionnary.txt: paddy yield at 14% humidity
-	d$yield_moisture <- 14
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	# Dictionnary.txt: RL = rainfed lowland
-	d$irrigated <- FALSE
+	process <- carobiner::get_function("process_africarice_btf", path, group)
+	# Lema (109-320) and Nobewan (84-140) are not panicle lengths in cm
+	d <- process(ff, year = 2016, irrigated = FALSE, drop_pnl_sites = c("Lema", "Nobewan"))
 
 	carobiner::write_files(path, meta, d)
 }

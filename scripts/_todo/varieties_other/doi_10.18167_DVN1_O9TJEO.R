@@ -32,27 +32,44 @@ The CNA6 population, evaluated over five cycles (3 to 7) of selection, including
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
 		publication = "doi:10.1038/s41437-023-00636-3",
+		project = NA,
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "yield;flowering_days;plant_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.4
 	)
 
 	f <- ff[basename(ff) == "CNA6_phenotypic_data.csv"]
 	r <- read.csv(f)
 
+	# Trial locations decoded from Pereira de Castro et al. (2023) doi:10.1038/s41437-023-00636-3
+	geo <- data.frame(
+		loc_code = c("GOI", "LAV", "PAR", "POR", "PRI", "SAG", "SIN", "TER", "VIL"),
+		location = c("Goianira", "Lavras", "Paragominas", "Porangatu", "Primavera do Leste",
+			"Santo Antônio de Goiás", "Sinop", "Teresina", "Vilhena"),
+		adm1 = c("Goiás", "Minas Gerais", "Pará", "Goiás", "Mato Grosso",
+			"Goiás", "Mato Grosso", "Piauí", "Rondônia"),
+		latitude = c(-16.496, -21.245, -2.996, -13.441, -15.556, -16.484, -11.864, -5.089, -12.741),
+		longitude = c(-49.427, -45.000, -47.353, -49.149, -54.296, -49.309, -55.505, -42.802, -60.146)
+	)
+	ig <- match(r$location, geo$loc_code)
+
 	d <- data.frame(
 		trial_id = r$study,
 		crop = "rice",
 		variety = as.character(r$gid),
 		treatment = as.character(r$gid),
-		location = r$location,
 		country = "Brazil",
+		adm1 = geo$adm1[ig],
+		location = geo$location[ig],
+		latitude = geo$latitude[ig],
+		longitude = geo$longitude[ig],
+		planting_date = as.character(r$year),
 		rep = as.integer(r$rep),
 		block_id = as.character(r$bloc),
 		plot_id = as.character(r$plot),
@@ -61,6 +78,9 @@ The CNA6 population, evaluated over five cycles (3 to 7) of selection, including
 		yield = as.numeric(r$yld),
 		yield_part = "grain",
 		selection_cycle_ = as.integer(r$cycle),
+		geo_from_source = FALSE,
+		irrigated = FALSE,
+		on_farm = FALSE,
 		is_survey = FALSE
 	)
 

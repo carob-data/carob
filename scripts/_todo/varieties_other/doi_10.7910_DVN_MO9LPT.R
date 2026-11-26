@@ -15,11 +15,8 @@
 
 
 ## NOT PROCESSED
-# 01a. Codebook - Combined Data Dictionary.xlsx: documentation or a codebook, not an observation table.
-# 01b. Data Dictionary - Nakuru.xlsx: documentation or a codebook, not an observation table.
-# 01c. Codebook - Embu.xlsx: documentation or a codebook, not an observation table.
-# 02b. Nakuru.csv: not read. columns: Enumerator, Date_interview, Sub_County, Division, location, village, Sex, Marital_status, Education, Age, HH_Head, Tot_farmsize, .... Observation records are missing from d until this file is standardized.
-# 02c. Embu.csv: not read. columns: id, Q1, A01, village, sex, age, agecat, respondent_type, enterprise, hhead, relationship, marital, .... Observation records are missing from d until this file is standardized.
+# 01a. Codebook - Combined Data Dictionary.xlsx, 01b. Data Dictionary - Nakuru.xlsx, 01c. Codebook - Embu.xlsx: codebooks.
+# 02b. Nakuru.csv (53 farmers) and 02c. Embu.csv (40 farmers): county source files combined in Combined Dataset.dta (93 farmers); extra socio-economic survey columns are not mapped.
 
 carob_script <- function(path) {
 
@@ -46,7 +43,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.6",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
 		carob_effort = 0.5
 	)

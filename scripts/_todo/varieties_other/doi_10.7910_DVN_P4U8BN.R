@@ -22,19 +22,7 @@
 
 ## NOT PROCESSED
 # PS and Trial are IL and MET on every row.
-# Year is 2016 on every row and is not a planting date.
 # 2016-IL-MET-Supplementary information.pdf: LSD, heritability, and p-value. ANOVA summary, not records.
-# 2016-IL-MET-Burkina Faso-Vallee du Kou.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-IL-MET-Gambia-Sapu.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-IL-MET-Mali-Niono.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, GW1000, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-IL-MET-Senegal-Fanaye.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, FLWR, PLTHGT, TILL, YIELD. Observation records are missing from d until this file is standardized.
-# 2016-IL-MET-Senegal-Ndiaye.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, TILL, FLWR, BIOM, GW1000, FERT, .... Observation records are missing from d until this file is standardized.
-# 2016-IL-MET-Uganda-Namulongue.xlsx: not read. sheet Sheet1: Year, PS, Trial, Country, Site, Season, Genotype, PLTHGT, PNL, YIELD. Observation records are missing from d until this file is standardized.
-
-## NEW VARIABLES
-# panicle_length_: panicle length (cm), from PNL
-# tiller_number_: tillers per plant, from TILL
-# spikelet_fertility_: spikelet fertility (%), from FERT
 
 
 carob_script <- function(path) {
@@ -62,46 +50,16 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;plant_height;seed_weight;dmy_total;panicle_length_;tiller_number_;spikelet_fertility_",
+		response_vars = "yield;flowering_days;plant_height;seed_weight;dmy_total;panicle_length;tiller_number;spikelet_fertility",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.5
 	)
 
-	xlfiles <- grep("\\.xlsx$", ff, value=TRUE)
-	d <- vector("list", length(xlfiles))
-	for (i in seq_along(xlfiles)) {
-		r <- carobiner::read.excel(xlfiles[i])
-		names(r) <- tolower(names(r))
-		d[[i]] <- data.frame(
-			country = trimws(r$country),
-			location = trimws(r$site),
-			season = tolower(trimws(r$season)),
-			variety = trimws(r$genotype),
-			flowering_days = if ("flwr" %in% names(r)) as.numeric(r$flwr) else NA_real_,
-			plant_height = if ("plthgt" %in% names(r)) as.numeric(r$plthgt) else NA_real_,
-			seed_weight = if ("gw1000" %in% names(r)) as.numeric(r$gw1000) else NA_real_,
-			panicle_length_ = if ("pnl" %in% names(r)) as.numeric(r$pnl) else NA_real_,
-			tiller_number_ = if ("till" %in% names(r)) as.numeric(r$till) else NA_real_,
-			dmy_total = if ("biom" %in% names(r)) as.numeric(r$biom) * 1000 else NA_real_,
-			spikelet_fertility_ = if ("fert" %in% names(r)) as.numeric(r$fert) else NA_real_,
-			yield = as.numeric(r$yield) * 1000
-		)
-	}
-	d <- do.call(rbind, d)
-
-	d$trial_id <- as.character(as.integer(as.factor(paste(d$country, d$location, d$season))))
-	d$treatment <- d$variety
-	d$crop <- "rice"
-	d$yield_part <- "grain"
-	# Dictionnary.txt: paddy yield at 14% humidity
-	d$yield_moisture <- 14
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	# Dictionnary.txt: IL = irrigated lowland
-	d$irrigated <- TRUE
+	process <- carobiner::get_function("process_africarice_btf", path, group)
+	d <- process(ff, year = 2016, irrigated = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

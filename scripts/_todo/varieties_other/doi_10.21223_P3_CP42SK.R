@@ -41,7 +41,7 @@ The objective of this study was to assess the main factors that explain the func
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
 		carob_effort = 0.35
 	)
@@ -70,6 +70,7 @@ The objective of this study was to assess the main factors that explain the func
 		latitude = -2.42,
 		longitude = 38.25,
 		geo_from_source = FALSE,
+		planting_date = "2010",
 		trial_id = "Kiboko_2010",
 		on_farm = FALSE,
 		is_survey = FALSE

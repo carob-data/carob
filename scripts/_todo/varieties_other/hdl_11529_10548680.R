@@ -71,6 +71,7 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 		latitude = 19.530,
 		longitude = -98.847,
 		trial_id = "El Batan 2017",
+		planting_date = "2017",
 		rep = as.integer(r$Rep),
 		plot_id = paste(r$Rep, variety),
 		crop = ifelse(variety == "Vetch", "vetch", "grass pea"),
@@ -92,6 +93,8 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 		plot_width = as.numeric(r$WidthArea),
 		plot_length = as.numeric(r$LengthArea),
 		plant_density = as.numeric(r$Count) / as.numeric(r$AreaCount) * 10000,
+		# protocol: 2 rows on 75 cm narrow permanent beds
+		row_spacing = 75,
 		land_prep_method = "permanent beds",
 		N_fertilizer = 20,
 		P_fertilizer = 40 / 2.29,

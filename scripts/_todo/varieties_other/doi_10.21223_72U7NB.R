@@ -7,15 +7,13 @@
 # treat is HS or NHS. The description defines a heat-stress season and a non-heat-stress season. The codes are kept as stored. The design is an alpha lattice, from the description. Harvest DAP is the dap column (the description says 120 days).
 
 ## ISSUES
-# No trial coordinates.
-# Rows are means, so plot and replication in the file are averages and are not plot ids.
+# Rows are means across replications, so plot and replication in the file are averages and are not plot ids.
 # Rows with no CIP number are dropped so the variety treatment is never blank.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: foliage_yield_ (yield?). unknown variable: root_dry_yield_ (yield?). unknown variable: vine_dry_yield_ (yield?). high crop yield: sweetpotato: 134585. NA detected: yield, yield_part.
+# Exact planting dates for the two 2013-2014 seasons are not recorded in the harvest file.
+# Fresh storage-root yield reaches 134.6 t/ha (left as recorded).
 
 ## NEW VARIABLES
-# foliage_yield_: FYTHA, kg/ha, from t/ha.
-# root_dry_yield_: DMRY, kg/ha, from t/ha.
-# vine_dry_yield_: DMVY, kg/ha, from t/ha.
+# heat_stress_: season treatment (HS = heat stress, NHS = non-heat stress).
 
 ## NOT PROCESSED
 # Morphology file, canopy-trait means, and the Piura weather workbook. The weather file is a station series and is not joined to accessions here.
@@ -47,13 +45,13 @@ This dataset presents the results of a screening for heat stress tolerance of 19
 		project = NA,
 		design = "alpha lattice",
 		data_type = "experiment",
-		treatment_vars = "treatment;variety",
-		response_vars = "yield",
+		treatment_vars = "variety;heat_stress_",
+		response_vars = "yield;dmy_storage;fwy_residue;dmy_residue;harvest_index;NDVI",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.4
 	)
 
@@ -71,17 +69,24 @@ This dataset presents the results of a screening for heat stress tolerance of 19
 	variety <- gsub(",", ".", variety, fixed=TRUE)
 	d <- data.frame(
 		country = "Peru",
+		adm1 = "Piura",
 		location = "Piura",
+		latitude = -5.1945,
+		longitude = -80.6328,
 		variety = variety,
 		treatment = trimws(r$treat),
+		heat_stress_ = trimws(r$treat),
 		DAP = as.integer(num(r$dap)),
 		crop = "sweetpotato",
 		yield = num(r$rytha) * 1000,
 		yield_part = "roots",
+		yield_isfresh = TRUE,
+		yield_moisture = 100 - num(r$dm),
 		harvest_index = num(r$hi),
-		foliage_yield_ = num(r$fytha) * 1000,
-		root_dry_yield_ = num(r$dmry) * 1000,
-		vine_dry_yield_ = num(r$dmvy) * 1000,
+		fwy_residue = num(r$fytha) * 1000,
+		dmy_storage = num(r$dmry) * 1000,
+		dmy_residue = num(r$dmvy) * 1000,
+		NDVI = num(r$ndvi),
 		geo_from_source = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE,

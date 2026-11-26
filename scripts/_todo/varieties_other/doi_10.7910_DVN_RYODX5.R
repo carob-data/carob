@@ -19,10 +19,7 @@
 # Dictionnary.txt TILL, BIOM, FERT: those columns are not in the workbooks.
 # 2015-M-PET-Supplementary information.pdf: LSD, heritability, and p-value. Trial statistics, not plot or genotype rows.
 # PS and Trial: constant (M and PET).
-# Year: the trial year, not a planting or harvest date.
-
-## NEW VARIABLES
-# panicle_length_: panicle length, cm (dictionary PNL).
+# Year: the trial year (2015), stored as planting_date.
 
 
 carob_script <- function(path) {
@@ -52,44 +49,18 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;plant_height;seed_weight",
+		response_vars = "yield;flowering_days;plant_height;seed_weight;panicle_length",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 85,
 		carob_effort = 0.4
 	)
 
-	f1 <- ff[basename(ff) %in% c("2015-M-PET-Gambia-Kaiaf.xlsx", "2015-M-PET-Gambia-Lamin Abuko.xlsx")]
-	f1 <- f1[order(basename(f1))]
-	d <- lapply(f1, function(f) {
-		r <- carobiner::read.excel(f)
-		variety <- trimws(as.character(r$Genotype))
-		data.frame(
-			country = trimws(as.character(r$Country)),
-			location = trimws(as.character(r$Site)),
-			season = tolower(trimws(as.character(r$Season))),
-			variety = variety,
-			treatment = variety,
-			flowering_days = as.numeric(r$FLWR),
-			plant_height = as.numeric(r$PLTHGT),
-			seed_weight = as.numeric(r$GW1000),
-			panicle_length_ = as.numeric(r$PNL),
-			# Dictionnary.txt: paddy yield at 14% moisture, t/ha
-			yield = as.numeric(r$YIELD) * 1000
-		)
-	})
-	d <- do.call(rbind, d)
-
-	d$crop <- "rice"
-	d$yield_part <- "grain"
-	# Dictionnary.txt: 14% humidity
-	d$yield_moisture <- 14
-	d$yield_isfresh <- FALSE
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	d$trial_id <- as.character(as.integer(as.factor(paste(d$country, d$location, d$season))))
+	process <- carobiner::get_function("process_africarice_btf", path, group)
+	# mangrove rice, not irrigated
+	d <- process(ff, year = 2015, irrigated = FALSE)
 
 	carobiner::write_files(path, meta, d)
 }

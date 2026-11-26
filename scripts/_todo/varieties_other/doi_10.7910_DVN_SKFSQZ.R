@@ -54,98 +54,13 @@ Explanations of the changes
 		notes = "Variety-by-location BLUPs from the 2017 irrigated lowland trial, not plot replicates.",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 75,
 		carob_effort = 0.4
 	)
 
-	blup_long <- function(f, response) {
-		r <- carobiner::read.excel(f, col_names=FALSE, .name_repair="minimal")
-		hdr <- trimws(as.character(unlist(r[1, ])))
-		hdr[is.na(hdr) | !nzchar(hdr)] <- NA_character_
-		body <- r[-1, , drop=FALSE]
-		variety <- trimws(as.character(body[[1]]))
-		stat <- variety %in% c("Heritability", "Mean", "LSD", "LCS", "Replicates", "Statistic", "Genotype")
-		stat <- stat | grepl("^(P-value|Variance)", variety)
-		keep <- !is.na(variety) & nzchar(variety) & !stat
-		variety <- variety[keep]
-		body <- body[keep, , drop=FALSE]
-		loc <- which(!is.na(hdr) & hdr != "Genotype" & !grepl("^Combined", hdr))
-		pieces <- vector("list", length(loc))
-		for (i in seq_along(loc)) {
-			j <- loc[i]
-			val <- body[[j]]
-			if (!is.numeric(val)) {
-				val <- as.numeric(trimws(as.character(val)))
-			}
-			pieces[[i]] <- data.frame(
-				variety = variety,
-				site_label = hdr[j],
-				value = val
-			)
-		}
-		x <- do.call(rbind, pieces)
-		x <- x[!is.na(x$value), ]
-		names(x)[names(x) == "value"] <- response
-		x
-	}
-
-	site_row <- function(label) {
-		parts <- trimws(strsplit(label, "-", fixed=TRUE)[[1]])
-		inst <- NA_character_
-		if (tolower(parts[1]) %in% c("africarice", "isra")) {
-			inst <- parts[1]
-			parts <- parts[-1]
-		}
-		cmap <- c(
-			"nigeria" = "Nigeria",
-			"senegal" = "Senegal",
-			"mali" = "Mali",
-			"burkina faso" = "Burkina Faso",
-			"guinea" = "Guinea",
-			"ghana" = "Ghana",
-			"benin" = "Benin",
-			"cote d'ivoire" = "C\u00f4te d'Ivoire"
-		)
-		country <- unname(cmap[tolower(parts[1])])
-		if (is.na(country)) {
-			stop(paste("unparsed site", label))
-		}
-		loc <- paste(parts[-1], collapse="-")
-		loc <- carobiner::fix_name(loc, "title", skip="du")
-		if (!is.na(inst)) {
-			loc <- paste0(loc, " (", inst, ")")
-		}
-		data.frame(site_label=label, country=country, location=loc)
-	}
-
-	f1 <- ff[basename(ff) == "BLUP-Yield-2017-Irrigated-Lowland.xls"]
-	f2 <- ff[basename(ff) == "BLUP-Height-2017-Irrigated-Lowland.xls"]
-	f3 <- ff[basename(ff) == "BLUP-Flowering-2017-Irrigated-Lowland.xls"]
-	y <- blup_long(f1, "yield")
-	h <- blup_long(f2, "plant_height")
-	fl <- blup_long(f3, "flowering_days")
-
-	d <- merge(y, h, by=c("variety", "site_label"), all=TRUE)
-	d <- merge(d, fl, by=c("variety", "site_label"), all=TRUE)
-	sites <- do.call(rbind, lapply(unique(d$site_label), site_row))
-	d <- merge(d, sites, by="site_label", all.x=TRUE)
-
-	d <- data.frame(
-		trial_id = as.character(as.integer(as.factor(paste(d$country, d$location, "2017")))),
-		crop = "rice",
-		variety = d$variety,
-		treatment = d$variety,
-		country = d$country,
-		location = d$location,
-		yield = as.numeric(d$yield),
-		flowering_days = as.numeric(d$flowering_days),
-		plant_height = as.numeric(d$plant_height),
-		yield_part = "grain",
-		irrigated = TRUE,
-		on_farm = FALSE,
-		is_survey = FALSE
-	)
+	process <- carobiner::get_function("process_africarice_blup", path, group)
+	d <- process(ff, year = 2017, irrigated = TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

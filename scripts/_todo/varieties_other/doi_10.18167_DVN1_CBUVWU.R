@@ -63,20 +63,6 @@ The 'Plantain-Optim' dataset contains growth, development and yield data of 405 
 	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
-	# English and French descriptions make yuri build two metadata rows and stop. Both texts stay in one description.
-	jf <- list.files(file.path(path, "data", "raw", group, "doi_10.18167_DVN1_CBUVWU"), pattern="\\.json$", full.names=TRUE)
-	js <- jsonlite::read_json(jf)
-	fields <- js$data$latestVersion$metadataBlocks$citation$fields
-	for (i in seq_along(fields)) {
-		if (identical(fields[[i]]$typeName, "dsDescription") && length(fields[[i]]$value) > 1) {
-			texts <- vapply(fields[[i]]$value, function(z) z$dsDescriptionValue$value, "")
-			fields[[i]]$value[[1]]$dsDescriptionValue$value <- paste(texts, collapse="\n\n")
-			fields[[i]]$value <- fields[[i]]$value[1]
-			js$data$latestVersion$metadataBlocks$citation$fields <- fields
-			jsonlite::write_json(js, jf, auto_unbox=TRUE)
-		}
-	}
-
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=1,
 		data_organization = "CIRAD",
 		publication = "doi:10.1016/j.dib.2018.01.065",
@@ -88,8 +74,8 @@ The 'Plantain-Optim' dataset contains growth, development and yield data of 405 
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.7
 	)
 
@@ -130,6 +116,9 @@ The 'Plantain-Optim' dataset contains growth, development and yield data of 405 
 		country = "Cameroon",
 		adm1 = "Littoral",
 		location = "Njombé",
+		# CARBAP station, Njombé
+		latitude = 4.583,
+		longitude = 9.650,
 		crop = "plantain",
 		on_farm = FALSE,
 		is_survey = FALSE,

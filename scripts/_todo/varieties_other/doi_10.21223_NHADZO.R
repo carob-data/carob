@@ -10,10 +10,16 @@
 
 ## ISSUES
 # The sheet does not say the crop name. The product is tubers of Kachpot 1 and Victoria, stored as potato.
-# No coordinates. The villages need georeferencing.
-# No fertilizer rates.
-# Survival rate is left as recorded. The summary sheet shows values such as 0.70, so it is not converted to a percentage.
-# write_files: , yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: season_ (season?). unknown variable: dehaulming_date_ (date?). unknown variables: cuttings_planted_, cuttings_harvested_, survival_rate_, and the tuber size-class columns. NA detected: yield.
+# Coordinates are approximate district/ZARDI centroids (geo_from_source = FALSE).
+# No fertilizer rates or irrigation information.
+# Survival rate is left as recorded (0-1 fraction).
+
+## NEW VARIABLES
+# dehaulming_date_: date of dehaulming (YYYY-MM-DD).
+# cuttings_planted_, cuttings_harvested_: number of rooted apical cuttings planted and harvested per bed.
+# survival_rate_: proportion of cuttings surviving to harvest (0-1).
+# tuber_count_class1_..class5_: tuber counts per bed by diameter class (<20 mm, 20-30 mm, 31-45 mm, 46-60 mm, >60 mm).
+# tuber_weight_class1_..class5_: tuber fresh weights (kg/bed) by diameter class (<20 mm, 20-30 mm, 31-45 mm, 46-60 mm, >60 mm).
 
 ## NOT PROCESSED
 # Sheet1, Sheet2, Sheet3, Sheet4, and Sheet8: pivot summaries of the RAC 2019A sheet.
@@ -44,8 +50,8 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 65,
 		carob_effort = 0.4
 	)
 
@@ -73,7 +79,7 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 		adm2 = trimws(as.character(r$District)),
 		adm3 = trimws(as.character(r[["Sub-county"]])),
 		location = trimws(as.character(r$Village)),
-		season_ = "2019A",
+		season = "first",
 		crop = "potato",
 		variety = variety,
 		treatment = variety,
@@ -84,23 +90,30 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 		sex = sex,
 		on_farm = biz == "Individual",
 		is_survey = FALSE,
-		geo_from_source = FALSE,
 		yield_part = "tubers",
+		yield_isfresh = TRUE,
 		yield = as.numeric(r[["Tons/ha"]]) * 1000,
 		cuttings_planted_ = as.numeric(r[["# cuttings planted"]]),
 		cuttings_harvested_ = as.numeric(r[["# cuttings harvested"]]),
 		survival_rate_ = as.numeric(r[["Survival rate"]]),
-		tuber_n_lt_20mm_ = as.numeric(r[["# tubers < 20mm"]]),
-		tuber_wt_kg_lt_20mm_ = as.numeric(r[["Weight tubers < 20mm (Kg)"]]),
-		tuber_n_20_30mm_ = as.numeric(r[["# tubers 20-30mm"]]),
-		tuber_wt_kg_20_30mm_ = as.numeric(r[["Weight tubers 20-30mm (Kg)"]]),
-		tuber_n_31_45mm_ = as.numeric(r[["# tubers 31-45mm"]]),
-		tuber_wt_kg_31_45mm_ = as.numeric(r[["Weight tubers 31-45mm (Kg)"]]),
-		tuber_n_46_60mm_ = as.numeric(r[["# tubers 46-60mm"]]),
-		tuber_wt_kg_46_60mm_ = as.numeric(r[["Weight tubers 46-60mm (Kg)"]]),
-		tuber_n_gt_60mm_ = as.numeric(r[["# tubers > 60mm"]]),
-		tuber_wt_kg_gt_60mm_ = as.numeric(r[["Weight tubers > 60mm (Kg)"]])
+		tuber_count_class1_ = as.numeric(r[["# tubers < 20mm"]]),
+		tuber_weight_class1_ = as.numeric(r[["Weight tubers < 20mm (Kg)"]]),
+		tuber_count_class2_ = as.numeric(r[["# tubers 20-30mm"]]),
+		tuber_weight_class2_ = as.numeric(r[["Weight tubers 20-30mm (Kg)"]]),
+		tuber_count_class3_ = as.numeric(r[["# tubers 31-45mm"]]),
+		tuber_weight_class3_ = as.numeric(r[["Weight tubers 31-45mm (Kg)"]]),
+		tuber_count_class4_ = as.numeric(r[["# tubers 46-60mm"]]),
+		tuber_weight_class4_ = as.numeric(r[["Weight tubers 46-60mm (Kg)"]]),
+		tuber_count_class5_ = as.numeric(r[["# tubers > 60mm"]]),
+		tuber_weight_class5_ = as.numeric(r[["Weight tubers > 60mm (Kg)"]])
 	)
+	geo <- data.frame(
+		adm2 = c("BugiZARDI", "Kabale", "Kanungu", "Kapchorwa", "KaZARDI", "Kisoro", "Kween", "Mbale", "Rubanda"),
+		latitude = c(1.070, -1.249, -0.958, 1.401, -1.221, -1.285, 1.420, 1.082, -1.190),
+		longitude = c(34.380, 29.989, 29.790, 34.450, 29.976, 29.685, 34.530, 34.175, 29.850),
+		geo_from_source = FALSE
+	)
+	d <- merge(d, geo, by="adm2", all.x=TRUE)
 
 	carobiner::write_files(path, meta, d)
 }

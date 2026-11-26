@@ -45,7 +45,7 @@ The R code used for data processing, analysis, and visualization is available in
 		response_vars = "yield;flowering_days;maturity_days;rank_score",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
 		carob_effort = 0.8
 	)

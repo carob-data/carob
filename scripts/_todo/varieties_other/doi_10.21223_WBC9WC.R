@@ -9,16 +9,12 @@
 # Season codes 2017A and 2017B are not names in the season list, so they stay in season_code_. Harvest index is the percent term.
 
 ## ISSUES
-# No coordinates.
+# Coordinates are approximate research station locations for NaCRRI Namulonge and NaSARRI Serere (geo_from_source = FALSE).
 # Commercial and non-commercial root weights are kg per plot, and plot area is not in the file, so they are not converted to kg/ha.
-# SRY of about 112 t/ha is left as recorded.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variable: season_code_ (season?). unknown variable: vine_yield_ (yield?). unknown variables: weevil_score_, bulking_score_. high crop yield: sweetpotato: 112488.75. NA detected: yield, yield_part.
+# SRY reaches about 112 t/ha; left as recorded.
 
 ## NEW VARIABLES
-# vine_yield_: vine yield, kg/ha, from VY in t/ha.
-# weevil_score_: sweetpotato weevil reaction, 1 to 5.
 # bulking_score_: continuous storage-root formation score, 1 to 9.
-# season_code_: 2017A or 2017B.
 
 ## NOT PROCESSED
 # ANOVA, means, and regression sheets.
@@ -45,12 +41,12 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield",
+		response_vars = "yield;fwy_residue;harvest_index;pest_severity",
 		notes = NA,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 55,
 		carob_effort = 0.45
 	)
 
@@ -77,11 +73,16 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 	variety <- name[code]
 	variety <- ifelse(is.na(variety), code, as.character(variety))
 
+	weevil <- num(r$Weevil)
 	d <- data.frame(
 		country = "Uganda",
 		location = ifelse(loc == 1, "Namulonge", ifelse(loc == 2, "Serere", NA_character_)),
 		adm1 = ifelse(loc == 1, "Wakiso", ifelse(loc == 2, "Serere", NA_character_)),
-		season_code_ = ifelse(seas == 1, "2017A", ifelse(seas == 2, "2017B", NA_character_)),
+		# NaCRRI Namulonge and NaSARRI Serere station coordinates
+		latitude = ifelse(loc == 1, 0.526, ifelse(loc == 2, 1.500, NA_real_)),
+		longitude = ifelse(loc == 1, 32.613, ifelse(loc == 2, 33.450, NA_real_)),
+		planting_date = "2017",
+		season = ifelse(seas == 1, "first", ifelse(seas == 2, "second", NA_character_)),
 		variety = variety,
 		treatment = variety,
 		rep = as.integer(num(r$Rep)),
@@ -90,15 +91,17 @@ The data set for the 'Continuous Storage Root Formation and Bulking in sweetpota
 		crop = "sweetpotato",
 		yield = num(r$SRY) * 1000,
 		yield_part = "roots",
-		vine_yield_ = num(r$VY) * 1000,
-		weevil_score_ = num(r$Weevil),
+		yield_isfresh = TRUE,
+		fwy_residue = num(r$VY) * 1000,
+		pest_species = ifelse(!is.na(weevil), "sweetpotato weevil", NA_character_),
+		pest_severity = as.character(weevil),
 		bulking_score_ = num(r$CSRFAB),
 		harvest_index = num(r$HI),
 		geo_from_source = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
-	d$trial_id <- paste(d$location, d$season_code_, sep="_")
+	d$trial_id <- paste(d$location, ifelse(seas == 1, "2017A", "2017B"), sep="_")
 	d$yield_part[is.na(d$yield)] <- NA_character_
 	rownames(d) <- NULL
 

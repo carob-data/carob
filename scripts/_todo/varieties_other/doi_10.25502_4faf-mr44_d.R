@@ -25,11 +25,10 @@
 # data_dictionary_okra_adaptation_and_yield_stability.csv: documentation or a codebook, not an observation table.
 
 ## NEW VARIABLES
-# stem_diameter_cm_, pod_length_cm_, pod_width_cm_, pod_weight_g_, total_pod_weight_g_: units inferred from magnitude, not from the dictionary.
-# plants_per_plot_: NoPlnts.
-# total_pods_: TotPodHarvest.
-# damaged_pods_: TotDamagedPod.
-# damaged_pod_percent_: %DamagePodPerPlt.
+# pod_weight_, total_pod_weight_: average pod weight and total harvested pod weight per plot (g; unit inferred from magnitude).
+# plants_per_plot_: number of plants per plot (NoPlnts).
+# total_pods_, damaged_pods_: total and damaged pods harvested per plot.
+# damaged_pod_share_: percentage of damaged pods per plot (%, %DamagePodPerPlt).
 
 
 carob_script <- function(path) {
@@ -54,8 +53,8 @@ IPM of aphid pests of vegetables
 		response_vars = "plant_height;flowering_days;maturity_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
 		carob_effort = 0.7,
 		notes = NA
 	)
@@ -89,21 +88,27 @@ IPM of aphid pests of vegetables
 		flowering_days = r$Anthesis,
 		maturity_days = r$DayCoMat,
 		plant_height = r$AvPlntHt,
-		stem_diameter_cm_ = r$AvStemDiam,
-		pod_length_cm_ = r$AvPodL,
-		pod_width_cm_ = r$AvPodW,
-		pod_weight_g_ = r$AvPodWt,
-		total_pod_weight_g_ = r$TotWt,
+		stem_diameter = r$AvStemDiam,
+		pod_length = r$AvPodL,
+		pod_width = r$AvPodW,
+		pod_weight_ = r$AvPodWt,
+		total_pod_weight_ = r$TotWt,
 		plants_per_plot_ = r$NoPlnts,
 		total_pods_ = r$TotPodHarvest,
 		damaged_pods_ = r$TotDamagedPod,
-		damaged_pod_percent_ = r[["%DamagePodPerPlt"]],
+		damaged_pod_share_ = r[["%DamagePodPerPlt"]],
 		crop = "okra",
 		yield_part = "fruit",
 		on_farm = NA,
 		is_survey = FALSE,
 		geo_from_source = FALSE
 	)
+	geo <- data.frame(
+		location = c("Buea", "Evodoula", "Foumbot", "Maroua"),
+		latitude = c(4.156, 4.083, 5.508, 10.591),
+		longitude = c(9.232, 11.200, 10.632, 14.316)
+	)
+	d <- merge(d, geo, by="location", all.x=TRUE)
 
 	carobiner::write_files(path, meta, d)
 }
