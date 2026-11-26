@@ -1,4 +1,11 @@
 
+# R script for "carob"
+
+## ISSUES
+# - 04_TotalYield_Comas.xls reports total biomass dry matter (dmy_total in long) at multiple
+#   dates, not fresh tuber yield; yield and yield_moisture are not available.
+# - fungicide_interval is NA for the unsprayed control treatment (Frequency == 0, fungicide_used == FALSE).
+
 carob_script <- function(path) {
   
   "
@@ -66,15 +73,12 @@ These datasets correspond to the field experiments in Comas.
     on_farm = NA,
     is_survey = FALSE,
     irrigated = NA,
-    yield = NA,
     yield_part = "tubers",
-    yield_moisture = NA,
-    yield_isfresh = NA,
     N_fertilizer = NA,
     P_fertilizer = NA,
     K_fertilizer = NA,
-   fungicide_used = r1$Frequency > 0,
-   fungicide_interval = ifelse(r1$Frequency == 0, NA, r1$Frequency)
+    fungicide_used = r1$Frequency > 0,
+    fungicide_interval = as.integer(ifelse(r1$Frequency == 0, NA, r1$Frequency))
   )
   
   lb <- paste0("LB", 1:19)

@@ -1,10 +1,12 @@
 # R script for "carob"
 
 ## ISSUES
-# - herbicide_product contains active ingredients not yet in terminag (e.g., oxadiargyl, ethoxysulfuron)
-#   and occasional rare farmer free-text brand/misspelled names.
-# - insecticide_product contains active ingredients not yet in terminag (e.g., profenofos, triazophos,
-#   triflumezopyrim) and many rare farmer free-text trade names.
+# - herbicide_product contains standardized active ingredients not yet in terminag
+#   (oxadiargyl, ethoxysulfuron, fluchloralin, quizalofop-ethyl); unidentifiable
+#   farmer free-text entries are mapped to "unknown".
+# - insecticide_product contains standardized active ingredients not yet in terminag
+#   (profenofos, triflumezopyrim, triazophos, ethiprole, phosphamidon, thiodicarb);
+#   unidentifiable farmer free-text entries are mapped to "unknown".
 # - A small number of records have extreme mineral fertilizer rates (e.g., N_fertilizer > 600 kg/ha,
 #   Zn_fertilizer > 100 kg/ha, S_fertilizer > 250 kg/ha) from raw survey plot-unit or entry outliers.
 # - O.largestPlotGPS.Altitude is not mapped to elevation because raw mobile GPS altitudes are

@@ -251,111 +251,74 @@ do_LCAS <- function(r) {
 	clean_insecticide <- function(x) {
 		x <- trimws(tolower(as.character(x)))
 		x[x == "" | x == "na"] <- NA
-		ins_from <- c(
-			"do not know", "don't know", "dont know", "dontknow", "don't", "not remember",
-			"don't remember", "not known", "do not known", "do no know", "not know",
-			"not knowin", "not knwon", "unknown", "no", "none",
-			"thymate", "thimet", "thimate", "thaimate", "thaimet", "forate 10g", "forate",
-			"phorate 10 g", "phorate 10g", "phorate granules", "porate grannules", "phoret", "phorate",
-			"acepate", "asataf", "acephat", "acefate", "accephate", "acelhate", "achephate",
-			"aciphate", "asipate", "asiphate", "asphate", "espate", "esphate", "acephate",
-			"super killer", "superkiller", "ustad", "ustat", "ustaad", "ostaad", "ostad", "usdad",
-			"artin", "arthin", "arthrin", "arthine", "aathrin", "arthri", "cypermethrin",
-			"hamla", "humla", "505", "action-505", "nurel 505", "nurel505", "toofan 505",
-			"bilbo 505", "bilbo 550", "bilbo550", "chlorocyper", "chlorocypher", "cannon", "canon", "canan",
-			"chloro", "chalora", "cloro", "choloro", "chaloro", "chaloa", "cholora", "calora", "clora",
-			"ranger", "lethal", "lithal", "darsban", "dursban", "dasban", "dosban", "tricel", "chlorpyrifos",
-			"padan", "cartap", "critap", "kantap", "caldan", "cartop", "cartab",
-			"confidor", "canfidol", "admire", "tatamida", "victor", "amida", "imidacloprid",
-			"monosil", "monocil", "nuvacron", "monocrotophos",
-			"fame", "takumi", "takomi", "takumin", "tata takomi", "tata tacomi", "flubendiamide",
-			"osheen", "oshen", "ohseen", "oshine", "ossen", "asheen", "token", "tocan", "dinitrofen", "dinotefuran",
-			"regent", "regent gr", "rajent", "reagent", "jump", "fipronil",
-			"furadan", "furadon", "firadon", "floradon", "furatox", "phoradon", "phuradon", "carbofuran",
-			"ploud", "applaud", "aplaud", "aplod", "upload", "uplod", "tata ploud", "tata upload", "tata aplond", "buprofezin",
-			"ferterra", "fatera", "fotera", "fartera", "fatara", "phatera", "phatara", "photera", "patera",
-			"bhaterra", "coragen", "coragen granules", "corozen", "corazen", "coragin", "corozin", "corezen",
-			"corragen", "chorazen", "rynaxypyr", "chlorantraniliprole",
-			"chess", "chass", "chaas", "bilbo", "bibo", "bilboa", "pymetrozine",
-			"rogor", "roger", "rogar", "rogour", "tafgor", "dimethoate",
-			"karate", "matador", "metador", "lamda", "lemda", "lambda-cyhalothrin",
-			"nuvan", "nuwan", "novan", "novn", "ddvp", "ddbp", "dichlorvos",
-			"malathian", "malathion",
-			"actara", "ektara", "attara", "thiamethoxam",
-			"ekalux", "quinalphos", "quinolphos", "qunalophus",
-			"thiodan", "endosulphan", "endosulfan",
-			"neem", "neem oil", "neem leaf extract", "azadirachtin",
-			"emamactin", "procleyem", "emamectin benzoate",
-			"ethiprol", "ethiprole",
-			"profenophos", "profinofos", "profinophos", "profinophus", "progenophos", "propenophos",
-			"prophinophus", "propinophus", "profenofos",
-			"trizophos", "trizophose", "trizoposh", "tryzophos", "tarzan", "tarjan", "tarzon",
-			"trazan", "trazen", "turzan", "trzan", "triazophos",
-			"pexalon", "pixalon", "pwzalon", "triflumezopyrim"
+
+		rules <- list(
+			c("\\b(hamla|humla|action.?505|nurel.?505|toofan.?505|bilbo.?505|bilbo.?550|bilbo550|chalora\\s*505|chaloa\\s*505|chaloro\\s*505|chloro\\s*505|chlorpyriphos\\s*505|fighter\\s*505|strike\\s*550|uld\\s*505|adhunik\\s*505|505|chlorocyph?er|bullet|bulet|ann?aconda|cannon|canon|canan|kanan|kanon|kanun|fighter)\\b", "chlorpyrifos; cypermethrin"),
+			c("\\b(profex\\s*super|profex\\s*supper|propex\\s*supar|profexbuildo|rocket|roket|racket|raket)\\b|profenofos.*cypermethrin", "profenofos; cypermethrin"),
+			c("\\b(lancer\\s*gold)\\b", "acephate; imidacloprid"),
+			c("\\b(vitako|virtako)\\b", "chlorantraniliprole; thiamethoxam"),
+			c("\\b(ampligo)\\b", "chlorantraniliprole; lambda-cyhalothrin"),
+			c("\\b(glamou?r)\\b", "ethiprole; imidacloprid"),
+			c("\\b(neuro[ck]omb?i?|niurocombi|nurocombi|niro\\s*kombe|neurocron)\\b", "chlorpyrifos; cypermethrin"),
+			c("\\b(th[aei]+m[aei]+t[a-z0-9]*|dhiomate|himet|ph?or[ae]t[a-z0-9]*|porate)\\b", "phorate"),
+			c("\\b(ac+[ei]+p[hf]*[ae]t[ae]?|as[ai]?p[hf]*[ae]t[ae]?|es[ph]*at[ae]|is[ph]*at[ae]|asataf|ac[ei]phat)\\b", "acephate"),
+			c("\\b(super\\s*killer|u?staa?d|ostaa?d|usdad|a+rth?r?in[ae]?|artin|cyper?m[aeio][a-z]*|cvpermethrin|cyperthrin|cyermeth[a-z]*|cypromith[a-z]*|cyperhit|cypher\\s*mithilin|simbuk|simca|simka|symca|cimka|cmika|colt|ripcord|repcord)\\b", "cypermethrin"),
+			c("\\b(ch?l?o?r[aeio]?[a-z]*(py|pi|pa|pe|pu|po|pr)[a-z]*(ph|f)[a-z]*|cbloriapairiphos|clopariphous|chloropyipos|ch?l?o?r?a?l?o?ra|ch?al[ao]r[ao]?|ch?l?oro|clora|calora|chalpra|chalro|chalroa|chslora|chalamin[ae]?|chalmine|chlamin|cor[ao]b[ao]n|ranger|l[ei]thal|d[auo]r?s[bw]an|tricel)\\b", "chlorpyrifos"),
+			c("\\b(padan|cart[aeor]?p[a-z]*|car\\s+tap[a-z]*|carap\\s+hydro|varta\\s+hydro|cartof|kart[ao]p|kritap|critap|kantap|k[ae]ld[ao]n|caldan|cartab)\\b", "cartab"),
+			c("\\b(confid[ao]r[ae]?|canfidol|admire|tatamida|victor|amida|hilmida|rajmida|gaucho|imid[ae]?c?h?l[a-z]*|emidachlor|prem|premier)\\b", "imidacloprid"),
+			c("\\b(mon[ao]?ch?r[ao]?t[a-z]*|mobochrotophos|momocrotophos|monchrophos|monocootophas|monocotphos|monocrophos|monortopho|mono|mon[ao]s?cil|nuvacron|nukran|nocron|monacrine)\\b", "monocrotophos"),
+			c("\\b(fame|frame|tak[uo]mi[n]?|tacomi|flub?e?nd[a-z]*)\\b", "flubendiamide"),
+			c("\\b(os[hs]*ee?n[ae]?|ohseen|oshine|asheen|o[cs]in[ae]?|ocean|tok[ae]n|tocan|dinot[ei]f[a-z]*|dinitrofen)\\b", "dinotefuran"),
+			c("\\b(r[ae]+g[ae]nt|rajent|reejent|jump|fip[ao]?ronil)\\b", "fipronil"),
+			c("\\b(f[ui]+r+[ao]+d[ao]+n[a]?|f[il]ur?adon|fhuradal|firdon|ph[auo]radon|furatox|foratox|phoratox|foradon|danadar|carbo?fur[a-z]*)\\b", "carbofuran"),
+			c("\\b(a?p+l[ao]+u?d|upl[ao]+u?d|aplond|aploid|bup?r[aeio]f[a-z]*|viprophozine)\\b", "buprofezin"),
+			c("\\b(f[aeo]r?t+e?r+a|ph?[aeo]t[ae]ra|fatra|fotra|bhaterra|cor[aoe]g[aei]n|cor[aoe]z[aei][nm]|kor[ao][jz][aei]n|chorazen|corizon|corgin|kurjin|rynaxypyr|chlorab?ntran[a-z]*)\\b", "chlorantraniliprole"),
+			c("\\b(ch[ae]ss|chaas|bilbo[a]?|bibo|py[mn][aei]tr[a-z]*|prmetrozyne|pimetrog[a-z]*)\\b", "pymetrozine"),
+			c("\\b(rog[aeo]u?r|tafgor|dimethoate)\\b", "dimethoate"),
+			c("\\b(karat[ae]y?|carate|karantey|m[ae]tador|lamb?da[\\s-]*cyh[a-z]*|lamd[ai]|lemd[ae][a-z]*|lemenda)\\b", "lambda-cyhalothrin"),
+			c("\\b(nu[vw]an|nov[ae]?n|nuan|nivan|dd[vb]p|dich?lor[io]?v[a-z]*|dichlorophos)\\b", "dichlorvos"),
+			c("\\b(m[ae]l[aei]?th[aiy]+[ao]?n[a-z]*)\\b", "malathion"),
+			c("\\b(actara|ektara|attara|thiamet[a-z0-9]*|thiometh[a-z]*)\\b", "thiamethoxam"),
+			c("\\b(ekalux|akal[ae]x|akalas|qu[ie]?n[ao]l[ao]?ph[a-z]*)\\b", "quinalphos"),
+			c("\\b(thiodan|thaidon|thai\\s*don|hildon|sildon|endosulp?h?[a-z]*|andosalfa|indosulp?h?[a-z]*)\\b", "endosulfan"),
+			c("\\b(neem[a-z]*|azadirachtin)\\b", "azadirachtin"),
+			c("\\b([ae]mam[ae]ctin[a-z\\s]*|procleyem)\\b", "emamectin benzoate"),
+			c("\\b(fenval[ae]?rat[ae]?|fenel|fenwal|tata\\s*fen|tatafen)\\b", "fenvalerate"),
+			c("\\b(folid[aoe]l|folider|folidr|filidol|metacid|metasid|metacyl|methyl\\s*parathion)\\b", "methyl parathion"),
+			c("\\b(decis|desis|deltamethrin)\\b", "deltamethrin"),
+			c("\\b(talstar|bifenthrin)\\b", "bifenthrin"),
+			c("\\b(sevin|carbaryl)\\b", "carbaryl"),
+			c("\\b(flonicamid[ae]?|fluconiamide)\\b", "flonicamid"),
+			c("\\b(fenpropathrin)\\b", "fenpropathrin"),
+			c("\\b(prof[aei]n[ao]f[a-z]*|prof[aei]n[ao]ph[a-z]*|progenophos|propenophos|proph[aei]n[ao]ph[a-z]*|praphanopos|profex|carina|karina)\\b", "profenofos"),
+			c("\\b(tr[aiy]+z[ao]?ph?[a-z]*|trisofos|tarz[ao]n|tarjan|traz[ae]n|turzan|trzan)\\b", "triazophos"),
+			c("\\b(p[eiw]xalon|fixlan|flexlan|fexlin|pex)\\b", "triflumezopyrim"),
+			c("\\b(larvin|thiodicarb)\\b", "thiodicarb"),
+			c("\\b(d[ae]m[aeio]cr[aio][nm][ae]?|demicron|damecron|phosphamidon)\\b", "phosphamidon"),
+			c("\\b(ethiprol[ae]?)\\b", "ethiprole")
 		)
-		ins_to <- c(
-			rep("unknown", 14), "none", "none",
-			rep("phorate", 13),
-			rep("acephate", 14),
-			rep("cypermethrin", 15),
-			rep("chlorpyrifos; cypermethrin", 15),
-			rep("chlorpyrifos", 18),
-			rep("cartab", 7),
-			rep("imidacloprid", 7),
-			rep("monocrotophos", 4),
-			rep("flubendiamide", 7),
-			rep("dinotefuran", 10),
-			rep("fipronil", 6),
-			rep("carbofuran", 8),
-			rep("buprofezin", 10),
-			rep("chlorantraniliprole", 21),
-			rep("pymetrozine", 7),
-			rep("dimethoate", 6),
-			rep("lambda-cyhalothrin", 6),
-			rep("dichlorvos", 7),
-			rep("malathion", 2),
-			rep("thiamethoxam", 4),
-			rep("quinalphos", 4),
-			rep("endosulfan", 3),
-			rep("azadirachtin", 4),
-			rep("emamectin benzoate", 3),
-			rep("ethiprole", 2),
-			rep("profenofos", 9),
-			rep("triazophos", 12),
-			rep("triflumezopyrim", 4)
-		)
-		map_one <- function(tok) {
-			idx <- match(tok, ins_from)
-			if (!is.na(idx)) return(ins_to[idx])
-			if (grepl("^ch?l?o?r[aeio]?[a-z]*(py|pi|pa|pe|pu|po|pr)[a-z]*(ph|f)[aoeu]?s?", tok)) return("chlorpyrifos")
-			if (grepl("^mon[ao]?ch?r[ao]?t", tok)) return("monocrotophos")
-			if (grepl("^cart[aeor]?p|^car\\s+tap", tok)) return("cartab")
-			if (grepl("^imid[ae]?c?h?l", tok)) return("imidacloprid")
-			if (grepl("^cyper?m[aeio]|^cyermeth|^cypromith", tok)) return("cypermethrin")
-			if (grepl("^py[mn][aei]tr|^pimetrog", tok)) return("pymetrozine")
-			if (grepl("^bup?r[aeio]f", tok)) return("buprofezin")
-			if (grepl("^flubend", tok)) return("flubendiamide")
-			if (grepl("^dinot[ei]f", tok)) return("dinotefuran")
-			if (grepl("^carbofur", tok)) return("carbofuran")
-			if (grepl("^chlorab?ntran", tok)) return("chlorantraniliprole")
-			if (grepl("^lamb?da.*cyh", tok)) return("lambda-cyhalothrin")
-			if (grepl("^dich?lor[io]?v", tok)) return("dichlorvos")
-			if (grepl("^thiamet|^thiometh", tok)) return("thiamethoxam")
-			tok
+
+		out <- rep(as.character(NA), length(x))
+		nn <- which(!is.na(x))
+		if (length(nn) == 0) return(out)
+
+		s <- gsub("[\r\n,+/;.&()]+", " ", x[nn])
+		s <- gsub("\\s+", " ", trimws(s))
+
+		res <- vector("list", length(s))
+		for (rl in rules) {
+			hits <- which(grepl(rl[1], s, perl=TRUE))
+			if (length(hits)) {
+				parts <- trimws(unlist(strsplit(rl[2], ";")))
+				for (h in hits) res[[h]] <- c(res[[h]], parts)
+			}
 		}
-		vapply(x, function(s) {
-			if (is.na(s)) return(as.character(NA))
-			if (grepl("remember|don'?t\\s*know|do\\s+not\\s+know|not\\s+known|do\\s+no\\s+know", s)) return("unknown")
-			s <- gsub("[\r\n]+", "; ", s)
-			toks <- trimws(unlist(strsplit(s, "[,+/;.]+")))
-			toks <- toks[toks != "" & toks != "na"]
-			if (length(toks) == 0) return(as.character(NA))
-			mapped <- vapply(toks, map_one, character(1), USE.NAMES=FALSE)
-			mapped <- trimws(unlist(strsplit(mapped, ";")))
-			mapped <- unique(mapped[mapped != ""])
-			if (length(mapped) == 0) return(as.character(NA))
-			paste(mapped, collapse="; ")
-		}, character(1), USE.NAMES=FALSE)
+		out[nn] <- vapply(seq_along(s), function(k) {
+			if (s[k] %in% c("no", "none")) return("none")
+			v <- unique(res[[k]])
+			if (length(v) == 0) "unknown" else paste(v, collapse="; ")
+		}, character(1))
+		out
 	}
 	d$insecticide_product <- clean_insecticide(r$I.q5508_insecticidesName)
 
@@ -369,81 +332,62 @@ do_LCAS <- function(r) {
 
 	# Herbicides
 	herb_cols <- c("J.q5601_1herbName", "J.q5603_2herbName", "J.q5605_3herbName")
-	herb_from <- c(
-		"24d_tok", "2,4-d", "2, 4-d", "24d", "2-4d", "2-4 d", "2,4,d", "2,4 d", "2.4-d", "2_4d",
-		"4-d", "4d", "weedmar super",
-		"bispyribac sodium", "bispyiback sodium", "bispyribak sodium", "bispyri back sodium",
-		"bispyibak sodium", "biapyribac sodium", "bis pyribac sodium", "bispiribacksodium",
-		"bispyribacsodium", "bispyripac sodium", "bispyribac",
-		"nominee gold", "nomineegold", "namini gold", "naminigold", "nomini gold", "namnigold",
-		"nominees gold", "nominigold", "namini", "lumini gold", "nomeene gold", "adora", "edora", "odera", "bispyribac-sodium",
-		"pretilachlor", "pritilaclor", "pretilachor", "pretilalore", "peitilachjore", "pretailachlor", "pretilaclor", "rifit", "refit", "repid",
-		"butachlor", "buta chlor", "machete",
-		"oxadiargyl", "oxadyagryl", "topstar",
-		"pyrazosulfuron", "parazosulfuron ethyl", "sathi", "saathi",
-		"metsulfuron", "chlorimuron", "chlorimuran ethyl", "chlorimuron-ethyl",
-		"almix", "allmix",
-		"fenoxaprop", "fenxaprop", "rice star", "ricestar", "restar", "weed super", "vip super",
-		"whip super", "fenoxaprop-p-ethyl",
-		"clodinafop", "clodinofop", "propargyl", "topic",
-		"sulfosulfuron", "leader", "traget",
-		"iodosulfuron", "idosulfuron",
-		"carfentrazone", "affinity",
-		"pendimethalin", "pendimythalyn", "stomp",
-		"alachlor", "lasso",
-		"bensulfuron", "londex power",
-		"paraquat", "gamaxon", "paraquat dichloride",
-		"penoxulam", "penoxsulam 24%sc", "penoxsulam",
-		"cyhalofop butyl", "cyhalofop-butyl",
-		"atrazin", "atrazine",
-		"mira 71", "glyphosate",
-		"pinoxaden", "isoproturon", "ethoxysulfuron", "metribuzin",
-		"don't remember", "don't know", "dontknow", "not known", "not remember",
-		"do not know", "do not known", "unknown"
-	)
-	herb_to <- c(
-		rep("2,4-D", 13),
-		rep("bispyribac-sodium", 26),
-		rep("pretilachlor", 10),
-		rep("butachlor", 3),
-		rep("oxadiargyl", 3),
-		rep("pyrazosulfuron", 4),
-		"metsulfuron", rep("chlorimuron-ethyl", 3),
-		rep("metsulfuron; chlorimuron-ethyl", 2),
-		rep("fenoxaprop-p-ethyl", 9),
-		rep("clodinafop", 4),
-		rep("sulfosulfuron", 3),
-		rep("iodosulfuron", 2),
-		rep("carfentrazone", 2),
-		rep("pendimethalin", 3),
-		rep("alachlor", 2),
-		"bensulfuron", "bensulfuron; pretilachlor",
-		rep("paraquat dichloride", 3),
-		rep("penoxsulam", 3),
-		rep("cyhalofop-butyl", 2),
-		rep("atrazine", 2),
-		rep("glyphosate", 2),
-		"pinoxaden", "isoproturon", "ethoxysulfuron", "metribuzin",
-		rep("unknown", 8)
-	)
-
-	d$herbicide_product <- apply(r[, herb_cols, drop=FALSE], 1, function(v) {
-		v <- trimws(tolower(as.character(v)))
-		v <- v[!is.na(v) & v != ""]
-		if (length(v) == 0) return(as.character(NA))
-		# Protect "2, 4-d" / "2,4-d" / "2,4,d" / "2,4-d sodium salt" before splitting on commas/periods
-		v <- gsub("2\\s*[,._-]\\s*4\\s*[,._-]?\\s*d(\\s*sodium\\s+(salt|sulphate))?", "24d_tok", v)
-		v <- gsub("[\r\n]+", "; ", v)
-		toks <- trimws(unlist(strsplit(v, "[,+/;.()]+")))
-		toks <- toks[toks != "" & toks != "safener"]
-		if (length(toks) == 0) return(as.character(NA))
-		idx <- match(toks, herb_from)
-		mapped <- ifelse(!is.na(idx), herb_to[idx], toks)
-		mapped <- trimws(unlist(strsplit(mapped, ";")))
-		mapped <- unique(mapped[mapped != ""])
-		if (length(mapped) == 0) return(as.character(NA))
-		paste(mapped, collapse="; ")
-	})
+	clean_herbicide <- function(mat) {
+		rules <- list(
+			c("2\\s*[,._-]?\\s*4\\s*[,._-]?\\s*d|\\b4-?d\\b|\\bweedmar\\s*super\\b", "2,4-D"),
+			c("\\b(bis\\s*p[iy]+r[iy]*b?[ae]?c?k?\\s*sodium|biapyribac|bispyribac|n[ao]m[ie]+n[ie]*\\s*gold|n[ao]mn?igold|namini|lumini\\s*gold|adora|edora|odera)\\b", "bispyribac-sodium"),
+			c("\\b(pr[ae]?t[ai]+la[a-z]*|pritilaclor|peitilachjore|r[ie]fit|repid)\\b", "pretilachlor"),
+			c("\\b(buta\\s*chlor|machete)\\b", "butachlor"),
+			c("\\b(oxad[iy]+a[rg]+yl|top\\s*star)\\b", "oxadiargyl"),
+			c("\\b(p[aey]razosulfuron|saa?thi)\\b", "pyrazosulfuron"),
+			c("\\b(al+mix)\\b", "metsulfuron; chlorimuron-ethyl"),
+			c("\\b(metsulfuron)\\b", "metsulfuron"),
+			c("\\b(chlorimur[ao]n[a-z\\s-]*)\\b", "chlorimuron-ethyl"),
+			c("\\b(fenx?o?x?aprop|rice\\s*star|restar|wh?ip\\s*super|weed\\s*super|vip\\s*super)\\b", "fenoxaprop-p-ethyl"),
+			c("\\b(clodin[ao]fop|propargyl|topic)\\b", "clodinafop"),
+			c("\\b(sulfosulfuron|lead[ae]r|traget)\\b", "sulfosulfuron"),
+			c("\\b(io?dosulfuron)\\b", "iodosulfuron"),
+			c("\\b(carfentrazone|affinity)\\b", "carfentrazone"),
+			c("\\b(pendim[ey]th[ai]l[iy]n|stomp)\\b", "pendimethalin"),
+			c("\\b(alachlor|lasso)\\b", "alachlor"),
+			c("\\b(londex\\s*power)\\b", "bensulfuron; pretilachlor"),
+			c("\\b(bensulfuron)\\b", "bensulfuron"),
+			c("\\b(paraquat|gamax[ao]n)\\b", "paraquat dichloride"),
+			c("\\b(penoxs?ulam)\\b", "penoxsulam"),
+			c("\\b(cyhalofop)\\b", "cyhalofop-butyl"),
+			c("\\b(atrazin[ae]?)\\b", "atrazine"),
+			c("\\b(glyphosate|mira\\s*71)\\b", "glyphosate"),
+			c("\\b(pinoxaden)\\b", "pinoxaden"),
+			c("\\b(isoproturon)\\b", "isoproturon"),
+			c("\\b(ethoxysulfuron)\\b", "ethoxysulfuron"),
+			c("\\b(metribuzin)\\b", "metribuzin"),
+			c("\\b(fluchl?oralin)\\b", "fluchloralin"),
+			c("\\b(quizalofop)\\b", "quizalofop-ethyl")
+		)
+		s <- apply(mat, 1, function(v) {
+			v <- trimws(tolower(as.character(v)))
+			v <- v[!is.na(v) & v != ""]
+			if (length(v) == 0) NA_character_ else paste(v, collapse=" ; ")
+		})
+		out <- rep(as.character(NA), length(s))
+		nn <- which(!is.na(s))
+		if (length(nn) == 0) return(out)
+		sn <- s[nn]
+		res <- vector("list", length(sn))
+		for (rl in rules) {
+			hits <- which(grepl(rl[1], sn, perl=TRUE))
+			if (length(hits)) {
+				parts <- trimws(unlist(strsplit(rl[2], ";")))
+				for (h in hits) res[[h]] <- c(res[[h]], parts)
+			}
+		}
+		out[nn] <- vapply(res, function(v) {
+			v <- unique(v)
+			if (length(v) == 0) "unknown" else paste(v, collapse="; ")
+		}, character(1))
+		out
+	}
+	d$herbicide_product <- clean_herbicide(r[, herb_cols, drop=FALSE])
 
 	h_non_na <- rowSums(!is.na(r[, herb_cols, drop=FALSE]) & r[, herb_cols, drop=FALSE] != "")
 	d$herbicide_times <- if (!is.null(r$J.herbAppTimes)) {

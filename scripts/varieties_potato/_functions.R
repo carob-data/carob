@@ -158,7 +158,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 		stop("multiple material files")
 	} else if (length(fm) == 1) {
 		if (grepl("\\.xlsx?$", fm, ignore.case=TRUE)) {
-			ml <- carobiner::read.excel(fm, na="")
+			ml <- carobiner::read.excel(fm, na="", col_types="text")
 			ml[] <- lapply(ml, function(x) trimws(as.character(x)))
 			# "Female code" -> "Female.code" as with read.delim
 			names(ml) <- make.names(names(ml))
@@ -168,7 +168,7 @@ process_cip_lbvars <- function(filename, addvars=NULL) {
 	} else {
 		ms <- which(tolower(gsub(" ", "_", trimws(sheets))) == "material_list")
 		if (length(ms) == 1) {
-			ml <- carobiner::read.excel(filename, sheet=ms, na=c("", "NA"))
+			ml <- carobiner::read.excel(filename, sheet=ms, na=c("", "NA"), col_types="text")
 			ml[] <- lapply(ml, function(x) {
 				x <- trimws(as.character(x))
 				x[!nzchar(x)] <- NA_character_

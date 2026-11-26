@@ -27,8 +27,9 @@ carob_script <- function(path) {
 	proc_fun <- function(f) {
 		r <- carobiner::read.excel(f, sheet="Fieldbook")
 		# this is marketable yield, total tuber yield not reported
-		r <- r[, c("REP", "INSTN", "MTYNA")]
-		colnames(r) <- c("rep", "variety", "yield")
+		r <- r[, c("REP", "INSTN", "MTYNA", "AVDM")]
+		colnames(r) <- c("rep", "variety", "yield", "yield_moisture")
+		r$yield_moisture <- 100 - as.numeric(r$yield_moisture)
 		
 		m <- carobiner::read.excel(f, sheet="Minimal") 
 		n <- as.list(m$Value)
@@ -53,18 +54,19 @@ carob_script <- function(path) {
 		kk <- as.list(rowMeans(k[, c("Data1", "Data2")]))
 		names(kk) <- k$Abbreviture
 		r$soil_pH <- kk$pH
+		r$soil_EC <- kk$EC
 		r$soil_SOM <- kk$MO
-		r$soil_P_available <- kk$P
+		r$soil_P <- kk$P
 		r$soil_K <- kk$K 
 		r$soil_sand <- kk$Sand
 		r$soil_clay <- kk$Clay
 		r$soil_silt <- kk$Silt
 		r$soil_CEC <- kk$CEC
-		r$soil_ex_Ca <- kk$ExCa2
-		r$soil_ex_Mg <- kk$ExMg2
-		r$soil_ex_K <- kk$ExK
-		r$soil_ex_Na <- kk$ExNa
-		r$soil_ex_Al <- kk$ExAl3_H
+		r$soil_Ca_exch <- kk$ExCa2
+		r$soil_Mg_exch <- kk$ExMg2
+		r$soil_K_exch <- kk$ExK
+		r$soil_Na_exch <- kk$ExNa
+		r$soil_ex_acidity <- kk$ExAl3_H
 		r
 		   
 	}

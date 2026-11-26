@@ -1,5 +1,7 @@
 # R script for "carob"
 
+## ISSUES
+# - Tuber dry matter / moisture (yield_moisture) is not reported in the Fieldbook sheets.
 
 carob_script <- function(path) {
    
@@ -48,17 +50,18 @@ carob_script <- function(path) {
       kk <- as.list(k$Data1)
       names(kk) <- k$Abbreviture
       r$soil_pH <- as.numeric(kk$SOILPH)
+      r$soil_EC <- as.numeric(kk$SOILEC)
       r$soil_SOM <- as.numeric(kk$ORGM)
-      r$soil_P_available <- as.numeric(kk$PHOS)
+      r$soil_P <- as.numeric(kk$PHOS)
       r$soil_sand <- as.numeric(kk$SAND)
       r$soil_clay <- as.numeric(kk$CLAY)
       r$soil_silt <- as.numeric(kk$LIME)
-      r$soil_CEC <- as.numeric(kk$SOILEC)
-      r$soil_ex_Ca <- as.numeric(kk$EXCA2)
-      r$soil_ex_Mg <- as.numeric(kk$EXMG2)
-      r$soil_ex_K <- as.numeric(kk$EXK)
-      r$soil_ex_Na <- as.numeric(kk$EXNA)
-      r$soil_ex_Al <- as.numeric(kk$AL3H)
+      r$soil_CEC <- as.numeric(kk$SCEC)
+      r$soil_Ca_exch <- as.numeric(kk$EXCA2)
+      r$soil_Mg_exch <- as.numeric(kk$EXMG2)
+      r$soil_K_exch <- as.numeric(kk$EXK)
+      r$soil_Na_exch <- as.numeric(kk$EXNA)
+      r$soil_ex_acidity <- as.numeric(kk$AL3H)
       r$soil_Zn <- as.numeric(kk$SOILZN)
       r$soil_B  <- as.numeric(kk$SOILB)
       r$soil_S  <- as.numeric(kk$SOILSULFATE)
@@ -81,7 +84,8 @@ carob_script <- function(path) {
    d$is_survey <- FALSE
    d$on_farm <- TRUE
    d$crop <- "potato"
-   d$yield_part <- "tubers" 
+   d$yield_part <- "tubers"
+   d$yield_isfresh <- TRUE
    # fix lon coordinate
    d$longitude[d$longitude==-14.75289] <- -74.75289
    

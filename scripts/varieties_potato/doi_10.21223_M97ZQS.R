@@ -75,7 +75,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;yield_marketable;tuber_flavor;tuber_texture;pvs_votes",
+		response_vars = "yield;yield_marketable;tuber_flavor;tuber_texture",
 		notes = NA,
 		carob_contributor = "Vilma Hualla",
 		carob_LLM = "Claude Opus 5.5",
@@ -115,7 +115,7 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	)
 	# initial weight (kg) of the tubers of each baby plot used for the dormancy test (NOTES 10)
 	r8 <- carobiner::read.excel(f, sheet="F8_Dormancy")
-	d2$dormancy_tuber_weight <- as.numeric(r8$ITW)[match(d2$plot_id, as.character(r8$PLOT))]
+	d2$dormancy_tuber_weight_ <- as.numeric(r8$ITW)[match(d2$plot_id, as.character(r8$PLOT))]
 	# variables that are the same for all plots
 	same <- setdiff(names(d1), c(names(d2), "variety", "female_parent", "male_parent",
 		"variety_pedigree", "block_id", "yield_moisture"))
@@ -139,13 +139,14 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 
 	## long table 1: farmer votes per plot and sex (NOTES 6); mother plots first, then baby plots
 	# SM = score men (corn kernels), SWM = score women (beans); the global score is their sum
-	votes <- function(r, sm, swm, mother, phase) {
+	votes <- function(r, sm, swm, mother, phase, date = NA_character_) {
 		data.frame(
 			trial_id = if (mother) trial else paste0(trial, "_baby"),
 			plot_id = rep(as.character(r$PLOT), 2),
+			date = date,
 			growth_stage = phase,
 			sex = rep(c("male", "female"), each=nrow(r)),
-			pvs_votes = as.numeric(c(r[[sm]], r[[swm]]))
+			pvs_votes_ = as.numeric(c(r[[sm]], r[[swm]]))
 		)
 	}
 	fl <- carobiner::read.excel(f, sheet="F2 Clones_Select_Flowering")
@@ -155,16 +156,16 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	lv <- carobiner::bindr(
 		# mother
 		votes(fl, "MSM", "MSWM", TRUE, "flowering"),
-		votes(hv, "MSM", "MSWM", TRUE, "harvest"),
+		votes(hv, "MSM", "MSWM", TRUE, "harvest", "2013-09-29"),
 		# baby
 		votes(b(fl), "BSM", "BSWM", FALSE, "flowering"),
-		votes(b(hv), "BSM", "BSWM", FALSE, "harvest"),
-		votes(st, "SCMEN", "SCWM", FALSE, "storage")
+		votes(b(hv), "BSM", "BSWM", FALSE, "harvest", "2013-09-29"),
+		votes(st, "SCMEN", "SCWM", FALSE, "storage", "2013-10-02")
 	)
 	# storage type of the storage selection (F9), e.g. "rustic"
-	lv$storage_type <- NA
+	lv$storage_type_ <- NA
 	i <- lv$growth_stage == "storage"
-	lv$storage_type[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
+	lv$storage_type_[i] <- st$STYPE[match(lv$plot_id[i], as.character(st$PLOT))]
 
 	## long table 2: organoleptic test per panelist (NOTES 7, ISSUES 2, 3)
 	org <- function(sheet, trial_id) {
@@ -187,6 +188,8 @@ A select group of 8 potato clones will be evaluated through a Farmer Participato
 	lo <- aggregate(lo[, c("tuber_appearance_", "tuber_flavor", "tuber_texture")], by=lo[, c("trial_id", "sex", "variety_code")], FUN=mean, na.rm=TRUE)
 	plots <- unique(d[, c("trial_id", "variety_code", "plot_id")])
 	lo <- merge(lo, plots, by=c("trial_id", "variety_code"), all.x=TRUE)
+	lo$variety_code <- NULL
+	lo$growth_stage <- "post-harvest"
 	## long table 3: selection criteria identified by the farmers, per phase (NOTES 9)
 	## No direct link between this and variety 
 	#cr <- carobiner::read.excel(f, sheet="F1_Selec_Crit")
