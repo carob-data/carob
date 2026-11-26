@@ -14,16 +14,17 @@
 # Plant aspect uses the 1-5 or 1-9 score in aspect. Ears per plant is a ratio.
 
 ## ISSUES
-# Binh Duong has degrees but the minutes cells are blank, so that site has no coordinates.
+# Binh Duong has degrees (11° N, 107° E) with blank minutes; assigned Binh Duong Province centroid (11.167 N, 106.667 E, geo_from_source = FALSE).
 # Neiva-Huila and Neiva-Huila (2) share one published coordinate. The two Aragua sets do too.
-# El Progreso, Pejibaye is published at 9°8' N, 84°32' W, which does not fall on land. The coordinate is left as published.
+# El Progreso, Pejibaye (Costa Rica, 380 m) is published at 9°8' N, 84°32' W (Pacific Ocean, 1-degree longitude typo for Pejibaye, Pérez Zeledón at 9°8' N, 83°32' W); corrected to -83.5333 (geo_from_source = FALSE).
 # El Progreso and one Aragua set have no planting or harvest date. Samaru has no harvest date. Agua Fria set 8 has no grain yield.
 # A dot in the aspect columns of 05CHTTY7.xls is read as missing.
-# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_, endosperm_hardness_. coordinates not on land: Costa Rica. duplicate coordinates: fewer coordinates than locations. NA detected: yield, latitude, longitude. invalid terms: disease: aspergillus flavus, fusarium, leaf diseases, leaf spot, rhizoctonia, smut, southern rust, stunt, tar spot. invalid terms: pest_species: earworm, maize weevil. contributor:
+# Fusarium mapped to "fusarium spp" and southern rust to "rust". Other diseases/pests not yet in terminag (aspergillus flavus, leaf diseases, leaf spot, rhizoctonia, smut, corn stunt, tar spot, earworm, maize weevil) are kept in long$disease / long$pest_species.
+# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_, endosperm_hardness_. duplicate coordinates: fewer coordinates than locations. NA detected: yield. invalid terms in long table: disease / pest_species not yet in terminag.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant, ratio, as printed.
-# endosperm_hardness_: endosperm hardness score. The unit row is 1-5. No scale is applied to the number.
+# endosperm_hardness_: endosperm hardness score (1-5).
 
 ## NOT PROCESSED
 # Percent of the best check. It is computed from yield.
@@ -57,9 +58,9 @@ Summary results and individual trial results from the International Late Yellow 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.9
 	)
 
 	excel_date <- function(x) {
@@ -134,8 +135,18 @@ Summary results and individual trial results from the International Late Yellow 
 		longitude = lon,
 		elevation = as.numeric(r1[[11]]),
 		planting_date = excel_date(r1[[12]]),
-		harvest_date = excel_date(r1[[13]])
+		harvest_date = excel_date(r1[[13]]),
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
+	# El Progreso, Pejibaye (Costa Rica): 84°32' W is in the Pacific Ocean; Pejibaye is 83°32' W
+	i_pej <- grepl("Pejibaye", locs$location, ignore.case = TRUE)
+	locs$longitude[i_pej] <- -(83 + 32 / 60)
+	locs$geo_from_source[i_pej] <- FALSE
+	# Binh Duong Province (Vietnam): minutes blank in source
+	i_bd <- grepl("Binh Duong", locs$location, ignore.case = TRUE)
+	locs$latitude[i_bd] <- 11.167
+	locs$longitude[i_bd] <- 106.667
+	locs$geo_from_source[i_bd] <- FALSE
 
 	read_standard <- function(f) {
 		r <- carobiner::read.excel(f, col_names=FALSE, na=c("", "- - -", "."))
@@ -202,11 +213,11 @@ Summary results and individual trial results from the International Late Yellow 
 		)
 		specs <- list(
 			c("Head Smut", "disease", "head smut"),
-			c("Fusa", "disease", "fusarium"),
+			c("Fusa", "disease", "fusarium spp"),
 			c("Smut", "disease", "smut"),
 			c("GLS|Gray Leaf", "disease", "gray leaf spot"),
 			c("turcicum", "disease", "maize leaf blight"),
-			c("Southern rust", "disease", "southern rust"),
+			c("Southern rust", "disease", "rust"),
 			c("Common Rust", "disease", "rust"),
 			c("Puccinia", "disease", "rust"),
 			c("MSV|Streak", "disease", "maize streak virus"),
@@ -214,7 +225,7 @@ Summary results and individual trial results from the International Late Yellow 
 			c("Bipolaris|maydis", "disease", "southern leaf blight"),
 			c("Rhizoc", "disease", "rhizoctonia"),
 			c("Leaf spot", "disease", "leaf spot"),
-			c("Stunt", "disease", "stunt"),
+			c("Stunt", "disease", "corn stunt"),
 			c("Leaf Diseases", "disease", "leaf diseases"),
 			c("Stem Borer", "pest", "stem borer"),
 			c("Ear Worm", "pest", "earworm")
@@ -355,7 +366,6 @@ Summary results and individual trial results from the International Late Yellow 
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$row_key <- paste(d$set_no, d$row_i, sep="-")
 	d$record_id <- seq_len(nrow(d))
 	if (nrow(long) > 0) {

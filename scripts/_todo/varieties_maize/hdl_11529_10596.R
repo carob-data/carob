@@ -10,9 +10,10 @@
 # Root lodging, fusarium, and smut are percent. Fusarium and smut go in the long table.
 
 ## ISSUES
-# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. datespan: 11 harvest_date more than 366 days after planting_date. duplicate coordinates: fewer coordinates than locations. NA detected: yield, country, latitude, longitude. invalid terms: disease: fusarium, head smut, smut.
+# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. datespan: 11 harvest_date more than 366 days after planting_date. duplicate coordinates: fewer coordinates than locations. NA detected: yield. invalid terms: disease: head smut, smut.
 # 05CHTHIW15.xls has no grain-yield column. Lodging is a percent in some locations and a 1-5 score in others. The scale is kept on the value.
-# Some set numbers in the location workbook have no coordinates. 05CHTHIW31.xls is not in the locations sheet.
+# 05CHTHIW31.xls is not in the locations sheet; row 2 of the workbook gives Location: Kitale, Country: Kenya (assigned KALRO Kitale coordinates 1.017 N, 35.000 E, geo_from_source = FALSE). San Jose Iturbide, Gto. (set 1, Mexico) has no coordinates in the locations sheet (assigned 21.000 N, -100.383 W, geo_from_source = FALSE).
+# Fusarium mapped to "fusarium spp"; smut and head smut (not yet in values_disease.csv) are kept in long$disease.
 ## NOT PROCESSED
 # Percent of the best check. It is computed from yield.
 # Plants harvested, a count with no plot area.
@@ -42,9 +43,9 @@ Summary results and individual trial results from the International Intermediate
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 72,
+		carob_effort = 0.8
 	)
 
 	excel_date <- function(x) {
@@ -81,9 +82,15 @@ Summary results and individual trial results from the International Intermediate
 		longitude = lon,
 		elevation = as.numeric(r1[[11]]),
 		planting_date = excel_date(r1[[12]]),
-		harvest_date = excel_date(r1[[13]])
+		harvest_date = excel_date(r1[[13]]),
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
 	locs$country[locs$country == "México"] <- "Mexico"
+	# San Jose Iturbide, Gto. (Mexico) has blank coordinates in locations sheet
+	i_sji <- grepl("San Jose Iturbide", locs$location, ignore.case = TRUE)
+	locs$latitude[i_sji] <- 21.000
+	locs$longitude[i_sji] <- -100.383
+	locs$geo_from_source[i_sji] <- FALSE
 
 	read_trial <- function(f) {
 		r <- carobiner::read.excel(f, col_names=FALSE)
@@ -120,11 +127,18 @@ Summary results and individual trial results from the International Intermediate
 			else out[ok] <- as.character(v[ok])
 			out
 		}
+		row2 <- blank(unlist(r[2, ]))
+		loc_src <- row2[grepl("^Location:", row2)]
+		cty_src <- row2[grepl("^Country:", row2)]
+		loc_src <- if (length(loc_src)) trimws(sub("^Location:\\s*", "", loc_src[1])) else NA_character_
+		cty_src <- if (length(cty_src)) trimws(sub("^Country:\\s*", "", cty_src[1])) else NA_character_
 		iy <- find("Yield")
 		if (!is.na(iy) && !grepl("Kg/ha", unit[iy])) iy <- NA_integer_
 		id <- sub("-1$", "", sub("\\.xls$", "", basename(f), ignore.case=TRUE))
 		data.frame(
 			set_no = as.integer(sub("^05CHTHIW", "", id)),
+			country_src = cty_src,
+			location_src = loc_src,
 			variety_code = as.character(sub[[1]]),
 			variety = trimws(as.character(sub[[2]])),
 			yield = pull(iy),
@@ -159,6 +173,17 @@ Summary results and individual trial results from the International Intermediate
 	)]
 	d <- do.call(rbind, lapply(f2, read_trial))
 	d <- merge(d, locs, by="set_no", all.x=TRUE)
+	miss_c <- is.na(d$country)
+	d$country[miss_c] <- d$country_src[miss_c]
+	miss_l <- is.na(d$location)
+	d$location[miss_l] <- d$location_src[miss_l]
+	# Set 31 (Kitale, Kenya) is absent from Locations sheet
+	i_kit <- !is.na(d$location) & d$location == "Kitale" & is.na(d$latitude)
+	d$latitude[i_kit] <- 1.017
+	d$longitude[i_kit] <- 35.000
+	d$geo_from_source[i_kit] <- FALSE
+	d$country_src <- NULL
+	d$location_src <- NULL
 	d$crop <- "maize"
 	d$treatment <- d$variety
 	d$yield_part <- "grain"
@@ -166,7 +191,6 @@ Summary results and individual trial results from the International Intermediate
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$record_id <- seq_len(nrow(d))
 
 	one_dis <- function(txt, disease) {
@@ -182,7 +206,7 @@ Summary results and individual trial results from the International Intermediate
 		)
 	}
 	long <- rbind(
-		one_dis(d$fusarium_txt, rep("fusarium", nrow(d))),
+		one_dis(d$fusarium_txt, rep("fusarium spp", nrow(d))),
 		one_dis(d$smut_txt, d$smut_name),
 		one_dis(d$ear_rot_txt, rep("ear rot", nrow(d)))
 	)

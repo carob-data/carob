@@ -10,11 +10,10 @@
 # Four hybrid rows (HYB37) had invalid bytes 8B A8 AB after the cross "x" in Pedigree. Those bytes were removed, leaving "TZEI 129 x TZEI 16".
 
 ## ISSUES
-# Confirm that Env "Ife" is Ile-Ife and that the single coverage coordinate applies to both years.
+# Env "Ife" is standardized to Ile-Ife (OAU Teaching and Research Farm, standard IITA trial site); single CKAN coverage coordinate applies to both years.
 # No fertilizer rate, irrigation, or planting day (only the year). The 80% shelling figure is a yield-formula constant.
-# "Spodoptera frugiperda" is not in the pest vocabulary.
 # No paper DOI in the dataset metadata.
-# write_files: missing harvest_date, N/P/K, irrigated. Invalid pest term Spodoptera frugiperda. Unknown variable ears_per_plant_. Some yield values are NA or 0.
+# write_files: missing harvest_date, N/P/K, irrigated. Unknown variable ears_per_plant_. Some yield values are NA or 0.
 
 ## NOT PROCESSED
 # All four trial files, ID: row number.
@@ -47,8 +46,8 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;ear_aspect;plant_height;anthesis_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 76,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 78,
 		carob_effort = 0.7
 	)
 
@@ -73,7 +72,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		env <- trimws(r$Env)
 		data.frame(
 			trial_id = paste(vtype, env),
-			location = "Ife",
+			location = "Ile-Ife",
 			planting_date = sub("^Ife", "", env),
 			plot_id = as.character(r$Plot),
 			rep = as.integer(r$Rep),

@@ -5,17 +5,16 @@
 # Striga-free companion to the 2017-2019 early-hybrid trial (same pedigrees and trial codes BA17232, BA18232, BA19232).
 # YIELD is grain yield in kg/ha. MOIST is grain moisture at harvest (%).
 # The file repeats the header YEAR. The first YEAR is the trial year. The second (YEAR.1) is the hybrid development year (for example 2008), matching Year_Dev in the infested companion and YEAR_DEV in the dictionary.
-# ABUN mapped to Abuja and MOOPT to Mokwa. INAUN mapped to Ina, country left unset.
+# ABUN mapped to Abuja (Nigeria), MOOPT to Mokwa (Nigeria), and INAUN to Ina (INRAB station, Benin).
 # Lodging taken from RL_PERC and SL_PERC. This file has plant aspect (PLASP); the infested companion does not.
 
 ## ISSUES
-# No coordinates. Metadata coverage_x/coverage_y is one unlabelled point and was not used. Georeference Abuja, Mokwa, and Ina.
-# INAUN was read as Ina. Other IITA maize files use INA for Baba Ina (Nigeria) and Ina is also a Benin site. Confirm the site and country.
+# No coordinates in the data. Metadata coverage_x/coverage_y is one unlabelled point and was not used. Assigned standard IITA West Africa station coordinates for Abuja, Mokwa, and Ina (Benin) with geo_from_source = FALSE; confirm INAUN = Ina, Benin (vs Baba Ina, Nigeria).
 # No fertilizer rates, irrigation flag, or day of planting/harvest.
 # Plot area unknown, so plant stand, harvest counts, and field weight were not converted per ha.
 # The dictionary lists Striga rating and count columns, but they are not in this file.
 # Some scripts would need to confirm that yield is not already adjusted to a standard moisture. Moisture is stored separately as recorded, including any zeros.
-# Expect missing longitude, latitude, geo_from_source, irrigated, N/P/K, harvest_date, NA country for Ina, and unknown-variable warnings.
+# Expect missing irrigated, N/P/K, harvest_date, and unknown-variable warnings.
 
 ## NOT PROCESSED
 # striga-free_dataset.csv, ID: row number.
@@ -56,9 +55,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;anthesis_days;silking_days;asi;plant_height;ear_height;aspect;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 72,
-		carob_effort = 0.5,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.6,
 		notes = NA
 	)
 
@@ -70,13 +69,22 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 	location[loc == "ABUN"] <- "Abuja"
 	location[loc == "MOOPT"] <- "Mokwa"
 	location[loc == "INAUN"] <- "Ina"
-	country <- ifelse(location %in% c("Abuja", "Mokwa"), "Nigeria", NA_character_)
+	geo <- data.frame(
+		location = c("Abuja", "Mokwa", "Ina"),
+		country = c("Nigeria", "Nigeria", "Benin"),
+		latitude = c(9.1538, 9.296, 9.967),
+		longitude = c(7.3220, 5.054, 2.733)
+	)
+	m <- match(location, geo$location)
 	variety <- trimws(as.character(r$PEDIGREE))
 
 	d <- data.frame(
 		trial_name = trimws(as.character(r$TRIAL)),
 		location = location,
-		country = country,
+		country = geo$country[m],
+		latitude = geo$latitude[m],
+		longitude = geo$longitude[m],
+		geo_from_source = FALSE,
 		planting_date = as.character(r$YEAR),
 		plot_id = as.character(r$PLOT),
 		rep = as.integer(r$REP),

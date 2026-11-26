@@ -17,7 +17,7 @@ Under best planting practices, the effect of land preparation on cassava root yi
 ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries in Africa (Nigeria and Tanzania) providing tailored agronomic advice to small scale cassava growers in the target countries. The project delivers agronomic solutions to improve cassava root yield and quality and the necessary knowledge base and applications for accessing this knowledge to cassava scaling partners and ultimately farmers in the target countries while instituting the necessary capacity and skills for national system scientists to engage in transformative cassava agronomy.
 "
 
-	uri <- "doi.org/10.25502/zwrb-ge44/d"
+	uri <- "doi:10.25502/zwrb-ge44/d"
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 

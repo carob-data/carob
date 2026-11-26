@@ -11,12 +11,12 @@
 
 ## ISSUES
 # No trial year, planting date, harvest date, fertilizer, irrigation, or grain moisture.
-# No coordinates. Metadata coverage point was not used. Georeference Abuja and Mokwa, Nigeria.
+# Coordinates for Abuja and Mokwa were assigned from standard IITA Nigeria station coordinates (geo_from_source = FALSE); metadata coverage point was not used.
 # Dictionary says both diallel indices i and j are the male parent. The pedigree string is the cross; i and j were not mapped.
 # The 6 checks are not identified in the data.
 # Optimum-file ear height includes values below 10 cm. Left as recorded.
 # Striga yield includes zeros. Left as recorded.
-# Expect missing longitude, latitude, geo_from_source, planting_date, harvest_date, yield_moisture, irrigated, N/P/K, and an unknown-variable warning for ears_per_plant_.
+# Expect missing planting_date, harvest_date, yield_moisture, irrigated, N/P/K, and an unknown-variable warning for ears_per_plant_.
 
 ## NOT PROCESSED
 # phenotypic-data-of-the-300-diallel-cross-and-6-checks.csv, ID: row number.
@@ -50,9 +50,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;plant_height;ear_height;ear_aspect;asi",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 68,
-		carob_effort = 0.5,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 72,
+		carob_effort = 0.6,
 		notes = NA
 	)
 
@@ -114,6 +114,13 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 	)
 
 	d <- carobiner::bindr(d1, d2)
+	geo <- data.frame(
+		location = c("Abuja", "Mokwa"),
+		latitude = c(9.1538, 9.296),
+		longitude = c(7.3220, 5.054)
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+	d$geo_from_source <- FALSE
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$borer_trial <- FALSE

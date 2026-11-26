@@ -9,14 +9,14 @@
 # Cob row and grain counts are plot measurements. Average grains per row and grains per cob are computed from those counts and were not stored again.
 
 ## ISSUES
-# No site name, coordinates, planting date, or fertilizer rates in the file. CKAN coverage_x/coverage_y are 243721 and 377878 (not degrees). Coverage dates 2025-05-27 to 2025-07-01 are not labeled as planting or harvest.
+# No site name, exact coordinates, planting date, or fertilizer rates in the file. CKAN coverage_x/coverage_y are 243721 and 377878 (projected, not degrees). Assigned São Tomé island centroid (0.24, 6.61, geo_from_source = FALSE). Coverage dates 2025-05-27 to 2025-07-01 are not labeled as planting or harvest.
 # Yield moisture is not reported. Do not assume a moisture.
 # On-farm vs station is not stated.
 # PL_HARV is only 0 or 1. E_HT includes 0. PLASP and EASP include 0 (dictionary scales start at 1). Left as recorded.
 # About 135 rows have a variety but no yield. Striga / FAW / termite / borer / ear-rot scores are mostly a single value (1) where present; the dictionary mixes "number of plants" and a 1-5 score.
 # Variety names repeat with and without hyphens (for example "TZE W" vs "TZE-W"); not merged.
-# Pest names "termites" and "Spodoptera frugiperda" are not in the pest vocabulary.
-# write_files will still report missing longitude, latitude, geo_from_source, planting_date, harvest_date, N/P/K fertilizer, irrigated, yield_moisture, on_farm, and NA yield.
+# Pest name "termites" is not yet in values_pest.csv; kept in long$pest_species = "termites" so it can be added to terminag.
+# write_files will still report missing planting_date, harvest_date, N/P/K fertilizer, irrigated, yield_moisture, on_farm, NA yield, invalid pest_species: termites, and a diacritic mismatch in check_lonlat (Sao Tome and Principe vs São Tomé and Príncipe).
 
 ## NOT PROCESSED
 # maize-evaluation-in-sao-tome.csv, LAND_SIZE: constant 10000, the hectare used in the yield formula.
@@ -60,9 +60,9 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 		response_vars = "yield;plant_height;ear_height",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 68,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 72,
+		carob_effort = 0.8
 	)
 
 	f <- ff[basename(ff) == "maize-evaluation-in-sao-tome.csv"]
@@ -116,6 +116,10 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 		crop = "maize",
 		yield_part = "grain",
 		country = "Sao Tome and Principe",
+		location = "Sao Tome",
+		latitude = 0.24,
+		longitude = 6.61,
+		geo_from_source = FALSE,
 		is_survey = FALSE
 	)
 	d$record_id <- as.integer(seq_len(nrow(d)))

@@ -11,21 +11,20 @@
 
 ## ISSUES
 # write_files: missing variables: yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# write_files: unknown variable: time_to_first_pop_s_ (time?)
-# write_files: unknown variables: kernels_in_sample_, expansion_volume_ml_, expandability_, unpopped_kernels_, unpopped_kernel_weight_g_, unpopped_percent_, flake_shape_, pericarp_retention_, primary_race_
+# write_files: unknown variables: kernels_in_sample_, expansion_volume_, expandability_, unpopped_kernels_, unpopped_kernel_weight_, unpopped_percent_, time_to_first_pop_, flake_shape_, pericarp_retention_, primary_race_
 # write_files: coordinates not on land: Mexico
 # write_files: duplicate coordinates: fewer coordinates than locations
 # write_files: NA detected: latitude, longitude
 # Some Mexico passport coordinates are still not on land after storing unsigned longitude as west. They are kept as published.
 
 ## NEW VARIABLES
-# expansion_volume_ml_: volume of the popped sample, ml. The description says the sample is 30 g.
-# expandability_: expansion volume divided by the initial grain weight.
-# unpopped_kernels_: kernels that did not pop.
-# unpopped_kernel_weight_g_: weight of kernels that did not pop, g.
-# unpopped_percent_: percent of kernels that did not pop.
-# kernels_in_sample_: kernels in the initial sample.
-# time_to_first_pop_s_: seconds from the start of microwaving to the first pop.
+# expansion_volume_: volume of the popped sample, ml. The description says the sample is 30 g.
+# expandability_: expansion volume divided by the initial grain weight (ml/g).
+# unpopped_kernels_: kernels that did not pop (count).
+# unpopped_kernel_weight_: weight of kernels that did not pop, g.
+# unpopped_percent_: percent of kernels that did not pop (%).
+# kernels_in_sample_: kernels in the initial sample (count).
+# time_to_first_pop_: seconds from the start of microwaving to the first pop (s).
 # flake_shape_: flake shape score, 1 to 5.
 # pericarp_retention_: pericarp retained after popping, score 1 to 5.
 # primary_race_: primary race name from the passport record.
@@ -58,9 +57,9 @@ The Global Popcorn Project began in 2014, by asking how many popcorn accessions 
 		response_vars = "seed_weight",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 50,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "PopcornDataset.873accs.2014.xlsx"]
@@ -75,7 +74,11 @@ The Global Popcorn Project began in 2014, by asking how many popcorn accessions 
 		}
 		as.numeric(x)
 	}
-	num <- function(x) as.numeric(as.character(x))
+	num <- function(x) {
+		z <- trimws(as.character(x))
+		z[z %in% c("", "NA", "la forma no fue posible")] <- NA_character_
+		as.numeric(z)
+	}
 	wt <- num(r[["Initial Weight (grams)"]])
 	nk <- num(r[["Kernel number in 30 grams"]])
 	lat <- num(r$Latitude)
@@ -98,12 +101,12 @@ The Global Popcorn Project began in 2014, by asking how many popcorn accessions 
 		geo_from_source = !is.na(lat) & !is.na(lon),
 		seed_weight = sw,
 		kernels_in_sample_ = nk,
-		expansion_volume_ml_ = num(r[["Expansion Volume (milliliters)"]]),
+		expansion_volume_ = num(r[["Expansion Volume (milliliters)"]]),
 		expandability_ = num(r$Expandability),
 		unpopped_kernels_ = num(r[["Number of unpopped kernels"]]),
-		unpopped_kernel_weight_g_ = num(r[["Weight of unpopped kernels (grams)"]]),
+		unpopped_kernel_weight_ = num(r[["Weight of unpopped kernels (grams)"]]),
 		unpopped_percent_ = num(r[["Percent unpopped kernels"]]),
-		time_to_first_pop_s_ = seconds(r[["Time to first pop (seconds)"]]),
+		time_to_first_pop_ = seconds(r[["Time to first pop (seconds)"]]),
 		flake_shape_ = num(r[["Flake shape"]]),
 		pericarp_retention_ = num(r[["Pericarp retention"]]),
 		primary_race_ = trimws(as.character(r[["Primary Race"]])),

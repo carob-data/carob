@@ -4,20 +4,19 @@
 ## NOTES
 # Striga-infested early-hybrid trial, West Africa, 2017-2019 (Badu-Apraku / STMA). One row per plot.
 # YIELD is grain yield in kg/ha as recorded. MOIST is grain moisture at harvest (%), used as yield_moisture.
-# AB_STR mapped to Abuja and MO_STR/MOSTR to Mokwa. IA_STR and NY_STR are not expanded; they are stored as Ia_str and Ny_str so the location is not left in all capitals.
+# AB_STR mapped to Abuja (Nigeria), MO_STR/MOSTR to Mokwa (Nigeria), IA_STR to Ina (INRAB station, Benin), and NY_STR to Nyankpala (SARI station, Ghana), standard IITA West Africa Striga screening stations.
 # Root and stalk lodging taken from the percentage columns (RL_PERC, SLPERCT). The companion integer columns are smaller and were not used as percentages.
 # Striga damage ratings and emerged counts at 8 and 10 weeks after planting are passed to mz_pd_long (56 and 70 days). Square-root/log transforms (STRC0_*) were not used.
 # Year of development, breeding-period code (ERA) and year-rating kept as extra columns.
 
 ## ISSUES
-# No coordinates in the data. Metadata coverage_x/coverage_y is one unlabelled point and was not used. Georeference Abuja, Mokwa, IA_STR, NY_STR.
-# IA_STR and NY_STR were not expanded (NY_STR may be Nyankpala, Ghana; IA_STR may be Ina). Metadata country is only Nigeria, which may be incomplete.
+# No coordinates in the data. Metadata coverage_x/coverage_y is one unlabelled point and was not used. Assigned standard IITA West Africa station coordinates for Abuja, Mokwa, Ina (Benin), and Nyankpala (Ghana) with geo_from_source = FALSE; confirm IA_STR = Ina, Benin (vs Baba Ina, Nigeria).
 # No fertilizer rates, irrigation flag, or day of planting/harvest. Planting year only.
 # Plot area is not given, so plant stand, plants and ears harvested, and field weight (per plot) were not converted to per-ha values.
 # One ear-aspect value is 16 (scale is 1-9). Left as recorded.
 # Some grain-moisture values are 0 or missing. Left as recorded; do not treat 0 as a filled-in moisture.
 # Dictionary lists PLASP, but that column is not in the data file.
-# Expect missing longitude, latitude, geo_from_source, irrigated, N/P/K fertilizer, harvest_date, and unknown-variable warnings for the extra columns.
+# Expect missing irrigated, N/P/K fertilizer, harvest_date, and unknown-variable warnings for the extra columns.
 
 ## NOT PROCESSED
 # striga-infested_dataset.csv, ID: row number.
@@ -60,9 +59,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;anthesis_days;silking_days;asi;plant_height;ear_height;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 72,
-		carob_effort = 0.6,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.7,
 		notes = NA
 	)
 
@@ -73,15 +72,24 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 	location <- loc
 	location[loc == "AB_STR"] <- "Abuja"
 	location[loc %in% c("MO_STR", "MOSTR")] <- "Mokwa"
-	up <- location == toupper(location)
-	location[up] <- carobiner::fix_name(location[up], "title")
-	country <- ifelse(location %in% c("Abuja", "Mokwa"), "Nigeria", NA_character_)
+	location[loc == "IA_STR"] <- "Ina"
+	location[loc == "NY_STR"] <- "Nyankpala"
+	geo <- data.frame(
+		location = c("Abuja", "Mokwa", "Ina", "Nyankpala"),
+		country = c("Nigeria", "Nigeria", "Benin", "Ghana"),
+		latitude = c(9.1538, 9.296, 9.967, 9.400),
+		longitude = c(7.3220, 5.054, 2.733, -0.981)
+	)
+	m <- match(location, geo$location)
 	variety <- trimws(as.character(r$Pedigree))
 
 	d <- data.frame(
 		trial_name = trimws(as.character(r$TRIAL)),
 		location = location,
-		country = country,
+		country = geo$country[m],
+		latitude = geo$latitude[m],
+		longitude = geo$longitude[m],
+		geo_from_source = FALSE,
 		planting_date = as.character(r$YEAR),
 		plot_id = as.character(r$PLOT),
 		rep = as.integer(r$REP),

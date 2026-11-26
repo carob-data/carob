@@ -6,13 +6,11 @@
 # Days pollen is days to anthesis. Plant height is cm. Moisture is percent.
 # Coordinates, elevation, and dates are from 05TTWSCWL-Locations.xls, joined when the set number and the place name agree.
 # Latitude and longitude are degrees and minutes. Excel serial dates use the 1899-12-30 origin.
-# Celaya set 1 and Nueva Concepcion-Escuintla have no coordinates in the location sheet.
+# Celaya set 1 (Guanajuato, Mexico) and Nueva Concepcion-Escuintla (Guatemala) have no coordinates in the location sheet; assigned town centroids (geo_from_source = FALSE).
 # Country is taken from the trial sheet, and from the location sheet when the trial sheet leaves it blank and the place names agree.
 
 ## ISSUES
 # missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer
-# duplicate coordinates: fewer coordinates than locations
-# NA detected: latitude, longitude
 
 ## NOT PROCESSED
 # The combined workbook.
@@ -42,9 +40,9 @@ Summary results and individual trial results from the International Late White H
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 66,
+		carob_effort = 0.6
 	)
 
 	blank <- function(x) {
@@ -155,6 +153,15 @@ Summary results and individual trial results from the International Late White H
 		need <- hit & is.na(d$country)
 		d$country[need] <- sites$country[i]
 	}
+	# Fill missing coordinates for Celaya (Guanajuato, Mexico) and Nueva Concepcion-Escuintla (Guatemala)
+	i_cel <- is.na(d$latitude) & grepl("Celaya", d$location, ignore.case = TRUE)
+	d$latitude[i_cel] <- 20.523
+	d$longitude[i_cel] <- -100.816
+	d$geo_from_source[i_cel] <- FALSE
+	i_nc <- is.na(d$latitude) & grepl("Nueva Concepcion", d$location, ignore.case = TRUE)
+	d$latitude[i_nc] <- 14.200
+	d$longitude[i_nc] <- -91.300
+	d$geo_from_source[i_nc] <- FALSE
 	d$set_no <- NULL
 	d$crop <- "maize"
 	d$yield_part <- "grain"

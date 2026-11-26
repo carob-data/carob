@@ -10,11 +10,12 @@
 # Disease and pest scores are in the long table. A 1-5 unit is severity. A percent unit is incidence.
 
 ## ISSUES
-# write_files: missing variables: on_farm, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. coordinates not on land: Costa Rica, Philippines. NA detected: yield, latitude, longitude. invalid terms: disease: aspergillus flavus, corn stunt, fusarium, sclerospora macrospora, sheath blight, smut, tar spot. invalid terms: pest_species: maize weevil.
-# El Parque, Los Chiles has no minutes in the locations sheet, so its coordinates are empty.
-# Kabacan is printed as 114°50' E. That point is not on land. The sheet value is kept.
+# write_files: missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. NA detected: yield. invalid terms in long table (disease/pest_species not yet in terminag): aspergillus flavus, corn stunt, sclerospora macrospora, sheath blight, smut, tar spot, maize weevil.
+# El Parque, Los Chiles (Costa Rica, 380 m — Pérez Zeledón) has blank minutes in the locations sheet (9° N, 84° W); assigned 9.33 N, -83.68 W (geo_from_source = FALSE).
+# Kabacan, Cotabato (Philippines) is printed as 7°6' N, 114°50' E (South China Sea — 1-digit typo for 124°50' E); corrected to 124.8333 E (geo_from_source = FALSE).
 # The two Kabacan sets share one coordinate pair.
 # Agua Fria set 6 has scores and no grain yield.
+# Fusarium mapped to "fusarium spp" and pyrausta nubilalis mapped to "stem borer". Other diseases/pests not yet in terminag are kept in long$disease / long$pest_species.
 
 
 ## NEW VARIABLES
@@ -66,9 +67,9 @@ Summary results and individual trial results from the International Late White H
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 68,
+		carob_effort = 0.9
 	)
 
 	num <- function(x) {
@@ -132,10 +133,20 @@ Summary results and individual trial results from the International Late White H
 		longitude = lon,
 		elevation = num(sites[[11]]),
 		planting_date = excel_date(sites[[12]]),
-		harvest_date = excel_date(sites[[13]])
+		harvest_date = excel_date(sites[[13]]),
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
 	ok <- !is.na(sites$location) & nzchar(sites$location)
 	if (any(ok)) sites$location[ok] <- carobiner::fix_name(sites$location[ok], "title")
+	# Kabacan, Cotabato (Philippines): printed 114°50' E (ocean) instead of 124°50' E
+	i_kab <- grepl("Kabacan", sites$location, ignore.case = TRUE)
+	sites$longitude[i_kab] <- 124 + 50 / 60
+	sites$geo_from_source[i_kab] <- FALSE
+	# El Parque, Los Chiles (Pérez Zeledón, Costa Rica, 380 m): minutes missing in source
+	i_ch <- grepl("Los Chiles", sites$location, ignore.case = TRUE)
+	sites$latitude[i_ch] <- 9.33
+	sites$longitude[i_ch] <- -83.68
+	sites$geo_from_source[i_ch] <- FALSE
 
 	one <- function(f) {
 		r <- carobiner::read.excel(f, sheet="Results", col_names=FALSE, col_types="text")
@@ -215,7 +226,7 @@ Summary results and individual trial results from the International Late White H
 			c("bipolaris", "southern leaf blight", "disease"),
 			c("rhizoc", "rhizoctonia", "disease"),
 			c("turcicum|helm", "maize leaf blight", "disease"),
-			c("fusa", "fusarium", "disease"),
+			c("fusa", "fusarium spp", "disease"),
 			c("head smut", "head smut", "disease"),
 			c("smut", "smut", "disease"),
 			c("ear rot", "ear rot", "disease"),
@@ -227,7 +238,7 @@ Summary results and individual trial results from the International Late White H
 			c("stunt", "corn stunt", "disease"),
 			c("tar\\s*spot|tarspot", "tar spot", "disease"),
 			c("flav|aspergillus", "aspergillus flavus", "disease"),
-			c("pyrausta", "pyrausta nubilalis", "pest"),
+			c("pyrausta", "stem borer", "pest"),
 			c("borer", "stem borer", "pest"),
 			c("weevil", "maize weevil", "pest")
 		)
@@ -300,8 +311,8 @@ Summary results and individual trial results from the International Late White H
 	loclab <- d$location
 	loclab[is.na(loclab)] <- ""
 	d$trial_id <- trimws(paste(d$set_no, loclab))
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	if (!is.null(long)) {
 		long <- merge(long, d[, c("set_no", "entry_no", "record_id")], by=c("set_no", "entry_no"))

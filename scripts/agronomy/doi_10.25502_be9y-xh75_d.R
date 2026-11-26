@@ -19,7 +19,7 @@ Collecting long-term data from ISFM maize trials and modelling them with the Day
 
 	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
 		data_organization = "IITA;ETH",
-		publication = "doi.org/10.1016/j.fcr.2022.108788",
+		publication = "doi:10.1016/j.fcr.2022.108788",
 		project = NA,
 		design = "split plot design",
 		data_type = "on-farm experiment",

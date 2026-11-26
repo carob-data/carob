@@ -10,12 +10,12 @@
 # Trial is one location x year. Plot numbers repeat across trials.
 
 ## ISSUES
-# No coordinates in the file. CKAN coverage_x = 7.49046 and coverage_y = 4.55213 are one unlabeled point for two sites (Ile-Ife and Mokwa). Not assigned.
+# No coordinates in the file. CKAN coverage_x = 7.49046 and coverage_y = 4.55213 are one unlabeled point for two sites (Ile-Ife and Mokwa). Assigned standard IITA Nigeria station coordinates for Ile-Ife and Mokwa (geo_from_source = FALSE).
 # No planting day, harvest date, fertilizer product, or N/P/K rate. Irrigation is not stated.
 # Five MOIST values are 0. Three HUSK values are 0 (dictionary scale is 1-9). Left as recorded.
 # The dictionary does not say whether YIELD was already adjusted to a standard moisture or is at harvest moisture. MOIST was mapped to yield_moisture as the recorded harvest moisture.
 # No paper DOI in the dataset metadata.
-# write_files: missing longitude, latitude, geo_from_source, harvest_date, N/P/K, irrigated. Unknown variables are the underscore fields. A few yield_moisture values are 0.
+# write_files: missing harvest_date, N/P/K, irrigated. Unknown variables are the underscore fields. A few yield_moisture values are 0.
 
 ## NOT PROCESSED
 # optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, SN: row number.
@@ -56,9 +56,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;plant_height;anthesis_days;silking_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 74,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 78,
+		carob_effort = 0.7
 	)
 
 	f <- ff[basename(ff) == "optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv"]
@@ -114,6 +114,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		crop = "maize",
 		yield_part = "grain",
 		country = "Nigeria",
+		latitude = ifelse(grepl("Ife", loc, ignore.case = TRUE), 7.483, ifelse(loc == "Mokwa", 9.296, NA_real_)),
+		longitude = ifelse(grepl("Ife", loc, ignore.case = TRUE), 4.560, ifelse(loc == "Mokwa", 5.054, NA_real_)),
+		geo_from_source = FALSE,
 		# researcher-managed trial at the sites named in the title
 		on_farm = FALSE,
 		is_survey = FALSE

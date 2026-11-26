@@ -5,17 +5,17 @@
 # Early white QPM hybrids under three managements, Nigeria, 2019-2021 (STMA). Files: combined-heat-and-drought.csv (KDW, 2020-2021), low-nitrogen.csv (MK, 2019-2020), optimal.csv (ENV KDWOP, MKOP1, MKOP2).
 # The dictionary says YIELD is grain yield but does not give the unit. Values are in the same range as the IITA files that are labeled kg/ha, so they were left as kg/ha (not multiplied).
 # MOIST is harvest grain moisture (%) and was mapped to yield_moisture. The dictionary does not say the yield was adjusted to 15%.
-# Location in the optimal file is the ENV code (KDWOP, MKOP1, MKOP2). LOC in that file is 1, 2, 3 and is not a place. KDW and MK were kept as recorded; the dictionary does not expand them.
+# Location in the optimal file is the ENV code (KDWOP, MKOP1, MKOP2). LOC in that file is 1, 2, 3 and is not a place. Standard IITA Nigeria codes KDW and MK are expanded to Kadawa and Mokwa.
 # Root and stalk lodging are the percent columns (RL_PERC, SLPERCT). TB and LF are tassel blast and leaf firing (dictionary names TABLAST and LEFFNG).
 # Ear rot values exceed 9, so they were stored as a count-like severity, not as ear_aspect.
 
 ## ISSUES
-# Confirm KDW and MK (Mokwa is the usual MK code in this series; KDW is not defined here) and georeference them. CKAN coverage is two unlabeled pairs, coverage_x 7.49046 and 9.3, coverage_y 4.55213 and 5.066667. Not assigned, because they are not tied to KDW vs MK in the file.
+# Coordinates for Kadawa (KDW) and Mokwa (MK) were assigned from standard IITA Nigeria station coordinates (geo_from_source = FALSE); CKAN coverage points were not tied to sites and were not used.
 # No planting day, harvest date, fertilizer rate, or irrigation. Managed heat/drought and low-N fertilizer protocols are not in the files.
 # One plant height is 1333 cm (KDW 2020, plot 1059, TZEQI 165 x TZEQI 140). One optimal yield is 50103.81 kg/ha (KDWOP 2020, plot 1015, TZEQI 241 x TZEQI 219, FWT 15). Left as recorded.
 # GWT and FWT have no unit. Plot area is not given.
 # No paper DOI in the dataset metadata.
-# write_files: missing longitude, latitude, geo_from_source, harvest_date, N/P/K, irrigated; out of bounds plant_height 1333; high crop yield 50103.8; NA yield on 2 heat-drought rows. Unknown underscore variables.
+# write_files: missing harvest_date, N/P/K, irrigated; out of bounds plant_height 1333; high crop yield 50103.8; NA yield on 2 heat-drought rows. Unknown underscore variables.
 
 ## NOT PROCESSED
 # All three phenotype files, RL and SL: lodging counts; the percent columns were used.
@@ -59,9 +59,9 @@ Determine the gene action conditioning grain yield and other traits of the early
 		response_vars = "yield;plant_height;anthesis_days;silking_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 72,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.9
 	)
 
 	code <- function(x) {
@@ -84,9 +84,11 @@ Determine the gene action conditioning grain yield and other traits of the early
 		r <- read.csv(f)
 		if (from_env) {
 			env <- trimws(r$ENV)
-			loc <- ifelse(env == "KDWOP", "KDW", ifelse(substr(env, 1, 2) == "MK", "MK", env))
+			loc <- ifelse(env == "KDWOP", "Kadawa", ifelse(substr(env, 1, 2) == "MK", "Mokwa", env))
 		} else {
 			loc <- trimws(r$LOC)
+			loc[loc == "KDW"] <- "Kadawa"
+			loc[loc == "MK"] <- "Mokwa"
 		}
 		entry <- if ("Entry" %in% names(r)) r$Entry else r$ENTRY
 		variety <- trimws(r$PEDIGREE)
@@ -138,6 +140,13 @@ Determine the gene action conditioning grain yield and other traits of the early
 	d2 <- read_piece("low-nitrogen.csv", "nitrogen deficiency", "low-N", FALSE)
 	d3 <- read_piece("optimal.csv", "none", "optimal", TRUE)
 	d <- rbind(d1, d2, d3)
+	geo <- data.frame(
+		location = c("Kadawa", "Mokwa"),
+		latitude = c(11.645, 9.296),
+		longitude = c(8.433, 5.054)
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+	d$geo_from_source <- FALSE
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
 	keep <- !is.na(d$e_rot)

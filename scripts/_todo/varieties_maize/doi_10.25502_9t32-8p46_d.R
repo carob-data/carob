@@ -12,14 +12,14 @@
 
 ## ISSUES
 # The dataset abstract also lists Ile-Ife. That site is not in the data file.
-# No coordinates. Metadata coverage point was not used. Georeference Ikenne, Kadawa, Mokwa, Abuja, and Bagauda (all Nigeria).
+# No coordinates in the file. Metadata coverage point was not used. Assigned standard IITA Nigeria station coordinates for Ikenne, Kadawa, Mokwa, Abuja, and Bagauda (geo_from_source = FALSE).
 # No fertilizer rates. Low-N plots are not given a numeric N rate. Irrigation is not stated, including for the managed-drought rows at Ikenne, so irrigated was omitted.
 # No day of planting or harvest.
 # Male and Female are integer diallel codes, not parent names. The pedigree already has the cross. They were not mapped.
 # Ear aspect includes 0. Stay-green includes 0 and is missing on most rows. Ear height stays within range. Left as recorded.
 # Field weight is described as grams but the values are about 0-4, which does not match a plot of ears without a plot area. Not converted.
 # Plant aspect is missing for part of the data.
-# Expect missing longitude, latitude, geo_from_source, irrigated, N/P/K, harvest_date, and unknown-variable warnings.
+# Expect missing irrigated, N/P/K, harvest_date, and unknown-variable warnings.
 
 ## NOT PROCESSED
 # gene-action-and-heterotic-pettern-and-inter-trait-relationship.csv, ID: row number.
@@ -60,9 +60,9 @@ Vitamin A deficiency is the leading cause of night blindness, total blindness, m
 		response_vars = "yield;tassling_days;silking_days;asi;plant_height;ear_height;aspect;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 76,
-		carob_effort = 0.7,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 80,
+		carob_effort = 0.8,
 		notes = NA
 	)
 
@@ -119,6 +119,13 @@ Vitamin A deficiency is the leading cause of night blindness, total blindness, m
 		is_survey = FALSE
 	)
 
+	geo <- data.frame(
+		location = c("Ikenne", "Kadawa", "Mokwa", "Abuja", "Bagauda"),
+		latitude = c(6.901, 11.645, 9.296, 9.1538, 11.570),
+		longitude = c(3.698, 8.433, 5.054, 7.3220, 8.385)
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$location, d$planting_date, cond, sep = "_")
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	mz_pd_long <- carobiner::get_function("mz_pd_long", path, group)

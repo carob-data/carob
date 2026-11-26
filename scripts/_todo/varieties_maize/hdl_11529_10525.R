@@ -12,8 +12,8 @@
 
 ## ISSUES
 # The grain-yield workbook reports kilograms per hectare by location. Those figures are not the field-weight column used here. Coatlinchan entry 5 is 8500 kg/ha in that workbook and 8.1245 t/ha field weight in the site file.
-# Un San County is recorded as South Korea. The published coordinates, 39 degrees 25 minutes north and 126 degrees 8 minutes east, are flagged as North Korea.
-# write_files: missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. coordinates in wrong country: South Korea/North Korea. contributor:
+# Un San County is recorded as South Korea, but the published coordinates (39°25' N, 126°8' E) fall in Unsan County, North Korea. Because it is uncertain whether the country or the coordinates are erroneous, coordinates for those rows are set to NA (geo_from_source = FALSE).
+# write_files: missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. NA detected: latitude, longitude.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant.
@@ -58,9 +58,9 @@ Summary results and individual trial results from the International Late Yellow 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 64,
+		carob_effort = 0.7
 	)
 
 	num <- function(x) {
@@ -213,6 +213,11 @@ Summary results and individual trial results from the International Late Yellow 
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$country[d$country %in% c("", "Na")] <- NA_character_
 	d$location[d$location %in% c("", "Na")] <- NA_character_
+	# Un San County (South Korea) has North Korea coordinates (39°25' N, 126°8' E); clear ambiguous coords
+	bad_kr <- !is.na(d$country) & d$country == "South Korea" & !is.na(d$latitude) & d$latitude > 38.5
+	d$latitude[bad_kr] <- NA_real_
+	d$longitude[bad_kr] <- NA_real_
+	d$geo_from_source[bad_kr] <- FALSE
 	d$record_id <- seq_len(nrow(d))
 
 	one_dis <- function(x, disease, percent) {

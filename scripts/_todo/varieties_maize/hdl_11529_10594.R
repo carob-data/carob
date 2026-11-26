@@ -9,9 +9,10 @@
 # Disease and pest scores are in the long table. A 1-5 unit is severity. A percent unit is incidence.
 
 ## ISSUES
-# write_files: missing variables: on_farm, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. NA detected: yield. invalid terms: disease: aspergillus flavus, fusarium, head smut, rhizoctonia, smut, tar spot. invalid terms: pest_species: maize weevil, pyrausta nubilalis.
+# write_files: missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. NA detected: yield. invalid terms in long table (not yet in terminag): aspergillus flavus, head smut, rhizoctonia, smut, tar spot, maize weevil.
 # Agua Fria has variety scores and no grain yield.
 # The locations sheet gives Godhra as 22°45' N, 77°40' E. That longitude is far east of Godhra, Gujarat. The sheet value is kept.
+# Fusarium mapped to "fusarium spp" and pyrausta nubilalis mapped to "stem borer". Other diseases/pests not yet in terminag are kept in long$disease / long$pest_species.
 
 
 ## NEW VARIABLES
@@ -47,9 +48,9 @@ Summary results and individual trial results from the International Intermediate
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
-		carob_effort = 0.7
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 66,
+		carob_effort = 0.8
 	)
 
 	num <- function(x) {
@@ -198,7 +199,7 @@ Summary results and individual trial results from the International Intermediate
 			c("bipolaris", "southern leaf blight", "disease"),
 			c("rhizoc", "rhizoctonia", "disease"),
 			c("turcicum|helm", "maize leaf blight", "disease"),
-			c("fusa", "fusarium", "disease"),
+			c("fusa", "fusarium spp", "disease"),
 			c("head smut", "head smut", "disease"),
 			c("smut", "smut", "disease"),
 			c("ear rot", "ear rot", "disease"),
@@ -210,7 +211,7 @@ Summary results and individual trial results from the International Intermediate
 			c("stunt", "corn stunt", "disease"),
 			c("tar\\s*spot|tarspot", "tar spot", "disease"),
 			c("flav|aspergillus", "aspergillus flavus", "disease"),
-			c("pyrausta", "pyrausta nubilalis", "pest"),
+			c("pyrausta", "stem borer", "pest"),
 			c("borer", "stem borer", "pest"),
 			c("weevil", "maize weevil", "pest")
 		)
@@ -275,6 +276,7 @@ Summary results and individual trial results from the International Intermediate
 	loclab <- d$location
 	loclab[is.na(loclab)] <- ""
 	d$trial_id <- trimws(paste(d$set_no, loclab))
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$record_id <- as.integer(seq_len(nrow(d)))

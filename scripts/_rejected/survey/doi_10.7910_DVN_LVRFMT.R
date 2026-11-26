@@ -26,7 +26,7 @@ The data was used to estimate annual greenhouse gas fluxes from typical smallhol
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "ILRI;ICRAF",
-		publication = "doi.org/10.5194/bg-14-187-2017",
+		publication = "doi:10.5194/bg-14-187-2017",
 		project = NA,
 		design = NA,
 		data_type = "survey",### this study included both survey and experiment

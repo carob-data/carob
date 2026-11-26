@@ -12,9 +12,10 @@
 # Plant aspect uses the 1-5 or 1-9 score in aspect. Ears per plant is a ratio.
 
 ## ISSUES
-# Bako and Ambo are both published at 8°58' N, 77°52' E. That longitude is not in Ethiopia. The coordinates are left as published.
+# Bako and Ambo (Ethiopia) are both published at 8°58' N, 77°52' E (77° E falls in India — digit typo for 37° E). Corrected to Bako Agricultural Research Center (9.117 N, 37.050 E) and Ambo Plant Protection Research Center (8.983 N, 37.850 E) with geo_from_source = FALSE.
 # Cuendo harvest serial 38364 (2005-01-12) is before planting serial 38463 (2005-04-21). Bako has no harvest date.
-# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. datespan: 8 records with harvest_date within 45 days of planting_date. coordinates in wrong country: Ethiopia/India. duplicate coordinates: fewer coordinates than locations. invalid terms: disease: fusarium, smut, southern rust. contributor:
+# Fusarium mapped to "fusarium spp" and southern rust mapped to "rust". Smut (not yet in values_disease.csv) is kept in long$disease.
+# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. unknown variables: ears_per_plant_. datespan: 8 records with harvest_date within 45 days of planting_date. invalid terms: disease: smut.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant, ratio, as printed.
@@ -49,9 +50,9 @@ Summary results and individual trial results from the International Late White V
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.6
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.8
 	)
 
 	excel_date <- function(x) {
@@ -91,8 +92,18 @@ Summary results and individual trial results from the International Late White V
 		longitude = lon,
 		elevation = as.numeric(r1[[11]]),
 		planting_date = excel_date(r1[[12]]),
-		harvest_date = excel_date(r1[[13]])
+		harvest_date = excel_date(r1[[13]]),
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
+	# Source printed 77°52' E (India) for Bako and Ambo, Ethiopia (typo for 37° E)
+	i_bako <- locs$location == "Bako" & locs$country == "Ethiopia"
+	locs$latitude[i_bako] <- 9.117
+	locs$longitude[i_bako] <- 37.050
+	locs$geo_from_source[i_bako] <- FALSE
+	i_ambo <- locs$location == "Ambo" & locs$country == "Ethiopia"
+	locs$latitude[i_ambo] <- 8.983
+	locs$longitude[i_ambo] <- 37.850
+	locs$geo_from_source[i_ambo] <- FALSE
 
 	empty_long <- function() {
 		data.frame(
@@ -171,11 +182,11 @@ Summary results and individual trial results from the International Late White V
 		)
 		specs <- list(
 			c("Head Smut", "disease", "head smut"),
-			c("Fusa", "disease", "fusarium"),
+			c("Fusa", "disease", "fusarium spp"),
 			c("Smut", "disease", "smut"),
 			c("GLS|Gray Leaf", "disease", "gray leaf spot"),
 			c("turcicum", "disease", "maize leaf blight"),
-			c("Southern rust", "disease", "southern rust"),
+			c("Southern rust", "disease", "rust"),
 			c("Common Rust", "disease", "rust"),
 			c("Puccinia", "disease", "rust"),
 			c("MSV|Streak", "disease", "maize streak virus"),
@@ -183,7 +194,7 @@ Summary results and individual trial results from the International Late White V
 			c("Bipolaris|maydis", "disease", "southern leaf blight"),
 			c("Rhizoc", "disease", "rhizoctonia"),
 			c("Leaf spot", "disease", "leaf spot"),
-			c("Stunt", "disease", "stunt"),
+			c("Stunt", "disease", "corn stunt"),
 			c("Leaf Diseases", "disease", "leaf diseases"),
 			c("Stem Borer", "pest", "stem borer"),
 			c("Ear Worm", "pest", "earworm")
@@ -243,7 +254,6 @@ Summary results and individual trial results from the International Late White V
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$row_key <- paste(d$set_no, d$row_i, sep="-")
 	d$record_id <- seq_len(nrow(d))
 	if (nrow(long) > 0) {

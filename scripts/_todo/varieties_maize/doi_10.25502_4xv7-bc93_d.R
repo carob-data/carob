@@ -2,20 +2,21 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Regional Striga-resistant and drought-tolerant hybrid trials, about 2012-2019 (Menkir; DTMA and STMA). Four files.
+# Regional Striga-resistant and drought-tolerant hybrid trials, about 2012-2019 (Menkir; DTMA and STMA). Five files.
 # m28fulli_irrigation-data.csv is padded with about 337000 blank rows; those rows were dropped. The unnamed column between REP and PLOT (integers 1-42) is stored as block_id because it occupies the same place as BLK in the multiloc file. Confirm that reading.
-# Grain yield is kg/ha (the irrigation and multiloc headers say so; the other two files use the same scale).
+# m28drought_stress-data.csv (960 rows, 2012-2019) has the same layout as the irrigation file plus Leaf.senescence and no location column; stored with stress = "drought".
+# Grain yield is kg/ha (the irrigation, drought, and multiloc headers say so; the other two files use the same scale).
 # Columns named "Silking date" and "Antheis Day" are days from planting, not calendar dates (values sit next to anthesis, about 45-90).
 # m28striga-data.csv has infested and non-infested measurements on one row. They are split into two rows. Striga ratings and counts stay on the infested row only.
 # m28multiloc-data-ii.csv (Kadawa, 2017) is the only file with variety names and grain moisture (MOI, %).
 # Elsewhere the variety is the entry number. Entry numbers are not a stable variety id across years or files, and were not joined to the Kadawa names.
 # Maize streak virus (MSV) and Curvularia leaf spot in the multiloc file go to the long pest/disease table.
-# Country and location names were filled only where the site code is a known place. No coordinates were added. Metadata lists five unlabelled coordinate pairs; they were not used.
+# Country, location names, and station coordinates (geo_from_source = FALSE) were filled where the site code matches a known West/Central/East African trial station. Metadata lists five unlabelled coordinate pairs; they were not used.
 
 ## ISSUES
-# Irrigation file has no location, so those trials cannot be placed. The unnamed column may be a block or a site index.
-# Many multiloc codes have no country: AGWAN_MALAMI, CARI_14, CARI_15, CARI_16, CARI_18, CARI_20, DALABANI, DUSU, INA, JANGEME, KALENDA, KASHILE, KUDU, MAGADAS, NALWEYO, PANDA, SABONGARI, TANIINA, YAMTAKE. INA may be Ina (Benin) or Baba Ina (Nigeria).
-# Countries outside the metadata list (Nigeria, Ghana, Mali, Benin) were assigned from the place name and need confirmation: Beni Suef (Egypt), Manga (Burkina Faso), Gambia, Gandajika (Democratic Republic of the Congo), Kilissi (Guinea), Gbedin 19 (Liberia). Kita, Lere, and Zamfara (a state name, not a town) also need confirmation. Gambia is stored as both location and country because the file gives no finer site.
+# Irrigation and drought files have no location column, so those trials cannot be georeferenced. The unnamed column in the irrigation file may be a block or a site index.
+# Remaining unmapped multiloc codes with no country/coordinates: AGWAN_MALAMI, DALABANI, JANGEME, KASHILE, MAGADAS, PANDA, TANIINA, YAMTAKE.
+# Countries assigned from place names outside the metadata summary list (Nigeria, Ghana, Mali, Benin) need confirmation: Beni Suef (Egypt), Manga (Burkina Faso), Gambia, Gandajika and Kalenda (Democratic Republic of the Congo), Kilissi (Guinea), Gbedin 19 and Suakoko/CARI (Liberia), Nalweyo (Uganda), Ina (Benin).
 # Numbered codes (Bagauda 2, Fumesua 1, Kadawa 1, and so on) were kept separate from the base name. IFE and ILE-IFE were both read as Ile-Ife.
 # No fertilizer rates and no day of planting or harvest. Irrigation is set only for the irrigation file.
 # Variety names are missing except in m28multiloc-data-ii.csv.
@@ -25,7 +26,7 @@
 # NP, PL, and SD in the Kadawa file are undefined abbreviations.
 # Non-infested Striga-file rows have no anthesis-silking interval, ear height is only on the non-infested side, and ears per plant and anthesis are not paired for every side. See the split.
 # On-farm status is not in the files (regional trials may include farmer fields). Recorded as station trials (on_farm FALSE).
-# Expect NA country, missing longitude/latitude/geo_from_source, missing N/P/K and harvest_date, NA yield, out-of-bounds messages, and unknown-variable warnings.
+# Expect NA country/latitude/longitude for irrigation/drought/unmapped sites, missing N/P/K and harvest_date, NA yield, out-of-bounds messages, and unknown-variable warnings.
 
 ## NOT PROCESSED
 # m28fulli_irrigation-data.csv, blank trailing rows: empty export rows.
@@ -34,10 +35,10 @@
 # m28multiloc-data-ii.csv, NP, PL, SD: undefined abbreviations (NP and PL about 28-36, SD about 60-74). Not assigned to density or silking.
 # m28striga-data.csv, ENV: used only inside trial_id.
 # No data dictionary is in the download.
-# m28drought_stress-data.csv: not read. columns: YEAR, REP, BLK, PLOT, ENTRY, YIELD (kg/ha), Antheis Day, Silking date, ASI, Plant height, Eear height, Ears per plant, .... Observation records are missing from d until this file is standardized.
 
 ## NEW VARIABLES
 # ears_per_plant_: ears per plant as recorded (dimensionless).
+# leaf_senescence_: leaf senescence score in m28drought_stress-data.csv (1-10 scale).
 # senescence_1_: first senescence score in the Kadawa file (scale not defined).
 # senescence_2_: second senescence score in the Kadawa file (scale not defined).
 
@@ -64,42 +65,64 @@ Breeding for stress resilient maize varieties and hybrids
 		response_vars = "yield;anthesis_days;silking_days;asi;plant_height;ear_height;aspect;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 58,
-		carob_effort = 1.2,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 78,
+		carob_effort = 1.5,
 		notes = NA
 	)
 
 	geo <- data.frame(
 		loc_code = c(
-			"AKURE", "ASKIRA", "BAGAUDA", "BAGAUDA_2", "BIRNI_KUDU", "DANSADAU", "DUTSIMA", "EJIBA", "ERUWA",
+			"AKURE", "ASKIRA", "BAGAUDA", "BAGAUDA_2", "BIRNI_KUDU", "DANSADAU", "DUSU", "DUTSIMA", "EJIBA", "ERUWA",
 			"IFE", "IFE_1", "IFE_2", "IKENNE", "ILE-IFE", "ILORIN", "KADAWA", "KADAWA_1", "KADAWA_2", "KANO",
-			"KISHI", "LAPAI", "LERE", "MOKWA", "MOKWA_2", "OMU-ARAN", "SAMARU", "SAMINAKA", "SHEDA", "ZAMFARA",
-			"ZARIA", "ZARIA_2",
+			"KISHI", "KUDU", "LAPAI", "LERE", "MOKWA", "MOKWA_2", "OMU-ARAN", "SABONGARI", "SAMARU", "SAMINAKA",
+			"SHEDA", "ZAMFARA", "ZARIA", "ZARIA_2", "ABJ", "ABUJA", "MOK",
 			"DAMONGO", "EJURA", "EJURA_2", "FUMESUA", "FUMESUA_1", "FUMESUA_2", "KPEVE", "NYANKPALA", "WA", "YENDI",
-			"ANGARADEBOU", "BAGOU",
+			"ANGARADEBOU", "BAGOU", "INA",
 			"BOUGOUMI", "KITA", "SAMANKO", "SOTUBA",
-			"BANI_SUEF", "MANGA", "GAMBIA", "GANDAJIKA", "KILISSI", "GBEDIN_19",
-			"ABJ", "ABUJA", "MOK"
+			"BANI_SUEF", "MANGA", "GAMBIA", "GANDAJIKA", "KALENDA", "KILISSI", "GBEDIN_19",
+			"CARI_14", "CARI_15", "CARI_16", "CARI_18", "CARI_20", "NALWEYO"
 		),
 		location = c(
-			"Akure", "Askira", "Bagauda", "Bagauda 2", "Birnin Kudu", "Dansadau", "Dutsin-Ma", "Ejiba", "Eruwa",
+			"Akure", "Askira", "Bagauda", "Bagauda 2", "Birnin Kudu", "Dansadau", "Dusu", "Dutsin-Ma", "Ejiba", "Eruwa",
 			"Ile-Ife", "Ile-Ife 1", "Ile-Ife 2", "Ikenne", "Ile-Ife", "Ilorin", "Kadawa", "Kadawa 1", "Kadawa 2", "Kano",
-			"Kishi", "Lapai", "Lere", "Mokwa", "Mokwa 2", "Omu-Aran", "Samaru", "Saminaka", "Sheda", "Zamfara",
-			"Zaria", "Zaria 2",
+			"Kishi", "Kudu", "Lapai", "Lere", "Mokwa", "Mokwa 2", "Omu-Aran", "Sabon Gari", "Samaru", "Saminaka",
+			"Sheda", "Zamfara", "Zaria", "Zaria 2", "Abuja", "Abuja", "Mokwa",
 			"Damongo", "Ejura", "Ejura 2", "Fumesua", "Fumesua 1", "Fumesua 2", "Kpeve", "Nyankpala", "Wa", "Yendi",
-			"Angaradebou", "Bagou",
+			"Angaradebou", "Bagou", "Ina",
 			"Bougouni", "Kita", "Samanko", "Sotuba",
-			"Beni Suef", "Manga", "Gambia", "Gandajika", "Kilissi", "Gbedin 19",
-			"Abuja", "Abuja", "Mokwa"
+			"Beni Suef", "Manga", "Gambia", "Gandajika", "Kalenda", "Kilissi", "Gbedin 19",
+			"Suakoko (CARI 14)", "Suakoko (CARI 15)", "Suakoko (CARI 16)", "Suakoko (CARI 18)", "Suakoko (CARI 20)", "Nalweyo"
 		),
 		country = c(
-			rep("Nigeria", 31),
+			rep("Nigeria", 37),
 			rep("Ghana", 10),
-			rep("Benin", 2),
+			rep("Benin", 3),
 			rep("Mali", 4),
-			"Egypt", "Burkina Faso", "Gambia", "Democratic Republic of the Congo", "Guinea", "Liberia",
-			"Nigeria", "Nigeria", "Nigeria"
+			"Egypt", "Burkina Faso", "Gambia", "Democratic Republic of the Congo", "Democratic Republic of the Congo",
+			"Guinea", "Liberia", rep("Liberia", 5), "Uganda"
+		),
+		latitude = c(
+			7.257, 10.651, 11.570, 11.570, 11.452, 11.296, 8.817, 12.454, 8.296, 7.534,
+			7.483, 7.483, 7.483, 6.901, 7.483, 8.497, 11.645, 11.645, 11.645, 12.002,
+			9.083, 9.276, 9.044, 10.386, 9.296, 9.296, 8.139, 11.158, 11.160, 10.412,
+			8.882, 12.122, 11.025, 11.025, 9.1538, 9.1538, 9.296,
+			9.083, 7.383, 7.383, 6.714, 6.714, 6.714, 6.685, 9.400, 10.060, 9.443,
+			11.323, 10.805, 9.967,
+			11.418, 13.035, 12.531, 12.660,
+			29.066, 11.667, 13.443, -6.745, -7.050, 9.983, 7.269,
+			6.993, 6.993, 6.993, 6.993, 6.993, 1.000
+		),
+		longitude = c(
+			5.206, 12.909, 8.385, 8.385, 9.478, 6.519, 12.367, 7.497, 5.643, 3.418,
+			4.560, 4.560, 4.560, 3.698, 4.560, 4.542, 8.433, 8.433, 8.433, 8.592,
+			3.852, 4.922, 6.571, 8.573, 5.054, 5.054, 5.103, 7.721, 7.637, 8.687,
+			7.053, 6.224, 7.652, 7.652, 7.3220, 7.3220, 5.054,
+			-1.817, -1.367, -1.367, -1.512, -1.512, -1.512, 0.333, -0.981, -2.502, -0.010,
+			3.041, 2.711, 2.733,
+			-7.483, -9.490, -8.068, -7.921,
+			31.099, -1.072, -15.310, 23.953, 23.517, -12.667, -8.817,
+			-9.581, -9.581, -9.581, -9.581, -9.581, 31.117
 		)
 	)
 
@@ -108,13 +131,17 @@ Breeding for stress resilient maize varieties and hybrids
 		m <- match(loc_code, geo$loc_code)
 		location <- loc_code
 		country <- rep(NA_character_, length(loc_code))
+		latitude <- rep(NA_real_, length(loc_code))
+		longitude <- rep(NA_real_, length(loc_code))
 		hit <- !is.na(m)
 		location[hit] <- geo$location[m[hit]]
 		country[hit] <- geo$country[m[hit]]
+		latitude[hit] <- geo$latitude[m[hit]]
+		longitude[hit] <- geo$longitude[m[hit]]
 		# unmatched codes were all capitals; keep them readable
 		up <- !is.na(location) & location == toupper(location) & grepl("[A-Z]", location)
 		location[up] <- carobiner::fix_name(location[up], "title")
-		data.frame(location = location, country = country)
+		data.frame(location = location, country = country, latitude = latitude, longitude = longitude)
 	}
 
 	chr_num <- function(x) {
@@ -156,6 +183,8 @@ Breeding for stress resilient maize varieties and hybrids
 		planting_date = as.character(r2$YEAR),
 		location = p2$location,
 		country = p2$country,
+		latitude = p2$latitude,
+		longitude = p2$longitude,
 		rep = as.integer(r2$REP),
 		block_id = as.character(r2$BLK),
 		plot_id = as.character(r2$PLOT),
@@ -185,6 +214,8 @@ Breeding for stress resilient maize varieties and hybrids
 		planting_date = as.character(r3$YEAR),
 		location = p3$location,
 		country = p3$country,
+		latitude = p3$latitude,
+		longitude = p3$longitude,
 		rep = as.integer(r3$REP),
 		block_id = as.character(r3$BLK),
 		plot_id = as.character(r3$PLOT),
@@ -216,6 +247,8 @@ Breeding for stress resilient maize varieties and hybrids
 		planting_date = as.character(r4$YEAR),
 		location = p4$location,
 		country = p4$country,
+		latitude = p4$latitude,
+		longitude = p4$longitude,
 		rep = as.integer(r4$REP),
 		plot_id = as.character(r4$PLOT),
 		variety_code = v4,
@@ -241,6 +274,8 @@ Breeding for stress resilient maize varieties and hybrids
 		planting_date = as.character(r4$YEAR),
 		location = p4$location,
 		country = p4$country,
+		latitude = p4$latitude,
+		longitude = p4$longitude,
 		rep = as.integer(r4$REP),
 		plot_id = as.character(r4$PLOT),
 		variety_code = v4,
@@ -260,7 +295,35 @@ Breeding for stress resilient maize varieties and hybrids
 	)
 	d4u$trial_id <- paste(d4u$location, d4u$planting_date, "noninfested", r4$ENV, sep = "_")
 
-	d <- carobiner::bindr(d1, d2, d3, d4i, d4u)
+	f5 <- ff[basename(ff) == "m28drought_stress-data.csv"]
+	r5 <- read.csv(f5, na.strings = c("NA", "", "."))
+	r5 <- r5[!is.na(r5$YEAR), ]
+	v5 <- as.character(r5$ENTRY)
+	d5 <- data.frame(
+		planting_date = as.character(r5$YEAR),
+		rep = as.integer(r5$REP),
+		block_id = as.character(r5$BLK),
+		plot_id = as.character(r5$PLOT),
+		variety_code = v5,
+		variety = v5,
+		treatment = v5,
+		yield = as.numeric(r5$YIELD..kg.ha.),
+		anthesis_days = as.numeric(r5$Antheis.Day),
+		silking_days = as.numeric(r5$Silking.date),
+		asi = as.numeric(r5$ASI),
+		plant_height = as.numeric(r5$Plant.height),
+		ear_height = as.numeric(r5$Eear.height),
+		ears_per_plant_ = as.numeric(r5$Ears.per.plant),
+		husk = chr_num(r5$Husk.cover),
+		leaf_senescence_ = as.numeric(r5$Leaf.senescence),
+		ear_aspect = as.numeric(r5$Ear.aspect),
+		aspect = as.numeric(r5$Plant.aspect),
+		stress = "drought"
+	)
+	d5$trial_id <- paste("drought", d5$planting_date, sep = "_")
+
+	d <- carobiner::bindr(d1, d2, d3, d4i, d4u, d5)
+	d$geo_from_source <- ifelse(!is.na(d$latitude) & !is.na(d$longitude), FALSE, NA)
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$variety_type <- "hybrid"

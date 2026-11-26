@@ -8,12 +8,12 @@
 # Striga counts (C01_STAT, C02_STAT) and damage ratings (STRRAT1, STRRAT2) at 8 and 10 weeks go to the long table. They are missing on the non-infested rows, as expected.
 
 ## ISSUES
-# No coordinates. Metadata coverage point (about 9.6 E, 8.0 N) is not a trial site and was not used. Georeference Abuja and Mokwa.
+# No coordinates in the file. Metadata coverage point (about 9.6 E, 8.0 N) is not a trial site and was not used. Assigned standard IITA Nigeria station coordinates for Abuja and Mokwa (geo_from_source = FALSE).
 # No fertilizer rates, irrigation flag, or day of planting/harvest. Trial year only.
 # Five rows have no yield. Kept.
 # NAME is missing on 726 rows; PEDIGREE was used as the variety name there.
 # The 15% moisture and 80% shelling figures are dictionary statements about how yield was computed, not plot-level measurements.
-# Expect missing longitude, latitude, geo_from_source, irrigated, N/P/K, harvest_date, NA yield, and unknown-variable warnings.
+# Expect missing irrigated, N/P/K, harvest_date, NA yield, and unknown-variable warnings.
 
 ## NOT PROCESSED
 # gg_-strinfnoninf_2010-2021.csv, ID: row number.
@@ -46,9 +46,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;anthesis_days;silking_days;asi;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 74,
-		carob_effort = 0.5,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 78,
+		carob_effort = 0.6,
 		notes = NA
 	)
 
@@ -69,6 +69,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 	d <- data.frame(
 		location = location,
 		country = "Nigeria",
+		latitude = ifelse(location == "Abuja", 9.1538, ifelse(location == "Mokwa", 9.296, NA_real_)),
+		longitude = ifelse(location == "Abuja", 7.3220, ifelse(location == "Mokwa", 5.054, NA_real_)),
+		geo_from_source = FALSE,
 		planting_date = as.character(r$TRIAL_YEAR),
 		plot_id = as.character(r$PLOT_NO),
 		rep = as.integer(r$REP),

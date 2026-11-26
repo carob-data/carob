@@ -9,10 +9,10 @@
 # Planting and harvest dates in that sheet are Excel serials (origin 1899-12-30).
 
 ## ISSUES
-# India sites R&D Wadadhe and R&D (Pachora) record 83 minutes of latitude. Minutes above 59 were still converted as degrees plus minutes/60. Those two sites share one coordinate pair.
+# India sites R&D Wadadhe and R&D (Pachora) print 20°83' N, 75°34' E (83' is invalid minutes — decimal 20.83° N split into degrees and minutes). Fixed to 20.83 N for Wadadhe (Jalgaon) and 20.667 N, 75.35 E for Pachora (geo_from_source = FALSE).
 # Xocoyucan harvest serial 39780 is 947 days after planting. It is stored as written.
 # Bako has no harvest date. Some variety means have no grain yield.
-# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. datespan: 17 harvest_date more than 366 days after planting_date. duplicate coordinates: fewer coordinates than locations. NA detected: yield.
+# write_files: missing variables: K_fertilizer, N_fertilizer, P_fertilizer. datespan: 17 harvest_date more than 366 days after planting_date. NA detected: yield.
 
 ## NOT PROCESSED
 # Plot-level workbooks without the -1 suffix. Those sheets are field-book templates without yield values.
@@ -49,9 +49,9 @@ Summary results and individual trial results from the International Intermediate
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 60,
+		carob_effort = 0.6
 	)
 
 	num <- function(z) {
@@ -86,8 +86,17 @@ Summary results and individual trial results from the International Intermediate
 		longitude = lon,
 		elevation = num(r1[[11]]),
 		planting_date = excel_date(r1[[12]]),
-		harvest_date = excel_date(r1[[13]])
+		harvest_date = excel_date(r1[[13]]),
+		geo_from_source = !is.na(lat) & !is.na(lon)
 	)
+	# Source printed 20°83' N (invalid minutes) for both Jalgaon/Pachora sites
+	i_wad <- grepl("Wadadhe", locs$location, ignore.case = TRUE)
+	locs$latitude[i_wad] <- 20.83
+	locs$geo_from_source[i_wad] <- FALSE
+	i_pac <- grepl("Pachora", locs$location, ignore.case = TRUE)
+	locs$latitude[i_pac] <- 20.667
+	locs$longitude[i_pac] <- 75.35
+	locs$geo_from_source[i_pac] <- FALSE
 
 	read_means <- function(f) {
 		r <- carobiner::read.excel(f, col_names=FALSE)
@@ -134,7 +143,6 @@ Summary results and individual trial results from the International Intermediate
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$irrigated <- NA
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 	d$set_no <- NULL
 	carobiner::write_files(path, meta, d)
 }

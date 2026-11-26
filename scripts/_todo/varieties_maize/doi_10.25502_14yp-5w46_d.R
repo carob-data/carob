@@ -10,11 +10,11 @@
 # Pedigrees that start with "Check" are checks; the other entries are inbreds. The check label and the inbred name are both kept in variety.
 
 ## ISSUES
-# No coordinates, fertilizer, irrigation, grain moisture, or day of planting. Year was taken from the location code.
+# No fertilizer, irrigation, grain moisture, or day of planting. Year was taken from the location code. Coordinates for Abuja and Mokwa were assigned from standard IITA Nigeria station coordinates (geo_from_source = FALSE).
 # No raw Striga counts, only transformed values.
 # ears_per_plant_ reaches 8, which is outside a usual ears-per-plant range. Left as recorded.
 # One Striga rating is missing.
-# Expect missing longitude, latitude, geo_from_source, yield_moisture, irrigated, N/P/K, harvest_date, and unknown-variable warnings.
+# Expect missing yield_moisture, irrigated, N/P/K, harvest_date, and unknown-variable warnings.
 
 ## NOT PROCESSED
 # phenotypic-data.csv, ID: row number.
@@ -48,9 +48,9 @@ Phenotypic data of 169 extra-early maturing quality protein maize  evaluated und
 		response_vars = "yield;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.4,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 74,
+		carob_effort = 0.5,
 		notes = NA
 	)
 
@@ -94,6 +94,13 @@ Phenotypic data of 169 extra-early maturing quality protein maize  evaluated und
 		is_survey = FALSE
 	)
 
+	geo <- data.frame(
+		location = c("Abuja", "Mokwa"),
+		latitude = c(9.1538, 9.296),
+		longitude = c(7.3220, 5.054)
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
+	d$geo_from_source <- FALSE
 	d$trial_id <- paste(d$location, d$planting_date, sep = "_")
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	mz_pd_long <- carobiner::get_function("mz_pd_long", path, group)

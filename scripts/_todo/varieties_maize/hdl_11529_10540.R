@@ -57,7 +57,7 @@ Summary results and individual trial results from the International Late Yellow 
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
+		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
 		carob_effort = 0.6
 	)

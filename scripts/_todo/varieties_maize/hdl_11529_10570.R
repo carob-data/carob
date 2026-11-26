@@ -10,13 +10,12 @@
 # Summary workbooks are not used.
 
 ## ISSUES
-# write_files: missing variables: on_farm, irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
+# write_files: missing variables: irrigated, K_fertilizer, N_fertilizer, P_fertilizer.
 
 
 ## NOT PROCESSED
 # Combined results, grain-yield summary, and the dendrogram.
 # Lodging, husk cover, ear rot, disease scores, and plant stand.
-# Anthesis date and anthesis-silking interval.
 
 
 carob_script <- function(path) {
@@ -41,9 +40,9 @@ Summary results and individual trial results from the International Intermediate
 		response_vars = "yield",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 70,
+		carob_effort = 0.6
 	)
 
 	dms <- function(deg, minute, hemi) {
@@ -126,8 +125,11 @@ Summary results and individual trial results from the International Intermediate
 		data.frame(
 			site = site,
 			variety = variety,
+			treatment = variety,
 			yield = as.numeric(r$GrainYieldTons_FieldWt) * 1000,
 			yield_moisture = as.numeric(r$GrainMoisturePer),
+			anthesis_days = if ("AnthesisDate" %in% names(r)) as.numeric(r$AnthesisDate) else NA_real_,
+			asi = if ("ASI" %in% names(r)) as.numeric(r$ASI) else NA_real_,
 			plant_height = as.numeric(r$PlantHeightCm),
 			ear_height = as.numeric(r$EarHeightCm),
 			geo_from_source = TRUE
@@ -139,8 +141,11 @@ Summary results and individual trial results from the International Intermediate
 	d$trial_id <- d$site
 	d$crop <- "maize"
 	d$yield_part <- "grain"
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE
 	d$site <- NULL
+	if (all(is.na(d$anthesis_days))) d$anthesis_days <- NULL
+	if (all(is.na(d$asi))) d$asi <- NULL
 	d <- d[!is.na(d$yield), ]
 
 	carobiner::write_files(path, meta, d)

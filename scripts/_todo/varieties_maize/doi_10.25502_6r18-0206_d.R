@@ -9,12 +9,12 @@
 # Ear rot (EROT) is the count of rotten ears. No harvest moisture column.
 
 ## ISSUES
-# No coordinates in the file. CKAN gives one unlabeled point (coverage_x = 7.49046, coverage_y = 4.55213) for two sites. Not assigned. Georeference Ile-Ife and Mokwa.
+# No coordinates in the file. CKAN gives one unlabeled point (coverage_x = 7.49046, coverage_y = 4.55213) for two sites. Assigned standard IITA Nigeria station coordinates for Ile-Ife and Mokwa (geo_from_source = FALSE).
 # No planting day, harvest date, fertilizer rate, or irrigation. Low-N management (how the low-N plots were fertilized) is not in the file.
 # Yield moisture is not in this file. Do not copy 15% from other IITA trials.
 # Column metadata lists PLST, RLPERC, MOIST, PHARV, FWT and a 1-9 husk scale, but those columns are absent here except HUSK. RL may be a count rather than the percent the dictionary describes.
 # No paper DOI in the dataset metadata.
-# write_files: missing longitude, latitude, geo_from_source, yield_moisture, harvest_date, N/P/K, irrigated.
+# write_files: missing yield_moisture, harvest_date, N/P/K, irrigated.
 
 ## NOT PROCESSED
 # low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv, SN: row number.
@@ -52,9 +52,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;plant_height;anthesis_days;silking_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 74,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "low-n-hybrid_datasets_ile-ife-mokwa_2016-2017.csv"]
@@ -114,6 +114,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		crop = "maize",
 		yield_part = "grain",
 		country = "Nigeria",
+		latitude = ifelse(grepl("Ife", loc, ignore.case = TRUE), 7.483, ifelse(loc == "Mokwa", 9.296, NA_real_)),
+		longitude = ifelse(grepl("Ife", loc, ignore.case = TRUE), 4.560, ifelse(loc == "Mokwa", 5.054, NA_real_)),
+		geo_from_source = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)

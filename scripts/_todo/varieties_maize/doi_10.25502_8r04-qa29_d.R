@@ -2,22 +2,21 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Early-maturing maize hybrids, Nigeria, 2017-2019 (STMA Phase I). Two files: genetic-gains-in-grain-yield-early-maturing-maize-hybrids.csv (stress locations) and genetic-gains-in-early-maturing-maize-hybrids-optimum-env.csv (optimum locations). YIELD is kg/ha in the dictionary.
-# Location codes were kept as recorded (AB_STR, IKDS, IFEHN, and so on). The dictionary calls LOC a condition, but the values are place plus condition codes. They were not expanded.
+# Early-maturing maize hybrids, West Africa (Nigeria, Benin, Ghana), 2017-2019 (STMA Phase I). Two files: genetic-gains-in-grain-yield-early-maturing-maize-hybrids.csv (stress locations) and genetic-gains-in-early-maturing-maize-hybrids-optimum-env.csv (optimum locations). YIELD is kg/ha in the dictionary.
+# Location codes combine IITA West Africa station codes with management suffixes (AB = Abuja, AN = Angaradebou, BG = Bagauda, EJ = Ejura, IA/INA = Ina, IFE = Ile-Ife, IK = Ikenne, MO = Mokwa, NY = Nyankpala, ZA = Zaria); expanded to place names with country and station coordinates (geo_from_source = FALSE), while keeping raw code in trial_id. MXOPT is unexpanded (stored as Mxopt with country/coords NA).
 # Stress on the stress file was read from the code: STR = striga (those rows are the only ones with RAT/CO), LN = nitrogen deficiency, IKDS = drought. The optimum file is stress = none. Confirm this reading.
 # Striga damage (RAT1, RAT2) and emerged-plant counts (CO1, CO2) are at 8 and 10 weeks after planting. Days after planting used here are 56 and 70 (weeks x 7). Square-root counts (STRC0_1, STRC0_2) were not stored.
 # RL and SL have no unit in the dictionary. Values go above 9, so they are not a 1-9 score; stored as recorded.
 # Dev_Year is the year the hybrid was developed, not the trial year and not a release year. Trial year is YEAR.
 
 ## ISSUES
-# Georeference every location code. CKAN has one point (coverage_x 9.60004, coverage_y 7.99997) that cannot be tied to these codes. Not used.
-# Spellings that may be the same place were not merged: IFE_LN and IFELN, IFE_HN and IFEHN, MO_STR and MOSTR.
+# Station coordinates assigned from standard IITA West Africa research stations (geo_from_source = FALSE); CKAN point (coverage_x 9.60004, coverage_y 7.99997) was not used. Confirm IA_STR/INAOPT/INAUN = Ina (Benin) and identify MXOPT (currently unmapped, country/coords NA).
 # IKDS = drought and LN = nitrogen deficiency are inferred from the codes. Only the STR reading is backed by Striga columns being filled on those rows alone.
 # No planting day, harvest date, fertilizer, irrigation, or yield moisture.
 # Ear aspect is 16 on one IA_STR 2017 row and 0 on one MOHN 2017 row. Left as recorded.
 # Ear rot (E_ROT) reaches 44, so it is not a 1-9 score. Stored as the recorded number in the long disease table.
 # No paper DOI in the dataset metadata.
-# write_files: missing longitude, latitude, geo_from_source, yield_moisture, harvest_date, N/P/K, irrigated; out of bounds ear_aspect 0 and 16; all uppercase location (codes, not place names). Unknown underscore variables.
+# write_files: missing yield_moisture, harvest_date, N/P/K, irrigated; out of bounds ear_aspect 0 and 16; NA country/lat/lon for MXOPT. Unknown underscore variables.
 
 ## NOT PROCESSED
 # Both phenotype files, ENV: environment number. Location and year already define the trial.
@@ -54,9 +53,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;plant_height;anthesis_days;silking_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0.8
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 1.0
 	)
 
 	as_num <- function(x) {
@@ -81,6 +80,24 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		out
 	}
 
+	loc_map <- data.frame(
+		code = c("AB_STR", "ABOPT", "ANOPT", "BGOPT", "EJHN", "IA_STR", "INAOPT", "INAUN",
+			"IFE_LN", "IFELN", "IFE_HN", "IFEHN", "IKDS", "IKOPT",
+			"MO_STR", "MOSTR", "MOLN", "MOHN", "MOOPT", "NY_STR", "NYOPT", "ZAOPT"),
+		location = c("Abuja", "Abuja", "Angaradebou", "Bagauda", "Ejura", "Ina", "Ina", "Ina",
+			"Ile-Ife", "Ile-Ife", "Ile-Ife", "Ile-Ife", "Ikenne", "Ikenne",
+			"Mokwa", "Mokwa", "Mokwa", "Mokwa", "Mokwa", "Nyankpala", "Nyankpala", "Zaria"),
+		country = c("Nigeria", "Nigeria", "Benin", "Nigeria", "Ghana", "Benin", "Benin", "Benin",
+			"Nigeria", "Nigeria", "Nigeria", "Nigeria", "Nigeria", "Nigeria",
+			"Nigeria", "Nigeria", "Nigeria", "Nigeria", "Nigeria", "Ghana", "Ghana", "Nigeria"),
+		latitude = c(9.1538, 9.1538, 11.323, 11.570, 7.383, 9.967, 9.967, 9.967,
+			7.483, 7.483, 7.483, 7.483, 6.901, 6.901,
+			9.296, 9.296, 9.296, 9.296, 9.296, 9.400, 9.400, 11.025),
+		longitude = c(7.3220, 7.3220, 3.041, 8.385, -1.367, 2.733, 2.733, 2.733,
+			4.560, 4.560, 4.560, 4.560, 3.698, 3.698,
+			5.054, 5.054, 5.054, 5.054, 5.054, -0.981, -0.981, 7.652)
+	)
+
 	read_piece <- function(fname, optimal) {
 		f <- ff[basename(ff) == fname]
 		r <- read.csv(f)
@@ -90,10 +107,19 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		} else {
 			stress <- stress_from_loc(loc)
 		}
+		m <- match(loc, loc_map$code)
+		place <- ifelse(!is.na(m), loc_map$location[m], carobiner::fix_name(loc, "title"))
+		country <- ifelse(!is.na(m), loc_map$country[m], NA_character_)
+		lat <- ifelse(!is.na(m), loc_map$latitude[m], NA_real_)
+		lon <- ifelse(!is.na(m), loc_map$longitude[m], NA_real_)
 		variety <- trimws(r$Pedigree)
 		data.frame(
 			trial_id = paste(loc, r$YEAR),
-			location = loc,
+			location = place,
+			country = country,
+			latitude = lat,
+			longitude = lon,
+			geo_from_source = ifelse(!is.na(lat) & !is.na(lon), FALSE, NA),
 			planting_date = as.character(r$YEAR),
 			plot_id = as.character(r$PLOT),
 			rep = as.integer(r$Rep),
@@ -121,7 +147,6 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 			stay_green_ = as_num(r$STGR),
 			crop = "maize",
 			yield_part = "grain",
-			country = "Nigeria",
 			on_farm = FALSE,
 			is_survey = FALSE,
 			e_rot = as_num(r$E_ROT),

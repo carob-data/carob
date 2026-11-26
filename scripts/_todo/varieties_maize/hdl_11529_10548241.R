@@ -9,9 +9,9 @@
 # The description mentions a daily temperature file. The download contains only this workbook.
 
 ## ISSUES
-# write_files: missing variables: yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: sowing_order_ (order?). out of bounds: emergence_days (-11, 190). NA detected: latitude, longitude.
-# One Monduli juu emergence date is before planting. Miwaleni emergence is 128 to 190 days. Those values are kept.
-# Coordinate cells equal to 0 are missing. Several stations have no coordinates.
+# write_files: missing variables: yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer. unknown variable: sowing_order_ (order?). out of bounds: emergence_days (-11, 190).
+# One Monduli juu emergence date is before planting (-11 d), and Miwaleni/Minja SS third-sowing emergence dates are 98-190 days after planting (likely date entry errors in the source). Those values are kept as recorded.
+# Coordinate cells equal to 0 are missing (75 rows at Miwaleni, 50 at West Kilimanjaro, 2 at Uyole). Those missing rows were filled using the mean GPS coordinates of the same station in the same workbook (with geo_from_source = FALSE on filled rows).
 
 ## NEW VARIABLES
 # sowing_order_: first, second, or third planting date at a station.
@@ -45,9 +45,9 @@ Experiments at multiple locations in Tanzania (800 to 1500m) to calibrate develo
 		response_vars = "emergence_days;flowering_days;maturity_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 62,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "TAMASA_TZ_VT__2016.xlsx"]
@@ -105,6 +105,12 @@ Experiments at multiple locations in Tanzania (800 to 1500m) to calibrate develo
 	)
 	# A zero in the source is used as a missing flag for coordinates and elevation.
 	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
+	# Fill rows with missing (0) GPS using the mean GPS of the same station in this file
+	st_lat <- tapply(d$latitude, d$location, mean, na.rm = TRUE)
+	st_lon <- tapply(d$longitude, d$location, mean, na.rm = TRUE)
+	miss <- is.na(d$latitude) | is.na(d$longitude)
+	d$latitude[miss] <- unname(st_lat[d$location[miss]])
+	d$longitude[miss] <- unname(st_lon[d$location[miss]])
 
 	carobiner::write_files(path, meta, d)
 }

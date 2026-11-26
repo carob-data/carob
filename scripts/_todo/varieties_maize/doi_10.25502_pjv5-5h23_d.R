@@ -10,11 +10,11 @@
 # The marker file is not field data and was not processed.
 
 ## ISSUES
-# No coordinates, fertilizer, irrigation, grain moisture, or day of planting. Year only. Georeference Abuja and Mokwa.
+# No coordinates in the file, fertilizer, irrigation, grain moisture, or day of planting. Year only. Assigned standard IITA Nigeria station coordinates for Abuja and Mokwa (geo_from_source = FALSE).
 # RAT1 is missing on half the rows and CO1 on a quarter. The sites are Striga sites (ABSTR, MOSTR), so those gaps were left as missing ratings, not as uninfested plots.
 # Ear aspect (E_ASPIN) includes values far above 9 (up to 85). Ear height includes values below 10 cm. Left as recorded.
 # The marker matrix (about 1900 SNPs by progeny) is a separate table and has no plot phenotypes.
-# Expect missing longitude, latitude, geo_from_source, yield_moisture, irrigated, N/P/K, harvest_date, out-of-bounds ear aspect and ear height, and an unknown-variable warning for ears_per_plant_.
+# Expect missing yield_moisture, irrigated, N/P/K, harvest_date, out-of-bounds ear aspect and ear height, and an unknown-variable warning for ears_per_plant_.
 
 ## NOT PROCESSED
 # mapping-quantitative-hermonthica_pheno.csv, ID: row number.
@@ -49,9 +49,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;asi;plant_height;ear_height;ear_aspect",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 64,
-		carob_effort = 0.5,
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 68,
+		carob_effort = 0.6,
 		notes = NA
 	)
 
@@ -69,6 +69,9 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		trial_name = trimws(as.character(r$TRIAL)),
 		location = location,
 		country = "Nigeria",
+		latitude = ifelse(location == "Abuja", 9.1538, ifelse(location == "Mokwa", 9.296, NA_real_)),
+		longitude = ifelse(location == "Abuja", 7.3220, ifelse(location == "Mokwa", 5.054, NA_real_)),
+		geo_from_source = FALSE,
 		planting_date = as.character(r$YEAR),
 		plot_id = as.character(r$Plot),
 		rep = as.integer(r$Rep),

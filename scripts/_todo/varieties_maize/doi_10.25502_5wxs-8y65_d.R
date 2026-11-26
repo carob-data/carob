@@ -11,10 +11,10 @@
 
 ## ISSUES
 # The dictionary title says "managed drought at Ikenne during the 2013 and 2014 dry seasons" and lists LFDTH, but the file is the Mokwa/Bagauda optimal set and has no LFDTH and no Ikenne. Treat the dictionary title as not describing this file.
-# No coordinates in the file. CKAN coverage_x = 7.49046, coverage_y = 4.55213 does not match Mokwa or Bagauda. Not used. Georeference Bagauda and Mokwa.
+# No coordinates in the file. CKAN coverage_x = 7.49046, coverage_y = 4.55213 does not match Mokwa or Bagauda. Assigned standard IITA Nigeria station coordinates for Bagauda and Mokwa (geo_from_source = FALSE).
 # No fertilizer, irrigation, harvest date, or yield moisture.
 # No paper DOI in the dataset metadata.
-# write_files: missing longitude, latitude, geo_from_source, yield_moisture, harvest_date, N/P/K, irrigated. Unknown variable ears_per_plant_.
+# write_files: missing yield_moisture, harvest_date, N/P/K, irrigated. Unknown variable ears_per_plant_.
 
 ## NOT PROCESSED
 # data_dictionary.csv, LFDTH: leaf-death score described in the dictionary but absent from the phenotype file.
@@ -46,9 +46,9 @@ Drought Tolerant Maize for Africa for Improved Livelihoods
 		response_vars = "yield;plant_height;anthesis_days;silking_days",
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 72,
-		carob_effort = 0.5
+		carob_LLM = "Gemini 4 Neon",
+		carob_completion = 76,
+		carob_effort = 0.6
 	)
 
 	f <- ff[basename(ff) == "optimal-hybrid-_dataset-mk-bg-2014.csv"]
@@ -98,6 +98,9 @@ Drought Tolerant Maize for Africa for Improved Livelihoods
 		crop = "maize",
 		yield_part = "grain",
 		country = "Nigeria",
+		latitude = ifelse(loc == "Bagauda", 11.570, ifelse(loc == "Mokwa", 9.296, NA_real_)),
+		longitude = ifelse(loc == "Bagauda", 8.385, ifelse(loc == "Mokwa", 5.054, NA_real_)),
+		geo_from_source = FALSE,
 		on_farm = FALSE,
 		is_survey = FALSE
 	)
