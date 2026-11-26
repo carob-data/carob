@@ -2,6 +2,7 @@
 
 ## ISSUES
 # The compilation mixes farmer fields and research stations, so on_farm is not set.
+## 9 rows with missing location and Geo coordinates (longitude and latitude)
 
 carob_script <- function(path){
 
