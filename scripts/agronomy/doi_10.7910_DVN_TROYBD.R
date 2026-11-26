@@ -3,6 +3,7 @@
 
 ## ISSUES
 # Treatment strings that are not parsed are left with unknown fertilizer rates.
+# 14 rows with missing location and Geo coordinates ( longitude and latitude)
 
 carob_script <- function(path) {
 
