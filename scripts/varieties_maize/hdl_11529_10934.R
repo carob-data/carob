@@ -34,14 +34,14 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 
 	f1 <- ff[basename(ff) == "COMBART2016-37LOC data.csv"]
 
-	r1 <- read.csv(f1)
+	r1 <- read.csv(f1, na.strings = c("", ".", "NA"))
 
 ### process
 	
 	d <- data.frame(
 		plot_id = as.character(r1$PLOT),
-		location = c("Batan 1", "Batan 2", "Batan 3", "Batan 4", "Quecholac", "Huejotzingo", "Epitacio Huerta", "Coatlinchan", "San Diego", "Felipe Angeles", "Acatzingo", "Jilotepec", "Ajacuba", "Texcoco", "San Andres", "Teotongo", "San Luis de laPaz", "Jesus Maria", "Santo Domingo", "Jilotepec", "Ixtlahuaca", 
-		             "Atlacomulco 1", "Atlacomulco 2", "Calimaya", "Mazapiltepec", "Amealco", "A de Juarez", "Muñoz", "Metepec", "Ixtenco", "Zacapoaxtla", "Temascalcingo", "Comtepec", "Ciudad Hidalgo", "Colon", "Atlangatepec", "Tlachaloya")[r1$ENV],
+		location = c("El Batan", "El Batan", "El Batan", "El Batan", "Quecholac", "Huejotzingo", "Epitacio Huerta", "Coatlinchan", "San Diego", "Felipe Angeles", "Acatzingo", "Jilotepec", "Ajacuba", "Texcoco", "San Andres", "Teotongo", "San Luis de la Paz", "Jesus Maria", "Santo Domingo", "Jilotepec", "Ixtlahuaca",
+		             "Atlacomulco", "Atlacomulco", "Calimaya", "Mazapiltepec", "Amealco", "A de Juarez", "Muñoz", "Metepec", "Ixtenco", "Zacapoaxtla", "Temascalcingo", "Comtepec", "Ciudad Hidalgo", "Colon", "Atlangatepec", "Tlachaloya")[r1$ENV],
 		rep = r1$REP,
 		block_id = as.character(r1$BLOCK),
 		variety_pedigree = r1$PEDIGREE1,
@@ -50,7 +50,7 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 		yield = r1$GY*1000,
 		plant_height = r1$PH,
 		ear_height = r1$EH,
-		e_rot = as.numeric(gsub("^.$", NA, r1$ER)),
+		e_rot = as.numeric(r1$ER),
 		crop = "maize",
 		country = "Mexico",
 		trial_id = as.character(r1$ENV),
@@ -62,11 +62,11 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 	### Adding lon and lat coordinate
 	
 	geo <- data.frame(
-	  location = c("Ajacuba", "Metepec", "Calimaya", "Ixtlahuaca", "Jilotepec", "Temascalcingo", "Texcoco", "Epitacio Huerta", "Teotongo", "Acatzingo", "Huejotzingo", "Quecholac", "Zacapoaxtla", "Santo Domingo", "Atlangatepec", "Ixtenco","Batan 1", "Batan 2", "Batan 3", "Batan 4", "A de Juarez", "Amealco", "Atlacomulco 1", "Atlacomulco 2", "Ciudad Hidalgo", "Coatlinchan", "Colon", "Comtepec", "Felipe Angeles", "Jesus Maria", "Mazapiltepec", "Muñoz", "San Andres", "San Diego", "San Luis de laPaz", "Tlachaloya"),
-	  longitude = c(-99.0780, -98.3429, -99.6433, -99.8070, -99.5966, -100.0370, -98.8278, -100.2893, -97.5385, -97.7650 , -98.4488, -97.6345, -97.5813, -101.6811, -98.1829 ,-97.9114, rep(-103.3469, 4), -98.0914, -99.5494, -99.877, -99.877, -100.5583, -98.8725, -99.169,  -100.1632, -99.111, -100.2574, -97.699, -98.209, -98.4668, -98.4841, -100.5247, -99.665),
-	  latitude = c(20.1198, 20.2578, 19.1655, 19.5899, 20.0191, 19.9213, 19.4716, 20.1473, 17.7486, 19.0261, 19.1671, 18.9482, 19.8544, 23.3496, 19.5451, 19.2576, rep(20.7232, 4), 19.0531, 20.239, 19.797, 19.797, 19.693, 19.449, 19.379, 19.952, 19.4529, 20.623, 19.121, 19.4749, 19.1059, 19.1305, 21.2936, 19.4755),
-	  geo_uncertainty = c(13721, 11636, 12203, 17546 , 23883, 19074, 21307, 19145, 5586, 11161, 20147, 12256, 15076, 63582, 9003, 7892, rep(NA, 20)),
-	  geo_source = c(rep("GADM 4.1, adm2", 16), rep("Google Maps", 20)),
+	  location = c("Ajacuba", "Metepec", "Calimaya", "Ixtlahuaca", "Jilotepec", "Temascalcingo", "Texcoco", "Epitacio Huerta", "Teotongo", "Acatzingo", "Huejotzingo", "Quecholac", "Zacapoaxtla", "Santo Domingo", "Atlangatepec", "Ixtenco", "El Batan", "A de Juarez", "Amealco", "Atlacomulco", "Ciudad Hidalgo", "Coatlinchan", "Colon", "Comtepec", "Felipe Angeles", "Jesus Maria", "Mazapiltepec", "Muñoz", "San Andres", "San Diego", "San Luis de la Paz", "Tlachaloya"),
+	  longitude = c(-99.0780, -98.3429, -99.6433, -99.8070, -99.5966, -100.0370, -98.8278, -100.2893, -97.5385, -97.7650, -98.4488, -97.6345, -97.5813, -101.6811, -98.1829, -97.9114, -98.8490, -98.0914, -99.5494, -99.877, -100.5583, -98.8725, -99.169, -100.1632, -99.111, -100.2574, -97.699, -98.209, -98.4668, -98.4841, -100.5247, -99.665),
+	  latitude = c(20.1198, 20.2578, 19.1655, 19.5899, 20.0191, 19.9213, 19.4716, 20.1473, 17.7486, 19.0261, 19.1671, 18.9482, 19.8544, 23.3496, 19.5451, 19.2576, 19.5330, 19.0531, 20.239, 19.797, 19.693, 19.449, 19.379, 19.952, 19.4529, 20.623, 19.121, 19.4749, 19.1059, 19.1305, 21.2936, 19.4755),
+	  geo_uncertainty = c(13721, 11636, 12203, 17546, 23883, 19074, 21307, 19145, 5586, 11161, 20147, 12256, 15076, 63582, 9003, 7892, rep(NA, 16)),
+	  geo_source = c(rep("GADM 4.1, adm2", 16), rep("Google Maps", 16)),
 	  geo_from_source = FALSE
 	)
 	
@@ -83,8 +83,7 @@ Grain yield and stability of white early hybrids in the highland valleys of Mexi
 	
 	d$record_id <- as.integer(seq_len(nrow(d)))
 	long <- carobiner::get_function("mz_pd_long", path, group)(d)
-	#d[intersect(c("e_rot", "blight", "curv", "gls", "rust", "streak", "borer",
-	#	"str_co1", "str_co2", "str_co3", "str_rat1", "str_rat2"), names(d))] <- NULL
+	d$e_rot <- NULL
 	carobiner::write_files(path, meta, d, long=long)
 }
 

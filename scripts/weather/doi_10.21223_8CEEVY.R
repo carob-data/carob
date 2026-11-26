@@ -38,11 +38,11 @@ In the present dataset, meteorological data at El progreso locality - Chugay dis
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "01_Meteorological data_El Progreso-Chugay_2023-2024.xlsx"]

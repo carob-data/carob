@@ -2,7 +2,7 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Daily weather at El Batan, Estado de Mexico. The explanation sheets give BATAN (19.31 N, 98.50 W, 2249 masl). Longitude is west. geo_from_source is TRUE.
+# Daily weather at El Batan, Estado de Mexico. The explanation sheets give BATAN (19°31'N, 98°50'W, written "19.31oN, 98.50oW", 2249 masl) = 19.5167 N, 98.8333 W. geo_from_source is TRUE.
 # 2012-2017 workbooks use temperature C, rainfall mm, RH percent, EvapT mm, and SolarRad W/m2.
 # 1997-1998 sheets are site, day, month, year, max temp, min temp, rainfall mm, and pan evaporation. -99 is missing.
 # 1977-1996 sheets are site, year, day-of-year, radiation MJ/m2, max temp, min temp, rain mm, pan evaporation, then month and day. Radiation is stored as srad in kJ/m2. Wind run is km/day and is stored as m/s.
@@ -11,10 +11,6 @@
 # -99 and -9999 are missing. Hourly workbooks are not used.
 
 ## ISSUES
-# write_files: unknown variables: evaporation_mm_ contributor:
-
-## NEW VARIABLES
-# evaporation_mm_: pan evaporation (mm) on the 1973-1998 sheets. The 1986 explanation names Pan evap beside rainfall in mm. The 1997 explanation names Pan_Evap and does not print a unit.
 
 ## NOT PROCESSED
 # Hourly and Campbell hourly workbooks.
@@ -48,11 +44,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
-		carob_effort = 0
+		carob_completion = 80,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -111,7 +107,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		w[is.na(w)] <- alt[is.na(w)]
 		w
 	}
-	pack <- function(date, temp, tmax, tmin, prec, rhum, rhmx, rhmn, ETP, irad, srad, wspd, evaporation_mm_) {
+	pack <- function(date, temp, tmax, tmin, prec, rhum, rhmx, rhmn, ETP, irad, srad, wspd, Epan) {
 		keep <- !is.na(date)
 		if (!any(keep)) return(NULL)
 		data.frame(
@@ -127,7 +123,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 			irad = irad[keep],
 			srad = srad[keep],
 			wspd = wspd[keep],
-			evaporation_mm_ = evaporation_mm_[keep]
+			Epan = Epan[keep]
 		)
 	}
 	read_new <- function(f) {
@@ -222,7 +218,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 	wth <- do.call(carobiner::bindr, parts)
 	wth$station_id <- "El Batan"
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "wspd", "evaporation_mm_")
+	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "wspd", "Epan")
 	ok <- rep(FALSE, nrow(wth))
 	for (v in meas) ok <- ok | !is.na(wth[[v]])
 	wth <- wth[ok, ]
@@ -236,8 +232,9 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		adm1 = "Estado de Mexico",
 		adm2 = "Texcoco",
 		location = "El Batan",
-		latitude = 19.31,
-		longitude = -98.50,
+		# Cover sheet gives 19°31'N, 98°50'W (written "19.31oN, 98.50oW")
+		latitude = round(19 + 31/60, 4),
+		longitude = -round(98 + 50/60, 4),
 		elevation = 2249,
 		geo_from_source = TRUE,
 		is_survey = FALSE,

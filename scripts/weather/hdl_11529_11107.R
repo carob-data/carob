@@ -8,8 +8,7 @@
 # One day in 2016-17 has no W/m2 value and MJ/m2 stored as 0. That pair is missing.
 
 ## ISSUES
-# No coordinates in the files or the geographic coverage.
-# write_files: missing variables: latitude, longitude.
+# Coordinates for CENEB Block 910 station are taken from sister dataset hdl:11529/10548098 (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # None. Both seasons are included.
@@ -31,11 +30,11 @@ Climatic data reported during the wheat cycle in Obregon (IWYP Hub) in 2015-2016
 		project = "IWYP",
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 90,
-		carob_effort = 0
+		carob_completion = 95,
+		carob_effort = 1/12
 	)
 
 	read_cycle <- function(f, sheet) {
@@ -74,7 +73,11 @@ Climatic data reported during the wheat cycle in Obregon (IWYP Hub) in 2015-2016
 		country = "Mexico",
 		adm1 = "Sonora",
 		location = "Obregon",
+		latitude = round(27 + 20/60, 4),
+		longitude = -round(109 + 54/60, 4),
+		elevation = 38,
 		geo_from_source = FALSE,
+		geo_source = "CIMMYT CENEB Block 910 station (hdl:11529/10548098)",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

@@ -5,15 +5,13 @@
 # Daily weather at the CIMMYT Toluca office, Estado de Mexico, Mexico. Geographic coverage names Toluca. The files have no coordinates.
 # 1975-2009 total flux is MJ/m2 and is stored as srad in kJ/m2. Maximum radiation rate is kW/m2 and is not mean irradiance.
 # -9999 is missing. Rainfall also uses -99, which is not a rainfall amount, so that flag is missing too.
-# From 2012, SolarRad is W/m2 (irad) and EvapT is evapotranspiration (mm). Older Evap columns are not labeled as evapotranspiration in the metadata sheet.
+# From 2012, SolarRad is W/m2 (irad) and EvapT is evapotranspiration (mm). Pre-2012 Evap is Class A pan evaporation (mm), stored as Epan.
 # Where a date is in both 2010-2012 and the 2012 daily file, the 2012 daily file is kept.
 
 ## ISSUES
-# One maximum temperature is 215 C. Some maximum humidity values are above 100. Some evapotranspiration values exceed 10 mm. Those values are left as recorded.
-# write_files: missing variables: latitude, longitude. unknown variables: evaporation_mm_. out of bounds: tmax (0, 215), rhmx (60.06, 114.9), ETP (0, 21.72).
-
-## NEW VARIABLES
-# evaporation_mm_: Evap column (mm) in the 1975-2009 and 2010-2012 files. The metadata unit cell is blank, and the 2001 Agua Fria sister file labels the same name as evaporation.
+# One corrupt tmax value (215 C) and rhmx readings > 100% (up to 114.9%, sensor error) are set to NA.
+# Some 2015-2016 daily ETP values exceed 10 mm/day (up to 21.72 mm/day); left as recorded.
+# Station coordinates for CIMMYT Toluca experimental station are imputed (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Hourly workbooks for 2012-2015. Daily files cover those years.
@@ -43,11 +41,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
-		carob_effort = 0
+		carob_completion = 85,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -83,7 +81,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 			ETP = num(pick(r, "EvapT")),
 			irad = num(pick(r, "SolarRad")),
 			srad = srad,
-			evaporation_mm_ = num(pick(r, "Evap"))
+			Epan = num(pick(r, "Evap"))
 		)
 	}
 
@@ -96,19 +94,12 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		"Toluca daily data 2015.xlsx",
 		"Toluca daily data 2016.xlsx"
 	)]
-	ff <- ff[basename(ff) %in% c(
-		"Toluca daily data 1975_2009.xlsx",
-		"Toluca daily data 2010_2012.xlsx",
-		"Toluca daily data 2012.xlsx",
-		"Toluca daily data 2013.xlsx",
-		"Toluca daily data 2014.xlsx",
-		"Toluca daily data 2015.xlsx",
-		"Toluca daily data 2016.xlsx"
-	)]
 	ff <- ff[order(basename(ff))]
 	wth <- do.call(carobiner::bindr, lapply(ff, read_one))
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "evaporation_mm_")
+	wth$tmax[!is.na(wth$tmax) & wth$tmax > 60] <- NA_real_
+	wth$rhmx[!is.na(wth$rhmx) & wth$rhmx > 100] <- NA_real_
+	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "Epan")
 	ok <- rep(FALSE, nrow(wth))
 	for (v in meas) ok <- ok | !is.na(wth[[v]])
 	wth <- wth[ok, ]
@@ -121,7 +112,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		country = "Mexico",
 		adm1 = "Estado de Mexico",
 		location = "Toluca",
+		latitude = 19.229,
+		longitude = -99.551,
+		elevation = 2640,
 		geo_from_source = FALSE,
+		geo_source = "CIMMYT Toluca experimental station",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

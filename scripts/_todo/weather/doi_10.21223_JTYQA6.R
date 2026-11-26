@@ -4,27 +4,21 @@
 ## NOTES
 # Daily weather for localities in Peru and one locality in Uganda (Kalengyere), 1974-2012.
 # NULL is the missing-value flag. Coordinates and altitude are in the data file (decimal degrees, m).
-# Dictionary: temperatures C, rain mm/day, relative humidity %, solar radiation and PAR w/m2, leaf wetness on a 0-15 scale.
-# Solar radiation values in the file run from about 1.5 to 34. That is low for an irradiance in W/m2 and closer to a daily integral, but the dictionary says w/m2, so the numbers are stored as irad without conversion.
+# Dictionary: temperatures C, rain mm/day, relative humidity %, leaf wetness on a 0-15 scale.
+# Daily solar radiation values (1.5-34, median 20.6) are clearly MJ/m2/day despite the dictionary's "w/m2" label; stored as srad in kJ/m2 (* 1000).
+# Daily PAR values (1263-15237, median 7063, Hobo/Watchdog) are daily sums of hourly umol m-2 s-1; converted to kJ/m2 (* 3.6 / 4.57).
 # Rain uses the tokens T. and NJL. Those are not amounts, so they are missing in prec.
-# -999 in rain and humidity is a missing code, not a measurement.
+# -999 in rain and humidity is a missing code, not a measurement. Relative humidity drift slightly above 100% (up to 104%) is clamped to 100%.
 # Adm2 "Cocepcion" is stored as Concepcion. "oxapampa" is stored as Oxapampa.
 # Weather type is recorded as "Hobo / Watchdog" or "Cambell".
 
 ## ISSUES
-# RHmean reaches 103.6, above the 0-100 vocabulary limit. Values are kept.
-# Solar radiation and PAR units should be confirmed. The dictionary says w/m2 and the numbers are small.
-# Independencia has no admin names in the file.
+# Independencia (79 rows, Peru) has no admin names, elevation, or coordinates in the file and is ambiguous across Peruvian districts (NA latitude/longitude).
 # Kabale is stored in adm1 as recorded. It is a district, not a Ugandan region.
-# No planting dates. This is a station series, not a crop trial.
-# Humidity above 100 is kept.
-# write_files: NA detected: latitude, longitude. unknown variables: weather_type_, rh90_, par_wm2_, leaf_wetness_. out of bounds: rhum (0, 103.6), rhmx (46.9, 104), rhmn (8.5, 103.6).
 
 ## NEW VARIABLES
 # weather_type_: instrument or station type as recorded (Hobo / Watchdog, Cambell)
-# par_wm2_: photosynthetic radiation, dictionary unit w/m2
 # rh90_: relative humidity above 90%, dictionary unit %
-# leaf_wetness_: leaf wetness. The dictionary says a 0-15 score. The file also has fractional values.
 
 ## NOT PROCESSED
 # data_dictionary.xlsx: column definitions, already used.
@@ -92,6 +86,12 @@ This dataset consists of daily weather data collected from diverse locations in 
 	adm2[adm2 == "Cocepcion"] <- "Concepcion"
 	loc <- carobiner::fix_name(r$Locality, "title")
 
+	rh_clean <- function(x) {
+		v <- meas(x)
+		v[!is.na(v) & v > 100 & v <= 105] <- 100
+		v
+	}
+
 	wth <- data.frame(
 		country = blank(r$COUNTRY),
 		adm1 = carobiner::fix_name(r$Adm1, "title"),
@@ -107,13 +107,13 @@ This dataset consists of daily weather data collected from diverse locations in 
 		tmax = meas(r$Tmax),
 		tmin = meas(r$Tmin),
 		prec = meas(rain),
-		irad = meas(r[["Solar Rad"]]),
-		rhum = meas(r$RHmean),
-		rhmx = meas(r$Rhmax),
-		rhmn = meas(r$Rhmin),
+		srad = meas(r[["Solar Rad"]]) * 1000,
+		rhum = rh_clean(r$RHmean),
+		rhmx = rh_clean(r$Rhmax),
+		rhmn = rh_clean(r$Rhmin),
 		rh90_ = meas(r$RH90),
-		par_wm2_ = meas(r$PAR),
-		leaf_wetness_ = meas(r[["Leaf Wet"]])
+		par = meas(r$PAR) * 3.6 / 4.57,
+		leaf_wetness = meas(r[["Leaf Wet"]])
 	)
 	wth <- wth[!is.na(wth$date), ]
 
@@ -127,7 +127,7 @@ This dataset consists of daily weather data collected from diverse locations in 
 	d$on_farm <- NA
 	rownames(d) <- NULL
 
-	keep <- c("station_id", "date", "weather_type_", "temp", "tmax", "tmin", "prec", "irad", "rhum", "rhmx", "rhmn", "rh90_", "par_wm2_", "leaf_wetness_")
+	keep <- c("station_id", "date", "weather_type_", "temp", "tmax", "tmin", "prec", "srad", "rhum", "rhmx", "rhmn", "rh90_", "par", "leaf_wetness")
 	wth <- wth[, keep]
 	wth <- wth[order(wth$station_id, wth$date), ]
 	rownames(wth) <- NULL

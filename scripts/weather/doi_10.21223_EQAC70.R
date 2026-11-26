@@ -2,14 +2,13 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Daily sheet BaseDeDatos. Dictionary: max_temp and min_temp are °C, precip is mm, radiation is W m^-2.
-# The dictionary "Other name" cells for rain and radiation are swapped relative to the variable-name and unit cells. Columns are taken from the data header and the unit on the matching variable name.
-# Place is La Molina, Lima, Peru, from the dataset geographic coverage. No coordinates are published.
+# Daily sheet BaseDeDatos. Dictionary: max_temp and min_temp are °C, precip is mm.
+# Daily radiation values (1.5-34, median 19.8) are clearly MJ/m2/day despite the dictionary's "W m^-2" label; stored as srad in kJ/m2 (* 1000).
+# The dictionary "Other name" cells for rain and radiation are swapped relative to the variable-name and unit cells. Columns are taken from the data header.
+# Coordinates and elevation for La Molina CIP station are taken from sister workbook doi:10.21223/0X6T54 (geo_from_source = FALSE).
 
 ## ISSUES
-# Radiation values are about 20-30. That is low for a daily mean irradiance in W m^-2. The dictionary unit is still W m^-2, so the numbers are not rescaled.
-# La Molina needs georeferencing. No longitude or latitude in the file or the geographic coverage.
-# write_files: ; geo_from_source, latitude, longitude.
+# Dictionary mislabels daily radiation (MJ/m2/day) as W m^-2; converted to srad (kJ/m2).
 
 ## NOT PROCESSED
 # Year, Month, Day: used only to confirm measure_date.
@@ -34,15 +33,15 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
-		carob_effort = 0
+		carob_completion = 90,
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "01_LaMolina_Lima.xls"]
-	r <- carobiner::read.excel(f, sheet="BaseDeDatos")
+	r <- carobiner::read.excel(f, sheet="BaseDeDatos", na=c("NULL", "null", "NA", ""))
 
 	wth <- data.frame(
 		station_id = as.character(r$station_code),
@@ -50,7 +49,8 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		tmax = as.numeric(r$max_temp),
 		tmin = as.numeric(r$min_temp),
 		prec = as.numeric(r$precip),
-		irad = as.numeric(r$radiation)
+		# Daily values (1.5-34, median 19.8) are MJ/m2/day -> kJ/m2
+		srad = as.numeric(r$radiation) * 1000
 	)
 	wth <- wth[!is.na(wth$date), ]
 
@@ -59,7 +59,14 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		station_name = "La Molina CIP experimental station",
 		country = "Peru",
 		adm1 = "Lima",
+		adm2 = "Lima",
+		adm3 = "La Molina",
 		location = "La Molina",
+		latitude = -12.07776,
+		longitude = -76.94875,
+		elevation = 239,
+		geo_from_source = FALSE,
+		geo_source = "CIP La Molina station workbook (doi:10.21223/0X6T54)",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

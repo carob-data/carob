@@ -10,11 +10,12 @@
 # One day in 2013 has solar radiation stored as question marks. That value is missing. Temperature for that day is kept.
 
 ## ISSUES
-# write_files: missing variables: latitude, longitude. unknown variables: harvest_year_, district_harvest_area_ha_. contributor:
+# Hybrid 60-year district wheat yield + CENEB weather compilation; monthly workbook (1960-2019, sole source for 1959-1967) is not yet processed.
+# CENEB/CIANO station coordinates are taken from sister dataset hdl:11529/10548098 (geo_from_source = FALSE).
 
 ## NEW VARIABLES
 # harvest_year_: harvest year of the district wheat record.
-# district_harvest_area_ha_: harvested wheat area of the Cajeme district, in hectares.
+# district_harvest_area_: harvested wheat area of the Cajeme district, in hectares.
 
 ## NOT PROCESSED
 # The monthly workbook. It repeats the daily series as November-April means and is the only source for November 1959 to April 1967.
@@ -65,18 +66,23 @@ The wheat area and yield data were collated by the Cajeme District grain receiva
 	keep <- !is.na(year) & year >= 1900 & year <= 2100
 	d <- data.frame(
 		trial_id = paste0("Cajeme-", year[keep]),
+		station_id = "CENEB",
 		country = "Mexico",
 		adm1 = "Sonora",
 		location = "Cajeme",
+		latitude = round(27 + 20/60, 4),
+		longitude = -round(109 + 54/60, 4),
+		elevation = 38,
 		crop = "wheat",
 		yield = num(r[[5]])[keep],
 		yield_part = "grain",
 		harvest_year_ = year[keep],
-		district_harvest_area_ha_ = num(r[[6]])[keep] * 1000,
+		district_harvest_area_ = num(r[[6]])[keep] * 1000,
 		irrigated = TRUE,
 		on_farm = TRUE,
 		is_survey = FALSE,
-		geo_from_source = FALSE
+		geo_from_source = FALSE,
+		geo_source = "CIMMYT CENEB Block 910 station (hdl:11529/10548098)"
 	)
 
 	f3 <- ff[basename(ff) == "3. Daily Rs, Tmax and Tmin wheat cycle 1968 to 2019 Yaqui Valley.xlsx"]
@@ -86,6 +92,7 @@ The wheat area and yield data were collated by the Cajeme District grain receiva
 	ok <- !is.na(yr) & !is.na(day)
 	when <- as.Date(sprintf("%d %d", yr[ok], day[ok]), format="%Y %j")
 	wth <- data.frame(
+		station_id = "CENEB",
 		station_name = "CENEB",
 		date = as.character(when),
 		tmax = num(r1[[9]])[ok],

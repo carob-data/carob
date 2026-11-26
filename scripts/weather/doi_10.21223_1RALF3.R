@@ -10,20 +10,15 @@
 # Evapotranspiration is the mm recorded for that hour, stored as ETo. Wind direction is a 16-point compass label, stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90).
 # Wind Dir and Hi Dir are read as text. Guessing the type treats them as logical and drops codes such as SSE.
 # Indoor temperature, UV, degree-days and wind-chill indexes are not primary outdoor observations.
-# Some temperature readings are -67.8 C and wind speed reaches 70 m/s. Those values are left as recorded.
-# write_files: missing carob_contributor. unknown variable: hi_dir_ (wdir?). Hi Dir is the direction of the maximum wind speed, so it is not stored in wdir. unknown variables: par_wm2_, rain_rate_mm_h_, soil_moist_pct_, soil_temp_1_, soil_temp_2_, soil_temp_3_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4), wspd (0, 70.2), wspdmx (0, 70.2).
+# Davis sensor disconnect codes (temperatures below -50 C, down to -67.8 C = -90 F, including 3,690 rows in Soil Temp 2), wind-speed spikes (> 25 m/s mean / > 50 m/s max, 70.2 m/s), and leaf_wetness readings > 15 (158-188, outside the 0-15 Davis sensor scale) are set to NA.
+# PAR (Hobo/Watchdog rows) is instantaneous PPFD (umol m-2 s-1, up to 2554) logged at mixed sub-hourly intervals (1, 10, 15 min); converted to iPAR (J s-1 m-2 = W m-2) via / 4.57 (McCree 1972).
+# Soil Temp 1, 2, 3 are a 3-depth profile (undocumented depths); averaged to soil_temp after filtering sensor disconnects.
+# Soil 1 Moist is labeled % in the dictionary, but values range 0-200 (Davis Watermark 200SS soil water tension in centibars/kPa, 0 = wet, 200 = dry); stored as soil_water_tension.
 
 ## NOT PROCESSED
 # Month, Day, Year: the same day as Date.
-# WeatherType, Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Hi Solar Rad, UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Leaf Wet, Wind Samp, ISS Recept, Arc. Int.
+# WeatherType, Rain Rate, Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Hi Solar Rad, UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Wind Samp, ISS Recept, Arc. Int.
 # data_dictionary.xlsx: documentation or a codebook, not an observation table.
-
-## NEW VARIABLES
-# hi_dir_: direction at maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name.
-# rain_rate_mm_h_: rain rate (mm/h).
-# par_wm2_: photosynthetically active radiation (W/m2).
-# soil_moist_pct_: soil moisture (%).
-# soil_temp_1_, soil_temp_2_, soil_temp_3_: soil temperature (C).
 
 
 carob_script <- function(path) {
@@ -45,11 +40,11 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
-		carob_effort = 0
+		carob_completion = 60,
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "01_hourly_data.xlsx"]
@@ -76,8 +71,9 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		}
 		ser <- !hm & !is.na(x) & grepl("^-?[0-9.]+([eE][+-]?[0-9]+)?$", x)
 		if (any(ser)) {
-			mins <- round(as.numeric(x[ser]) * 24 * 60)
-			out[ser] <- sprintf("%02d:%02d", mins %/% 60, mins %% 60)
+			mins <- round((as.numeric(x[ser]) %% 1) * 24 * 60)
+			hh <- (mins %/% 60) %% 24
+			out[ser] <- sprintf("%02d:%02d", hh, mins %% 60)
 		}
 		out
 	}
@@ -129,29 +125,42 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		out
 	}
 
+	clean_temp <- function(x) {
+		v <- num(x)
+		v[!is.na(v) & v < -50] <- NA_real_
+		v
+	}
+	wspd <- num(r[["Wind Speed"]])
+	wspd[!is.na(wspd) & wspd > 25] <- NA_real_
+	wspdmx <- num(r[["Hi Speed"]])
+	wspdmx[!is.na(wspdmx) & wspdmx > 50] <- NA_real_
+	lw <- num(r[["Leaf Wet"]])
+	lw[!is.na(lw) & lw > 15] <- NA_real_
+	soil_temp <- rowMeans(cbind(clean_temp(r[["Soil  Temp 1"]]), clean_temp(r[["Soil  Temp 2"]]), clean_temp(r[["Soil  Temp 3"]])), na.rm=TRUE)
+	soil_temp[is.nan(soil_temp)] <- NA_real_
+
 	wth <- data.frame(
 		station_id = sid,
 		date = date_of(r$Date),
 		time = clock(r$HOURW),
-		temp = num(r$Tmean),
-		tmax = num(r$Tmax),
-		tmin = num(r$Tmin),
+		temp = clean_temp(r$Tmean),
+		tmax = clean_temp(r$Tmax),
+		tmin = clean_temp(r$Tmin),
 		rhum = num(r$Rhum),
-		dewp = num(r[["Dew Pt"]]),
-		wspd = num(r[["Wind Speed"]]),
-		wspdmx = num(r[["Hi Speed"]]),
+		dewp = clean_temp(r[["Dew Pt"]]),
+		wspd = wspd,
+		wspdmx = wspdmx,
 		wdir = compass_deg(r[["Wind Dir"]]),
-		hi_dir_ = compass_deg(r[["Hi Dir"]]),
+		wind_dir_max = compass_deg(r[["Hi Dir"]]),
 		prec = num(r$Rain),
 		irad = num(r[["Solar Rad"]]),
-		par_wm2_ = num(r$PAR),
+		srad = num(r[["Solar Energy"]]) * 41.84,
+		iPAR = num(r$PAR) / 4.57,
 		pressure = num(r$Bar),
-		rain_rate_mm_h_ = num(r[["Rain Rate"]]),
 		ETo = num(r$ET),
-		soil_moist_pct_ = num(r[["Soil 1 Moist"]]),
-		soil_temp_1_ = num(r[["Soil  Temp 1"]]),
-		soil_temp_2_ = num(r[["Soil  Temp 2"]]),
-		soil_temp_3_ = num(r[["Soil  Temp 3"]])
+		leaf_wetness = lw,
+		soil_water_tension = num(r[["Soil 1 Moist"]]),
+		soil_temp = soil_temp
 	)
 	wth <- wth[!is.na(wth$date), ]
 

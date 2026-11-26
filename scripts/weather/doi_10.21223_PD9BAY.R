@@ -2,13 +2,12 @@
 # license: GPL (>=3)
 
 ## NOTES
-# Daily sheet BaseDeDatos. Same dictionary layout as the La Molina 1975-2001 file: temperature °C, rain mm, radiation W m^-2.
-# Place is Chanchamayo - San Ramon, Junin, Peru, from the dataset geographic coverage. No coordinates are published.
+# Daily sheet BaseDeDatos. Same dictionary layout as the La Molina 1975-2001 file: temperature °C, rain mm.
+# Daily radiation values (2.1-33.7, median 19.2) are clearly MJ/m2/day despite the dictionary's "W m^-2" label; stored as srad in kJ/m2 (* 1000).
+# Coordinates and elevation for San Ramon CIP station are taken from sister workbook doi:10.21223/USHWLU (geo_from_source = FALSE).
 
 ## ISSUES
-# Radiation values follow the dictionary unit W m^-2. Daily numbers near 20-30 are low for a mean irradiance and are not rescaled.
-# San Ramon needs georeferencing.
-# write_files: ; geo_from_source, latitude, longitude.
+# Dictionary mislabels daily radiation (MJ/m2/day) as W m^-2; converted to srad (kJ/m2).
 
 ## NOT PROCESSED
 # Year, Month, Day: used only to confirm measure_date.
@@ -33,15 +32,15 @@ In the present dataset, daily weather data at San Ramon CIP Experimental Station
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
-		carob_effort = 0
+		carob_completion = 90,
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "01_SanRamon_Junin.xls"]
-	r <- carobiner::read.excel(f, sheet="BaseDeDatos")
+	r <- carobiner::read.excel(f, sheet="BaseDeDatos", na=c("NULL", "null", "NA", ""))
 
 	wth <- data.frame(
 		station_id = as.character(r$station_code),
@@ -49,7 +48,8 @@ In the present dataset, daily weather data at San Ramon CIP Experimental Station
 		tmax = as.numeric(r$max_temp),
 		tmin = as.numeric(r$min_temp),
 		prec = as.numeric(r$precip),
-		irad = as.numeric(r$radiation)
+		# Daily values (2.1-33.7, median 19.2) are MJ/m2/day -> kJ/m2
+		srad = as.numeric(r$radiation) * 1000
 	)
 	wth <- wth[!is.na(wth$date), ]
 
@@ -58,7 +58,14 @@ In the present dataset, daily weather data at San Ramon CIP Experimental Station
 		station_name = "San Ramon CIP experimental station",
 		country = "Peru",
 		adm1 = "Junin",
+		adm2 = "Chanchamayo",
+		adm3 = "San Ramon",
 		location = "San Ramon",
+		latitude = -11.1275,
+		longitude = -75.3601,
+		elevation = 847,
+		geo_from_source = FALSE,
+		geo_source = "CIP San Ramon station workbook (doi:10.21223/USHWLU)",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

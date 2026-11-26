@@ -4,15 +4,13 @@
 ## NOTES
 # Daily and monthly weather at the CIMMYT Agua Fria office, Venustiano Carranza, Puebla, Mexico. Geographic coverage names that place. The files have no coordinates.
 # 1969-1999 is year and month only, so the date is year-month. Later files are daily.
-# Metadata: temperature C, rain mm, relative humidity %, EvapT is evapotranspiration mm, SolarRad is W/m2 (stored as irad). The 2001-2011 column Evap is labeled Evaporation, not evapotranspiration.
+# Metadata: temperature C, rain mm, relative humidity %, EvapT is evapotranspiration mm, SolarRad is W/m2 (stored as irad). The 2001-2011 column Evap is pan evaporation (mm), stored as Epan.
 # -9999 is the missing-data flag in the metadata. -99 is used the same way for rainfall at the sister Toluca station and is treated as missing here too.
 
 ## ISSUES
-# One relative humidity in 2013 is -343.9 and one evapotranspiration is 11.9 mm. Those values are left as recorded.
-# write_files: missing variables: latitude, longitude. unknown variables: evaporation_mm_. out of bounds: rhum (-343.894, 96.895), ETP (0, 11.9).
-
-## NEW VARIABLES
-# evaporation_mm_: pan evaporation (mm) from the 2001-2011 Evap column.
+# One corrupt 2013 relative humidity value (-343.9%, from averaging an unfiltered -9999 flag) is set to NA.
+# Some 2017 ETP values reach 11.9 mm/day (slightly above the 10 mm/day vocabulary bound); left as recorded.
+# Station coordinates for CIMMYT Agua Fria experimental station are imputed (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Hourly workbooks for 2012-2016. Daily files cover those years.
@@ -42,11 +40,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
-		carob_effort = 0
+		carob_completion = 85,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -81,7 +79,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 			rhum = num(pick(r, "RH")),
 			ETP = num(pick(r, "EvapT")),
 			irad = num(pick(r, "SolarRad")),
-			evaporation_mm_ = num(pick(r, "Evap"))
+			Epan = num(pick(r, "Evap"))
 		)
 	}
 
@@ -95,20 +93,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		"AguaFria daily data 2016.xlsx",
 		"AguaFria daily data 2017.xlsx"
 	)]
-	ff <- ff[basename(ff) %in% c(
-		"Agua Fria daily data 1969_1999.xlsx",
-		"Agua Fria DrErnest  daily data 2001_2011.xlsx",
-		"AguaFria daily data 2012.xlsx",
-		"AguaFria daily data 2013.xlsx",
-		"AguaFria daily data 2014.xlsx",
-		"AguaFria daily data 2015.xlsx",
-		"AguaFria daily data 2016.xlsx",
-		"AguaFria daily data 2017.xlsx"
-	)]
 	ff <- ff[order(basename(ff))]
 	wth <- do.call(carobiner::bindr, lapply(ff, read_one))
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "ETP", "irad", "evaporation_mm_")
+	wth$rhum[!is.na(wth$rhum) & (wth$rhum < 0 | wth$rhum > 100)] <- NA_real_
+	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "ETP", "irad", "Epan")
 	ok <- rep(FALSE, nrow(wth))
 	for (v in meas) ok <- ok | !is.na(wth[[v]])
 	wth <- wth[ok, ]
@@ -122,7 +111,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		adm1 = "Puebla",
 		adm2 = "Venustiano Carranza",
 		location = "Agua Fria",
+		latitude = 20.453,
+		longitude = -97.641,
+		elevation = 110,
 		geo_from_source = FALSE,
+		geo_source = "CIMMYT Agua Fria experimental station",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

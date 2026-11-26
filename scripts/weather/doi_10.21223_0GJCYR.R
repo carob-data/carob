@@ -6,18 +6,14 @@
 # Dictionary units: air temperature C, relative humidity %, wind speed m/s, wind direction degrees, solar radiation W/m2, rain mm, pressure hPa.
 # Solar radiation is the hourly mean intensity, stored as irad (W/m2 = J s-1 m-2).
 # Eo is the ASCE standardized reference evapotranspiration for that hour, in mm, stored as ETo.
-# Vapor pressure deficit in the file is kPa and is stored as vpd in hPa. Atmospheric pressure is stored as pressure. PAR is umol s-1 m-2 and has no vocabulary name.
+# Vapor pressure deficit in the file is kPa and is stored as vpd in hPa. Atmospheric pressure is stored as pressure.
+# Hourly PAR is in umol s-1 m-2 and is converted to hourly kJ m-2 using 4.57 umol J-1 (McCree 1972) * 3.6 (3600 s / 1000).
 
 ## ISSUES
-# The Dataverse record has no bounding box, so this station is not georeferenced.
-# Eo is an hourly amount in mm.
+# Coordinates and elevation are taken from the sister CIP La Molina station workbook (doi:10.21223/0X6T54; geo_from_source = FALSE).
+# Eo is an hourly amount in mm. Small negative nighttime values (-0.049 to 0) are clamped to 0.
 # Some Eo cells are the text NAN. Those are missing.
 # Time is an integer hour on some rows and an Excel fraction of a day on others. Both are stored as hh:mm.
-# Eo includes a few small negative values. They are kept.
-# write_files: , latitude, longitude. unknown variables: par_umol_. out of bounds: ETo (-0.049, 1.142).
-
-## NEW VARIABLES
-# par_umol_: photosynthetically active radiation, umol s-1 m-2
 
 ## NOT PROCESSED
 # 02_Data_dictionary.xlsx: column definitions, already used.
@@ -43,11 +39,11 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
-		carob_effort = 0
+		carob_completion = 85,
+		carob_effort = 1/12
 	)
 
 	f <- ff[basename(ff) == "01_Meteorology data_La Molina CIP station 2013-2025.xlsx"]
@@ -82,6 +78,10 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 	}
 	time <- clock(r$Time)
 
+	eto <- num(r[["Eo (mm)"]])
+	# Small negative nighttime ASCE hourly ETo values (-0.049 to 0) are clamped to 0
+	eto[!is.na(eto) & eto < 0 & eto >= -0.1] <- 0
+
 	wth <- data.frame(
 		station_id = "LaMolina_CIP",
 		date = as.character(as.Date(r$Date)),
@@ -92,10 +92,10 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		wspd = num(r[["WS (m/s)"]]),
 		wdir = num(r[["Dir (°)"]]),
 		irad = num(r[["SR (W/m2)"]]),
-		par_umol_ = num(r[["PAR (umol s-1 m-2)"]]),
+		par = num(r[["PAR (umol s-1 m-2)"]]) * 3.6 / 4.57,
 		prec = num(r[["P (mm)"]]),
 		pressure = num(r[["Pa (hPa)"]]),
-		ETo = num(r[["Eo (mm)"]])
+		ETo = eto
 	)
 	wth <- wth[!is.na(wth$date), ]
 	wth <- wth[order(wth$date, wth$time), ]
@@ -105,9 +105,15 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		station_id = "LaMolina_CIP",
 		station_name = "La Molina CIP",
 		country = "Peru",
-		location = "La Molina",
 		adm1 = "Lima",
+		adm2 = "Lima",
+		adm3 = "La Molina",
+		location = "La Molina",
+		latitude = -12.07776,
+		longitude = -76.94875,
+		elevation = 239,
 		geo_from_source = FALSE,
+		geo_source = "CIP La Molina station workbook (doi:10.21223/0X6T54)",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

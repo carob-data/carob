@@ -4,36 +4,33 @@
 ## NOTES
 # Hourly Vantage Pro Plus records. Temperature, humidity, dew point, wind speed, rain, solar radiation, and evapotranspiration are the station columns.
 # Wind direction is a 16-point compass label. It is stored as wdir at the center of that wedge (N = 0, NE = 45, E = 90). The text NULL is missing.
-# Solar energy is Wh/m2 in the dictionary (vatios-hora/m2). Multiplied by 3.6 to kJ/m2.
+# Solar energy is labeled Wh/m2 in the dictionary, but Solar Energy / Solar Rad = 0.0430 (30-min) and 0.0860 (60-min), which is Langleys (1 ly = 41.84 kJ/m2). Multiplied by 41.84 to kJ/m2.
 # ET is the mm recorded for that hour, stored as ETo. Barometric pressure is hPa.
 # Coordinates, admin names, and elevation are columns in the workbook.
 # The description lists vapor pressure deficit. This workbook has dew point, not vapor-pressure deficit.
 
 ## ISSUES
 # Comfort indices, UV, indoor temperature, rain rate, and wind run are not mapped.
-# A few temperature, maximum temperature, minimum temperature, and dew-point values are -67.8. They are left as recorded.
-# write_files: missing carob_contributor. unknown variables: wind_dir_max_, par_, soil_moist_, soil_temp1_, soil_temp2_, soil_temp3_, leaf_wet_. out of bounds: temp (-67.8, 38.6), tmax (-67.8, 38.6), tmin (-67.8, 36.4), dewp (-67.8, 38.4).
-
-## NEW VARIABLES
-# wind_dir_max_: direction of the maximum wind speed, degrees at the compass-point center (NE = 45). No vocabulary name.
-# par_: photosynthetically active radiation, as recorded.
-# soil_moist_: soil moisture sensor, percent.
-# soil_temp1_, soil_temp2_, soil_temp3_: soil temperature sensors, C.
-# leaf_wet_: leaf wetness sensor, 0 to 15.
+# Two hourly wind-speed readings of 70.2 m/s (sensor spikes) are set to NA.
+# 3,544 hourly leaf_wetness readings > 15 (158-188, outside the 0-15 Davis sensor scale) are set to NA.
+# 3,690 hourly Soil Temp 2 readings < -50 C (-67.8 C = -90 F Davis sensor disconnect flag) are set to NA.
+# Soil Temp 1, 2, 3 are a 3-depth profile (undocumented depths); averaged to soil_temp after filtering sensor disconnects.
+# Soil 1 Moist. is labeled % in the dictionary, but values range 0-200 (Davis Watermark 200SS soil water tension in centibars/kPa, 0 = wet, 200 = dry); stored as soil_water_tension.
 
 ## NOT PROCESSED
+# PAR: column is completely empty (all NULL).
 # Wind Run, Wind Chill, Heat Index, THW Index, THSW Index, Rain Rate, Hi Solar Rad., UV Index, UV Dose, Hi UV, Heat D-D, Cool D-D, In Temp, In Hum, Wind Samp, ISS Recept, Arc. Int. Derived indices or station diagnostics.
 # 02_Data_Dictionary.xlsx: column definitions.
 
 carob_script <- function(path) {
 
 "
-Dataset for: Meteorological data at San Ramon CIP experimental station from 2004 to 2011
+Dataset for: Meteorological data at La Molina CIP experimental station from 2004 to 2012
 
-In the present dataset, hourly meteorological data at San Ramon CIP Experimental Station from July 2004 to November 2011 is available. The meteorological variables are the following variables: Air temperature (°C), relative humidity (%), vapor pressure deficit (kPa), wind speed (m s^-1), wind direction (cardinals direction of compass rose), solar radiation (W m^-2), atmospheric pressure (hPa), rain (mm) and potential evapotranspiration (mm). Data from an automatic weather station Vantage Pro Plus.
+In the present dataset, hourly meteorological data at La Molina CIP Experimental Station from July 2004 to December 2012 is available. The meteorological variables are the following variables: Air temperature (°C), relative humidity (%), vapor pressure deficit (kPa), wind speed (m s^-1), wind direction (cardinals direction of compass rose), solar radiation (W m^-2), atmospheric pressure (hPa), rain (mm) and potential evapotranspiration (mm). Data from an automatic weather station Vantage Pro Plus.
 "
 
-	uri <- "doi:10.21223/USHWLU"
+	uri <- "doi:10.21223/0X6T54"
 	group <- "weather"
 	ff <- carobiner::get_data(uri, path, group)
 
@@ -44,14 +41,14 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		design = NA,
 		data_type = "compilation",
 		notes = NA,
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0
+		carob_completion = 75,
+		carob_effort = 1/12
 	)
 
-	f <- ff[basename(ff) == "01_SanRamon_Junin.xlsx"]
+	f <- ff[basename(ff) == "01_LaMolina_Lima.xlsx"]
 	r <- carobiner::read.excel(f, na=c("NULL", "null", ""))
 
 	num <- function(x) {
@@ -96,6 +93,17 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 	if (inherits(r$Date, "POSIXt") || inherits(r$Date, "Date")) {
 		date <- as.character(as.Date(r$Date))
 	}
+	wspd <- num(r[["Wind Speed"]])
+	wspd[!is.na(wspd) & wspd > 25] <- NA_real_
+	wspdmx <- num(r[["Hi Speed"]])
+	wspdmx[!is.na(wspdmx) & wspdmx > 50] <- NA_real_
+	lw <- num(r[["Leaf Wet 1"]])
+	lw[!is.na(lw) & lw > 15] <- NA_real_
+	st2 <- num(r[["Soil  Temp 2"]])
+	st2[!is.na(st2) & st2 < -50] <- NA_real_
+	soil_temp <- rowMeans(cbind(num(r[["Soil  Temp 1"]]), st2, num(r[["Soil  Temp 3"]])), na.rm=TRUE)
+	soil_temp[is.nan(soil_temp)] <- NA_real_
+
 	wth <- data.frame(
 		station_id = location[1],
 		date = date,
@@ -105,21 +113,18 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		tmin = num(r[["Low Temp"]]),
 		rhum = num(r[["Out Hum"]]),
 		dewp = num(r[["Dew Pt."]]),
-		wspd = num(r[["Wind Speed"]]),
+		wspd = wspd,
 		wdir = compass_deg(r[["Wind Dir"]]),
-		wspdmx = num(r[["Hi Speed"]]),
-		wind_dir_max_ = compass_deg(r[["Hi Dir"]]),
+		wspdmx = wspdmx,
+		wind_dir_max = compass_deg(r[["Hi Dir"]]),
 		prec = num(r$Rain),
 		irad = num(r[["Solar Rad."]]),
-		srad = num(r[["Solar Energy"]]) * 3.6,
+		srad = num(r[["Solar Energy"]]) * 41.84,
 		ETo = num(r$ET),
 		pressure = num(r$Bar),
-		par_ = num(r$PAR),
-		soil_moist_ = num(r[["Soil 1 Moist."]]),
-		soil_temp1_ = num(r[["Soil  Temp 1"]]),
-		soil_temp2_ = num(r[["Soil  Temp 2"]]),
-		soil_temp3_ = num(r[["Soil  Temp 3"]]),
-		leaf_wet_ = num(r[["Leaf Wet 1"]])
+		soil_water_tension = num(r[["Soil 1 Moist."]]),
+		soil_temp = soil_temp,
+		leaf_wetness = lw
 	)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
 	rownames(wth) <- NULL

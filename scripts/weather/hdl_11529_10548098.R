@@ -3,18 +3,14 @@
 
 ## NOTES
 # Daily weather at the CENEB station. geographicCoverage country is Mexico. The state cell is the placeholder XXXX and is not used.
-# The 1986-1992 explanation sheet gives Block 910, Ciudad Obregon: 27.20 N, 109.54 W, 38 m. Those coordinates are stored. geo_from_source is TRUE.
+# The 1986-1992 explanation sheet gives Block 910, Ciudad Obregon: 27°20'N, 109°54'W (written "27.20oN, 109.54oW"), 38 m = 27.3333 N, 109.9000 W. geo_from_source is TRUE.
 # -99 and -9999 are missing. In 2004-2009, 99 is also missing for temperature and for radiation above 40 MJ/m2. One rainfall value was a station pressure and is left empty. Station pressure outside 900-1100 hPa is left empty.
 # From 2012, SolarRad is W/m2 (irad) and EvapT is evapotranspiration (mm), as the metadata sheet states.
 # 2004-2009 Rad_Flux is MJ/m2 and is stored as srad in kJ/m2.
-# Older Evap is evaporation (mm), not evapotranspiration. Wind is at 0.5 m.
+# Older Evap is pan evaporation (mm), stored as Epan. Wind is at 0.5 m.
 # Where 1989 is in both the multi-year workbook and the 1989 file, the 1989 file is kept.
 
 ## ISSUES
-# write_files: unknown variables: evaporation_mm_.
-
-## NEW VARIABLES
-# evaporation_mm_: Evap column (mm) in the files from 1986 to 2003. The metadata calls it evaporation.
 
 ## NOT PROCESSED
 # Hourly workbooks for 2012-2016. Daily files cover those years.
@@ -45,11 +41,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
-		carob_effort = 0
+		carob_completion = 80,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -109,7 +105,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 			srad = srad,
 			wspd = num(pick(r, "WIN_SPD_1_2")),
 			pressure = num(pick(r, "Pressue_station")),
-			evaporation_mm_ = num(pick(r, "Evap"))
+			Epan = num(pick(r, "Evap"))
 		)
 	}
 
@@ -140,7 +136,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 			srad = srad,
 			wspd = at(13),
 			pressure = at(10),
-			evaporation_mm_ = at(15)
+			Epan = at(15)
 		)
 	}
 
@@ -166,7 +162,7 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 	}
 	wth <- do.call(carobiner::bindr, parts)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "wspd", "pressure", "evaporation_mm_")
+	meas <- c("temp", "tmax", "tmin", "prec", "rhum", "rhmx", "rhmn", "ETP", "irad", "srad", "wspd", "pressure", "Epan")
 	ok <- rep(FALSE, nrow(wth))
 	for (v in meas) ok <- ok | !is.na(wth[[v]])
 	wth <- wth[ok, ]
@@ -182,9 +178,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		station_id = "CENEB",
 		station_name = "CENEB",
 		country = "Mexico",
+		adm1 = "Sonora",
 		location = "Obregon",
-		latitude = 27.20,
-		longitude = -109.54,
+		# Cover sheet gives 27°20'N, 109°54'W (written "27.20oN, 109.54oW"), 38 m
+		latitude = round(27 + 20/60, 4),
+		longitude = -round(109 + 54/60, 4),
 		elevation = 38,
 		geo_from_source = TRUE,
 		is_survey = FALSE,

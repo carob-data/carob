@@ -9,7 +9,7 @@
 # ET is the station total for that half hour, not a daily total. -9999 is missing.
 
 ## ISSUES
-# write_files: missing variables: latitude, longitude. contributor:
+# Coordinates for Centro Experimental Iguala INIFAP are imputed (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Wind run, wind chill, heat index, THW, THSW, rain rate, UV, degree-days, indoor sensors, and station diagnostics.
@@ -33,11 +33,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0
+		carob_completion = 80,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -114,8 +114,13 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		station_id = "Iguala",
 		station_name = "Centro Experimental Iguala",
 		country = "Mexico",
+		adm1 = "Guerrero",
 		location = "Iguala",
+		latitude = 18.345,
+		longitude = -99.539,
+		elevation = 735,
 		geo_from_source = FALSE,
+		geo_source = "Centro Experimental Iguala INIFAP",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)

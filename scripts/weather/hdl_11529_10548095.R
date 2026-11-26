@@ -7,7 +7,7 @@
 # Daily values are the interval mean, max, min, or sum. ETP is the sum of interval ET in mm, stored as mm/day. Wind speed is converted from km/h to m/s. -9999 is missing.
 
 ## ISSUES
-# write_files: missing variables: latitude, longitude contributor:
+# Coordinates for CEVAMEX Coatlinchan experimental station are imputed (geo_from_source = FALSE).
 
 ## NOT PROCESSED
 # Indoor console readings, heat index, wind chill, UV, wind run, and wind direction.
@@ -32,11 +32,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		project = NA,
 		design = NA,
 		data_type = "compilation",
-		carob_contributor = NA,
-		carob_date = "202?-??-??",
+		carob_contributor = "Robert Hijmans",
+		carob_date = "2026-11-26",
 		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
-		carob_effort = 0
+		carob_completion = 80,
+		carob_effort = 1/12
 	)
 
 	num <- function(x) {
@@ -109,7 +109,11 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 		adm1 = "Estado de Mexico",
 		adm2 = "Texcoco",
 		location = "Coatlinchan",
+		latitude = 19.449,
+		longitude = -98.873,
+		elevation = 2250,
 		geo_from_source = FALSE,
+		geo_source = "CEVAMEX INIFAP Coatlinchan station",
 		is_survey = FALSE,
 		on_farm = FALSE
 	)
