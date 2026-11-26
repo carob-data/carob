@@ -98,8 +98,8 @@ In the present dataset, meteorological data at El progreso locality - Chugay dis
 		ETo = num(r$Eo)
 	)
 	wth <- wth[!is.na(wth$date), ]
-	wth <- wth[order(wth$date, wth$time), ]
-	rownames(wth) <- NULL
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = "ElProgreso_Chugay",

@@ -10,7 +10,7 @@
 
 ## ISSUES
 # The province is not in the file.
-# write_files: missing carob_contributor.
+# Sub-hourly (30-min) records are aggregated to hourly timesteps.
 
 ## NOT PROCESSED
 # 02_Data_dictionary.xlsx: column definitions.
@@ -93,7 +93,8 @@ In the present dataset, meteorological data in the Pishauli locality - Chugay di
 		ETo = num(r$Eo)
 )
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	rownames(wth) <- NULL
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = "Pishauli",

@@ -9,7 +9,7 @@
 ## ISSUES
 # Eo is reference evapotranspiration, in mm for the recording interval, stored as ETo. VPD in the file is kPa and is stored as vpd in hPa.
 # The file uses NAN and --- as missing values.
-# write_files: missing carob_contributor.
+# Sub-hourly (30-min) records are aggregated to hourly timesteps.
 
 ## NOT PROCESSED
 # ID: row number.
@@ -98,6 +98,8 @@ In the present dataset, meteorological data from the station located at Santa Fe
 		pressure = num(r$Pa),
 		ETo = num(r$Eo)
 	)
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	carobiner::write_files(path, meta, d, wth=wth)
 }

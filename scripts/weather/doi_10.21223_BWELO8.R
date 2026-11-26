@@ -9,7 +9,7 @@
 ## ISSUES
 # No fertilizer or crop records. This is a weather station series.
 # VPD in the file is kPa and is stored as vpd in hPa.
-# write_files: missing carob_contributor.
+# Sub-hourly (10- and 30-min) records are aggregated to hourly timesteps.
 
 ## NOT PROCESSED
 # ID: row number.
@@ -98,6 +98,8 @@ In the present dataset, meteorological data at La Soledad locality - Chugay, La 
 		pressure = num(r$Pa),
 		ETo = num(r$Eo)
 	)
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	carobiner::write_files(path, meta, d, wth=wth)
 }

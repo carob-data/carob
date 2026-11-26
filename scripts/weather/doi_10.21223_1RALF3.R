@@ -163,6 +163,8 @@ This dataset comprises hourly data collected from diverse locations from Peru (f
 		soil_temp = soil_temp
 	)
 	wth <- wth[!is.na(wth$date), ]
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	carobiner::write_files(path, meta, d, wth=wth)
 }

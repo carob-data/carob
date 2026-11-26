@@ -108,7 +108,8 @@ CIMMYT has Meteorological Records for each station office in Mexico. Many variab
 	ok <- rep(FALSE, nrow(wth))
 	for (v in meas) ok <- ok | !is.na(wth[[v]])
 	wth <- wth[ok, ]
-	wth <- wth[order(wth$date, wth$time), ]
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = "Iguala",

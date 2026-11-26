@@ -116,7 +116,8 @@ In the present dataset, hourly meteorological data at La Victoria CIP Experiment
 		leaf_wetness = num(r[["Leaf Wet 1"]])
 	)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	rownames(wth) <- NULL
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = location[1],

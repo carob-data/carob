@@ -84,6 +84,8 @@ In the present dataset, hourly meteorological data at San Ramon CIP Experimental
 		ETo = num(r$Eo)
 	)
 	wth <- wth[!is.na(wth$date), ]
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = "CIP-SanRamon",

@@ -170,3 +170,108 @@ africa_rice_weather <- function(ff) {
 	)
 	list(d=d, wth=wth)
 }
+
+
+aggregate_hourly <- function(wth) {
+	if (is.null(wth) || nrow(wth) == 0 || !"time" %in% names(wth)) return(wth)
+
+	tm <- trimws(as.character(wth$time))
+	hour <- rep(NA_character_, length(tm))
+	ok_tm <- !is.na(tm) & grepl("^[0-9]{1,2}:", tm)
+	if (any(ok_tm)) {
+		hh <- as.integer(sub("^([0-9]{1,2}):.*", "\\1", tm[ok_tm])) %% 24L
+		hour[ok_tm] <- sprintf("%02d:00", hh)
+	}
+	sid <- if ("station_id" %in% names(wth)) as.character(wth$station_id) else rep("", nrow(wth))
+	dt <- as.character(wth$date)
+
+	ord <- order(sid, dt, hour, na.last=TRUE)
+	wth <- wth[ord, , drop=FALSE]
+	sid <- sid[ord]
+	dt <- dt[ord]
+	hour <- hour[ord]
+
+	key <- paste(
+		ifelse(is.na(sid), "<NA>", sid),
+		ifelse(is.na(dt), "<NA>", dt),
+		ifelse(is.na(hour), "<NA>", hour),
+		sep="\r"
+	)
+	n <- length(key)
+	first <- c(TRUE, key[-1] != key[-n])
+	if (all(first)) {
+		wth$time <- hour
+		rownames(wth) <- NULL
+		return(wth)
+	}
+	g <- cumsum(first)
+
+	agg_sum <- function(x) {
+		ok <- !is.na(x)
+		cnt <- rowsum(as.integer(ok), g, reorder=FALSE)[, 1]
+		s <- rowsum(ifelse(ok, x, 0), g, reorder=FALSE)[, 1]
+		s[cnt == 0] <- NA_real_
+		round(s, 4)
+	}
+	agg_mean <- function(x) {
+		ok <- !is.na(x)
+		cnt <- rowsum(as.integer(ok), g, reorder=FALSE)[, 1]
+		s <- rowsum(ifelse(ok, x, 0), g, reorder=FALSE)[, 1]
+		res <- s / cnt
+		res[cnt == 0] <- NA_real_
+		round(res, 4)
+	}
+	agg_max <- function(x) {
+		o <- order(g, -x, na.last=TRUE)
+		x[o][!duplicated(g[o])]
+	}
+	agg_min <- function(x) {
+		o <- order(g, x, na.last=TRUE)
+		x[o][!duplicated(g[o])]
+	}
+	agg_wdir <- function(x) {
+		ok <- !is.na(x)
+		rad <- ifelse(ok, x * pi / 180, 0)
+		cnt <- rowsum(as.integer(ok), g, reorder=FALSE)[, 1]
+		ss <- rowsum(ifelse(ok, sin(rad), 0), g, reorder=FALSE)[, 1]
+		cc <- rowsum(ifelse(ok, cos(rad), 0), g, reorder=FALSE)[, 1]
+		ang <- (atan2(ss, cc) * 180 / pi) %% 360
+		ang[cnt == 0 | (abs(ss) < 1e-12 & abs(cc) < 1e-12)] <- NA_real_
+		round(ang, 1) %% 360
+	}
+
+	sum_vars <- c("prec", "srad", "par", "ETo", "ETP", "Epan")
+	max_vars <- c("tmax", "rhmx", "wspdmx", "wgst")
+	min_vars <- c("tmin", "rhmn", "wspd_min")
+	id_vars <- c("station_id", "date", "time")
+
+	out <- wth[first, intersect(id_vars, names(wth)), drop=FALSE]
+	out$time <- hour[first]
+
+	for (nm in setdiff(names(wth), id_vars)) {
+		x <- wth[[nm]]
+		if (!is.numeric(x)) {
+			out[[nm]] <- x[first]
+		} else if (nm %in% sum_vars) {
+			out[[nm]] <- agg_sum(x)
+		} else if (nm %in% max_vars) {
+			out[[nm]] <- agg_max(x)
+		} else if (nm %in% min_vars) {
+			out[[nm]] <- agg_min(x)
+		} else if (nm == "wdir") {
+			out[[nm]] <- agg_wdir(x)
+		} else if (nm == "wind_dir_max") {
+			if ("wspdmx" %in% names(wth) && is.numeric(wth$wspdmx)) {
+				o <- order(g, -wth$wspdmx, is.na(x), na.last=TRUE)
+				out[[nm]] <- x[o][!duplicated(g[o])]
+			} else {
+				out[[nm]] <- agg_wdir(x)
+			}
+		} else {
+			out[[nm]] <- agg_mean(x)
+		}
+	}
+	out <- out[, names(wth), drop=FALSE]
+	rownames(out) <- NULL
+	out
+}

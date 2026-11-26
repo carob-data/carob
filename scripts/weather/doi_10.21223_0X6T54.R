@@ -127,7 +127,8 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		leaf_wetness = lw
 	)
 	wth <- wth[!is.na(wth$date) & nzchar(wth$date), ]
-	rownames(wth) <- NULL
+	agg_hourly <- carobiner::get_function("aggregate_hourly", path, group)
+	wth <- agg_hourly(wth)
 
 	d <- data.frame(
 		station_id = location[1],
