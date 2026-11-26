@@ -48,7 +48,7 @@ An evaluation was carried out on 192 varieties from the Phureja potato collectio
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "TMIN200605_COMAS_Phureja_Collection_Field.xls"]

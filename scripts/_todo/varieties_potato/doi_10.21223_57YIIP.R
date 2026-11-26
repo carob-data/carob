@@ -46,7 +46,7 @@ An evaluation of 24 potato clones was carried out in the cities of Mugerero , Bu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	proc <- carobiner::get_function("process_cip_lbvars", path, group)

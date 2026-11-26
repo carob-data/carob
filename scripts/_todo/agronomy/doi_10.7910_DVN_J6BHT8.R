@@ -39,7 +39,7 @@ carob_script <- function(path) {
 		data_type = "on-farm experiment",
 		treatment_vars = "treatment",
 		response_vars = "yield",
-		carob_effort = 0.4,
+		carob_effort = 0,
 		carob_completion = 65,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",

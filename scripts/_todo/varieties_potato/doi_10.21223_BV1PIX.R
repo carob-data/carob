@@ -54,7 +54,7 @@ An examination of micronutrient concentrations, including minerals and vitamin C
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	read_txt <- function(f) {

@@ -45,7 +45,7 @@ El Estudio de Mercado para variedades de papa resistentes, baculovirus y feromon
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Encuesta Datos - Estudio de Mercado para variedades resistentes, baculovirus y feromonas.xlsx"]

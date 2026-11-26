@@ -65,7 +65,7 @@ To examine how the influence of various modernizing forces affect the income lev
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "LVFResurvey1.xls"]

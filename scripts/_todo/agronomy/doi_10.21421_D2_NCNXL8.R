@@ -37,7 +37,7 @@ The data is on biofortification (delivery of micronutrients via micronutrient-de
 		data_type = "experiment",
 		treatment_vars = "variety;irrigated",
 		response_vars = "yield;grain_Fe;grain_Zn;grain_protein;oil_content;shelling_percentage;seed_weight",
-		carob_effort = 0.15,
+		carob_effort = 0,
 		carob_completion = 90,
 		carob_contributor = NA,
 		carob_date = "202?-??-??",

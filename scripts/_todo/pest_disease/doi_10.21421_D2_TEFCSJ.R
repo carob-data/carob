@@ -60,7 +60,7 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Elite groundnut trial in Minjibir 2016.xlsx"]

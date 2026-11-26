@@ -49,7 +49,7 @@ Several cotton experiments have been conducted at the University of Arizona’s 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 2.5
+		carob_effort = 0
 	)
 
 	bn <- basename(ff)

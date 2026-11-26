@@ -46,7 +46,7 @@ The major pests and diseases were identified and quantified on thirteen potato l
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.55
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_pests_and_diseases_incidence.xls"]

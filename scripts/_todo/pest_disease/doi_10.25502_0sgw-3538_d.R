@@ -56,7 +56,7 @@ Fruit flies belong to family Tephritidae are the most destructive pests of horti
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "ff-counts-on-resting-plants.csv"]

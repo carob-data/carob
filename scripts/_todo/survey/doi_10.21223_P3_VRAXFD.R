@@ -67,7 +67,7 @@ Biodiversity sustains a wide variety of genetic traits that are very valuable fo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	chr <- function(x) {

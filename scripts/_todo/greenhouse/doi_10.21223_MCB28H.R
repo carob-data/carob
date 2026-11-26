@@ -49,7 +49,7 @@ A total of 53 accessions were evaluated for sweetpotato virus disease resistance
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CIPVIR_2018_2020.csv"]

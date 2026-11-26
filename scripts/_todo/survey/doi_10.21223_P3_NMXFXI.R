@@ -39,7 +39,7 @@ El proyecto tuvo como objetivo general 'Mejorar la calidad de vida de pequeños 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Encuesta Datos -Proyecto Innovaciones Tecnologicas y Mercados Diferenciados para Productores de Papa Nativas.xlsx"]

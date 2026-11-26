@@ -41,7 +41,7 @@ Evaluation of different varieties of barley, triticale and wheat in Valles Altos
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Resultados validación PV2017 VA.xlsx"]

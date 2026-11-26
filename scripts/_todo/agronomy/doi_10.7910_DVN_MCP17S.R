@@ -68,7 +68,7 @@ The aus rice variety group originated in stress‐prone regions and is a promisi
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "aus compilation for Dataverse.xlsx"]

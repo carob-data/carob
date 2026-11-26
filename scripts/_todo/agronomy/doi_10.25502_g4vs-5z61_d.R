@@ -75,7 +75,7 @@ Monsoon Active [foramsulfuron-sodium + thiecarbazone-methyl + cyprosulfamide ] w
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 76,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "onstation2019_lagon_all_locations_datafile_rft.csv"]

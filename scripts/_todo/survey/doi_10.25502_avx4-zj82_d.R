@@ -112,7 +112,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 2
+		carob_effort = 0
 	)
 
 	na_str <- c("", "NA", "N/A")

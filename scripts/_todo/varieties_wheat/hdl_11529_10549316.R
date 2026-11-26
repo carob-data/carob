@@ -43,7 +43,7 @@ Grain Yield and Grain Protein data of CIMMYT Elite Spring Wheat lines with the B
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	num <- function(x) {

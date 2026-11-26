@@ -53,7 +53,7 @@ Soybean (Glycine max (L.) Merrill.) is one of the most important oil crops of th
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6,
+		carob_effort = 0,
 		notes = NA
 	)
 

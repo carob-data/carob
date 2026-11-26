@@ -53,7 +53,7 @@ The study was conducted during the winter cropping season (from July to November
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "subchapter 2.1_Arthropod community dataset.xls"]

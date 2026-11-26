@@ -58,7 +58,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	map_legume <- function(x) {

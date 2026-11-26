@@ -45,7 +45,7 @@ This dataset consists of soil data from Baseline Yield Survey conducted in South
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "TAMASA_BYS_2015_Soil_Data.xlsx"]

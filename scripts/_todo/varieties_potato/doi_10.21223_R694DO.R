@@ -42,7 +42,7 @@ The integrated management of late blight was assessed in 3 sites: Njabini, Limur
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "12582_Data.xlsx"]

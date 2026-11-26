@@ -95,7 +95,7 @@ The survey included interview modules for household characteristics, household f
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 8,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MAMA_SASHA_end_pg1_hh_id.dta"]

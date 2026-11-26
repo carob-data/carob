@@ -53,7 +53,7 @@ These procedures serve for the evaluation of advanced clonal selections and may 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Solid.xls"]

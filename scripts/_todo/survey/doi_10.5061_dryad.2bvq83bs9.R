@@ -50,7 +50,7 @@ A data set was generated thorugh surveys to establish a baseline inforamtion for
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Baseline survey  data_16 May 2022.r1.xlsx"]

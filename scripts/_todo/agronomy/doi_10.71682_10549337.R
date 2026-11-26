@@ -45,7 +45,7 @@ Research on the effect of split nitrogen application on wheat grain yield and qu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "BD-TrigoFuerte-Baj-2024 b.xlsx"]

@@ -46,7 +46,7 @@ Sweetpotato (Ipomoea batatas L.) is an important staple and food security crop i
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

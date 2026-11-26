@@ -39,7 +39,7 @@ Fertilizer trials were established on a clayey soil in Yala, Kenya, and on a san
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	num <- function(x) as.numeric(as.character(x))

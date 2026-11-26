@@ -51,7 +51,7 @@ Roots and tuber crops (RTCs) play an important role in diverse Asian agri-food s
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01-General Non-Roster Dataset.xlsx"]

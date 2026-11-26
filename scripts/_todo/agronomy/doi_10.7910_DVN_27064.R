@@ -64,7 +64,7 @@ To evaluate the performance of stress-tolerant varieties in farmer's field and c
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	rd <- function(name) carobiner::read.excel(ff[basename(ff) == name], na=c("", "."))

@@ -64,7 +64,7 @@ The Adoption Pathways project was part of a portfolio of projects that has contr
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MODULE 3_MERGED_CROP PRODUCTION FOR ALL CROPS - BLURRED.sav"]

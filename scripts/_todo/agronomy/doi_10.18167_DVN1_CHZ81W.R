@@ -57,7 +57,7 @@ Recycling the growing stock of organic waste products (OWP) from cities, factori
 		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
 		carob_completion = 85,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	na_vals <- c("", "NA", "na", "<QL", "no_thinning")

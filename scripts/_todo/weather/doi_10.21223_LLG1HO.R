@@ -39,7 +39,7 @@ In the present dataset, daily weather data at La Victoria Experimental Station f
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_LaVictoria_Junin.xls"]

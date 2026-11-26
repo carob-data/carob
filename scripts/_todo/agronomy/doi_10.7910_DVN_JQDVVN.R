@@ -73,7 +73,7 @@ Whereas many indica and rainfed rice-growing regions have historically been cons
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 ## 1. IRRI 2015WS-2017DS, two reps in columns

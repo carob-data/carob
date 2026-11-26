@@ -50,7 +50,7 @@ Phenotypic data of 169 extra-early maturing quality protein maize  evaluated und
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 74,
-		carob_effort = 0.5,
+		carob_effort = 0,
 		notes = NA
 	)
 

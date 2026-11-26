@@ -46,7 +46,7 @@ The primary objective of evaluating post-harvest traits is obtain information ab
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for chipping quality Data.xls"]

@@ -57,7 +57,7 @@ The objective of the study is to monitor the changes in rice farming in the majo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Central Luzon Loop 1974-75.xlsx"]

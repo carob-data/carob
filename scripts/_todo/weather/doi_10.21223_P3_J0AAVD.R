@@ -38,7 +38,7 @@ Weather stations in the Mantaro valley, Peru
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "WeatherStationsInMantaro(Instalation).xlsx"]

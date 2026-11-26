@@ -46,7 +46,7 @@ Vitamin A deficiency (VAD) is a widespread health problem among young children a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 8,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "SUSTAIN_Baseline_HHSurvey2015_HH_level_v11.dta"]

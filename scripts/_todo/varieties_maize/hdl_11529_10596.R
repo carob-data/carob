@@ -45,7 +45,7 @@ Summary results and individual trial results from the International Intermediate
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 72,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	excel_date <- function(x) {

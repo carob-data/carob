@@ -40,7 +40,7 @@ The wild and cultivated species of potato have been utilized in potato breeding 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_screening_for_resistance.xls"]

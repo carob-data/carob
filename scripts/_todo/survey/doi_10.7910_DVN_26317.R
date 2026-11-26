@@ -58,7 +58,7 @@ The project 'Anatomy of Peasant Economy' seeks to document the production, incom
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Tubuan_1976.xls"]

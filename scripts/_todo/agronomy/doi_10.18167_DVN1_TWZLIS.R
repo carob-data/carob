@@ -98,7 +98,7 @@ Essais mis en place chez des producteurs dans deux grappes de villages du Nord C
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "operations culturales ensemble parcelles.xlsx"]

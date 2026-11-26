@@ -51,7 +51,7 @@ The measured variables included pH (1:1 soil–water suspension), electrical con
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data of Soil Physical and Chemical Properties.xlsx"]

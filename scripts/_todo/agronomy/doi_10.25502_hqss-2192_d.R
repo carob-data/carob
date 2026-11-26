@@ -60,7 +60,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 58,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	ymd <- function(dd, mm, yyyy) {

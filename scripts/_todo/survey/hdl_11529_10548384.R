@@ -47,7 +47,7 @@ Under SRFSI project objective 1, various socio-economic surveys to understand fa
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	num <- function(x) {

@@ -47,7 +47,7 @@ The database contains data on arthropods caught using Malaise traps in maize and
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Mexico Arthropod Biodiversity Dataset (2021-2024).xlsx"]

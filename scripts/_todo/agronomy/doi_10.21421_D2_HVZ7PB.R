@@ -899,7 +899,7 @@ Sequential observations of agronomicaly important traits during cropping season 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	carobiner::write_files(path, meta, d, long = long, wth = wth)

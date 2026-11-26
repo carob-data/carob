@@ -50,7 +50,7 @@ A total of 91 accessions representing eight wild Solanum species (S. acaule, S. 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	slug <- function(x) {

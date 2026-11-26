@@ -41,7 +41,7 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of medium duration multi-location trial post rainy in IAR.xlsx"]

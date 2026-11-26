@@ -37,7 +37,7 @@ In the present dataset, daily weather data at San Ramon CIP Experimental Station
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_SanRamon_Junin.xls"]

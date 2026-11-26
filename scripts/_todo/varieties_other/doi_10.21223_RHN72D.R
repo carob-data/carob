@@ -50,7 +50,7 @@ Tarwi (Lupinus mutabilis S.) is a legume native to the andes that stands out for
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_Tarwi_accesions.xlsx"]

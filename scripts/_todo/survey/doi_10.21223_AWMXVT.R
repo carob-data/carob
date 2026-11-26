@@ -48,7 +48,7 @@ La medición de las pérdidas de alimentos (cantidad y valor) y sus causas a lo 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_DataSet - Perdidas precosecha - Uso DST tizón.xlsx"]

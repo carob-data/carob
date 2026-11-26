@@ -40,7 +40,7 @@ New CWR LB- resistant sources
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "01_Field_book_CRW_late_blight_resistant.xlsx"]

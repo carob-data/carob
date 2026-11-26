@@ -64,7 +64,7 @@ Statistical analyses included ANOVA to assess differences between genotypes and 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 72,
-		carob_effort = 0.65
+		carob_effort = 0
 	)
 
 	num <- function(x) as.numeric(as.character(x))

@@ -39,7 +39,7 @@ Although multi-location testing is rarely used to assess potential donor lines/l
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Drought Donors MASTER all 3 sets agronomic 04072025.xlsx"]

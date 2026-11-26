@@ -54,7 +54,7 @@ This dataset contains, Actinomycetes (CAI-13, CAI-85, CAI-93, CAI-140, CAI-155 a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Effect of the six actinomycetes and yield of Rice.xlsx"]

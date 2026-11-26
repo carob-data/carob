@@ -56,7 +56,7 @@ This is a component of a big research project in China whose objective is to dev
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "IOMERGE.xls"]

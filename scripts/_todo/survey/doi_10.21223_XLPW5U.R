@@ -45,7 +45,7 @@ This dataset included information on 83 farmers' agroecological knowledge in  Ph
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_CA3561_database_of_farmer_agroecological_knowledge.xlsx"]

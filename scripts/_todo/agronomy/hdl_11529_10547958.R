@@ -51,7 +51,7 @@ Long-term farmers’ participatory researchers managed trails aimed to improve t
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	header_value <- function(cells, label) {

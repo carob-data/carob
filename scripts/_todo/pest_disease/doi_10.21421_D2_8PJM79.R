@@ -58,7 +58,7 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "FMBN-3 Angrau Viziainagram.xlsx"]

@@ -44,7 +44,7 @@ On-farm potato tuber yields of KIRUNDO and KINIGI along an altitude gradient in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.15
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_onfarm_yield_Rwanda.xls"]

@@ -40,7 +40,7 @@ The International Maize and Wheat Improvement Centre (CIMMYT), in collaboration 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "1992_2013_DATA_Kenya Maize HH survey v9_curated.sav"]

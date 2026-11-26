@@ -52,7 +52,7 @@ Data production of seed from cuttings 2019.  This estudy was evaluated  in 9 dis
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_production_of_seed_out_of_cuttings_2019_A1.xlsx"]

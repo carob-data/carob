@@ -44,7 +44,7 @@ Data on field and semi-field trials of maize seed treament for the control of fa
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 55,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data Field Seye.xlsx"]

@@ -361,7 +361,7 @@ Trials were also conducted in conjunction with PhilRice at their stations,    Nu
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 35,
-		carob_effort = 3
+		carob_effort = 0
 	)
 
 	bn <- basename(ff)

@@ -44,7 +44,7 @@ Evaluation of wheat, barley and triticale elite lines for Bajio region in Centra
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	num <- function(z) {

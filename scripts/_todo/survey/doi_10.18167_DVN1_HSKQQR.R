@@ -45,7 +45,7 @@ Enquête dans les treize régions administratives où la culture du coton a ét�
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 30,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "000_group_perf_typo_data.xlsx"]

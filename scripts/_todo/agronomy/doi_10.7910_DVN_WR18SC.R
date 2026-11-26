@@ -86,7 +86,7 @@ To organize the data, three big blocks were established: one block for hillsides
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 22,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "36.FIS_RENDIMIE.csv"]

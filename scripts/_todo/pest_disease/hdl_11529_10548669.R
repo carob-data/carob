@@ -50,7 +50,7 @@ Effectiveness of herbicides were compared during 2016 in El Batan, Mexico. The r
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	key <- data.frame(

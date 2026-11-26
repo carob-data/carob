@@ -64,7 +64,7 @@ This dataset provide data for calibration and evaluation of the model Stics in t
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 95,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "DatasetModellingRiceLegume.xlsx"]

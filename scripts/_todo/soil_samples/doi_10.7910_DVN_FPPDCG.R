@@ -45,7 +45,7 @@ Data for soil samples collected from WKIEMP project and analyzed at ICRAF using 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Wet Chemistry.csv"]

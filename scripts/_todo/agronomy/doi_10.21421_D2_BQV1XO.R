@@ -53,7 +53,7 @@ Yield and agronomic trait assessment
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Groundnut Ref Set  Field WW WS - India-Niger 2008-13.xlsx"]

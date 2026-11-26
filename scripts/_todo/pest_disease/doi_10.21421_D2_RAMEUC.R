@@ -58,7 +58,7 @@ Sorghum is a major cereal crop cultivated mainly for food, feed and fodder purpo
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Phenotypic data of shoot fly introgression lines in sorghum for the year 2014 post-rainy season .xlsx"]

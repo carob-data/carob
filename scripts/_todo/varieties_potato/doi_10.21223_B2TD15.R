@@ -47,7 +47,7 @@ Yield data of nine selected clones in Rwanda 2014B-2016A
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	num <- function(x) {

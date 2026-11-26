@@ -57,7 +57,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 76,
-		carob_effort = 0.6,
+		carob_effort = 0,
 		notes = NA
 	)
 

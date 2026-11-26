@@ -64,7 +64,7 @@ Dataset for: Nutritious Orange-Fleshed Sweetpotato (OFSP) For Niassa - Endline H
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "A01 to A23 HH Demographic Data.sav"]

@@ -41,7 +41,7 @@ Wheat head blast index (%) data for four CIMMYT nurseries (16HLBSN, 16HZAN, 42SA
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	sites <- data.frame(

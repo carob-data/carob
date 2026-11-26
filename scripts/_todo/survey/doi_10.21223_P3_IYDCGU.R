@@ -40,7 +40,7 @@ International Potato Center (CIP) and Yunnan Normal University collaborated to d
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_Adoption and Diffusion of C88.dta"]

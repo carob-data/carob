@@ -46,7 +46,7 @@ Several varieties of Low-ODAP grass pea were evaluated. Some of the variables me
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	# Entry list in BV105-17-Grasspea.docx

@@ -51,7 +51,7 @@ The integrated soil fertility management (ISFM) framework provides an opportunit
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "20190109aao_iita_isfm_end-project-evaluation-survey.csv"]

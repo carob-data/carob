@@ -53,7 +53,7 @@ WP1 of RCI to improve UPU crop productivity; assessment of tray vegetable seedli
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.6,
+		carob_effort = 0,
 		notes = NA
 	)
 

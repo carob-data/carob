@@ -73,7 +73,7 @@ Assessing how maize plants damage at different injury levels can recover and rep
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 72,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "plant-recovery-from-faw-damage_complete-data-set-kf.csv"]

@@ -41,7 +41,7 @@ The CNA6 population, evaluated over five cycles (3 to 7) of selection, including
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CNA6_phenotypic_data.csv"]

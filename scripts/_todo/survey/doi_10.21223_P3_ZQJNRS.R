@@ -90,7 +90,7 @@ The Marando Bora endline survey was conducted from January to March 2013. The ob
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	from_labels <- function(x) {

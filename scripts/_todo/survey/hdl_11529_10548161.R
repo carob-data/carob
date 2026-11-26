@@ -72,7 +72,7 @@ Large tracts of land in the upland plateau ecology of Odisha are not suitable fo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "MaizeAgronomy.dta"]

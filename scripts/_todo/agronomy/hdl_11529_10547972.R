@@ -41,7 +41,7 @@ On-farm long-term jute trials at Rangpur, Bangladesh, 2015 and 2016.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

@@ -78,7 +78,7 @@ Intensive rice-wheat under conventional tillage is the main system of the Easter
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Cropping systems_CA data_Dutta.xlsx"]

@@ -67,7 +67,7 @@ To examine and analyze the growth of rice production, economic inefficiency, as 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CHINA95(060624).xls"]

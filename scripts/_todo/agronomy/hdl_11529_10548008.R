@@ -49,7 +49,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmers'
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.9,
+		carob_effort = 0,
 		notes = "Field-book coordinates imputed at Rangpur district level; validation-sheet latitude and longitude headers are swapped on most sheets. K.kg.ha is K2O. Jute yield is dry bast fiber stored with yield_part = 'stems'."
 	)
 

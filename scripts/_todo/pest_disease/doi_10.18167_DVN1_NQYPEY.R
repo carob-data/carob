@@ -49,7 +49,7 @@ Characterization of weed communities in rain-fed rice-based cropping systems in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MAD-RAK-2015-RIZ-AD.xlsx"]

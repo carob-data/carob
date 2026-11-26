@@ -43,7 +43,7 @@ Wheat blast disease, which began in South America, has now spread to Asia and Af
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "221002 1st, 2nd and 3rd years data of Cultivar Mixture Trial_Jashore.xlsx"]

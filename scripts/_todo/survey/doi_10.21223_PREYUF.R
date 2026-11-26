@@ -46,7 +46,7 @@ During 2020, the challenges created by the COVID-19 health crisis were critical 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_DataSet_COVID-19_La Libertad_2021.xlsx"]

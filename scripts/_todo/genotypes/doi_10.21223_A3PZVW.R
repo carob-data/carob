@@ -40,7 +40,7 @@ Molecular markers dataset of 662 sweetpotato parents from CIP Peru Breeding plat
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "S1.Table_journal.pone.0232173.s006.xlsx"]

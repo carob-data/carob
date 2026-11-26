@@ -61,7 +61,7 @@ The demand for corn is increasing in Asia for feed and biofuel. It is grown in t
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Effect of pre and post emergence herbicide on survival and growth of rice and 2nd generation round up ready corn.xls"]

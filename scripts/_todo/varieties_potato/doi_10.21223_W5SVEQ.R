@@ -42,7 +42,7 @@ The results of National Performance trials in Kenya. It holds the average of 2 s
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "4415_Data.xlsx"]

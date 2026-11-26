@@ -56,7 +56,7 @@ Dataset processed of a household level survey to describe the main farm characte
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "bd-nepal-houshold-processed-survey-2023-cimmyt.csv"]

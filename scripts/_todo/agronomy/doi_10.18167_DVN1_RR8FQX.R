@@ -56,7 +56,7 @@ Intercropping with legumes has attracted much attention worldwide, regarded as a
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 85,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "DB_VF.csv"]

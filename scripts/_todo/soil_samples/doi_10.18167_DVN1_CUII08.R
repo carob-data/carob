@@ -51,7 +51,7 @@ Five field trials where mineral and organic fertilizers were applied for a decad
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	num <- function(x) {

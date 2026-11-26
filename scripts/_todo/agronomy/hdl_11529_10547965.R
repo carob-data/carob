@@ -40,7 +40,7 @@ On-farm long-term wheat trials at Madhubani, Bihar, rabi seasons 2014-15, 2015-1
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

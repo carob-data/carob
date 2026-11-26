@@ -56,7 +56,7 @@ The direct seeded maize in no-till/strip till/permanent beds or tilled soil with
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	num <- function(x) {

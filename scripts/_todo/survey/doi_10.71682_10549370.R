@@ -47,7 +47,7 @@ INIAP (Instituto Nacional de Investigaciones Agropecuarias) and CIMMYT implement
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "AppendixA-Database-PostharvestManagementGrain-2025-12-10.xlsx"]

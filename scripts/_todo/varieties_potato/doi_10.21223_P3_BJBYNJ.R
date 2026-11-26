@@ -48,7 +48,7 @@ The purpose of this study was to estimate the genetic gains of three cycles of r
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	proc <- carobiner::get_function("process_cip_lbvars", path, group)

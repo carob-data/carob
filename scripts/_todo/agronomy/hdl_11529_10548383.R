@@ -47,7 +47,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

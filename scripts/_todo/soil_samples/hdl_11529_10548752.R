@@ -52,7 +52,7 @@ Soil enzyme activities measured after seven years of the same management practic
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	label <- c(

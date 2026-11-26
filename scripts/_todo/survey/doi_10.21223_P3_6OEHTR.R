@@ -49,7 +49,7 @@ The goal of this study was to assess sweet potato seed (vine) transactions and a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Transaction Data_2013_2014.xlsx"]

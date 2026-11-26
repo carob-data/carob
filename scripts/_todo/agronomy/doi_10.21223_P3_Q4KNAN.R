@@ -63,7 +63,7 @@ Field experiment to compare physiological performance and crop yield among diffe
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Photosynthesis recovery-2017_v2.xlsx"]

@@ -726,7 +726,7 @@ The dataset reported here was created to analyze the value of physiological trai
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 1.5
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "CIM_AgMIP_Obs_crop_summary_plots.txt"]

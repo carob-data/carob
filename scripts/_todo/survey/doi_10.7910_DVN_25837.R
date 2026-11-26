@@ -62,7 +62,7 @@ To analyze the effects of genetic diversity on rice blast management and to dete
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 40,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Dataset.xlsx"]

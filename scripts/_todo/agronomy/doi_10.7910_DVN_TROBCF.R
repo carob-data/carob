@@ -40,7 +40,7 @@ On-farm pigeon pea, sole and intercropped with inoculated soybean, with and with
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "003_pigeonpeaProductivityParameters_PPgrainYield.csv"]

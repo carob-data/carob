@@ -87,7 +87,7 @@ The Cassava Monitoring Survey (CMS) in Nigeria household and plot level data.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "cassava_variety_all-regions.csv"]

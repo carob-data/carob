@@ -47,7 +47,7 @@ Experiments at multiple locations in Tanzania (800 to 1500m) to calibrate develo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 62,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "TAMASA_TZ_VT__2016.xlsx"]

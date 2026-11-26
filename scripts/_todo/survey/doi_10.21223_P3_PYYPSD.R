@@ -79,7 +79,7 @@ Most local farmers practice traditional small scale agriculture with focus on po
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Household_Dataset_LaPaz.xlsx"]

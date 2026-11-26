@@ -60,7 +60,7 @@ Summary results and individual trial results from the International Late Yellow 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 76,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	excel_date <- function(x) {

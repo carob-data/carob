@@ -63,7 +63,7 @@ To compare economic performance of rice production and water management practice
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	read_wk1 <- function(name) {

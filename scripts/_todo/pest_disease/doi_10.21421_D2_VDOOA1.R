@@ -44,7 +44,7 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Multi-environment field testing to identify stable resistance.xlsx"]

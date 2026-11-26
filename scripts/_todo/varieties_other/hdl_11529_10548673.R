@@ -40,7 +40,7 @@ Different varieties of barley (4 varieties), triticale (4 varieties) and wheat (
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	to_date <- function(x) {

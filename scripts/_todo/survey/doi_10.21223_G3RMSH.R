@@ -44,7 +44,7 @@ Through a gender-responsive pilot intervention, the project Anemia Zero is contr
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_DataSet_CAP Anemia - La Libertad 2021 - Linea de Base v3.xlsx"]

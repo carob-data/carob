@@ -63,7 +63,7 @@ Study area. The study was conducted through the winter cropping season (from Jun
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "subchapter 2.2 _cropping system dataset.xls"]

@@ -59,7 +59,7 @@ The baseline survey for Viable Sweetpotato Technologies in Africa (VISTA) projec
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	lab <- function(x) {

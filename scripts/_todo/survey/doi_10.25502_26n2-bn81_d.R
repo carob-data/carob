@@ -53,7 +53,7 @@ British America Tobacco Nigeria Limited (BATNL) wish to mitigate their former le
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "batn-baseline-needs-assess-data-all-excel.csv"]

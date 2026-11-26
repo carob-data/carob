@@ -50,7 +50,7 @@ Assessment of the current status of agronomy practices in potato cultivation in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "001_Rwanda_Potato_Production_Rapid.xlsx"]

@@ -39,7 +39,7 @@ This dataset contains primary survey data collected as part of a study on the im
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_Dictionary_Kisima_Household-v1.xlsx"]

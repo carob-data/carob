@@ -58,7 +58,7 @@ This dataset shows the seven most promising isolates of Streptomyces (BCA-546,BC
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Effect of the seven actinomycetes on agronomic.xlsx"]

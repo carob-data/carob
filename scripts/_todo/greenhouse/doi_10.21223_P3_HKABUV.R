@@ -47,7 +47,7 @@ This data set includes information of late blight severity readings at 3 and 5 d
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Fieldbook.xlsx"]

@@ -52,7 +52,7 @@ A questionnaire with 25 questions, many with multiple answers, was used in the v
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_survey_Ulcumayo.xlsx"]

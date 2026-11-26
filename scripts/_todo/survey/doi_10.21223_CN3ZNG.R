@@ -45,7 +45,7 @@ The endline survey for Viable Sweetpotato Technologies in Africa (VISTA) project
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "VISTA_2018_survey_dataset_cleaned.dta"]

@@ -47,7 +47,7 @@ Potatoes play an important role in rural livelihoods in Bangladesh. The study is
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Farmer_Database_Bangladesh_Potato_COVID_ValueChain_2021.xlsx"]

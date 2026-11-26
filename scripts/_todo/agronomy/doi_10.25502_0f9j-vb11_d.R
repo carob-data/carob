@@ -62,7 +62,7 @@ Evaluation of yield benefits of certified cassava seed.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.8,
+		carob_effort = 0,
 		notes = NA
 	)
 

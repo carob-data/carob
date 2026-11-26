@@ -55,7 +55,7 @@ Earthworm abundance and soil properties after 10 years of climate-smart agricult
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Agronomy 12-0065_SK.xlsx"]

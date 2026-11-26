@@ -41,7 +41,7 @@ Preliminary yield and agronomic trial data collected from 6 different trials car
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	col_by <- function(nms, body, pat) {

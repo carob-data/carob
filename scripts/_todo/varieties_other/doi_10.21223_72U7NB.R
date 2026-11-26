@@ -52,7 +52,7 @@ This dataset presents the results of a screening for heat stress tolerance of 19
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "harvest_traits_mean_across_rep.csv"]

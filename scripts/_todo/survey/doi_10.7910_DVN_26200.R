@@ -56,7 +56,7 @@ a)  Understand the operation of the Bangladesh rural household economy;  b) Anal
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Documentation of 1987_Bangladesh.xls"]

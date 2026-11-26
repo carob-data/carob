@@ -44,7 +44,7 @@ Dataset for: Raw and analyzed late blight resistance data from three field trial
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	one <- function(f, year) {

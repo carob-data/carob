@@ -59,7 +59,7 @@ In deze dataset en het bijbehorende rapport worden de resultaten van het biologi
 		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
 		carob_completion = 70,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data rapport Bodemkwaliteit op zand 2000-2016_Biologisch_Definitief.xlsx"]

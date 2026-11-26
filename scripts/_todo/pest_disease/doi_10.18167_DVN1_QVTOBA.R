@@ -44,7 +44,7 @@ Données collectées à La Dalia, Nicaragua, de 2017 à 2018. Données issues de
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 45,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	month_year <- function(x) {

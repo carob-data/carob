@@ -145,7 +145,7 @@ To investigate the determinants of technology adoption in rice cultivation by fo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 10,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "hh0.xlsx"]

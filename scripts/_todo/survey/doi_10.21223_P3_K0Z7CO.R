@@ -42,7 +42,7 @@ El presente estudio de base de la metodología del Enfoque Participativo de Cade
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_DataBase Caso Papa Nativa - EPCP Ecuador.xlsx"]

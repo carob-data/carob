@@ -53,7 +53,7 @@ Intercropping sorghum sp., cowpea and native evergreen woody shrub was tested du
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 90,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	excel_date <- function(x) {

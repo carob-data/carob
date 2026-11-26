@@ -57,7 +57,7 @@ The dataset contains five strains of Streptomyces (CAI-17, CAI-68, CAI-78, KAI-2
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Field harvest analysis.xlsx"]

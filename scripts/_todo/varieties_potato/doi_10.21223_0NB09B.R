@@ -43,7 +43,7 @@ Dataset for: Field Evaluation and Nutritional Analysis of Stenotomum and Gonioca
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	proc <- carobiner::get_function("process_cip_lbvars", path, group)

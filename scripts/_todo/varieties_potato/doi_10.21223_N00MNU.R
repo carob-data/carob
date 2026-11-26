@@ -52,7 +52,7 @@ Dataset for: Preliminary trial for late blight assessment in HERLB population (F
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Fieldbook_HERLB_PER_2022_LateBlight_Oxa.xlsx"]

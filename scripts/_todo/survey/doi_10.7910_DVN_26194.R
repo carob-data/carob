@@ -355,7 +355,7 @@ Green Super Rice for the Resource Poor of Asia and Africa (GSR) - Phase 1
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	sfx <- c("", paste0("_", c(1:4, 6:10)))

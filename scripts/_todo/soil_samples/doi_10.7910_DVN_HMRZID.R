@@ -53,7 +53,7 @@ The objective of the study was to decompose the rice yield gap into an efficienc
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "DATA SOIL SURVEY CLLS_FINAL.xlsx"]

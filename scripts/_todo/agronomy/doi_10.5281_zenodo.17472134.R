@@ -53,7 +53,7 @@ This dataset correponds to physiological measurements conducted in a vineyard tr
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "ET4DROUGHT_IRTA_Cosecha_2024.xls"]

@@ -55,7 +55,7 @@ To examine how such a pattern of agrarian change has emerged through the interac
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Tubuan 1995_1.xls"]

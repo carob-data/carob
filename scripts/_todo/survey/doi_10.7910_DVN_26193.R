@@ -58,7 +58,7 @@ The objective of the study is to review government policies on upland rice, eval
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Upland Rice Production.xls"]

@@ -52,7 +52,7 @@ A total of 89 actinomycetes were screened for their antago-nistic activity again
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Effect of the four actinomycetes on agronomic performance.xlsx"]

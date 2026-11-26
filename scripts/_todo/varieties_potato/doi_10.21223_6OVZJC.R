@@ -50,7 +50,7 @@ Dataset for: Sensory analysis of boiled potato samples from wild species, landra
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Dataset Sensory Analysis - data.xlsx"]

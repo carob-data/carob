@@ -58,7 +58,7 @@ The Activity aims to improve smallholder farmers’ livelihoods through increase
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "eraal-annual-outcome-survey_2022.csv"]

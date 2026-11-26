@@ -42,7 +42,7 @@ The aim of the experiment was to study the effect of different pest control stra
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "RawData_ToppingCotton.xlsx"]

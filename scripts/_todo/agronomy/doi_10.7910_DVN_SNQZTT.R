@@ -59,7 +59,7 @@ Drought is the major constraint to rainfed rice productivity in South Asia, but 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "all data for PCA w imputed.xlsx"]

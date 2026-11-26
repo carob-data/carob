@@ -43,7 +43,7 @@ Macroinvertebrates play a central role in processes supporting soil fertility. I
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 55,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Dataverse_Macrofauna_240229.xlsx"]

@@ -58,7 +58,7 @@ A challenge observed is the nature of RTB crops which demand more strategic logi
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.9,
+		carob_effort = 0,
 		notes = NA
 	)
 

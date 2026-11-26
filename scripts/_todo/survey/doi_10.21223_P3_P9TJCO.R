@@ -62,7 +62,7 @@ This dataset presents baseline data collected by GROWING, which is being impleme
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "C02bs_m015_1_Crops_Details_Table_nopii.dta"]

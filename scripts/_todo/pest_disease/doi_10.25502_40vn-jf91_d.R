@@ -94,7 +94,7 @@ Maize farmers in sub-Saharan Africa recently experienced unusual damage in their
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "maize-survey-database.csv"]

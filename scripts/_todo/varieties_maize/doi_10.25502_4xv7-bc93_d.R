@@ -67,7 +67,7 @@ Breeding for stress resilient maize varieties and hybrids
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 78,
-		carob_effort = 1.5,
+		carob_effort = 0,
 		notes = NA
 	)
 

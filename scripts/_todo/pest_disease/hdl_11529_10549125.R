@@ -43,7 +43,7 @@ Field and greenhouse FHB resistance evaluation for a panel of African wheat vari
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "African_panel.csv"]

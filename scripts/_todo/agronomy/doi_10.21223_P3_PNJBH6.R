@@ -54,7 +54,7 @@ It developed a field experiment, with the aim to analyze Crop Water Stress Index
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	nas <- c("", "NA")

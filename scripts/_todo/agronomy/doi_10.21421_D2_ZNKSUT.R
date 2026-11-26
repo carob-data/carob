@@ -58,7 +58,7 @@ The experiment was done for two consecutive post-rainy cropping seasons in 2012â
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	season_yr <- function(x) substr(trimws(as.character(x)), 1, 4)

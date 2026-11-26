@@ -47,7 +47,7 @@ This data set includes information of late blight severity readings at 4 and 6 d
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_Screening for resistance to late blight in traditional landraces under greenhouse conditions.xlsx"]

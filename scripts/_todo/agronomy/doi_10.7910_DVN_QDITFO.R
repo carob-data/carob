@@ -108,7 +108,7 @@ The traditional transplanted and flooded rice cropping system is threatened by w
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	harv <- function(year) {

@@ -52,7 +52,7 @@ This contains potato seed system data collected for a network analysis. It is fr
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Seed_system_CONPAPA_for_Dataverse_20160120.xlsx"]

@@ -51,7 +51,7 @@ The key findings of the baseline survey are. In terms of socio-economic indicato
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 10,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "09142011  Data for Baseline Nutrition Project Tigray-1.dta"]

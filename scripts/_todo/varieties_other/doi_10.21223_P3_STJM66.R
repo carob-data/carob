@@ -46,7 +46,7 @@ Twenty-five quinoa accessions belonging to the Cusco Quinoa Collection (QC), nat
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_Agro-morphological.xlsx"]

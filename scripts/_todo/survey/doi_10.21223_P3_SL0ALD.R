@@ -77,7 +77,7 @@ Relevant information on the challenges and opportunities of the project were con
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	num <- function(x) as.numeric(haven::zap_labels(x))

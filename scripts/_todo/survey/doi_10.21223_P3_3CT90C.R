@@ -48,7 +48,7 @@ Vegetative multiplication of potato in the field can lead to an accumulation of 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	num <- function(x) {

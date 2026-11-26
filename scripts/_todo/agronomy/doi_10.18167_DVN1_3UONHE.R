@@ -51,7 +51,7 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "DataWeedRiceYield_AntsaPhDthesis_WeedBiomassRiceYield.xlsx"]

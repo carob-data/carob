@@ -49,7 +49,7 @@ Study of the weed flora of flood sorghum (Muskwari) in the karal soil areas in N
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CAM-MAR-1999-MSK-AD.xlsx"]

@@ -53,7 +53,7 @@ This dataset has been specially created to estimate carbon footprint in potato f
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CFT_PNIA 2017-2018.xlsx"]

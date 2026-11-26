@@ -63,7 +63,7 @@ By responding to the variable soil environments in which they are grown, the roo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "XX for slope.csv"]

@@ -60,7 +60,7 @@ Cover plant and weed control experimental data from field trials in Reunion (201
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 90,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	num <- function(x) {

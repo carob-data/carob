@@ -83,7 +83,7 @@ STRASA = Stress Tolerant Rice for poor farmers in Africa and South Asia (Banglad
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 1.5
+		carob_effort = 0
 	)
 
 	rd <- function(name) carobiner::read.excel(ff[basename(ff) == name], guess_max=100000)

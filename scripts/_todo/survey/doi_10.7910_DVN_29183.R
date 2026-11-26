@@ -66,7 +66,7 @@ The Laguna Loop survey is a farm household level data set collected by the IRRI 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 1.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Laguna Loop 1965-66.xlsx"]

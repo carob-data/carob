@@ -42,7 +42,7 @@ Eight CIP-bred potato clones (V1 = 392745.7, V2 = 392780.1, V3 = 397006.18, V4 =
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	proc <- carobiner::get_function("process_cip_lbvars", path, group)

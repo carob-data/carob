@@ -43,7 +43,7 @@ International Potato Center (CIP) and partners collaborated to develop strategie
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Encuesta Autoridades - La Libertad - Junin - Huancavelica - COVID-19.xlsx"]

@@ -45,7 +45,7 @@ Dry direct-seeded rice herbicide trials on research stations, comparing pre-emer
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

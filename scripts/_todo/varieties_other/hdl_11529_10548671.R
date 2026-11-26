@@ -47,7 +47,7 @@ Several international varieties of Low-ODAP grass pea were evaluated. Some of th
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	# Field book, rows 49-73: entry, accession, origin.

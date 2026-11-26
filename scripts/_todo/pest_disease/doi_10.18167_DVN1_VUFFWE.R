@@ -57,7 +57,7 @@ Study of weed communities composition and abundance in different cropping system
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MAY-MAR-2020-DIV-AD.xlsx"]

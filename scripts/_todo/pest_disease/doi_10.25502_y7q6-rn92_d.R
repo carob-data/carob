@@ -64,7 +64,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 66,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "fruit-fly-incidnce-n-abundanc-on-cucmber-n-squash.csv"]

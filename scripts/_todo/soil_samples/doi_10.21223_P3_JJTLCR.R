@@ -44,7 +44,7 @@ Replication data for: Soil organic carbon stocks and fractionation under differe
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	# Inverse Transverse Mercator (WGS84 UTM Zone 18S -> decimal lon/lat)

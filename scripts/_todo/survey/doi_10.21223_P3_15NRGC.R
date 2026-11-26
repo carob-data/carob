@@ -46,7 +46,7 @@ The baseline study was conducted to assess and understand the socio-economic sit
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Part 4 Input Use in Potato Production_2.dta"]

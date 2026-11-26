@@ -63,7 +63,7 @@ Each sampled cacao plot was geolocated to be associated with the corresponding s
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 80,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "CIV_Cacao_sols Nguessan.xlsx"]

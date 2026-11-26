@@ -45,7 +45,7 @@ The data collection aimed to investigate gender-responsive participatory variety
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Combined Dataset.dta"]

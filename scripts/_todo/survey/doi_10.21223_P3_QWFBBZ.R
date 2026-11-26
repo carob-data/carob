@@ -67,7 +67,7 @@ The Marando Bora Baseline survey objective was to address the main problems asso
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	from_labels <- function(x) {

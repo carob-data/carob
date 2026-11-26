@@ -38,7 +38,7 @@ The implementation of the large- scale planting material dissemination component
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MB_DVM_dataset.xlsx"]

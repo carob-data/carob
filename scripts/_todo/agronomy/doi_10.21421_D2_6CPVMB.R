@@ -57,7 +57,7 @@ This data set contains replicated observations of selected bacterial isolates (V
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Effect of the four selected bacterial isolated from compost and rhizosphere soils .xlsx"]

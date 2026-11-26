@@ -92,7 +92,7 @@ The study is based on village full enumeration field surveys.  The main purpose 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	# header row is the row starting with HHNO; strip the year suffix; negative values are missing

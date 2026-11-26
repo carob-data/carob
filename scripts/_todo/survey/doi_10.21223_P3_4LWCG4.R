@@ -75,7 +75,7 @@ Dataset for: Participatory mapping for long-term monitoring and red listing of c
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Plots_Cusco.dbf"]

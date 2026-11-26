@@ -53,7 +53,7 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Medium duration lines for agronomic traits in the location Gumel..xlsx"]

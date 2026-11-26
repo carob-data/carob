@@ -45,7 +45,7 @@ The dataset contains yields and field management data of two adjacent randomised
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "TI_TI-SOC-Enrichment_2025_06_13.sqlite"]

@@ -53,7 +53,7 @@ This dataset corresponds to the records of small potato farmers carried out duri
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "05_Data-Agronomic-La Libertad-2021-2022-Productivity.xlsx"]

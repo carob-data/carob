@@ -48,7 +48,7 @@ The Malawi project has local theme 'Agro-ecological intensification in Malawi th
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "yieldcutsdata.xlsx"]

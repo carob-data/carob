@@ -65,7 +65,7 @@ This dataset contains field observations of eleven banana genotypes conducted in
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "df_field.csv"]

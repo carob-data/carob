@@ -68,7 +68,7 @@ Biological invasion is a global concern with species deployed out of native rang
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 64,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) %in% c("metadata.csv", "spatio-temporal-partitioning-dataset140720201.csv")]

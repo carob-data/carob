@@ -48,7 +48,7 @@ Characterization of weed flora of cotton crop in Guinea in 1996, within the fram
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "GUI-MAR-1996-COT-AD.xlsx"]

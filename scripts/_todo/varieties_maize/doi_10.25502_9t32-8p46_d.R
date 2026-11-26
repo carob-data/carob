@@ -62,7 +62,7 @@ Vitamin A deficiency is the leading cause of night blindness, total blindness, m
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.8,
+		carob_effort = 0,
 		notes = NA
 	)
 

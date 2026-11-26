@@ -47,7 +47,7 @@ Rainfed maize production in southern Mexico is constrained by climate variabilit
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	dms <- function(x) {

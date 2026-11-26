@@ -38,7 +38,7 @@ Conocer la percepción de los consumidores sobre las papas nativas de color en s
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_DataBase Percepcion de los consumidores sobre las papas nativas de color.xlsx"]

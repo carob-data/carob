@@ -307,7 +307,7 @@ This is a household baseline survey that will measure ex-post and ex-ante econom
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	getf <- function(name) ff[basename(ff) == name]

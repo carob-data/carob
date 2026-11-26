@@ -56,7 +56,7 @@ The dataset contains 15 soil crop model i) input and outputs on long-term experi
 		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
 		carob_completion = 85,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	read_semi <- function(f) {

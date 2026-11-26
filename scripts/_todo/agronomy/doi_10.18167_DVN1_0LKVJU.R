@@ -50,7 +50,7 @@ The AgriecoH (Agro-equipment and low Herbicide innovation) project, an Ecophyto 
 		carob_LLM = "Gemini 4 Neon",
 		carob_date = "202?-??-??",
 		carob_completion = 85,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f_acc <- ff[basename(ff) == "Accession.xlsx"]

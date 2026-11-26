@@ -63,7 +63,7 @@ This data set contain replicated observations on PGP capabilities of five strain
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Final Harvest for chickpea on plant growth-promoting broad-spectrum Streptomyces sp.xlsx"]

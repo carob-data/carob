@@ -59,7 +59,7 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "aphid-around-field.csv"]

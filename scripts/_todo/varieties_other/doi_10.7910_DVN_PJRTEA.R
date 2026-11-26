@@ -59,7 +59,7 @@ Further, NARS evaluated these lines in at least three sites per country and duri
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	process <- carobiner::get_function("process_africarice_btf", path, group)

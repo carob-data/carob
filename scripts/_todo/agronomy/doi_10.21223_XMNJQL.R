@@ -51,7 +51,7 @@ A set of 260 validation trials was conducted from the season 2021B onwards to co
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Scaling_AKILIMO_yield_data.csv"]

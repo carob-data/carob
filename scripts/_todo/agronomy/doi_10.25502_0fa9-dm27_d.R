@@ -44,7 +44,7 @@ The main objective of the research is to advise Norad on the relevance of contin
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.6",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "all-crops-and-treatment.csv"]

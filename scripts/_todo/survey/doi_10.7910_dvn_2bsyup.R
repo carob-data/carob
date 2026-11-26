@@ -54,7 +54,7 @@ About the project   Project title: Africa RISING- Sustainable Intensification of
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	code_crop <- c(

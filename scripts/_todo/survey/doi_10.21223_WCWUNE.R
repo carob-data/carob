@@ -43,7 +43,7 @@ The native potato varieties have been successfully marketed to consumers in Lima
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Encuesta_sobre_demanda_Miskipapa_2020.xlsx"]

@@ -44,7 +44,7 @@ Data on a sample of cotton farms in Hebei province, out of which a sub-sample wa
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 40,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "ProductionCost_UnitArea.xlsx"]

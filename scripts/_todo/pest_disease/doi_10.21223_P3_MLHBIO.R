@@ -60,7 +60,7 @@ Surveys to study the occurrence and distribution of leafminer fly and their asso
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 50,
-		carob_effort = 0.55
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "subchapter 1.1_Survey dataset.xls"]

@@ -62,7 +62,7 @@ Data from a field experiment in the banana agroecosystems of Martinique (Lesser 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f_dec <- ff[basename(ff) == "Decomposition.csv"]

@@ -50,7 +50,7 @@ Research work carried out to identify promising groundnut breeding lines with re
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Regional variety evaluation data..xlsx"]

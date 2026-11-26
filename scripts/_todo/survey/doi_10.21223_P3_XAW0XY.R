@@ -55,7 +55,7 @@ Promotion of Orange-Fleshed Sweet Potato Increased Vitamin A Intakes and Reduced
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	chr <- function(x) {

@@ -85,7 +85,7 @@ The study examines the changes in the livelihood of the rural household that com
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	# header row is the row starting with HHNO

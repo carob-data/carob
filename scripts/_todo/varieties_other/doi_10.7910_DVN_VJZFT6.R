@@ -55,7 +55,7 @@ Explanations of the changes
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	process <- carobiner::get_function("process_africarice_blup", path, group)

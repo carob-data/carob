@@ -61,7 +61,7 @@ The soil biology (PE-2: Soils project of CIAT) had several field experiments in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "17.MBIO_PRODUCCI.csv"]

@@ -44,7 +44,7 @@ The use of high quality seed is one of the current strategies to increase seed a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Surveys.xls"]

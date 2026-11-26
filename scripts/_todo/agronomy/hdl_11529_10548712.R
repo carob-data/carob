@@ -44,7 +44,7 @@ This experiments were established with different rates of nitrogen in order to g
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	num <- function(z) {

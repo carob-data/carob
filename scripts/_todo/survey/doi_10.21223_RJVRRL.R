@@ -41,7 +41,7 @@ This data set details information collected on preferred characteristics of urba
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data V2.xlsx"]

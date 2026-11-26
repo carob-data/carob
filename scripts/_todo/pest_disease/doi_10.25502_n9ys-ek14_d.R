@@ -59,7 +59,7 @@ The project aims to develop environmentally friendly management strategies to en
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "field-assessment-2024.csv"]

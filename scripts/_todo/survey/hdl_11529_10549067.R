@@ -41,7 +41,7 @@ The study of women's involvement and responsibilities within seed systems in Nep
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Seed Security Nepal.xlsx"]

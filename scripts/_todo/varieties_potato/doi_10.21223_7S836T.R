@@ -53,7 +53,7 @@ Laboratory assessments of minerals and vitamin C were carried out on raw samples
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	read_txt <- function(f) {

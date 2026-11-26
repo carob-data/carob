@@ -43,7 +43,7 @@ The objective of this study was to assess the main factors that explain the func
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data.xls"]

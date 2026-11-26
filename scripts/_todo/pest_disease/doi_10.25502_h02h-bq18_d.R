@@ -79,7 +79,7 @@ Assess the field biophysical efficacy of different products against FAW and dete
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 68,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "local_innovation_data.csv"]

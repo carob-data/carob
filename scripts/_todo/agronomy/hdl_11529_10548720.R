@@ -41,7 +41,7 @@ This experiments were established with different rates of nitrogen in order to g
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "GreenSeeker Yucatan 2012-2013.xlsx"]

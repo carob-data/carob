@@ -57,7 +57,7 @@ Measure awareness and adoption of 3R3G in the Mekong Delta Region and assess dif
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Impact Assessment of Three R and Three G.xls"]

@@ -55,7 +55,7 @@ Abundance scale notation 1-9. This dataset covers 69 plant surveys for 131 weed 
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MAU-PAY-2020-MAR-AD.xlsx"]

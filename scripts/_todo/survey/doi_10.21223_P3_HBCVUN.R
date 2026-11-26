@@ -64,7 +64,7 @@ The QDBH project is being implemented by the International Potato Center (CIP) a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Module 1 - Household Information.dta"]

@@ -85,7 +85,7 @@ Rice Monitoring Survey: South Asia (RMS-SA) Project was IRRI implemented with su
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	rd <- function(name) carobiner::read.excel(ff[basename(ff) == name], guess_max=100000)

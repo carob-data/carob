@@ -47,7 +47,7 @@ Replication data for: Land Use Effects on Soil Fertility and Nutrient Cycling in
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	# Inverse Transverse Mercator (WGS84 UTM Zone 18S -> decimal lon/lat)

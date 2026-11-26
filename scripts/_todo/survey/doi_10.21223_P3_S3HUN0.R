@@ -43,7 +43,7 @@ Orange-fleshed sweetpotato (OFSP) as a staple food providing necessary body ener
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	plain <- function(x) {

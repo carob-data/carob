@@ -57,7 +57,7 @@ The objective of this study was to evaluate the performance of the SOLANUM model
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Yield estimation of Unica potato.xls"]

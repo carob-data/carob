@@ -48,7 +48,7 @@ For more than 40 years CIP has worked with the potato breeding program of the Na
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "STC_Survey_2017_Febrero09-2018.accdb"]

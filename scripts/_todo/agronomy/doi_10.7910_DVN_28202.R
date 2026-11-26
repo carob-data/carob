@@ -119,7 +119,7 @@ As the human population continues to grow and competition for natural resources 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 58,
-		carob_effort = 1.2
+		carob_effort = 0
 	)
 
 	rd <- function(f) read.csv(ff[basename(ff) == f])

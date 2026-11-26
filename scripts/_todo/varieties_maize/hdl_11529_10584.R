@@ -42,7 +42,7 @@ Summary results and individual trial results from the International Late White H
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 66,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	blank <- function(x) {

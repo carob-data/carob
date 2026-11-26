@@ -86,7 +86,7 @@ This is a follow-up survey on Rola & Pingali's 1989/90 pesticide health cost stu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	rd <- function(name) carobiner::read.excel(ff[basename(ff) == name])

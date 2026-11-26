@@ -66,7 +66,7 @@ water use related traits, flowering time and root system architecture in the fie
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 82,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MoroxSwarna_RawData_All.xlsx"]

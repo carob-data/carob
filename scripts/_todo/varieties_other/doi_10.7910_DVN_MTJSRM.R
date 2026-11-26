@@ -46,7 +46,7 @@ In 2010, the Africa-wide Rice Breeding Task Force was launched by AfricaRice inv
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	process <- carobiner::get_function("process_africarice_blup", path, group)

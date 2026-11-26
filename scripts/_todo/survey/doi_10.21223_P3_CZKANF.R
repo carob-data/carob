@@ -50,7 +50,7 @@ The Mama SASHA project was set in Bungoma county in Kenya’s Western Province. 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 15,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "A1 - Voucher redemption.dta"]

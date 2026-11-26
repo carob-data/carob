@@ -50,7 +50,7 @@ Characterization of weed communities in rain-fed crops on slopes (rice, corn) in
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "VIE-STE-1999-RIZ-AD.xlsx"]

@@ -51,7 +51,7 @@ The overall objective of the project was to transfer and promote improved planta
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 70,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "banana-weevil-dynamic-_psmnr-project.csv"]

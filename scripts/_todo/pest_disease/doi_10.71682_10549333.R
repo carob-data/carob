@@ -45,7 +45,7 @@ Wheat head blast index (%) data for four CIMMYT nurseries (15HLBSN, 15HZAN, 41SA
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	country_of <- c(Quirusillas="Bolivia", Okinawa="Bolivia", Jashore="Bangladesh")

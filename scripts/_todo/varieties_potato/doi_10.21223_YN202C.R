@@ -47,7 +47,7 @@ Dataset for: Open field assessment for late blight evaluation in HERLB populatio
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	num <- function(x) {

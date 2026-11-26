@@ -57,7 +57,7 @@ Greenhouse experiment to compare physiological performance and biomass accumulat
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	blank <- function(x) {

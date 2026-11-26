@@ -41,7 +41,7 @@ The Agricultural Transformation Agenda Support Program Phase 1 (AT ASP-1) of the
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of ICRISAT on Varietal demonstration trial ATASP-1.xlsx"]

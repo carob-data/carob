@@ -63,7 +63,7 @@ This study contains data from different cereal legume rotation systems in northe
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 2,
+		carob_effort = 0,
 		notes = NA
 	)
 

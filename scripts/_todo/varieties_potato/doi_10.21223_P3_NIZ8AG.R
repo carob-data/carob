@@ -61,7 +61,7 @@ Breeding efforts for enriching potato tubers with more Zn and Fe are in progress
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	clean <- function(x) {

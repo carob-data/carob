@@ -58,7 +58,7 @@ Stress Tolerant Maize for Africa for Improved Livelihoods
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 78,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "optimal-hybrid_datasets_ile-ife-mokwa_2016-2017.csv"]

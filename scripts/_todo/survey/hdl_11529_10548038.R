@@ -68,7 +68,7 @@ Main crop and plot area on the focal field of each household.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "TZAPS17_fp.dta"]

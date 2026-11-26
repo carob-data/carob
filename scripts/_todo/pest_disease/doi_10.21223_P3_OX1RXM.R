@@ -59,7 +59,7 @@ Habitat manipulation by trap crops establishes a management component which allo
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Student thesis data 4 data.xlsx"]

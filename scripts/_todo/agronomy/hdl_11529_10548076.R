@@ -42,7 +42,7 @@ On-farm long-term maize and wheat trials at Rangpur, Bangladesh, rabi seasons 20
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	one <- function(f) {

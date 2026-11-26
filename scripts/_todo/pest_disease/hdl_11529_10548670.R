@@ -47,7 +47,7 @@ Effectiveness of 14 herbicides were compared during 2016 in El Batan, Mexico. Th
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "DAT-BV101_WHEAT-16.xlsx"]

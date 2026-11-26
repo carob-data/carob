@@ -55,7 +55,7 @@ Evaluation of yield parameters of 6 clones introduced to Rwanda as processing va
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_Mel_4798.xlsx"]

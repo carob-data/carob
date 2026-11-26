@@ -98,7 +98,7 @@ The objectives of this activity were: (1) to insure that the households surveyed
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f3 <- ff[basename(ff) == "input_use.csv"]

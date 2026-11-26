@@ -54,7 +54,7 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	one <- function(f, stress) {

@@ -47,7 +47,7 @@ This study was conducted during the years of 2016, 2017 and 2018 in the countrie
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "16940_Decentralised_seed_multiplier_gross_margin_data.xlsx"]

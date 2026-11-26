@@ -45,7 +45,7 @@ Rice is an increasingly important commodity in sub-Saharan Africa. In Tanzania, 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Trial1_2013.xls"]

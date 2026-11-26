@@ -61,7 +61,7 @@ Determine the gene action conditioning grain yield and other traits of the early
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 76,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	code <- function(x) {

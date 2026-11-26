@@ -55,7 +55,7 @@ This dataset consists of daily weather data collected from diverse locations in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_daily_data.xlsx"]

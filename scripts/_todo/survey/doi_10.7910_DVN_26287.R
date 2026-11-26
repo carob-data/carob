@@ -69,7 +69,7 @@ To assess the impact of adoption of new rice-based technologies on income and em
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f3 <- ff[basename(ff) == "Documentation of 1996 survey.xls"]

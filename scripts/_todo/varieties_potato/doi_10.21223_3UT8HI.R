@@ -50,7 +50,7 @@ Four native varieties of bitter potatoes were used to analyze mineral concentrat
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 80,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Data_minerals_Puno_Fresh_Bitter_2007.xlsx"]

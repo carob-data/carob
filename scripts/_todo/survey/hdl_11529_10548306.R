@@ -43,7 +43,7 @@ Household survey and maize crop-cut data collected in Kaduna, Kano, and Katsina 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "NG_APS_CC_Yield_2016 (blurred).xlsx"]

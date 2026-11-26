@@ -46,7 +46,7 @@ Farmer participatory on-farm trials with CA technologies comparing with farmersâ
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Rabi 2014-15-validation trials-all nodes-Choochbehar.xlsx"]

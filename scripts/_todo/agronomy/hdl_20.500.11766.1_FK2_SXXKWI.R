@@ -41,7 +41,7 @@ Evaluation of undersowing vetch in sorghum for intensifying existing production 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Sorghum_Data.csv"]

@@ -43,7 +43,7 @@ Données issues du suivi de 55 exploitations dans quatre villages pour cerner le
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "ML_97_parcelles.xlsx"]

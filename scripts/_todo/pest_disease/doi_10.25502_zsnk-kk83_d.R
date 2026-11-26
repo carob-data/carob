@@ -61,7 +61,7 @@ Assess the link between damage, abundance and yield
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 58,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "yield-data.csv"]

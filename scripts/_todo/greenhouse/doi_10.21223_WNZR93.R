@@ -48,7 +48,7 @@ Potted experiment to develop water stress resilience and productivity in 59 acce
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_CWR_Sweetpotato2018.xlsx"]

@@ -64,7 +64,7 @@ This dataset includes values for abundance, biomass, and functional traits of ma
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "diversity.csv"]

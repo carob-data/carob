@@ -53,7 +53,7 @@ To describe the major socio-economic characteristics of a typical rice village i
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Tubuan_1974.xls"]

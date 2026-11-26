@@ -51,7 +51,7 @@ Laboratory assays for minerals and vitamin C were conducted on raw samples with 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.55
+		carob_effort = 0
 	)
 
 	num <- function(x) {

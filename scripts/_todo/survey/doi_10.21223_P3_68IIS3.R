@@ -146,7 +146,7 @@ Dataset for: Baseline Survey for the OFDA 2016 Mitigating Drought Impacts on Liv
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "HH_location_&_Quality_control_v5.dta"]

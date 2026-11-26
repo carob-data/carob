@@ -71,7 +71,7 @@ This dataset describes how different tree species (monospecific vs. mixed) influ
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "README.txt"]

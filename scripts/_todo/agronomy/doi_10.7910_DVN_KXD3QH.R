@@ -61,7 +61,7 @@ The data sets reveal grain Zn biofortfication performance of Zn-efficient and Zn
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 62,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	# some raw sheets have a second (re-sorted, analysis) block below the first; only the first block is used

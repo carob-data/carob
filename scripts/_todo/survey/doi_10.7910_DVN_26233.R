@@ -58,7 +58,7 @@ Objectives of the study are to identify rice varieties that are recently being a
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Landuse.XLS"]

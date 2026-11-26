@@ -87,7 +87,7 @@ The rapid progress in genotyping of rice must be matched by advances in phenotyp
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 52,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	obs <- function(name) {

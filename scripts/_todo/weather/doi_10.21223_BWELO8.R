@@ -39,7 +39,7 @@ In the present dataset, meteorological data at La Soledad locality - Chugay, La 
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Meteorological data_La Soledad-Chugay 2022-2024.xlsx"]

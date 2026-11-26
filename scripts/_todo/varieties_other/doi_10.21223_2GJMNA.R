@@ -47,7 +47,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Umbeluzi_2019_Moz2.xlsx"]

@@ -46,7 +46,7 @@ One of the most notorious and economically devastating  disease of potatoes is l
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.55
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for Late Blight Resistance_Data.xls"]

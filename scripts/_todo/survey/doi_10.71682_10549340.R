@@ -41,7 +41,7 @@ Plot crops and area from the 2023 carbon-farming household survey.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	num <- function(x) {

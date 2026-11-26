@@ -49,7 +49,7 @@ To estimate yield and profitability of gains in the cultivation of hybrids compa
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "costs and return.xlsx"]

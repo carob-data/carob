@@ -57,7 +57,7 @@ It is widely recognized that female farmers have considerably less access to pro
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "gender_data_final.csv"]

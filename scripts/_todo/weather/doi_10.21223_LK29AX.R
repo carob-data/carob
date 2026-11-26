@@ -39,7 +39,7 @@ In the present dataset, meteorological data in the Pishauli locality - Chugay di
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.35
+		carob_effort = 0
 )
 
 	f <- ff[basename(ff) == "01_Meteorological data_Pishauli-Chugay_2023-2024.xlsx"]

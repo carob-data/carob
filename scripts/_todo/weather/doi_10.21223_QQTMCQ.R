@@ -43,7 +43,7 @@ In the present dataset, meteorological data at Vista Florida locality - Pataz, L
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Meteorological data_Vista Florida_2022-2023.xlsx"]

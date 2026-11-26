@@ -60,7 +60,7 @@ In the years 2005, 2007 and 2008, three trials were carried out in the Cañete v
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "subchapter 3.1_2005 crop loss trial.xls"]

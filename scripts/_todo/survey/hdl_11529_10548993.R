@@ -46,7 +46,7 @@ Household crop area and production for aman, boro, and aus.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "BD Bangladesh Houshold processed survey 2023 CIMMYT.xlsx"]

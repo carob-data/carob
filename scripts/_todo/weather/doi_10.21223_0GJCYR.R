@@ -47,7 +47,7 @@ In the present dataset, hourly meteorological data at La Molina CIP Experimental
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Meteorology data_La Molina CIP station 2013-2025.xlsx"]

@@ -51,7 +51,7 @@ In this data base, representative georeferenced farmer survey data from Zambia f
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Zambia_storage loss  2011 survey v4_curated.sav"]

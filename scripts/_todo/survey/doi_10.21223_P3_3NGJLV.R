@@ -45,7 +45,7 @@ Datasets for: Monitoring Data for Viable Sweetpotato Technologies in Africa (VIS
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "VST5 - DVM Mapping.dta"]

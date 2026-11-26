@@ -67,7 +67,7 @@ These data were collected as part of the INDICANTS project, which received fundi
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 100,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Multi_country_field_data.csv"]

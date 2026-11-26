@@ -39,7 +39,7 @@ This dataset contains information from the monitoring of native potatoes registe
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_data_monitoreo_Patacancha_Cusco.xlsx"]

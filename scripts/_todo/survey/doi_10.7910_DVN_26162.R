@@ -59,7 +59,7 @@ The benchmark survey was used to develop a systematic understanding of target en
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CPWF Final Baseline Survey - DTA MGT.xls"]

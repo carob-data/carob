@@ -57,7 +57,7 @@ A survey covering 19 major rice-producing provinces in the Philippines was condu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "allfiles-as of dec905.xls"]

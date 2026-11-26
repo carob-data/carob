@@ -38,7 +38,7 @@ In the present dataset, daily weather data at La Molina CIP Experimental Station
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 80,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_LaMolina_Lima.xls"]

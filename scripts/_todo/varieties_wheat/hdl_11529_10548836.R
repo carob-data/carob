@@ -44,7 +44,7 @@ A standard quantitative genetic model was used to examine how genotype-environme
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	doy_date <- function(year, doy) {

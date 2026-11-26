@@ -66,7 +66,7 @@ This study in general aims to look at the impacts of drought on rice production,
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "A Baseline Study of Autonomous Adaptation Against Drought Among Indonesian Rice Farmers_Dataset_DManzanilla et al.xlsx"]

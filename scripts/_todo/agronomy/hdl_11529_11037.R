@@ -48,7 +48,7 @@ In South Asia, wheat is typically grown in favorable environments, although poli
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Final_DATA_year_02.csv"]

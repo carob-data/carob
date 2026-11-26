@@ -50,7 +50,7 @@ Mineral and vitamin C assessments were conducted on five potato varieties: Canch
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_Fieldbook_TMIN200312_MUQUI_Varieties.txt"]

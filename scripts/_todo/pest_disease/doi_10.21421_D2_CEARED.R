@@ -63,7 +63,7 @@ Aflatoxin contamination problem studies  in Anantapur district of Andhra Pradesh
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 55,
-		carob_effort = 1.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Aflatoxin problem Anantapur AP India.xlsx"]

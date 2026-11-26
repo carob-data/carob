@@ -49,7 +49,7 @@ Summary of selected genotypes from cycle III bio-fortified genotypes at Holetta/
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	num <- function(x) {

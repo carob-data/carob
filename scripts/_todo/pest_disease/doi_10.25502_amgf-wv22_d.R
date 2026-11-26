@@ -63,7 +63,7 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 62,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "yield-data_effects-of-neem-seed-oil-against-pests-and-d.csv"]

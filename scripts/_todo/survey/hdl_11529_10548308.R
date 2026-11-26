@@ -51,7 +51,7 @@ Tamasa Agronomy Panel Survey Tanzania 2017
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "TZ_TAMASA_APS_2016_Yield_MetaData_11July17 (Blurred).xlsx"]

@@ -53,7 +53,7 @@ Availability of multiple-stress tolerant maize is critical for improvement in ma
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 78,
-		carob_effort = 0.8,
+		carob_effort = 0,
 		notes = NA
 	)
 

@@ -47,7 +47,7 @@ Dry direct-seeded rice in no-till or tilled soil is an alternate option for tran
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 45,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	header_value <- function(cells, label) {

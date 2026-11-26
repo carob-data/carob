@@ -104,7 +104,7 @@ The cropping intensity and productivity of the coastal zone of Bangladesh is muc
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 42,
-		carob_effort = 1.2
+		carob_effort = 0
 	)
 
 	getf <- function(name) ff[basename(ff) == name]

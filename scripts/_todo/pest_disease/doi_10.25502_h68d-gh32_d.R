@@ -62,7 +62,7 @@ Diagnostic and surveillance network established for characterization, monitoring
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "cassava-root-rot-data.csv"]

@@ -54,7 +54,7 @@ The database contains location, weather, soil, management techniques, sorghum cr
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 1.0
+		carob_effort = 0
 	)
 
 	# Timestamps in these files are month/day/year (for example 6/10/2014).

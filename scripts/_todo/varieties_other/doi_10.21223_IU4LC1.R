@@ -47,7 +47,7 @@ Sensory attributes and consumer acceptance of sweetpotato and potato genotypes i
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	chr <- function(x) {

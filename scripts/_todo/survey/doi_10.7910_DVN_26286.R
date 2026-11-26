@@ -67,7 +67,7 @@ To assess the changes that took place in agriculture and socio-economic conditio
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Documentation of 2004 survey.xls"]

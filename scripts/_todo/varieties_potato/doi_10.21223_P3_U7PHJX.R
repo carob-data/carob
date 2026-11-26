@@ -43,7 +43,7 @@ Plant aboveground symptoms are not specific. Weak to growth and small, chlorotic
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Root Knot Nematode.xls"]

@@ -82,7 +82,7 @@ The project is implemented in five core countries (Ghana, Nigeria, Tanzania, Uga
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 1
+		carob_effort = 0
 	)
 
 	f2 <- ff[basename(ff) == "a_general.csv"]

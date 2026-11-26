@@ -52,7 +52,7 @@ The intensive, irrigated rice-wheat systems of the northwestern Indo-Gangetic Pl
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	acre <- 0.4046863

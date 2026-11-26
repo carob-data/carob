@@ -54,7 +54,7 @@ Soil characterization of diverse localities from Peru (1989-2012) with the follo
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "01_soil_data.xlsx"]

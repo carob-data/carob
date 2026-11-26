@@ -56,7 +56,7 @@ Trained Partner Enumerators to perform Data Collection: Central Luzon State Univ
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.3
+		carob_effort = 0
 	)
 
 	unlab <- function(d) {

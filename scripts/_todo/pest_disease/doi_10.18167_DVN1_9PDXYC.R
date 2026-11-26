@@ -49,7 +49,7 @@ Comparative experimental study of the effect of mechanical weeding compared to m
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 65,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CAM-VAL-2001-COT-AD.xlsx"]

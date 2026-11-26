@@ -37,7 +37,7 @@ Dataset for: Adoption and Effects of Orange-Fleshed Sweetpotato in Malawi (marke
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 35,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Market Survey.xlsx"]

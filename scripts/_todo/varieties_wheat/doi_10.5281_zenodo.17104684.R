@@ -42,7 +42,7 @@ Data on winter wheat from a long term trial on cereal production for the period 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "SLU_variety_trial_Winter_wheat_WHE_zenodo_2025_09_18.sqlite"]

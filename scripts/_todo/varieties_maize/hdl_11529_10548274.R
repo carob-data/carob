@@ -59,7 +59,7 @@ The Global Popcorn Project began in 2014, by asking how many popcorn accessions 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 50,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "PopcornDataset.873accs.2014.xlsx"]

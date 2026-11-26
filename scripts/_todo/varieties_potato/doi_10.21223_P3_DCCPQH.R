@@ -65,7 +65,7 @@ Field experiment to assess physiological performance of 24 different genotypes, 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Minicore_2017_v2.xlsx"]

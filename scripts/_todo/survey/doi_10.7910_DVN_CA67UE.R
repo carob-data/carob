@@ -66,7 +66,7 @@ The dataset includes the raw data of the published manuscript https://doi.org/10
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 45,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Rdata_Sustainability indicators_Odisha data.xlsx"]

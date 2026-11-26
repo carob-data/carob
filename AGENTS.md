@@ -129,7 +129,7 @@ meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
     carob_LLM = "LLM & version",
     carob_date = "2026-07-17",        # date first written (YYYY-MM-DD)
     carob_completion = 80,            # % of relevant variables standardized (0-100)
-    carob_effort = 0.1               # hours spent
+    carob_effort = 0                  # set to 0 for new scripts (human adds their time); do not change when editing existing scripts
 )
 ```
 
@@ -147,7 +147,7 @@ Rules and gotchas:
 - Do *not* fill in the name of the "carob_contributor". `carob_contributor` must be a **real person** (the human responsible for the script) — never an AI/LLM, a placeholder, or a GitHub handle. Leave it for that person to fill in; record the model you used under `carob_LLM` instead.
 - Use _your_ model name and version as "carob_LLM"
 - Estimate carob_completion (% of variables in the raw data that have been processed) 
-- Estimate carob_effort based on your actual time spent (typically a fraction of an hour)
+- When writing a new script, set `carob_effort = 0` so the human editor can add their own time. Do **not** change `carob_effort` when editing an existing script.
 
 ---
 
@@ -436,7 +436,7 @@ Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgemen
 - [ ] `## NOTES`/`## ISSUES` are correct — verified against the data and paper, not blindly trusted.
 - [ ] `## NOT PROCESSED` lists all possibly relevant raw variables that were not processed, and why.
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
-- [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort`; `NA` (not `""`) for absent fields; treatments and responses not swapped.
+- [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort` (`0` for new scripts; unchanged when editing existing scripts); `NA` (not `""`) for absent fields; treatments and responses not swapped.
 - [ ] Associated publication's Methods checked for location/management/design/units; values taken from it are commented and (if a paper exists).
 - [ ] All column names and categorical values match terminag; units correct (kg/ha yields, elemental N/P/K, ha areas, proper date formats).
 - [ ] Meaningful non-standard variables/values kept (named, not omitted or mapped to `"none"`/`"unknown"`); multiple values joined with `;`.

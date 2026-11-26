@@ -53,7 +53,7 @@ This dataset contains the three Streptomyces (CAI-21, CAI-26 and MMA-32) were ch
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f2 <- ff[basename(ff) == "Effect of Streptomyces strains on soil chemical.xlsx"]

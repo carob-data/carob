@@ -63,7 +63,7 @@ In total 30 tetraploid BIOT clones and 4 commercial varieties were evaluated in 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Tabla 12 Los resultados del porcentaje de materia seca, color de hojuelas, contenido de azúcares, análisis organolépticos en laboratorio.xlsx"]

@@ -50,7 +50,7 @@ Experimental design: row column design (6 rows x 8 columns per each treatment), 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Umbeluzi_2019_Moz1.xlsx"]

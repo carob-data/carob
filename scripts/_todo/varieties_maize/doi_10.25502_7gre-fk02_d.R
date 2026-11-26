@@ -62,7 +62,7 @@ Bioassay of parasitoids (natural enemies) of armyworms host range for biological
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 72,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "maize-evaluation-in-sao-tome.csv"]

@@ -54,7 +54,7 @@ International Potato Center (CIP) and partners collaborated to develop orange-fl
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 30,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Adop02- PartA_Household Composition, Roster - v1.xlsx"]

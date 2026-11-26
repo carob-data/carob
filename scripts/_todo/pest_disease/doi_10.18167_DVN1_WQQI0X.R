@@ -42,7 +42,7 @@ The aim of this study was to determine the efficiency of using Erianthus arundin
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 50,
-		carob_effort = 0.55
+		carob_effort = 0
 	)
 
 	parse_date <- function(x) {

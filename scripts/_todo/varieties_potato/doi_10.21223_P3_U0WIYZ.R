@@ -52,7 +52,7 @@ Bacterial wilt (BW) or brown rot is caused by the bacteria Ralstonia solanacearu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.65
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Standard Evaluation Trial for Bacterial Wilt Resistance Data.xls"]

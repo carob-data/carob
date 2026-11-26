@@ -59,7 +59,7 @@ The Mama SASHA baseline survey is a key part of a project evaluation strategy ai
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 20,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	from_labels <- function(x) {

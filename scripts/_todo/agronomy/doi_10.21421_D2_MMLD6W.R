@@ -57,7 +57,7 @@ This dataset contains, field trials were conducted for two cropping seasons in 2
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Effect of Plant growth-promoting Streptomyces sp 30 DAS, 60 DAS.xlsx"]

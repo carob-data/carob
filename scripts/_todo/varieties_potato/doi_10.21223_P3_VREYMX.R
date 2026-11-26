@@ -64,7 +64,7 @@ A survey and a field experiment were performed in Ecuador to: (1) determine the 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 65,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "Losses yield determination.xls"]

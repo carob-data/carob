@@ -46,7 +46,7 @@ Sweet potato (Ipomoea batatas L) is the main component in the diet of millions o
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 75,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data_storage_cooking_sweetpotato.xls"]

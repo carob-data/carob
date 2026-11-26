@@ -52,7 +52,7 @@ Conducted a nationwide survey to collect yield loss in 19 provinces across the m
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Landholdings.xls"]

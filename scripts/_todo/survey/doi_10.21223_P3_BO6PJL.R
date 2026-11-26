@@ -45,7 +45,7 @@ El presente estudio de base de la metodología Seguimiento y Evaluación Partici
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.35
+		carob_effort = 0
 	)
 
 	chr <- function(x) {

@@ -57,7 +57,7 @@ Weed pressure is a main biotic constraint in tropical agriculture. Cover crop mi
 		carob_contributor = NA,
 		carob_date = "202?-??-??",
 		carob_completion = 92,
-		carob_effort = 0.8
+		carob_effort = 0
 	)
 
 	code_crop <- c(

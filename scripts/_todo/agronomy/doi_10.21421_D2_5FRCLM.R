@@ -52,7 +52,7 @@ Five most promising FOC antagonistic isolates (CAI-24, CAI-121, CAI-127, KAI-32 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.25
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Copy of Evaluation of five potential antagonistic actinomycetes.xlsx"]

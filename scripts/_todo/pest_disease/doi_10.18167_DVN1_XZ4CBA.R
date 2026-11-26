@@ -50,7 +50,7 @@ Characterization of weed communities in the cotton rotation (cotton, maize, cass
 		carob_date = "202?-??-??",
 		carob_LLM = "Cursor Grok 4.7",
 		carob_completion = 60,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "MAD-JA2-1999-DIV-AD.xlsx"]

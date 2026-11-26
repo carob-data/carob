@@ -45,7 +45,7 @@ Potato seed degeneration threatens productivity of small-scale potato producers 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 85,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Seed_degeneration_in_a_Andean_highland_landscape.xlsx"]

@@ -72,7 +72,7 @@ The West African Sahel and dry savannahs cover a large northern sector of the su
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.5
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "plot.csv"]

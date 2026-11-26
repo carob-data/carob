@@ -60,7 +60,7 @@ A field study was carried out in the main potato-producing provinces of Ecuador 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.9
+		carob_effort = 0
 	)
 
 	parse_dmy <- function(x) {

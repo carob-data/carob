@@ -58,7 +58,7 @@ The experiment tests the effects of different amounts of lime (and thus soil pH)
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 90,
-		carob_effort = 0.2
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "crop_data.csv"]

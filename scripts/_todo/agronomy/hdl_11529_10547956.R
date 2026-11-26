@@ -48,7 +48,7 @@ Farmers' participatory researcher-managed long-term trials of aman rice in Madhu
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	as_date <- function(x) {

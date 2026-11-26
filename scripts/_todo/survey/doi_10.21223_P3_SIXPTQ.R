@@ -68,7 +68,7 @@ The baseline survey is designed with an aim of determining the level of communit
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 25,
-		carob_effort = 0.45
+		carob_effort = 0
 	)
 
 	num <- function(x) {

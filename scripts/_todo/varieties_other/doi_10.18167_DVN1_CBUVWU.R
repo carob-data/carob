@@ -76,7 +76,7 @@ The 'Plantain-Optim' dataset contains growth, development and yield data of 405 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 60,
-		carob_effort = 0.7
+		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "optim_mp-harvest.txt"]

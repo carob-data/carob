@@ -54,7 +54,7 @@ Enhanced breeding for increased productivity and improved quality in West Africa
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 70,
-		carob_effort = 0.8,
+		carob_effort = 0,
 		notes = NA
 	)
 

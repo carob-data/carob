@@ -43,7 +43,7 @@ CIMMYT and Universidad Zamorano carried out a study across five departments of H
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 35,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Caracterizacion_de_la_mecanizacion_en_Honduras_database_revJPE.xlsx"]

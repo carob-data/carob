@@ -40,7 +40,7 @@ Farmer participatory intercropping of leafy vegetables in maize, Purnea, Bihar, 
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 55,
-		carob_effort = 0.6
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Inter-cropping 2015-16-LT-all nodes-Purnea.xlsx"]

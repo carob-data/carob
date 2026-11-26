@@ -47,7 +47,7 @@ Household maize area and grain production in three palikas of Nepal.
 		carob_date = "202?-??-??",
 		carob_LLM = "Gemini 4 Neon",
 		carob_completion = 40,
-		carob_effort = 0.4
+		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CRP_Maize_NEPAL_HH_DATA_Excel.xlsx"]
