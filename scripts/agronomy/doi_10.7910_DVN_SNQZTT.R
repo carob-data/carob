@@ -112,7 +112,7 @@ Drought is the major constraint to rainfed rice productivity in South Asia, but 
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE)
 	
-	###  Keep tension water table as long variable
+	###  Keep tensiom and water table as long variable
 	water_T <- data.frame(
 	  trial_id = paste(r1$location, r1$Year, sep="_"),
 	  DAP = r1$DAS,
