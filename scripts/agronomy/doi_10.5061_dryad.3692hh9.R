@@ -1,4 +1,8 @@
-# R script for "carob" 	
+# R script for "carob" 
+
+##ISSUE
+## longitude and latitude of three sites  (""NMusGata14b"  "NBurKiv2015A" "NBURRuh15b" ) are missing from publication 
+##  201 rows have missing  location and geo coordinates (longitude and latitude) 
 
 carob_script <- function(path) {
    
