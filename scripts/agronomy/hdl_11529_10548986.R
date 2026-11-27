@@ -379,6 +379,9 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$adm1[d$adm1 %in% "Distrito Federal"] <- "Ciudad De Mexico"
 	d$adm1[is.na(d$adm1) & d$adm2 %in% "Tepeapulco"] <- "Hidalgo"
 	
+	d$geo_source <- NA_character_
+	d$geo_uncertainty <- NA_real_
+	
 	# Cardenas, Tabasco: household 41306 has coordinates in Hidalgo;
 	# replaced with the mean of the other Cardenas source points
 	i   <- d$adm1 %in% "Tabasco" & d$adm2 %in% "Cárdenas"
@@ -387,6 +390,8 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$longitude[bad] <- mean(d$longitude[ok])
 	d$latitude[bad]  <- mean(d$latitude[ok])
 	d$geo_from_source[bad] <- FALSE
+	d$geo_source[bad] <- "municipality mean"
+	d$geo_uncertainty[bad] <- 15000
 	
 	# missing coordinates: mean of other samples in the same municipality
 	miss <- is.na(d$longitude) | is.na(d$latitude)
@@ -394,6 +399,9 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	d$k2 <- norm(d$adm2)
 	d <- fill_geo(d, c("country","k1","k2"))
 	d$k1 <- d$k2 <- NULL
+	filled_mean <- miss & !is.na(d$longitude) & !is.na(d$latitude)
+	d$geo_source[filled_mean] <- "municipality mean"
+	d$geo_uncertainty[filled_mean] <- 15000
 	
 	# municipalities with no coordinates anywhere in the data:
 	# municipal seat / municipality coordinates from Wikipedia
@@ -415,8 +423,11 @@ The integrated BEM and e-Agrology dataset encompasses historical data from 2012 
 	# https://en.wikipedia.org/wiki/Ixtapaluca
 	
 	m <- match(paste(norm(d$adm1), norm(d$adm2)), paste(norm(geo$adm1), norm(geo$adm2)))
-	j <- is.na(d$longitude) & !is.na(m); d$longitude[j] <- geo$lon[m[j]]
-	j <- is.na(d$latitude)  & !is.na(m); d$latitude[j]  <- geo$lat[m[j]]
+	j <- (is.na(d$longitude) | is.na(d$latitude)) & !is.na(m)
+	d$longitude[j] <- geo$lon[m[j]]
+	d$latitude[j]  <- geo$lat[m[j]]
+	d$geo_source[j] <- "Wikipedia"
+	d$geo_uncertainty[j] <- 15000
 	
 	d$geo_from_source[miss] <- FALSE
 	carobiner::write_files(path, meta, d)

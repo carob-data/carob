@@ -8,27 +8,20 @@
 # Raw images (Imagenes_Moz2.rar, 303 MB) not downloaded; coordinates from Image_description_Moz2.xlsx.
 
 ## ISSUES
-# Yield, vine and root weights are in the paper (BLUPs only) but not in the data; yield left NA. Keep in varieties without yield?
-# Genotype spelling variants harmonised (9 names); check the mapping in the code.
-# After that, 122 names (paper: 120); 5 names in >4 plots, 7 in <4 plots; kept as reported.
-# Urea rate not reported: N_fertilizer NA.
-# 5 plots have negative CI red-edge (NIR < red-edge reflectance); kept as reported.
+# Yield, vine and root weights are in the paper (BLUPs only) but not in the data; yield and yield_moisture are omitted.
+# Genotype spelling variants harmonised (10 names); check the mapping in the code.
+# After that, 121 names (paper: 120); some clones appear in >4 or <4 plots; kept as reported.
+# Urea rate not reported: N_fertilizer is NA.
+# 5 plots have negative chlorophyll_index (NIR < red-edge reflectance); kept as reported (within valid_min = -1).
 # Plot area: dataset says 25 m2, paper gives 5.1 x 4.5 m (22.95 m2); paper value used.
 # Variety types (checks, parents, landraces) are in paper Table S2 (not available); only the checks and landraces named in the description are set.
 # Flight date: sheet name gives 3 Oct 2019, but 190 DAP from planting (28 Mar, day 0) is 4 Oct; date from the sheet name.
 
 ## NEW VARIABLES
-# canopy_temp: mean canopy temperature of the plot from UAV thermal image, C
-# canopy_temp_sd: standard deviation of canopy temperature pixels in the plot, C
-# NDVI_sd: standard deviation of NDVI pixels in the plot, unitless
-# NDVI_green: mean green NDVI (NIR - green)/(NIR + green) of the plot, unitless
-# NDVI_green_sd: standard deviation of green NDVI pixels in the plot, unitless
-# CI_rededge: mean chlorophyll red-edge index (NIR/RedEdge - 1) of the plot, unitless
-# CI_rededge_sd: standard deviation of CI red-edge pixels in the plot, unitless
-# irrigation_stop: days after planting from which irrigation was withheld (LSD only), days
-# is_check: TRUE for the check clones named in the dataset description (Resisto, 199062.1 and the 2 landraces); NA for others
+# irrigation_stop_: days after planting from which irrigation was withheld (LSD only), days
 
 ## NOT PROCESSED
+# Within-plot pixel standard deviations (stdev) of canopy_temperature, NDVI, NDVI_green, and chlorophyll_index (UAV raster diagnostics).
 # Image_description_Moz2.xlsx: flight altitude, image resolution and size (image metadata).
 # Paper: BLUPs per genotype of TRW, CRW, VW, dT, PCI, RCI (model outputs, not plot data).
 # Paper: irrigation "twice a week" (dataset description); amounts are in Table S3 (not available).
@@ -45,7 +38,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 
 	uri <- "doi:10.21223/2GJMNA"
 	group <- "varieties_other"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
 		data_organization = "CIP",
@@ -54,7 +47,7 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		design = "resolvable row-column; 2 reps per water regime",
 		data_type = "experiment",
 		treatment_vars = "variety;stress",
-		response_vars = "canopy_temp;NDVI;NDVI_green;CI_rededge;ground_cover",
+		response_vars = "canopy_temperature;NDVI;NDVI_green;chlorophyll_index;ground_cover",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
@@ -63,11 +56,9 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		carob_effort = 0.5
 	)
 
-	f1 <- ff[basename(ff) == "Umbeluzi_2019_Moz2.xlsx"]
+	f <- ff[basename(ff) == "Umbeluzi_2019_Moz2.xlsx"]
+	r <- carobiner::read.excel.hdr(f, skip=2, hdr=1)   # sheet "031019": plot design and UAV indices (two header rows)
 
-	r1 <- carobiner::read.excel.hdr(f1, skip=2, hdr=1)   # sheet "031019": plot design and UAV indices (two header rows)
-
-	## d1 from r1
 	# genotype spelling variants; each fix fills a treatment x rep where the name was missing
 	vfix <- c(
 		"19906.099999999999" = "199062.1",   # Excel number, missing in OI rep 2
@@ -78,40 +69,39 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 		"MUASG15017-16" = "MUSG15017-16",
 		"MUSG016043-15" = "MUSG16043-15",
 		"MGSG12046-16" = "MUSG12046-16",     # MUSG spelling in 3 of 4 plots
+		"MUSG151108-18" = "MUSG15108-18",    # doubled '1' typo in OI rep 1 (completes 2x4 = 8 plots)
 		"MUSG1614-10" = "MUSG16114-10"       # OI plots; MUSG16114-10 only in the LSD plots
 	)
-	variety <- r1$Genotype
+	variety <- trimws(as.character(r$Genotype))
 	tofix <- variety %in% names(vfix)
 	variety[tofix] <- vfix[variety[tofix]]
-	# measurements: sheet name "031019" (3 Oct 2019); image file says 190 DAP (= 4 Oct, as the dictionary counts planting as day 0)
-	d1 <- data.frame(
-		plot_id = paste0(ifelse(r1$Treatment == "Optimum Irrigation", "OI", "LSD"), "_", r1$PLOT),
-		plot_row = as.integer(r1$Row),
-		plot_columns = as.integer(r1$Column),
-		rep = as.integer(r1$Rep),
+
+	is_oi <- r$Treatment == "Optimum Irrigation"
+
+	# measurements: sheet name "031019" (3 Oct 2019); image file says 190 DAP (= 4 Oct, as dictionary counts planting as day 0)
+	d <- data.frame(
+		trial_id = "Umbeluzi_2019_B",
+		plot_id = paste0(ifelse(is_oi, "OI", "LSD"), "_", r$PLOT),
+		plot_row = as.integer(r$Row),
+		plot_columns = as.integer(r$Column),
+		rep = as.integer(r$Rep),
+		crop = "sweetpotato",
 		variety = variety,
-		treatment = ifelse(r1$Treatment == "Optimum Irrigation", "OI", "LSD"),   # "Terminal drought" = LSD in the paper
-		stress = ifelse(r1$Treatment == "Optimum Irrigation", "none", "drought"),
-		irrigation_stop = ifelse(r1$Treatment == "Optimum Irrigation", NA, 110L),  # irrigation withheld from 110 DAP
+		# landraces and check clones named in the dataset description; other variety types are in paper Table S2
+		variety_type = ifelse(variety %in% c("Xitsekele", "Xiadlaxakau"), "landrace",
+			ifelse(variety %in% c("Resisto", "199062.1"), "check", NA_character_)),
+		treatment = ifelse(is_oi, "OI", "LSD"),   # "Terminal drought" = LSD in the paper
+		stress = ifelse(is_oi, "none", "drought"),
+		irrigation_stop_ = ifelse(is_oi, NA_integer_, 110L),  # irrigation withheld from 110 DAP
 		date = "2019-10-03",
 		DAP = 190L,
-		canopy_temp = r1$Canopy.Temperature.C._mean,          # C
-		canopy_temp_sd = r1$stdev,
-		NDVI = r1$NDVI_mean,
-		NDVI_sd = r1$stdev.1,
-		NDVI_green = r1$NDVIgreen_mean,
-		NDVI_green_sd = r1$stdev.2,
-		CI_rededge = r1$CI_mean,
-		CI_rededge_sd = r1$stdev.3,
-		ground_cover = r1$Coberture_.pct                      # %, green pixels / plot pixels
+		canopy_temperature = as.numeric(r$Canopy.Temperature.C._mean),   # C
+		NDVI = as.numeric(r$NDVI_mean),
+		NDVI_green = as.numeric(r$NDVIgreen_mean),
+		chlorophyll_index = as.numeric(r$CI_mean),
+		ground_cover = as.numeric(r$Coberture_.pct)                      # %, green pixels / plot pixels
 	)
 
-	d <- d1
-	d$trial_id <- "Umbeluzi_2019_B"
-	d$crop <- "sweetpotato"
-	# landraces named in the dataset description; other variety types are in paper Table S2
-	d$variety_type <- ifelse(d$variety %in% c("Xitsekele", "Xiadlaxakau"), "landrace", NA)
-	d$is_check <- ifelse(d$variety %in% c("Resisto", "199062.1", "Xitsekele", "Xiadlaxakau"), TRUE, NA)   # "check clones such as" (description); list may be incomplete
 	d$country <- "Mozambique"
 	d$adm1 <- "Maputo"
 	d$adm2 <- "Boane"
@@ -149,9 +139,6 @@ The trial had 120 clones,  the majority begin parents used in crossing blocks at
 	d$weeding_done <- TRUE
 	d$weeding_implement <- "hoe"
 	d$yield_part <- "roots"
-	d$yield <- as.numeric(NA)            # not reported in the data
-	d$yield_moisture <- as.numeric(NA)   # not reported
-	d$yield_isfresh <- NA                # no yield in the data (paper yields are fresh weights)
 
 	carobiner::write_files(path, meta, d)
 }

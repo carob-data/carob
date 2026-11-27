@@ -9,10 +9,10 @@
 # Family labour (018) and hired and exchange labour (019) are person-days per plot x season x crop. plot_labour_* are totals for the plot; labour, weeding_labour and fertilizer_labour are per ha.
 # Crop sales (017) are per household x season x crop. crop_price is the reported price per sale unit converted to TZS/kg. crop_amount_sold is only given when the household grew the crop on one plot in that season.
 # Harvests and sales were converted to kg with the factors in "conversion to kg" below (see ISSUES 2).
-# Fertilizer types written under "other" keep their original names (cleaned spelling). Nutrient contents used: urea 46% N; DAP 18% N and 46% P2O5 (20.1% P); CAN 26% N. Nutrient amounts are NA for other products.
+# Fertilizer types written under "other" were standardized to terminag terms (CAN, DAS, KNO, DAP, NPK, NPS, Phosphate rock, unknown). Nutrient contents used: urea 46% N; DAP 18% N and 46% P2O5 (20.1% P); CAN 26% N; DAS 21% N and 24% S; KNO 13% N and 46% K2O (38.2% K). Nutrient amounts are NA for other products.
 # "manure", "organic manure" and "samadi" (Swahili for manure) written as a fertilizer type were recorded as OM_used.
 # Fertilizer and manure amounts and costs are per plot in the source and were divided by the area planted.
-# Irrigation: frequency per day, week, two weeks or month was converted to the interval between irrigations in days; frequency per season is irrigation_number.
+# Irrigation: frequency per day, week, two weeks or month was converted to the interval between irrigations in days (irrigation_interval); frequency per season is irrigation_number. One implausible entry (7 times/day = 0.143 days) was set to NA.
 # The region is not in the data files. Kilosa and Mvomero are districts of Morogoro Region.
 
 # No coordinates in the source. Village coordinates were looked up with carobiner::geocode (Nominatim) and still need to be verified on a map. "Chanzulu" was found as "Chanzuru". "Zombolumbo" was not found and has the coordinates of Zombo ward.
@@ -22,22 +22,13 @@
 ## ISSUES
 # 2. Harvests and sales in tins, litres and bushels (36.37 L) were converted with a bulk density by crop, and "bags" without a stated weight with a bag weight by crop. These factors are proposed values, not from the survey: please check. They are only given for grain, pulse and oilseed crops and for tomato, potato and onion. Other crops in these units, and bunches and pieces, have no yield.
 # 6. Household altitude (alt) has implausible values (-613 to 2803 m; village medians are 349 to 774 m). Values below 200 m or above 1000 m were set to NA.
-# 10. Some values are implausible and were not changed: very high yields for small areas, and a few fertilizer amounts above 1000 kg/ha. Some sale prices are very low or very high for the unit.
-# 11. Irrigation durations above 24 hours were set to NA.
-# 12. "chinese spinach" and "african eggplant" were added to the crop vocabulary by the reviewer; "bulbs" (onion) needs to be in the yield_part vocabulary.
+# 10. Some values are implausible and were not changed: very high yields for small areas (e.g. maize 42.7 t/ha, common bean 25.0 t/ha, rice 23.7 t/ha from 20 L tins/bags on small plots), and a few high fertilizer amounts. Some sale prices are very low or very high for the unit.
+# 11. Irrigation durations above 24 hours and intervals below 0.25 days were set to NA.
 # 13. Some amounts sold are larger than the harvest (up to 8,000,000 kg), probably money entered as quantity. crop_amount_sold and crop_price were set to NA for these (sold > 1.1 x harvest, or > 50 t when the harvest is unknown).
-
-## NEW VARIABLES
-# Provisional water variables, proposed in controvoc/terminag PR #15 (without the trailing underscore):
-# irrigation_interval_: days between irrigation events
-# irrigation_duration_: average duration of one irrigation event (hours)
-# waterlogging_: Was the plot waterlogged? (015)
-# well_type_: type of well when the source is groundwater
-# irrigation_lifting_: method of obtaining the water
 
 ## NOT PROCESSED
 # Soil fertility, slope, erosion, distance and decision maker (012); seed price is not asked (014); groundwater depth (015) is only a class (<7, 8-50, >50 m).
-# Pumps (016): pumps are recorded per household and the plots they serve are coded as concatenated plot numbers ("010203"); flow rate is mostly 88 (don't know). The pump type is covered by irrigation_lifting_.
+# Pumps (016): pumps are recorded per household and the plots they serve are coded as concatenated plot numbers ("010203"); flow rate is mostly 88 (don't know). The pump type is covered by irrigation_lifting.
 # Crop residue, feed, seed, gift and own-consumption amounts (017). Wages (019).
 # Household-level modules that do not fit the plot x crop records: livestock (020, 021), soil conservation (022), diet diversity and food security (023-025), WASH (026, 027), disease and anthropometry (028, 029), income, social protection and expenditure (030-034), shocks (035), WEAI (038-040), and the community survey.
 
@@ -242,13 +233,17 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 		pest_cost = num(r4$d6_)
 	)
 
-	# fertilizer types written under "other": original names, with spelling variants merged
-	fnames <- c(can = "CAN", kan = "CAN", npk = "NPK",
-		minjingu = "Minjingu", mijingu = "Minjingu",
-		"minjingu mazao" = "Minjingu Mazao", "minjigu mazao" = "Minjingu Mazao",
-		booster = "booster", boster = "booster", buster = "booster", busta = "booster",
-		yaramila = "YaraMila", yalamila = "YaraMila", yala = "YaraMila",
-		kani = "kani", keni = "kani", sa = "SA", "malti k" = "Multi-K", "99" = "unknown")
+	# fertilizer types written under "other" mapped to terminag values_fertilizer_type.csv
+	# local/brand names: kani/keni = CAN; depo = DAP; sa = DAS (ammonium sulfate); malti k = KNO (Multi-K);
+	# minjingu = Phosphate rock; minjingu mazao = NPS; yaramila/yala = NPK;
+	# booster/boster/buster/busta, bioforand, vigi maks, carreti, 99 = unknown
+	fnames <- c(can = "CAN", kan = "CAN", kani = "CAN", keni = "CAN",
+		depo = "DAP", npk = "NPK", sa = "DAS", "malti k" = "KNO",
+		minjingu = "Phosphate rock", mijingu = "Phosphate rock",
+		"minjingu mazao" = "NPS", "minjigu mazao" = "NPS",
+		yaramila = "NPK", yalamila = "NPK", yala = "NPK",
+		booster = "unknown", boster = "unknown", buster = "unknown", busta = "unknown",
+		bioforand = "unknown", "vigi maks" = "unknown", carreti = "unknown", "99" = "unknown")
 	manures <- c("manure", "organic manure", "samadi")
 	ftype <- function(x, other) {
 		other[is.na(other)] <- ""
@@ -256,8 +251,7 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 		out[which(x == "Urea")] <- "urea"
 		out[which(x == "DAP")] <- "DAP"
 		i <- which(x == "Other (Specify)")
-		out[i] <- ifelse(other[i] %in% names(fnames), unname(fnames[other[i]]), other[i])
-		out[which(x == "Other (Specify)" & other == "")] <- "unknown"
+		out[i] <- ifelse(other[i] %in% names(fnames), unname(fnames[other[i]]), "unknown")
 		out[which(x == "Other (Specify)" & other %in% manures)] <- "none"
 		out[grep("^Did not use", x)] <- "none"
 		out
@@ -284,10 +278,10 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 	k1 <- fkg(p$q1, p$u1, p$u1o)
 	k2 <- fkg(p$q2, p$u2, p$u2o)
 
-	Nc <- c(urea = 46, DAP = 18, CAN = 26)
-	# DAP has 46% P2O5; P = P2O5 / 2.29
-	Pc <- c(urea = 0, DAP = 20.1, CAN = 0)
-	Kc <- c(urea = 0, DAP = 0, CAN = 0)
+	Nc <- c(urea = 46, DAP = 18, CAN = 26, DAS = 21, KNO = 13)
+	# DAP has 46% P2O5 (P = P2O5 / 2.29); KNO has 46% K2O (K = K2O / 1.2051)
+	Pc <- c(urea = 0, DAP = 20.1, CAN = 0, DAS = 0, KNO = 0)
+	Kc <- c(urea = 0, DAP = 0, CAN = 0, DAS = 0, KNO = 38.2)
 
 	p$fertilizer_used <- t1 != "none" | t2 != "none"
 	p$fertilizer_type <- ifelse(t2 == "none" | t2 == t1, t1, paste(t1, t2, sep = ";"))
@@ -351,16 +345,19 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 		irrigation_source = low(txt(r5$e2_)),
 		well = txt(r5$e3_),
 		method = txt(r5$e5_),
-		irrigation_lifting_ = low(txt(r5$e6_)),
+		lifting = low(txt(r5$e6_)),
 		freq = num(r5$e7a_),
 		per = txt(r5$e7b_),
 		irrigation_fulfullment = low(txt(r5$e8_)),
 		dur = num(r5$e9a_),
 		dunit = txt(r5$e9b_),
-		waterlogging_ = txt(r5$e10_) == "Yes"
+		waterlogging = txt(r5$e10_) == "Yes"
 	)
+	g$irrigation_source[which(g$irrigation_source == "harvested water")] <- "harvested rainwater"
 	g$irrigation_source[which(g$irrigation_source == "other (specify)")] <- NA
-	g$irrigation_lifting_[which(g$irrigation_lifting_ == "other (specify)")] <- NA
+	lift_map <- c("diesel pump" = "diesel pump", "gravity" = "gravity",
+		"hand bucket/hose" = "manual", "hand/foot pump" = "manual pump")
+	g$irrigation_lifting <- unname(lift_map[g$lifting])
 
 	methods <- c(
 		"Bucket/hose/watering can" = "manual", "Surface/flooding" = "surface",
@@ -371,25 +368,25 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 	g$irrigation_method[which(!g$irrigated)] <- "none"
 
 	wells <- c("Drilled" = "borehole", "Hand-dug" = "hand-dug well")
-	g$well_type_ <- unname(wells[g$well])
-	g$well_type_[which(g$irrigation_source != "groundwater")] <- NA
+	g$well_type <- unname(wells[g$well])
+	g$well_type[which(g$irrigation_source != "groundwater")] <- NA
 
 	# times per period to days between irrigations
 	days <- c(Day = 1, Week = 7, "Two weeks" = 14, Month = 30)
-	g$irrigation_interval_ <- unname(days[g$per]) / g$freq
-	g$irrigation_interval_[which(g$freq <= 0)] <- NA
+	g$irrigation_interval <- unname(days[g$per]) / g$freq
+	g$irrigation_interval[which(g$freq <= 0 | g$irrigation_interval < 0.25 | g$irrigation_interval > 60)] <- NA
 	g$irrigation_number <- as.integer(ifelse(g$per == "Season" & g$freq > 0, g$freq, NA))
 
-	g$irrigation_duration_ <- ifelse(g$dunit == "Hours", g$dur, NA)
+	g$irrigation_duration <- ifelse(g$dunit == "Hours", g$dur, NA)
 	i <- which(g$dunit == "Minutes")
-	g$irrigation_duration_[i] <- g$dur[i] / 60
-	g$irrigation_duration_[which(g$irrigation_duration_ <= 0 | g$irrigation_duration_ > 24)] <- NA
+	g$irrigation_duration[i] <- g$dur[i] / 60
+	g$irrigation_duration[which(g$irrigation_duration <= 0 | g$irrigation_duration > 24)] <- NA
 
 	g$irrigation_fulfullment[which(!g$irrigated | g$irrigation_fulfullment %in% c("", "na"))] <- NA
 
-	g <- g[, c(keys, "irrigated", "irrigation_source", "irrigation_method", "irrigation_lifting_",
-		"irrigation_number", "irrigation_interval_", "irrigation_duration_", "irrigation_fulfullment",
-		"waterlogging_", "well_type_")]
+	g <- g[, c(keys, "irrigated", "irrigation_source", "irrigation_method", "irrigation_lifting",
+		"irrigation_number", "irrigation_interval", "irrigation_duration", "irrigation_fulfullment",
+		"waterlogging", "well_type")]
 	d <- merge(d, g, by = keys, all.x = TRUE)
 
 ### labour (person-days per plot x season x crop)
@@ -477,10 +474,13 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 		longitude = c(37.0734, 37.0457, 37.0297, 37.1397, 37.0288, 36.8992, 37.1406,
 				36.9222, 37.4401, 37.2409, 37.5532, 37.5616, 37.6099, 37.5718),
 		latitude = c(-6.7991, -6.7624, -6.8310, -6.7862, -6.7976, -6.9828, -6.6868,
-				-6.9601, -7.0300, -7.0631, -6.2401, -6.8923, -6.9319, -6.9111)
+				-6.9601, -7.0300, -7.0631, -6.2401, -6.8923, -6.9319, -6.9111),
+		geo_uncertainty = c(5000, 5000, 5000, 5000, 5000, 5000, 5000,
+				10000, 5000, 5000, 5000, 5000, 5000, 5000)
 	)
 	d <- merge(d, geo, by = "location", all.x = TRUE)
 	d$geo_from_source <- FALSE
+	d$geo_source <- "Nominatim"
 
 ### yield part
 	parts <- c(
@@ -497,8 +497,6 @@ The Feed the Future Innovation Lab on Small-Scale Irrigation (FTF-ILSSI) is a co
 	)
 	d$yield_part <- unname(parts[d$crop])
 	d$yield_part[d$leafy] <- "leaves"
-	d$yield_moisture <- as.numeric(NA)
-	d$yield_isfresh <- NA
 
 	d$plot_id <- paste(d$parcel, d$plot, sep = "-")
 	d$on_farm <- TRUE

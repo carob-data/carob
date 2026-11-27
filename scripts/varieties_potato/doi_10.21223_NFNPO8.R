@@ -71,8 +71,10 @@ The objective of this study was to assess the yield of 29 potato clones during t
 	## soil (NOTES 4)
 	s <- carobiner::read.excel(f, sheet="Soil_analysis")
 	sv <- function(abb) as.numeric(s$Data1[trimws(s$Abbreviture) == abb])
+	d$soil_sample_date <- trimws(as.character(s$Data1[trimws(s$Abbreviture) == "DATE"]))
 	d$soil_pH <- sv("pH")
 	d$soil_EC <- sv("EC")
+	d$soil_CaCO3 <- sv("CaCO3") * 10
 	d$soil_SOM <- sv("MO")
 	d$soil_P <- sv("P")
 	d$soil_K <- sv("K")

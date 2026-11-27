@@ -62,7 +62,7 @@ The objective of this study was to assess early yield and heat tolerance for 38 
 	d <- process(f)
 
 	## yield from the field sheet (ISSUES 1 and 2)
-	r <- carobiner::read.excel(f, sheet="original")
+	r <- carobiner::read.excel(f, sheet="original", na=c("", "-"))
 	cip <- c("C95.276"="CIP396311.1", "C99.551"="CIP399101.1", "CANCHAN"="CIP380389.1",
 		"Maria Bonita"="CIP388676.1", "PERRICHOLI"="CIP374080.5", "REICHE"="CIP388611.22",
 		"REVOLUCION"="CIP720043", "TOMASA"="CIP720072", "UNICA"="CIP392797.22",
@@ -74,7 +74,7 @@ The objective of this study was to assess early yield and heat tolerance for 38 
 	## (e.g. "301044.35999999999")
 	id[!i] <- paste0("CIP", round(as.numeric(id[!i]), 2))
 	r <- data.frame(rep = as.integer(r$Rep), variety_code = id,
-		yield = suppressWarnings(as.numeric(r$Peso)) / 1000 * 10000 / d$plot_area[1])
+		yield = as.numeric(r$Peso) / 1000 * 10000 / d$plot_area[1])
 
 	d$yield <- NULL
 	d <- merge(d, r, by=c("rep", "variety_code"), all.x=TRUE)

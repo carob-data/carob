@@ -8,7 +8,7 @@
 # Long table: 1157 LAI, soil water and N records, plus the soil profile (6 layers, Oct 2021) for each record; wth: station and rain gauges.
 
 ## ISSUES
-# Grain yield and biomass column labels are swapped in pLER_LER (checked with pLER columns and paper); swapped back.
+# Grain yield and biomass column labels are swapped in pLER_LER (checked with pLER columns and paper); swapped back. Two maize plots (HOND_2021-22 SC403_CPA, SMAN_2022-23 SC403) still have yield > dmy_total after swapping; kept as reported.
 # No yield in the data for the unfertilised control and late-sown sole cowpea (46 records), and 16 others; NA.
 # Season 1 intercropped maize has one ammonium nitrate split (46.5 kg N/ha) in the data; paper says 80. Kept data.
 # Intercropped cowpea records get 0 N, P, K: fertilizer was applied on the maize rows. Keep?
@@ -24,7 +24,7 @@
 # irrigated not stated (rainfed implied by the water stress analysis); left NA.
 
 ## NEW VARIABLES
-# Ndfa: N in cowpea aboveground biomass derived from the atmosphere (15N natural abundance), % (checked: N_fixation = kg/ha, crop_N = kg/ha)
+# Ndfa_: N in cowpea aboveground biomass derived from the atmosphere (15N natural abundance), % (checked: N_fixation = kg/ha, crop_N = kg/ha)
 
 ## NOT PROCESSED
 # pLER_LER: simulated (STICS) water and N stress factors; pLER and LER (computed from the yields); planting day numbers (repeat Crop_management).
@@ -53,7 +53,7 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 		design = "one unreplicated plot per treatment per field",
 		data_type = "on-farm experiment",
 		treatment_vars = "variety;intercrops;planting_date;N_fertilizer;P_fertilizer;K_fertilizer",
-		response_vars = "yield;dmy_total;N_fixation;Ndfa;crop_N;LAI;soil_SWC",
+		response_vars = "yield;dmy_total;N_fixation;Ndfa_;crop_N;LAI;soil_SWC",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
@@ -64,7 +64,6 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 
 	f1 <- ff[basename(ff) == "Kwenda_et_al_data_vf.xlsx"]
 
-	r1a <- carobiner::read.excel(f1, sheet="Legend")                      # codebook
 	r1b <- carobiner::read.excel(f1, sheet="Sites")                       # coordinates of fields and weather station
 	r1c <- carobiner::read.excel(f1, sheet="Treatments")                  # treatment codes per field, soil water tube depth
 	r1d <- carobiner::read.excel(f1, sheet="Soil_results")                # soil profile per field (Oct 2021)
@@ -193,7 +192,7 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 		treatment = r1h$treatment,
 		crop = tolower(r1h$Plant),
 		date = r1h$Date,
-		Ndfa = r1h[["%Ndfa"]],                          # cowpea at peak flowering
+		Ndfa_ = r1h[["%Ndfa"]],                         # cowpea at peak flowering
 		N_fixation = r1h$N2_fixation,                   # kg/ha, cowpea aboveground biomass at peak flowering
 		crop_N = r1h$N_uptake                           # kg/ha, aboveground N uptake (flowering or maturity)
 	)
@@ -249,6 +248,8 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	d$trial_id <- paste(d$location, ifelse(d$season == "Season 1", "2021-22", "2022-23"), sep="_")
 	d$plot_id <- paste(d$trial_id, d$treatment, sep="_")
 	d$season <- NULL
+	d <- d[order(d$trial_id, d$plot_id, d$crop), ]
+	rownames(d) <- NULL
 	d$record_id <- seq_len(nrow(d))
 	d$country <- "Zimbabwe"
 	d$adm1 <- "Mashonaland East"
@@ -258,6 +259,8 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	d$is_survey <- FALSE
 	d$irrigated <- NA                                # not stated in the paper
 	d$soil_type <- "Arenosol"                       # paper: sandy soils (Arenosols)
+	d$plot_length <- 6
+	d$plot_width <- 5
 	d$plot_area <- 30                                # 6 x 5 m
 	d$yield_part <- ifelse(d$crop == "maize", "grain", "seed")
 	d$yield_moisture <- 0                            # oven dried at 65 C (paper)
@@ -265,7 +268,7 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 
 ## long table: LAI, soil water, N uptake and N fixation
 	dlong <- merge(d1i, d1h, by=c("row", "location", "season", "treatment", "crop", "date"))
-	vars <- c("LAI", "soil_SWC", "Ndfa", "N_fixation", "crop_N")
+	vars <- c("LAI", "soil_SWC", "Ndfa_", "N_fixation", "crop_N")
 	dlong <- dlong[rowSums(!is.na(dlong[, vars])) > 0, ]
 	dlong$trial_id <- paste(dlong$location, ifelse(dlong$season == "Season 1", "2021-22", "2022-23"), sep="_")
 	dlong$plot_id <- paste(dlong$trial_id, dlong$treatment, sep="_")
@@ -274,17 +277,20 @@ These are the raw data of the paper 'Intercrop overyielding is maintained under 
 	dlong$depth_bottom[is.na(dlong$soil_SWC)] <- NA
 	dlong$depth_top <- ifelse(is.na(dlong$soil_SWC), NA, 0)
 	dlong <- dlong[order(dlong$record_id, dlong$date, dlong$row), ]
-	dlong$order <- ave(dlong$record_id, dlong$record_id, dlong$date, FUN=seq_along)   # > 1 only for duplicated rows
+	dlong$order <- as.integer(ave(dlong$record_id, dlong$record_id, dlong$date, FUN=seq_along))   # > 1 only for duplicated rows
 	dlong <- dlong[, c("record_id", "date", "order", vars, "depth_top", "depth_bottom")]
 	dlong$date <- as.character(as.Date(dlong$date))
 	# soil profile of each field, repeated for every record of that field (same plots in both seasons)
 	dsoil <- merge(d[, c("record_id", "location")], d1d, by="location")
 	dsoil$location <- NULL
 	dlong <- carobiner::bindr(dlong, dsoil)
+	rownames(dlong) <- NULL
 
 ## weather table
 	wth <- merge(d1e, d1b, by="location", all.x=TRUE)
 	wth$country <- "Zimbabwe"
+	wth <- wth[order(wth$location, wth$date), ]
+	rownames(wth) <- NULL
 
 	carobiner::write_files(path, meta, d, long=dlong, wth=wth)
 }

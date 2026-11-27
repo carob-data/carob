@@ -34,7 +34,7 @@ The dataset contains yields and field management data of two adjacent randomised
 	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=5, minor=NA,
-		data_organization = "Th\u00fcnen",
+		data_organization = "Thünen",
 		publication = NA,
 		project = "OrganicYieldsUP",
 		design = "RCBD",

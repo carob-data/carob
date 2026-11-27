@@ -185,26 +185,35 @@ carob_script <- function(path) {
 
 	d <- unique(d)
 	
-	#fixing NA coordinates
-	
-  geo <- data.frame(
-    country=c("Zimbabwe","Pakistan","Kenya"),
-    location=c(NA,"Faisalabad","Kiboko"),
-    latitude=c(-19,34.467,-2.188),
-    longitude=c(29.75,71.573,37.686),#Pakistan coordinates already present 
-    geo_source=c("Geonames","Dataset","Geonames")
-  )
-  
-  i <- match(trimws(d$location), trimws(geo$location))
-  miss <- (is.na(d$latitude) | is.na(d$longitude)) & !is.na(i)
-  
-  if (!"geo_source" %in% names(d)) d$geo_source <- NA_character_
-  
-  d$latitude[miss] <- geo$latitude[i[miss]]
-  d$longitude[miss] <- geo$longitude[i[miss]]
-  d$geo_source[miss] <- geo$geo_source[i[miss]]
-  d$geo_from_source[miss] <- FALSE
-	
+	# fixing NA and erroneous coordinates
+	geo <- data.frame(
+		country = c("Zimbabwe", "Pakistan", "Kenya"),
+		location = c("", "Faisalabad", "Kiboko"),
+		latitude = c(-19, 31.418, -2.188),
+		longitude = c(29.75, 73.079, 37.686),
+		geo_source = c("Geonames", "Geonames", "Geonames"),
+		geo_uncertainty = c(300000, 15000, 10000)
+	)
+
+	# one Faisalabad source row has erroneous coords (34.467, 71.573 ~350 km NNW near Afghan border)
+	bad_fais <- d$country == "Pakistan" & trimws(d$location) == "Faisalabad" & !is.na(d$latitude) & d$latitude > 33
+	d$latitude[bad_fais] <- NA_real_
+	d$longitude[bad_fais] <- NA_real_
+
+	# match on country + location so NA location only matches Zimbabwe
+	loc_d <- ifelse(is.na(d$location), "", trimws(d$location))
+	i <- match(paste(d$country, loc_d, sep = "|"), paste(geo$country, geo$location, sep = "|"))
+	miss <- (is.na(d$latitude) | is.na(d$longitude)) & !is.na(i)
+
+	if (!"geo_source" %in% names(d)) d$geo_source <- NA_character_
+	if (!"geo_uncertainty" %in% names(d)) d$geo_uncertainty <- NA_real_
+
+	d$latitude[miss]        <- geo$latitude[i[miss]]
+	d$longitude[miss]       <- geo$longitude[i[miss]]
+	d$geo_source[miss]      <- geo$geo_source[i[miss]]
+	d$geo_uncertainty[miss] <- geo$geo_uncertainty[i[miss]]
+	d$geo_from_source[miss] <- FALSE
+
 	carobiner::write_files(meta, d, path=path)
 }
 

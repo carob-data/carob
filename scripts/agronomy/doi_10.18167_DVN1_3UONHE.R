@@ -5,30 +5,30 @@
 # Paper: Rafenomanjato et al. 2023 Weed Research (doi:10.1111/wre.12578); its means match the data.
 # Split-split-plot, 6 blocks: tillage/cover crop (CT, NT) x fertilisation (F1, F2) x weeding regime, 3 sub-subplots each.
 # One field per season: 2016 and 2018 on the same plots, 2017 on the adjacent field (rice-maize rotation).
-# 540 plots in d; long table: 1188 cover records (plot x 30-120 DAS) and 5939 species records. Metadata file is the codebook.
+# 540 plots in d; long table: 1188 cover records (plot x 30-120 DAS) and 4751 per-species records (5939 total). Metadata file is the codebook.
 
 ## ISSUES
 # Manure: paper says 10 t DM/ha, codebook 5-10 t DM/ha; 10000 kg/ha used; OM_type assumed farmyard manure.
-# "shoot t/ha" taken as rice straw dry matter (dmy_residue); fresh/dry basis is not stated.
+# "shoot t/ha" does not state fresh vs dry basis; stored as y_residue (not dmy_residue).
 # missing.plant often disagrees with tiller and panicle counts (e.g. 102 of 105 hills empty, 2.5 t/ha); kept.
 # Likely data errors, kept: tot.weeds differs from grass + broadleaved + sedge in 51 records: mostly by 1 g/m2 (rounding), 3 by more.
 # 2 CT weedy plots (2017) with yield 0; one has no tillers, so stem/spike_density 0 is flagged (min 500).
-# harvest_date not reported (4-month cycle); left NA.
+# harvest_date not reported (4-month cycle); omitted.
 # Weed-free NT plots have per-species cover but no total weed cover (WeedCover empty); kept as is.
 # Stylosanthes is a living mulch (established before the rice), stored as cover_crop; give it its own record, as for intercrops?
 
 ## NEW VARIABLES
-# weed_management: weeding regime ("weedy", "weed-free", "weed-stylo-free" = weeds and stylosanthes regrowth removed)
-# weed_dmy: total weed dry biomass at harvest, kg/ha
-# weed_dmy_grass, weed_dmy_broadleaf, weed_dmy_sedge: weed dry biomass at harvest by group, kg/ha
-# cover_crop_dmy: stylosanthes regrowth dry biomass at harvest, kg/ha
-# cover_crop_cover: ground cover by stylosanthes, %
-# weed_cover_crop_cover: ground cover by weeds and stylosanthes together, %
-# missing_hills: sown hills without rice plants, % of hills
-# hills_no_panicle: hills without panicles, % of hills
-# striga_hills: hills with Striga asiatica, % of hills
-# white_panicle_density: white (empty) panicles, panicles/ha
-# empty_grain_weight: weight of 1000 empty grains, g
+# weed_management_: weeding regime ("weedy", "weed-free", "weed-stylo-free" = weeds and stylosanthes regrowth removed)
+# weed_dmy_: total weed dry biomass at harvest, kg/ha (terminag weed_biomass is fresh weight)
+# weed_dmy_grass_, weed_dmy_broadleaf_, weed_dmy_sedge_: weed dry biomass at harvest by group, kg/ha
+# cover_crop_dmy_: stylosanthes regrowth dry biomass at harvest, kg/ha
+# cover_crop_cover_: ground cover by stylosanthes, %
+# weed_cover_crop_cover_: ground cover by weeds and stylosanthes together, %
+# missing_hills_: sown hills without rice plants, % of hills
+# hills_no_panicle_: hills without panicles, % of hills
+# striga_hills_: hills with Striga asiatica, % of hills
+# white_panicle_density_: white (empty) panicles, panicles/ha
+# empty_grain_weight_: weight of 1000 empty grains, g
 
 ## NOT PROCESSED
 # Paper: rainfall 1220, 1231, 1241 mm in 2016-2018 (period not clear: season or year).
@@ -46,7 +46,7 @@ This dataset contains weed cover observation in rainfed rice field considering o
 
 	uri <- "doi:10.18167/DVN1/3UONHE"
 	group <- "agronomy"
-	ff  <- carobiner::get_data(uri, path, group)
+	ff <- carobiner::get_data(uri, path, group)
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "SSSA; CIRAD; FOFIFA",
@@ -54,8 +54,8 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		project = NA,
 		design = "split-split-plot, 6 blocks",
 		data_type = "experiment",
-		treatment_vars = "land_prep_method;cover_crop;N_fertilizer;P_fertilizer;K_fertilizer;weed_management",
-		response_vars = "yield;weed_dmy;weed_cover;weed_species_cover;cover_crop_dmy",
+		treatment_vars = "land_prep_method;cover_crop;N_fertilizer;P_fertilizer;K_fertilizer;weed_management_",
+		response_vars = "yield;weed_dmy_;weed_cover;weed_species_cover;cover_crop_dmy_",
 		notes = NA,
 		carob_contributor = "Stella Muthoni",
 		carob_LLM = "Claude Opus 5.5 (merged from 2 drafts)",
@@ -79,23 +79,23 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		rep = match(r1$block, LETTERS),                         # block A-F
 		soil = r1$soil,
 		ferti = r1$ferti,
-		weed_management = weeds1,
+		weed_management_ = weeds1,
 		treatment = paste(r1$soil, r1$ferti, weeds1, sep="_"),
-		missing_hills = 100 * r1$missing.plant / r1$nb.holes,   # 105 hills per sub-subplot
-		hills_no_panicle = 100 * r1$zero.panic / r1$nb.holes,
-		striga_hills = 100 * r1$striga / r1$nb.holes,
+		missing_hills_ = 100 * r1$missing.plant / r1$nb.holes,  # 105 hills per sub-subplot
+		hills_no_panicle_ = 100 * r1$zero.panic / r1$nb.holes,
+		striga_hills_ = 100 * r1$striga / r1$nb.holes,
 		striga_infected = r1$striga > 0,
 		stem_density = r1$nb.till * 10000 / 6.3,                # tillers per 6.3 m2 -> per ha
 		spike_density = r1$nb.panic * 10000 / 6.3,              # panicles per 6.3 m2 -> per ha
-		white_panicle_density = r1$white.panic * 10000 / 6.3,
-		weed_dmy_grass = r1$grass * 10,                         # g/m2 -> kg/ha; DM (paper 2.5)
-		weed_dmy_broadleaf = r1$broadleaved * 10,
-		weed_dmy_sedge = r1$sedge * 10,
-		weed_dmy = r1$tot.weeds * 10,
-		cover_crop_dmy = r1$stylo * 10,                         # DM: paper 53 g/m2 = mean over NT weed-free and weed-stylo-free
-		dmy_residue = as.numeric(r1$`shoot t/ha`) * 1000,       # t/ha -> kg/ha; assumed straw DM (always < grain yield)
+		white_panicle_density_ = r1$white.panic * 10000 / 6.3,
+		weed_dmy_grass_ = r1$grass * 10,                        # g/m2 -> kg/ha; DM (paper 2.5)
+		weed_dmy_broadleaf_ = r1$broadleaved * 10,
+		weed_dmy_sedge_ = r1$sedge * 10,
+		weed_dmy_ = r1$tot.weeds * 10,
+		cover_crop_dmy_ = r1$stylo * 10,                        # DM: paper 53 g/m2 = mean over NT weed-free and weed-stylo-free
+		y_residue = as.numeric(r1$`shoot t/ha`) * 1000,         # t/ha -> kg/ha; fresh/dry basis not stated
 		seed_weight = as.numeric(r1$`200 grains full`) * 5,     # g per 200 grains (codebook "g.m-2" is wrong) -> 1000 grains
-		empty_grain_weight = as.numeric(r1$`200 grains empty`) * 5,
+		empty_grain_weight_ = as.numeric(r1$`200 grains empty`) * 5,
 		sterility_index = as.numeric(r1$pourcent.empty),        # % empty grains
 		yield = as.numeric(r1$yield) * 1000                     # t/ha -> kg/ha, at 14% moisture (paper 2.5)
 	)
@@ -106,9 +106,9 @@ This dataset contains weed cover observation in rainfed rice field considering o
 	d2 <- data.frame(
 		plot_id = plot2,
 		DAP = as.integer(r2$DAS),                               # days after sowing
-		weed_cover_crop_cover = r2$WeedStyloCover,
+		weed_cover_crop_cover_ = r2$WeedStyloCover,
 		weed_cover = r2$WeedCover,
-		cover_crop_cover = r2$`Stylosanthes guianensis`
+		cover_crop_cover_ = r2$`Stylosanthes guianensis`
 	)
 
 ## d2species from r2: cover per weed species (long); empty cells = species not recorded
@@ -156,7 +156,7 @@ This dataset contains weed cover observation in rainfed rice field considering o
 		K_fertilizer = c(0, 80 * 0.16 / 1.2051)             # grade is K2O: paper's "12.8 kg K" = 80 x 16%
 	)
 	dweed <- data.frame(
-		weed_management = c("weedy", "weed-free", "weed-stylo-free"),
+		weed_management_ = c("weedy", "weed-free", "weed-stylo-free"),
 		weeding_done = c(FALSE, TRUE, TRUE),
 		weeding_times = c(0L, 12L, 12L),                    # weekly, 12 times per cycle
 		weeding_method = c(NA, "manual", "manual")          # by hand and/or angady (spade)
@@ -165,17 +165,19 @@ This dataset contains weed cover observation in rainfed rice field considering o
 ## build d and the long table
 	d <- merge(d1, dsoil, by="soil", all.x=TRUE)
 	d <- merge(d, dferti, by="ferti", all.x=TRUE)
-	d <- merge(d, dweed, by="weed_management", all.x=TRUE)
+	d <- merge(d, dweed, by="weed_management_", all.x=TRUE)
 	d$soil <- d$ferti <- NULL
 	d$planting_date <- paste0(d$year - 1, "-11")          # sown in late November
-	d$harvest_date <- as.character(NA)                     # not reported
 	d$year <- NULL
+	d <- d[order(d$trial_id, d$plot_id), ]
+	rownames(d) <- NULL
 
 	d$country <- "Madagascar"
 	d$adm1 <- "Antananarivo"                               # GADM 4.1 units containing the paper's coordinates
 	d$adm2 <- "Vakinankaratra"
 	d$adm3 <- "Betafo"
 	d$adm4 <- "Vinany"
+	d$location <- "Ivory"                                  # SPAD research platform site (in dataset metadata)
 	d$latitude <- -(19 + 33/60 + 26/3600)                  # paper: 19 33'26"S, 46 24'55"E, 930 m
 	d$longitude <- 46 + 24/60 + 55/3600
 	d$elevation <- 930
@@ -189,6 +191,8 @@ This dataset contains weed cover observation in rainfed rice field considering o
 	d$variety <- "Nerica 4"
 	d$previous_crop <- "maize"                             # rice-maize biannual rotation
 	d$crop_rotation <- "rice;maize"
+	d$plot_length <- 3
+	d$plot_width <- 2.1
 	d$plot_area <- 6.3                                     # 3 x 2.1 m
 	d$row_spacing <- 30                                    # 20 x 30 cm hills
 	d$plant_spacing <- 20
@@ -201,8 +205,10 @@ This dataset contains weed cover observation in rainfed rice field considering o
 	d$depth_bottom <- 10
 	d$yield_part <- "grain"
 	d$yield_moisture <- 14
+	d$yield_isfresh <- TRUE
 
 	dlong <- carobiner::bindr(d2, d2species)
+	rownames(dlong) <- NULL
 
 	carobiner::write_files(path, meta, d, long=dlong)
 }
