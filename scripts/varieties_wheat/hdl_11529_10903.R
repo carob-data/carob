@@ -45,8 +45,8 @@ carob_script <- function(path) {
 	d$wide$crop <- "durum wheat"
 	d$wide$soil_pH[d$wide$soil_pH < 2] <- NA
 
-	pds <- paste0(81:96, "-", 82:97)
-	rpl <- 1981:1996
+	pds <- c(paste0(80:98, "-", 81:99), "99-00", "00-01")
+	rpl <- c(1980:1998, 1999, 2000)
 	for (i in 1:length(pds)) d$wide$planting_date <- gsub(pds[i], rpl[i], d$wide$planting_date)
 
 	carobiner::write_files(path, meta, d$wide, d$long)
