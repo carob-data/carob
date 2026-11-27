@@ -2,6 +2,7 @@
 # license: GPL (>=3)
 
 ## NOTES
+# Associated publication (doi:10.1016/j.bcab.2018.05.006, Gopalakrishnan et al. 2018) describes a greenhouse pot experiment.
 # Three diazotrophic bacteria isolated from chickpea nodules (IC-59, IC-76A, IC-2002) tested on
 #   five chickpea cultivars (BG256, RSG888, Subhra, K850, ICCV2) at ICRISAT, Patancheru, India.
 # "Culture" is the bacterial inoculant -> inoculant; inoculated is FALSE for an uninoculated control.
@@ -30,7 +31,7 @@ chickpea such as BG256, RSG888, Subhra, K850 and ICCV2. Factorial RBD with 3 rep
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "ICRISAT",
-		publication = NA,
+		publication = "doi:10.1016/j.bcab.2018.05.006",
 		project = NA,
 		design = "Factorial RBD with 3 replications",
 		data_type = "experiment",
