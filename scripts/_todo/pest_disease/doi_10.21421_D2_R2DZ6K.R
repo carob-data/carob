@@ -1,29 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Medium-duration groundnut at Bayero University Kano under rainfed conditions. Dataverse year 2015.
-# DPWkgha is dry pod weight (kg/ha) and is yield. DFWkgha is dry fodder. The description also calls Pykg_ha pod yield (kg/ha); the two columns are not the same, so Pykg_ha is kept as pod_yield_.
-# Shelling ratio is a percentage. HSW (g/100 seeds) times 10 is seed_weight.
-# DEM, DFF and DM are days, not calendar dates.
-# Early leaf severity, late leaf severity and rust severity are 1-9 scores in the long table.
-# Coordinates are the Buk bounding-box midpoint. northLongitude and southLongitude in the metadata are latitudes.
-
 ## ISSUES
-# No fertilizer or plot area. Irrigated is FALSE because the description says rainfed.
-# Pykg_ha / DPWkgha ranges from about 0.95 to 2.47. Which column the authors treat as the reported yield needs a check. This script uses the dry-pod column, consistent with the other files.
-# The abstract says 15 lines and 3 released varieties and does not say which names are the checks.
-# adm1 is not in the metadata as a state (the city string is Bayero University Kano).
-# write_files: missing carob_contributor, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; unknown pod_yield_ (the checker asks if this should be yield; dry pod weight is already yield), plant_population_, plants_harvested_, sound_mature_kernel_; invalid disease early leaf spot, late leaf spot.
+# Plot area is not reported, so NPLE and NPH cannot be converted to plants/ha and remain per-plot counts.
+# Pykg_ha is used as yield because DPWkgha equals Pykg_ha * 128 / NPH on 39 of 54 rows (stand-adjusted to 128 plants/plot) and exceeds Pykg_ha by up to 2.47x on the remaining 15 rows; DPWkgha is retained as pod_yield_adjusted_ for verification.
 
-## NOT PROCESSED
-# None of the measurement columns were dropped except where noted as mapped. There is no row-number column.
+## NEW
+# plant_population_: emerged plants per plot (NPLE; count/plot, plot area unknown)
+# plants_harvested_: harvested plants per plot (NPH; count/plot, plot area unknown)
+# pod_yield_adjusted_: stand-adjusted dry pod yield (DPWkgha; kg/ha)
+# sound_mature_kernel_: sound mature kernel score/count (SMK; values 75-98, unit not stated)
+# disease: "late leaf spot" not yet in values_disease.csv
 
-## NEW VARIABLES
-# pod_yield_: Pykg_ha, kg/ha, as labeled. Not used as yield.
-# plant_population_: NPLE, plants per plot.
-# plants_harvested_: NPH, plants per plot.
-# sound_mature_kernel_: SMK. Unit not stated (Buk elite description says "Number").
+## MISSING
+# N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Medium-duration groundnut multi-location trial at Bayero University Kano (BUK), Kano State, Nigeria, 2015 under rainfed conditions (irrigated = FALSE).
+# 18 entries (15 breeding lines + 3 released varieties SAMNUT22, SAMNUT24, SAMNUT25) x 3 reps in blocks (54 plots).
+# Pykg_ha is dry pod yield (yield_part = "pod", yield_moisture = 0, yield_isfresh = FALSE); DFWkgha is dry fodder (dmy_residue). DEM, DFF, and DM are days, not calendar dates.
+# Early leaf spot, late leaf spot, and rust severity (1-9 scale) are stored in the long table.
+# Coordinates are the midpoint of the Dataverse bounding box (northLongitude/southLongitude fields hold latitudes ~11.984 N).
 
 carob_script <- function(path) {
 
@@ -37,28 +34,32 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 0,
 		data_organization = "ICRISAT",
 		publication = NA,
 		project = NA,
 		design = "3 replications in blocks",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;dmy_residue;disease_severity",
+		response_vars = "yield;dmy_residue;emergence_days;flowering_days;maturity_days;seed_weight;shelling_percentage;disease_severity",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Medium duration lines for agronomic traits in the location Buk.xlsx"]
-	r <- carobiner::read.excel(f, na="NA")
+	r <- carobiner::read.excel(f, na = "NA")
+
+	variety <- trimws(r$Variety)
+	vtype <- ifelse(variety %in% c("SAMNUT22", "SAMNUT24", "SAMNUT25"), "released variety", "breeding line")
 
 	d <- data.frame(
-		variety = trimws(r$Variety),
-		treatment = trimws(r$Variety),
+		variety = variety,
+		variety_type = vtype,
+		treatment = variety,
 		rep = as.integer(r[["Replication number"]]),
 		block_id = as.character(r$Block),
 		plot_id = as.character(r[["Plot no"]]),
@@ -67,8 +68,9 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 		maturity_days = as.numeric(r$DM),
 		plant_population_ = as.numeric(r$NPLE),
 		plants_harvested_ = as.numeric(r$NPH),
-		yield = as.numeric(r$DPWkgha),
-		pod_yield_ = as.numeric(r$Pykg_ha),
+		# Pykg_ha is unadjusted pod yield; DPWkgha is stand-adjusted (Pykg_ha * 128 / NPH on 39/54 rows)
+		yield = as.numeric(r$Pykg_ha),
+		pod_yield_adjusted_ = as.numeric(r$DPWkgha),
 		dmy_residue = as.numeric(r$DFWkgha),
 		seed_weight = as.numeric(r$HSW) * 10,
 		shelling_percentage = as.numeric(r[["Shelling ratio"]]),
@@ -81,6 +83,7 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 	d$stress <- "disease"
 	d$irrigated <- FALSE
 	d$country <- "Nigeria"
+	d$adm1 <- "Kano"
 	d$location <- "Bayero University Kano"
 	d$planting_date <- "2015"
 	d$trial_id <- "Buk_2015"
@@ -96,10 +99,11 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 	n <- nrow(d)
 	long <- data.frame(
 		record_id = rep(d$record_id, 3),
-		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = as.character(c(r[["Early Leaf Severity"]], r[["Late Leaf Severity"]], r[["Rust severity"]]))
+		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each = n),
+		disease_severity = as.character(c(r[["Early Leaf Severity"]], r[["Late Leaf Severity"]], r[["Rust severity"]])),
+		severity_scale = "1-9"
 	)
-	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))
+	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN = seq_along))
 
-	carobiner::write_files(path, meta, d, long=long)
+	carobiner::write_files(path, meta, d, long = long)
 }

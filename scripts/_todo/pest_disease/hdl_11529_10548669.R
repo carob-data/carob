@@ -1,35 +1,35 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Herbicide trial in common bean at El Batan, 2016. geographicCoverage is Mexico, Estado de Mexico, Texcoco. The protocol places the trial in lote G6.
-# Design is RCBD with two replications. Variety is Pinto Saltillo. Beds are permanent and 0.75 m. The crop was rainfed (Temporal).
-# Fertilizer in the protocol is 50 kg N/ha as urea and 40 kg P2O5/ha as triple superphosphate, on every plot. P is elemental. K is not stated.
-# Yield_Dry is kg/ha of dry seed. Subsample moisture in %Humidity is a fraction and is stored as a percent.
-# Plot codes are 100 * rep + treatment. Weed counts are one number per species per plot. The protocol counts two quadrats of 0.50 m by the bed width and does not say whether the sheet is one quadrat or the sum, so the counts are not converted to plants/ha.
-# Weed dry weight is the sheet value in grams, not kg/ha. Dates are the Excel serials above the PARC header.
-# Doses in the protocol are g or ml of product per ha, not kg of active ingredient. Treatment 1 is an unweeded check and treatment 2 is weed free.
-
 ## ISSUES
-# No coordinates.
-# Fusilade is stored as fluazifop-p-butyl. Basagran is stored as bentazon, sodium salt. Fomesafan is stored as fomesafen. Those names follow the product, not a concentration assay.
-# write_files: missing variables: latitude, longitude, K_fertilizer, planting_date, harvest_date. unknown variables: herbicide_dose_g_or_ml_ha_. invalid terms: herbicide_product: fomesafen, imazethapyr. unknown variables: weed_count_, weed_dry_g_.
+# Coordinates are not in the workbook; CIMMYT El Batan research station coordinates were georeferenced from the protocol ("Lote G6, El Batan", Texcoco, Estado de Mexico).
+# Active ingredient names are mapped from the protocol trade names (Fusilade -> fluazifop-p-butyl, Basagran -> bentazon, sodium salt, Fomesafan -> fomesafen, Pivot -> imazethapyr, ammonium salt); exact product concentrations are not stated, so herbicide product doses (g or ml/ha) cannot be converted to kg a.i./ha.
+# The protocol notes two quadrats of 0.50 m x bed width (0.75 m) per plot for weed counts/biomass, but does not confirm whether spreadsheet entries are per quadrat or summed over both quadrats, so counts and dry weights are kept as raw values in the long table rather than converted to per-ha.
 
-## NEW VARIABLES
-# herbicide_dose_g_or_ml_ha_: product dose from the protocol, g or ml per ha. Zero on the unweeded and weed-free plots.
-# weed_count_: weed count as entered for that species and date.
-# weed_dry_g_: weed dry weight (g) on that date. The quadrat area is not applied.
+## NEW
+# herbicide_dose_: product application rate from the protocol (g or ml of formulated product per ha; 0 for unweeded and weed-free checks).
+# weed_count_: weed count per plot sample for the given weed_species and date (count per sampling unit).
+# weed_dry_weight_: oven-dry weed biomass per plot sample on the given date (g per sampling unit).
+# herbicide_product: "fomesafen" is not yet in values_herbicides.csv.
+
+## MISSING
+# K_fertilizer, harvest_date (planting_date is year-only "2016").
+
+## NOTES
+# Rainfed common bean (cv. Pinto Saltillo) herbicide evaluation trial (RCBD, 2 reps, 10 treatments) on 0.75 m permanent beds at CIMMYT El Batan (Lote G6), 2016.
+# Grain yield at 12% moisture is stored in yield (yield_moisture = 12, yield_isfresh = TRUE) alongside yield_dry, dmy_total, dmy_residue, seed_weight (1000-seed dry weight), and harvest_index (%).
+# Protocol blanket management: 50 kg/ha seed rate (150,000 seeds/ha), 50 kg N/ha as urea and 40 kg P2O5/ha (17.47 kg P/ha) as TSP applied pre-sowing.
+# Repeated weed counts by species (two dates, using field-book Spanish abbreviations plus broadleaf/grass totals H.ANCHA and H.ANGOSTA) and weed dry weights (two dates) are stored in the long table.
 
 ## NOT PROCESSED
-# Grain-yield components (grains per stem, thousand-grain weight, test weight, straw).
-# Phytotoxicity scores. The protocol lists them and this workbook does not have that column.
-# Species counts are the field-book abbreviations (Verd, Golon, H.ANCHA, H.ANGOSTA), not botanical names.
+# Calculations sheet: test weight (g/L), grains per stem, stem dry weight, and single-date 45 DAS summary columns (P_sco_45, H.ACHA45, H.AGOS45) already captured in the weed count/dry weight workbooks.
+# Phytotoxicity scores: listed in protocol but absent from all data workbooks.
 
 
 carob_script <- function(path) {
 
 "
-Evaluation of herbicides for weed control in beans in El Batan, Mexico (2016)
+Evaluation of herbicides for weed control in beans in El Batán, México (2016)
 
 Effectiveness of herbicides were compared during 2016 in El Batan, Mexico. The results will be used to make recommendations to farmers for weed control.
 "
@@ -41,18 +41,19 @@ Effectiveness of herbicides were compared during 2016 in El Batan, Mexico. The r
 	meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
 		data_organization = "CIMMYT",
 		publication = NA,
-		project = "Herbicide evaluation in common bean, El Batan, 2016",
+		project = NA,
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "yield",
+		treatment_vars = "herbicide_product;herbicide_dose_;weeding_done",
+		response_vars = "yield;yield_dry;dmy_total;dmy_residue;seed_weight;weed_count_;weed_dry_weight_",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
+	# Treatment table from protocol BV101-16-C-Bean.docx
 	key <- data.frame(
 		trt = 1:10,
 		treatment = c(
@@ -64,125 +65,125 @@ Effectiveness of herbicides were compared during 2016 in El Batan, Mexico. The r
 		),
 		herbicide_product = c(
 			"none", "none", "pendimethalin", "fomesafen", "fluazifop-p-butyl",
-			"fomesafen;fluazifop-p-butyl", "imazethapyr", "imazethapyr",
-			"imazethapyr", "bentazon, sodium salt"
+			"fomesafen;fluazifop-p-butyl", "imazethapyr, ammonium salt",
+			"imazethapyr, ammonium salt", "imazethapyr, ammonium salt",
+			"bentazon, sodium salt"
 		),
-		herbicide_dose_g_or_ml_ha_ = c(0, 0, 2631, 1000, 1000, 1000, 500, 400, 300, 2000),
+		herbicide_dose_ = c(0, 0, 2631, 1000, 1000, 1000, 500, 400, 300, 2000),
 		herbicide_used = c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
 		weeding_done = c(FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 	)
 
-	numcol <- function(r, pat) {
-		n <- grep(pat, names(r), value=TRUE)
-		if (!length(n)) return(rep(NA_real_, nrow(r)))
-		as.numeric(r[[n[1]]])
-	}
-
 	f <- ff[basename(ff) == "DAT-BV101_BEANS-16.xlsx"]
-	r <- carobiner::read.excel(f, sheet="Calculations")
+	# Read as text because rows below the data table contain treatment labels in Yield_12%H2O
+	r <- carobiner::read.excel(f, sheet="Calculations", col_types="text", na=c("", "NA", "."))
 	r <- r[!is.na(r$Rep) & !is.na(r$Trt), ]
-	moist <- numcol(r, "Humidity")
-	moist <- ifelse(!is.na(moist) & moist <= 1.5, moist * 100, moist)
-	hi <- numcol(r, "^HI$")
-	hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
+
 	d <- data.frame(
 		country = "Mexico",
-		adm1 = "Estado de Mexico",
+		adm1 = "México",
 		adm2 = "Texcoco",
-		location = "El Batan",
-		trial_id = "El Batan 2016",
+		location = "El Batán",
+		site = "Lote G6",
+		# Georeferenced CIMMYT El Batan research station
+		latitude = 19.530,
+		longitude = -98.849,
+		elevation = 2249,
+		geo_from_source = FALSE,
+		geo_uncertainty = 1000,
+		geo_source = "CIMMYT El Batan research station",
+		trial_id = "El_Batan_2016",
 		plot_id = sprintf("%d%02d", as.integer(r$Rep), as.integer(r$Trt)),
 		rep = as.integer(r$Rep),
 		crop = "common bean",
 		variety = "Pinto Saltillo",
+		planting_date = "2016",
 		yield_part = "seed",
-		yield = numcol(r, "^Yield_Dry$"),
-		yield_moisture = moist,
-		yield_isfresh = FALSE,
-		dmy_total = numcol(r, "^Biomass$"),
-		harvest_index = hi,
-		maturity_days = numcol(r, "^Maturity$"),
-		plot_area = numcol(r, "^Area$"),
+		yield = as.numeric(r[["Yield_12%H2O"]]),
+		yield_moisture = 12,
+		yield_isfresh = TRUE,
+		yield_dry = as.numeric(r$Yield_Dry),
+		dmy_total = as.numeric(r$Biomass),
+		dmy_residue = as.numeric(r$Straw),
+		seed_weight = as.numeric(r$Thou),
+		harvest_index = as.numeric(r$HI),
+		# Legend specifies days after emergence
+		maturity_days = as.numeric(r$Maturity),
+		plot_area = as.numeric(r$Area),
+		plot_width = as.numeric(r$WidthArea),
+		plot_length = as.numeric(r$LengthArea),
+		# Blanket management from protocol BV101-16-C-Bean.docx
 		row_spacing = 75,
 		seed_rate = 50,
+		seed_density = 150000,
+		fertilizer_used = TRUE,
+		fertilizer_type = "urea;TSP",
 		N_fertilizer = 50,
-		P_fertilizer = 40 / 2.29,
+		P_fertilizer = round(40 / 2.29, 2),
 		land_prep_method = "permanent beds",
 		irrigated = FALSE,
 		stress = "weeds",
+		on_farm = FALSE,
+		is_survey = FALSE,
 		trt = as.integer(r$Trt)
 	)
 	d <- merge(d, key, by="trt", sort=FALSE)
 	d$trt <- NULL
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	d$geo_from_source <- FALSE
+	d$record_id <- seq_len(nrow(d))
 
-	sheet_date <- function(s) {
-		p <- strsplit(s, "-")[[1]]
-		mon <- tolower(p[2])
-		if (grepl("^agost", mon)) mon <- "ago"
-		m <- c(ene=1, jan=1, feb=2, mar=3, abr=4, apr=4, may=5, jun=6, jul=7, ago=8, aug=8, sep=9, oct=10, nov=11, dic=12, dec=12)
-		sprintf("20%s-%02d-%02d", p[3], as.integer(m[mon]), as.integer(p[1]))
-	}
-	as_num <- function(x) {
-		x <- trimws(as.character(x))
-		x[!nzchar(x)] <- NA_character_
-		x[grepl("[A-Za-z]", x)] <- NA_character_
-		as.numeric(x)
-	}
-
+	# Repeated weed counts by species
 	f1 <- ff[basename(ff) == "DAT-BV101-16-WeedCounts_Bean.xlsx"]
-	sh <- c("01-Agost-16", "19-Ago-16")
+	sh_dates <- c("01-Agost-16"="2016-08-01", "19-Ago-16"="2016-08-19")
 	counts <- list()
-	for (s in sh) {
-		w <- carobiner::read.excel(f1, sheet=s, col_names=FALSE, na=c(".", ""))
+	for (s in names(sh_dates)) {
+		w <- carobiner::read.excel(f1, sheet=s, col_names=FALSE, col_types="text", na=c(".", ""))
 		hdr <- which(apply(w, 1, function(z) any(toupper(trimws(as.character(z))) == "PARC")))[1]
 		nms <- trimws(as.character(unlist(w[hdr, ])))
 		body <- w[(hdr + 1):nrow(w), ]
-		parc <- as_num(body[[1]])
+		parc <- as.integer(trimws(body[[1]]))
 		ok <- !is.na(parc)
 		body <- body[ok, ]
 		parc <- parc[ok]
 		for (j in seq_len(ncol(body))[-1]) {
 			if (is.na(nms[j]) || !nzchar(nms[j])) next
-			val <- as_num(body[[j]])
+			val <- as.numeric(trimws(body[[j]]))
 			keep <- !is.na(val)
 			if (!any(keep)) next
 			counts[[length(counts) + 1]] <- data.frame(
-				plot_id = sprintf("%03d", as.integer(parc[keep])),
-				date = sheet_date(s),
+				plot_id = sprintf("%03d", parc[keep]),
+				date = unname(sh_dates[s]),
 				weed_species = nms[j],
 				weed_count_ = val[keep],
-				weed_dry_g_ = NA_real_
+				weed_dry_weight_ = NA_real_
 			)
 		}
 	}
 
+	# Repeated total weed dry weights
 	f2 <- ff[basename(ff) == "DAT-BV101-16-WeedDryWeight_Bean.xlsx"]
-	w <- carobiner::read.excel(f2, sheet="WeedDryWeight", col_names=FALSE, na=c(".", ""))
+	w <- carobiner::read.excel(f2, sheet="WeedDryWeight", col_names=FALSE, col_types="text", na=c(".", ""))
 	hdr <- which(apply(w, 1, function(z) any(toupper(trimws(as.character(z))) == "PARC")))[1]
 	nms <- trimws(as.character(unlist(w[hdr, ])))
-	above <- as_num(unlist(w[hdr - 1, ]))
+	above <- as.numeric(trimws(unlist(w[hdr - 1, ])))
 	body <- w[(hdr + 1):nrow(w), ]
 	parc_j <- which(toupper(nms) == "PARC")[1]
-	parc <- as_num(body[[parc_j]])
+	parc <- as.integer(trimws(body[[parc_j]]))
 	ok <- !is.na(parc)
 	for (j in which(grepl("seco|peso", nms, ignore.case=TRUE))) {
-		val <- as_num(body[[j]])
+		val <- as.numeric(trimws(body[[j]]))
 		keep <- ok & !is.na(val)
 		if (!any(keep) || is.na(above[j])) next
 		counts[[length(counts) + 1]] <- data.frame(
-			plot_id = sprintf("%03d", as.integer(parc[keep])),
+			plot_id = sprintf("%03d", parc[keep]),
 			date = as.character(as.Date(above[j], origin="1899-12-30")),
 			weed_species = "all weeds",
 			weed_count_ = NA_real_,
-			weed_dry_g_ = val[keep]
+			weed_dry_weight_ = val[keep]
 		)
 	}
+
 	long <- do.call(rbind, counts)
-	long <- long[long$plot_id %in% d$plot_id, ]
-	long$trial_id <- "El Batan 2016"
+	long <- merge(long, d[, c("plot_id", "record_id", "trial_id")], by="plot_id", sort=FALSE)
 
 	carobiner::write_files(path, meta, d, long=long)
 }

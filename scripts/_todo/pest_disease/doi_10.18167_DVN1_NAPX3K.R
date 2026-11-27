@@ -1,24 +1,37 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Field file only. Cage sheets (oviposition and larval survival) are an insectary trial and are not used.
-# Two field sowings (10 Nov 2020 and 14 Jan 2022). Seed treatment is cyantraniliprole (Fortenza) or none.
-# Devis is the 1-9 plant score in Data_damage. Plants in a plot on one date are averaged. Presence flags stay yes/no when the plants agree, and become the proportion of plants when they do not.
-# Row spacing 0.75 m and within-row spacing 0.24 m, and drip irrigation, are on the Meta_data sheet.
-# The dataset has no geographicCoverage and the field sheet has no place name.
-
 ## ISSUES
-# Repeated plant rows are included in the plot mean.
-# write_files: missing on_farm, yield, yield_moisture, yield_part, country, geo_from_source, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date.
-# unknown variables: larva_present_, damage_present_, larval_instar_. invalid terms: pest_species: fall armyworm.
+# 1. Neither the dataset files nor the publicly accessible abstract of Seye et al.
+#    (2023, doi:10.1111/jen.13114) gives the specific town or station coordinates
+#    within Senegal (plot codes are D7C7D and JAUNE 3). Country is set to Senegal
+#    from the publication; coordinates and on_farm remain missing.
+# 2. Trial 2 (2022) has only one damage assessment week (Semaine 2, 2022-02-05)
+#    and one seedling-count week (Semaine 1), whereas Trial 1 (2020) has four
+#    damage weeks and multiple seedling-count weeks.
+
+## NEW
+# plant_number_: individual sampled plant number within plot and date
+# row_number_: sampled row number (10 m line) for seedling stand count
+# larva_present_: logical indicator of fall armyworm larva presence on plant
+# damage_present_: logical indicator of fall armyworm foliar damage on plant
+# larval_instar_: observed fall armyworm larval developmental stage (2-4)
+
+## MISSING
+# latitude, longitude, geo_from_source, on_farm, yield, yield_part,
+# yield_moisture, harvest_date, N_fertilizer, P_fertilizer, K_fertilizer.
+
+## NOTES
+# Two field trials in Senegal (2020 and 2022) evaluating cyantraniliprole
+# (Fortenza) maize seed treatment vs untreated control against Spodoptera
+# frugiperda (Seye et al. 2023). Wide table d holds the 16 experimental plots;
+# long holds all 960 plant-level damage scores (1-9 Davis scale) and 120
+# row-level seedling density counts linked via record_id.
 
 ## NOT PROCESSED
-# Data cage Seye.xlsx: insectary oviposition and larval survival.
-# Data_seedling: line-level stand counts and plants per ha. They are not the same grain as the plant damage scores.
-# Data_damage %plant_attaque: 0 or 100, the same flag as Pres_degat.
-# Data_damage Nb_plant_obs: 1 on every row.
-
+# Data cage Seye.xlsx: semi-field cage oviposition and tunnel larval survival
+# experiments (non-field insectary/cage trials).
+# Data_damage: %plant_attaque (0/100 duplicate of Pres_degat), Nb_plant_obs (always 1).
 
 carob_script <- function(path) {
 
@@ -34,114 +47,79 @@ Data on field and semi-field trials of maize seed treament for the control of fa
 
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
 		data_organization = "CIRAD",
-		publication = NA,
+		publication = "doi:10.1111/jen.13114",
 		project = NA,
-		design = NA,
+		design = "RCBD",
 		data_type = "experiment",
 		treatment_vars = "seed_treatment",
-		response_vars = "pest_severity",
-		carob_LLM = "Cursor Grok 4.7",
+		response_vars = "pest_severity;plant_density",
+		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_completion = 55,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data Field Seye.xlsx"]
-	r <- carobiner::read.excel(f, sheet="Data_damage")
-	treated <- r$Trait_au_fortenza == "Traite au Cyantranilipole"
+	r1 <- carobiner::read.excel(f, sheet = "Data_damage")
+	r2 <- carobiner::read.excel(f, sheet = "Data_seedling", skip = 4)
+
+	## Plot-level (wide) records: 2 trials x 4 blocks x 2 seed treatments = 16 plots
+	plots <- unique(r1[, c("Num_essai", "Bloc", "Parcelle", "Trait_au_fortenza", "Date_semis", "Date_lev")])
+	plots <- plots[order(plots$Num_essai, plots$Bloc, plots$Trait_au_fortenza), ]
+	rownames(plots) <- NULL
+	treated <- trimws(plots$Trait_au_fortenza) == "Traite au Cyantranilipole"
 
 	d <- data.frame(
-		trial_id = paste0("essai_", r$Num_essai),
+		record_id = seq_len(nrow(plots)),
+		trial_id = paste0("essai_", as.integer(plots$Num_essai)),
+		country = "Senegal",
 		crop = "maize",
-		treatment = trimws(r$Trait_au_fortenza),
+		treatment = trimws(plots$Trait_au_fortenza),
 		seed_treatment = ifelse(treated, "cyantraniliprole", "none"),
 		insecticide_used = treated,
-		rep = as.integer(r$Bloc),
-		plot_id = trimws(as.character(r$Parcelle)),
-		plant_number_ = as.integer(r$Num_plant),
-		planting_date = as.character(as.Date(r$Date_semis)),
-		date = as.character(as.Date(r$Date_obs)),
-		pest_species = "fall armyworm",
-		pest_severity = as.character(as.integer(r$Devis)),
-		severity_scale = "1-9",
-		larva_present_ = r$Presence_larv == 1,
-		damage_present_ = r$Pres_degat == 1,
-		larval_instar_ = as.integer(r$Stade_larv),
+		insecticide_product = ifelse(treated, "cyantraniliprole", "none"),
+		rep = as.integer(plots$Bloc),
+		plot_id = paste0(trimws(plots$Parcelle), "_B", as.integer(plots$Bloc), "_", ifelse(treated, "T", "NT")),
+		plot_area = 10000, # 1 ha plots per Meta_data
+		planting_date = as.character(as.Date(plots$Date_semis)),
+		emergence_date = as.character(as.Date(plots$Date_lev)),
 		row_spacing = 75,
 		plant_spacing = 24,
 		irrigated = TRUE,
+		irrigation_method = "drip",
 		stress = "pests",
 		is_survey = FALSE
 	)
 
-	# Average one row per plant to one row per group in `by`.
-	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
-	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
-	mean_by <- function(x, by) {
-		if (!nrow(x)) return(x)
-		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
-		if ("record_id" %in% names(x)) x$record_id <- NULL
-		by <- intersect(by, names(x))
-		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
-		mean_na <- function(z) {
-			z <- as.numeric(z)
-			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
-		}
-		keep <- !duplicated(key)
-		out <- x[keep, , drop = FALSE]
-		num <- vapply(x, is.numeric, TRUE)
-		logi <- vapply(x, is.logical, TRUE)
-		num[names(num) %in% by] <- FALSE
-		logi[names(logi) %in% by] <- FALSE
-		for (v in names(x)[num]) {
-			m <- tapply(x[[v]], key, mean_na)
-			m <- unname(m[key[keep]])
-			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
-				m <- as.integer(round(m))
-			}
-			out[[v]] <- m
-		}
-		for (v in names(x)[logi]) {
-			same <- tapply(x[[v]], key, function(z) {
-				z <- z[!is.na(z)]
-				!length(z) || all(z == z[1])
-			})
-			if (isTRUE(all(same))) {
-				m <- tapply(x[[v]], key, function(z) {
-					z <- z[!is.na(z)]
-					if (!length(z)) NA else z[1]
-				})
-				out[[v]] <- unname(m[key[keep]])
-			} else {
-				m <- tapply(as.numeric(x[[v]]), key, mean_na)
-				out[[v]] <- unname(m[key[keep]])
-			}
-		}
-		for (v in names(x)) {
-			if (v %in% by || num[v] || logi[v]) next
-			u <- tapply(as.character(x[[v]]), key, function(z) {
-				z <- z[!is.na(z)]
-				z <- trimws(z)
-				z <- z[nzchar(z)]
-				if (!length(z)) return(NA_character_)
-				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
-					return(as.character(mean(as.Date(z))))
-				}
-				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
-				parts <- character()
-				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
-				codes <- unique(z[!isn])
-				parts <- c(parts, codes)
-				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
-			})
-			out[[v]] <- unname(u[key[keep]])
-		}
-		rownames(out) <- NULL
-		out
-	}
+	## Key to link observation-level sheets to wide plot records
+	plot_key <- paste(plots$Num_essai, plots$Bloc, trimws(plots$Parcelle), trimws(plots$Trait_au_fortenza), sep = "|")
 
-	d <- mean_by(d, c("trial_id", "treatment", "seed_treatment", "rep", "plot_id", "planting_date", "date", "pest_species", "crop"))
+	k1 <- match(paste(r1$Num_essai, r1$Bloc, trimws(r1$Parcelle), trimws(r1$Trait_au_fortenza), sep = "|"), plot_key)
+	l1 <- data.frame(
+		record_id = d$record_id[k1],
+		trial_id = d$trial_id[k1],
+		date = as.character(as.Date(r1$Date_obs)),
+		plant_number_ = as.integer(r1$Num_plant),
+		pest_species = "Spodoptera frugiperda",
+		pest_severity = as.character(as.integer(r1$Devis)),
+		severity_scale = "1-9",
+		larva_present_ = r1$Presence_larv == 1,
+		damage_present_ = r1$Pres_degat == 1,
+		larval_instar_ = as.integer(r1$Stade_larv)
+	)
 
-	carobiner::write_files(path, meta, d)
+	k2 <- match(paste(r2$Num_essai, r2$Bloc, trimws(r2$Parcelle), trimws(r2$Trait_au_fortenza), sep = "|"), plot_key)
+	l2 <- data.frame(
+		record_id = d$record_id[k2],
+		trial_id = d$trial_id[k2],
+		date = as.character(as.Date(r2$Date_obs)),
+		row_number_ = as.integer(r2$Num_ligne),
+		plant_density = as.numeric(r2$Nombre_plant_ha)
+	)
+
+	long <- carobiner::bindr(l1, l2)
+
+	carobiner::write_files(path, meta, d, long = long)
 }

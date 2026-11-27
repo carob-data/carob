@@ -1,21 +1,20 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Medium-duration groundnut lines at IAR, Nigeria, rainfed. The description workbook says Pykg_h is pod yield in kg/ha.
-# One trial (18 lines, 3 blocks, 3 replications). Block is not the same as replication.
-# Coordinates are the midpoint of the Dataverse bounding box (3.850134–3.850365 E, 7.362372 N).
-
 ## ISSUES
-# The title is an evaluation for foliar diseases, but the workbook has no disease score, date, fertilizer, or plot size.
-# Dataverse productionDate is 2015; it is not used as a planting date.
-# The metadata does not name a state. The point is not the usual Samaru (Zaria) IAR coordinate; confirm the site.
-# No publication DOI in the Dataverse record.
-# write_files: missing carob_contributor, yield_moisture, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date.
+# Despite the title mentioning foliar diseases, the workbook contains only pod yield (no disease scores); this dataset may belong in the varieties group.
+# Source coordinates (7.362 N, 3.850 E) fall at IAR&T Moor Plantation, Ibadan (Oyo State), whereas ICRISAT's northern Nigeria groundnut partner IAR is in Samaru, Zaria (Kaduna State); confirm the actual site before setting adm1.
+# No fertilizer rates, moisture basis, plot size, or exact planting/harvest dates are reported.
+
+## MISSING
+# yield_moisture, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Rainfed medium-duration groundnut trial at IAR, Nigeria (2015, from Dataverse timePeriodCovered/productionDate): 15 breeding lines + 3 released varieties (SAMNUT22, SAMNUT24, SAMNUT25) in 3 replications x 3 blocks.
+# Pykg_h is pod yield in kg/ha per the description file. Coordinates are the midpoint of the Dataverse bounding box.
 
 ## NOT PROCESSED
-# Data file, S.no: row number.
-# Data file, Entry number: trial entry index, one per variety.
+# Data file, S.no and Entry number: row/entry indexes only.
 
 carob_script <- function(path) {
 
@@ -39,33 +38,40 @@ Medium-Duration Groundnut for Multi-location evaluation comprises 15 breeding li
 		response_vars = "yield",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Medium duration lines for agronomic traits in the location IAR.xlsx"]
 	r <- carobiner::read.excel(f)
 
+	variety <- trimws(r$Variety)
+
 	d <- data.frame(
 		country = "Nigeria",
 		location = "IAR",
 		crop = "groundnut",
-		variety = trimws(r$Variety),
-		treatment = trimws(r$Variety),
+		variety = variety,
+		# Abstract notes 15 breeding lines and 3 released varieties (SAMNUT22, SAMNUT24, SAMNUT25)
+		variety_type = ifelse(grepl("^SAMNUT", variety), "improved", NA_character_),
+		treatment = variety,
 		rep = as.integer(r[["Replication number"]]),
 		block_id = as.character(r$Block),
 		plot_id = as.character(r[["Plot no"]]),
 		yield = as.numeric(r$Pykg_h),
 		yield_part = "pod",
-		stress = "disease",
-		trial_id = "1",
+		# Dataverse timePeriodCovered is 2015-06-14 to 2015-12-25 (day-of-month is template across ICRISAT deposits)
+		planting_date = "2015",
+		trial_id = "IAR_2015",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		irrigated = FALSE,
 		longitude = (3.850134 + 3.850365) / 2,
 		latitude = 7.362372,
+		geo_uncertainty = 13,
+		geo_source = "ICRISAT Dataverse bounding box",
 		geo_from_source = TRUE
 	)
 

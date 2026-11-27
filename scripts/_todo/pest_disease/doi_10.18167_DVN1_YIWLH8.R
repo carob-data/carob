@@ -1,42 +1,54 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Macroinvertebrate counts in six banana fields in Martinique, three agroforestry and three conventional. Country is geographicCoverage.
-# The file writes Conventionalforestry for the conventional system.
-# Date codes (2Q, 2V, 3Q, 3V, 4Q, 4V) are campaign labels. They are not calendar dates, and the description's years 2019-2021 are not assigned to them.
-# abundance is the count in the sample, not a per-hectare density.
-# Identical count rows are dropped.
-
 ## ISSUES
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variable: trap_method_ (method?)
-# unknown variable: taxon_order_ (order?)
-# unknown variables: system_, campaign_, pair_, taxon_class_, taxon_family_, taxon_species_, abundance_, diversity_used_
+# 1. Exact coordinates of the six banana fields are not in the data files;
+#    midpoint of the Dataverse geographicBoundingBox in northern Martinique is
+#    used with 9 km uncertainty.
+# 2. Sampling campaigns are coded 2Q/2V, 3Q/3V, 4Q/4V across the three
+#    consecutive annual campaigns (2019-2021). Because soil properties and
+#    canopy opening were measured only in the last campaign (4Q), campaigns 2,
+#    3, and 4 are mapped to 2019, 2020, and 2021 respectively.
+# 3. `diversity.csv` omits the within-plot sampling point (`Replicate` 1-8)
+#    column present in the other files; all 3,004 rows are retained in `long`
+#    indexed by the source row number (`order`) and linked to `d` by `trial_id`
+#    (plot x year).
+# 4. In `soil_properties.csv`, `Infiltrability` ranges 270-2521 mm/h (27-252
+#    cm/h, exceeding terminag `soil_Ksat` valid_max = 40 cm/h) and is stored in
+#    `soil_infiltrability_` (mm/h).
+
+## NEW
+# cropping_system_: management system ("agroforestry" or "conventional")
+# pair_: paired farm/site block ("Bourguignon", "Petite_Barriere", "Canal_Fanny")
+# campaign_: sampling campaign code in wide table (2Q, 3Q, 4Q)
+# fauna_campaign_: sampling campaign code in long macrofauna table (2Q, 2V, 3Q, 3V, 4Q, 4V)
+# litter_twigs_, litter_cover_crop_, litter_tree_leaves_, litter_banana_leaves_: litter mass by component (g/sample)
+# canopy_openness_: mean hemispherical canopy openness (%)
+# soil_void_ratio_: volume of voids / volume of solids (Iv)
+# soil_microporosity_, soil_macroporosity_: soil microporosity and macroporosity (%)
+# soil_CN_ratio_: soil C:N ratio
+# soil_infiltrability_: soil infiltrability (mm/h, 0-10 cm)
+# trap_method_: macrofauna sampling method ("Quadra litiere", "Quadra sol", "test beche")
+# fauna_group_: broad taxon group ("Macro-arthropods" or "Earthworms")
+# fauna_class_, fauna_order_, fauna_family_, fauna_species_: taxonomic identification
+# fauna_abundance_: individuals per sample
+# diversity_used_: status in diversity analysis ("yes", "no", "garder larve")
+
+## MISSING
+# yield, yield_moisture, yield_part, planting_date, harvest_date.
+
+## NOTES
+# Paired comparison of 3 agroforestry vs 3 conventional commercial banana
+# fields in Martinique over 3 campaigns (2019-2021), 8 sampling points per
+# plot. Wide table `d` combines litter composition (144 plot x rep x year
+# samples), canopy openness (48 samples in 2021), and soil physico-chemical
+# properties at 0-10 cm and 10-20 cm (96 samples in 2021). Long table `long`
+# holds all 3,004 macroinvertebrate abundance records from `diversity.csv`.
 
 ## NOT PROCESSED
-# arthropods_imagej.csv and earthworms_imagej.csv. Body-size measurements.
-# soil_properties.csv, canopee_opening.csv, composition_litter.csv, and traits_litter.csv.
-# arthropods_imagej_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
-# canopee_opening_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
-# composition_litter_labels.xlsx: not read. sheet Feuil1: Category_TW, The masse of the twig of the litter sample (g). Observation records are missing from d until this file is standardized.
-# diversity _label.csv: not read. columns: Date;The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
-# earthworms_imagej_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
-# soil_properties_labels.xlsx: not read. sheet Feuil1: Plot, The plot of the sample among the six plots. Observation records are missing from d until this file is standardized.
-# traits_litter_labels.xlsx: not read. sheet Feuil1: Date, The year of the sample among the three fields. Observation records are missing from d until this file is standardized.
-
-
-## NEW VARIABLES
-# system_: agroforestry or conventional.
-# campaign_: sampling code in the Date column.
-# pair_: plot pair named in the file.
-# trap_method_: litter quadrat or soil quadrat method, as stored.
-# taxon_class_: class.
-# taxon_order_: order.
-# taxon_family_: family.
-# taxon_species_: species name, as stored.
-# abundance_: individuals in the sample.
-# diversity_used_: TRUE when the row was flagged for the diversity analysis.
+# Raw ImageJ particle-by-particle image measurements (`arthropods_imagej.csv`,
+# `earthworms_imagej.csv`, `traits_litter.csv`) and their codebook spreadsheets
+# (`*_labels.xlsx`, `diversity _label.csv`).
 
 
 carob_script <- function(path) {
@@ -57,49 +69,115 @@ This dataset includes values for abundance, biomass, and functional traits of ma
 		project = NA,
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "system_",
-		response_vars = "abundance_",
+		treatment_vars = "cropping_system_",
+		response_vars = "fauna_abundance_;canopy_openness_;soil_pH;soil_C_total;soil_bd",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 75,
 		carob_effort = 0
 	)
 
-	f <- ff[basename(ff) == "diversity.csv"]
-	# Species names are Latin-1. Read that way so later name checks see valid UTF-8.
-	r <- read.csv(f, sep=";", na.strings=c("NA", ""), check.names=FALSE, fileEncoding="Latin1")
-	names(r) <- trimws(names(r))
-	r <- r[, names(r) != ""]
-	for (nm in names(r)) if (is.character(r[[nm]])) r[[nm]] <- enc2utf8(r[[nm]])
+	read_fr <- function(fname) {
+		f <- ff[basename(ff) == fname]
+		r <- read.csv(f, sep=";", dec=",", na.strings=c("NA", ""), check.names=FALSE, fileEncoding="Latin1")
+		names(r) <- trimws(names(r))
+		for (nm in names(r)) {
+			if (is.character(r[[nm]])) r[[nm]] <- trimws(enc2utf8(r[[nm]]))
+		}
+		r
+	}
 
-	sys <- trimws(r$System)
-	sys[sys == "Agroforestry"] <- "agroforestry"
-	sys[sys == "Conventionalforestry"] <- "conventional"
-	used <- tolower(trimws(r$diversity))
+	norm_sys <- function(x) {
+		ifelse(grepl("^agro", tolower(x)), "agroforestry", "conventional")
+	}
+	camp_year <- function(x) {
+		c("2"="2019", "3"="2020", "4"="2021")[substr(trimws(x), 1, 1)]
+	}
 
-	d <- data.frame(
-		trial_id = paste(trimws(r$Plot), trimws(r$Date)),
-		plot_id = trimws(r$Plot),
-		country = "Martinique",
-		crop = "banana",
-		system_ = sys,
-		treatment = sys,
-		campaign_ = trimws(r$Date),
-		pair_ = trimws(r$Pair),
-		trap_method_ = trimws(r$trapping_method),
-		taxon_class_ = trimws(r$nom_classe),
-		taxon_order_ = trimws(r$nom_ordre),
-		taxon_family_ = trimws(r$nom_famille),
-		taxon_species_ = trimws(r$nom_espece),
-		abundance_ = as.numeric(r$abundance),
-		diversity_used_ = ifelse(used == "yes", TRUE, ifelse(used == "no", FALSE, NA)),
-		on_farm = TRUE,
-		is_survey = TRUE,
-		geo_from_source = FALSE
+	## 1. Litter composition (144 samples: 6 plots x 8 reps x 3 campaigns 2Q/3Q/4Q)
+	r_lit <- read_fr("composition_litter.csv")
+	d_lit <- data.frame(
+		sample_id = r_lit$Code,
+		campaign_ = r_lit$Date,
+		date = unname(camp_year(r_lit$Date)),
+		plot_id = gsub("_", "-", r_lit$Plot),
+		pair_ = r_lit$Pair,
+		cropping_system_ = norm_sys(r_lit$System),
+		rep = as.integer(r_lit$Replicate),
+		litter_twigs_ = as.numeric(r_lit$Category_TW),
+		litter_cover_crop_ = as.numeric(r_lit$Category_CC),
+		litter_tree_leaves_ = as.numeric(r_lit$Category_TL),
+		litter_banana_leaves_ = as.numeric(r_lit$Category_BL)
 	)
-	d <- d[!duplicated(d), ]
+	d_lit$trial_id <- paste(d_lit$plot_id, d_lit$date, sep="_")
+	d_lit$treatment <- d_lit$cropping_system_
 
-	carobiner::write_files(path, meta, d)
+	## 2. Canopy openness (48 samples in 4Q / 2021, 3 hemispherical photos each)
+	r_can <- read_fr("canopee_opening.csv")
+	open1 <- 100 * as.numeric(r_can$Canopy_Opening_1) / as.numeric(r_can$Total_1)
+	open2 <- 100 * as.numeric(r_can$Canopy_Opening_2) / as.numeric(r_can$Total_2)
+	open3 <- 100 * as.numeric(r_can$Canopy_Opening_3) / as.numeric(r_can$Total_3)
+	d_can <- data.frame(
+		sample_id = r_can$Code,
+		canopy_openness_ = rowMeans(cbind(open1, open2, open3), na.rm=TRUE)
+	)
+	d <- merge(d_lit, d_can, by="sample_id", all.x=TRUE)
+
+	## 3. Soil properties (96 rows in 4Q / 2021: 48 samples x 2 depths 0-10 & 10-20 cm)
+	r_soil <- read_fr("soil_properties.csv")
+	d_soil <- data.frame(
+		sample_id = r_soil$Code,
+		soil_sample_date = "2021",
+		depth_top = ifelse(r_soil$Depth == "0-10cm", 0, 10),
+		depth_bottom = ifelse(r_soil$Depth == "0-10cm", 10, 20),
+		soil_bd = as.numeric(r_soil$Dapp),
+		soil_GWC = as.numeric(r_soil$Eaufield) / 100,
+		soil_FC = as.numeric(r_soil$EauCC),
+		soil_void_ratio_ = as.numeric(r_soil$Iv),
+		soil_microporosity_ = as.numeric(r_soil$Microporosite),
+		soil_macroporosity_ = as.numeric(r_soil$Macroporosite),
+		soil_stones = as.numeric(r_soil$Pierrosite),
+		soil_pH = as.numeric(r_soil$pH),
+		soil_C_total = as.numeric(r_soil$C),
+		soil_N_total = as.numeric(r_soil$N) * 10000,
+		soil_CN_ratio_ = as.numeric(r_soil$CN),
+		soil_infiltrability_ = as.numeric(r_soil$Infiltrability)
+	)
+	d <- merge(d, d_soil, by="sample_id", all.x=TRUE)
+
+	d$country <- "Martinique"
+	d$crop <- "banana"
+	## Midpoint of Dataverse geographicBoundingBox (-61.1573..-61.0654 W, 14.7764..14.8983 N)
+	d$latitude <- 14.8374
+	d$longitude <- -61.1114
+	d$geo_uncertainty <- 9000
+	d$geo_source <- "Dataverse metadata geographicBoundingBox midpoint (northern Martinique)"
+	d$geo_from_source <- FALSE
+	d$on_farm <- TRUE
+	d$is_survey <- TRUE
+
+	## 4. Macroinvertebrate diversity & abundance (3,004 rows, linked via trial_id)
+	r_div <- read_fr("diversity.csv")
+	clean <- function(x) {
+		x <- trimws(as.character(x))
+		x[x == ""] <- NA_character_
+		x
+	}
+	long <- data.frame(
+		trial_id = paste(gsub("_", "-", r_div$Plot), unname(camp_year(r_div$Date)), sep="_"),
+		order = as.integer(r_div[[1]]),
+		fauna_campaign_ = clean(r_div$Date),
+		trap_method_ = clean(r_div$trapping_method),
+		fauna_group_ = clean(r_div$taxa),
+		fauna_class_ = clean(r_div$nom_classe),
+		fauna_order_ = clean(r_div$nom_ordre),
+		fauna_family_ = clean(r_div$nom_famille),
+		fauna_species_ = clean(r_div$nom_espece),
+		fauna_abundance_ = as.numeric(r_div$abundance),
+		diversity_used_ = clean(r_div$diversity)
+	)
+
+	carobiner::write_files(path, meta, d, long=long)
 }

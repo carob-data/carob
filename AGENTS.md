@@ -467,6 +467,20 @@ In the code itself, do *not* refer to `ISSUES` by number (like `# see ISSUES 4`)
 
 ---
 
+
+## 15. Touch edited scripts after testing (`build_carob.bat`)
+
+`build_carob.bat` runs `carobiner::make_carob(..., cache=TRUE)`, which skips any script whose compiled output in `data/clean/` has a newer modification timestamp than the `.R` script itself.
+
+- **Required for published scripts**: Whenever you edit a published Carob script under `scripts/<group>/` and test it (running `carob_script()` / `carobiner::write_files()`), immediately update the `.R` script's modification timestamp afterwards so it is **more recent than any output written during the test**.
+- **Exempt**: Skip this for scripts in `scripts/_todo/` (as well as other skipped folders: `_draft/`, `_pending/`, `_rejected/`, `_AI/`), which `build_carob.bat` does not build.
+- On Windows PowerShell, do this with:
+  ```powershell
+  (Get-Item <path-to-script.R>).LastWriteTime = Get-Date
+  ```
+- Do this after the **final** test run for every modified published script before finishing your turn, so running `build_carob.bat` triggers the script again and displays its output to the user.
+
+
 ## Related references
 
 - **Official contributor guidelines (read this): <https://carob-data.org/contribute/guidelines.html>**

@@ -1,43 +1,70 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Field observations at Neufchâteau station, Guadeloupe (geographicCoverage). Coordinates in the file are plant positions such as A02, not longitude and latitude.
-# Crop is plantain when Type Genotype is Plantain, and banana otherwise.
-# Gaulh is the severity stored in disease_severity. The dictionary tokens non and Non, and pas de PJFN / pas de PJFL, are missing leaf-stage notes and are set to NA before the numbers are read.
-# Lesion and necrosis sizes on the same rows are measurements of leaf fragments from these field plants. This is the field file.
-# Rows that match on every column kept here, including fragment ids, are dropped. Period code REF is missing and is set to NA.
-
 ## ISSUES
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date
-# unknown variable: field_ (field_id?)
-# unknown variable: status_ (civil_status?)
-# unknown variable: sex_latent_days_ (sex?)
-# unknown variables: cycle_, period_, yls_, insl_, sev_yls_, incubation_days_, lesion_length_, lesion_width_, fragment_id_, lesion_id_, necrosis_id_
-# invalid terms: disease: Pseudocercospora fijiensis
+# 1. Dataset title mentions 11 banana genotypes in 2021-2022, but df_field.csv
+#    actually contains 19 genotypes and dates spanning 2017-2023 (including 154
+#    rows formatted as "01/03/22" instead of dd/mm/yyyy, parsed here as
+#    2022-03-01).
+# 2. Global Gauhl severity (Gaulh, stored in disease_severity) mixes 0-1
+#    proportions (817 rows, primarily 2017-2020) and 0-100 percentages (991
+#    rows, primarily 2021-2023) in the same column. Values are kept as reported
+#    in the source pending verification against the publication scripts.
+# 3. Rows 2730-3395 record leaf-fragment lesion/necrosis measurements rather
+#    than whole-plant Gauhl severity (Gaulh is NA on those rows). All 3395 rows
+#    are retained without dropping records.
+# 4. Coordinates in df_field.csv are plant grid positions (e.g., A02, stored in
+#    plot_id), not geographic coordinates. CIRAD Neufchateau station coordinates
+#    were georeferenced from Mapcarta with 1 km uncertainty.
+
+## NEW
+# disease: "black leaf streak" (black Sigatoka; not yet in values_disease.csv)
+# pathogen: "Pseudocercospora fijiensis" (not yet in values_pathogen.csv)
+# cycle_: banana crop cycle number
+# period_: observation period number (Period_nb; "REF" set to NA)
+# total_leaves_: total number of functional leaves per plant (TNL)
+# leaf_emission_rate_: leaf emission rate, leaves/week (LER)
+# yls_: youngest leaf spotted with stage 6 symptoms, leaf rank (YLS)
+# sev_yls_: Gauhl severity score (1-6) on youngest leaf spotted (Sev_YLS)
+# sex_latent_days_: estimated sexual latent period, days (SexLP)
+# insl_: index of non-spotted leaves without stage 6 symptoms, % (INSL)
+# ylst_: youngest leaf with visible streaks (stage 2), leaf rank (Ylst)
+# sev_ylst_: severity score on Ylst (Sev_Ylst)
+# incubation_days_: estimated incubation period, days (IP)
+# instl_: index of leaves without visible streaks (stage 2), % (InstL)
+# ylmst_: youngest leaf with mature streaks (stage 3), leaf rank (Ylmst)
+# sev_ylmst_: severity score on Ylmst (Sev_YmstL)
+# asex_latent_days_: estimated asexual latent period, days (AsexLP)
+# inmstl_: index of leaves without mature streaks (stage 3), % (InstmL)
+# fragment_id_: leaf fragment identifier (ID_fragment)
+# lesion_id_: lesion identifier on fragment (ID_lesion)
+# lesion_length_: lesion length, mm
+# lesion_width_: lesion width, mm
+# lesion_area_: lesion area, mm2 (surface_lesion)
+# conidiophore_count_: counted stomata with mature conidiophores per lesion (nb_conidio_lesion)
+# conidiophore_density_: mature conidiophore density, stomata/cm2 (conidio_lesion)
+# necrosis_id_: necrosis identifier on fragment (ID_necrosis)
+# necrosis_length_: necrosis length, mm
+# necrosis_width_: necrosis width, mm
+# necrosis_area_: necrosis area, mm2 (surface_necrosis)
+# perithecia_count_: perithecia count per necrosis (nb_perithecia_necrosis)
+# perithecia_density_: perithecia density, perithecia/cm2 (perithecia_necrosis)
+
+## MISSING
+# yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer,
+# P_fertilizer, planting_date, harvest_date (not reported in df_field.csv)
+
+## NOTES
+# Field resistance screening of banana and plantain genotypes to black leaf
+# streak disease (Pseudocercospora fijiensis) at CIRAD Neufchateau station,
+# Guadeloupe (2017-2023; Jolivet et al., 2025, Plant Pathology). Non-numeric
+# missing-symptom tokens ("non", "Non", "pas de PJFN", "pas de PJFL",
+# "pas de PJFM", "REF") are converted to NA before numeric coercion.
 
 ## NOT PROCESSED
-# Observer, additional comments, marked-leaf rank, leaf emission rate, and the other stage indexes (Ylst, Ylmst, InstL, InmstL, AsexLP).
-# Conidia and perithecia counts and the derived lesion surfaces.
-# df_field_dictionary.csv: documentation or a codebook, not an observation table.
-# README.txt: documentation or a codebook, not an observation table.
-
-
-## NEW VARIABLES
-# field_: field name inside the station.
-# cycle_: banana cycle number.
-# period_: observation period number.
-# status_: plant status code (V, F, and the other codes in the file).
-# yls_: youngest leaf spotted, leaf rank.
-# insl_: index of non-spotted leaves, percent.
-# sev_yls_: severity of the youngest leaf spotted, Gauhl scale.
-# sex_latent_days_: estimated sexual latent period, days.
-# incubation_days_: estimated incubation period, days.
-# lesion_length_: lesion length on a leaf fragment.
-# lesion_width_: lesion width on a leaf fragment.
-# fragment_id_: leaf-fragment id. Several fragments can share one plant and date.
-# lesion_id_: lesion id on that fragment.
-# necrosis_id_: necrosis id on that fragment.
+# Observer (observer name), add_obs (free-text field notes), MLR (marked leaf
+# rank used to derive LER), and YLS+1 / YLmstL+1 (auxiliary adjacent-leaf ranks).
+# df_field_dictionary.csv and README.txt are codebook/documentation files.
 
 
 carob_script <- function(path) {
@@ -62,68 +89,95 @@ This dataset contains field observations of eleven banana genotypes conducted in
 		response_vars = "disease_severity",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 45,
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_date = "2026-11-26",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "df_field.csv"]
-	r <- read.csv(f, na.strings=c("NA", ""), check.names=FALSE)
+	r <- read.csv(f, na.strings = c("NA", ""), check.names = FALSE)
 	names(r) <- trimws(names(r))
 
+	clean_chr <- function(x) {
+		x <- trimws(gsub("\u00a0", "", as.character(x)))
+		x[x == ""] <- NA_character_
+		x
+	}
 	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[x %in% c("", "non", "Non", "pas de PJFN", "pas de PJFL", "REF")] <- NA_character_
+		x <- clean_chr(x)
+		x[tolower(x) %in% c("non", "pas de pjfn", "pas de pjfl", "pas de pjfm", "ref")] <- NA_character_
 		as.numeric(x)
 	}
 
-	field <- gsub("\u00a0", "", r$Field)
-	field <- trimws(field)
-	field[field == ""] <- NA_character_
-	vtype <- trimws(r[["Type Genotype"]])
+	dt_raw <- clean_chr(r$Date)
+	dt <- ifelse(
+		grepl("^\\d{2}/\\d{2}/\\d{2}$", dt_raw),
+		as.character(as.Date(dt_raw, "%d/%m/%y")),
+		as.character(as.Date(dt_raw, "%d/%m/%Y"))
+	)
+
+	st_raw <- clean_chr(r$State)
+	stage_map <- c(V = "vegetative", F = "flowering", f = "flowering", P = "P", R = "R", C = "C", Mort = "dead")
+	vtype <- clean_chr(r[["Type Genotype"]])
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
 		trial_id = "Neufchateau",
-		plot_id = trimws(as.character(r$Coordinates)),
+		site = clean_chr(r$Field),
+		plot_id = clean_chr(r$Coordinates),
 		country = "Guadeloupe",
+		adm1 = "Basse-Terre",
+		adm2 = "Capesterre-Belle-Eau",
 		location = "Neufchateau",
-		field_ = field,
-		crop = ifelse(vtype == "Plantain", "plantain", "banana"),
-		variety = trimws(r$Genotype),
+		latitude = 16.0808,
+		longitude = -61.6029,
+		geo_uncertainty = 1000,
+		geo_source = "Mapcarta (CIRAD Station de Neufch\u00e2teau)",
+		geo_from_source = FALSE,
+		crop = ifelse(!is.na(vtype) & vtype == "Plantain", "plantain", "banana"),
+		variety = clean_chr(r$Genotype),
 		variety_type = vtype,
-		treatment = trimws(r$Genotype),
+		treatment = clean_chr(r$Genotype),
 		rep = as.integer(num(r$Rep)),
 		cycle_ = as.integer(num(r$Cycle)),
 		period_ = as.integer(num(r$Period_nb)),
-		date = as.character(as.Date(trimws(r$Date), "%d/%m/%Y")),
-		status_ = trimws(r$State),
+		date = dt,
+		growth_stage = unname(stage_map[st_raw]),
 		stress = "disease",
-		disease = "Pseudocercospora fijiensis",
-		disease_severity = trimws(as.character(r$Gaulh)),
+		disease = "black leaf streak",
+		pathogen = "Pseudocercospora fijiensis",
+		disease_severity = clean_chr(r$Gaulh),
+		total_leaves_ = num(r$TNL),
+		leaf_emission_rate_ = num(r$LER),
 		yls_ = num(r$YLS),
-		insl_ = num(r$INSL),
 		sev_yls_ = num(r$Sev_YLS),
 		sex_latent_days_ = num(r$SexLP),
+		insl_ = num(r$INSL),
+		ylst_ = num(r$Ylst),
+		sev_ylst_ = num(r$Sev_Ylst),
 		incubation_days_ = num(r$IP),
+		instl_ = num(r$InstL),
+		ylmst_ = num(r$Ylmst),
+		sev_ylmst_ = num(r$Sev_YmstL),
+		asex_latent_days_ = num(r$AsexLP),
+		inmstl_ = num(r$InstmL),
+		fragment_id_ = clean_chr(r$ID_fragment),
+		lesion_id_ = clean_chr(r$ID_lesion),
 		lesion_length_ = num(r$lesion_length),
 		lesion_width_ = num(r$lesion_width),
-		fragment_id_ = trimws(as.character(r$ID_fragment)),
-		lesion_id_ = trimws(as.character(r$ID_lesion)),
-		necrosis_id_ = trimws(as.character(r$ID_necrosis)),
+		lesion_area_ = num(r$surface_lesion),
+		conidiophore_count_ = num(r$nb_conidio_lesion),
+		conidiophore_density_ = num(r$conidio_lesion),
+		necrosis_id_ = clean_chr(r$ID_necrosis),
+		necrosis_length_ = num(r$necrosis_length),
+		necrosis_width_ = num(r$necrosis_width),
+		necrosis_area_ = num(r$surface_necrosis),
+		perithecia_count_ = num(r$nb_perithecia_necrosis),
+		perithecia_density_ = num(r$perithecia_necrosis),
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
-	d$plot_id[d$plot_id == ""] <- NA_character_
-	d$status_[d$status_ == ""] <- NA_character_
-	d$disease_severity[d$disease_severity == ""] <- NA_character_
-	d$variety_type[d$variety_type == ""] <- NA_character_
-	d$fragment_id_[d$fragment_id_ == ""] <- NA_character_
-	d$lesion_id_[d$lesion_id_ == ""] <- NA_character_
-	d$necrosis_id_[d$necrosis_id_ == ""] <- NA_character_
-	# Some rows match on every column kept here, including the fragment ids.
-	d <- d[!duplicated(d), ]
 
 	carobiner::write_files(path, meta, d)
 }

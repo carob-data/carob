@@ -1,33 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Two surveillance tables: potato psyllid (01) and purple top (02). Ecuador, from the dataset title.
-# fecha is the observation date. Provincia is stored as adm1 in title case.
-# papa is potato. pepino_dulce is pepino (Solanum muricatum). Other species names are kept as recorded in crop.
-# incidencia is a percent in the file. It is stored as incidence_ because disease_incidence is text and pest_incidence is a count.
-# Presence is the text in presencia.
-
 ## ISSUES
-# 63 psyllid records have no province name and were left without coordinates. Unmatched adm1: missing nameprovincia. Parish codes are not longitude or latitude.
-# Landscape cover by plant family is not mapped.
-# papa is potato, pepino_dulce is pepino, and tomate / Lycopersicon text is tomato. pimiento, prinontomate, tomate arbol, and uvilla are kept as recorded and are not vocabulary crop names.
-# Bactericera cockerelli is not in the pest list. The purple-top diagnosis is recorded as punta morada, which is not in the disease list.
-# No yield or fertilizer. These are surveillance records.
-# write_files: missing yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
-# write_files: NA detected: latitude, longitude (records with no province).
-# write_files: unknown variable: incidence_ (pest_incidence?); unknown variables: presence_.
-# write_files: invalid terms: crop: pimiento, prinontomate, tomate arbol, uvilla; pest_species: Bactericera cockerelli; disease: punta morada.
+# 18 records in 01_Data_Surveillance_of_the_potato_psyllid.xlsx have no province name or parish code (DPA_PARROQ = NA) and therefore lack coordinates (45 other rows missing nameprovincia were recovered from the first two digits of DPA_PARROQ).
+# Row 951 of 01_Data_Surveillance_of_the_potato_psyllid.xlsx (tree tomato, missing parish code) records altitude = 0 m, which is likely a missing GPS elevation; kept as recorded.
+# Coordinates are province-level (GADM adm1) centroids; finer parish-level georeferencing is possible from the 6-digit Ecuador INEC DPA_PARROQ codes if a parish lookup table is added.
+
+## NEW
+# pest_incidence_pct_: percentage of plants/field with potato psyllid (Bactericera cockerelli) incidence (%).
+# crop: tree tomato (Solanum betaceum, raw: tomate_arbol), cape gooseberry (Physalis peruviana, raw: uvilla).
+# pest_species: Bactericera cockerelli.
+# disease: potato purple top (raw: punta morada).
+
+## NOTES
+# Surveillance records from Agrocalidad (with CIP and Technical University of Cotopaxi) in Ecuador (2018-2021) for potato psyllid (n = 951) and potato purple top (n = 309) across six Solanaceae host crops.
+# Crop species are mapped using 03_Data_dictionary_Surveillance_of_the_potato.xlsx (prinontomate -> tomato, pimiento -> bell pepper, papa -> potato, pepino_dulce -> pepino, tomate_arbol -> tree tomato, uvilla -> cape gooseberry).
+# Purple top dates in 02_Data_Surveillance_pmp.xlsx are stored as Excel serial numbers and converted with origin = "1899-12-30".
 
 ## NOT PROCESSED
-# Family cover columns (fabaceae through linaceae), superficie_can_total, and num_superficietotal_par. Parish land-cover composition, not a plot measurement.
-# ual_prov, ual_cant, ual_parr, DPA_PARROQ: administrative codes. The province name is kept.
-# year: the calendar year of fecha.
-# 03_Data_dictionary_Surveillance_of_the_potato.xlsx: documentation or a codebook, not an observation table.
+# 01 and 02 xlsx: 38 parish-level botanical family land-cover percentages (fabaceae through linaceae), superficie_can_total, and num_superficietotal_par (parish-level agricultural census landscape covariates, not field measurements).
+# 01 and 02 xlsx: presencia (presence/absence; 100% redundant with incidencia > 0 across all 1,260 rows), year (redundant with fecha), and raw administrative codes (DPA_PARROQ, ual_prov, ual_cant, ual_parr; province extracted into adm1).
 
-## NEW VARIABLES
-# incidence_: recorded incidence, percent
-# presence_: presence text as recorded
 
 carob_script <- function(path) {
 
@@ -48,60 +41,92 @@ The psyllid (Bactericera cockerelli) and purple top are serious productivity con
 		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
-		response_vars = "incidence_",
+		response_vars = "disease_incidence;pest_incidence_pct_",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 55,
 		carob_effort = 0
 	)
 
+	# Ecuador INEC 2-digit province codes (first two digits of 6-digit DPA_PARROQ)
+	prov_codes <- c(
+		"01" = "Azuay",
+		"02" = "Bolívar",
+		"03" = "Cañar",
+		"04" = "Carchi",
+		"05" = "Cotopaxi",
+		"06" = "Chimborazo",
+		"08" = "Esmeraldas",
+		"10" = "Imbabura",
+		"11" = "Loja",
+		"17" = "Pichincha",
+		"18" = "Tungurahua",
+		"21" = "Sucumbíos"
+	)
+
+	crop_map <- c(
+		"papa" = "potato",
+		"pepino_dulce" = "pepino",
+		"pimiento" = "bell pepper",
+		"prinontomate" = "tomato",
+		"tomate (lycopersicon esculentum)" = "tomato",
+		"tomate_arbol" = "tree tomato",
+		"uvilla" = "cape gooseberry"
+	)
+
 	one <- function(f, stress) {
-		r <- carobiner::read.excel(f)
+		r <- carobiner::read.excel(f, na=c("", "NA"))
+
 		sp <- tolower(trimws(as.character(r[["Especie vegetal"]])))
-		crop <- gsub("_", " ", sp, fixed=TRUE)
-		crop[sp == "papa"] <- "potato"
-		crop[sp == "pepino_dulce"] <- "pepino"
-		crop[crop == "tomate" | grepl("lycopersicon", crop, fixed=TRUE)] <- "tomato"
-		diag <- trimws(as.character(r$diagnostico))
-		diag <- ifelse(tolower(diag) == "bactericera cockerelli", "Bactericera cockerelli", diag)
-		prov <- trimws(as.character(r$nameprovincia))
-		# Missing nameprovincia must stay missing. toTitleCase("NA") would be "Na".
-		miss <- is.na(r$nameprovincia) | !nzchar(prov) | (!is.na(prov) & toupper(prov) == "NA")
-		prov[miss] <- NA_character_
-		prov <- tools::toTitleCase(tolower(prov))
-		# canar is the GADM province Cañar
-		prov[which(prov == "Canar")] <- "Cañar"
+		crop <- unname(crop_map[sp])
+		if (anyNA(crop)) stop("unmapped crop: ", paste(unique(sp[is.na(crop)]), collapse=", "))
+
+		# Recover missing province names from the first two digits of DPA_PARROQ
+		dpa <- ifelse(is.na(r$DPA_PARROQ), NA_character_, sprintf("%06d", as.integer(r$DPA_PARROQ)))
+		pcode <- ifelse(is.na(dpa), NA_character_, substr(dpa, 1, 2))
+		prov <- unname(prov_codes[pcode])
+		if (any(!is.na(pcode) & is.na(prov))) {
+			stop("unmapped Ecuador province code: ", paste(unique(pcode[!is.na(pcode) & is.na(prov)]), collapse=", "))
+		}
+
+		# 01 has POSIXct dates; 02 has numeric Excel serial dates
+		dt <- if (is.numeric(r$fecha)) {
+			as.character(as.Date(r$fecha, origin="1899-12-30"))
+		} else {
+			as.character(as.Date(r$fecha))
+		}
+
+		inc <- as.numeric(r$incidencia)
 		data.frame(
 			country = "Ecuador",
 			adm1 = prov,
 			elevation = as.numeric(r$altitude),
-			date = as.character(as.Date(r$fecha)),
+			date = dt,
 			crop = crop,
-			pest_species = if (stress == "pests") diag else NA_character_,
-			disease = if (stress == "disease") diag else NA_character_,
+			pest_species = if (stress == "pests") "Bactericera cockerelli" else NA_character_,
+			pest_incidence_pct_ = if (stress == "pests") inc else NA_real_,
+			disease = if (stress == "disease") "potato purple top" else NA_character_,
+			# % incidence of potato purple top in the surveyed field
+			disease_incidence = if (stress == "disease") as.character(inc) else NA_character_,
 			stress = stress,
-			incidence_ = as.numeric(r$incidencia),
-			presence_ = trimws(as.character(r$presencia)),
-			trial_id = if (stress == "pests") "psyllid" else "purple_top",
 			on_farm = TRUE,
-			is_survey = TRUE,
-			irrigated = NA
+			is_survey = TRUE
 		)
 	}
 
 	f1 <- ff[basename(ff) == "01_Data_Surveillance_of_the_potato_psyllid.xlsx"]
 	f2 <- ff[basename(ff) == "02_Data_Surveillance_pmp.xlsx"]
 	d <- carobiner::bindr(one(f1, "pests"), one(f2, "disease"))
-	d$plot_id <- as.character(seq_len(nrow(d)))
+	d$trial_id <- as.character(seq_len(nrow(d)))
 
-	# Coordinates are the GADM point-radius centroid of the province.
+	# Province (GADM 4.1 adm1) centroids and approximate bounding-radius uncertainties (m)
 	geo <- data.frame(
-		adm1 = c("Azuay", "Bolivar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "Imbabura", "Loja", "Pichincha", "Tungurahua"),
-		longitude = c(-79.1542, -79.1069, -79.0304, -78.0759, -78.7208, -78.8565, -78.3709, -79.6559, -78.5936, -78.5071),
-		latitude = c(-3.0141, -1.5872, -2.5324, 0.7702, -1.975, -0.858, 0.4054, -4.0901, -0.1049, -1.2944),
-		geo_uncertainty = c(92116, 63004, 55137, 67254, 75052, 61695, 100962, 96226, 93783, 48740),
+		adm1 = c("Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi", "Esmeraldas", "Imbabura", "Loja", "Pichincha", "Sucumbíos", "Tungurahua"),
+		longitude = c(-79.1542, -79.1069, -79.0304, -78.0759, -78.7208, -78.8565, -79.3500, -78.3709, -79.6559, -78.5936, -76.8500, -78.5071),
+		latitude = c(-3.0141, -1.5872, -2.5324, 0.7702, -1.9750, -0.8580, 0.7800, 0.4054, -4.0901, -0.1049, 0.0500, -1.2944),
+		geo_uncertainty = c(92116, 63004, 55137, 67254, 75052, 61695, 110000, 100962, 96226, 93783, 140000, 48740),
 		geo_source = "GADM 4.1, adm1"
 	)
 	d <- merge(d, geo, by="adm1", all.x=TRUE, sort=FALSE)

@@ -1,26 +1,25 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Malaise-trap counts in maize and wheat at El Batán (Estado de México) and CENEB (Ciudad Obregón, Sonora), 2021-2024. Geographic coverage is Mexico. The file has no coordinates.
-# Each row is one taxon in one trap. A count of 0 is a recorded count. Distance 0 is the flower strip.
-# The crop is not separable by row. Maize and wheat were both grown, so crop is not stored.
-# Days is the number of days the trap was active.
-# 3581 rows repeat the same site, date, plot, replicate, taxon, distance, count, and functional group. One copy of each is kept.
-
 ## ISSUES
-# The rows do not say whether the trap was in maize or wheat, so crop is not stored. There is no yield, fertilizer, irrigation, planting date, or coordinates.
-# write_files: missing variables: crop, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. unknown variables: flower_strip_distance_, trap_days_, functional_group_, taxon_, insect_count_. contributor:
+# Rows do not indicate whether a Malaise trap was placed in a maize or a wheat field, so crop cannot be assigned per row.
+# The raw Data sheet contains 3,581 exact duplicate rows (deduplicated here) and 1,309 additional pairs sharing the same Site, Date, Plot, Distance, Replicate, and Taxonomical_group but with different counts (often one non-zero and one zero); those pairs are kept because the cause (e.g. morphospecies rows vs. data-entry artifact) cannot be resolved without the authors.
+# Coordinates are not in the workbook; station coordinates for CIMMYT El Batan and CENEB were georeferenced from the station names.
 
-## NEW VARIABLES
-# flower_strip_distance_: distance of the trap from the flower strip, in meters.
-# trap_days_: days the trap was active.
-# functional_group_: functional group assigned to the taxon.
-# taxon_: taxonomic group.
-# insect_count_: number of individuals of that taxon.
+## NEW
+# flower_strip_distance_: distance of the Malaise trap from the flower strip (m).
+# trap_days_: number of days the Malaise trap remained active for sampling (days).
+# functional_group_: ecological functional group assigned to the captured arthropod taxon.
+
+## MISSING
+# crop, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+
+## NOTES
+# Malaise-trap arthropod counts at five distances from flower strips in maize and wheat fields at CIMMYT El Batan (Estado de Mexico) and CENEB (Ciudad Obregon, Sonora), 2021-2024.
+# Taxonomic family/group is stored in insect_species and the number of captured individuals (including 0) in insect_abundance. Distance 0 m is inside the flower strip.
 
 ## NOT PROCESSED
-# Overview sheet.
+# Overview sheet: workbook metadata and column definitions only.
 
 
 carob_script <- function(path) {
@@ -42,52 +41,63 @@ The database contains data on arthropods caught using Malaise traps in maize and
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "flower_strip_distance_",
-		response_vars = "insect_count_",
+		response_vars = "insect_abundance",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Mexico Arthropod Biodiversity Dataset (2021-2024).xlsx"]
-	r <- carobiner::read.excel(f, sheet="Data")
-	num <- function(x) {
-		x <- trimws(as.character(x))
-		x[x %in% c("", "NA", "-")] <- NA_character_
-		bad <- !is.na(x) & grepl("[A-Za-z]", x)
-		x[bad] <- NA_character_
-		as.numeric(x)
+	r <- carobiner::read.excel(f, sheet="Data", na=c("", "NA"))
+
+	# Georeferenced CIMMYT experiment stations (El Batan and CENEB)
+	sites <- data.frame(
+		site_key = c("El_Batan", "CENEB"),
+		country = c("Mexico", "Mexico"),
+		adm1 = c("México", "Sonora"),
+		adm2 = c("Texcoco", "Cajeme"),
+		location = c("El Batán", "Ciudad Obregón"),
+		site = c("CIMMYT El Batán", "CENEB"),
+		latitude = c(19.530, 27.369),
+		longitude = c(-98.849, -109.931),
+		elevation = c(2249, 38),
+		geo_uncertainty = c(1500, 1500),
+		geo_source = c("CIMMYT El Batan research station", "CIMMYT CENEB research station")
+	)
+
+	# Clean trailing spaces and non-breaking spaces in taxonomic and functional group names
+	clean_txt <- function(x) {
+		x <- gsub("\u00a0", " ", as.character(x), fixed=TRUE)
+		x <- trimws(x)
+		x[!nzchar(x)] <- NA_character_
+		x
 	}
-	site <- trimws(as.character(r$Site))
-	loc <- site
-	loc[site == "El_Batan"] <- "El Batán"
-	loc[site == "CENEB"] <- "Ciudad Obregón"
-	dist <- num(r$Distance)
-	count <- num(r$Number)
-	when <- as.character(as.Date(r$Date))
+
+	site_key <- clean_txt(r$Site)
 	d <- data.frame(
-		country = "Mexico",
-		location = loc,
-		trial_id = paste(site, when, r$Plot, r$Replicate, r$Taxonomical_group, dist, sep="_"),
-		plot_id = as.character(r$Plot),
-		rep = as.integer(num(r$Replicate)),
-		flower_strip_distance_ = dist,
-		treatment = as.character(dist),
-		trap_days_ = num(r$Days),
-		date = when,
-		functional_group_ = trimws(as.character(r$Functional_group)),
-		taxon_ = trimws(as.character(r$Taxonomical_group)),
-		insect_count_ = count,
+		site_key = site_key,
+		trial_id = paste(site_key, as.integer(r$Year), sep="_"),
+		plot_id = as.character(as.integer(r$Plot)),
+		rep = as.integer(r$Replicate),
+		date = as.character(as.Date(r$Date)),
+		flower_strip_distance_ = as.numeric(r$Distance),
+		treatment = paste0(as.numeric(r$Distance), " m"),
+		trap_days_ = as.numeric(r$Days),
+		functional_group_ = clean_txt(r$Functional_group),
+		insect_species = clean_txt(r$Taxonomical_group),
+		insect_abundance = as.character(as.integer(r$Number)),
 		stress = "pests",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		geo_from_source = FALSE
 	)
-	d <- d[!is.na(d$flower_strip_distance_), ]
-	d$functional_group_[d$functional_group_ %in% c("", "NA")] <- NA_character_
-	d$taxon_[d$taxon_ %in% c("", "NA")] <- NA_character_
-	# The workbook repeats 3581 trap records.
+
+	# Drop 3,581 exact duplicate rows present in the raw workbook
 	d <- d[!duplicated(d), ]
+	d <- merge(d, sites, by="site_key", all.x=TRUE, sort=FALSE)
+	d$site_key <- NULL
+
 	carobiner::write_files(path, meta, d)
 }

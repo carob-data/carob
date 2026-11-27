@@ -1,62 +1,65 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Medium-duration groundnut at Minjibir, post-rainy season. Dataverse time coverage is 2015. Only the year is used: the day-of-month (14 and 25) is repeated across these ICRISAT deposits.
-# DPWkgha is dry pod yield (kg/ha). DFWkgha is dry fodder (kg/ha). Shelling ratio is already a percentage (about 58-71).
-# HSW is grams per 100 seeds, multiplied by 10 for seed_weight.
-# DEM, DFF and DM are days (values about 6-8, 26-28 and 90-115), stored as emergence_days, flowering_days and maturity_days. The description calls them dates.
-# ELS, LLS and RUST are 1-9 scores in the long table. The description's ELS80 and LLS90 names are not the column names in the file (the file says ELS, LLS, RUST).
-# Coordinates are the same Minjibir bounding box as the 2016 elite trial.
-
 ## ISSUES
-# No fertilizer, irrigation, or plot area. The title says post-rainy season; irrigation is not stated.
-# Dataverse puts Minjibir in the state field. adm1 was not set from that.
-# SMK reaches 98.9, so it is not an integer kernel count. The description does not give the unit.
-# early leaf spot and late leaf spot are not in the disease vocabulary.
-# write_files: missing carob_contributor, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; unknown plant_population_, plants_harvested_, sound_mature_kernel_; invalid disease early leaf spot, late leaf spot.
+# Plot area is not reported, so NPLE and NPH could not be converted to plant_density (plants/ha); however, DPWkgha exactly equals 10 * DPWg / (NPH * 0.05), indicating yield was scaled per harvested plant assuming 0.05 m2/plant.
+# The codebook labels disease traits ELS80 (80 DAP) and LLS90 (90 DAP) whereas the spreadsheet columns are named ELS, LLS, and RUST; DAP = 80 and 90 were applied from the codebook.
+
+## NEW
+# plant_population_: NPLE, plants emerged per plot, count
+# plants_harvested_: NPH, plants harvested per plot, count
+# sound_mature_kernel_: SMK, sound mature kernels, %
+# disease: late leaf spot
+
+## MISSING
+# harvest_date, irrigated, N_fertilizer, P_fertilizer, K_fertilizer
+
+## NOTES
+# Medium-duration groundnut variety trial (15 varieties x 3 reps in 5 blocks per rep) at ICRISAT Minjibir (Kano State, Nigeria), post-rainy 2015.
+# Dataverse timePeriodCovered is 2015-06-14 to 2015-12-25 (repeated across companion 2015 deposits), so only planting year "2015" is used.
+# DPWkgha is dry pod yield (yield_moisture = 0, yield_isfresh = FALSE), DFWkgha is dry fodder (dmy_residue), HSW * 10 is 1000-seed weight (seed_weight), and DEM/DFF/DM are days to emergence, flowering, and maturity.
+# Foliar disease severity scores (1-9 scale) for early leaf spot (80 DAP), late leaf spot (90 DAP), and rust are stored in the long table.
 
 ## NOT PROCESSED
-# S.no.
-# DPWg: dry pod weight in grams. DPWkgha was used.
-
-## NEW VARIABLES
-# plant_population_: NPLE, plants per plot. The description says "plant population".
-# plants_harvested_: NPH, plants per plot.
-# sound_mature_kernel_: SMK as recorded.
+# DPWg: plot dry pod weight in g, redundant with DPWkgha (DPWkgha = 10 * DPWg / (NPH * 0.05)).
 
 carob_script <- function(path) {
 
 "
 Evaluation of medium duration lines for agronomic traits and Foliar diseases under post rainy season in Minjibir
 
-Medium-Duration Multi-location trial conducted under Post-season .The trial was aimed to test their adaptability, yield superiority, resistance and tolerance to biotic and abiotic stresses across the location which includes, Minjibir        Experimental location on Google Maps
+Medium-Duration Multi-location trial conducted under Post-season .The trial was aimed to test their adaptability, yield superiority, resistance and tolerance to biotic and abiotic stresses across the location which includes, Minjibir
 "
 
 	uri <- "doi:10.21421/D2/FLVTLT"
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 0,
 		data_organization = "ICRISAT",
 		publication = NA,
 		project = NA,
-		design = "3 replications in blocks",
+		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;dmy_residue;disease_severity",
+		response_vars = "yield;dmy_residue;disease_severity;seed_weight;shelling_percentage;emergence_days;flowering_days;maturity_days",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 95,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of medium duration multi-location trial post rainy in Minjibir.xlsx"]
-	r <- carobiner::read.excel(f, na="NA")
+	r <- carobiner::read.excel(f, na = "NA")
 
 	d <- data.frame(
+		country = "Nigeria",
+		adm1 = "Kano",
+		adm2 = "Minjibir",
+		location = "Minjibir",
+		crop = "groundnut",
 		variety = trimws(r$Variety),
 		treatment = trimws(r$Variety),
 		rep = as.integer(r[["Replication number"]]),
@@ -71,33 +74,32 @@ Medium-Duration Multi-location trial conducted under Post-season .The trial was 
 		dmy_residue = as.numeric(r$DFWkgha),
 		seed_weight = as.numeric(r$HSW) * 10,
 		shelling_percentage = as.numeric(r[["Shelling ratio"]]),
-		sound_mature_kernel_ = as.numeric(r$SMK)
+		sound_mature_kernel_ = as.numeric(r$SMK),
+		yield_part = "pod",
+		yield_moisture = 0,
+		yield_isfresh = FALSE,
+		stress = "disease",
+		planting_date = "2015",
+		trial_id = "Minjibir_2015",
+		record_id = as.integer(seq_len(nrow(r))),
+		on_farm = FALSE,
+		is_survey = FALSE,
+		longitude = (8.625937 + 8.630400) / 2,
+		latitude = (12.192154 + 12.191986) / 2,
+		geo_from_source = TRUE,
+		geo_uncertainty = 243,
+		geo_source = "ICRISAT Dataverse bounding box"
 	)
-	d$crop <- "groundnut"
-	d$yield_part <- "pod"
-	d$yield_moisture <- 0
-	d$yield_isfresh <- FALSE
-	d$stress <- "disease"
-	d$country <- "Nigeria"
-	d$location <- "Minjibir"
-	d$planting_date <- "2015"
-	d$trial_id <- "Minjibir_2015"
-	d$on_farm <- FALSE
-	d$is_survey <- FALSE
-	d$geo_from_source <- TRUE
-	d$longitude <- (8.625937 + 8.630400) / 2
-	d$latitude <- (12.192154 + 12.191986) / 2
-	d$geo_uncertainty <- 243
-	d$geo_source <- "ICRISAT Dataverse bounding box"
-	d$record_id <- as.integer(seq_len(nrow(d)))
 
 	n <- nrow(d)
 	long <- data.frame(
 		record_id = rep(d$record_id, 3),
-		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = as.character(c(r$ELS, r$LLS, r$RUST))
+		order = rep(1:3, each = n),
+		DAP = rep(c(80L, 90L, NA_integer_), each = n),
+		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each = n),
+		disease_severity = as.character(c(r$ELS, r$LLS, r$RUST)),
+		severity_scale = rep("1-9", 3 * n)
 	)
-	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))
 
-	carobiner::write_files(path, meta, d, long=long)
+	carobiner::write_files(path, meta, d, long = long)
 }

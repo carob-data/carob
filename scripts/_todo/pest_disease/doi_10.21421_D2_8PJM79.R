@@ -1,37 +1,28 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Finger millet blast nursery FMBN-3 at ARS, ANGRAU, Vizianagaram, rainy 2020. Sowing date on the sheet is 29/07/2020.
-# The sheet has a title block and two header rows. Data start at row 7. Two blank separator rows were dropped.
-# Leaf blast is a 0–9 score at 30 days after sowing and again at soft dough. Neck and finger blast are incidence (percent).
-# Panicle, infected-panicle, finger, and infected-finger columns are means (they are not integers). The sheet does not say per plant or per plot; values are about 2–9, so they were left unscaled.
-# The long table repeats leaf blast (with growth stage), neck blast incidence, and finger blast incidence.
-# State is Andhra Pradesh from the Dataverse record. There is no coordinate in the file or the metadata.
-
 ## ISSUES
-# No yield, fertilizer, plot size, or coordinates. Vizianagaram still needs a georeference.
-# Disease names are not in the disease vocabulary.
-# ENTRY_TYPE is "T" on every data row, including Local check, GPU 28, and VR 708, so it was not used as a check flag.
-# No publication DOI in the Dataverse record.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, latitude, longitude, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date.
-# unknown variables: the leaf, neck, and finger blast scores and counts. The hint leaf_B is leaf boron, not blast.
-# invalid terms: disease finger millet leaf blast, finger millet neck blast, finger millet finger blast.
+# Coordinates for ARS Vizianagaram (Gajularega) are not in the file or Dataverse metadata and were georeferenced externally.
+# ENTRY_TYPE is "T" on every row, including "Local check", "GPU 28", and "VR 708"; only "Local check" was flagged in variety_type.
+# Panicle and finger counts are decimal plot means (likely 5-plant averages), but the sampling unit is not stated in the file.
+
+## NEW
+# neck_blast_panicles_: mean panicle count recorded for neck blast (sampling unit not stated)
+# neck_blast_infected_panicles_: mean infected panicle count for neck blast (sampling unit not stated)
+# finger_blast_fingers_: mean finger count recorded for finger blast (sampling unit not stated)
+# finger_blast_infected_fingers_: mean infected finger count for finger blast (sampling unit not stated)
+# disease: finger millet leaf blast; finger millet neck blast; finger millet finger blast
+
+## MISSING
+# yield, yield_part, yield_moisture, harvest_date, irrigated, N_fertilizer, P_fertilizer, K_fertilizer
+
+## NOTES
+# Finger millet blast resistance nursery (FMBN-3) with 18 entries x 3 reps at ARS (ANGRAU), Vizianagaram, Andhra Pradesh during rainy (kharif) 2020.
+# Sowing date from sheet header is 2020-07-29; Dataverse timePeriodCovered ends 2020-11-06 (not assumed to be harvest_date).
+# Leaf blast severity (0-9 scale at 30 DAS and soft dough stage) and neck/finger blast incidence (%) are stored in the long table without wide duplication.
 
 ## NOT PROCESSED
-# xlsx, OBS_UNIT_ID: plot UUID.
-# xlsx, ENTRY_TYPE: "T" on every row.
-# xlsx, Entry No: one number per designation.
-
-## NEW VARIABLES
-# leaf_blast_30_das_: leaf blast score at 30 days after sowing, 0–9 scale
-# leaf_blast_soft_dough_: leaf blast score at soft dough, 0–9 scale
-# neck_blast_incidence_: neck blast incidence, percent
-# finger_blast_incidence_: finger blast incidence, percent
-# neck_blast_panicles_: panicle count recorded with neck blast (basis not stated)
-# neck_blast_infected_panicles_: infected panicle count (basis not stated)
-# finger_blast_fingers_: finger count recorded with finger blast (basis not stated)
-# finger_blast_infected_fingers_: infected finger count (basis not stated)
+# FMBN-3 Angrau Viziainagram.xlsx, ENTRY_TYPE: constant "T" across all rows (including checks).
 
 carob_script <- function(path) {
 
@@ -48,16 +39,16 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 	meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 0,
 		data_organization = "ICRISAT",
 		publication = NA,
-		project = NA,
+		project = "CRP-GLDC",
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "leaf_blast_30_das_;leaf_blast_soft_dough_;neck_blast_incidence_;finger_blast_incidence_",
+		response_vars = "disease_severity;disease_incidence",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
@@ -71,21 +62,18 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 	d <- data.frame(
 		country = "India",
 		adm1 = "Andhra Pradesh",
+		adm2 = "Vizianagaram",
 		location = "ARS Vizianagaram",
 		crop = "finger millet",
 		variety = trimws(r$designation),
-		variety_code = trimws(r$gid),
+		variety_code = trimws(as.character(r$gid)),
 		treatment = trimws(r$designation),
 		rep = as.integer(r$rep_no),
 		plot_id = as.character(r$plot_no),
-		leaf_blast_30_das_ = as.numeric(r$lb30),
-		leaf_blast_soft_dough_ = as.numeric(r$lb_soft),
 		neck_blast_panicles_ = as.numeric(r$neck_panicles),
 		neck_blast_infected_panicles_ = as.numeric(r$neck_infected),
-		neck_blast_incidence_ = as.numeric(r$neck_pct),
 		finger_blast_fingers_ = as.numeric(r$finger_n),
 		finger_blast_infected_fingers_ = as.numeric(r$finger_infected),
-		finger_blast_incidence_ = as.numeric(r$finger_pct),
 		stress = "disease",
 		season = "kharif",
 		planting_date = "2020-07-29",
@@ -93,44 +81,57 @@ The trial contains information on blast scores (Leaf blast, neck blast and finge
 		record_id = as.integer(seq_len(nrow(r))),
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE
+		longitude = 83.3988,
+		latitude = 18.1238,
+		geo_from_source = FALSE,
+		geo_uncertainty = 1500,
+		geo_source = "ANGRAU ARS Vizianagaram (Gajularega)"
 	)
+	d$variety_type <- ifelse(d$variety == "Local check", "local check", NA_character_)
 
-	blank <- rep(NA_character_, nrow(d))
-	x <- rbind(
+	n <- nrow(d)
+	long <- rbind(
 		data.frame(
 			record_id = d$record_id,
-			growth_stage = "30 DAS",
-			disease = "finger millet leaf blast",
-			disease_severity = as.character(d$leaf_blast_30_das_),
-			disease_incidence = blank,
-			severity_scale = "0-9"
+			order = rep(1L, n),
+			DAP = rep(30L, n),
+			growth_stage = rep(NA_character_, n),
+			disease = rep("finger millet leaf blast", n),
+			disease_severity = as.character(round(as.numeric(r$lb30), 4)),
+			disease_incidence = rep(NA_character_, n),
+			severity_scale = rep("0-9", n)
 		),
 		data.frame(
 			record_id = d$record_id,
-			growth_stage = "soft dough",
-			disease = "finger millet leaf blast",
-			disease_severity = as.character(d$leaf_blast_soft_dough_),
-			disease_incidence = blank,
-			severity_scale = "0-9"
+			order = rep(2L, n),
+			DAP = rep(NA_integer_, n),
+			growth_stage = rep("soft dough", n),
+			disease = rep("finger millet leaf blast", n),
+			disease_severity = as.character(round(as.numeric(r$lb_soft), 4)),
+			disease_incidence = rep(NA_character_, n),
+			severity_scale = rep("0-9", n)
 		),
 		data.frame(
 			record_id = d$record_id,
-			growth_stage = blank,
-			disease = "finger millet neck blast",
-			disease_severity = blank,
-			disease_incidence = as.character(d$neck_blast_incidence_),
-			severity_scale = blank
+			order = rep(3L, n),
+			DAP = rep(NA_integer_, n),
+			growth_stage = rep(NA_character_, n),
+			disease = rep("finger millet neck blast", n),
+			disease_severity = rep(NA_character_, n),
+			disease_incidence = as.character(round(as.numeric(r$neck_pct), 4)),
+			severity_scale = rep(NA_character_, n)
 		),
 		data.frame(
 			record_id = d$record_id,
-			growth_stage = blank,
-			disease = "finger millet finger blast",
-			disease_severity = blank,
-			disease_incidence = as.character(d$finger_blast_incidence_),
-			severity_scale = blank
+			order = rep(4L, n),
+			DAP = rep(NA_integer_, n),
+			growth_stage = rep(NA_character_, n),
+			disease = rep("finger millet finger blast", n),
+			disease_severity = rep(NA_character_, n),
+			disease_incidence = as.character(round(as.numeric(r$finger_pct), 4)),
+			severity_scale = rep(NA_character_, n)
 		)
 	)
 
-	carobiner::write_files(path, meta, d, long = x)
+	carobiner::write_files(path, meta, d, long = long)
 }

@@ -1,38 +1,30 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Elite groundnut lines at Bayero University Kano, 2016. Two sheets of the same 60 plots (20 entries x 3 reps), joined on plot number.
-# DPWkgha is dry pod yield (kg/ha), so yield_moisture is 0 and yield_part is pod. DFWkgha is dry fodder (kg/ha) and is dmy_residue.
-# SW_ M_g100sd is grams per 100 seeds. seed_weight is grams per 1000 seeds, so the value is multiplied by 10.
-# DEM and DFF are stored as emergence_days and flowering_days. The description says "date" but the values are 6-12 and 24-29.
-# ELS_E_1to9, LLS_E_1to9 and Rust_E_1to9 are 1-9 scores in the long table. The description's "SPAD = single-photon avalanche diode" is not how the numbers behave; they are stored as SPAD.
-# CT150DAYS and SPAD150days share one long row, and the 250-day pair another. NDVI1 and NDVI2 are separate rows because the file does not say they were taken on those days.
-# Coordinates are the midpoint of the Dataverse bounding box. The box labels northLongitude and southLongitude are the latitudes (about 11.98).
-
 ## ISSUES
-# No fertilizer rates or plot area. NPLE and NPH stay as per-plot counts.
-# The description calls DPWkgha80 and DFWkgha80 yields "at 80 days". Those columns match the adjusted-yield columns, not a second harvest, so they were not used.
-# Sheet 2 SW_ M_g100sd is not the 100-seed weight (sheet 1 is 30-50 g; sheet 2 is 46-186 g) and the sample is not defined.
-# Drought is a visual score (3-5 here). The scale is not defined. 150 and 250 days are longer than a normal groundnut season, so that time origin was not treated as days after planting.
-# The abstract says two checks and does not name them.
-# State is not a separate metadata field. Minjibir's metadata puts the town in the state field; this file's city string is "BUk(Bayero University Kano)".
-# write_files: missing carob_contributor, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; unknown plant_population_, plants_harvested_, sound_mature_kernel_, reading_, canopy_temperature_; invalid disease early leaf spot, late leaf spot.
+# Plot area (6 m2) is not stated in the description docx, but is exact from DPWg / DPWkgha and DFWg (kg) / DFWkgha on every row; used to derive plant_density and harvested_plant_density_.
+# DPWkgha80 and DFWkgha80 are described as yields "at 80 days" in the docx, but equal DPWkgha * 64 / NPH and DFWkgha * 64 / NPH on every row (stand-adjusted to 64 plants/plot); excluded in favor of unadjusted DPWkgha and DFWkgha.
+# Sheet 2 column "SW_ M_g100sd" (46-186 g) differs from Sheet 1 100-seed weight (30-50 g) and its sample basis is undefined.
+# Drought visual score (3-5) has no scale definition. CT150DAYS/SPAD150days and CT250days/SPAD250Days time labels exceed a normal groundnut cycle, so they are stored in timing rather than DAP.
+
+## NEW
+# harvested_plant_density_: harvested plant stand per hectare (plants/ha; from NPH / 6 m2)
+# sound_mature_kernel_: sound mature kernel score/count (SMK; docx says "Number", values 75-97)
+# disease: "late leaf spot" not yet in values_disease.csv
+
+## MISSING
+# irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Multi-location elite groundnut trial at Bayero University Kano (BUK), Kano State, Nigeria, 2016 (Dataverse collection window 2016-07-14 to 2016-12-25).
+# Two sheets of the same 60 plots (20 entries = 18 ICRISAT elite lines + 2 checks SAMNUT 24 and SAMNUT 25, 3 reps, 4 blocks) joined by Plot No.
+# DPWkgha is dry pod yield (yield_part = "pod", yield_moisture = 0, yield_isfresh = FALSE); DFWkgha is dry fodder (dmy_residue). DEM (6-12) and DFF (24-29) are days, not calendar dates.
+# Foliar diseases (early leaf spot, late leaf spot, rust; 1-9 scale) and repeated physiological readings (canopy_temperature, SPAD, NDVI) are stored in the long table.
+# Coordinates are the midpoint of the Dataverse bounding box (northLongitude/southLongitude fields hold latitudes ~11.984 N).
 
 ## NOT PROCESSED
-# S.No, Entry number: layout indexes.
-# DPWg and DFWg: plot weights in grams. The kg/ha columns were used. Plot area is not given.
-# DPWkgha80, podadjusted, DFWkgha80, fodderadjusted: adjusted yields. See ISSUES.
-# HPWg: not defined in the description.
-# NSP, NMP: not defined.
-# Sheet 2 SW_ M_g100sd: grams, sample not defined.
-
-## NEW VARIABLES
-# plant_population_: NPLE, plants per plot.
-# plants_harvested_: NPH, plants per plot.
-# sound_mature_kernel_: SMK. The description says "Number".
-# canopy_temperature_: CT columns, degrees C.
-# reading_: which repeated measurement the long row came from (150days, 250days, NDVI1, NDVI2).
+# Groundnut trial-2016: DPWkgha80, podadjusted, DFWkgha80, fodderadjusted (stand-adjusted yields; see ISSUES); HPWg (66-159 g), NSP (12-25), NMP (27-300) (not defined in description docx).
+# Elite trial in Buk-2016: SW_ M_g100sd (46-186 g; sample undefined, differs from Sheet 1 100-seed weight).
 
 carob_script <- function(path) {
 
@@ -46,46 +38,50 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
+	meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 1,
 		data_organization = "ICRISAT",
 		publication = NA,
 		project = NA,
 		design = "3 replications in blocks",
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;dmy_residue;disease_severity;drought_stress",
+		response_vars = "yield;dmy_residue;emergence_days;flowering_days;seed_weight;shelling_percentage;disease_severity;drought_stress;canopy_temperature;SPAD;NDVI",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 80,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Data file of Elite groundnut trial in Buk 2016.xlsx"]
-	r1 <- carobiner::read.excel(f, sheet="Groundnut trial-2016", na="NA")
-	r2 <- carobiner::read.excel(f, sheet="Elite trial in Buk-2016", na="NA")
+	r1 <- carobiner::read.excel(f, sheet = "Groundnut trial-2016", na = "NA")
+	r2 <- carobiner::read.excel(f, sheet = "Elite trial in Buk-2016", na = "NA")
+
+	variety <- trimws(r1$Genotype)
+	vtype <- ifelse(variety %in% c("SAMNUT 24", "SAMNUT 25"), "check", "breeding line")
 
 	d <- data.frame(
-		variety = trimws(r1$Genotype),
-		treatment = trimws(r1$Genotype),
+		variety = variety,
+		variety_type = vtype,
+		treatment = variety,
 		rep = as.integer(r1[["Replication number"]]),
 		block_id = as.character(r1$Block),
 		plot_id = as.character(r1[["Plot No"]]),
 		emergence_days = as.numeric(r1$DEM),
 		flowering_days = as.numeric(r1$DFF),
-		plant_population_ = as.numeric(r1$NPLE),
-		plants_harvested_ = as.numeric(r1$NPH),
+		# Plot area = 6 m2 (exact from DPWg / 1000 / DPWkgha * 10000 on all 60 rows)
+		plant_density = as.numeric(r1$NPLE) * 10000 / 6,
+		harvested_plant_density_ = as.numeric(r1$NPH) * 10000 / 6,
+		plot_area = 6,
 		yield = as.numeric(r1$DPWkgha),
 		dmy_residue = as.numeric(r1$DFWkgha),
 		seed_weight = as.numeric(r1[["SW_ M_g100sd"]]) * 10,
 		shelling_percentage = as.numeric(r1$SH_Calc_pct),
 		sound_mature_kernel_ = as.numeric(r1$SMK)
 	)
-	r2$plot_id <- as.character(r2[["Plot No"]])
-	d <- merge(d, r2[, c("plot_id", "DROUGHT")], by="plot_id", all.x=TRUE, sort=FALSE)
-	d$drought_stress <- as.character(d$DROUGHT)
-	d$DROUGHT <- NULL
+	ib <- match(d$plot_id, as.character(r2[["Plot No"]]))
+	d$drought_stress <- as.character(r2$DROUGHT[ib])
 
 	d$crop <- "groundnut"
 	d$yield_part <- "pod"
@@ -93,6 +89,7 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 	d$yield_isfresh <- FALSE
 	d$stress <- "disease;drought"
 	d$country <- "Nigeria"
+	d$adm1 <- "Kano"
 	d$location <- "Bayero University Kano"
 	d$planting_date <- "2016"
 	d$trial_id <- "Buk_2016"
@@ -106,15 +103,13 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 	d$record_id <- as.integer(seq_len(nrow(d)))
 
 	n <- nrow(d)
-	ia <- match(d$plot_id, as.character(r1[["Plot No"]]))
-	ib <- match(d$plot_id, as.character(r2[["Plot No"]]))
-	score <- as.character(c(r1$ELS_E_1to9[ia], r1$LLS_E_1to9[ia], r2$Rust_E_1to9[ib]))
 	dis <- data.frame(
 		record_id = rep(d$record_id, 3),
-		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each=n),
-		disease_severity = score,
-		reading_ = NA_character_,
-		canopy_temperature_ = NA_real_,
+		disease = rep(c("early leaf spot", "late leaf spot", "rust"), each = n),
+		disease_severity = as.character(c(r1$ELS_E_1to9, r1$LLS_E_1to9, r2$Rust_E_1to9[ib])),
+		severity_scale = "1-9",
+		timing = NA_character_,
+		canopy_temperature = NA_real_,
 		SPAD = NA_real_,
 		NDVI = NA_real_
 	)
@@ -122,13 +117,14 @@ Multilocation evaluation of elite breeding lines conducted at three locations vi
 		record_id = rep(d$record_id, 4),
 		disease = NA_character_,
 		disease_severity = NA_character_,
-		reading_ = rep(c("150days", "250days", "NDVI1", "NDVI2"), each=n),
-		canopy_temperature_ = c(r2$CT150DAYS[ib], r2$CT250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
+		severity_scale = NA_character_,
+		timing = rep(c("150days", "250days", "NDVI1", "NDVI2"), each = n),
+		canopy_temperature = c(r2$CT150DAYS[ib], r2$CT250days[ib], rep(NA_real_, n), rep(NA_real_, n)),
 		SPAD = c(r2$SPAD150days[ib], r2$SPAD250Days[ib], rep(NA_real_, n), rep(NA_real_, n)),
 		NDVI = c(rep(NA_real_, n), rep(NA_real_, n), r2$NDVI1[ib], r2$NDVI2[ib])
 	)
 	long <- rbind(dis, ph)
-	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN=seq_along))
+	long$order <- as.integer(ave(seq_len(nrow(long)), long$record_id, FUN = seq_along))
 
-	carobiner::write_files(path, meta, d, long=long)
+	carobiner::write_files(path, meta, d, long = long)
 }

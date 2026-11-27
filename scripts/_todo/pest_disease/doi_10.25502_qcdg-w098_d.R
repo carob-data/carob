@@ -1,37 +1,36 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Aphid counts on and around plantain fields in South Cameroon (Mengama, Abang Minko'o, Nlono), 2017-2018, plus a 2017 quadrat inventory of host plants.
-# The files do not contain BBTD incidence, roguing dates, or yield. Musa sp is stored as plantain (the crop in the abstract; terminag also equates plantain with Musa sp.).
-# Xanthosoma sagittifolium and Xanthosoma sp are tannia. Carica papaya is papaya. Other hosts stay in host_plant_ with crop left empty.
-# pest_incidence is the total aphid count. Winged and wingless counts are kept beside it. Blank padding rows in the around-field file are dropped.
-
 ## ISSUES
-# No coordinates in the tables. Do not copy the single CKAN point (coverage_x 02.33282, coverage_y 011.44253) onto three localities.
-# 39 around-field rows have no host plant name.
-# Georeference Mengama, Abang Minko'o, and Nlono (South Cameroon).
-# Aphid species is not named in the files (the BBTD vector is often Pentalonia nigronervosa; that name is not applied here).
-# Quadrat area is not given, so the inventory is a count per quadrat, not plants per ha.
-# Percent alates is empty in the around-field file and is the ratio of the two counts in the within-field file, so it is not stored.
-# No planting date, fertilizer, or irrigation. hhid is locality plus field (or quadrat), not a household code.
-# write_files: missing yield, yield_moisture, latitude, longitude, irrigated, N/P/K, planting_date, harvest_date; crop empty on wild hosts; pest name "aphids" not in the vocabulary; carob_contributor empty.
+# - The dataset abstract describes BBTD containment by phytosanitation, but the uploaded CSV files contain only aphid counts on host plants within/around fields and a quadrat host-plant inventory (no BBTD incidence, roguing dates, or yield).
+# - In aphid-around-field.csv, 39 rows have an empty Host_plant (38 have all aphid counts NA, likely no host plant present at that distance; ID 1 has Total_aphids = 0).
+# - In aphid-within-field.csv, rows 296 and 297 (Abang Minko'o, Field 6, Costus afer) appear to have swapped total_aphids vs apterous_aphids (row 296: apterous = 0, alate = 0, total = 3; row 297: apterous = 3, alate = 0, total = 0); kept as recorded.
+# - Aphid species is not named in the files (a companion IITA study notes Pentalonia nigronervosa on Musa and Pentalonia caladii on alternative hosts); stored as "aphid".
+# - Quadrat area is not given in host-plant-inventory.csv, so counts cannot be converted to plant density per ha.
+
+## NEW
+# host_plant_: plant species sampled as recorded, including wild alternative hosts
+# aphids_apterous_: wingless aphids counted per sample (count)
+# aphids_alate_: winged aphids counted per sample (count)
+# sample_where_: sampling context ("within field", "around field", or "quadrat inventory")
+# distance_m_: distance from field border for around-field samples (m)
+# border_: field border number for around-field samples (1-4)
+# quadrat_: quadrat number in the host-plant inventory (1-5)
+# plants_in_quadrat_: plants counted in the quadrat (count)
+
+## MISSING
+# yield, yield_moisture, yield_part, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date (not applicable to this aphid and host-plant survey)
+
+## NOTES
+# Survey of aphids on cultivated and wild host plants within and around plantain fields in three localities of Vallée-du-Ntem, Sud, Cameroon (Mengama, Abang Minko'o, Nlono; 2017-2018), plus a 2017 quadrat host-plant inventory.
+# Musa sp is mapped to plantain, Xanthosoma spp. to tannia, and Carica papaya to papaya; wild alternative hosts remain in host_plant_ with crop = NA.
+# Locality coordinates are georeferenced at village level (Mapcarta/GeoView; Abang Minko'o also matches the CKAN coverage point 2.333, 11.443).
+# Fifteen trailing blank padding rows in aphid-around-field.csv are removed.
 
 ## NOT PROCESSED
-# aphid-around-field.csv: Percent alates. Entirely empty.
-# aphid-within-field.csv: percent_alates. Repeats alate_aphids / total_aphids.
-# All three files: ID. Row number.
-# data_dictionary.csv: documentation or a codebook, not an observation table.
-
-## NEW VARIABLES
-# host_plant_: name as recorded, including wild hosts.
-# aphids_apterous_: wingless aphids on the sample.
-# aphids_alate_: winged aphids on the sample.
-# sample_where_: within field or around field.
-# distance_m_: metres from the field border (around-field samples).
-# border_: border number (around-field samples).
-# quadrat_: quadrat number in the host inventory.
-# plants_in_quadrat_: plants counted in that quadrat.
+# aphid-around-field.csv: "Percent alates" (entirely empty).
+# aphid-within-field.csv: percent_alates (redundant ratio 100 * alate_aphids / total_aphids).
+# data_dictionary.csv: codebook only.
 
 
 carob_script <- function(path) {
@@ -46,28 +45,27 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
+	meta <- carobiner::get_metadata(uri, path, group, major = NA, minor = NA,
 		data_organization = "IITA",
 		publication = NA,
-		project = NA,
-		design = "aphid counts in and around plantain fields",
+		project = "BBTV mitigation: Community Management in Nigeria and Screening Wild Banana Progenitors for Resistance",
+		design = "survey of aphid counts within and around plantain fields and quadrat inventory of alternative host plants across 3 localities",
 		data_type = "survey",
 		treatment_vars = "none",
 		response_vars = "pest_incidence",
-		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 55,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f1 <- ff[basename(ff) == "aphid-around-field.csv"]
 	f2 <- ff[basename(ff) == "aphid-within-field.csv"]
 	f3 <- ff[basename(ff) == "host-plant-inventory.csv"]
-	r1 <- read.csv(f1, check.names=FALSE)
-	r2 <- read.csv(f2, check.names=FALSE)
-	r3 <- read.csv(f3, check.names=FALSE)
+	r1 <- read.csv(f1, check.names = FALSE, na.strings = "")
+	r2 <- read.csv(f2, check.names = FALSE, na.strings = "")
+	r3 <- read.csv(f3, check.names = FALSE, na.strings = "")
 	names(r1) <- trimws(names(r1))
 	names(r2) <- trimws(names(r2))
 
@@ -80,10 +78,12 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		out
 	}
 
-	r1 <- r1[!is.na(r1$Locality) & trimws(r1$Locality) != "", ]
+	# Drop 15 completely empty trailing padding rows
+	r1 <- r1[!is.na(r1$Locality), ]
 	d1 <- data.frame(
+		order = as.integer(r1$ID),
 		date = as.character(r1$Year),
-		location = carobiner::fix_name(trimws(r1$Locality), "title"),
+		location = trimws(r1$Locality),
 		plot_id = as.character(r1$Field),
 		host_plant_ = trimws(r1$Host_plant),
 		crop = crop_of(r1$Host_plant),
@@ -95,57 +95,52 @@ Banana and plantain (Musa spp.) contribute to livelihood and income in Central A
 		pest_incidence = as.integer(r1$Total_aphids)
 	)
 	d2 <- data.frame(
+		order = as.integer(r2$ID),
 		date = as.character(r2$Year),
-		location = carobiner::fix_name(trimws(r2$Locality), "title"),
+		location = trimws(r2$Locality),
 		plot_id = as.character(r2$Field),
 		host_plant_ = trimws(r2$Host_plant),
 		crop = crop_of(r2$Host_plant),
 		sample_where_ = "within field",
-		border_ = NA_integer_,
-		distance_m_ = NA_real_,
 		aphids_apterous_ = as.integer(r2$apterous_aphids),
 		aphids_alate_ = as.integer(r2$alate_aphids),
 		pest_incidence = as.integer(r2$total_aphids)
 	)
 	d3 <- data.frame(
+		order = as.integer(r3$ID),
 		date = as.character(r3$Year),
-		location = carobiner::fix_name(trimws(r3$Locality), "title"),
-		plot_id = NA_character_,
+		location = trimws(r3$Locality),
 		host_plant_ = trimws(r3$Specie_name),
 		crop = crop_of(r3$Specie_name),
 		sample_where_ = "quadrat inventory",
-		border_ = NA_integer_,
-		distance_m_ = NA_real_,
-		aphids_apterous_ = NA_integer_,
-		aphids_alate_ = NA_integer_,
-		pest_incidence = NA_integer_,
 		quadrat_ = as.integer(r3$Num_quadrat),
 		plants_in_quadrat_ = as.integer(r3$Number_of_plant_in_the_quadrat)
 	)
-	d <- carobiner::bindr(d1, d2, d3)
-	both_na <- is.na(d$aphids_apterous_) & is.na(d$aphids_alate_)
-	part_sum <- rowSums(cbind(d$aphids_apterous_, d$aphids_alate_), na.rm=TRUE)
-	part_sum[both_na] <- NA
-	fill <- is.na(d$pest_incidence) & !both_na
-	d$pest_incidence[fill] <- part_sum[fill]
-	d$pest_incidence <- as.integer(d$pest_incidence)
-	d$host_plant_ <- trimws(d$host_plant_)
-	d$host_plant_[!is.na(d$host_plant_) & d$host_plant_ == ""] <- NA
-	yp <- rep("none", nrow(d))
-	yp[d$crop %in% c("plantain", "papaya")] <- "fruit"
-	yp[d$crop == "tannia"] <- "roots"
-	d$yield_part <- yp
 
+	d <- carobiner::bindr(d1, d2, d3)
+	d$host_plant_[!is.na(d$host_plant_) & d$host_plant_ == ""] <- NA_character_
+
+	# Village-level georeferences in Vallée-du-Ntem, Sud, Cameroon (Mapcarta/GeoView; ~5 km uncertainty)
+	geo <- data.frame(
+		location = c("Abang Minko'o", "Mengama", "Nlono"),
+		adm1 = "Sud",
+		adm2 = "Vallée-du-Ntem",
+		latitude = c(2.3333, 2.3488, 2.3333),
+		longitude = c(11.4333, 11.5572, 11.4000),
+		geo_from_source = FALSE,
+		geo_uncertainty = 5000,
+		geo_source = "Mapcarta/GeoView"
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 	d$country <- "Cameroon"
-	d$pest_species <- ifelse(d$sample_where_ == "quadrat inventory", NA_character_, "aphids")
+	d$pest_species <- ifelse(d$sample_where_ == "quadrat inventory", NA_character_, "aphid")
 	d$stress <- "pests"
-	d$geo_from_source <- FALSE
 	d$hhid <- ifelse(
 		is.na(d$quadrat_),
-		paste(d$location, d$plot_id, sep="_field"),
-		paste(d$location, d$quadrat_, sep="_quadrat")
+		paste(d$location, d$plot_id, sep = "_field"),
+		paste(d$location, d$quadrat_, sep = "_quadrat")
 	)
-	d$trial_id <- paste(d$location, d$date, sep="_")
+	d$trial_id <- paste(d$location, d$date, sep = "_")
 	d$on_farm <- TRUE
 	d$is_survey <- TRUE
 

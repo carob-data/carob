@@ -1,23 +1,22 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Sheet PercentSM is percent sterility mosaic incidence for 29 genotypes, 2 reps, 2007 and 2008, at 8 sites.
-# The location columns were stacked. "Banglore" is Bangalore.
-# Coordinates are the degree-minute pairs in the description and in the Dataverse geographicUnit text. geo_from_source is TRUE.
-# adm1 is the Dataverse state, except Dholi (see ISSUES).
-# Disease is sterility mosaic. The abstract names Pigeonpea sterility mosaic virus.
-
 ## ISSUES
-# No yield, fertilizer, irrigation, or planting day. Dataverse coverage is 2003-01-14 to 2009-12-25; this sheet is only 2007 and 2008.
-# Artificial versus natural inoculation is not a column. BP 14B and BIL 7 are named in the metadata but the sheet has one Patancheru column.
-# Dataverse puts Dholi in Gujarat. The same metadata gives 25°59'N, 85°35'E, so adm1 was left empty for Dholi.
-# Publication DOI 10.1007/s10327-015-0585-z is in the Dataverse metadata. No RIS file was added.
-# "sterility mosaic" and "Pigeonpea sterility mosaic virus" are not in the vocabularies.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, harvest_date; invalid disease sterility mosaic; invalid pathogen Pigeonpea sterility mosaic virus.
+# Source metadata gives 10°25'N, 76°49'E for Vamban, which falls in Kerala (~230 km west of Vamban, Tamil Nadu; apparent typo for 78°E); replaced with NPRC Vamban (Pudukkottai, Tamil Nadu) coordinates with geo_from_source = FALSE. Source latitude for Badnapur (19°23'N) also duplicates Rahuri's latitude (~60 km south of Badnapur town) but stays in Maharashtra and was kept as reported.
+# Artificial vs natural pathogen inoculation varies across sites/nurseries (per metadata) but is not reported per site in the workbook.
+# No yield, fertilizer, irrigation, or exact planting/harvest dates are in the data file (check Sharma et al. 2015 Methods behind paywall for any missing management details).
 
-## NOT PROCESSED
-# None. The sheet's year, genotype, replication, and eight incidence columns are all used.
+## NEW
+# disease: sterility mosaic
+# pathogen: Pigeonpea sterility mosaic virus
+
+## MISSING
+# yield, yield_part, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Multi-environment sterility mosaic disease (SMD) screening of 28 resistant pigeonpea genotypes + susceptible check ICP 2376 across 8 Indian locations in 2007 and 2008 (2 replications; Sharma et al. 2015, doi:10.1007/s10327-015-0585-z).
+# The 8 location columns of percent SMD incidence are reshaped to rows; "Banglore" is normalized to "Bangalore".
+# Dataverse erroneously lists Dholi under Gujarat; corrected to Bihar matching the source coordinates (25°59'N, 85°35'E) and Sharma et al. (2015).
 
 carob_script <- function(path) {
 
@@ -41,9 +40,9 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 		response_vars = "disease_incidence",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 80,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
@@ -57,11 +56,13 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 			variety = trimws(r$Genotype),
 			rep = as.integer(r[["Replication number"]]),
 			location = site,
-			disease_incidence = as.character(r[[site]])
+			disease_incidence = as.character(round(as.numeric(r[[site]]), 2))
 		)
 	}
 	d <- do.call(rbind, lapply(sites, one))
 	d$location[d$location == "Banglore"] <- "Bangalore"
+	# Abstract notes 28 resistant lines; the 29th entry ICP 2376 is the susceptible check (Sharma et al. 2015)
+	d$variety_type <- ifelse(d$variety == "ICP 2376", "check", NA_character_)
 	d$treatment <- d$variety
 	d$crop <- "pigeon pea"
 	d$disease <- "sterility mosaic"
@@ -71,14 +72,17 @@ Sterility mosaic disease (SMD) caused by Pigeonpea sterility mosaic virus and ve
 	d$trial_id <- paste(d$location, d$planting_date, sep="_")
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$geo_from_source <- TRUE
 
-	# degree-minutes from the description docx and Dataverse geographicUnit
+	# Degree-minute coordinates from metadata docx and Dataverse geographicUnit, except Vamban
+	# (source 10°25'N, 76°49'E falls in Kerala; replaced with NPRC Vamban, Pudukkottai, Tamil Nadu)
 	geo <- data.frame(
 		location = c("Akola", "Badnapur", "Bangalore", "Coimbatore", "Dholi", "Rahuri", "Patancheru", "Vamban"),
-		adm1 = c("Maharashtra", "Maharashtra", "Karnataka", "Tamil Nadu", NA_character_, "Maharashtra", "Telangana", "Tamil Nadu"),
-		latitude = c(20 + 42/60, 19 + 23/60, 12 + 58/60, 10 + 59/60, 25 + 59/60, 19 + 23/60, 17 + 31/60, 10 + 25/60),
-		longitude = c(76 + 59/60, 75 + 43/60, 77 + 35/60, 76 + 57/60, 85 + 35/60, 74 + 42/60, 78 + 15/60, 76 + 49/60)
+		adm1 = c("Maharashtra", "Maharashtra", "Karnataka", "Tamil Nadu", "Bihar", "Maharashtra", "Telangana", "Tamil Nadu"),
+		latitude = c(20 + 42/60, 19 + 23/60, 12 + 58/60, 10 + 59/60, 25 + 59/60, 19 + 23/60, 17 + 31/60, 10.368),
+		longitude = c(76 + 59/60, 75 + 43/60, 77 + 35/60, 76 + 57/60, 85 + 35/60, 74 + 42/60, 78 + 15/60, 78.931),
+		geo_from_source = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE),
+		geo_uncertainty = c(1000, 1000, 1000, 1000, 1000, 1000, 1000, 2000),
+		geo_source = c(rep("ICRISAT Dataverse metadata", 7), "NPRC Vamban, Pudukkottai, Tamil Nadu")
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE, sort=FALSE)
 

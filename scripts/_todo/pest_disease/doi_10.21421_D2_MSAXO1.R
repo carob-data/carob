@@ -1,39 +1,32 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Shoot-fly screening of sorghum introgression lines, ICRISAT Patancheru, 2015 rainy season (kharif). Sheet name is "2015 rainy".
-# The docx body matches that sheet (rainy, two replications, RCBD, 2 rows x 2 m x 0.75 m = 3 m2). The docx filename says post-rainy; the body does not.
-# Glossiness is 1 (glossy) to 5 (non-glossy). Seedling vigor is 1 (low) to 5 (high), from the dataset abstract.
-# Plant density is plants per plot x 10000 / 3. pest_severity is deadheart percent at 28 DAE, stored as text.
-# Coordinates are the midpoint of the Dataverse bounding box (78.278587–78.279564 E, 17.501790–17.501851 N).
-# Publication DOI is the one given in the Dataverse record.
-
 ## ISSUES
-# No grain yield, fertilizer, inoculation, or irrigation in the file.
-# planting_date is timePeriodCoveredStart 2015-06-15. timePeriodCoveredEnd is 2014-09-15, which is before the start, so it was not used as harvest_date.
-# The abstract gives 17°30'39.8"N, 78°16'11.7"E. That point is about 1 km from the bounding box used here.
-# geographicUnit says research field RP 12B; the docx says BP10.
-# The abstract names 296B/Swarna as the susceptible check. Both names occur in this file and both are flagged.
-# The same genotype can appear under more than one entry number (rows kept).
-# One row has no plant count and no scores. Leaf sheath pigmentation is 1–3; the scores are not defined.
-# pest_species "Atherigona soccata" is not in the pest vocabulary.
-# write_files: missing carob_contributor, yield, yield_part, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date.
-# unknown variables are the entry number and the shoot-fly component scores. The hint leaf_S is leaf sulphur, not pigmentation.
+# planting_date uses Dataverse timePeriodCoveredStart (2015-06-15); timePeriodCoveredEnd is 2014-09-15 (before start), so harvest_date is omitted.
+# Field location conflict: Dataverse geographicUnit says RP 12B (bounding box used here), docx says BP10, and the abstract coordinate (17°30'39.8"N, 78°16'11.7"E) is ~1 km away.
+# Seedling vigor scale conflict: the abstract states 1 = low to 5 = high, whereas ICRISAT sorghum shoot-fly screening typically scores 1 = high to 5 = low (values here are 1-3). Leaf sheath pigmentation (1-3) is not defined in the files.
+# Recurrent parents ICSB 29004 (entries 7, 14) and SPV 1411 (entries 22, 25) appear under two entry numbers each; entry_number_ is kept to distinguish them. Row 43 (Plot 6011, ICSB 29004, Rep 2) has NA for all measurements.
+
+## NEW
+# entry_number_: trial entry number (1-32; distinguishes duplicate recurrent-parent entries)
+# glossiness_score_: leaf surface glossiness visual score (1 = glossy to 5 = non-glossy)
+# seedling_vigor_: seedling vigor visual score (1-5 scale; see ISSUES on direction)
+# leaf_sheath_pigmentation_: leaf sheath pigmentation visual score (1-3 scale)
+# shoot_fly_egg_density_: shoot fly eggs per hectare (eggs/ha; derived from SF Total eggs / 3 m2)
+# shoot_fly_egg_incidence_: percentage of plants with shoot fly eggs (%)
+# pest_species: "Atherigona soccata" (sorghum shoot fly) not yet in values_pest.csv
+
+## MISSING
+# yield, yield_part, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Shoot-fly (Atherigona soccata) screening of sorghum MABC introgression lines at ICRISAT Patancheru, 2015 rainy season (kharif); RCBD, 2 replications, 2 rows x 2 m x 0.75 m = 3 m2 (from docx; docx filename says post-rainy but body and Excel sheet are 2015 rainy).
+# Associated publication: Gorthy et al. (2017), Front. Plant Sci. 8:1494 (doi:10.3389/fpls.2017.01494).
+# pest_severity stores percent deadhearts at 28 DAE (0-100 scale). Per-plot egg counts are normalized to eggs/ha (shoot_fly_egg_density_); SF eggs per plant and plants with eggs are algebraically recoverable via plant_density and plot_area.
+# Coordinates are the midpoint of the Dataverse bounding box (78.278587-78.279564 E, 17.501790-17.501851 N).
 
 ## NOT PROCESSED
-# None. Entry number is kept as entry_number_ because one genotype can have two entry numbers.
-
-## NEW VARIABLES
-# entry_number_: trial entry number
-# glossiness_score_: leaf glossiness, 1 glossy to 5 non-glossy
-# seedling_vigor_: seedling vigor, 1 low to 5 high
-# leaf_sheath_pigmentation_: leaf sheath pigmentation score
-# shoot_fly_eggs_: shoot fly eggs per plot
-# shoot_fly_eggs_per_plant_: shoot fly eggs per plant
-# plants_with_shoot_fly_eggs_: plants in the plot with at least one shoot fly egg
-# shoot_fly_egg_incidence_: percent of plants with shoot fly eggs
-# deadheart_incidence_: percent deadhearts at 28 days after emergence
+# Phenotypic data ... 2015 rainy season.xlsx: SF eggs per plant (redundant: shoot_fly_egg_density_ / plant_density); Pl.with SF eggs (redundant: shoot_fly_egg_incidence_ / 100 * plant_density * plot_area / 10000).
 
 carob_script <- function(path) {
 
@@ -57,26 +50,27 @@ Sorghum is a major cereal crop cultivated mainly for food, feed and fodder purpo
 		response_vars = "pest_severity",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 78,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Phenotypic data of shoot fly introgression lines in sorghum for the year 2015 rainy season.xlsx"]
-	r <- carobiner::read.excel(f, na = "NA")
+	r <- carobiner::read.excel(f, sheet = "2015 rainy", na = "NA")
 
 	variety <- trimws(r$Genotype)
 	vtype <- rep(NA_character_, nrow(r))
 	vtype[variety == "IS18551"] <- "resistant check"
 	vtype[variety %in% c("296B", "Swarna")] <- "susceptible check"
-	plants <- as.numeric(r[["No of plant per plot"]])
+	vtype[variety %in% c("ICSB 29004", "SPV 1411")] <- "recurrent parent"
 	deadheart <- as.numeric(r[["SFDH percent at 28DAE"]])
 
 	d <- data.frame(
 		country = "India",
 		adm1 = "Telangana",
 		location = "ICRISAT Patancheru",
+		site = "RP 12B",
 		crop = "sorghum",
 		variety = variety,
 		variety_type = vtype,
@@ -84,16 +78,16 @@ Sorghum is a major cereal crop cultivated mainly for food, feed and fodder purpo
 		rep = as.integer(r[["Replication number"]]),
 		plot_id = as.character(r[["Plot no"]]),
 		entry_number_ = as.integer(r[["Entry no"]]),
-		plant_density = plants * 10000 / 3,
+		# Plot area: 2 rows x 2 m x 0.75 m = 3 m2 (from docx)
+		plant_density = as.numeric(r[["No of plant per plot"]]) * 10000 / 3,
 		glossiness_score_ = as.numeric(r[["Glossy score"]]),
 		seedling_vigor_ = as.numeric(r[["Vigor  score"]]),
 		leaf_sheath_pigmentation_ = as.numeric(r[["Leaf sheath pigmentation"]]),
-		shoot_fly_eggs_ = as.numeric(r[["SF Total eggs"]]),
-		shoot_fly_eggs_per_plant_ = as.numeric(r[["SF eggs per plant"]]),
-		plants_with_shoot_fly_eggs_ = as.numeric(r[["Pl.with SF eggs"]]),
+		shoot_fly_egg_density_ = as.numeric(r[["SF Total eggs"]]) * 10000 / 3,
 		shoot_fly_egg_incidence_ = as.numeric(r[["Percent of plants with SF eggs"]]),
-		deadheart_incidence_ = deadheart,
-		pest_severity = as.character(deadheart),
+		# Percent shoot fly deadhearts at 28 DAE
+		pest_severity = as.character(round(deadheart, 2)),
+		severity_scale = "0-100",
 		pest_species = "Atherigona soccata",
 		stress = "pests",
 		season = "kharif",
@@ -105,8 +99,11 @@ Sorghum is a major cereal crop cultivated mainly for food, feed and fodder purpo
 		trial_id = "1",
 		on_farm = FALSE,
 		is_survey = FALSE,
+		# Midpoint of Dataverse bounding box (~104 m E-W)
 		longitude = (78.278587 + 78.279564) / 2,
 		latitude = (17.501790 + 17.501851) / 2,
+		geo_uncertainty = 55,
+		geo_source = "ICRISAT Dataverse bounding box",
 		geo_from_source = TRUE
 	)
 

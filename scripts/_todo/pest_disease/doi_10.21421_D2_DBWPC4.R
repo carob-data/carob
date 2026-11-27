@@ -1,27 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Advanced groundnut lines evaluated in Niger for aflatoxin. Sheet1 of AFVT-SA.xls is the only sheet with rows.
-# Columns, in order: plot, entry, replication, genotype, aflatoxin (ppb), pod yield (t/ha), haulm yield (t/ha).
-# Pod yield is t/ha x 1000, yield_part pod. Haulm yield is the same conversion; fresh versus dry is not stated.
-# G2008.dta has the same 51 rows and the same columns with normalized names.
-
 ## ISSUES
-# No site name, coordinates, year, plot size, fertilizer, or irrigation. The file name G2008.dta is not used as a planting year.
-# Sheets 2–5 are empty.
-# No publication DOI in the Dataverse record.
-# write_files: missing carob_contributor, yield_moisture, latitude, longitude, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date.
-# unknown variables: aflatoxin_ppb_, haulm_yield_. The hint to rename haulm_yield_ to yield is the pod yield, which is already mapped.
+# Site name and coordinates are not stated explicitly in the file or Dataverse metadata; "SA" in AFVT-SA.xls was inferred as ICRISAT Sahelian Center (Sadoré, Niger) where Farid Waliyar conducted groundnut aflatoxin trials — needs human confirmation.
+# Trial year is not stated in the metadata; companion file G2008.dta suggests 2008, so planting_date was left omitted pending verification.
+# Moisture basis for pod yield and haulm yield (y_residue) is not stated.
+
+## NEW
+# aflatoxin_: aflatoxin concentration in groundnut pods/kernels, ppb
+
+## MISSING
+# planting_date, harvest_date, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer
+
+## NOTES
+# Advanced groundnut breeding lines (15 ICGV lines plus resistant check 55-437 and susceptible check JL 24; 17 entries x 3 reps) evaluated in Niger for aflatoxin contamination.
+# Sheet1 of AFVT-SA.xls contains the full 51-row table; Sheets 2-5 are empty, and G2008.dta is an identical copy of Sheet1.
+# Pod yield and haulm yield (t/ha) were converted to kg/ha and mapped to yield (yield_part = "pod") and y_residue.
 
 ## NOT PROCESSED
-# AFVT-SA.xls, Entrées: entry number, one per genotype.
-# AFVT-SA.xls sheets 2–5: empty.
-# G2008.dta: same table as Sheet1.
-
-## NEW VARIABLES
-# aflatoxin_ppb_: aflatoxin in the pods, parts per billion
-# haulm_yield_: haulm yield, kg/ha, moisture basis not stated
+# AFVT-SA.xls, Entrées!: entry number (1-17), redundant with genotype.
+# AFVT-SA.xls, Sheets 2-5: empty.
+# G2008.dta: exact duplicate of AFVT-SA.xls Sheet1.
 
 carob_script <- function(path) {
 
@@ -42,12 +41,12 @@ Advanced Groundnut Breeding Lines Niger Aflatoxin
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;aflatoxin_ppb_",
+		response_vars = "yield;y_residue",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 70,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
@@ -59,20 +58,26 @@ Advanced Groundnut Breeding Lines Niger Aflatoxin
 
 	d <- data.frame(
 		country = "Niger",
+		adm1 = "Tillabéri",
+		location = "Sadoré",
 		crop = "groundnut",
 		variety = variety,
 		treatment = variety,
 		rep = as.integer(r[[grep("epetition", nm)]]),
 		plot_id = as.character(r[[grep("^Plot", nm)]]),
-		aflatoxin_ppb_ = as.numeric(r[[grep("ppb", nm)]]),
+		aflatoxin_ = as.numeric(r[[grep("ppb", nm)]]),
 		yield = as.numeric(r[[grep("gousses", nm)]]) * 1000,
-		haulm_yield_ = as.numeric(r[[grep("fanes", nm)]]) * 1000,
+		y_residue = as.numeric(r[[grep("fanes", nm)]]) * 1000,
 		yield_part = "pod",
 		stress = "disease",
 		trial_id = "1",
 		on_farm = FALSE,
 		is_survey = FALSE,
-		geo_from_source = FALSE
+		longitude = 2.283,
+		latitude = 13.250,
+		geo_from_source = FALSE,
+		geo_uncertainty = 2000,
+		geo_source = "ICRISAT Sahelian Center, Sadoré (inferred from AFVT-SA)"
 	)
 
 	carobiner::write_files(path, meta, d)

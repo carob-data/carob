@@ -1,28 +1,45 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# 540 plot surveys of the cotton rotation in northern Cameroon. One row per
-# species with a rating > 0. Floristique is the DOC 1-9 scale. There is no
-# Enherbement row. weed_species is the 5-letter code. Crop is Type_culture.
-# Location is the Lieu value on each plot.
-
 ## ISSUES
-# Title spans 1988-1992; Annee and Date_obs are all in 1990. Floristique has
-# 155 species rows; the description says 157. No coordinates. write_files:
-# missing variables: yield, yield_moisture, yield_part, latitude, longitude,
-# K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# 1. The 10 numeric rows in Facteurs and Facteurs origine (Altitude, Prof sol,
+#    pH, MO, Argile, Limon, Sable, Pluvio jusqu'a obs, Pluvio annuelle, Date
+#    semis) are all unit-variance standardized (sd = 1.000, dimensionless)
+#    without original scaling factors or units, so they cannot be recovered as
+#    physical measurements and are excluded.
+# 2. The dataset title spans 1988-1992 (DOC says 1988-1991), but Annee is 1990
+#    and Date_obs has only three dates (1990-06-01, 1990-08-01, 1990-10-01).
+# 3. Floristique has 155 species rows (description says 157), identified only by
+#    5-letter Amatrop/Bayer codes; no species-name lookup sheet is provided.
+# 4. Fumure reports total NPK + urea product rates (100 or 200 kg/ha NPK plus
+#    100 kg/ha urea) without an NPK grade, so N_fertilizer, P_fertilizer, and
+#    K_fertilizer can only be computed for unfertilized plots (0) and urea-only
+#    plots (100 kg/ha urea = 46 kg N/ha).
+# 5. No coordinates in the source; the 18 named localities (Lieu) in North and
+#    Far North Cameroon were georeferenced from locality/commune centers.
 
+## NEW
+# earthing_up_: earthing-up / ridging practice (none, manual, mechanical)
+# bare_soil_pct_: bare soil cover class (<10%, 10-25%, 25-50%, 50-75%, >75%)
+# field_age_years_: years of cultivation class (1-2, 3-4, 5-10, 10-20, >20)
+# herbicide_history_: years of prior herbicide use (none, 1-3 years, 4-10 years, >10 years)
+# herbicide_product: "dipropetryn" (active ingredient in dipropetrine+metolachlore, not yet in values_herbicides.csv)
+
+## MISSING
+# yield, yield_moisture, yield_part, planting_date, harvest_date (not collected in this weed survey)
+
+## NOTES
+# 540 phytoecological weed surveys across 18 localities in the Northern Cameroon
+# cotton rotation (cotton, maize, sorghum, groundnut). Plot factors are in wide
+# format (d) and 1-9 species abundance scores converted to % cover are in long.
 
 ## NOT PROCESSED
-# Facteurs not mapped: Parcelle, Sol, Climat, Age_parcelle, Labour, Fumure
-# (product rates without an NPK grade), Stade_culture, Herbicide, Sarclage,
-# Butage, Anciennete_herbi, Herbicide-type, Sol_nu, Epoque_obs, Altitude,
-# Prof sol, pH, MO, Argile, Limon, Sable, rainfall. Méta données, Facteurs
-# origine, FLO, FAC, and PA repeat the workbook or the DOC.
-# CAM-LEB-1990-DIV-AD-FLO.txt: not read. columns: "CAM-LEB-001" "CAM-LEB-002" "CAM-LEB-003" "CAM-LEB-004" "CAM-LEB-005" "CAM-LEB-006" "CAM-LEB-007" "CAM-LEB-008" "CAM-LEB-009" "CAM-LEB-010" "CAM-LEB-011" "CAM-LEB-012" "CAM-LEB-013" "CAM-LEB-014" "CAM-LEB-015" "CAM-LEB-016" "CAM-LEB-017" "CAM-LEB-018" "CAM-LEB-019" "CAM-LEB-020" "CAM-LEB-021" "CAM-LEB-022" "CAM-LEB-023" "CAM-LEB-024" "CAM-LEB-025" "CAM-LEB-026" "CAM-LEB-027" "CAM-LEB-028" "CAM-LEB-029" "CAM-LEB-030" "CAM-LEB-031" "CAM-LEB-032" "CAM-LEB-033" "CAM-LEB-034" "CAM-LEB-035" "CAM-LEB-036" "CAM-LEB-037" "CAM-LEB-038" "CAM-LEB-039" "CAM-LEB-040" "CAM-LEB-041" "CAM-LEB-042" "CAM-LEB-043" "CAM-LEB-044" "CAM-LEB-045" "CAM-LEB-046" "CAM-LEB-047" "CAM-LEB-048" "CAM-LEB-049" "CAM-LEB-050" "CAM-LEB-051" "CAM-LEB-052" "CAM-LEB-053" "CAM-LEB-054" "CAM-LEB-055" "CAM-LEB-056" "CAM-LEB-057" "CAM-LEB-058" "CAM-LEB-059" "CAM-LEB-060" "CAM-LEB-061" "CAM-LEB-062" "CAM-LEB-063" "CAM-LEB-064" "CAM-LEB-065" "CAM-LEB-066" "CAM-LEB-067" "CAM-LEB-068" "CAM-LEB-069" "CAM-LEB-070" "CAM-LEB-071" "CAM-LEB-072" "CAM-LEB-073" "CAM-LEB-074" "CAM-LEB-075" "CAM-LEB-076" "CAM-LEB-077" "CAM-LEB-078" "CAM-LEB-079" "CAM-LEB-080" "CAM-LEB-081" "CAM-LEB-082" "CAM-LEB-083" "CAM-LEB-084" "CAM-LEB-085" "CAM-LEB-086" "CAM-LEB-087" "CAM-LEB-088" "CAM-LEB-089" "CAM-LEB-090" "CAM-LEB-091" "CAM-LEB-092" "CAM-LEB-093" "CAM-LEB-094" "CAM-LEB-095" "CAM-LEB-096" "CAM-LEB-097" "CAM-LEB-098" "CAM-LEB-099" "CAM-LEB-100" "CAM-LEB-101" "CAM-LEB-102" "CAM-LEB-103" "CAM-LEB-104" "CAM-LEB-105" "CAM-LEB-106" "CAM-LEB-107" "CAM-LEB-108" "CAM-LEB-109" "CAM-LEB-110" "CAM-LEB-111" "CAM-LEB-112" "CAM-LEB-113" "CAM-LEB-114" "CAM-LEB-115" "CAM-LEB-116" "CAM-LEB-117" "CAM-LEB-118" "CAM-LEB-119" "CAM-LEB-120" "CAM-LEB-121" "CAM-LEB-122" "CAM-LEB-123" "CAM-LEB-124" "CAM-LEB-125" "CAM-LEB-126" "CAM-LEB-127" "CAM-LEB-128" "CAM-LEB-129" "CAM-LEB-130" "CAM-LEB-131" "CAM-LEB-132" "CAM-LEB-133" "CAM-LEB-134" "CAM-LEB-135" "CAM-LEB-136" "CAM-LEB-137" "CAM-LEB-138" "CAM-LEB-139" "CAM-LEB-140" "CAM-LEB-141" "CAM-LEB-142" "CAM-LEB-143" "CAM-LEB-144" "CAM-LEB-145" "CAM-LEB-146" "CAM-LEB-147" "CAM-LEB-148" "CAM-LEB-149" "CAM-LEB-150" "CAM-LEB-151" "CAM-LEB-152" "CAM-LEB-153" "CAM-LEB-154" "CAM-LEB-155" "CAM-LEB-156" "CAM-LEB-157" "CAM-LEB-158" "CAM-LEB-159" "CAM-LEB-160" "CAM-LEB-161" "CAM-LEB-162" "CAM-LEB-163" "CAM-LEB-164" "CAM-LEB-165" "CAM-LEB-166" "CAM-LEB-167" "CAM-LEB-168" "CAM-LEB-169" "CAM-LEB-170" "CAM-LEB-171" "CAM-LEB-172" "CAM-LEB-173" "CAM-LEB-174" "CAM-LEB-175" "CAM-LEB-176" "CAM-LEB-177" "CAM-LEB-178" "CAM-LEB-179" "CAM-LEB-180" "CAM-LEB-181" "CAM-LEB-182" "CAM-LEB-183" "CAM-LEB-184" "CAM-LEB-185" "CAM-LEB-186" "CAM-LEB-187" "CAM-LEB-188" "CAM-LEB-189" "CAM-LEB-190" "CAM-LEB-191" "CAM-LEB-192" "CAM-LEB-193" "CAM-LEB-194" "CAM-LEB-195" "CAM-LEB-196" "CAM-LEB-197" "CAM-LEB-198" "CAM-LEB-199" "CAM-LEB-200" "CAM-LEB-201" "CAM-LEB-202" "CAM-LEB-203" "CAM-LEB-204" "CAM-LEB-205" "CAM-LEB-206" "CAM-LEB-207" "CAM-LEB-208" "CAM-LEB-209" "CAM-LEB-210" "CAM-LEB-211" "CAM-LEB-212" "CAM-LEB-213" "CAM-LEB-214" "CAM-LEB-215" "CAM-LEB-216" "CAM-LEB-217" "CAM-LEB-218" "CAM-LEB-219" "CAM-LEB-220" "CAM-LEB-221" "CAM-LEB-222" "CAM-LEB-223" "CAM-LEB-224" "CAM-LEB-225" "CAM-LEB-226" "CAM-LEB-227" "CAM-LEB-228" "CAM-LEB-229" "CAM-LEB-230" "CAM-LEB-231" "CAM-LEB-232" "CAM-LEB-233" "CAM-LEB-234" "CAM-LEB-235" "CAM-LEB-236" "CAM-LEB-237" "CAM-LEB-238" "CAM-LEB-239" "CAM-LEB-240" "CAM-LEB-241" "CAM-LEB-242" "CAM-LEB-243" "CAM-LEB-244" "CAM-LEB-245" "CAM-LEB-246" "CAM-LEB-247" "CAM-LEB-248" "CAM-LEB-249" "CAM-LEB-250" "CAM-LEB-251" "CAM-LEB-252" "CAM-LEB-253" "CAM-LEB-254" "CAM-LEB-255" "CAM-LEB-256" "CAM-LEB-257" "CAM-LEB-258" "CAM-LEB-259" "CAM-LEB-260" "CAM-LEB-261" "CAM-LEB-262" "CAM-LEB-263" "CAM-LEB-264" "CAM-LEB-265" "CAM-LEB-266" "CAM-LEB-267" "CAM-LEB-268" "CAM-LEB-269" "CAM-LEB-270" "CAM-LEB-271" "CAM-LEB-272" "CAM-LEB-273" "CAM-LEB-274" "CAM-LEB-275" "CAM-LEB-276" "CAM-LEB-277" "CAM-LEB-278" "CAM-LEB-279" "CAM-LEB-280" "CAM-LEB-281" "CAM-LEB-282" "CAM-LEB-283" "CAM-LEB-284" "CAM-LEB-285" "CAM-LEB-286" "CAM-LEB-287" "CAM-LEB-288" "CAM-LEB-289" "CAM-LEB-290" "CAM-LEB-291" "CAM-LEB-292" "CAM-LEB-293" "CAM-LEB-294" "CAM-LEB-295" "CAM-LEB-296" "CAM-LEB-297" "CAM-LEB-298" "CAM-LEB-299" "CAM-LEB-300" "CAM-LEB-301" "CAM-LEB-302" "CAM-LEB-303" "CAM-LEB-304" "CAM-LEB-305" "CAM-LEB-306" "CAM-LEB-307" "CAM-LEB-308" "CAM-LEB-309" "CAM-LEB-310" "CAM-LEB-311" "CAM-LEB-312" "CAM-LEB-313" "CAM-LEB-314" "CAM-LEB-315" "CAM-LEB-316" "CAM-LEB-317" "CAM-LEB-318" "CAM-LEB-319" "CAM-LEB-320" "CAM-LEB-321" "CAM-LEB-322" "CAM-LEB-323" "CAM-LEB-324" "CAM-LEB-325" "CAM-LEB-326" "CAM-LEB-327" "CAM-LEB-328" "CAM-LEB-329" "CAM-LEB-330" "CAM-LEB-331" "CAM-LEB-332" "CAM-LEB-333" "CAM-LEB-334" "CAM-LEB-335" "CAM-LEB-336" "CAM-LEB-337" "CAM-LEB-338" "CAM-LEB-339" "CAM-LEB-340" "CAM-LEB-341" "CAM-LEB-342" "CAM-LEB-343" "CAM-LEB-344" "CAM-LEB-345" "CAM-LEB-346" "CAM-LEB-347" "CAM-LEB-348" "CAM-LEB-349" "CAM-LEB-350" "CAM-LEB-351" "CAM-LEB-352" "CAM-LEB-353" "CAM-LEB-354" "CAM-LEB-355" "CAM-LEB-356" "CAM-LEB-357" "CAM-LEB-358" "CAM-LEB-359" "CAM-LEB-360" "CAM-LEB-361" "CAM-LEB-362" "CAM-LEB-363" "CAM-LEB-364" "CAM-LEB-365" "CAM-LEB-366" "CAM-LEB-367" "CAM-LEB-368" "CAM-LEB-369" "CAM-LEB-370" "CAM-LEB-371" "CAM-LEB-372" "CAM-LEB-373" "CAM-LEB-374" "CAM-LEB-375" "CAM-LEB-376" "CAM-LEB-377" "CAM-LEB-378" "CAM-LEB-379" "CAM-LEB-380" "CAM-LEB-381" "CAM-LEB-382" "CAM-LEB-383" "CAM-LEB-384" "CAM-LEB-385" "CAM-LEB-386" "CAM-LEB-387" "CAM-LEB-388" "CAM-LEB-389" "CAM-LEB-390" "CAM-LEB-391" "CAM-LEB-392" "CAM-LEB-393" "CAM-LEB-394" "CAM-LEB-395" "CAM-LEB-396" "CAM-LEB-397" "CAM-LEB-398" "CAM-LEB-399" "CAM-LEB-400" "CAM-LEB-401" "CAM-LEB-402" "CAM-LEB-403" "CAM-LEB-404" "CAM-LEB-405" "CAM-LEB-406" "CAM-LEB-407" "CAM-LEB-408" "CAM-LEB-409" "CAM-LEB-410" "CAM-LEB-411" "CAM-LEB-412" "CAM-LEB-413" "CAM-LEB-414" "CAM-LEB-415" "CAM-LEB-416" "CAM-LEB-417" "CAM-LEB-418" "CAM-LEB-419" "CAM-LEB-420" "CAM-LEB-421" "CAM-LEB-422" "CAM-LEB-423" "CAM-LEB-424" "CAM-LEB-425" "CAM-LEB-426" "CAM-LEB-427" "CAM-LEB-428" "CAM-LEB-429" "CAM-LEB-430" "CAM-LEB-431" "CAM-LEB-432" "CAM-LEB-433" "CAM-LEB-434" "CAM-LEB-435" "CAM-LEB-436" "CAM-LEB-437" "CAM-LEB-438" "CAM-LEB-439" "CAM-LEB-440" "CAM-LEB-441" "CAM-LEB-442" "CAM-LEB-443" "CAM-LEB-444" "CAM-LEB-445" "CAM-LEB-446" "CAM-LEB-447" "CAM-LEB-448" "CAM-LEB-449" "CAM-LEB-450" "CAM-LEB-451" "CAM-LEB-452" "CAM-LEB-453" "CAM-LEB-454" "CAM-LEB-455" "CAM-LEB-456" "CAM-LEB-457" "CAM-LEB-458" "CAM-LEB-459" "CAM-LEB-460" "CAM-LEB-461" "CAM-LEB-462" "CAM-LEB-463" "CAM-LEB-464" "CAM-LEB-465" "CAM-LEB-466" "CAM-LEB-467" "CAM-LEB-468" "CAM-LEB-469" "CAM-LEB-470" "CAM-LEB-471" "CAM-LEB-472" "CAM-LEB-473" "CAM-LEB-474" "CAM-LEB-475" "CAM-LEB-476" "CAM-LEB-477" "CAM-LEB-478" "CAM-LEB-479" "CAM-LEB-480" "CAM-LEB-481" "CAM-LEB-482" "CAM-LEB-483" "CAM-LEB-484" "CAM-LEB-485" "CAM-LEB-486" "CAM-LEB-487" "CAM-LEB-488" "CAM-LEB-489" "CAM-LEB-490" "CAM-LEB-491" "CAM-LEB-492" "CAM-LEB-493" "CAM-LEB-494" "CAM-LEB-495" "CAM-LEB-496" "CAM-LEB-497" "CAM-LEB-498" "CAM-LEB-499" "CAM-LEB-500" "CAM-LEB-501" "CAM-LEB-502" "CAM-LEB-503" "CAM-LEB-504" "CAM-LEB-505" "CAM-LEB-506" "CAM-LEB-507" "CAM-LEB-508" "CAM-LEB-509" "CAM-LEB-510" "CAM-LEB-511" "CAM-LEB-512" "CAM-LEB-513" "CAM-LEB-514" "CAM-LEB-515" "CAM-LEB-516" "CAM-LEB-517" "CAM-LEB-518" "CAM-LEB-519" "CAM-LEB-520" "CAM-LEB-521" "CAM-LEB-522" "CAM-LEB-523" "CAM-LEB-524" "CAM-LEB-525" "CAM-LEB-526" "CAM-LEB-527" "CAM-LEB-528" "CAM-LEB-529" "CAM-LEB-530" "CAM-LEB-531" "CAM-LEB-532" "CAM-LEB-533" "CAM-LEB-534" "CAM-LEB-535" "CAM-LEB-536" "CAM-LEB-537" "CAM-LEB-538" "CAM-LEB-539" "CAM-LEB-540". Observation records are missing from d until this file is standardized.
-# CAM-LEB-1990-DIV-FAC.txt: not read. columns: "CAM-LEB-001" "CAM-LEB-002" "CAM-LEB-003" "CAM-LEB-004" "CAM-LEB-005" "CAM-LEB-006" "CAM-LEB-007" "CAM-LEB-008" "CAM-LEB-009" "CAM-LEB-010" "CAM-LEB-011" "CAM-LEB-012" "CAM-LEB-013" "CAM-LEB-014" "CAM-LEB-015" "CAM-LEB-016" "CAM-LEB-017" "CAM-LEB-018" "CAM-LEB-019" "CAM-LEB-020" "CAM-LEB-021" "CAM-LEB-022" "CAM-LEB-023" "CAM-LEB-024" "CAM-LEB-025" "CAM-LEB-026" "CAM-LEB-027" "CAM-LEB-028" "CAM-LEB-029" "CAM-LEB-030" "CAM-LEB-031" "CAM-LEB-032" "CAM-LEB-033" "CAM-LEB-034" "CAM-LEB-035" "CAM-LEB-036" "CAM-LEB-037" "CAM-LEB-038" "CAM-LEB-039" "CAM-LEB-040" "CAM-LEB-041" "CAM-LEB-042" "CAM-LEB-043" "CAM-LEB-044" "CAM-LEB-045" "CAM-LEB-046" "CAM-LEB-047" "CAM-LEB-048" "CAM-LEB-049" "CAM-LEB-050" "CAM-LEB-051" "CAM-LEB-052" "CAM-LEB-053" "CAM-LEB-054" "CAM-LEB-055" "CAM-LEB-056" "CAM-LEB-057" "CAM-LEB-058" "CAM-LEB-059" "CAM-LEB-060" "CAM-LEB-061" "CAM-LEB-062" "CAM-LEB-063" "CAM-LEB-064" "CAM-LEB-065" "CAM-LEB-066" "CAM-LEB-067" "CAM-LEB-068" "CAM-LEB-069" "CAM-LEB-070" "CAM-LEB-071" "CAM-LEB-072" "CAM-LEB-073" "CAM-LEB-074" "CAM-LEB-075" "CAM-LEB-076" "CAM-LEB-077" "CAM-LEB-078" "CAM-LEB-079" "CAM-LEB-080" "CAM-LEB-081" "CAM-LEB-082" "CAM-LEB-083" "CAM-LEB-084" "CAM-LEB-085" "CAM-LEB-086" "CAM-LEB-087" "CAM-LEB-088" "CAM-LEB-089" "CAM-LEB-090" "CAM-LEB-091" "CAM-LEB-092" "CAM-LEB-093" "CAM-LEB-094" "CAM-LEB-095" "CAM-LEB-096" "CAM-LEB-097" "CAM-LEB-098" "CAM-LEB-099" "CAM-LEB-100" "CAM-LEB-101" "CAM-LEB-102" "CAM-LEB-103" "CAM-LEB-104" "CAM-LEB-105" "CAM-LEB-106" "CAM-LEB-107" "CAM-LEB-108" "CAM-LEB-109" "CAM-LEB-110" "CAM-LEB-111" "CAM-LEB-112" "CAM-LEB-113" "CAM-LEB-114" "CAM-LEB-115" "CAM-LEB-116" "CAM-LEB-117" "CAM-LEB-118" "CAM-LEB-119" "CAM-LEB-120" "CAM-LEB-121" "CAM-LEB-122" "CAM-LEB-123" "CAM-LEB-124" "CAM-LEB-125" "CAM-LEB-126" "CAM-LEB-127" "CAM-LEB-128" "CAM-LEB-129" "CAM-LEB-130" "CAM-LEB-131" "CAM-LEB-132" "CAM-LEB-133" "CAM-LEB-134" "CAM-LEB-135" "CAM-LEB-136" "CAM-LEB-137" "CAM-LEB-138" "CAM-LEB-139" "CAM-LEB-140" "CAM-LEB-141" "CAM-LEB-142" "CAM-LEB-143" "CAM-LEB-144" "CAM-LEB-145" "CAM-LEB-146" "CAM-LEB-147" "CAM-LEB-148" "CAM-LEB-149" "CAM-LEB-150" "CAM-LEB-151" "CAM-LEB-152" "CAM-LEB-153" "CAM-LEB-154" "CAM-LEB-155" "CAM-LEB-156" "CAM-LEB-157" "CAM-LEB-158" "CAM-LEB-159" "CAM-LEB-160" "CAM-LEB-161" "CAM-LEB-162" "CAM-LEB-163" "CAM-LEB-164" "CAM-LEB-165" "CAM-LEB-166" "CAM-LEB-167" "CAM-LEB-168" "CAM-LEB-169" "CAM-LEB-170" "CAM-LEB-171" "CAM-LEB-172" "CAM-LEB-173" "CAM-LEB-174" "CAM-LEB-175" "CAM-LEB-176" "CAM-LEB-177" "CAM-LEB-178" "CAM-LEB-179" "CAM-LEB-180" "CAM-LEB-181" "CAM-LEB-182" "CAM-LEB-183" "CAM-LEB-184" "CAM-LEB-185" "CAM-LEB-186" "CAM-LEB-187" "CAM-LEB-188" "CAM-LEB-189" "CAM-LEB-190" "CAM-LEB-191" "CAM-LEB-192" "CAM-LEB-193" "CAM-LEB-194" "CAM-LEB-195" "CAM-LEB-196" "CAM-LEB-197" "CAM-LEB-198" "CAM-LEB-199" "CAM-LEB-200" "CAM-LEB-201" "CAM-LEB-202" "CAM-LEB-203" "CAM-LEB-204" "CAM-LEB-205" "CAM-LEB-206" "CAM-LEB-207" "CAM-LEB-208" "CAM-LEB-209" "CAM-LEB-210" "CAM-LEB-211" "CAM-LEB-212" "CAM-LEB-213" "CAM-LEB-214" "CAM-LEB-215" "CAM-LEB-216" "CAM-LEB-217" "CAM-LEB-218" "CAM-LEB-219" "CAM-LEB-220" "CAM-LEB-221" "CAM-LEB-222" "CAM-LEB-223" "CAM-LEB-224" "CAM-LEB-225" "CAM-LEB-226" "CAM-LEB-227" "CAM-LEB-228" "CAM-LEB-229" "CAM-LEB-230" "CAM-LEB-231" "CAM-LEB-232" "CAM-LEB-233" "CAM-LEB-234" "CAM-LEB-235" "CAM-LEB-236" "CAM-LEB-237" "CAM-LEB-238" "CAM-LEB-239" "CAM-LEB-240" "CAM-LEB-241" "CAM-LEB-242" "CAM-LEB-243" "CAM-LEB-244" "CAM-LEB-245" "CAM-LEB-246" "CAM-LEB-247" "CAM-LEB-248" "CAM-LEB-249" "CAM-LEB-250" "CAM-LEB-251" "CAM-LEB-252" "CAM-LEB-253" "CAM-LEB-254" "CAM-LEB-255" "CAM-LEB-256" "CAM-LEB-257" "CAM-LEB-258" "CAM-LEB-259" "CAM-LEB-260" "CAM-LEB-261" "CAM-LEB-262" "CAM-LEB-263" "CAM-LEB-264" "CAM-LEB-265" "CAM-LEB-266" "CAM-LEB-267" "CAM-LEB-268" "CAM-LEB-269" "CAM-LEB-270" "CAM-LEB-271" "CAM-LEB-272" "CAM-LEB-273" "CAM-LEB-274" "CAM-LEB-275" "CAM-LEB-276" "CAM-LEB-277" "CAM-LEB-278" "CAM-LEB-279" "CAM-LEB-280" "CAM-LEB-281" "CAM-LEB-282" "CAM-LEB-283" "CAM-LEB-284" "CAM-LEB-285" "CAM-LEB-286" "CAM-LEB-287" "CAM-LEB-288" "CAM-LEB-289" "CAM-LEB-290" "CAM-LEB-291" "CAM-LEB-292" "CAM-LEB-293" "CAM-LEB-294" "CAM-LEB-295" "CAM-LEB-296" "CAM-LEB-297" "CAM-LEB-298" "CAM-LEB-299" "CAM-LEB-300" "CAM-LEB-301" "CAM-LEB-302" "CAM-LEB-303" "CAM-LEB-304" "CAM-LEB-305" "CAM-LEB-306" "CAM-LEB-307" "CAM-LEB-308" "CAM-LEB-309" "CAM-LEB-310" "CAM-LEB-311" "CAM-LEB-312" "CAM-LEB-313" "CAM-LEB-314" "CAM-LEB-315" "CAM-LEB-316" "CAM-LEB-317" "CAM-LEB-318" "CAM-LEB-319" "CAM-LEB-320" "CAM-LEB-321" "CAM-LEB-322" "CAM-LEB-323" "CAM-LEB-324" "CAM-LEB-325" "CAM-LEB-326" "CAM-LEB-327" "CAM-LEB-328" "CAM-LEB-329" "CAM-LEB-330" "CAM-LEB-331" "CAM-LEB-332" "CAM-LEB-333" "CAM-LEB-334" "CAM-LEB-335" "CAM-LEB-336" "CAM-LEB-337" "CAM-LEB-338" "CAM-LEB-339" "CAM-LEB-340" "CAM-LEB-341" "CAM-LEB-342" "CAM-LEB-343" "CAM-LEB-344" "CAM-LEB-345" "CAM-LEB-346" "CAM-LEB-347" "CAM-LEB-348" "CAM-LEB-349" "CAM-LEB-350" "CAM-LEB-351" "CAM-LEB-352" "CAM-LEB-353" "CAM-LEB-354" "CAM-LEB-355" "CAM-LEB-356" "CAM-LEB-357" "CAM-LEB-358" "CAM-LEB-359" "CAM-LEB-360" "CAM-LEB-361" "CAM-LEB-362" "CAM-LEB-363" "CAM-LEB-364" "CAM-LEB-365" "CAM-LEB-366" "CAM-LEB-367" "CAM-LEB-368" "CAM-LEB-369" "CAM-LEB-370" "CAM-LEB-371" "CAM-LEB-372" "CAM-LEB-373" "CAM-LEB-374" "CAM-LEB-375" "CAM-LEB-376" "CAM-LEB-377" "CAM-LEB-378" "CAM-LEB-379" "CAM-LEB-380" "CAM-LEB-381" "CAM-LEB-382" "CAM-LEB-383" "CAM-LEB-384" "CAM-LEB-385" "CAM-LEB-386" "CAM-LEB-387" "CAM-LEB-388" "CAM-LEB-389" "CAM-LEB-390" "CAM-LEB-391" "CAM-LEB-392" "CAM-LEB-393" "CAM-LEB-394" "CAM-LEB-395" "CAM-LEB-396" "CAM-LEB-397" "CAM-LEB-398" "CAM-LEB-399" "CAM-LEB-400" "CAM-LEB-401" "CAM-LEB-402" "CAM-LEB-403" "CAM-LEB-404" "CAM-LEB-405" "CAM-LEB-406" "CAM-LEB-407" "CAM-LEB-408" "CAM-LEB-409" "CAM-LEB-410" "CAM-LEB-411" "CAM-LEB-412" "CAM-LEB-413" "CAM-LEB-414" "CAM-LEB-415" "CAM-LEB-416" "CAM-LEB-417" "CAM-LEB-418" "CAM-LEB-419" "CAM-LEB-420" "CAM-LEB-421" "CAM-LEB-422" "CAM-LEB-423" "CAM-LEB-424" "CAM-LEB-425" "CAM-LEB-426" "CAM-LEB-427" "CAM-LEB-428" "CAM-LEB-429" "CAM-LEB-430" "CAM-LEB-431" "CAM-LEB-432" "CAM-LEB-433" "CAM-LEB-434" "CAM-LEB-435" "CAM-LEB-436" "CAM-LEB-437" "CAM-LEB-438" "CAM-LEB-439" "CAM-LEB-440" "CAM-LEB-441" "CAM-LEB-442" "CAM-LEB-443" "CAM-LEB-444" "CAM-LEB-445" "CAM-LEB-446" "CAM-LEB-447" "CAM-LEB-448" "CAM-LEB-449" "CAM-LEB-450" "CAM-LEB-451" "CAM-LEB-452" "CAM-LEB-453" "CAM-LEB-454" "CAM-LEB-455" "CAM-LEB-456" "CAM-LEB-457" "CAM-LEB-458" "CAM-LEB-459" "CAM-LEB-460" "CAM-LEB-461" "CAM-LEB-462" "CAM-LEB-463" "CAM-LEB-464" "CAM-LEB-465" "CAM-LEB-466" "CAM-LEB-467" "CAM-LEB-468" "CAM-LEB-469" "CAM-LEB-470" "CAM-LEB-471" "CAM-LEB-472" "CAM-LEB-473" "CAM-LEB-474" "CAM-LEB-475" "CAM-LEB-476" "CAM-LEB-477" "CAM-LEB-478" "CAM-LEB-479" "CAM-LEB-480" "CAM-LEB-481" "CAM-LEB-482" "CAM-LEB-483" "CAM-LEB-484" "CAM-LEB-485" "CAM-LEB-486" "CAM-LEB-487" "CAM-LEB-488" "CAM-LEB-489" "CAM-LEB-490" "CAM-LEB-491" "CAM-LEB-492" "CAM-LEB-493" "CAM-LEB-494" "CAM-LEB-495" "CAM-LEB-496" "CAM-LEB-497" "CAM-LEB-498" "CAM-LEB-499" "CAM-LEB-500" "CAM-LEB-501" "CAM-LEB-502" "CAM-LEB-503" "CAM-LEB-504" "CAM-LEB-505" "CAM-LEB-506" "CAM-LEB-507" "CAM-LEB-508" "CAM-LEB-509" "CAM-LEB-510" "CAM-LEB-511" "CAM-LEB-512" "CAM-LEB-513" "CAM-LEB-514" "CAM-LEB-515" "CAM-LEB-516" "CAM-LEB-517" "CAM-LEB-518" "CAM-LEB-519" "CAM-LEB-520" "CAM-LEB-521" "CAM-LEB-522" "CAM-LEB-523" "CAM-LEB-524" "CAM-LEB-525" "CAM-LEB-526" "CAM-LEB-527" "CAM-LEB-528" "CAM-LEB-529" "CAM-LEB-530" "CAM-LEB-531" "CAM-LEB-532" "CAM-LEB-533" "CAM-LEB-534" "CAM-LEB-535" "CAM-LEB-536" "CAM-LEB-537" "CAM-LEB-538" "CAM-LEB-539" "CAM-LEB-540". Observation records are missing from d until this file is standardized.
-# CAM-LEB-1990-DIV-PA-FLO.txt: not read. columns: "CAM-LEB-001" "CAM-LEB-002" "CAM-LEB-003" "CAM-LEB-004" "CAM-LEB-005" "CAM-LEB-006" "CAM-LEB-007" "CAM-LEB-008" "CAM-LEB-009" "CAM-LEB-010" "CAM-LEB-011" "CAM-LEB-012" "CAM-LEB-013" "CAM-LEB-014" "CAM-LEB-015" "CAM-LEB-016" "CAM-LEB-017" "CAM-LEB-018" "CAM-LEB-019" "CAM-LEB-020" "CAM-LEB-021" "CAM-LEB-022" "CAM-LEB-023" "CAM-LEB-024" "CAM-LEB-025" "CAM-LEB-026" "CAM-LEB-027" "CAM-LEB-028" "CAM-LEB-029" "CAM-LEB-030" "CAM-LEB-031" "CAM-LEB-032" "CAM-LEB-033" "CAM-LEB-034" "CAM-LEB-035" "CAM-LEB-036" "CAM-LEB-037" "CAM-LEB-038" "CAM-LEB-039" "CAM-LEB-040" "CAM-LEB-041" "CAM-LEB-042" "CAM-LEB-043" "CAM-LEB-044" "CAM-LEB-045" "CAM-LEB-046" "CAM-LEB-047" "CAM-LEB-048" "CAM-LEB-049" "CAM-LEB-050" "CAM-LEB-051" "CAM-LEB-052" "CAM-LEB-053" "CAM-LEB-054" "CAM-LEB-055" "CAM-LEB-056" "CAM-LEB-057" "CAM-LEB-058" "CAM-LEB-059" "CAM-LEB-060" "CAM-LEB-061" "CAM-LEB-062" "CAM-LEB-063" "CAM-LEB-064" "CAM-LEB-065" "CAM-LEB-066" "CAM-LEB-067" "CAM-LEB-068" "CAM-LEB-069" "CAM-LEB-070" "CAM-LEB-071" "CAM-LEB-072" "CAM-LEB-073" "CAM-LEB-074" "CAM-LEB-075" "CAM-LEB-076" "CAM-LEB-077" "CAM-LEB-078" "CAM-LEB-079" "CAM-LEB-080" "CAM-LEB-081" "CAM-LEB-082" "CAM-LEB-083" "CAM-LEB-084" "CAM-LEB-085" "CAM-LEB-086" "CAM-LEB-087" "CAM-LEB-088" "CAM-LEB-089" "CAM-LEB-090" "CAM-LEB-091" "CAM-LEB-092" "CAM-LEB-093" "CAM-LEB-094" "CAM-LEB-095" "CAM-LEB-096" "CAM-LEB-097" "CAM-LEB-098" "CAM-LEB-099" "CAM-LEB-100" "CAM-LEB-101" "CAM-LEB-102" "CAM-LEB-103" "CAM-LEB-104" "CAM-LEB-105" "CAM-LEB-106" "CAM-LEB-107" "CAM-LEB-108" "CAM-LEB-109" "CAM-LEB-110" "CAM-LEB-111" "CAM-LEB-112" "CAM-LEB-113" "CAM-LEB-114" "CAM-LEB-115" "CAM-LEB-116" "CAM-LEB-117" "CAM-LEB-118" "CAM-LEB-119" "CAM-LEB-120" "CAM-LEB-121" "CAM-LEB-122" "CAM-LEB-123" "CAM-LEB-124" "CAM-LEB-125" "CAM-LEB-126" "CAM-LEB-127" "CAM-LEB-128" "CAM-LEB-129" "CAM-LEB-130" "CAM-LEB-131" "CAM-LEB-132" "CAM-LEB-133" "CAM-LEB-134" "CAM-LEB-135" "CAM-LEB-136" "CAM-LEB-137" "CAM-LEB-138" "CAM-LEB-139" "CAM-LEB-140" "CAM-LEB-141" "CAM-LEB-142" "CAM-LEB-143" "CAM-LEB-144" "CAM-LEB-145" "CAM-LEB-146" "CAM-LEB-147" "CAM-LEB-148" "CAM-LEB-149" "CAM-LEB-150" "CAM-LEB-151" "CAM-LEB-152" "CAM-LEB-153" "CAM-LEB-154" "CAM-LEB-155" "CAM-LEB-156" "CAM-LEB-157" "CAM-LEB-158" "CAM-LEB-159" "CAM-LEB-160" "CAM-LEB-161" "CAM-LEB-162" "CAM-LEB-163" "CAM-LEB-164" "CAM-LEB-165" "CAM-LEB-166" "CAM-LEB-167" "CAM-LEB-168" "CAM-LEB-169" "CAM-LEB-170" "CAM-LEB-171" "CAM-LEB-172" "CAM-LEB-173" "CAM-LEB-174" "CAM-LEB-175" "CAM-LEB-176" "CAM-LEB-177" "CAM-LEB-178" "CAM-LEB-179" "CAM-LEB-180" "CAM-LEB-181" "CAM-LEB-182" "CAM-LEB-183" "CAM-LEB-184" "CAM-LEB-185" "CAM-LEB-186" "CAM-LEB-187" "CAM-LEB-188" "CAM-LEB-189" "CAM-LEB-190" "CAM-LEB-191" "CAM-LEB-192" "CAM-LEB-193" "CAM-LEB-194" "CAM-LEB-195" "CAM-LEB-196" "CAM-LEB-197" "CAM-LEB-198" "CAM-LEB-199" "CAM-LEB-200" "CAM-LEB-201" "CAM-LEB-202" "CAM-LEB-203" "CAM-LEB-204" "CAM-LEB-205" "CAM-LEB-206" "CAM-LEB-207" "CAM-LEB-208" "CAM-LEB-209" "CAM-LEB-210" "CAM-LEB-211" "CAM-LEB-212" "CAM-LEB-213" "CAM-LEB-214" "CAM-LEB-215" "CAM-LEB-216" "CAM-LEB-217" "CAM-LEB-218" "CAM-LEB-219" "CAM-LEB-220" "CAM-LEB-221" "CAM-LEB-222" "CAM-LEB-223" "CAM-LEB-224" "CAM-LEB-225" "CAM-LEB-226" "CAM-LEB-227" "CAM-LEB-228" "CAM-LEB-229" "CAM-LEB-230" "CAM-LEB-231" "CAM-LEB-232" "CAM-LEB-233" "CAM-LEB-234" "CAM-LEB-235" "CAM-LEB-236" "CAM-LEB-237" "CAM-LEB-238" "CAM-LEB-239" "CAM-LEB-240" "CAM-LEB-241" "CAM-LEB-242" "CAM-LEB-243" "CAM-LEB-244" "CAM-LEB-245" "CAM-LEB-246" "CAM-LEB-247" "CAM-LEB-248" "CAM-LEB-249" "CAM-LEB-250" "CAM-LEB-251" "CAM-LEB-252" "CAM-LEB-253" "CAM-LEB-254" "CAM-LEB-255" "CAM-LEB-256" "CAM-LEB-257" "CAM-LEB-258" "CAM-LEB-259" "CAM-LEB-260" "CAM-LEB-261" "CAM-LEB-262" "CAM-LEB-263" "CAM-LEB-264" "CAM-LEB-265" "CAM-LEB-266" "CAM-LEB-267" "CAM-LEB-268" "CAM-LEB-269" "CAM-LEB-270" "CAM-LEB-271" "CAM-LEB-272" "CAM-LEB-273" "CAM-LEB-274" "CAM-LEB-275" "CAM-LEB-276" "CAM-LEB-277" "CAM-LEB-278" "CAM-LEB-279" "CAM-LEB-280" "CAM-LEB-281" "CAM-LEB-282" "CAM-LEB-283" "CAM-LEB-284" "CAM-LEB-285" "CAM-LEB-286" "CAM-LEB-287" "CAM-LEB-288" "CAM-LEB-289" "CAM-LEB-290" "CAM-LEB-291" "CAM-LEB-292" "CAM-LEB-293" "CAM-LEB-294" "CAM-LEB-295" "CAM-LEB-296" "CAM-LEB-297" "CAM-LEB-298" "CAM-LEB-299" "CAM-LEB-300" "CAM-LEB-301" "CAM-LEB-302" "CAM-LEB-303" "CAM-LEB-304" "CAM-LEB-305" "CAM-LEB-306" "CAM-LEB-307" "CAM-LEB-308" "CAM-LEB-309" "CAM-LEB-310" "CAM-LEB-311" "CAM-LEB-312" "CAM-LEB-313" "CAM-LEB-314" "CAM-LEB-315" "CAM-LEB-316" "CAM-LEB-317" "CAM-LEB-318" "CAM-LEB-319" "CAM-LEB-320" "CAM-LEB-321" "CAM-LEB-322" "CAM-LEB-323" "CAM-LEB-324" "CAM-LEB-325" "CAM-LEB-326" "CAM-LEB-327" "CAM-LEB-328" "CAM-LEB-329" "CAM-LEB-330" "CAM-LEB-331" "CAM-LEB-332" "CAM-LEB-333" "CAM-LEB-334" "CAM-LEB-335" "CAM-LEB-336" "CAM-LEB-337" "CAM-LEB-338" "CAM-LEB-339" "CAM-LEB-340" "CAM-LEB-341" "CAM-LEB-342" "CAM-LEB-343" "CAM-LEB-344" "CAM-LEB-345" "CAM-LEB-346" "CAM-LEB-347" "CAM-LEB-348" "CAM-LEB-349" "CAM-LEB-350" "CAM-LEB-351" "CAM-LEB-352" "CAM-LEB-353" "CAM-LEB-354" "CAM-LEB-355" "CAM-LEB-356" "CAM-LEB-357" "CAM-LEB-358" "CAM-LEB-359" "CAM-LEB-360" "CAM-LEB-361" "CAM-LEB-362" "CAM-LEB-363" "CAM-LEB-364" "CAM-LEB-365" "CAM-LEB-366" "CAM-LEB-367" "CAM-LEB-368" "CAM-LEB-369" "CAM-LEB-370" "CAM-LEB-371" "CAM-LEB-372" "CAM-LEB-373" "CAM-LEB-374" "CAM-LEB-375" "CAM-LEB-376" "CAM-LEB-377" "CAM-LEB-378" "CAM-LEB-379" "CAM-LEB-380" "CAM-LEB-381" "CAM-LEB-382" "CAM-LEB-383" "CAM-LEB-384" "CAM-LEB-385" "CAM-LEB-386" "CAM-LEB-387" "CAM-LEB-388" "CAM-LEB-389" "CAM-LEB-390" "CAM-LEB-391" "CAM-LEB-392" "CAM-LEB-393" "CAM-LEB-394" "CAM-LEB-395" "CAM-LEB-396" "CAM-LEB-397" "CAM-LEB-398" "CAM-LEB-399" "CAM-LEB-400" "CAM-LEB-401" "CAM-LEB-402" "CAM-LEB-403" "CAM-LEB-404" "CAM-LEB-405" "CAM-LEB-406" "CAM-LEB-407" "CAM-LEB-408" "CAM-LEB-409" "CAM-LEB-410" "CAM-LEB-411" "CAM-LEB-412" "CAM-LEB-413" "CAM-LEB-414" "CAM-LEB-415" "CAM-LEB-416" "CAM-LEB-417" "CAM-LEB-418" "CAM-LEB-419" "CAM-LEB-420" "CAM-LEB-421" "CAM-LEB-422" "CAM-LEB-423" "CAM-LEB-424" "CAM-LEB-425" "CAM-LEB-426" "CAM-LEB-427" "CAM-LEB-428" "CAM-LEB-429" "CAM-LEB-430" "CAM-LEB-431" "CAM-LEB-432" "CAM-LEB-433" "CAM-LEB-434" "CAM-LEB-435" "CAM-LEB-436" "CAM-LEB-437" "CAM-LEB-438" "CAM-LEB-439" "CAM-LEB-440" "CAM-LEB-441" "CAM-LEB-442" "CAM-LEB-443" "CAM-LEB-444" "CAM-LEB-445" "CAM-LEB-446" "CAM-LEB-447" "CAM-LEB-448" "CAM-LEB-449" "CAM-LEB-450" "CAM-LEB-451" "CAM-LEB-452" "CAM-LEB-453" "CAM-LEB-454" "CAM-LEB-455" "CAM-LEB-456" "CAM-LEB-457" "CAM-LEB-458" "CAM-LEB-459" "CAM-LEB-460" "CAM-LEB-461" "CAM-LEB-462" "CAM-LEB-463" "CAM-LEB-464" "CAM-LEB-465" "CAM-LEB-466" "CAM-LEB-467" "CAM-LEB-468" "CAM-LEB-469" "CAM-LEB-470" "CAM-LEB-471" "CAM-LEB-472" "CAM-LEB-473" "CAM-LEB-474" "CAM-LEB-475" "CAM-LEB-476" "CAM-LEB-477" "CAM-LEB-478" "CAM-LEB-479" "CAM-LEB-480" "CAM-LEB-481" "CAM-LEB-482" "CAM-LEB-483" "CAM-LEB-484" "CAM-LEB-485" "CAM-LEB-486" "CAM-LEB-487" "CAM-LEB-488" "CAM-LEB-489" "CAM-LEB-490" "CAM-LEB-491" "CAM-LEB-492" "CAM-LEB-493" "CAM-LEB-494" "CAM-LEB-495" "CAM-LEB-496" "CAM-LEB-497" "CAM-LEB-498" "CAM-LEB-499" "CAM-LEB-500" "CAM-LEB-501" "CAM-LEB-502" "CAM-LEB-503" "CAM-LEB-504" "CAM-LEB-505" "CAM-LEB-506" "CAM-LEB-507" "CAM-LEB-508" "CAM-LEB-509" "CAM-LEB-510" "CAM-LEB-511" "CAM-LEB-512" "CAM-LEB-513" "CAM-LEB-514" "CAM-LEB-515" "CAM-LEB-516" "CAM-LEB-517" "CAM-LEB-518" "CAM-LEB-519" "CAM-LEB-520" "CAM-LEB-521" "CAM-LEB-522" "CAM-LEB-523" "CAM-LEB-524" "CAM-LEB-525" "CAM-LEB-526" "CAM-LEB-527" "CAM-LEB-528" "CAM-LEB-529" "CAM-LEB-530" "CAM-LEB-531" "CAM-LEB-532" "CAM-LEB-533" "CAM-LEB-534" "CAM-LEB-535" "CAM-LEB-536" "CAM-LEB-537" "CAM-LEB-538" "CAM-LEB-539" "CAM-LEB-540". Observation records are missing from d until this file is standardized.
+# Standardized numeric rows in Facteurs (Altitude, Prof sol, pH, MO, Argile,
+# Limon, Sable, Pluvio jusqu'a obs, Pluvio annuelle, Date semis): rescaled to
+# unit variance without original scale factors.
+# Climat (tropical / tropical-sec) and Epoque_obs (redundant with Date_obs).
+# Sheets Meta donnees and Facteurs origine, and exported .txt files (FLO, FAC,
+# PA-FLO) duplicate the Facteurs and Floristique sheets.
 
 
 carob_script <- function(path) {
@@ -40,62 +57,151 @@ Characterization of weed communities in cotton rotation (cotton, maiz, sorghum, 
 	meta <- carobiner::get_metadata(uri, path, group, major=5, minor=0,
 		data_organization = "CIRAD",
 		publication = NA,
-		project = "Projet FAC régional malherbologie Garoua Cameroun",
-		design = "weed abundance survey",
+		project = "Projet FAC r\u00e9gional malherbologie Garoua Cameroun",
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
-		response_vars = "weed_species;ground_cover",
+		response_vars = "weed_species;weed_species_cover",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_date = "2026-11-26",
+		carob_completion = 70,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "CAM-LEB-1990-DIV-AD.xlsx"]
-	r1 <- carobiner::read.excel(f, sheet="Facteurs")
-	r2 <- carobiner::read.excel(f, sheet="Floristique")
+	r1 <- carobiner::read.excel(f, sheet = "Facteurs")
+	r2 <- carobiner::read.excel(f, sheet = "Floristique")
 
-	get_row <- function(label) unname(unlist(r1[r1[[1]] == label, -1]))
+	get_row <- function(label) trimws(as.character(unname(unlist(r1[r1[[1]] == label, -1]))))
 
-	# CAM-LEB-1990-DIV-AD-DOC.txt: transformed 1-9 note to % cover, Benin table.
-	rating_to_cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
-
-	crop_map <- c(
-		arachide = "groundnut", cotonnier = "cotton", mais = "maize", sorgho = "sorghum"
+	crop_map <- c(arachide = "groundnut", cotonnier = "cotton", mais = "maize", sorgho = "sorghum")
+	prev_map <- c(arachide = "groundnut", cotonnier = "cotton", jachere = "none", mais = "maize", sorgho = "sorghum")
+	soil_map <- c(
+		"alluvions" = "alluvial",
+		"ferrugineux" = "ferruginous",
+		"ferrugineux dunaire" = "ferruginous dune",
+		"fersialitique" = "fersiallitic",
+		"hydromorphe" = "hydromorphic",
+		"peu evolue" = "weakly developed",
+		"planosol" = "planosol",
+		"vertisol" = "vertisol"
 	)
-	prev_map <- c(
-		arachide = "groundnut", cotonnier = "cotton", jachere = "none",
-		mais = "maize", sorgho = "sorghum"
+	stage_map <- c(
+		"levee" = "emergence",
+		"deb veg" = "early vegetative",
+		"vegetation" = "vegetative",
+		"floraison" = "flowering",
+		"fructification" = "fruiting",
+		"recolte" = "maturity"
+	)
+	weed_meth_map <- c(
+		"0 sarclage" = "none",
+		"sarclage man" = "manual",
+		"sarclage mec" = "mechanical",
+		"sarclage mec+man" = "mechanical;manual"
+	)
+	but_map <- c("0 butage" = "none", "butage man" = "manual", "butage mec" = "mechanical")
+	herbi_map <- c(
+		"pas herbi" = "none",
+		"atrazine+metolachlore" = "atrazine;metolachlor",
+		"dipropetrine+metolachlore" = "dipropetryn;metolachlor"
+	)
+	age_map <- c(
+		"1-2 ans" = "1-2", "3-4 ans" = "3-4", "5-10 ans" = "5-10",
+		"10-20 ans" = "10-20", ">20 ans" = ">20"
+	)
+	hhist_map <- c(
+		"jamais herbi" = "none",
+		"herbi 1-3 ans" = "1-3 years",
+		"herbi 4-10 ans" = "4-10 years",
+		"herbi >10 ans" = ">10 years"
 	)
 
-	irr <- tolower(trimws(as.character(get_row("Irrigation"))))
-	# Date_obs is an Excel serial (1 Jun, 1 Aug, 1 Oct 1990).
-	obs <- as.numeric(get_row("Date_obs"))
-	d1b <- data.frame(
-		trial_id = names(r1)[-1],
-		crop = unname(crop_map[tolower(trimws(as.character(get_row("Type_culture"))))]),
-		previous_crop = unname(prev_map[tolower(trimws(as.character(get_row("Precedent"))))]),
-		date = as.character(as.Date(obs, origin="1899-12-30")),
-		country = "Cameroon", # geographicCoverage
-		location = trimws(as.character(get_row("Lieu"))),
-		irrigated = irr %in% c("inonde", "inondé"),
-		stress = "weeds"
-	)
-	d1b$intercropped <- FALSE
-	d1b$on_farm <- TRUE
-	d1b$is_survey <- TRUE
-	d1b$geo_from_source <- FALSE
+	lab <- tolower(get_row("Labour"))
+	fum <- tolower(get_row("Fumure"))
+	sar <- tolower(get_row("Sarclage"))
+	hbt <- tolower(get_row("Herbicide-type"))
+	irr <- tolower(get_row("Irrigation"))
 
-	present <- which(!is.na(r2[, -1]) & r2[, -1] > 0, arr.ind=TRUE)
-	scores <- as.integer(as.numeric(r2[, -1][present]))
+	ftype <- c("0 fumure" = "none", "100 uree" = "urea", "100 npk + 100 uree" = "NPK;urea", "200 npk + 100 uree" = "NPK;urea")
+	famt <- c("0 fumure" = 0, "100 uree" = 100, "100 npk + 100 uree" = 200, "200 npk + 100 uree" = 300)
+
 	d <- data.frame(
-		trial_id = names(r2)[-1][present[, "col"]],
-		weed_species = trimws(as.character(r2[[1]][present[, "row"]])),
-		ground_cover = rating_to_cover[match(scores, 1:9)]
+		trial_id = names(r1)[-1],
+		plot_id = get_row("Parcelle"),
+		date = as.character(as.Date(as.numeric(get_row("Date_obs")), origin = "1899-12-30")),
+		country = "Cameroon",
+		location = get_row("Lieu"),
+		crop = unname(crop_map[tolower(get_row("Type_culture"))]),
+		previous_crop = unname(prev_map[tolower(get_row("Precedent"))]),
+		growth_stage = unname(stage_map[tolower(get_row("Stade_culture"))]),
+		soil_type = unname(soil_map[tolower(get_row("Sol"))]),
+		land_prep_method = ifelse(lab == "0 labour", "none", "ploughing"),
+		land_prep_traction = ifelse(lab == "0 labour", "none", ifelse(lab == "manuel", "manual", NA_character_)),
+		fertilizer_used = fum != "0 fumure",
+		fertilizer_type = unname(ftype[fum]),
+		fertilizer_amount = unname(famt[fum]),
+		N_fertilizer = ifelse(fum == "0 fumure", 0, ifelse(fum == "100 uree", 46, NA_real_)),
+		P_fertilizer = ifelse(fum %in% c("0 fumure", "100 uree"), 0, NA_real_),
+		K_fertilizer = ifelse(fum %in% c("0 fumure", "100 uree"), 0, NA_real_),
+		herbicide_used = tolower(get_row("Herbicide")) == "herbi pre",
+		herbicide_product = unname(herbi_map[hbt]),
+		weeding_done = sar != "0 sarclage",
+		weeding_method = unname(weed_meth_map[sar]),
+		earthing_up_ = unname(but_map[tolower(get_row("Butage"))]),
+		bare_soil_pct_ = sub("^sn", "", tolower(get_row("Sol_nu"))),
+		field_age_years_ = unname(age_map[tolower(get_row("Age_parcelle"))]),
+		herbicide_history_ = unname(hhist_map[tolower(get_row("Anciennete_herbi"))]),
+		irrigated = irr %in% c("inonde", "inond\u00e9"),
+		irrigation_method = ifelse(irr %in% c("inonde", "inond\u00e9"), "flood", "none"),
+		stress = "weeds",
+		intercropped = FALSE,
+		on_farm = TRUE,
+		is_survey = TRUE
 	)
-	d <- merge(d, d1b, by="trial_id", all.x=TRUE)
 
-	carobiner::write_files(path, meta, d)
+	geo <- data.frame(
+		location = c(
+			"B\u00e9nou\u00e9", "Bidzar", "Bocki", "Bogo", "Gashiga", "Guider",
+			"Hamakoussou", "Ka\u00e9l\u00e9", "Madingrin", "Mokong", "Mora",
+			"Ndock", "Ngong", "Pitoa", "Poli", "Sorombeo", "Tchollir\u00e9", "Touboro"
+		),
+		adm1 = c(
+			"Nord", "Nord", "Nord", "Extr\u00eame-Nord", "Nord", "Nord",
+			"Nord", "Extr\u00eame-Nord", "Nord", "Extr\u00eame-Nord", "Extr\u00eame-Nord",
+			"Nord", "Nord", "Nord", "Nord", "Nord", "Nord", "Nord"
+		),
+		latitude = c(
+			9.3000, 9.8953, 8.7848, 10.7336, 9.4296, 9.9342,
+			9.5800, 10.1000, 8.4600, 10.5990, 11.0500,
+			7.9466, 9.0233, 9.3839, 8.4734, 8.2228, 8.3976, 7.7682
+		),
+		longitude = c(
+			13.4000, 14.1132, 13.5133, 14.6093, 13.3616, 13.9486,
+			13.4300, 14.4500, 15.0100, 14.0065, 14.1500,
+			14.7051, 13.5119, 13.5023, 13.2404, 14.9428, 14.1728, 15.3541
+		),
+		geo_uncertainty = c(
+			30000, 10000, 10000, 10000, 10000, 10000,
+			15000, 10000, 10000, 10000, 10000,
+			10000, 10000, 10000, 10000, 10000, 10000, 10000
+		),
+		geo_source = "Locality/commune center (North & Far North Cameroon)",
+		geo_from_source = FALSE
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE, sort = FALSE)
+
+	# 1-9 abundance scale -> % cover (CAM-LEB-1990-DIV-AD-DOC.txt)
+	cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
+	score <- as.matrix(r2[, -1])
+	j <- which(!is.na(score) & score > 0, arr.ind = TRUE)
+	long <- data.frame(
+		trial_id = colnames(score)[j[, "col"]],
+		weed_species = trimws(as.character(r2[[1]][j[, "row"]])),
+		weed_species_cover = cover[as.integer(score[j])]
+	)
+
+	carobiner::write_files(path, meta, d, long = long)
 }

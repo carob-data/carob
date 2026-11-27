@@ -1,34 +1,44 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Herbicide comparison in wheat at El Batan, Mexico, 2016. The protocol in BV101-16-B-Wheat.docx states an RCBD with 2 replications, variety Zinc Mutus, rainfed (temporal), 150 kg N/ha as urea and 40 kg P2O5/ha as triple superphosphate at planting.
-# Yield_12%H2O is already kg/ha at 12% moisture. Biomass in the legend is dry biomass, kg/ha.
-# P2O5 is divided by 2.29. Potassium is not in the protocol.
-# Flowering and maturity are days after emergence, not after planting.
-# Treatment 1 is an unsprayed control and treatment 2 is weed free without herbicide. Product doses are g or ml of product per ha, not kg of active ingredient.
-
 ## ISSUES
-# No coordinates, potassium rate, or planting and harvest dates in the workbook or the protocol.
-# write_files: missing variables: latitude, longitude, K_fertilizer, planting_date, harvest_date. unknown variable: flowering_dae_ (DAE?). unknown variable: maturity_dae_ (DAE?). invalid terms: herbicide_product: flucarbazone-sodium, prosulfuron, triasulfuron.
+# Lodging is described as a plant count in the English legend and as "% de plantas acamadas" in the Spanish legend; values (0 to 80 in increments of 5) indicate percentages and are stored in lodging_ (%).
+# Exact planting and harvest dates are not recorded in the workbook or protocol; only the 2016 summer season is known (phytotoxicity was scored on 2016-06-27), so planting_date and harvest_date are set to "2016".
+# Herbicide doses in the protocol (BV101-16-B-Wheat.docx) are product rates (g or mL/ha), not kg a.i./ha; kept in herbicide_product_dose_.
+# Weed counts (H.ACH_30, H.ANGO_30) and dry weight (P_sco_30) at 30 DAS do not specify the sampled quadrat area or whether values are per quadrat or summed across quadrats, so they are stored unscaled in the long table.
 
-## NEW VARIABLES
-# flowering_dae_: days from emergence to flowering.
-# maturity_dae_: days from emergence to maturity.
+## NEW
+# heading_dae_: days from emergence to heading/tasseling (days).
+# flowering_dae_: days from emergence to flowering (days).
+# maturity_dae_: days from emergence to maturity (days).
+# herbicide_product_dose_: commercial herbicide product dose from protocol (g or mL product/ha; semicolon-separated for tank mixes).
+# grain_test_weight_: grain test weight / hectoliter weight (g/L).
+# lodging_: lodged plants (%).
+# phytotoxicity_score_: visual herbicide phytotoxicity score (1-6 scale, recorded 2016-06-27).
+# weed_count_: weed plant count per sampled quadrat at 30 DAS (count).
+# weed_dry_weight_: weed dry weight per sampled quadrat at 30 DAS (g).
+# herbicide_product values not in terminag: prosulfuron, triasulfuron, flucarbazone-sodium.
+
+## MISSING
+# K_fertilizer: potassium application is not mentioned in the workbook or protocol.
+
+## NOTES
+# Herbicide efficacy trial in rainfed wheat (cv. Zinc Mutus) at CIMMYT El Batan (Lote J9), Mexico, 2016 (protocol BV101-16-B-Wheat.docx).
+# RCBD with 2 replicates and 14 treatments (untreated check, weed-free check, and 12 herbicide treatments) on narrow permanent zero-till beds (0.75 m), 150 kg N/ha (urea) and 40 kg P2O5/ha (TSP) pre-sowing.
+# Coordinates are estimated for the CIMMYT El Batan research station (Texcoco, Mexico).
+# Yield_12%H2O (12% moisture) is mapped to yield and Yield_Dry to yield_dry; 30-DAS weed counts/biomass and 2016-06-27 phytotoxicity scores are stored in the long table.
 
 ## NOT PROCESSED
-# Lodging: the English legend says a count and the Spanish legend says a percent.
-# Weed scores (Scoring_27/06/16, H.ACH_30, H.ANGO_30, P_sco_30). The sheet does not define the scale.
-# Calculated rates, straw, and test weight.
-# Subsample weights used to compute yield.
+# DAT-BV101_WHEAT-16.xlsx (Calculations): Grains/m2, WStem, WGrain/spike, DaysGrain, BioRate, GrainRateA, GrainRateB, VegRate, KernelRate (derived yield-component ratios and growth rates).
+# DAT-BV101_WHEAT-16.xlsx (Calculations): Plants/m2 (all values are NA).
 
 
 carob_script <- function(path) {
 
 "
-Evaluation of herbicides for weed control in wheat in El Batan, Mexico (2016)
+Evaluation of herbicides for weed control in wheat in El Batán, México (2016)
 
-Effectiveness of 14 herbicides were compared during 2016 in El Batan, Mexico. The results will be used to make recommendations to wheat farmers for weed control.
+Effectiveness of 14 herbicides were compared during 2016 in El Batán, México. The results will be used to make recommendations to wheat farmers for weed control.
 "
 
 	uri <- "hdl:11529/10548670"
@@ -41,12 +51,12 @@ Effectiveness of 14 herbicides were compared during 2016 in El Batan, Mexico. Th
 		project = "BV101B/16",
 		design = "RCBD",
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "yield",
+		treatment_vars = "herbicide_product;herbicide_used;weeding_done",
+		response_vars = "yield;dmy_total;dmy_residue;harvest_index;plant_height;seed_weight;spike_density;grains_per_spike",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
@@ -54,82 +64,122 @@ Effectiveness of 14 herbicides were compared during 2016 in El Batan, Mexico. Th
 	r <- carobiner::read.excel(f, sheet="Calculations")
 	r <- r[!is.na(r$Trt), ]
 
-	# Active ingredients from the treatment table in BV101-16-B-Wheat.docx.
-	prod <- c(
-		"1" = "none",
-		"2" = "none",
-		"3" = "prosulfuron",
-		"4" = "triasulfuron",
-		"5" = "prosulfuron;triasulfuron",
-		"6" = "dicamba;2,4-D",
-		"7" = "2,4-D",
-		"8" = "fenoxaprop-p-ethyl",
-		"9" = "fluroxypyr",
-		"10" = "flucarbazone-sodium;clodinafop",
-		"11" = "clodinafop",
-		"12" = "pinoxaden",
-		"13" = "mesosulfuron-methyl;iodosulfuron",
-		"14" = "carfentrazone"
+	# Treatments, active ingredients, and product doses (g or mL/ha) from BV101-16-B-Wheat.docx
+	key <- data.frame(
+		trt = 1:14,
+		treatment = c(
+			"untreated check", "weed free", "Peak (prosulfuron)", "Amber (triasulfuron)",
+			"Peak+Amber (prosulfuron;triasulfuron)", "Banvel 12-24 (dicamba;2,4-D)",
+			"Esteron (2,4-D)", "Puma (fenoxaprop-p-ethyl)", "Starane (fluroxypyr)",
+			"Everest+Topik (flucarbazone-sodium;clodinafop)", "Topik (clodinafop)",
+			"Axial (pinoxaden)", "Sigma (mesosulfuron-methyl;iodosulfuron)",
+			"Veloz (carfentrazone)"
+		),
+		herbicide_product = c(
+			"none", "none", "prosulfuron", "triasulfuron", "prosulfuron;triasulfuron",
+			"dicamba;2,4-D", "2,4-D", "fenoxaprop-p-ethyl", "fluroxypyr",
+			"flucarbazone-sodium;clodinafop", "clodinafop", "pinoxaden",
+			"mesosulfuron-methyl;iodosulfuron", "carfentrazone"
+		),
+		herbicide_product_dose_ = c(
+			"0", "0", "30", "10", "26.3;6.66", "1000", "500", "1000", "400",
+			"30;750", "750", "600", "500", "1000"
+		),
+		herbicide_used = c(FALSE, FALSE, rep(TRUE, 12)),
+		weeding_done = c(FALSE, TRUE, rep(FALSE, 12))
 	)
-	lab <- c(
-		"1" = "untreated",
-		"2" = "weed free",
-		"3" = "prosulfuron",
-		"4" = "triasulfuron",
-		"5" = "prosulfuron;triasulfuron",
-		"6" = "dicamba;2,4-D",
-		"7" = "2,4-D",
-		"8" = "fenoxaprop-p-ethyl",
-		"9" = "fluroxypyr",
-		"10" = "flucarbazone-sodium;clodinafop",
-		"11" = "clodinafop",
-		"12" = "pinoxaden",
-		"13" = "mesosulfuron-methyl;iodosulfuron",
-		"14" = "carfentrazone"
-	)
-	code <- as.character(r$Trt)
-	hi <- as.numeric(r$HI)
-	hi <- ifelse(!is.na(hi) & hi <= 1.5, hi * 100, hi)
 
 	d <- data.frame(
+		record_id = as.integer(seq_len(nrow(r))),
 		country = "Mexico",
-		adm1 = "Estado de Mexico",
+		adm1 = "México",
 		adm2 = "Texcoco",
-		location = "El Batan",
+		location = "El Batán",
 		site = "Lote J9",
-		trial_id = "BV101-16",
+		# CIMMYT El Batan research station, Texcoco
+		longitude = -98.848,
+		latitude = 19.533,
+		geo_from_source = FALSE,
+		geo_uncertainty = 1000,
+		geo_source = "CIMMYT El Batan research station",
+		trial_id = "BV101B-16",
+		plot_id = sprintf("%d%02d", as.integer(r$Rep), as.integer(r$Trt)),
 		rep = as.integer(r$Rep),
-		treatment = unname(lab[code]),
-		herbicide_product = unname(prod[code]),
-		herbicide_used = !code %in% c("1", "2"),
+		trt = as.integer(r$Trt),
 		crop = "wheat",
 		variety = "Zinc Mutus",
+		planting_date = "2016",
+		harvest_date = "2016",
 		yield_part = "grain",
 		yield = as.numeric(r[["Yield_12%H2O"]]),
 		yield_moisture = 12,
+		yield_isfresh = TRUE,
+		yield_dry = as.numeric(r$Yield_Dry),
 		dmy_total = as.numeric(r$Biomass),
-		harvest_index = hi,
+		dmy_residue = as.numeric(r$Straw),
+		harvest_index = as.numeric(r$HI),
 		plant_height = as.numeric(r$Height),
 		seed_weight = as.numeric(r$Thou),
 		spike_density = as.numeric(r[["Spikes/m2"]]) * 10000,
-		plant_density = as.numeric(r[["Plants/m²"]]) * 10000,
+		grains_per_spike = as.numeric(r[["Grains/spike"]]),
+		grain_test_weight_ = as.numeric(r[["Test weight"]]),
+		lodging_ = as.numeric(r$Lodging),
 		plot_area = as.numeric(r$Area),
 		row_spacing = 24,
 		seed_rate = 110,
+		heading_dae_ = as.numeric(r$Tasseling),
 		flowering_dae_ = as.numeric(r$Flowering),
 		maturity_dae_ = as.numeric(r$Maturity),
 		N_fertilizer = 150,
 		P_fertilizer = 40 / 2.29,
 		fertilizer_type = "urea;TSP",
+		land_prep_method = "permanent beds",
 		stress = "weeds",
 		irrigated = FALSE,
 		on_farm = FALSE,
-		is_survey = FALSE,
-		geo_from_source = FALSE
+		is_survey = FALSE
 	)
-	d$weeding_done <- NA
-	d$weeding_done[d$treatment == "weed free"] <- TRUE
-	d$weeding_done[d$treatment == "untreated"] <- FALSE
+	d <- merge(d, key, by="trt", sort=FALSE)
+	d$trt <- NULL
 
-	carobiner::write_files(path, meta, d)
+	# Long table: 30-DAS weed counts/biomass (protocol: 30 DDS) and phytotoxicity score (2016-06-27)
+	l_broad <- data.frame(
+		record_id = d$record_id,
+		DAP = 30L,
+		date = NA_character_,
+		weed_species = "broadleaf total",
+		weed_count_ = as.numeric(r$H.ACH_30),
+		weed_dry_weight_ = NA_real_,
+		phytotoxicity_score_ = NA_real_
+	)
+	l_narrow <- data.frame(
+		record_id = d$record_id,
+		DAP = 30L,
+		date = NA_character_,
+		weed_species = "narrowleaf total",
+		weed_count_ = as.numeric(r$H.ANGO_30),
+		weed_dry_weight_ = NA_real_,
+		phytotoxicity_score_ = NA_real_
+	)
+	l_dry <- data.frame(
+		record_id = d$record_id,
+		DAP = 30L,
+		date = NA_character_,
+		weed_species = "all weeds",
+		weed_count_ = NA_real_,
+		weed_dry_weight_ = as.numeric(r$P_sco_30),
+		phytotoxicity_score_ = NA_real_
+	)
+	l_phyto <- data.frame(
+		record_id = d$record_id,
+		DAP = NA_integer_,
+		date = "2016-06-27",
+		weed_species = NA_character_,
+		weed_count_ = NA_real_,
+		weed_dry_weight_ = NA_real_,
+		phytotoxicity_score_ = as.numeric(r[["Scoring_27/06/16"]])
+	)
+	long <- rbind(l_broad, l_narrow, l_dry, l_phyto)
+
+	carobiner::write_files(path, meta, d, long=long)
 }

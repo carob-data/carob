@@ -1,44 +1,31 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Fruit samples from cucumber and squash at site "IITA", 13-30 July 2016, neem seed oil
-#   ("traité") versus untreated. Dates in the file are like 13-Jul-16; parsed without
-#   relying on the locale. Coverage coordinates 3.84803 N, 11.50208 E.
-# d is one fruit sample (a row of the csv). pest_incidence on d is the sum of adult
-#   Bactrocera (columns BD_*) and Dacus (columns DS_*) males and females. It is NA when
-#   all four counts are NA, and 0 when the flies were counted as zero.
-# dd splits every non-missing count (organism_count_): Bactrocera, Dacus, their unhatched
-#   pupae, Fopius (a parasitoid), total pupae, and empty pupae. pest_incidence is not
-#   repeated on dd.
-# The dictionary spells the genus "Bractocera"; stored as Bactrocera.
-# Weight_g is the weight of the sampled fruits, not a plot yield. Several rows have
-#   incubation/sieving flags and no fruit count.
-
 ## ISSUES
-# 1. No plot area, so fruit weight is not a yield in kg/ha. No fertilizer or neem rate.
-# 2. Block and Replication are both present. Replication is 1 or blank; Block is 1-4.
-#    rep is Replication only (not copied from Block).
-# 3. BD/DS/Fo are not identified to species (dictionary: Bractocera sp, Dacus sp, Fopius sp).
-# 4. write_files: missing yield, yield_moisture, irrigated, N/P/K, planting_date, harvest_date.
-#    "neem seed oil", "Bactrocera" and "Dacus" are not in the vocabularies. Coordinates are the
-#    dataset coverage point, not a GPS column.
+# 1. No plot area is reported, so sampled fruit weight (fruit_weight_, g) cannot be converted to yield (kg/ha). Neem seed oil application rate, concentration, and spray dates are not given.
+# 2. Both Block (1-4) and Replication (1 or NA) are present; Block is mapped to block_id and Replication to rep. Confirm whether Block should also be used as rep.
+# 3. 42 of 112 rows have NA for fruit count, fruit weight, sieving, replication, and all insect counts (no fruits sampled on that date); all rows are retained.
+# 4. Fruit flies and parasitoids are only identified to genus (Bactrocera sp., Dacus sp., Fopius sp.; dictionary spells "Bractocera").
+# 5. Coordinates (3.84803 N, 11.50208 E) come from the dataset coverage metadata (central Yaounde, ~5 km from IITA Nkolbisson station); confirm exact station coordinates.
+
+## NEW
+# fruit_number_: number of fruits in the incubated sample (count)
+# fruit_weight_: weight of sampled fruits (g)
+# incubation_: incubation batch number (integer, 1-7)
+# sieving_: evaluation/sieving number (integer; dictionary: N° d'évaluation)
+# insect_sex_: sex of the counted insect ("male" or "female"; NA when unsexed)
+# life_stage_: developmental stage of the counted insect ("adult", "unhatched", "pupa", "empty pupa")
+# pest_species: "Bactrocera", "Dacus" (not yet in values_pest.csv)
+
+## MISSING
+# yield, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date
+
+## NOTES
+# Field trial at IITA (Yaounde, Cameroon), 13-30 July 2016, comparing neem seed oil ("traité", mapped to insecticide_product = "margosa oil") against untreated ("non traité") cucumber (Concombre) and squash (Courgette) across 4 blocks.
+# Wide table d has one row per fruit sample (112 rows); long table dd retains all non-missing insect counts by genus/organism, sex, and stage (Bactrocera and Dacus in pest_species/pest_incidence; Fopius parasitoids, total pupae, and empty puparia in insect_species/insect_abundance).
 
 ## NOT PROCESSED
-# SN: row number.
-# Remarks: empty.
-# fruit-fly dictionary: definitions used above.
-# fruit-fly-incidnce-n-abundanc-on-cucmb_dictionary.csv: documentation or a codebook, not an observation table.
-
-## NEW VARIABLES
-# fruit_number_: fruits in the sample
-# fruit_weight_g_: sample fruit weight, grams
-# incubation_: incubation number
-# sieving_: evaluation number (dictionary: N° d'évaluation)
-# sex: male or female of the counted insect (not the respondent); NA when the count is not sexed
-# stage_: adult, pupa, unhatched or empty pupa
-# organism_: name used for parasitoids and for pupae that are not identified to genus
-# organism_count_: count of organism_ (pest_incidence is used for Bactrocera and Dacus)
+# fruit-fly-incidnce-n-abundanc-on-cucmber-n-squash.csv: Remarks (entirely empty).
 
 carob_script <- function(path) {
 
@@ -56,14 +43,14 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		data_organization = "IITA",
 		publication = NA,
 		project = "Enhancing horticultural productivity, incomes and livelihoods through integrated management of aphid pests on vegetables in sub-Saharan Africa",
-		design = "Neem seed oil versus untreated cucumber and squash; fruit samples incubated for fruit flies",
+		design = "Neem seed oil versus untreated cucumber and squash in 4 blocks; fruit samples incubated for fruit flies",
 		data_type = "experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "crop;insecticide_used;insecticide_product",
 		response_vars = "pest_incidence",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 66,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
@@ -72,10 +59,9 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 
 	mon <- c(jan = "01", feb = "02", mar = "03", apr = "04", may = "05", jun = "06",
 		jul = "07", aug = "08", sep = "09", oct = "10", nov = "11", dec = "12")
-	x <- trimws(r$Date)
-	parts <- strsplit(x, "-")
+	parts <- strsplit(trimws(r$Date), "-")
 	dday <- sprintf("%02d", as.integer(vapply(parts, `[`, "", 1)))
-	dmon <- mon[tolower(vapply(parts, `[`, "", 2))]
+	dmon <- unname(mon[tolower(vapply(parts, `[`, "", 2))])
 	dyy <- paste0("20", vapply(parts, `[`, "", 3))
 	date <- paste(dyy, dmon, dday, sep = "-")
 
@@ -84,29 +70,27 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 	fruit <- trimws(r$Fruit)
 	crop <- ifelse(fruit == "Concombre", "cucumber", ifelse(fruit == "Courgette", "squash", tolower(fruit)))
 
-	flies <- cbind(r$BD_male, r$BD_female, r$DS_male, r$DS_female)
-	allna <- apply(flies, 1, function(z) all(is.na(z)))
-	pest_n <- as.integer(rowSums(flies, na.rm = TRUE))
-	pest_n[allna] <- NA_integer_
-
 	d <- data.frame(
 		country = "Cameroon",
-		location = "IITA",
+		adm1 = "Centre",
+		adm2 = "Mfoundi",
+		location = "Yaoundé",
+		site = trimws(r$site),
 		latitude = 3.84803,
 		longitude = 11.50208,
 		geo_from_source = TRUE,
+		geo_uncertainty = 5000,
 		crop = crop,
 		treatment = treatment,
 		insecticide_used = treatment == "neem seed oil",
-		insecticide_product = ifelse(treatment == "neem seed oil", "neem seed oil", NA_character_),
+		insecticide_product = ifelse(treatment == "neem seed oil", "margosa oil", "none"),
 		block_id = as.character(r$Block),
 		rep = as.integer(r$Replication),
 		date = date,
-		fruit_number_ = r$Nbre_des_fruits,
-		fruit_weight_g_ = r$Weight_g,
-		incubation_ = r$Inccubation,
-		sieving_ = r$Sieving,
-		pest_incidence = pest_n,
+		fruit_number_ = as.integer(r$Nbre_des_fruits),
+		fruit_weight_ = as.numeric(r$Weight_g),
+		incubation_ = as.integer(r$Inccubation),
+		sieving_ = as.integer(r$Sieving),
 		stress = "pests",
 		trial_id = "1",
 		on_farm = FALSE,
@@ -115,31 +99,48 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 	)
 	d$record_id <- seq_len(nrow(d))
 
-	stack_count <- function(count, pest, sex_value, stage, organism) {
+	stack_pest <- function(count, pest, sex_value, stage) {
 		keep <- !is.na(count)
 		n <- sum(keep)
 		data.frame(
 			record_id = d$record_id[keep],
-			pest_species = if (is.na(pest)) rep(NA_character_, n) else rep(pest, n),
-			sex = if (is.na(sex_value)) rep(NA_character_, n) else rep(sex_value, n),
-			stage_ = rep(stage, n),
-			organism_ = if (is.na(organism)) rep(NA_character_, n) else rep(organism, n),
-			organism_count_ = as.integer(count[keep])
+			date = d$date[keep],
+			pest_species = rep(pest, n),
+			pest_incidence = as.integer(count[keep]),
+			insect_species = rep(NA_character_, n),
+			insect_abundance = rep(NA_character_, n),
+			insect_sex_ = rep(sex_value, n),
+			life_stage_ = rep(stage, n)
+		)
+	}
+
+	stack_insect <- function(count, species, sex_value, stage) {
+		keep <- !is.na(count)
+		n <- sum(keep)
+		data.frame(
+			record_id = d$record_id[keep],
+			date = d$date[keep],
+			pest_species = rep(NA_character_, n),
+			pest_incidence = rep(NA_integer_, n),
+			insect_species = rep(species, n),
+			insect_abundance = as.character(as.integer(count[keep])),
+			insect_sex_ = rep(sex_value, n),
+			life_stage_ = rep(stage, n)
 		)
 	}
 
 	dd <- rbind(
-		stack_count(r$BD_male, "Bactrocera", "male", "adult", NA),
-		stack_count(r$BD_female, "Bactrocera", "female", "adult", NA),
-		stack_count(r$DS_male, "Dacus", "male", "adult", NA),
-		stack_count(r$DS_female, "Dacus", "female", "adult", NA),
-		stack_count(r$UN_BD, "Bactrocera", NA, "unhatched", NA),
-		stack_count(r$UN_DS, "Dacus", NA, "unhatched", NA),
-		stack_count(r$Fo_male, NA, "male", "adult", "Fopius"),
-		stack_count(r$Fo_female, NA, "female", "adult", "Fopius"),
-		stack_count(r$UN_Fo, NA, NA, "unhatched", "Fopius"),
-		stack_count(r$Pupe, NA, NA, "pupa", "fruit fly pupae"),
-		stack_count(r$Empty, NA, NA, "empty pupa", "empty pupae")
+		stack_pest(r$BD_male, "Bactrocera", "male", "adult"),
+		stack_pest(r$BD_female, "Bactrocera", "female", "adult"),
+		stack_pest(r$DS_male, "Dacus", "male", "adult"),
+		stack_pest(r$DS_female, "Dacus", "female", "adult"),
+		stack_pest(r$UN_BD, "Bactrocera", NA_character_, "unhatched"),
+		stack_pest(r$UN_DS, "Dacus", NA_character_, "unhatched"),
+		stack_insect(r$Fo_male, "Fopius", "male", "adult"),
+		stack_insect(r$Fo_female, "Fopius", "female", "adult"),
+		stack_insect(r$UN_Fo, "Fopius", NA_character_, "unhatched"),
+		stack_insect(r$Pupe, "fruit fly pupae", NA_character_, "pupa"),
+		stack_insect(r$Empty, "empty pupae", NA_character_, "empty pupa")
 	)
 
 	carobiner::write_files(path, meta, d, long = dd)

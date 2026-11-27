@@ -1,43 +1,37 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Cucumber (Concombre) and squash (Courgette) at one site, harvested on 13 dates from
-#   12 July to 22 August 2016 (dates are day/month/year: 22/08/2016). Four replicates.
-#   "traité" / "non traité" is neem seed oil versus untreated, from the dataset title.
-#   The file does not name the site. Coverage coordinates are 3.84803 N, 11.50208 E
-#   (coverage_x / coverage_y, same order as the other IITA records here).
-# Each row is one plot on one harvest date (not a season total). Fruit weight is grams
-#   for that harvest (pds_ttl_frt_g). Plot area is not given, so there is no kg/ha yield.
-# dd holds per-fruit length, diameter and puncture counts for fruits 1-5 when that fruit
-#   exists (index <= NbreFruit) or a measurement is > 0. Units of length and diameter
-#   are not stated.
-# Read as latin1 so the treatment and replicate column names keep their accents.
-
 ## ISSUES
-# 1. No plot area or plant spacing, so fruit weight stays in grams per harvest.
-# 2. Neem rate, active ingredient, spray dates and fertilizer are not in the file.
-# 3. Site name is absent. doi:10.25502/y7q6-rn92/d (same project and coverage point) says IITA.
-# 4. Confirm length and diameter units (both often 14-21; cm is plausible for length,
-#    large for cucumber diameter).
-# 5. write_files: missing yield, yield_moisture, N/P/K, planting_date. harvest_date is the
-#    row date because each row is a harvest. Pest names are not attached to the punctures.
+# 1. No plot area or plant spacing is reported, so per-harvest fruit weight (g) cannot be converted to kg/ha yield.
+# 2. Neem seed oil concentration/rate, spray schedule, and fertilizer/irrigation management are not in the dataset.
+# 3. No site name or plot GPS is in the CSV; coordinates (3.84803 N, 11.50208 E, Yaoundé) come from CKAN coverage metadata (companion dataset doi:10.25502/y7q6-rn92/d names site "IITA").
+# 4. Units of fruit length (L1-L5) and diameter (D1-D5) are not stated; D1-D5 values (14-21 for cucumber, 17-25 for squash) nearly equal length, suggesting circumference (cm) rather than diameter.
+# 5. Pest species causing fruit punctures (likely tephritid fruit flies, per companion dataset doi:10.25502/y7q6-rn92/d) are not identified in this file.
+
+## NEW
+# plant_count_: number of plants in the plot (NbrePlante)
+# flower_count_: number of flowers counted per plot on the harvest date (NbreFleur)
+# fruit_count_: number of harvested fruits per plot on the harvest date (NbreFruit)
+# fruit_damaged_: number of pest-damaged fruits per plot on the harvest date (Fruit_attaq)
+# fruit_weight_: total harvested fruit weight per plot on the harvest date, g (pds_ttl_frt_g)
+# fruit_length_: individual fruit length, unit not stated (likely cm; L1-L5)
+# fruit_diameter_: individual fruit diameter (or circumference), unit not stated (likely cm; D1-D5)
+# fruit_punctures_: number of insect punctures on the individual fruit (P1-P5)
+
+## MISSING
+# yield, yield_moisture, irrigated, planting_date, N_fertilizer, P_fertilizer, K_fertilizer
+
+## NOTES
+# Repeated harvest measurements on cucumber (Concombre) and squash (Courgette) across 14 dates
+#   (12 Jul to 22 Aug 2016; 13 harvest dates per crop), 4 replicates, comparing neem seed oil
+#   ("traité") against untreated control ("non traité") in Yaoundé, Cameroon.
+# Each row of d is one plot on one harvest date; dd (long) holds individual fruit measurements
+#   (order 1-5) linked by record_id when fruit exists (order <= NbreFruit) or any measure > 0.
+# The dictionary shifts fruit column names by one (L2-L6 for fruits 1-5), while the CSV uses L1-L5.
 
 ## NOT PROCESSED
-# SN: row number.
-# Dictionary columns L6, D6, P6: not present in the data file (only fruits 1-5).
-# yield-data_effects-of-neem-seed-oil-against_dictionary.csv: documentation or a codebook, not an observation table.
+# None (all measurement columns are processed; only row counter SN and codebook file are omitted).
 
-## NEW VARIABLES
-# plants_: number of plants (NbrePlante)
-# flowers_: number of flowers (NbreFleur)
-# fruit_number_: number of fruits (NbreFruit)
-# fruit_damaged_: number of damaged fruits (Fruit_attaq)
-# fruit_weight_g_: total fruit weight of the harvest, grams
-# fruit_index_: fruit number 1-5 on the plot
-# fruit_length_: L, unit not stated
-# fruit_diameter_: D, unit not stated
-# fruit_punctures_: P, puncture count on that fruit
 
 carob_script <- function(path) {
 
@@ -55,14 +49,15 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 		data_organization = "IITA",
 		publication = NA,
 		project = "Enhancing horticultural productivity, incomes and livelihoods through integrated management of aphid pests on vegetables in sub-Saharan Africa",
-		design = "Neem seed oil versus untreated cucumber and squash; 4 replicates; repeated harvests",
+		design = "4 replicates; neem seed oil versus untreated control on cucumber and squash; repeated harvests",
 		data_type = "experiment",
-		treatment_vars = "treatment",
-		response_vars = "fruit_weight_g_;fruit_damaged_",
+		treatment_vars = "insecticide_used;insecticide_product",
+		response_vars = "fruit_weight_;fruit_damaged_;fruit_punctures_",
+		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 62,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 85,
 		carob_effort = 0
 	)
 
@@ -71,43 +66,49 @@ Preliminary testing of plant extracts as insecticides in organic cultivation
 	repcol <- grep("tition$", names(r), value = TRUE)
 
 	tr <- tolower(trimws(r$traitement))
-	treatment <- ifelse(grepl("^non", tr), "untreated", ifelse(grepl("^trait", tr), "neem seed oil", tr))
-	crop <- ifelse(r$Culture == "Concombre", "cucumber", ifelse(r$Culture == "Courgette", "squash", tolower(trimws(r$Culture))))
+	treatment <- ifelse(grepl("^non", tr), "control", ifelse(grepl("^trait", tr), "neem seed oil", tr))
+	crop <- ifelse(r$Culture == "Concombre", "cucumber",
+		ifelse(r$Culture == "Courgette", "squash", tolower(trimws(r$Culture))))
+	hdate <- as.character(as.Date(r$Date, "%d/%m/%Y"))
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
+		trial_id = "1",
+		plot_id = paste(crop, gsub(" ", "_", treatment), r[[repcol]], sep = "_"),
 		country = "Cameroon",
+		adm1 = "Centre",
 		latitude = 3.84803,
 		longitude = 11.50208,
 		geo_from_source = TRUE,
 		crop = crop,
 		treatment = treatment,
 		insecticide_used = treatment == "neem seed oil",
-		insecticide_product = ifelse(treatment == "neem seed oil", "neem seed oil", NA_character_),
+		# azadirachtin is the active ingredient of neem seed oil
+		insecticide_product = ifelse(treatment == "neem seed oil", "azadirachtin", "none"),
 		rep = as.integer(r[[repcol]]),
-		harvest_date = as.character(as.Date(r$Date, "%d/%m/%Y")),
-		date = as.character(as.Date(r$Date, "%d/%m/%Y")),
-		plants_ = r$NbrePlante,
-		flowers_ = r$NbreFleur,
-		fruit_number_ = r$NbreFruit,
-		fruit_damaged_ = r$Fruit_attaq,
-		fruit_weight_g_ = r$pds_ttl_frt_g,
+		date = hdate,
+		harvest_date = hdate,
+		plant_count_ = as.integer(r$NbrePlante),
+		flower_count_ = as.integer(r$NbreFleur),
+		fruit_count_ = as.integer(r$NbreFruit),
+		fruit_damaged_ = as.integer(r$Fruit_attaq),
+		fruit_weight_ = as.numeric(r$pds_ttl_frt_g),
 		stress = "pests",
-		trial_id = "1",
 		on_farm = NA,
 		is_survey = FALSE,
 		yield_part = "fruit"
 	)
-	d$record_id <- seq_len(nrow(d))
 
 	pieces <- vector("list", 5)
 	for (i in 1:5) {
-		L <- r[[paste0("L", i)]]
-		D <- r[[paste0("D", i)]]
-		P <- r[[paste0("P", i)]]
-		keep <- (!is.na(r$NbreFruit) & r$NbreFruit >= i) | (!is.na(L) & L > 0) | (!is.na(D) & D > 0) | (!is.na(P) & P > 0)
+		L <- as.numeric(r[[paste0("L", i)]])
+		D <- as.numeric(r[[paste0("D", i)]])
+		P <- as.integer(r[[paste0("P", i)]])
+		keep <- (!is.na(r$NbreFruit) & r$NbreFruit >= i) |
+			(!is.na(L) & L > 0) | (!is.na(D) & D > 0) | (!is.na(P) & P > 0)
 		pieces[[i]] <- data.frame(
 			record_id = d$record_id[keep],
-			fruit_index_ = i,
+			order = as.integer(i),
 			fruit_length_ = L[keep],
 			fruit_diameter_ = D[keep],
 			fruit_punctures_ = P[keep]

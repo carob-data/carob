@@ -1,28 +1,39 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# 363 plot surveys of rainfed rice and maize at Ban Cuon (1999). One row per
-# species with a rating > 0. Floristique is the DOC 1-9 scale. No Enherbement
-# row. weed_species is the 5-letter code. Traitement is kept as the source code.
-
 ## ISSUES
-# No coordinates. geographicCoverage is "Viet Nam"; country is the terminag name
-# Vietnam. One species code is ZANSP?. Traitement mixes weeding, mulch, and
-# fertilizer codes; 21 plots are blank. write_files: metadata: missing values
-# in treatment variable treatment. missing variables: yield, yield_moisture,
-# yield_part, latitude, longitude, K_fertilizer, N_fertilizer, P_fertilizer,
-# planting_date, harvest_date.
+# 1. The dataset combines on-farm phytoecological surveys ("suivi phytoeco", 200
+#    records) and trial monitoring ("suivi essais", 163 records), recorded in
+#    study_type_. Traitement mixes weeding, mulching, and fertilizer codes, and
+#    is blank for 21 plots; kept in treatment with data_type = "survey" and
+#    treatment_vars = "none".
+# 2. Floristique uses 5-letter Amatrop/Bayer codes (no species-name lookup sheet
+#    is provided), including one uncertain code "ZANSP?".
+# 3. No coordinates in the source; Ban Cuon village (Ngoc Phai commune, Cho Don
+#    district, Bac Kan province, Vietnam) was georeferenced with 3 km
+#    uncertainty.
 
+## NEW
+# study_type_: survey vs experiment monitoring (from Type_suivi)
+# observation_stage_: timing/stage of weed observation (from Observation)
+# slope_class_: qualitative slope class (Pente1, Pente2, Pente3)
+# field_age_years_: cultivation age class (from Age_parcelle)
+# previous_land_use_: prior fallow/forest/pasture land cover description (from Precedent)
+# mulch_used_: logical indicating whether mulch/paillage was explicitly applied
+
+## MISSING
+# yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer,
+# planting_date, harvest_date (not reported in this weed dataset)
+
+## NOTES
+# 363 phytoecological weed surveys in rainfed upland rice and maize on hillsides
+# in Ban Cuon Valley, Bac Kan, Northern Vietnam (1999). Plot factors are in d
+# (wide) and 1-9 species abundance scores converted to % cover are in long.
 
 ## NOT PROCESSED
-# Facteurs not mapped: Parcelle, Age_parcelle, Type_culture, Climat, Observation,
-# Pente, Precedent (forest and pasture descriptions, not a crop name),
-# Toposequence, Type_sol, Type_suivi. Méta Données, FLO, FAC, and PA repeat
-# the workbook or the DOC.
-# VIE-STE-1999-RIZ-AD-FLO.txt: not read. columns: "VIE-STE-001" "VIE-STE-002" "VIE-STE-003" "VIE-STE-004" "VIE-STE-005" "VIE-STE-006" "VIE-STE-007" "VIE-STE-008" "VIE-STE-009" "VIE-STE-010" "VIE-STE-011" "VIE-STE-012" "VIE-STE-013" "VIE-STE-014" "VIE-STE-015" "VIE-STE-016" "VIE-STE-017" "VIE-STE-018" "VIE-STE-019" "VIE-STE-020" "VIE-STE-021" "VIE-STE-022" "VIE-STE-023" "VIE-STE-024" "VIE-STE-025" "VIE-STE-026" "VIE-STE-027" "VIE-STE-028" "VIE-STE-029" "VIE-STE-030" "VIE-STE-031" "VIE-STE-032" "VIE-STE-033" "VIE-STE-034" "VIE-STE-035" "VIE-STE-036" "VIE-STE-037" "VIE-STE-038" "VIE-STE-039" "VIE-STE-040" "VIE-STE-041" "VIE-STE-042" "VIE-STE-043" "VIE-STE-044" "VIE-STE-045" "VIE-STE-046" "VIE-STE-047" "VIE-STE-048" "VIE-STE-049" "VIE-STE-050" "VIE-STE-051" "VIE-STE-052" "VIE-STE-053" "VIE-STE-054" "VIE-STE-055" "VIE-STE-056" "VIE-STE-057" "VIE-STE-058" "VIE-STE-059" "VIE-STE-060" "VIE-STE-061" "VIE-STE-062" "VIE-STE-063" "VIE-STE-064" "VIE-STE-065" "VIE-STE-066" "VIE-STE-067" "VIE-STE-068" "VIE-STE-069" "VIE-STE-070" "VIE-STE-071" "VIE-STE-072" "VIE-STE-073" "VIE-STE-074" "VIE-STE-075" "VIE-STE-076" "VIE-STE-077" "VIE-STE-078" "VIE-STE-079" "VIE-STE-080" "VIE-STE-081" "VIE-STE-082" "VIE-STE-083" "VIE-STE-084" "VIE-STE-085" "VIE-STE-086" "VIE-STE-087" "VIE-STE-088" "VIE-STE-089" "VIE-STE-090" "VIE-STE-091" "VIE-STE-092" "VIE-STE-093" "VIE-STE-094" "VIE-STE-095" "VIE-STE-096" "VIE-STE-097" "VIE-STE-098" "VIE-STE-099" "VIE-STE-100" "VIE-STE-101" "VIE-STE-102" "VIE-STE-103" "VIE-STE-104" "VIE-STE-105" "VIE-STE-106" "VIE-STE-107" "VIE-STE-108" "VIE-STE-109" "VIE-STE-110" "VIE-STE-111" "VIE-STE-112" "VIE-STE-113" "VIE-STE-114" "VIE-STE-115" "VIE-STE-116" "VIE-STE-117" "VIE-STE-118" "VIE-STE-119" "VIE-STE-120" "VIE-STE-121" "VIE-STE-122" "VIE-STE-123" "VIE-STE-124" "VIE-STE-125" "VIE-STE-126" "VIE-STE-127" "VIE-STE-128" "VIE-STE-129" "VIE-STE-130" "VIE-STE-131" "VIE-STE-132" "VIE-STE-133" "VIE-STE-134" "VIE-STE-135" "VIE-STE-136" "VIE-STE-137" "VIE-STE-138" "VIE-STE-139" "VIE-STE-140" "VIE-STE-141" "VIE-STE-142" "VIE-STE-143" "VIE-STE-144" "VIE-STE-145" "VIE-STE-146" "VIE-STE-147" "VIE-STE-148" "VIE-STE-149" "VIE-STE-150" "VIE-STE-151" "VIE-STE-152" "VIE-STE-153" "VIE-STE-154" "VIE-STE-155" "VIE-STE-156" "VIE-STE-157" "VIE-STE-158" "VIE-STE-159" "VIE-STE-160" "VIE-STE-161" "VIE-STE-162" "VIE-STE-163" "VIE-STE-164" "VIE-STE-165" "VIE-STE-166" "VIE-STE-167" "VIE-STE-168" "VIE-STE-169" "VIE-STE-170" "VIE-STE-171" "VIE-STE-172" "VIE-STE-173" "VIE-STE-174" "VIE-STE-175" "VIE-STE-176" "VIE-STE-177" "VIE-STE-178" "VIE-STE-179" "VIE-STE-180" "VIE-STE-181" "VIE-STE-182" "VIE-STE-183" "VIE-STE-184" "VIE-STE-185" "VIE-STE-186" "VIE-STE-187" "VIE-STE-188" "VIE-STE-189" "VIE-STE-190" "VIE-STE-191" "VIE-STE-192" "VIE-STE-193" "VIE-STE-194" "VIE-STE-195" "VIE-STE-196" "VIE-STE-197" "VIE-STE-198" "VIE-STE-199" "VIE-STE-200" "VIE-STE-201" "VIE-STE-202" "VIE-STE-203" "VIE-STE-204" "VIE-STE-205" "VIE-STE-206" "VIE-STE-207" "VIE-STE-208" "VIE-STE-209" "VIE-STE-210" "VIE-STE-211" "VIE-STE-212" "VIE-STE-213" "VIE-STE-214" "VIE-STE-215" "VIE-STE-216" "VIE-STE-217" "VIE-STE-218" "VIE-STE-219" "VIE-STE-220" "VIE-STE-221" "VIE-STE-222" "VIE-STE-223" "VIE-STE-224" "VIE-STE-225" "VIE-STE-226" "VIE-STE-227" "VIE-STE-228" "VIE-STE-229" "VIE-STE-230" "VIE-STE-231" "VIE-STE-232" "VIE-STE-233" "VIE-STE-234" "VIE-STE-235" "VIE-STE-236" "VIE-STE-237" "VIE-STE-238" "VIE-STE-239" "VIE-STE-240" "VIE-STE-241" "VIE-STE-242" "VIE-STE-243" "VIE-STE-244" "VIE-STE-245" "VIE-STE-246" "VIE-STE-247" "VIE-STE-248" "VIE-STE-249" "VIE-STE-250" "VIE-STE-251" "VIE-STE-252" "VIE-STE-253" "VIE-STE-254" "VIE-STE-255" "VIE-STE-256" "VIE-STE-257" "VIE-STE-258" "VIE-STE-259" "VIE-STE-260" "VIE-STE-261" "VIE-STE-262" "VIE-STE-263" "VIE-STE-264" "VIE-STE-265" "VIE-STE-266" "VIE-STE-267" "VIE-STE-268" "VIE-STE-269" "VIE-STE-270" "VIE-STE-271" "VIE-STE-272" "VIE-STE-273" "VIE-STE-274" "VIE-STE-275" "VIE-STE-276" "VIE-STE-277" "VIE-STE-278" "VIE-STE-279" "VIE-STE-280" "VIE-STE-281" "VIE-STE-282" "VIE-STE-283" "VIE-STE-284" "VIE-STE-285" "VIE-STE-286" "VIE-STE-287" "VIE-STE-288" "VIE-STE-289" "VIE-STE-290" "VIE-STE-291" "VIE-STE-292" "VIE-STE-293" "VIE-STE-294" "VIE-STE-295" "VIE-STE-296" "VIE-STE-297" "VIE-STE-298" "VIE-STE-299" "VIE-STE-300" "VIE-STE-301" "VIE-STE-302" "VIE-STE-303" "VIE-STE-304" "VIE-STE-305" "VIE-STE-306" "VIE-STE-307" "VIE-STE-308" "VIE-STE-309" "VIE-STE-310" "VIE-STE-311" "VIE-STE-312" "VIE-STE-313" "VIE-STE-314" "VIE-STE-315" "VIE-STE-316" "VIE-STE-317" "VIE-STE-318" "VIE-STE-319" "VIE-STE-320" "VIE-STE-321" "VIE-STE-322" "VIE-STE-323" "VIE-STE-324" "VIE-STE-325" "VIE-STE-326" "VIE-STE-327" "VIE-STE-328" "VIE-STE-329" "VIE-STE-330" "VIE-STE-331" "VIE-STE-332" "VIE-STE-333" "VIE-STE-334" "VIE-STE-335" "VIE-STE-336" "VIE-STE-337" "VIE-STE-338" "VIE-STE-339" "VIE-STE-340" "VIE-STE-341" "VIE-STE-342" "VIE-STE-343" "VIE-STE-344" "VIE-STE-345" "VIE-STE-346" "VIE-STE-347" "VIE-STE-348" "VIE-STE-349" "VIE-STE-350" "VIE-STE-351" "VIE-STE-352" "VIE-STE-353" "VIE-STE-354" "VIE-STE-355" "VIE-STE-356" "VIE-STE-357" "VIE-STE-358" "VIE-STE-359" "VIE-STE-360" "VIE-STE-361" "VIE-STE-362" "VIE-STE-363". Observation records are missing from d until this file is standardized.
-# VIE-STE-1999-RIZ-FAC.txt: not read. columns: "VIE-STE-001" "VIE-STE-002" "VIE-STE-003" "VIE-STE-004" "VIE-STE-005" "VIE-STE-006" "VIE-STE-007" "VIE-STE-008" "VIE-STE-009" "VIE-STE-010" "VIE-STE-011" "VIE-STE-012" "VIE-STE-013" "VIE-STE-014" "VIE-STE-015" "VIE-STE-016" "VIE-STE-017" "VIE-STE-018" "VIE-STE-019" "VIE-STE-020" "VIE-STE-021" "VIE-STE-022" "VIE-STE-023" "VIE-STE-024" "VIE-STE-025" "VIE-STE-026" "VIE-STE-027" "VIE-STE-028" "VIE-STE-029" "VIE-STE-030" "VIE-STE-031" "VIE-STE-032" "VIE-STE-033" "VIE-STE-034" "VIE-STE-035" "VIE-STE-036" "VIE-STE-037" "VIE-STE-038" "VIE-STE-039" "VIE-STE-040" "VIE-STE-041" "VIE-STE-042" "VIE-STE-043" "VIE-STE-044" "VIE-STE-045" "VIE-STE-046" "VIE-STE-047" "VIE-STE-048" "VIE-STE-049" "VIE-STE-050" "VIE-STE-051" "VIE-STE-052" "VIE-STE-053" "VIE-STE-054" "VIE-STE-055" "VIE-STE-056" "VIE-STE-057" "VIE-STE-058" "VIE-STE-059" "VIE-STE-060" "VIE-STE-061" "VIE-STE-062" "VIE-STE-063" "VIE-STE-064" "VIE-STE-065" "VIE-STE-066" "VIE-STE-067" "VIE-STE-068" "VIE-STE-069" "VIE-STE-070" "VIE-STE-071" "VIE-STE-072" "VIE-STE-073" "VIE-STE-074" "VIE-STE-075" "VIE-STE-076" "VIE-STE-077" "VIE-STE-078" "VIE-STE-079" "VIE-STE-080" "VIE-STE-081" "VIE-STE-082" "VIE-STE-083" "VIE-STE-084" "VIE-STE-085" "VIE-STE-086" "VIE-STE-087" "VIE-STE-088" "VIE-STE-089" "VIE-STE-090" "VIE-STE-091" "VIE-STE-092" "VIE-STE-093" "VIE-STE-094" "VIE-STE-095" "VIE-STE-096" "VIE-STE-097" "VIE-STE-098" "VIE-STE-099" "VIE-STE-100" "VIE-STE-101" "VIE-STE-102" "VIE-STE-103" "VIE-STE-104" "VIE-STE-105" "VIE-STE-106" "VIE-STE-107" "VIE-STE-108" "VIE-STE-109" "VIE-STE-110" "VIE-STE-111" "VIE-STE-112" "VIE-STE-113" "VIE-STE-114" "VIE-STE-115" "VIE-STE-116" "VIE-STE-117" "VIE-STE-118" "VIE-STE-119" "VIE-STE-120" "VIE-STE-121" "VIE-STE-122" "VIE-STE-123" "VIE-STE-124" "VIE-STE-125" "VIE-STE-126" "VIE-STE-127" "VIE-STE-128" "VIE-STE-129" "VIE-STE-130" "VIE-STE-131" "VIE-STE-132" "VIE-STE-133" "VIE-STE-134" "VIE-STE-135" "VIE-STE-136" "VIE-STE-137" "VIE-STE-138" "VIE-STE-139" "VIE-STE-140" "VIE-STE-141" "VIE-STE-142" "VIE-STE-143" "VIE-STE-144" "VIE-STE-145" "VIE-STE-146" "VIE-STE-147" "VIE-STE-148" "VIE-STE-149" "VIE-STE-150" "VIE-STE-151" "VIE-STE-152" "VIE-STE-153" "VIE-STE-154" "VIE-STE-155" "VIE-STE-156" "VIE-STE-157" "VIE-STE-158" "VIE-STE-159" "VIE-STE-160" "VIE-STE-161" "VIE-STE-162" "VIE-STE-163" "VIE-STE-164" "VIE-STE-165" "VIE-STE-166" "VIE-STE-167" "VIE-STE-168" "VIE-STE-169" "VIE-STE-170" "VIE-STE-171" "VIE-STE-172" "VIE-STE-173" "VIE-STE-174" "VIE-STE-175" "VIE-STE-176" "VIE-STE-177" "VIE-STE-178" "VIE-STE-179" "VIE-STE-180" "VIE-STE-181" "VIE-STE-182" "VIE-STE-183" "VIE-STE-184" "VIE-STE-185" "VIE-STE-186" "VIE-STE-187" "VIE-STE-188" "VIE-STE-189" "VIE-STE-190" "VIE-STE-191" "VIE-STE-192" "VIE-STE-193" "VIE-STE-194" "VIE-STE-195" "VIE-STE-196" "VIE-STE-197" "VIE-STE-198" "VIE-STE-199" "VIE-STE-200" "VIE-STE-201" "VIE-STE-202" "VIE-STE-203" "VIE-STE-204" "VIE-STE-205" "VIE-STE-206" "VIE-STE-207" "VIE-STE-208" "VIE-STE-209" "VIE-STE-210" "VIE-STE-211" "VIE-STE-212" "VIE-STE-213" "VIE-STE-214" "VIE-STE-215" "VIE-STE-216" "VIE-STE-217" "VIE-STE-218" "VIE-STE-219" "VIE-STE-220" "VIE-STE-221" "VIE-STE-222" "VIE-STE-223" "VIE-STE-224" "VIE-STE-225" "VIE-STE-226" "VIE-STE-227" "VIE-STE-228" "VIE-STE-229" "VIE-STE-230" "VIE-STE-231" "VIE-STE-232" "VIE-STE-233" "VIE-STE-234" "VIE-STE-235" "VIE-STE-236" "VIE-STE-237" "VIE-STE-238" "VIE-STE-239" "VIE-STE-240" "VIE-STE-241" "VIE-STE-242" "VIE-STE-243" "VIE-STE-244" "VIE-STE-245" "VIE-STE-246" "VIE-STE-247" "VIE-STE-248" "VIE-STE-249" "VIE-STE-250" "VIE-STE-251" "VIE-STE-252" "VIE-STE-253" "VIE-STE-254" "VIE-STE-255" "VIE-STE-256" "VIE-STE-257" "VIE-STE-258" "VIE-STE-259" "VIE-STE-260" "VIE-STE-261" "VIE-STE-262" "VIE-STE-263" "VIE-STE-264" "VIE-STE-265" "VIE-STE-266" "VIE-STE-267" "VIE-STE-268" "VIE-STE-269" "VIE-STE-270" "VIE-STE-271" "VIE-STE-272" "VIE-STE-273" "VIE-STE-274" "VIE-STE-275" "VIE-STE-276" "VIE-STE-277" "VIE-STE-278" "VIE-STE-279" "VIE-STE-280" "VIE-STE-281" "VIE-STE-282" "VIE-STE-283" "VIE-STE-284" "VIE-STE-285" "VIE-STE-286" "VIE-STE-287" "VIE-STE-288" "VIE-STE-289" "VIE-STE-290" "VIE-STE-291" "VIE-STE-292" "VIE-STE-293" "VIE-STE-294" "VIE-STE-295" "VIE-STE-296" "VIE-STE-297" "VIE-STE-298" "VIE-STE-299" "VIE-STE-300" "VIE-STE-301" "VIE-STE-302" "VIE-STE-303" "VIE-STE-304" "VIE-STE-305" "VIE-STE-306" "VIE-STE-307" "VIE-STE-308" "VIE-STE-309" "VIE-STE-310" "VIE-STE-311" "VIE-STE-312" "VIE-STE-313" "VIE-STE-314" "VIE-STE-315" "VIE-STE-316" "VIE-STE-317" "VIE-STE-318" "VIE-STE-319" "VIE-STE-320" "VIE-STE-321" "VIE-STE-322" "VIE-STE-323" "VIE-STE-324" "VIE-STE-325" "VIE-STE-326" "VIE-STE-327" "VIE-STE-328" "VIE-STE-329" "VIE-STE-330" "VIE-STE-331" "VIE-STE-332" "VIE-STE-333" "VIE-STE-334" "VIE-STE-335" "VIE-STE-336" "VIE-STE-337" "VIE-STE-338" "VIE-STE-339" "VIE-STE-340" "VIE-STE-341" "VIE-STE-342" "VIE-STE-343" "VIE-STE-344" "VIE-STE-345" "VIE-STE-346" "VIE-STE-347" "VIE-STE-348" "VIE-STE-349" "VIE-STE-350" "VIE-STE-351" "VIE-STE-352" "VIE-STE-353" "VIE-STE-354" "VIE-STE-355" "VIE-STE-356" "VIE-STE-357" "VIE-STE-358" "VIE-STE-359" "VIE-STE-360" "VIE-STE-361" "VIE-STE-362" "VIE-STE-363". Observation records are missing from d until this file is standardized.
-# VIE-STE-1999-RIZ-PA-FLO.txt: not read. columns: "VIE-STE-001" "VIE-STE-002" "VIE-STE-003" "VIE-STE-004" "VIE-STE-005" "VIE-STE-006" "VIE-STE-007" "VIE-STE-008" "VIE-STE-009" "VIE-STE-010" "VIE-STE-011" "VIE-STE-012" "VIE-STE-013" "VIE-STE-014" "VIE-STE-015" "VIE-STE-016" "VIE-STE-017" "VIE-STE-018" "VIE-STE-019" "VIE-STE-020" "VIE-STE-021" "VIE-STE-022" "VIE-STE-023" "VIE-STE-024" "VIE-STE-025" "VIE-STE-026" "VIE-STE-027" "VIE-STE-028" "VIE-STE-029" "VIE-STE-030" "VIE-STE-031" "VIE-STE-032" "VIE-STE-033" "VIE-STE-034" "VIE-STE-035" "VIE-STE-036" "VIE-STE-037" "VIE-STE-038" "VIE-STE-039" "VIE-STE-040" "VIE-STE-041" "VIE-STE-042" "VIE-STE-043" "VIE-STE-044" "VIE-STE-045" "VIE-STE-046" "VIE-STE-047" "VIE-STE-048" "VIE-STE-049" "VIE-STE-050" "VIE-STE-051" "VIE-STE-052" "VIE-STE-053" "VIE-STE-054" "VIE-STE-055" "VIE-STE-056" "VIE-STE-057" "VIE-STE-058" "VIE-STE-059" "VIE-STE-060" "VIE-STE-061" "VIE-STE-062" "VIE-STE-063" "VIE-STE-064" "VIE-STE-065" "VIE-STE-066" "VIE-STE-067" "VIE-STE-068" "VIE-STE-069" "VIE-STE-070" "VIE-STE-071" "VIE-STE-072" "VIE-STE-073" "VIE-STE-074" "VIE-STE-075" "VIE-STE-076" "VIE-STE-077" "VIE-STE-078" "VIE-STE-079" "VIE-STE-080" "VIE-STE-081" "VIE-STE-082" "VIE-STE-083" "VIE-STE-084" "VIE-STE-085" "VIE-STE-086" "VIE-STE-087" "VIE-STE-088" "VIE-STE-089" "VIE-STE-090" "VIE-STE-091" "VIE-STE-092" "VIE-STE-093" "VIE-STE-094" "VIE-STE-095" "VIE-STE-096" "VIE-STE-097" "VIE-STE-098" "VIE-STE-099" "VIE-STE-100" "VIE-STE-101" "VIE-STE-102" "VIE-STE-103" "VIE-STE-104" "VIE-STE-105" "VIE-STE-106" "VIE-STE-107" "VIE-STE-108" "VIE-STE-109" "VIE-STE-110" "VIE-STE-111" "VIE-STE-112" "VIE-STE-113" "VIE-STE-114" "VIE-STE-115" "VIE-STE-116" "VIE-STE-117" "VIE-STE-118" "VIE-STE-119" "VIE-STE-120" "VIE-STE-121" "VIE-STE-122" "VIE-STE-123" "VIE-STE-124" "VIE-STE-125" "VIE-STE-126" "VIE-STE-127" "VIE-STE-128" "VIE-STE-129" "VIE-STE-130" "VIE-STE-131" "VIE-STE-132" "VIE-STE-133" "VIE-STE-134" "VIE-STE-135" "VIE-STE-136" "VIE-STE-137" "VIE-STE-138" "VIE-STE-139" "VIE-STE-140" "VIE-STE-141" "VIE-STE-142" "VIE-STE-143" "VIE-STE-144" "VIE-STE-145" "VIE-STE-146" "VIE-STE-147" "VIE-STE-148" "VIE-STE-149" "VIE-STE-150" "VIE-STE-151" "VIE-STE-152" "VIE-STE-153" "VIE-STE-154" "VIE-STE-155" "VIE-STE-156" "VIE-STE-157" "VIE-STE-158" "VIE-STE-159" "VIE-STE-160" "VIE-STE-161" "VIE-STE-162" "VIE-STE-163" "VIE-STE-164" "VIE-STE-165" "VIE-STE-166" "VIE-STE-167" "VIE-STE-168" "VIE-STE-169" "VIE-STE-170" "VIE-STE-171" "VIE-STE-172" "VIE-STE-173" "VIE-STE-174" "VIE-STE-175" "VIE-STE-176" "VIE-STE-177" "VIE-STE-178" "VIE-STE-179" "VIE-STE-180" "VIE-STE-181" "VIE-STE-182" "VIE-STE-183" "VIE-STE-184" "VIE-STE-185" "VIE-STE-186" "VIE-STE-187" "VIE-STE-188" "VIE-STE-189" "VIE-STE-190" "VIE-STE-191" "VIE-STE-192" "VIE-STE-193" "VIE-STE-194" "VIE-STE-195" "VIE-STE-196" "VIE-STE-197" "VIE-STE-198" "VIE-STE-199" "VIE-STE-200" "VIE-STE-201" "VIE-STE-202" "VIE-STE-203" "VIE-STE-204" "VIE-STE-205" "VIE-STE-206" "VIE-STE-207" "VIE-STE-208" "VIE-STE-209" "VIE-STE-210" "VIE-STE-211" "VIE-STE-212" "VIE-STE-213" "VIE-STE-214" "VIE-STE-215" "VIE-STE-216" "VIE-STE-217" "VIE-STE-218" "VIE-STE-219" "VIE-STE-220" "VIE-STE-221" "VIE-STE-222" "VIE-STE-223" "VIE-STE-224" "VIE-STE-225" "VIE-STE-226" "VIE-STE-227" "VIE-STE-228" "VIE-STE-229" "VIE-STE-230" "VIE-STE-231" "VIE-STE-232" "VIE-STE-233" "VIE-STE-234" "VIE-STE-235" "VIE-STE-236" "VIE-STE-237" "VIE-STE-238" "VIE-STE-239" "VIE-STE-240" "VIE-STE-241" "VIE-STE-242" "VIE-STE-243" "VIE-STE-244" "VIE-STE-245" "VIE-STE-246" "VIE-STE-247" "VIE-STE-248" "VIE-STE-249" "VIE-STE-250" "VIE-STE-251" "VIE-STE-252" "VIE-STE-253" "VIE-STE-254" "VIE-STE-255" "VIE-STE-256" "VIE-STE-257" "VIE-STE-258" "VIE-STE-259" "VIE-STE-260" "VIE-STE-261" "VIE-STE-262" "VIE-STE-263" "VIE-STE-264" "VIE-STE-265" "VIE-STE-266" "VIE-STE-267" "VIE-STE-268" "VIE-STE-269" "VIE-STE-270" "VIE-STE-271" "VIE-STE-272" "VIE-STE-273" "VIE-STE-274" "VIE-STE-275" "VIE-STE-276" "VIE-STE-277" "VIE-STE-278" "VIE-STE-279" "VIE-STE-280" "VIE-STE-281" "VIE-STE-282" "VIE-STE-283" "VIE-STE-284" "VIE-STE-285" "VIE-STE-286" "VIE-STE-287" "VIE-STE-288" "VIE-STE-289" "VIE-STE-290" "VIE-STE-291" "VIE-STE-292" "VIE-STE-293" "VIE-STE-294" "VIE-STE-295" "VIE-STE-296" "VIE-STE-297" "VIE-STE-298" "VIE-STE-299" "VIE-STE-300" "VIE-STE-301" "VIE-STE-302" "VIE-STE-303" "VIE-STE-304" "VIE-STE-305" "VIE-STE-306" "VIE-STE-307" "VIE-STE-308" "VIE-STE-309" "VIE-STE-310" "VIE-STE-311" "VIE-STE-312" "VIE-STE-313" "VIE-STE-314" "VIE-STE-315" "VIE-STE-316" "VIE-STE-317" "VIE-STE-318" "VIE-STE-319" "VIE-STE-320" "VIE-STE-321" "VIE-STE-322" "VIE-STE-323" "VIE-STE-324" "VIE-STE-325" "VIE-STE-326" "VIE-STE-327" "VIE-STE-328" "VIE-STE-329" "VIE-STE-330" "VIE-STE-331" "VIE-STE-332" "VIE-STE-333" "VIE-STE-334" "VIE-STE-335" "VIE-STE-336" "VIE-STE-337" "VIE-STE-338" "VIE-STE-339" "VIE-STE-340" "VIE-STE-341" "VIE-STE-342" "VIE-STE-343" "VIE-STE-344" "VIE-STE-345" "VIE-STE-346" "VIE-STE-347" "VIE-STE-348" "VIE-STE-349" "VIE-STE-350" "VIE-STE-351" "VIE-STE-352" "VIE-STE-353" "VIE-STE-354" "VIE-STE-355" "VIE-STE-356" "VIE-STE-357" "VIE-STE-358" "VIE-STE-359" "VIE-STE-360" "VIE-STE-361" "VIE-STE-362" "VIE-STE-363". Observation records are missing from d until this file is standardized.
+# Type_culture (redundant with Culture_origine) and Climat (constant
+# "subtropical"). Meta Donnees sheet and exported .txt files (FLO, FAC, PA-FLO)
+# duplicate the Facteurs and Floristique sheets.
 
 
 carob_script <- function(path) {
@@ -41,52 +52,79 @@ Characterization of weed communities in rain-fed crops on slopes (rice, corn) in
 		data_organization = "CIRAD",
 		publication = NA,
 		project = NA,
-		design = "weed abundance survey",
+		design = NA,
 		data_type = "survey",
-		treatment_vars = "treatment",
-		response_vars = "weed_species;ground_cover",
+		treatment_vars = "none",
+		response_vars = "weed_species;weed_species_cover",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_date = "2026-11-26",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "VIE-STE-1999-RIZ-AD.xlsx"]
-	r1 <- carobiner::read.excel(f, sheet="Facteurs")
-	r2 <- carobiner::read.excel(f, sheet="Floristique")
+	r1 <- carobiner::read.excel(f, sheet = "Facteurs")
+	r2 <- carobiner::read.excel(f, sheet = "Floristique")
 
-	get_row <- function(label) unname(unlist(r1[r1[[1]] == label, -1]))
-
-	# VIE-STE-1999-RIZ-AD-DOC.txt: Ab/Dom 1-6 stored as 1-9 notes; same % table.
-	rating_to_cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
+	get_row <- function(label) {
+		x <- trimws(as.character(unname(unlist(r1[r1[[1]] == label, -1]))))
+		x[x == ""] <- NA_character_
+		x
+	}
 
 	crop_map <- c(mais = "maize", riz = "rice")
-	irr <- tolower(trimws(as.character(get_row("Irrigation"))))
-	d1b <- data.frame(
-		trial_id = names(r1)[-1],
-		crop = unname(crop_map[tolower(trimws(as.character(get_row("Culture_origine"))))]),
-		treatment = trimws(as.character(get_row("Traitement"))),
-		date = as.character(as.integer(as.numeric(get_row("Annee")))),
-		country = "Vietnam", # geographicCoverage "Viet Nam"
-		location = trimws(as.character(get_row("Lieu"))),
-		irrigated = irr %in% c("inonde", "inondé"),
-		stress = "weeds"
-	)
-	d1b$intercropped <- FALSE
-	d1b$on_farm <- TRUE
-	d1b$is_survey <- TRUE
-	d1b$geo_from_source <- FALSE
+	topo_map <- c(haut = "upper slope", milieu = "middle slope", bas = "lower slope")
+	soil_col_map <- c(brun = "brown", jaune = "yellow", rouge = "red")
+	suivi_map <- c("suivi phyto\u00e9co" = "survey", "suivi essais" = "experiment")
 
-	present <- which(!is.na(r2[, -1]) & r2[, -1] > 0, arr.ind=TRUE)
-	scores <- as.integer(as.numeric(r2[, -1][present]))
+	trt <- get_row("Traitement")
+	trt_low <- tolower(trt)
+	irr <- tolower(get_row("Irrigation"))
+
 	d <- data.frame(
-		trial_id = names(r2)[-1][present[, "col"]],
-		weed_species = trimws(as.character(r2[[1]][present[, "row"]])),
-		ground_cover = rating_to_cover[match(scores, 1:9)]
+		trial_id = names(r1)[-1],
+		plot_id = get_row("Parcelle"),
+		date = as.character(as.integer(as.numeric(get_row("Annee")))),
+		country = "Vietnam",
+		adm1 = "B\u1eafc K\u1ea1n",
+		adm2 = "Ch\u1ee3 \u0110\u1ed3n",
+		adm3 = "Ng\u1ecdc Ph\u00e1i",
+		location = get_row("Lieu"),
+		latitude = 22.2195,
+		longitude = 105.5764,
+		geo_uncertainty = 3000,
+		geo_source = "Wikipedia (B\u1ea3n Cu\u00f4n, Ng\u1ecdc Ph\u00e1i, Ch\u1ee3 \u0110\u1ed3n, B\u1eafc K\u1ea1n)",
+		geo_from_source = FALSE,
+		crop = unname(crop_map[tolower(get_row("Culture_origine"))]),
+		treatment = ifelse(!is.na(trt_low) & trt_low == "aucun", "none", trt),
+		study_type_ = unname(suivi_map[tolower(get_row("Type_suivi"))]),
+		observation_stage_ = get_row("Observation"),
+		landscape_position = unname(topo_map[tolower(get_row("Toposequence"))]),
+		slope_class_ = get_row("Pente"),
+		soil_color = unname(soil_col_map[tolower(get_row("Type_sol"))]),
+		field_age_years_ = get_row("Age_parcelle"),
+		previous_land_use_ = get_row("Precedent"),
+		mulch_used_ = ifelse(trt_low %in% c("mulch", "paillage"), TRUE, ifelse(trt_low == "non paillage", FALSE, NA)),
+		weeding_done = ifelse(trt_low == "desherb\u00e9", TRUE, ifelse(trt_low == "enherb\u00e9", FALSE, NA)),
+		irrigated = irr %in% c("inonde", "inond\u00e9"),
+		irrigation_method = ifelse(irr %in% c("inonde", "inond\u00e9"), "flood", "none"),
+		stress = "weeds",
+		intercropped = FALSE,
+		on_farm = TRUE,
+		is_survey = TRUE
 	)
-	d <- merge(d, d1b, by="trial_id", all.x=TRUE)
 
-	carobiner::write_files(path, meta, d)
+	# 1-9 abundance scale -> % cover (VIE-STE-1999-RIZ-AD-DOC.txt)
+	cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
+	score <- as.matrix(r2[, -1])
+	j <- which(!is.na(score) & score > 0, arr.ind = TRUE)
+	long <- data.frame(
+		trial_id = colnames(score)[j[, "col"]],
+		weed_species = trimws(as.character(r2[[1]][j[, "row"]])),
+		weed_species_cover = cover[as.integer(score[j])]
+	)
+
+	carobiner::write_files(path, meta, d, long = long)
 }

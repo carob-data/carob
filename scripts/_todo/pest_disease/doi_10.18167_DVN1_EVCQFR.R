@@ -1,26 +1,33 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# 110 cotton surveys in Guinea. One row per species with a rating > 0.
-# Floristique is the DOC 1-9 scale. Note_globale is that same 1-9 note and is
-# stored as weed_cover. weed_species is the 5-letter code. Location is Lieu
-# (Dabola, Kankan, or Koundara-Gaoual).
-
 ## ISSUES
-# Title says 1996; the file also has 1997-08-01. The DOC calendar line
-# (23 September-5 October 2018) does not match the Date serials. No coordinates.
-# write_files: missing variables: yield, yield_moisture, yield_part, latitude,
-# longitude, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date.
+# 1. Dataset title says 1996, but Date serials and Annee span both 1996
+#    (1996-10-23, 1996-11-01) and 1997 (1997-08-01). The DOC.txt text line
+#    mentioning "23 septembre - 5 octobre 2018" appears to be a typo and does
+#    not match the data dates.
+# 2. No coordinates in the source; the three survey regions (Koundara-Gaoual,
+#    Kankan, Dabola) were georeferenced to town/midpoint centers with large
+#    regional uncertainty (30-50 km).
 
+## NEW
+# weed_family_: botanical family of the weed species
+
+## MISSING
+# yield, yield_moisture, yield_part, K_fertilizer, N_fertilizer, P_fertilizer,
+# planting_date, harvest_date (not collected in this weed survey)
+
+## NOTES
+# 110 cotton weed surveys across three cotton-growing regions of Guinea
+# (Koundara-Gaoual, Kankan, Dabola) in 1996-1997. Plot-level records are in d
+# (wide) and all 158 species mapped to full botanical names and families from
+# the "Guinee 1996 1997 Origine" sheet are in long.
 
 ## NOT PROCESSED
-# Facteurs not mapped: Type_culture, Climat, Epoque/cycle, jour_de_mission,
-# Observation_du_jour. Méta Données and the origine sheet repeat the survey.
-# FLO, FAC, and PA repeat the workbook or the DOC.
-# GUI-MAR-1996-COT-AD-FLO.txt: not read. columns: "GUI-MAR-01" "GUI-MAR-02" "GUI-MAR-03" "GUI-MAR-04" "GUI-MAR-05" "GUI-MAR-06" "GUI-MAR-07" "GUI-MAR-08" "GUI-MAR-09" "GUI-MAR-10" "GUI-MAR-11" "GUI-MAR-12" "GUI-MAR-13" "GUI-MAR-14" "GUI-MAR-15" "GUI-MAR-16" "GUI-MAR-17" "GUI-MAR-18" "GUI-MAR-19" "GUI-MAR-20" "GUI-MAR-21" "GUI-MAR-22" "GUI-MAR-23" "GUI-MAR-24" "GUI-MAR-25" "GUI-MAR-26" "GUI-MAR-27" "GUI-MAR-28" "GUI-MAR-29" "GUI-MAR-30" "GUI-MAR-31" "GUI-MAR-32" "GUI-MAR-33" "GUI-MAR-34" "GUI-MAR-35" "GUI-MAR-36" "GUI-MAR-37" "GUI-MAR-38" "GUI-MAR-39" "GUI-MAR-40" "GUI-MAR-41" "GUI-MAR-42" "GUI-MAR-43" "GUI-MAR-44" "GUI-MAR-45" "GUI-MAR-46" "GUI-MAR-47" "GUI-MAR-48" "GUI-MAR-49" "GUI-MAR-50" "GUI-MAR-51" "GUI-MAR-52" "GUI-MAR-53" "GUI-MAR-54" "GUI-MAR-55" "GUI-MAR-56" "GUI-MAR-57" "GUI-MAR-58" "GUI-MAR-59" "GUI-MAR-60" "GUI-MAR-61" "GUI-MAR-62" "GUI-MAR-63" "GUI-MAR-64" "GUI-MAR-65" "GUI-MAR-66" "GUI-MAR-67" "GUI-MAR-68" "GUI-MAR-69" "GUI-MAR-70" "GUI-MAR-71" "GUI-MAR-72" "GUI-MAR-73" "GUI-MAR-74" "GUI-MAR-75" "GUI-MAR-76" "GUI-MAR-77" "GUI-MAR-78" "GUI-MAR-79" "GUI-MAR-80" "GUI-MAR-81" "GUI-MAR-82" "GUI-MAR-83" "GUI-MAR-84" "GUI-MAR-85" "GUI-MAR-86" "GUI-MAR-87" "GUI-MAR-88" "GUI-MAR-89" "GUI-MAR-90" "GUI-MAR-91" "GUI-MAR-92" "GUI-MAR-93" "GUI-MAR-94" "GUI-MAR-95" "GUI-MAR-96" "GUI-MAR-97" "GUI-MAR-98" "GUI-MAR-99" "GUI-MAR-100" "GUI-MAR-101" "GUI-MAR-102" "GUI-MAR-103" "GUI-MAR-104" "GUI-MAR-105" "GUI-MAR-106" "GUI-MAR-107" "GUI-MAR-108" "GUI-MAR-109" "GUI-MAR-110". Observation records are missing from d until this file is standardized.
-# GUI-MAR-1996-COT-FAC.txt: not read. columns: "GUI-MAR-01" "GUI-MAR-02" "GUI-MAR-03" "GUI-MAR-04" "GUI-MAR-05" "GUI-MAR-06" "GUI-MAR-07" "GUI-MAR-08" "GUI-MAR-09" "GUI-MAR-10" "GUI-MAR-11" "GUI-MAR-12" "GUI-MAR-13" "GUI-MAR-14" "GUI-MAR-15" "GUI-MAR-16" "GUI-MAR-17" "GUI-MAR-18" "GUI-MAR-19" "GUI-MAR-20" "GUI-MAR-21" "GUI-MAR-22" "GUI-MAR-23" "GUI-MAR-24" "GUI-MAR-25" "GUI-MAR-26" "GUI-MAR-27" "GUI-MAR-28" "GUI-MAR-29" "GUI-MAR-30" "GUI-MAR-31" "GUI-MAR-32" "GUI-MAR-33" "GUI-MAR-34" "GUI-MAR-35" "GUI-MAR-36" "GUI-MAR-37" "GUI-MAR-38" "GUI-MAR-39" "GUI-MAR-40" "GUI-MAR-41" "GUI-MAR-42" "GUI-MAR-43" "GUI-MAR-44" "GUI-MAR-45" "GUI-MAR-46" "GUI-MAR-47" "GUI-MAR-48" "GUI-MAR-49" "GUI-MAR-50" "GUI-MAR-51" "GUI-MAR-52" "GUI-MAR-53" "GUI-MAR-54" "GUI-MAR-55" "GUI-MAR-56" "GUI-MAR-57" "GUI-MAR-58" "GUI-MAR-59" "GUI-MAR-60" "GUI-MAR-61" "GUI-MAR-62" "GUI-MAR-63" "GUI-MAR-64" "GUI-MAR-65" "GUI-MAR-66" "GUI-MAR-67" "GUI-MAR-68" "GUI-MAR-69" "GUI-MAR-70" "GUI-MAR-71" "GUI-MAR-72" "GUI-MAR-73" "GUI-MAR-74" "GUI-MAR-75" "GUI-MAR-76" "GUI-MAR-77" "GUI-MAR-78" "GUI-MAR-79" "GUI-MAR-80" "GUI-MAR-81" "GUI-MAR-82" "GUI-MAR-83" "GUI-MAR-84" "GUI-MAR-85" "GUI-MAR-86" "GUI-MAR-87" "GUI-MAR-88" "GUI-MAR-89" "GUI-MAR-90" "GUI-MAR-91" "GUI-MAR-92" "GUI-MAR-93" "GUI-MAR-94" "GUI-MAR-95" "GUI-MAR-96" "GUI-MAR-97" "GUI-MAR-98" "GUI-MAR-99" "GUI-MAR-100" "GUI-MAR-101" "GUI-MAR-102" "GUI-MAR-103" "GUI-MAR-104" "GUI-MAR-105" "GUI-MAR-106" "GUI-MAR-107" "GUI-MAR-108" "GUI-MAR-109" "GUI-MAR-110". Observation records are missing from d until this file is standardized.
-# GUI-MAR-1996-COT-PA-FLO.txt: not read. columns: "GUI-MAR-01" "GUI-MAR-02" "GUI-MAR-03" "GUI-MAR-04" "GUI-MAR-05" "GUI-MAR-06" "GUI-MAR-07" "GUI-MAR-08" "GUI-MAR-09" "GUI-MAR-10" "GUI-MAR-11" "GUI-MAR-12" "GUI-MAR-13" "GUI-MAR-14" "GUI-MAR-15" "GUI-MAR-16" "GUI-MAR-17" "GUI-MAR-18" "GUI-MAR-19" "GUI-MAR-20" "GUI-MAR-21" "GUI-MAR-22" "GUI-MAR-23" "GUI-MAR-24" "GUI-MAR-25" "GUI-MAR-26" "GUI-MAR-27" "GUI-MAR-28" "GUI-MAR-29" "GUI-MAR-30" "GUI-MAR-31" "GUI-MAR-32" "GUI-MAR-33" "GUI-MAR-34" "GUI-MAR-35" "GUI-MAR-36" "GUI-MAR-37" "GUI-MAR-38" "GUI-MAR-39" "GUI-MAR-40" "GUI-MAR-41" "GUI-MAR-42" "GUI-MAR-43" "GUI-MAR-44" "GUI-MAR-45" "GUI-MAR-46" "GUI-MAR-47" "GUI-MAR-48" "GUI-MAR-49" "GUI-MAR-50" "GUI-MAR-51" "GUI-MAR-52" "GUI-MAR-53" "GUI-MAR-54" "GUI-MAR-55" "GUI-MAR-56" "GUI-MAR-57" "GUI-MAR-58" "GUI-MAR-59" "GUI-MAR-60" "GUI-MAR-61" "GUI-MAR-62" "GUI-MAR-63" "GUI-MAR-64" "GUI-MAR-65" "GUI-MAR-66" "GUI-MAR-67" "GUI-MAR-68" "GUI-MAR-69" "GUI-MAR-70" "GUI-MAR-71" "GUI-MAR-72" "GUI-MAR-73" "GUI-MAR-74" "GUI-MAR-75" "GUI-MAR-76" "GUI-MAR-77" "GUI-MAR-78" "GUI-MAR-79" "GUI-MAR-80" "GUI-MAR-81" "GUI-MAR-82" "GUI-MAR-83" "GUI-MAR-84" "GUI-MAR-85" "GUI-MAR-86" "GUI-MAR-87" "GUI-MAR-88" "GUI-MAR-89" "GUI-MAR-90" "GUI-MAR-91" "GUI-MAR-92" "GUI-MAR-93" "GUI-MAR-94" "GUI-MAR-95" "GUI-MAR-96" "GUI-MAR-97" "GUI-MAR-98" "GUI-MAR-99" "GUI-MAR-100" "GUI-MAR-101" "GUI-MAR-102" "GUI-MAR-103" "GUI-MAR-104" "GUI-MAR-105" "GUI-MAR-106" "GUI-MAR-107" "GUI-MAR-108" "GUI-MAR-109" "GUI-MAR-110". Observation records are missing from d until this file is standardized.
+# jour_de_mission, Observation_du_jour (mission survey sequence numbers),
+# Climat (constant "tropical"), and Type_culture (identical to Culture_origine).
+# Meta Donnees sheet and exported .txt files (FLO, FAC, PA-FLO) duplicate the
+# Facteurs and Floristique sheets.
 
 
 carob_script <- function(path) {
@@ -39,55 +46,79 @@ Characterization of weed flora of cotton crop in Guinea in 1996, within the fram
 		data_organization = "CIRAD",
 		publication = NA,
 		project = "PCGK; PCK",
-		design = "weed abundance survey",
+		design = NA,
 		data_type = "survey",
 		treatment_vars = "none",
-		response_vars = "weed_species;ground_cover;weed_cover",
+		response_vars = "weed_cover;weed_species;weed_species_cover",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_date = "2026-11-26",
+		carob_completion = 95,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "GUI-MAR-1996-COT-AD.xlsx"]
-	r1 <- carobiner::read.excel(f, sheet="Facteurs")
-	r2 <- carobiner::read.excel(f, sheet="Floristique")
+	r1 <- carobiner::read.excel(f, sheet = "Facteurs")
+	r2 <- carobiner::read.excel(f, sheet = "Floristique")
+	r3 <- carobiner::read.excel(f, sheet = " Guin\u00e9e 1996 1997 Origine", col_names = FALSE)
 
-	get_row <- function(label) unname(unlist(r1[r1[[1]] == label, -1]))
+	get_row <- function(label) trimws(as.character(unname(unlist(r1[r1[[1]] == label, -1]))))
 
-	# GUI-MAR-1996-COT-AD-DOC.txt: 1-9 note to % cover, same table as Benin 2013.
-	rating_to_cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
-
-	crop_map <- c(cotonnier = "cotton")
-	irr <- tolower(trimws(as.character(get_row("Irrigation"))))
+	# 1-9 abundance scale -> % cover (GUI-MAR-1996-COT-AD-DOC.txt)
+	cover <- c(1, 7, 15, 30, 50, 70, 85, 93, 100)
+	stage_map <- c("deb-cycle" = "early cycle", "fin-cycle" = "late cycle")
+	irr <- tolower(get_row("Irrigation"))
 	enh <- as.integer(as.numeric(get_row("Note_globale")))
-	# Date is an Excel serial (1996-10-23, 1996-11-01, 1997-08-01).
-	obs <- as.numeric(get_row("Date"))
-	d1b <- data.frame(
-		trial_id = names(r1)[-1],
-		crop = unname(crop_map[tolower(trimws(as.character(get_row("Culture_origine"))))]),
-		date = as.character(as.Date(obs, origin="1899-12-30")),
-		country = "Guinea", # geographicCoverage
-		location = trimws(as.character(get_row("Lieu"))),
-		weed_cover = rating_to_cover[match(enh, 1:9)],
-		irrigated = irr %in% c("inonde", "inondé"),
-		stress = "weeds"
-	)
-	d1b$intercropped <- FALSE
-	d1b$on_farm <- TRUE
-	d1b$is_survey <- TRUE
-	d1b$geo_from_source <- FALSE
 
-	present <- which(!is.na(r2[, -1]) & r2[, -1] > 0, arr.ind=TRUE)
-	scores <- as.integer(as.numeric(r2[, -1][present]))
 	d <- data.frame(
-		trial_id = names(r2)[-1][present[, "col"]],
-		weed_species = trimws(as.character(r2[[1]][present[, "row"]])),
-		ground_cover = rating_to_cover[match(scores, 1:9)]
+		trial_id = names(r1)[-1],
+		date = as.character(as.Date(as.numeric(get_row("Date")), origin = "1899-12-30")),
+		country = "Guinea",
+		location = get_row("Lieu"),
+		crop = "cotton",
+		growth_stage = unname(stage_map[tolower(get_row("Epoque/cycle"))]),
+		weed_cover = cover[match(enh, 1:9)],
+		irrigated = irr %in% c("inonde", "inond\u00e9"),
+		irrigation_method = ifelse(irr %in% c("inonde", "inond\u00e9"), "flood", "none"),
+		stress = "weeds",
+		intercropped = FALSE,
+		on_farm = TRUE,
+		is_survey = TRUE
 	)
-	d <- merge(d, d1b, by="trial_id", all.x=TRUE)
 
-	carobiner::write_files(path, meta, d)
+	geo <- data.frame(
+		location = c("Koundara-Gaoual", "Kankan", "Dabola"),
+		adm1 = c("Bok\u00e9", "Kankan", "Faranah"),
+		latitude = c(12.1167, 10.3854, 10.7433),
+		longitude = c(-13.2500, -9.3057, -11.1078),
+		geo_uncertainty = c(50000, 30000, 30000),
+		geo_source = c(
+			"Midpoint of Koundara and Gaoual (Bok\u00e9, Guinea)",
+			"Kankan town center (Guinea)",
+			"Dabola town center (Guinea)"
+		),
+		geo_from_source = FALSE
+	)
+	d <- merge(d, geo, by = "location", all.x = TRUE, sort = FALSE)
+
+	# Full species names and families from the Origine sheet (col 4 = code, col 3 = species, col 2 = family)
+	i <- which(!is.na(r3[[4]]))
+	spp <- data.frame(
+		code = trimws(as.character(r3[[4]][i])),
+		weed_species = trimws(as.character(r3[[3]][i])),
+		weed_family_ = trimws(as.character(r3[[2]][i]))
+	)
+
+	score <- as.matrix(r2[, -1])
+	j <- which(!is.na(score) & score > 0, arr.ind = TRUE)
+	long <- data.frame(
+		trial_id = colnames(score)[j[, "col"]],
+		code = trimws(as.character(r2[[1]][j[, "row"]])),
+		weed_species_cover = cover[as.integer(score[j])]
+	)
+	long <- merge(long, spp, by = "code", all.x = TRUE, sort = FALSE)
+	long$code <- NULL
+
+	carobiner::write_files(path, meta, d, long = long)
 }

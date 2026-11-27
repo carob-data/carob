@@ -1,53 +1,44 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Four sowing dates at Nkolbisson (IITA Cameroon station), 2020-2021. Treatment is an imposed
-#   defoliation class (Scale), including a separate Control, 20 plants per class.
-# Sowing_date is day/month/year (28/10/2020 cannot be month-first).
-# Season stored as wet/dry; the original "Rainy 1/2" and "Dry 1/2" labels are in season_label_.
-# The column Yield equals kernels per cob x weight per grain, i.e. grams of grain on that ear,
-#   not kg/ha (the dictionary calls it kg/ha). seed_weight is weight per grain x 1000.
-#   Grain_yield, g_ha and t_h_kernel_factor are formulas of kernel number (Grain_yield = g_ha x 8,
-#   t_h_kernel_factor = Grain_yield x 60) and do not use grain weight, so they are not a yield.
-# Plant_height is stored twice (never both filled); the non-missing value is used. Unit cm.
-# Row spacing in the file is 50 cm. Sample-row length is 8 m.
-# GPS is filled on the second experiment only. Other rows use the dataset coverage point
-#   03°51.791'N, 011°27.706'E. One longitude 44.46291 sits between 11.46286 and 11.46292
-#   and was corrected to 11.46291.
-# 117 trailing rows with no experiment, season or scale were dropped.
-
 ## ISSUES
-# 1. No kg/ha yield is reported. Confirm whether the 8 m x 50 cm sample and the constant
-#    "Number_of_ears" = 5 can be used as a harvest area. They look like a protocol constant.
-# 2. N/P/K, irrigation and harvest date are not in the files (the title says "optimum" conditions).
-# 3. What Observation1-8 are (leaf positions or repeated scores) is not defined; only Average is kept.
-# 4. SB_damage scale is not defined (values 0-90). Scale "One (0%)" and "Control" both occur.
-# 5. write_files: missing yield, yield_moisture, irrigated, N/P/K, harvest_date;
-#    pest_species Spodoptera frugiperda is not in the vocabulary. yield_part is grain.
-# 6. "Spodoptera frugiperda" is not yet in the pest vocabulary. The defoliation was imposed.
+# 1. Grain yield in kg/ha is not directly harvested per plot: t_h_kernel_factor (stored in yield_est_) is a yield-component estimate calculated from kernels per cob assuming 5 ears per sample row and a fixed kernel-per-bushel factor (90,000 in rainy seasons, 110,000 in dry seasons; doi:10.1093/jee/toae235), while Yield (grain_ear_weight_) is measured ear grain weight in g (Experiment 1 only). Decide whether yield_est_ should be mapped to yield.
+# 2. Fertilizer rates (290.4 kg N/ha, 19.21 kg P/ha, 36.51 kg K/ha) are calculated from doi:10.1093/jee/toae235 Methods (11 g/plant NPK 20-10-10 at 2 WAP + 11 g/plant urea at 4 WAP, at 50 x 50 cm = 40,000 plants/ha assuming 1 plant/hill after thinning); verify plants/hill in the full text.
+# 3. In Experiment 4, raw column Average equals the mean of Observation1-4 rather than all 7 non-missing observations; all weekly observations (Observation1-8) are preserved in the long table dd.
+# 4. SB_damage values range 0-90 (% stem borer damage?); exact scale is not stated in the dictionary.
+# 5. Cob_length (up to 31.5) and Cob_Width (up to 6) units are not stated (likely cm).
+# 6. One GPS typo in Experiment 2 (ID 131, Long = 44.46291 between 11.46286 and 11.46292) was corrected to 11.46291; Experiments 1 and 4 lack row GPS and use the CKAN coverage point (3.86318 N, 11.46177 E, Nkolbisson).
+
+## NEW
+# season_label_: original trial season label ("Rainy 1", "Rainy 2", "Dry 1", "Dry 2")
+# defoliation_class_: FAW visual defoliation class ("0%", "1-25%", "26-50%", "51-75%", ">75%", "control")
+# plant_number_: tagged plant number within defoliation class (1-20)
+# grain_ear_weight_: measured grain weight per ear, g (Yield column, Experiment 1 only)
+# yield_est_: kernel-count bushel-formula estimated grain yield, kg/ha (t_h_kernel_factor)
+# kernel_rows_: number of kernel rows per cob (Num_of_Rows_per_cob)
+# kernels_per_row_: number of kernels per row (Num_of_kernel_per_row)
+# kernels_per_cob_: number of kernels per cob (Num_of_kernels_per_cob)
+# cob_length_: cob length, unit not stated (likely cm; Cob_length)
+# cob_width_: cob width, unit not stated (likely cm; Cob_Width)
+# sample_length_: length of sampled row, m (8 m; Length_of_sample_area)
+
+## MISSING
+# yield, yield_moisture, harvest_date
+
+## NOTES
+# Four rainfed seasonal trials of maize (variety ACR 06 TZL COMP4C4F2) at IITA Nkolbisson, Cameroon
+#   (2020-2021; published in Abang et al. 2024, doi:10.1093/jee/toae235).
+# In each trial, 20 plants were tagged per natural FAW defoliation class (Scale 1-5) plus an
+#   insecticide-protected Control (480 plants total; 117 trailing empty rows removed).
+# d holds plant-level measurements (combining the two non-overlapping Plant_height columns);
+#   dd (long) holds weekly FAW defoliation scores (Observation1-8, order 1-8) and stem borer damage
+#   (SB_damage) linked by record_id.
 
 ## NOT PROCESSED
-# plant-recovery-from-faw-damage_complete-data-set-kf.csv, Observation1-8: eight damage scores per plant; Average is their summary and the dictionary does not define each column.
-# Grain_yield, g_ha, t_h_kernel_factor: kernel-count formulas, not measured t/ha or g/ha (see NOTES).
-# Number_of_ears: 5 on every filled row (sample size, not a stand count).
-# Conver_sample_area_to_ha: constant 500; the hectare factor is not explained.
-# Kernel_size: 90000 or 110000; meaning not defined.
-# ID: row number.
-# data_dictionary.csv: documentation or a codebook, not an observation table.
+# Average: summary of Observation1-8 (or 1-4 in Exp 4); individual weekly observations are in dd.
+# g_ha, Grain_yield: intermediate steps of the bushel-formula estimate (t_h_kernel_factor = Grain_yield x 60 = g_ha x 480).
+# Number_of_ears (constant 5), Conver_sample_area_to_ha (constant 500), Kernel_size (90000 or 110000): formula constants.
 
-## NEW VARIABLES
-# season_label_: original season text (Rainy 1, Rainy 2, Dry 1, Dry 2)
-# leaf_damage_pct_: Average damage score for the plant (0-100); same number as pest_severity
-# stemborer_damage_: SB_damage, scale not documented
-# grain_g_ear_: grain weight of the ear in grams (the Yield column)
-# kernel_rows_: number of kernel rows per cob
-# kernels_per_row_: kernels per row
-# kernels_per_cob_: kernels per cob
-# cob_length_: cob length, unit not stated (values up to 31.5)
-# cob_width_: cob width, unit not stated (values up to 6)
-# sample_length_m_: length of the sampled row (8 m in the file)
-# plant_id_: plant number within the defoliation class
 
 carob_script <- function(path) {
 
@@ -63,72 +54,116 @@ Assessing how maize plants damage at different injury levels can recover and rep
 
 	meta <- carobiner::get_metadata(uri, path, group, major = NA, minor = NA,
 		data_organization = "IITA",
-		publication = NA,
+		publication = "doi:10.1093/jee/toae235",
 		project = "Coordinating elucidation of science and effectiveness of Local Innovations for Managing Fall armyworm in Africa",
-		design = "Defoliation classes (0%, 1-25%, 26-50%, 51-75%, >75%) plus a control; 20 plants per class; four sowing dates",
+		design = "4 seasonal trials at IITA Nkolbisson; 5 natural FAW defoliation classes (0%, 1-25%, 26-50%, 51-75%, >75%) plus insecticide-protected control; 20 tagged plants per class",
 		data_type = "on-station experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "insecticide_used;defoliation_class_",
 		response_vars = "plant_height;seed_weight;pest_severity",
+		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 72,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "plant-recovery-from-faw-damage_complete-data-set-kf.csv"]
-	r <- read.csv(f, check.names = FALSE)
-	r <- r[trimws(r$Experiment) != "" & !is.na(r$Experiment), ]
+	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1")
+	r <- r[!is.na(r$Experiment) & nzchar(trimws(r$Experiment)), ]
 
-	h1 <- r[[19]]
-	h2 <- r[[26]]
-	ht <- h1
-	ht[is.na(ht)] <- h2[is.na(ht)]
+	# Plant_height is split across two non-overlapping columns (19 for Exp 1/3/4, 26 for Exp 2)
+	ht <- r[[19]]
+	ht[is.na(ht)] <- r[[26]][is.na(ht)]
 
 	seas <- trimws(r$Season)
-	lon <- r$Long
-	# single bad GPS; see NOTES
+	tr <- trimws(r$Scale)
+	defol_map <- c(
+		"One (0%)" = "0%",
+		"Two (1-25%)" = "1-25%",
+		"Three (26-50%)" = "26-50%",
+		"Four (51-75%)" = "51-75%",
+		"Five (>75%)" = ">75%",
+		"Control" = "control"
+	)
+
+	# Fix single longitude typo (44.46291 -> 11.46291) and fill missing Exp 1/4 GPS from CKAN coverage (03°51.791'N, 011°27.706'E)
+	lon <- as.numeric(r$Long)
 	lon[!is.na(lon) & lon > 20] <- 11.46291
-	lat <- r$Lat
+	lat <- as.numeric(r$Lat)
 	miss <- is.na(lat) | is.na(lon)
-	# dataset coverage point, 03°51.791'N, 011°27.706'E
 	lat[miss] <- 3 + 51.791 / 60
 	lon[miss] <- 11 + 27.706 / 60
 
+	# Management from Abang et al. (2024, doi:10.1093/jee/toae235): variety ACR 06 TZL COMP4C4F2,
+	# 50 x 50 cm spacing (40,000 plants/ha), 11 g/plant NPK 20-10-10 at 2 WAP + 11 g/plant urea at 4 WAP,
+	# rainfed across rainy and dry seasons, Control kept FAW-free with insecticide.
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
+		trial_id = paste(trimws(r$Experiment), r$Year, seas, sep = "_"),
 		country = "Cameroon",
-		location = "Nkolbisson",
 		adm1 = "Centre",
+		adm2 = "Mfoundi",
+		location = "Nkolbisson",
 		latitude = lat,
 		longitude = lon,
-		elevation = r$Altitude,
+		elevation = as.numeric(r$Altitude),
 		geo_from_source = TRUE,
 		planting_date = as.character(as.Date(r$Sowing_date, "%d/%m/%Y")),
 		season = ifelse(grepl("Rainy", seas), "wet", ifelse(grepl("Dry", seas), "dry", NA_character_)),
 		season_label_ = seas,
-		treatment = trimws(r$Scale),
-		plant_id_ = as.character(r$Plant),
 		crop = "maize",
+		variety = "ACR 06 TZL COMP4C4F2",
+		treatment = tr,
+		defoliation_class_ = unname(defol_map[tr]),
+		insecticide_used = tr == "Control",
+		fertilizer_used = TRUE,
+		fertilizer_type = "NPK; urea",
+		N_fertilizer = 290.4,
+		P_fertilizer = round(44 / 2.29, 2),
+		K_fertilizer = round(44 / 1.2051, 2),
+		irrigated = FALSE,
+		row_spacing = as.numeric(r$Row_spacing),
+		plant_spacing = 50,
+		plant_number_ = as.integer(r$Plant),
+		plant_height = as.numeric(ht),
+		seed_weight = as.numeric(r$Weight_per_grain) * 1000,
+		grain_ear_weight_ = as.numeric(r$Yield),
+		yield_est_ = as.numeric(r$t_h_kernel_factor),
+		kernel_rows_ = as.numeric(r$Num_of_Rows_per_cob),
+		kernels_per_row_ = as.numeric(r$Num_of_kernel_per_row),
+		kernels_per_cob_ = as.numeric(r$Num_of_kernels_per_cob),
+		cob_length_ = as.numeric(r$Cob_length),
+		cob_width_ = as.numeric(r$Cob_Width),
+		sample_length_ = as.numeric(r$Length_of_sample_area),
 		stress = "pests",
-		pest_species = "Spodoptera frugiperda",
-		pest_severity = ifelse(is.na(r$Average), NA_character_, as.character(round(r$Average, 2))),
-		leaf_damage_pct_ = r$Average,
-		stemborer_damage_ = r$SB_damage,
-		plant_height = ht,
-		seed_weight = r$Weight_per_grain * 1000,
-		grain_g_ear_ = r$Yield,
-		kernel_rows_ = r$Num_of_Rows_per_cob,
-		kernels_per_row_ = r$Num_of_kernel_per_row,
-		kernels_per_cob_ = r$Num_of_kernels_per_cob,
-		cob_length_ = r$Cob_length,
-		cob_width_ = r$Cob_Width,
-		row_spacing = r$Row_spacing,
-		sample_length_m_ = r$Length_of_sample_area,
-		trial_id = paste(trimws(r$Experiment), r$Year, seas, sep = "_"),
 		on_farm = FALSE,
 		is_survey = FALSE,
 		yield_part = "grain"
 	)
 
-	carobiner::write_files(path, meta, d)
+	# Long table: weekly FAW defoliation observations (Observation1-8) plus stem borer damage (SB_damage)
+	pieces <- vector("list", 9)
+	for (i in 1:8) {
+		v <- r[[paste0("Observation", i)]]
+		keep <- !is.na(v)
+		pieces[[i]] <- data.frame(
+			record_id = d$record_id[keep],
+			order = as.integer(i),
+			pest_species = "Spodoptera frugiperda",
+			pest_severity = as.character(v[keep]),
+			severity_scale = "0-100"
+		)
+	}
+	sb_keep <- !is.na(r$SB_damage)
+	pieces[[9]] <- data.frame(
+		record_id = d$record_id[sb_keep],
+		order = NA_integer_,
+		pest_species = "stem borer",
+		pest_severity = as.character(r$SB_damage[sb_keep]),
+		severity_scale = NA_character_
+	)
+	dd <- do.call(rbind, pieces)
+
+	carobiner::write_files(path, meta, d, long = dd)
 }

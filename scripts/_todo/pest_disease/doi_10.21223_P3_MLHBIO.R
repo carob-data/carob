@@ -1,39 +1,29 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Field survey of leafminer flies and parasitoids along the Peruvian coast, winter 2003 and autumn 2004.
-# The citation in the dataset metadata is doi:10.1603/EN10170.
-# Latitude and longitude are degrees-minutes-seconds without a hemisphere. The survey is on the Peruvian coast, so latitude is south and longitude is west.
-# Foliar damage uses the four-level scale named in the column: 1 no damage, 2 low, 3 middle, 4 high.
-# Crop names were aligned to the vocabulary where the file uses another name for the same crop: alfalfa to lucerne, soja to soybean, green pea to pea, cowpea bean to cowpea, sweet pepper to bell pepper, muskmelon to melon.
-# Tmax and Tmin are the values recorded on the survey row, not a daily weather series.
-
 ## ISSUES
-# There is no yield, fertilizer, or planting date. This is an occurrence survey.
-# There is no applied treatment. crop is recorded in treatment_vars because that field has to name a column that varies.
-# Several crop names are not in the vocabulary and are kept as recorded.
-# Leafminer fly is not in the pathogen vocabulary, so it is not stored as pathogen. The taxa are in the long table.
-# season_ is the cropping season in the file (winter, autumn). It is not one of the wet/dry season terms.
-# Some DMS points are flagged as not on land, and some rows have no coordinates.
-# Some rows have no crop name.
-# write_files: , trial_id, yield, yield_moisture, yield_part, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date. metadata: missing values in treatment variable crop. unknown variable: season_ (season?). unknown variables: damage_class_, leafminer_adults_, parasitoid_adults_, pupae_, larvae_per_leaflet_, taxon_, insect_count_. invalid terms: crop: bean, scallion, wild watermelon, yellow peruvian chili. coordinates not on land: Peru. NA detected: latitude, longitude. time/depth: no time/depth variables in long records?
+# Two DMS longitudes have minutes or seconds >= 60: Piura "80°80'99\"" (5 rows; parses to -81.361 in the Pacific Ocean, corrected to -80.8099 assuming decimal degrees) and Moquegua/Tacna "70°49'97\"" (4 rows; corrected to -70.8328 assuming decimal minutes 70°49.97'), with geo_from_source = FALSE on those 9 rows.
+# In 15 rows leafminer_adults_ exceeds Liriomyza sativae + L. huidobrensis, and in 17 rows parasitoid_adults_ differs from the sum of individual parasitoid taxa (likely unidentified specimens or raw transcription discrepancies); both totals and per-taxon counts are retained.
+# Tmin and Tmax are site/season temperatures attached to each survey row rather than a daily weather series.
+# Crop names were standardized to terminag terms following Mujica & Kroschel (2011): bean -> common bean (Phaseolus vulgaris), wild watermelon -> watermelon (Citrullus lanatus), yellow peruvian chili -> chili pepper (Capsicum baccatum), scallion -> green onions, alfalfa -> lucerne, soja -> soybean, green pea -> pea, cowpea bean -> cowpea, sweet pepper -> bell pepper.
 
-## NEW VARIABLES
-# damage_class_: foliar-damage band from the percent classes in the column header (low 1-25%, middle 26-50%, high >50%).
-# season_: winter or autumn, as recorded.
-# leafminer_adults_: count of leafminer fly adults.
-# parasitoid_adults_: count of parasitoid adults.
-# pupae_: pupae without emerging adults.
-# larvae_per_leaflet_: larvae per leaflet.
-# taxon_: insect taxon in the count table.
-# insect_count_: count of that taxon in the sample.
+## NEW
+# season: winter, autumn (Peruvian coastal cropping seasons; not in values_season)
+# leafminer_adults_: count of leafminer fly adults emerging from the ~30-leaflet field sample (count)
+# parasitoid_adults_: count of parasitoid adults emerging from the sample (count)
+# pupae_: count of pupae without emerging adults (count)
+# larvae_per_leaflet_: mean number of leafminer larvae per leaflet (count/leaflet)
+
+## NOTES
+# Field survey of leafminer flies (Liriomyza spp.) and parasitoids across 459 fields in 10 coastal regions of Peru during winter (Jul-Aug 2003, 243 fields) and autumn (Apr-May 2004, 216 fields); Mujica & Kroschel (2011), doi:10.1603/EN10170.
+# Trailing Excel summary/blank rows (rows 460-462) were dropped. Foliar damage is stored in pest_severity (1-4 scale) and per-taxon counts for 2 leafminer and 61 parasitoid taxa in long (insect_species, insect_abundance).
+# DMS coordinates lack hemisphere indicators; all sites are on the Peruvian coast (south latitude, west longitude).
 
 ## NOT PROCESSED
-# 1.1_dictionary.xls: column definitions.
-# Crop (Family plant): plant family, redundant with crop once the crop is named.
-# Total (LMF + Par + Pupae): sum of the adult, parasitoid, and pupae columns.
-
+# 1.1_dictionary.xls: variable codebook.
+# Crop (Family plant): plant family, redundant with crop.
+# Foliar damage (low = 1-25%; middle=26-50%; high>50%): 1-to-1 text label for the 1-4 pest_severity code.
+# Total (LMF + Par + Pupae): sum of leafminer_adults_, parasitoid_adults_, and pupae_.
 
 carob_script <- function(path) {
 
@@ -50,77 +40,75 @@ Surveys to study the occurrence and distribution of leafminer fly and their asso
 	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "CIP",
 		publication = "doi:10.1603/EN10170",
-		project = NA,
+		project = "Control of the Leafminer, Liriomyza huidobrensis in Potatoes through IPM",
 		design = NA,
 		data_type = "survey",
-		treatment_vars = "crop",
-		response_vars = "disease_severity",
+		treatment_vars = "none",
+		response_vars = "pest_severity;insect_abundance",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 50,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "subchapter 1.1_Survey dataset.xls"]
 	r <- carobiner::read.excel(f, na="NA")
 	names(r) <- trimws(names(r))
+	# Drop trailing Excel summary/blank rows (rows 460-462)
+	r <- r[!is.na(r$Region), ]
 
 	dms <- function(x, neg) {
 		s <- gsub("[[:space:]]+", "", trimws(as.character(x)))
-		s[!nzchar(s)] <- NA_character_
-		out <- rep(NA_real_, length(s))
-		# One longitude is stored as 77°44"54" (a quote where the minutes mark should be).
-		ok <- !is.na(s) & grepl("^[0-9]+°[0-9]+['\"][0-9]+\"?$", s)
-		if (any(!is.na(s) & !ok)) stop("unparsed coordinate")
-		parts <- strsplit(s[ok], "[°'\"]")
+		parts <- strsplit(s, "[°'\"]")
 		mat <- do.call(rbind, parts)
 		deg <- as.numeric(mat[, 1]) + as.numeric(mat[, 2]) / 60 + as.numeric(mat[, 3]) / 3600
 		if (neg) deg <- -deg
-		out[ok] <- deg
-		out
+		deg
 	}
 
+	lon_raw <- gsub("[[:space:]]+", "", trimws(as.character(r[["Longitude (DMS)"]])))
+	lon <- dms(lon_raw, TRUE)
+	bad_piura <- lon_raw == "80°80'99\""
+	bad_moq <- lon_raw == "70°49'97\""
+	lon[bad_piura] <- -80.8099
+	lon[bad_moq] <- -(70 + 49.97 / 60)
+
 	crop <- tolower(trimws(as.character(r[["Crop (common name)"]])))
-	crop[crop == "alfalfa"] <- "lucerne"
-	crop[crop == "soja"] <- "soybean"
-	crop[crop == "green pea"] <- "pea"
-	crop[crop == "cowpea bean"] <- "cowpea"
-	crop[crop == "sweet pepper"] <- "bell pepper"
-	crop[crop == "muskmelon"] <- "melon"
-	crop[crop == "faba bean"] <- "faba bean"
+	crop <- carobiner::replace_values(crop,
+		c("alfalfa", "bean", "cowpea bean", "green pea", "scallion", "soja",
+		  "sweet pepper", "wild watermelon", "yellow peruvian chili"),
+		c("lucerne", "common bean", "cowpea", "pea", "green onions", "soybean",
+		  "bell pepper", "watermelon", "chili pepper")
+	)
+
+	season <- tolower(trimws(as.character(r$Season)))
 
 	d <- data.frame(
 		record_id = seq_len(nrow(r)),
+		trial_id = as.character(seq_len(nrow(r))),
 		country = "Peru",
 		adm1 = carobiner::fix_name(r$Region, "title"),
-		latitude = dms(r[["Latitude (DMS)"]], TRUE),
-		longitude = dms(r[["Longitude (DMS)"]], TRUE),
+		latitude = round(dms(r[["Latitude (DMS)"]], TRUE), 5),
+		longitude = round(lon, 5),
 		elevation = as.numeric(r[["Altitude (m)"]]),
-		season_ = tolower(trimws(as.character(r$Season))),
+		geo_from_source = !(bad_piura | bad_moq),
+		date = ifelse(season == "winter", "2003", "2004"),
+		season = season,
 		crop = crop,
-		treatment = crop,
 		tmin = as.numeric(r$Tmin),
 		tmax = as.numeric(r$Tmax),
-		damage_class_ = trimws(as.character(r[["Foliar damage (low = 1-25%; middle=26-50%; high>50%)"]])),
-		disease_severity = as.character(r[["Foliar damage (no damage=1;low = 2; middle=3; high=4)"]]),
-		severity_scale = "1=no damage;2=low (1-25%);3=middle (26-50%);4=high (>50%)",
-		leafminer_adults_ = as.numeric(r[["leafminer fly adults"]]),
-		parasitoid_adults_ = as.numeric(r[["Parasitoid adults"]]),
-		pupae_ = as.numeric(r[["Pupae (without emerging adults)"]]),
+		pest_severity = as.character(as.integer(r[["Foliar damage (no damage=1;low = 2; middle=3; high=4)"]])),
+		severity_scale = "1=no damage (0%);2=low (1-25%);3=middle (26-50%);4=high (>50%)",
+		leafminer_adults_ = as.integer(r[["leafminer fly adults"]]),
+		parasitoid_adults_ = as.integer(r[["Parasitoid adults"]]),
+		pupae_ = as.integer(r[["Pupae (without emerging adults)"]]),
 		larvae_per_leaflet_ = as.numeric(r[["Larva/ leaflet"]]),
 		stress = "pests",
 		on_farm = TRUE,
-		is_survey = TRUE,
-		geo_from_source = FALSE
+		is_survey = TRUE
 	)
-	d$damage_class_[!nzchar(d$damage_class_)] <- NA_character_
-	d$disease_severity[!nzchar(d$disease_severity)] <- NA_character_
-	d$season_[!nzchar(d$season_)] <- NA_character_
-	d$crop[!nzchar(d$crop)] <- NA_character_
-	d$treatment <- d$crop
-	d$geo_from_source <- !is.na(d$latitude) & !is.na(d$longitude)
 
 	known <- c(
 		"Region", "Latitude (DMS)", "Longitude (DMS)", "Altitude (m)", "Season", "Tmax", "Tmin",
@@ -131,13 +119,18 @@ Surveys to study the occurrence and distribution of leafminer fly and their asso
 		"Total (LMF + Par + Pupae)", "Larva/ leaflet"
 	)
 	taxa <- setdiff(names(r), known)
+	taxa_clean <- gsub("[[:space:]]+", " ", trimws(taxa))
+	taxa_clean[taxa_clean == "L. sativae"] <- "Liriomyza sativae"
+	taxa_clean[taxa_clean == "L. huidobrensis"] <- "Liriomyza huidobrensis"
+
 	pieces <- vector("list", length(taxa))
 	for (i in seq_along(taxa)) {
 		pieces[[i]] <- data.frame(
 			record_id = d$record_id,
-			order = i,
-			taxon_ = taxa[i],
-			insect_count_ = as.numeric(r[[taxa[i]]])
+			date = d$date,
+			order = as.integer(i),
+			insect_species = taxa_clean[i],
+			insect_abundance = as.character(as.integer(r[[taxa[i]]]))
 		)
 	}
 	dlong <- do.call(rbind, pieces)

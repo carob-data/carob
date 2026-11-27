@@ -1,31 +1,26 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Medium-duration disease-resistant pigeonpea hybrid trial MLT-MDDRPHT-1 at ICRISAT Patancheru. The dataset title says 2016-17, so planting_date is 2016.
-# Net plot 4 rows x 3.4 m x 0.75 m = 10.2 m2 (gross 12 m2), from the metadata text. Grain weight is kg/plot. Yield (kg/ha) is kg/plot x 10000 / 10.2.
-# 100-seed weight is grams; seed_weight is that value x 10. Plant height is centimeters and plant stand is plants, from the metadata text.
-# Plot numbers 1xx and 2xx are the two replications. Names with "(C)" are checks. Sterility is 0 on every row.
-# Coordinates are the midpoint of the Dataverse bounding box for field BP 14A (78.268877–78.270929 E, 17.507420–17.507494 N).
-
 ## ISSUES
-# No disease scores are in the workbook. Fertilizer, inoculation, and irrigation are not reported.
-# The 100-seed column name ends with a non-breaking space.
-# Final plant stand and "Total plants" differ. Density uses plant stand with the net area; the column is not labeled net or gross.
-# Seeds per pod includes 0.6, which is very low; left as recorded.
-# No publication DOI in the Dataverse record.
-# write_files: missing carob_contributor, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date.
-# unknown variables: fertility_plants_, seeds_per_pod_.
+# Despite "disease resistant" in the trial title, no disease scores or disease stress data are in the workbook; this dataset may belong in the varieties group.
+# Seeds per pod in plot 110 (ICPH 3496, rep 1) is 0.6 vs 3.4-4.2 on all other plots (likely a data-entry typo for 3.6); left as recorded.
+# Fertilizer, irrigation, moisture basis, and exact planting/harvest dates are not reported.
+
+## NEW
+# seeds_per_pod_: seeds per pod (count).
+
+## MISSING
+# yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, harvest_date
+
+## NOTES
+# Medium-duration pigeonpea hybrid trial MLT-MDDRPHT-1 at ICRISAT Patancheru (field BP 14A), 2016-17: 12 ICPH hybrids + 2 check varieties (Asha, Maruti) in 2 replications.
+# Net plot is 4 rows x 3.4 m x 0.75 m = 10.2 m2 (gross 12 m2); grain weight (kg/plot) and net plant stand are scaled to kg/ha and plants/ha using 10.2 m2.
+# Check tag "(C)" was stripped from variety names and marked in variety_type; non-pedigree check labels (including a raw copy-paste error "Maruti (Check)" on Asha in plot 214) were set to NA in variety_pedigree.
+# Coordinates are the midpoint of the ICRISAT Dataverse bounding box for field BP 14A.
 
 ## NOT PROCESSED
-# xlsx, Entry no: one entry per hybrid name.
-# xlsx, Total fertiles and Total steriles: every row is fully fertile.
-# xlsx, Fertile percentage: used for sterility_index.
-# Metadata-Multi loction trial - medium duration disease resistant Pigeonpea hybrids trial (MLT-MDDRPHT-1).txt: documentation or a codebook, not an observation table.
-
-## NEW VARIABLES
-# seeds_per_pod_: seeds per pod
-# fertility_plants_: plants counted for fertility (Total plants), not the field stand
+# xlsx, Entry no: trial entry index (1-to-1 with ICPH No).
+# xlsx, Total plants, Total fertiles, Total steriles: gross-plot plant count (always exactly Plant stand + 8 border plants across 4 rows) with 0 steriles on every row; captured by plant_density and sterility_index.
 
 carob_script <- function(path) {
 
@@ -46,30 +41,33 @@ This dataset contains phenotypic evaluation data of medium duration disease resi
 		design = NA,
 		data_type = "experiment",
 		treatment_vars = "variety",
-		response_vars = "yield;flowering_days;maturity_days;plant_height",
+		response_vars = "yield;flowering_days;maturity_days;plant_height;seed_weight;sterility_index",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 75,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "Multi loction trial - medium duration disease resistant Pigeonpea hybrids trial (MLT-MDDRPHT-1.xlsx"]
 	r <- carobiner::read.excel(f)
+	# Column header ends with a non-breaking space
 	seed_col <- grep("^Weight of 100 seeds", names(r), value = TRUE)
 
-	variety <- trimws(r[["ICPH No"]])
-	vtype <- ifelse(grepl("\\(C\\)", variety), "check", NA_character_)
-	ped <- gsub("\\s+", " ", trimws(r$Pedigree))
+	raw_var <- trimws(r[["ICPH No"]])
+	is_check <- grepl("\\(C\\)", raw_var)
+	variety <- trimws(gsub("\\(C\\)", "", raw_var))
+	ped <- ifelse(is_check, NA_character_, gsub("\\s+", " ", trimws(r$Pedigree)))
 
 	d <- data.frame(
 		country = "India",
 		adm1 = "Telangana",
 		location = "ICRISAT Patancheru",
+		site = "BP 14A",
 		crop = "pigeon pea",
 		variety = variety,
-		variety_type = vtype,
+		variety_type = ifelse(is_check, "check", "hybrid"),
 		variety_pedigree = ped,
 		treatment = variety,
 		rep = as.integer(r[["Plot number"]] %/% 100),
@@ -77,25 +75,27 @@ This dataset contains phenotypic evaluation data of medium duration disease resi
 		flowering_days = as.numeric(r[["Days to flowering"]]),
 		maturity_days = as.numeric(r[["Days to maturity"]]),
 		plant_height = as.numeric(r[["Plant height"]]),
+		# Net plot area = 4 rows x 3.4 m x 0.75 m = 10.2 m2 (from metadata txt)
 		plant_density = as.numeric(r[["Plant stand"]]) * 10000 / 10.2,
-		fertility_plants_ = as.numeric(r[["Total plants"]]),
 		sterility_index = 100 - as.numeric(r[["Fertile percentage"]]),
 		seed_weight = as.numeric(r[[seed_col]]) * 10,
 		seeds_per_pod_ = as.numeric(r[["Seeds per pod"]]),
-		grain_color = trimws(r[["Seed base color"]]),
+		grain_color = tolower(trimws(r[["Seed base color"]])),
 		yield = as.numeric(r[["Grain weight"]]) * 10000 / 10.2,
-		yield_part = "grain",
-		stress = "disease",
+		yield_part = "seed",
 		planting_date = "2016",
 		row_spacing = 75,
 		plot_length = 3.4,
 		plot_width = 3,
 		plot_area = 10.2,
 		trial_id = "1",
+		trial_name = "MLT-MDDRPHT-1",
 		on_farm = FALSE,
 		is_survey = FALSE,
 		longitude = (78.268877 + 78.270929) / 2,
 		latitude = (17.507420 + 17.507494) / 2,
+		geo_uncertainty = 109,
+		geo_source = "ICRISAT Dataverse bounding box",
 		geo_from_source = TRUE
 	)
 

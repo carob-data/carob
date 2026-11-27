@@ -1,36 +1,34 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# cgm-data.csv: cassava plants scored for cassava green mite and the predatory mite Typhlodromalus aripo.
-# Plants in a block are averaged at each month. Sites in Cameroon, dry season labeled 2016-2017, at 3, 6, or 9 months after planting.
-# typhlodromalus_present_ stays yes/no when the plants agree, and is the proportion of plants when they do not. typhlodromalus_30plants_ is the recorded percent; missing plants are left out of the mean.
-# pest_incidence is CGM_Abundance (count). CGM_Incidence is kept separately because values reach 1820, so it is not a 0-100 percent.
-# T. aripo columns are the predator, not a pest count. ICARDA is an author affiliation in the dataset metadata.
-
 ## ISSUES
-# No coordinates in the table. Do not use the single CKAN point (coverage_x 03°51.791, coverage_y 011°27.706) for every site.
-# Georeference: Bambui, Bertoua, Ekona, Foumbot, Mbalmayo, Meiganga, Meyomessala (Cameroon).
-# October vs January is not assigned to 2016 or 2017. The year column is the label "2016-2017".
-# CGM_Sev is only 2, 3, or 4 and Hairiness is 2, 3, or 4. The dictionary does not give the scales.
-# CGM_Incidence has no unit. Taripo_30plants is filled on 151 of 4520 rows.
-# No yield, plot area, planting date, or fertilizer. AEZ codes are not expanded.
-# write_files: missing latitude, longitude, yield, yield_moisture, N/P/K, irrigated, planting_date, harvest_date; pest names not in the vocabulary; carob_contributor empty.
+# - Genotype "I090521" appears twice at every location and sampling time (30 plants each) with two different fixed Hairiness scores (2 vs 4), indicating one of the two entries is likely a mislabeled genotype (12 genotypes total per site, 360 plants per site-time). Both entries are kept distinct via plot_id and leaf_hairiness_.
+# - CGM_Sev (observed 2-4) and Hairiness (observed 2-4) scales are not defined in the data dictionary (likely standard IITA 1-5 scales).
+# - At Bambui, Foumbot, and Meyomessala, two different MAP ages (3MAP with 9MAP or 6MAP) were both recorded in January 2017, indicating two planting cohorts at those sites; planting dates are not reported.
+# - Meyomessala January 6MAP has only 200 rows (7 genotypes, with 20 plants for I071026) instead of 360.
+
+## NEW
+# aez_: Cameroon agroecological zone code (AEZII, AEZIII, AEZIV, AEZV)
+# leaf_hairiness_: shoot/leaf pubescence score (values 2, 3, or 4; scale not specified)
+# months_after_planting_: months after planting at assessment (3, 6, or 9)
+# plant_number_: sequential plant number sampled per block (1-10)
+# typhlodromalus_present_: logical presence/absence of the predatory mite Typhlodromalus aripo on the plant
+# pest_species: Mononychellus tanajoa
+
+## MISSING
+# yield, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date
+
+## NOTES
+# Multi-location cassava trial across 7 sites in Cameroon (dry season 2016-2017; October 2016 and January 2017) evaluating cassava green mite (Mononychellus tanajoa) abundance/severity and presence of the predatory mite Typhlodromalus aripo across 12 genotype entries (3 blocks x 10 plants per entry).
+# Wide table d has one row per trial cohort x genotype entry (distinguishing the two I090521 hairiness levels) x block; long table dd preserves all 4,520 individual plant-level observations linked by record_id without aggregation.
+# Sites are georeferenced at town/station level (Wikipedia/GeoNames; ~5 km uncertainty); the single CKAN coordinate (3°51.791'N, 11°27.706'E, Yaoundé/IITA) is not applied across all 7 sites.
 
 ## NOT PROCESSED
-# cgm-data.csv: ID. Row number.
-# data-dictionary.csv: documentation or a codebook, not an observation table.
-
-## NEW VARIABLES
-# months_after_planting_: 3, 6, or 9 (column MAP).
-# observation_month_: October or January.
-# season_year_: the source label 2016-2017.
-# cgm_incidence_: CGM_Incidence as recorded; unit not stated.
-# typhlodromalus_present_: T_aripo on the plant, averaged as described in NOTES.
-# typhlodromalus_percent_: T_aripo_perc; dictionary says percent, values are 0 or 3.333.
-# typhlodromalus_30plants_: Taripo_30plants, percent of 30 plants, mostly missing.
-# leaf_hairiness_: Hairiness score.
-# aez_: agroecological zone code (AEZ II, III, IV, or V).
+# cgm-data.csv: ID (row number).
+# cgm-data.csv: CGM_Incidence (exactly CGM_Abundance * 100 / 30 on every row, reaching 1820; apparent spreadsheet formula error copied from T_aripo_perc).
+# cgm-data.csv: T_aripo_perc (redundant helper column = T_aripo * 100 / 30, i.e., 0 or 3.3333%).
+# cgm-data.csv: Taripo_30plants (redundant summary = sum of T_aripo_perc across the 30 plants of each genotype entry, recorded only on row 1 of each 30-plant group).
+# data-dictionary.csv: codebook only.
 
 
 carob_script <- function(path) {
@@ -45,123 +43,89 @@ Biological control of Mononychellus tanajoa.
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=NA, minor=NA,
+	meta <- carobiner::get_metadata(uri, path, group, major = NA, minor = NA,
 		data_organization = "IITA; ICARDA",
 		publication = NA,
-		project = NA,
-		design = "multilocation; cassava genotypes in 3 blocks",
+		project = "Agriculture Investment and Market Development Project (PIDMA)",
+		design = "multilocation; 12 cassava genotype entries in 3 blocks; 10 plants sampled per block",
 		data_type = "experiment",
 		treatment_vars = "variety",
 		response_vars = "pest_incidence;pest_severity",
-		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 65,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "cgm-data.csv"]
-	r <- read.csv(f, check.names=FALSE)
+	r <- read.csv(f, check.names = FALSE)
 
-	d <- data.frame(
-		variety = trimws(r$Genotypes),
-		treatment = trimws(r$Genotypes),
-		location = carobiner::fix_name(trimws(r$Loc), "title"),
-		aez_ = trimws(r$AEZone),
-		season = "dry",
-		season_year_ = trimws(r$Year),
-		observation_month_ = trimws(r$Month),
-		months_after_planting_ = as.integer(sub("MAP", "", r$MAP)),
-		block_id = as.character(r$Block),
-		plant_number_ = as.integer(r$Plant_number),
-		crop = "cassava",
-		yield_part = "roots",
-		pest_species = "Mononychellus tanajoa",
-		pest_incidence = as.integer(r$CGM_Abundance),
-		cgm_incidence_ = as.numeric(r$CGM_Incidence),
-		pest_severity = as.character(r$CGM_Sev),
-		typhlodromalus_present_ = r$T_aripo == 1,
-		typhlodromalus_percent_ = as.numeric(r$T_aripo_perc),
-		typhlodromalus_30plants_ = as.numeric(r$Taripo_30plants),
-		leaf_hairiness_ = as.integer(r$Hairiness)
+	loc <- carobiner::fix_name(trimws(r$Loc), "title")
+	aez <- trimws(r$AEZone)
+	mon <- trimws(r$Month)
+	# Year is "2016-2017"; October (6MAP) precedes January (9MAP) by 3 months
+	obs_date <- ifelse(mon == "October", "2016-10", ifelse(mon == "January", "2017-01", NA_character_))
+	map_num <- as.integer(sub("MAP", "", trimws(r$MAP)))
+	# Distinguish planting cohorts at sites where two MAP ages were sampled in the same month (January)
+	cohort <- ifelse(mon == "October" & map_num == 6L, "2016-04",
+		ifelse(mon == "January" & map_num == 9L, "2016-04",
+		ifelse(mon == "January" & map_num == 6L, "2016-07",
+		ifelse(mon == "January" & map_num == 3L, "2016-10", "unknown"))))
+	trial_id <- paste(loc, cohort, sep = "_")
+	var <- trimws(r$Genotypes)
+	hair <- as.integer(r$Hairiness)
+	blk <- as.character(r$Block)
+	# Include hairiness in plot_id to keep the two distinct I090521 entries (Hairiness 2 vs 4) separate
+	plot_id <- paste(trial_id, var, paste0("H", hair), paste0("B", blk), sep = "_")
+
+	# Wide table: one row per plot (trial cohort x genotype entry x block)
+	d <- unique(data.frame(
+		trial_id = trial_id,
+		location = loc,
+		aez_ = aez,
+		block_id = blk,
+		plot_id = plot_id,
+		variety = var,
+		treatment = var,
+		leaf_hairiness_ = hair
+	))
+	d <- d[order(d$trial_id, d$variety, d$leaf_hairiness_, d$block_id), ]
+	rownames(d) <- NULL
+	d$record_id <- seq_len(nrow(d))
+
+	# Town/station-level georeferences in Cameroon (Wikipedia/GeoNames; ~5 km uncertainty)
+	geo <- data.frame(
+		location = c("Bambui", "Bertoua", "Ekona", "Foumbot", "Mbalmayo", "Meiganga", "Meyomessala"),
+		adm1 = c("Nord-Ouest", "Est", "Sud-Ouest", "Ouest", "Centre", "Adamaoua", "Sud"),
+		latitude = c(6.0500, 4.5773, 4.2306, 5.5080, 3.5167, 6.5300, 2.7203),
+		longitude = c(10.2333, 13.6846, 9.3368, 10.6325, 11.5000, 14.3700, 11.7068),
+		geo_from_source = FALSE,
+		geo_uncertainty = 5000,
+		geo_source = "Wikipedia/GeoNames"
 	)
-
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 	d$country <- "Cameroon"
-	d$geo_from_source <- FALSE
-	d$trial_id <- paste(d$location, d$season_year_, sep="_")
+	d$season <- "dry"
+	d$crop <- "cassava"
+	d$yield_part <- "roots"
 	d$on_farm <- NA
 	d$is_survey <- FALSE
 	d$stress <- "pests"
-	# Abstract names the mite Mononychellus tanajoa. CGM_Abundance is the count used as pest_incidence.
 
-	# Average one row per plant to one row per group in `by`.
-	# Numbers are means. A yes/no column stays yes/no when the plants agree, otherwise it is the proportion of plants.
-	# Text that is all numbers is averaged. Other text that differs is joined with "; ". Full dates are averaged.
-	mean_by <- function(x, by) {
-		if (!nrow(x)) return(x)
-		if ("plant_number_" %in% names(x)) x$plant_number_ <- NULL
-		if ("record_id" %in% names(x)) x$record_id <- NULL
-		by <- intersect(by, names(x))
-		key <- do.call(paste, c(lapply(by, function(v) ifelse(is.na(x[[v]]), "", as.character(x[[v]]))), list(sep = "\r")))
-		mean_na <- function(z) {
-			z <- as.numeric(z)
-			if (all(is.na(z))) NA_real_ else mean(z, na.rm = TRUE)
-		}
-		keep <- !duplicated(key)
-		out <- x[keep, , drop = FALSE]
-		num <- vapply(x, is.numeric, TRUE)
-		logi <- vapply(x, is.logical, TRUE)
-		num[names(num) %in% by] <- FALSE
-		logi[names(logi) %in% by] <- FALSE
-		for (v in names(x)[num]) {
-			m <- tapply(x[[v]], key, mean_na)
-			m <- unname(m[key[keep]])
-			if (is.integer(x[[v]]) && all(is.na(m) | abs(m - round(m)) < 1e-8)) {
-				m <- as.integer(round(m))
-			}
-			out[[v]] <- m
-		}
-		for (v in names(x)[logi]) {
-			same <- tapply(x[[v]], key, function(z) {
-				z <- z[!is.na(z)]
-				!length(z) || all(z == z[1])
-			})
-			if (isTRUE(all(same))) {
-				m <- tapply(x[[v]], key, function(z) {
-					z <- z[!is.na(z)]
-					if (!length(z)) NA else z[1]
-				})
-				out[[v]] <- unname(m[key[keep]])
-			} else {
-				m <- tapply(as.numeric(x[[v]]), key, mean_na)
-				out[[v]] <- unname(m[key[keep]])
-			}
-		}
-		for (v in names(x)) {
-			if (v %in% by || num[v] || logi[v]) next
-			u <- tapply(as.character(x[[v]]), key, function(z) {
-				z <- z[!is.na(z)]
-				z <- trimws(z)
-				z <- z[nzchar(z)]
-				if (!length(z)) return(NA_character_)
-				if (all(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", z))) {
-					return(as.character(mean(as.Date(z))))
-				}
-				isn <- grepl("^-?[0-9]+(\\.[0-9]+)?$", z)
-				parts <- character()
-				if (any(isn)) parts <- c(parts, as.character(mean(as.numeric(z[isn]))))
-				codes <- unique(z[!isn])
-				parts <- c(parts, codes)
-				if (length(parts) == 1) parts else paste(parts, collapse = "; ")
-			})
-			out[[v]] <- unname(u[key[keep]])
-		}
-		rownames(out) <- NULL
-		out
-	}
+	# Long table: all 4,520 plant-level observations linked to d by record_id
+	rec_id <- d$record_id[match(plot_id, d$plot_id)]
+	stopifnot(!any(is.na(rec_id)))
+	dd <- data.frame(
+		record_id = rec_id,
+		date = obs_date,
+		months_after_planting_ = map_num,
+		plant_number_ = as.integer(r$Plant_number),
+		pest_species = "Mononychellus tanajoa",
+		pest_incidence = as.integer(r$CGM_Abundance),
+		pest_severity = as.character(r$CGM_Sev),
+		typhlodromalus_present_ = r$T_aripo == 1L
+	)
 
-	d <- mean_by(d, c("variety", "treatment", "location", "aez_", "season", "season_year_", "observation_month_", "months_after_planting_", "block_id", "trial_id", "crop", "pest_species"))
-
-	carobiner::write_files(path, meta, d)
+	carobiner::write_files(path, meta, d, long = dd)
 }

@@ -1,39 +1,32 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Field counts of aphids on 320 plots in 2024 (Dry and Raining seasons). Treatments are
-#   a fungal isolate (Beauveria or Metarhizium codes BIITAC/MIITAC), a water or oil
-#   formulation, plus Control and INSECTICIDE. Concentration text is kept as read;
-#   the exponent did not survive in the csv ("3.2x 10?").
-# Initial_count and week1-week4 are aphid counts per plant (dictionary). They are stacked
-#   in dd with week_ 0 (initial) to 4. One wide row per plot.
-# The crop is not a column. The description is banana and plantain, targeting the banana
-#   aphid. crop is set to plantain and pest_species to "banana aphid"; both need confirmation.
-# Season "Raining" is stored as wet, "Dry" as dry.
-# Coordinates are the dataset coverage point coverage_x 4.61255, coverage_y 13.15358
-#   (latitude, longitude; same order as the other IITA records). No place name.
-# Rows with a blank formulation are kept; treatment is then the isolate alone
-#   (Control and INSECTICIDE).
-
 ## ISSUES
-# 1. Confirm the crop (banana versus plantain) and that the insects counted were the banana aphid.
-# 2. Recover the spore concentration (the power of 10 was lost in the file).
-# 3. No site name, yield, planting date, or fertilizer. The coverage point needs a place name.
-# 4. The insecticide used in the INSECTICIDE treatment is not named.
-# 5. write_files: missing yield, yield_part, yield_moisture, N/P/K, planting_date, harvest_date.
-#    formulation_, isolate_ and concentration_ are not in terminag yet.
+# - Coordinates (4.61255, 13.15358) are a single country-level coverage point from dataset metadata, not actual field coordinates; no trial locality or site name is reported.
+# - Confirm the crop ("plantain" vs "banana"; the abstract refers to "banana-plantain production") and verify that counted aphids are Pentalonia nigronervosa (banana aphid).
+# - Spore concentration exponent was corrupted in the source CSV ("3.2x 10?"); related lab bioassays by the same group (Enoh et al. 2024, PLOS ONE) used 3.2 x 10^6 conidia/ml. In the source CSV this string was also filled down on Control and INSECTICIDE rows (set to NA here for those treatments).
+# - Active ingredient and rate of the chemical INSECTICIDE treatment are not named.
+
+## NEW
+# formulation_: biopesticide carrier formulation ("water" or "oil")
+# isolate_: entomopathogenic fungal isolate code (MIITAC6.2.2, BIITAC6.2.2, BIITAC10.3.3)
+# concentration_: fungal spore concentration text as recorded in the source file
+# week_: weeks after treatment (0 = initial pre-treatment count, 1-4 = weeks after treatment)
+# pest_species: Pentalonia nigronervosa
+# insecticide_product: beauveria bassiana
+
+## MISSING
+# yield, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date
+
+## NOTES
+# Field efficacy trial in Cameroon (2024, dry and wet seasons) evaluating 3 entomopathogenic fungal isolates (Metarhizium anisopliae MIITAC6.2.2; Beauveria bassiana BIITAC6.2.2, BIITAC10.3.3) in water or oil formulations against an untreated control and an unnamed chemical insecticide (20 replications each; 320 plots/plants).
+# Repeated weekly aphid counts per plant (initial count through week 4) are stored in the long table linked by record_id and order/week_.
+# Year (2024) is the evaluation year (stored as date in the long table), not planting_date.
 
 ## NOT PROCESSED
-# ID: row number.
-# data_dictionary.csv rows Formulated, Unformulated, MIITAC6.2.2, BIITAC6.2.2, BIITAC10.3.3:
-#   code lists, already carried in Formulation and isolate.
+# field-assessment-2024.csv: ID (row number).
+# data_dictionary.csv: metadata/codebook only.
 
-## NEW VARIABLES
-# formulation_: water or oil formulation
-# isolate_: fungal isolate, Control, or INSECTICIDE
-# concentration_: spore concentration text as in the file
-# week_: 0 = initial count, 1-4 = weeks after treatment
 
 carob_script <- function(path) {
 
@@ -51,62 +44,70 @@ The project aims to develop environmentally friendly management strategies to en
 		data_organization = "IITA",
 		publication = NA,
 		project = "Plant Health Initiative",
-		design = "Fungal isolates in water or oil formulations, a control and an insecticide; up to 20 repetitions; dry and wet seasons",
+		design = "3 fungal isolates x 2 formulations (water, oil) plus untreated control and chemical insecticide; 20 replications; dry and wet seasons",
 		data_type = "experiment",
-		treatment_vars = "treatment",
+		treatment_vars = "insecticide_used;insecticide_product",
 		response_vars = "pest_incidence",
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 60,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "field-assessment-2024.csv"]
-	r <- read.csv(f, check.names = FALSE)
+	r <- read.csv(f, check.names = FALSE, na.strings = "")
 
-	form <- trimws(r$Formulation)
-	form[form == ""] <- NA_character_
-	iso <- trimws(r$isolate)
-	iso[iso == ""] <- NA_character_
-	conc <- trimws(r$Concentration)
-	conc[conc == ""] <- NA_character_
+	form_raw <- trimws(r$Formulation)
+	form <- ifelse(form_raw == "Water formulations", "water",
+		ifelse(form_raw == "Oil formulation", "oil", form_raw))
+	iso_raw <- trimws(r$isolate)
+	is_fungal <- !(iso_raw %in% c("Control", "INSECTICIDE"))
+
+	prod <- ifelse(iso_raw == "Control", "none",
+		ifelse(iso_raw == "INSECTICIDE", "unknown",
+		ifelse(iso_raw == "MIITAC6.2.2", "metarhizium anisopliae", "beauveria bassiana")))
+
 	seas <- trimws(r$season)
-	season <- ifelse(seas == "Dry", "dry", ifelse(seas == "Raining", "wet", seas))
-	treatment <- ifelse(is.na(form), iso, paste(form, iso, sep = " | "))
+	season <- ifelse(seas == "Dry", "dry", ifelse(seas == "Raining", "wet", tolower(seas)))
+	treatment <- ifelse(is.na(form), iso_raw, paste(iso_raw, form, sep = " | "))
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
 		country = "Cameroon",
+		# Single country-level coverage coordinate from dataset metadata (no site name reported)
 		latitude = 4.61255,
 		longitude = 13.15358,
 		geo_from_source = TRUE,
-		planting_date = as.character(r$Year),
+		date = as.character(r$Year),
 		season = season,
-		treatment = treatment,
-		formulation_ = form,
-		isolate_ = iso,
-		concentration_ = conc,
-		rep = as.integer(r$Repetition),
-		insecticide_used = !is.na(iso) & iso == "INSECTICIDE",
-		crop = "plantain",
-		stress = "pests",
 		trial_id = paste(r$Year, season, sep = "_"),
+		rep = as.integer(r$Repetition),
+		crop = "plantain",
+		yield_part = "fruit",
+		treatment = treatment,
+		insecticide_used = iso_raw != "Control",
+		insecticide_product = prod,
+		isolate_ = ifelse(is_fungal, iso_raw, NA_character_),
+		formulation_ = form,
+		# Source filled "3.2x 10?" down onto Control and INSECTICIDE rows; keep only for fungal treatments
+		concentration_ = ifelse(is_fungal, trimws(r$Concentration), NA_character_),
+		stress = "pests",
 		on_farm = NA,
 		is_survey = FALSE
 	)
-	d$record_id <- seq_len(nrow(d))
 
 	cols <- c("Initial_count", "week1", "week2", "week3", "week4")
-	pieces <- vector("list", length(cols))
-	for (i in seq_along(cols)) {
-		pieces[[i]] <- data.frame(
+	pieces <- lapply(seq_along(cols), function(i) {
+		data.frame(
 			record_id = d$record_id,
 			date = as.character(r$Year),
-			week_ = i - 1L,
-			pest_species = "banana aphid",
+			order = as.integer(i),
+			week_ = as.integer(i - 1L),
+			pest_species = "Pentalonia nigronervosa",
 			pest_incidence = as.integer(r[[cols[i]]])
 		)
-	}
+	})
 	dd <- do.call(rbind, pieces)
 
 	carobiner::write_files(path, meta, d, long = dd)

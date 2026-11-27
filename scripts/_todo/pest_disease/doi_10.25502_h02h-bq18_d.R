@@ -1,59 +1,40 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# Plant-level counts of fall armyworm, stemborers, leaf folders and natural enemies
-#   on maize at Batchenga (Ndjie, Okongolo) and Mbalmayo (Avebe, Memiam), Centre, Cameroon,
-#   2020 and 2021. 65535 rows is the Excel limit; 29018 rows with no treatment were dropped.
-# One row is one plant at one sampling date (not aggregated).
-# Sampling_date is either day/month/year (21/10/2020) or day-Mon-yy (13-Oct-20). Months
-#   are matched in English so the result does not depend on the locale.
-# WAP and WAS (4, 6, 8, 11) are converted to DAP = weeks x 7. planting_date = sampling date minus DAP.
-# Cropping_season 1 and 2 are stored as first and second. Season  codes are not defined further.
-# fertilized_ is TRUE or FALSE only when the treatment or variety text says so.
-#   "unfertilized" is handled before "fertilized".
-# pest_incidence is FAW larvae. pest_severity is FAWSev as text (values run past 9, up to 100;
-#   the scale is not documented). Other counts stay in their own columns.
-# Variety is kept as recorded, including CMS8704-fertilized / CMS8704-unfertilized.
-# No coordinates in the file. The dataset coverage point (2.3232, 11.43653) is not these towns.
-
 ## ISSUES
-# 1. Georeference Batchenga (Ndjie, Okongolo) and Mbalmayo (Avebe, Memiam), Centre, Cameroon.
-#    adm2 (Lekié, Nyong-et-So'o) was not set; confirm GADM names.
-# 2. No yield in this file (yield components are doi:10.25502/zsnk-kk83/d). No N/P/K rates.
-# 3. FAWSev, SBSev and LeafFolderSev look like percentages but that is not stated.
-# 4. GREMEC has no active ingredient or rate. OMO, Tithonia, wood ash and soil treatment have no rates.
-# 5. Stem borers are not identified to species. Confirm planting dates derived from WAP.
-# 6. write_files: missing yield, yield_part, yield_moisture, N/P/K, longitude, latitude, harvest_date.
-#    The count columns with a trailing underscore are not in terminag yet.
+# 1. Coordinates are not in the raw file (CKAN coverage point 2.3232 N, 11.43653 E is far south of these towns). Approximate coordinates for Batchenga (Ndjie, Okongolo) and Mbalmayo (Avebe, Memiam) were geocoded; verify village-level GPS.
+# 2. No yield data in this file (yield components are in companion dataset doi:10.25502/zsnk-kk83/d).
+# 3. Fertilizer rates (N/P/K) are not reported, and fertilizer status is unknown for the 6 local-innovation pest control treatments (fertilizer_used = NA).
+# 4. Application rates/schedules for GREMEC (emamectin benzoate), OMO detergent, Tithonia diversifolia, Thevetia neriifolia, wood ash, and soil treatment are not stated.
+# 5. FAWSev, SBSev, and LeafFolderSev range 0-100 (appearing to be % foliar/damage severity) but the exact rating scale is not documented.
+# 6. Planting dates are back-calculated from Sampling_date minus WAP/WAS x 7; confirm against trial records.
+# 7. 1,837 rows share identical location/field/year/season/date/WAP/treatment/variety/block/method/plant keys (461 exact duplicates excluding ID); kept as recorded pending verification.
+
+## NEW
+# agroecosystem_: agroecological zone ("Forest" or "Transition forest-savannah")
+# pest_control_method_: FAW control technology applied ("emamectin benzoate (GREMEC)", "OMO detergent", "Tithonia diversifolia leaf", "Thevetia neriifolia leaf", "soil application", "wood ash", "none")
+# sampling_method_: plant sampling method ("Destructive" or "Non-destructive")
+# plant_number_: plant sequential number within plot/sampling method (1-8 destructive, 9-30 non-destructive)
+# insect_stage_: pest life stage or damage observation ("egg mass", "larva", "pupa", "damage")
+# organism_role_: ecological role ("pest", "parasitoid", "predator")
+# pest_species values not in terminag: leaf folder, cricket
+
+## MISSING
+# yield, yield_part, yield_moisture, irrigated, harvest_date, N_fertilizer, P_fertilizer, K_fertilizer
+
+## NOTES
+# Plant-level counts of fall armyworm (Spodoptera frugiperda), stem borers, leaf folders, crickets,
+#   and natural enemies (parasitoids and predators) on maize in on-farm trials at Batchenga (Ndjie,
+#   Okongolo) and Mbalmayo (Avebe, Memiam), Centre Region, Cameroon (2020 season 2 and 2021 season 1).
+# Trailing 29,018 empty rows (from Excel 65,535-row export) are removed, leaving 36,517 plant records.
+# d holds plant-date records; dd (long) holds all pest counts/severities (pest_species, pest_incidence,
+#   pest_severity) and natural-enemy counts (insect_species, insect_abundance) linked by record_id.
+# GREMEC active ingredient is emamectin benzoate (per IITA Cameroon FAW trials, e.g. doi:10.1093/jee/toae102).
+# Variety names "CMS8704-fertilized" / "CMS8704-unfertilized" are normalized to "CMS8704" with fertilizer_used set.
 
 ## NOT PROCESSED
-# ID: row number.
-# 29018 empty rows (no treatment, variety, date or counts).
-# data_dictionary.csv: definitions used above.
+# ID: sequential row number; 29,018 trailing empty rows.
 
-## NEW VARIABLES
-# agroecosystem_: forest or transition forest-savannah
-# fertilized_: from the treatment or variety name; NA when not stated
-# sampling_method_: Destructive or Non-destructive
-# plant_id_: plant number
-# faw_eggmass_: FAW egg masses
-# faw_pupae_: FAW pupae
-# sb_eggmass_: stemborer egg masses
-# sb_larvae_: stemborer larvae
-# sb_pupae_: stemborer pupae
-# sb_severity_: stemborer severity, scale not documented
-# charops_: Charops sp. count
-# cotesia_icipe_: Cotesia icipe count
-# coccygidium_luteum_: Coccygidium luteum count
-# other_parasitoids_: other parasitoids
-# predatory_wasps_: predatory wasps
-# earwigs_: earwigs
-# ants_: ants
-# predatory_beetle_: predatory beetles
-# cricket_: crickets (dictionary: other pest)
-# leaffolder_count_: leaf-folder count
-# leaffolder_severity_: leaf-folder severity, scale not documented
 
 carob_script <- function(path) {
 
@@ -70,22 +51,24 @@ Assess the field biophysical efficacy of different products against FAW and dete
 	meta <- carobiner::get_metadata(uri, path, group, major = NA, minor = NA,
 		data_organization = "IITA",
 		publication = NA,
-		project = "Coordinating elucidation of science and effectiveness of Local Innovations for Managing Fall armyworm in Africa",
-		design = "On-farm comparison of FAW control treatments, some with and without fertilizer, at Batchenga and Mbalmayo; repeated plant counts",
+		project = "CGIAR Research Program on Maize: Coordinating elucidation of science and effectiveness of Local Innovations for Managing Fall armyworm in Africa",
+		design = "RCBD; 4-5 blocks on-farm at 2 sites each in Batchenga and Mbalmayo; FAW control technologies and fertilized vs unfertilized maize varieties; destructive (8 plants) and non-destructive (22 plants) sampling at 4, 6, 8, and 11 WAP",
 		data_type = "on-farm experiment",
-		treatment_vars = "treatment;variety",
-		response_vars = "pest_incidence;pest_severity",
+		treatment_vars = "variety;insecticide_used;pest_control_method_",
+		response_vars = "pest_incidence;pest_severity;insect_abundance",
+		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 68,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 90,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "local_innovation_data.csv"]
-	r <- read.csv(f, check.names = FALSE)
-	r <- r[!is.na(r$Treatment) & trimws(r$Treatment) != "", ]
+	r <- read.csv(f, check.names = FALSE, fileEncoding = "latin1")
+	r <- r[!is.na(r$Treatment) & nzchar(trimws(r$Treatment)), ]
 
+	# Parse mixed "dd/mm/yyyy" and "dd-Mon-yy" sampling dates without locale dependence
 	mon <- c(jan = "01", feb = "02", mar = "03", apr = "04", may = "05", jun = "06",
 		jul = "07", aug = "08", sep = "09", oct = "10", nov = "11", dec = "12")
 	rawd <- trimws(r$Sampling_date)
@@ -93,90 +76,129 @@ Assess the field biophysical efficacy of different products against FAW and dete
 	i <- grepl("^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$", rawd)
 	date[i] <- as.character(as.Date(rawd[i], "%d/%m/%Y"))
 	j <- grepl("^[0-9]{1,2}-[A-Za-z]{3}-[0-9]{2}$", rawd)
-	parts <- strsplit(rawd[j], "-")
+	parts <- strsplit(rawd[j], "-", fixed = TRUE)
 	dday <- sprintf("%02d", as.integer(vapply(parts, `[`, "", 1)))
 	dmon <- unname(mon[tolower(vapply(parts, `[`, "", 2))])
 	dyy <- paste0("20", vapply(parts, `[`, "", 3))
 	date[j] <- paste(dyy, dmon, dday, sep = "-")
 
+	# Convert WAP/WAS (4, 6, 8, 11) to DAP and derive planting date
 	w <- toupper(trimws(r$WAP))
-	okw <- grepl("^[0-9]+WAS$|^[0-9]+WAP$", w)
-	dap <- rep(NA_integer_, length(w))
-	dap[okw] <- as.integer(sub("W(AP|AS)$", "", w[okw])) * 7L
+	dap <- as.integer(sub("W(AP|AS)$", "", w)) * 7L
 	planting <- as.character(as.Date(date) - dap)
 
 	tr <- trimws(r$Treatment)
 	va <- trimws(r$Variety)
-	va[!is.na(va) & va == ""] <- NA_character_
-	both <- paste(tr, va)
+	va <- sub("-(un)?fertilized$", "", va, ignore.case = TRUE)
+
+	both <- paste(tr, trimws(r$Variety))
 	unfert <- grepl("unfertilized|without fertilizer", both, ignore.case = TRUE)
 	fert <- grepl("fertilized|with fertilizer", both, ignore.case = TRUE) & !unfert
-	fertilized <- rep(NA, length(unfert))
-	fertilized[unfert] <- FALSE
-	fertilized[fert] <- TRUE
+	fertilizer_used <- rep(NA, length(tr))
+	fertilizer_used[unfert] <- FALSE
+	fertilizer_used[fert] <- TRUE
+
+	pcm <- rep("none", length(tr))
+	pcm[tr == "Insecticide-GREMEC"] <- "emamectin benzoate (GREMEC)"
+	pcm[tr == "Detergent-OMO"] <- "OMO detergent"
+	pcm[tr == "Leaf of T. diversifolia"] <- "Tithonia diversifolia leaf"
+	pcm[tr == "Leaf of T. neriifolia"] <- "Thevetia neriifolia leaf"
+	pcm[tr == "Soil-treatment"] <- "soil application"
+	pcm[tr == "Wood ash-treatment"] <- "wood ash"
 
 	loc <- carobiner::fix_name(trimws(r$Loc), "title")
 	site <- carobiner::fix_name(trimws(r$Field), "title")
 	year <- as.character(r$Year)
-	sn <- r$Cropping_season
-	season <- ifelse(sn == 1, "first", ifelse(sn == 2, "second", NA_character_))
-	gs <- trimws(r$Crop_Stage)
-	gs[gs == ""] <- NA_character_
-	meth <- trimws(r$method)
-	meth[meth == ""] <- NA_character_
-	sev <- r$FAWSev
+	season <- ifelse(r$Cropping_season == 1, "first",
+		ifelse(r$Cropping_season == 2, "second", NA_character_))
+
+	# Georeference Batchenga (Lekié) and Mbalmayo (Nyong-et-So'o) sites in Centre Region, Cameroon;
+	# Ndjie/Okongolo use Batchenga town coords (4.283 N, 11.650 E, ~10 km uncertainty);
+	# Avebe uses Mbalmayo town coords (3.517 N, 11.500 E, ~10 km); Memiam uses village coords (3.467 N, 11.600 E, ~5 km).
+	geo <- data.frame(
+		site = c("Ndjie", "Okongolo", "Avebe", "Memiam"),
+		adm2 = c("Lekié", "Lekié", "Nyong-et-So'o", "Nyong-et-So'o"),
+		latitude = c(4.283, 4.283, 3.517, 3.467),
+		longitude = c(11.650, 11.650, 11.500, 11.600),
+		geo_uncertainty = c(10000, 10000, 10000, 5000),
+		geo_source = c("Batchenga commune centroid", "Batchenga commune centroid",
+			"Mbalmayo commune centroid", "Memiam village"),
+		stringsAsFactors = FALSE
+	)
+	gm <- match(site, geo$site)
 
 	d <- data.frame(
+		record_id = seq_len(nrow(r)),
+		trial_id = paste(loc, site, year, season, sep = "_"),
 		country = "Cameroon",
 		adm1 = "Centre",
+		adm2 = geo$adm2[gm],
 		location = loc,
-		geo_from_source = FALSE,
 		site = site,
+		latitude = geo$latitude[gm],
+		longitude = geo$longitude[gm],
+		geo_uncertainty = geo$geo_uncertainty[gm],
+		geo_source = geo$geo_source[gm],
+		geo_from_source = FALSE,
 		agroecosystem_ = trimws(r$Agroecosystem),
 		planting_date = planting,
 		date = date,
 		DAP = dap,
 		season = season,
-		treatment = tr,
+		crop = "maize",
 		variety = va,
-		fertilized_ = as.logical(fertilized),
+		treatment = tr,
+		fertilizer_used = fertilizer_used,
 		insecticide_used = tr == "Insecticide-GREMEC",
-		insecticide_product = ifelse(tr == "Insecticide-GREMEC", "GREMEC", NA_character_),
+		# GREMEC 050 WG active ingredient is emamectin benzoate
+		insecticide_product = ifelse(tr == "Insecticide-GREMEC", "emamectin benzoate", "none"),
+		pest_control_method_ = pcm,
 		block_id = as.character(r$Block),
 		rep = as.integer(r$Block),
-		sampling_method_ = meth,
-		growth_stage = gs,
-		plant_id_ = as.character(r$Plant),
-		crop = "maize",
+		sampling_method_ = trimws(r$method),
+		growth_stage = trimws(r$Crop_Stage),
+		plant_number_ = as.integer(r$Plant),
 		stress = "pests",
-		pest_species = "Spodoptera frugiperda",
-		pest_incidence = as.integer(r$FAWLar),
-		pest_severity = ifelse(is.na(sev), NA_character_, as.character(sev)),
-		faw_eggmass_ = as.integer(r$NbEggmassFAW),
-		faw_pupae_ = as.integer(r$FAWPup),
-		sb_eggmass_ = as.integer(r$NBEggmassSB),
-		sb_larvae_ = as.integer(r$SBLar),
-		sb_pupae_ = as.integer(r$SBPup),
-		sb_severity_ = ifelse(is.na(r$SBSev), NA_character_, as.character(r$SBSev)),
-		charops_ = as.integer(r$Charops_sp),
-		cotesia_icipe_ = as.integer(r$Cotesia_icipe),
-		coccygidium_luteum_ = as.integer(r$Coccygidium_luteum),
-		other_parasitoids_ = as.integer(r$Other_Parasitoids),
-		predatory_wasps_ = as.integer(r$Predatory_wasps),
-		earwigs_ = as.integer(r$Ear_wigs),
-		ants_ = as.integer(r$Ants),
-		predatory_beetle_ = as.integer(r$Predatory_beetle),
-		cricket_ = as.integer(r$Cricket),
-		leaffolder_count_ = as.integer(r$NbLeafFolder),
-		leaffolder_severity_ = ifelse(is.na(r$LeafFolderSev), NA_character_, as.character(r$LeafFolderSev)),
-		trial_id = paste(loc, site, year, season, sep = "_"),
 		on_farm = TRUE,
 		is_survey = FALSE
 	)
-	d$agroecosystem_[!is.na(d$agroecosystem_) & d$agroecosystem_ == ""] <- NA_character_
-	d$record_id <- seq_len(nrow(d))
-	# insecticide_used is FALSE for every treatment other than Insecticide-GREMEC
-	d$fertilized_ <- as.logical(d$fertilized_)
 
-	carobiner::write_files(path, meta, d)
+	make_obs <- function(vals, species, stage, role, what) {
+		keep <- !is.na(vals)
+		n <- sum(keep)
+		data.frame(
+			record_id = d$record_id[keep],
+			pest_species = if (role == "pest") rep(species, n) else rep(NA_character_, n),
+			insect_species = if (role != "pest") rep(species, n) else rep(NA_character_, n),
+			insect_stage_ = rep(stage, n),
+			organism_role_ = rep(role, n),
+			pest_incidence = if (what == "count") as.integer(vals[keep]) else rep(NA_integer_, n),
+			pest_severity = if (what == "severity") as.character(vals[keep]) else rep(NA_character_, n),
+			insect_abundance = if (what == "beneficial") as.character(vals[keep]) else rep(NA_character_, n)
+		)
+	}
+
+	dd <- rbind(
+		make_obs(r$NbEggmassFAW, "Spodoptera frugiperda", "egg mass", "pest", "count"),
+		make_obs(r$FAWLar, "Spodoptera frugiperda", "larva", "pest", "count"),
+		make_obs(r$FAWPup, "Spodoptera frugiperda", "pupa", "pest", "count"),
+		make_obs(r$FAWSev, "Spodoptera frugiperda", "damage", "pest", "severity"),
+		make_obs(r$NBEggmassSB, "stem borer", "egg mass", "pest", "count"),
+		make_obs(r$SBLar, "stem borer", "larva", "pest", "count"),
+		make_obs(r$SBPup, "stem borer", "pupa", "pest", "count"),
+		make_obs(r$SBSev, "stem borer", "damage", "pest", "severity"),
+		make_obs(r$NbLeafFolder, "leaf folder", "larva", "pest", "count"),
+		make_obs(r$LeafFolderSev, "leaf folder", "damage", "pest", "severity"),
+		make_obs(r$Cricket, "cricket", NA_character_, "pest", "count"),
+		make_obs(r$Charops_sp, "Charops sp.", "larva", "parasitoid", "beneficial"),
+		make_obs(r$Cotesia_icipe, "Cotesia icipe", "larva", "parasitoid", "beneficial"),
+		make_obs(r$Coccygidium_luteum, "Coccygidium luteum", "larva", "parasitoid", "beneficial"),
+		make_obs(r$Other_Parasitoids, "other parasitoids", NA_character_, "parasitoid", "beneficial"),
+		make_obs(r$Predatory_wasps, "predatory wasp", NA_character_, "predator", "beneficial"),
+		make_obs(r$Ear_wigs, "earwig", NA_character_, "predator", "beneficial"),
+		make_obs(r$Ants, "ant", NA_character_, "predator", "beneficial"),
+		make_obs(r$Predatory_beetle, "predatory beetle", NA_character_, "predator", "beneficial")
+	)
+
+	carobiner::write_files(path, meta, d, long = dd)
 }

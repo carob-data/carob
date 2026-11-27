@@ -1,25 +1,28 @@
 # R script for "carob"
 # license: GPL (>=3)
 
-## NOTES
-# The IJPP extract sheet is blast scores for 25 seed parents against five Pyricularia grisea isolates.
-# Column headers are "Pyricularia grisea 45" and so on. The abstract calls the isolates Pg 45, Pg 53, Pg 56, Pg 118 and Pg 119, and the fungus Magnaporthe grisea.
-# Scores with a decimal are kept as printed. The abstract names ICMR 06444 as the resistant check and ICMB 95444 as the susceptible check.
-# The screen is a greenhouse test (abstract). Dataverse place is Patancheru, Telangana, field code BP 07. There is no bounding box.
-
 ## ISSUES
-# The ANOVA sheet is for 160 lines (breeding-line DF 159), 5 pathotypes and 3 replications (total DF 2399). Those plot scores are not in the files. This script has the 25-line extract only.
-# The extract has no replicate, year, or scale definition. Collection dates in Dataverse are 2014-06-14 to 2016-11-25 and were not used as a planting date.
-# No coordinates, yield, or fertilizer.
-# write_files: missing carob_contributor, yield, yield_moisture, yield_part, latitude, longitude, irrigated, K_fertilizer, N_fertilizer, P_fertilizer, planting_date, harvest_date; unknown pathotype_; invalid disease blast; invalid pathogen Pyricularia grisea.
+# Only the 25-line mean extract (IJPP extract) is provided, not the replicate-level scores for all 160 B-lines summarized in the ANOVA file (160 lines x 5 pathotypes x 3 reps).
+# Greenhouse screening experiment (per AGENTS.md, greenhouse variety-trait screenings are acceptable); no exact sowing date is reported (Dataverse collection window is 2014-06-14 to 2016-11-25).
+
+## NEW
+# pathotype_: Magnaporthe/Pyricularia grisea pathotype-isolate code (Pg 45, Pg 53, Pg 56, Pg 118, Pg 119)
+# disease: "blast" (pearl millet foliar blast) not yet in values_disease.csv
+# pathogen: "Pyricularia grisea" (anamorph of Magnaporthe grisea) not yet in values_pathogen.csv
+
+## MISSING
+# yield, yield_part, yield_moisture, irrigated, N_fertilizer, P_fertilizer, K_fertilizer, planting_date, harvest_date
+
+## NOTES
+# Greenhouse blast screening of designated pearl millet hybrid seed parents (B-lines) against five Pyricularia grisea pathotype-isolates at ICRISAT Patancheru (BP 07).
+# Associated publication (found via web search, no DOI): Yella Goud et al. (2016), Indian Journal of Plant Protection 44(1): 83-87.
+# Scores are on the standard 1-9 blast severity scale (resistant <= 3; susceptible check ICMB 95444 scores 7-9; resistant check ICMR 06444 scores 1-3).
+# Typo "IICMB 97222" in row 4 of the Excel sheet is corrected to "ICMB 97222" (confirmed in Yella Goud et al. 2016).
+# Coordinates are estimated for ICRISAT Patancheru from the Dataverse Google Maps link (geo_from_source = FALSE, geo_uncertainty = 1000 m).
 
 ## NOT PROCESSED
-# ANOVA workbook: source of variation, DF, SS, MSS, F value, F probability. Summary statistics, not plot scores.
-# IJPP extract column Mean: the mean of the five isolate scores on the same row.
-# ANOVA Evaluation of designated hybrid seed parents of Pearl millet for blast resistance.xlsx: design, layout, or protocol sheet, not plot or survey records.
-
-## NEW VARIABLES
-# pathotype_: isolate code from the column header (Pg 45, Pg 53, Pg 56, Pg 118, Pg 119).
+# ANOVA Evaluation of designated hybrid seed parents of Pearl millet for blast resistance.xlsx: ANOVA summary statistics only (DF, SS, MSS, F), not plot observations.
+# IJPP extract ...xlsx: Mean column (arithmetic mean of the five pathotype scores per line).
 
 carob_script <- function(path) {
 
@@ -33,7 +36,7 @@ This database includes the research work carried out on evaluation of 160 Pearl 
 	group <- "pest_disease"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major = 1, minor = 0,
 		data_organization = "ICRISAT",
 		publication = NA,
 		project = NA,
@@ -43,42 +46,51 @@ This database includes the research work carried out on evaluation of 160 Pearl 
 		response_vars = "disease_severity",
 		notes = NA,
 		carob_contributor = NA,
-		carob_date = "202?-??-??",
-		carob_LLM = "Cursor Grok 4.7",
-		carob_completion = 40,
+		carob_date = "2026-11-26",
+		carob_LLM = "Gemini 3.1 Pro",
+		carob_completion = 60,
 		carob_effort = 0
 	)
 
 	f <- ff[basename(ff) == "IJPP extract evaluation of designated hybrid seed parents of Pearl millet for blast resistance.xlsx"]
-	r <- carobiner::read.excel(f, na="NA")
+	r <- carobiner::read.excel(f, na = "NA")
 
 	cols <- c("Pyricularia grisea 45", "Pyricularia grisea 53", "Pyricularia grisea 56", "Pyricularia grisea 118", "Pyricularia grisea 119")
 	codes <- c("Pg 45", "Pg 53", "Pg 56", "Pg 118", "Pg 119")
 	n <- nrow(r)
 	variety <- trimws(r$Entry)
+	# Fix spelling typo in row 4 ("IICMB 97222" -> "ICMB 97222", confirmed in Yella Goud et al. 2016)
+	variety[variety == "IICMB 97222"] <- "ICMB 97222"
 	vtype <- rep("breeding line", n)
-	vtype[variety %in% c("ICMR 06444", "ICMB 95444")] <- "check"
+	vtype[variety == "ICMR 06444"] <- "resistant check"
+	vtype[variety == "ICMB 95444"] <- "susceptible check"
 
 	d <- data.frame(
 		variety = rep(variety, length(cols)),
 		variety_pedigree = rep(trimws(r$Pedigree), length(cols)),
 		variety_type = rep(vtype, length(cols)),
-		pathotype_ = rep(codes, each=n),
+		pathotype_ = rep(codes, each = n),
 		disease_severity = as.character(unlist(r[cols]))
 	)
-	d$treatment <- paste(d$variety, d$pathotype_, sep="_")
+	d$treatment <- paste(d$variety, d$pathotype_, sep = "_")
 	d$crop <- "pearl millet"
 	d$disease <- "blast"
 	d$pathogen <- "Pyricularia grisea"
+	d$severity_scale <- "1-9"
 	d$stress <- "disease"
 	d$country <- "India"
 	d$adm1 <- "Telangana"
-	d$location <- "Patancheru"
-	d$site <- "ICRISAT Research Field - BP 07"
+	d$location <- "ICRISAT Patancheru"
+	d$site <- "BP 07"
+	# ICRISAT Patancheru campus coordinates from Dataverse Google Maps link
+	d$longitude <- 78.2720
+	d$latitude <- 17.5182
+	d$geo_uncertainty <- 1000
+	d$geo_source <- "ICRISAT Patancheru (Dataverse Google Maps link)"
+	d$geo_from_source <- FALSE
 	d$trial_id <- "1"
 	d$on_farm <- FALSE
 	d$is_survey <- FALSE
-	d$geo_from_source <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }
