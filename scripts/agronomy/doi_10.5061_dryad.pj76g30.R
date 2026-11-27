@@ -5,6 +5,8 @@
 
 ## ISSUES
 # Plot yields are not in the data file, so country-crop-treatment means from the paper were not written as plot yields.
+# The data and the article do not specify the site where the experiment was carried out.
+# Geographic coordinates (longitude and latitude) are missing from the entire dataset.
 
 carob_script <- function(path) {
    
