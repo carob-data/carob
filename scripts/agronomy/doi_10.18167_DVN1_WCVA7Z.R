@@ -19,7 +19,7 @@ Full dataset (raw data calculated at plot level) on weed biomass, Weed cover, we
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "SSSA; CIRAD; FOFIFA",
 		publication = NA,
 		project = NA,

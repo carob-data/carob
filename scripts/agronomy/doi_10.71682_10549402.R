@@ -27,7 +27,7 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		list()
 	}
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIMMYT; CIRAD; RAB; ICRAF",
 		publication = NA,
 		project = "GAIA",

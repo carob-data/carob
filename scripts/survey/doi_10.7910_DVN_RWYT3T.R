@@ -5,6 +5,7 @@
 ## The plot area is unusually large compared to the reported harvested yield.
 
 
+
 carob_script <- function(path) {
 
 "
@@ -17,7 +18,7 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 	group <- "survey"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=3,
 		data_organization = "AfricaRice; IRRI",
 		publication = NA,
 		project = NA,
@@ -32,8 +33,8 @@ Data are from surveys conducted by Africa Rice Center (AfricaRice) and National 
 		notes = NA
 	)
 	
-	f1 <- ff[basename(ff) == "SRP_Dataset.xls"]
-	f2 <- ff[basename(ff) == "SRP_Dataset_dictionary.xls"]
+	f1 <- ff[basename(ff) == "data.xls"]
+	f2 <- ff[basename(ff) == "dictionary.xls"]
 	f3 <- ff[basename(ff) == "doi_10.7910_DVN_RWYT3T.json"]
 	f4 <- ff[basename(ff) == "doi_10.7910_DVN_RWYT3T.zip"]
 	f5 <- ff[basename(ff) == "doi_10.7910_DVN_RWYT3T_files.txt"]

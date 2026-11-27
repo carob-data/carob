@@ -1,6 +1,7 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+
 ## ISSUES
 "
 data does not distinguish which); 
@@ -38,7 +39,7 @@ There is one simulation unit for each combination of crop, soil and climate, ide
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=2,
 		data_organization = "CIRAD",
 		publication = NA,
 		project = NA,

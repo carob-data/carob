@@ -9,7 +9,7 @@ carob_script  <- function(path) {
 	group <- "varieties_other"
 	ff <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=11,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=12,
 		publication= NA,# 
 		data_organization = "CIP;IIAM;SLU",
 		carob_contributor="Cedric Ngakou",

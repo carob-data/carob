@@ -19,7 +19,7 @@ More specifically, the data comprise nitrous oxide (N2O) and methane (CH4) emiss
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "CIRAD;MAFFKH;ETH;RUA;KSU",
 		publication = "doi:10.1016/j.agee.2026.110363",
 		project = NA,
