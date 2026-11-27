@@ -1,23 +1,21 @@
 # R script for "carob"
 # license: GPL (>=3)
 
+## ISSUES
+# Ludhiana BIOMASS (t/ha) does not state fresh vs dry basis; stored as y_total (kg/ha).
+# Ludhiana topsoil (0-15 cm) NH4 and NO3 are reported in kg/ha without bulk density; converted to mg/kg by dividing by 2.24 (standard 0-15 cm furrow-slice factor, BD ~1.49 g/cm3, consistent with the 0.25088 = 2.24 * 0.112 titration increments in the raw values).
+
+## MISSING
+# P_fertilizer, K_fertilizer, yield_moisture, and harvest_date are not reported in the files.
+
 ## NOTES
 # Three 2024/25 BNI (T3BL.3NsbS) spring-wheat yield trials in South Asia (CropSustaiN project):
 # Bhairahawa (NWRP, Nepal), Islamabad (NARC, Pakistan), and Ludhiana (BISA, India), each 8 lines x 3 N rates (0/75/150 kg N/ha) x 3 reps = 72 plots (216 total).
 # BNI_Nepal_2025.xlsx duplicates Bhairahawa yield components and is not used.
 # For Pakistan, Yield Trial + Islamabad 2024_25, PAKISTAN.xlsx ("Agronomic data" & "Gen. info.") is combined with the matching 72-plot sheet "Agronomic Data" in BNI data_Final_ Pakistan 2024-25.xlsx (which adds grain N, protein, and 4 dated soil-N batches).
+# Islamabad Yellow rust scores follow the Modified Cobb scale (e.g. 80M, 90S); stored as disease = "yellow rust" and disease_severity.
 # Repeated canopy observations (ground_cover, NDVI, canopy_temperature, SPAD) and multi-date soil N analyses (NO3, NH4, total N, pH, SOM, mineral N) are stored in the long table.
 # Site coordinates are estimated from the station names (not reported in the files).
-
-## ISSUES
-# P_fertilizer, K_fertilizer, yield_moisture, and harvest_date are not reported in the files and are omitted.
-# Islamabad Yellow rust scores follow the Modified Cobb scale (e.g. 80M, 90S); stored as disease = "yellow rust" and disease_severity.
-# Ludhiana BIOMASS (t/ha) does not state fresh vs dry basis; stored as y_total (kg/ha).
-# Ludhiana Soil N data reports topsoil (0-15 cm) NH4 and NO3 in kg/ha (no bulk density given to convert to mg/kg); total mineral N is stored as soil_N_min_total and the NH4/NO3 split as soil_NH4_stock_ / soil_NO3_stock_.
-
-## NEW VARIABLES
-# soil_NH4_stock_: topsoil (0-15 cm) ammonium-N stock in Ludhiana, kg/ha
-# soil_NO3_stock_: topsoil (0-15 cm) nitrate-N stock in Ludhiana, kg/ha
 
 ## NOT PROCESSED
 # BNI_Nepal_2025.xlsx: duplicates Bhairahawa yield components already in Yield Trial + Bhairahawa 2024_25 NEPAL.xlsx.
@@ -232,6 +230,7 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 	)
 
 	# Ludhiana canopy traits by growth stage + 5 topsoil (0-15 cm) soil mineral N stages
+	# NH4 and NO3 are reported in kg/ha; divide by 2.24 (0-15 cm furrow-slice mass, BD ~1.49 g/cm3) -> mg/kg
 	l3 <- carobiner::bindr(
 		data.frame(record_id = id3, growth_stage = "anthesis", NDVI = num(r3[[19]]), canopy_temperature = num(r3[[23]])),
 		data.frame(record_id = id3, growth_stage = "flowering", SPAD = num(r3[[27]])),
@@ -239,15 +238,15 @@ Yield trial data of CIMMYT Elite Spring Wheat lines with the BNI short arm trans
 		data.frame(record_id = id3, growth_stage = "milking", NDVI = num(r3[[21]]), canopy_temperature = num(r3[[25]])),
 		data.frame(record_id = id3, growth_stage = "maturity", NDVI = num(r3[[22]]), canopy_temperature = num(r3[[26]])),
 		data.frame(record_id = id3, growth_stage = "before sowing", depth_top = 0, depth_bottom = 15, soil_pH = 8.18,
-			soil_NH4_stock_ = num(r3s[[13]]), soil_NO3_stock_ = num(r3s[[14]]), soil_N_min_total = num(r3s[[15]])),
+			soil_NH4 = num(r3s[[13]]) / 2.24, soil_NO3 = num(r3s[[14]]) / 2.24, soil_N_min_total = num(r3s[[15]])),
 		data.frame(record_id = id3, growth_stage = "7 days after 2nd N", depth_top = 0, depth_bottom = 15,
-			soil_NH4_stock_ = num(r3s[[16]]), soil_NO3_stock_ = num(r3s[[17]]), soil_N_min_total = num(r3s[[18]])),
+			soil_NH4 = num(r3s[[16]]) / 2.24, soil_NO3 = num(r3s[[17]]) / 2.24, soil_N_min_total = num(r3s[[18]])),
 		data.frame(record_id = id3, growth_stage = "14 days after 2nd N", depth_top = 0, depth_bottom = 15,
-			soil_NH4_stock_ = num(r3s[[19]]), soil_NO3_stock_ = num(r3s[[20]]), soil_N_min_total = num(r3s[[21]])),
+			soil_NH4 = num(r3s[[19]]) / 2.24, soil_NO3 = num(r3s[[20]]) / 2.24, soil_N_min_total = num(r3s[[21]])),
 		data.frame(record_id = id3, growth_stage = "21 days after 2nd N", depth_top = 0, depth_bottom = 15,
-			soil_NH4_stock_ = num(r3s[[22]]), soil_NO3_stock_ = num(r3s[[23]]), soil_N_min_total = num(r3s[[24]])),
+			soil_NH4 = num(r3s[[22]]) / 2.24, soil_NO3 = num(r3s[[23]]) / 2.24, soil_N_min_total = num(r3s[[24]])),
 		data.frame(record_id = id3, growth_stage = "after harvest", depth_top = 0, depth_bottom = 15,
-			soil_NH4_stock_ = num(r3s[[25]]), soil_NO3_stock_ = num(r3s[[26]]), soil_N_min_total = num(r3s[[27]]))
+			soil_NH4 = num(r3s[[25]]) / 2.24, soil_NO3 = num(r3s[[26]]) / 2.24, soil_N_min_total = num(r3s[[27]]))
 	)
 
 	dlong <- carobiner::bindr(l1, l2, l3)

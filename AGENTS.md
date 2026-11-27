@@ -10,7 +10,7 @@ This document supplements those pages with practical, agent-specific detail. If 
 
 **Before writing, also read a few existing scripts in `scripts/<group>/`** — especially the same group you are targeting — to see the conventions applied to real datasets (e.g. files in `scripts/varieties_other/` such as `doi_10.7910_DVN_SMGA6L.R`, or any script in `scripts/agronomy/` or `scripts/survey/`). They are the best templates for structure, naming, units, and how metadata and geo/housekeeping variables are set.
 
-Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear`# comment` in the code, and add a line to the `## NOTE:` or `## ISSUES` block at the top of the scripts. It is better not to process a variable (and leave a comment about it) than to introduce errors.
+Do NOT guess silently. If you get stuck on *what* a value should be (not *how* to code it), leave a clear `# comment` in the code, and add a line to the `## ISSUES` block at the top of the script. It is better not to process a variable (and leave a comment about it) than to introduce errors.
 
 It is of fundamental importance that no critical information is lost to analyze the data as intended. Resist simplifying the data to the point where relevant information is lost
 
@@ -21,7 +21,7 @@ It is of fundamental importance that no critical information is lost to analyze 
 
 ### Human review is mandatory (agent must say this)
 
-The **human author** of the script must review **every line of code** and **every comment** (`#`, `## NOTES`, `## ISSUES`, `## NEW VARIABLES`, `## NOT PROCESSED`) before submitting. The agent drafts; the human owns the result.
+The **human author** of the script must review **every line of code** and **every comment** (`#`, `## ISSUES`, `## NEW`, `## MISSING`, `## NOTES`, `## NOT PROCESSED`) before submitting. The agent drafts; the human owns the result.
 
 **Agent obligation:** whenever you deliver or hand off a Carob script (draft finished, file moved to `scripts/<group>/`, or a PR is ready), you **must** tell the human clearly and explicitly, in your own message to them, something equivalent to:
 
@@ -229,12 +229,12 @@ General rules:
 
 - **variables** all variables should be processed unless they are redundant (used to compute a variable of interest, or derived thereof) or cannot be interpreted. Write a comment for each variable that is not processed.
 - **Unprocessed variables list.** At the top of the script, under `## NOT PROCESSED`, list every raw variable (column, sheet, or file) that is possibly relevant but was not processed, one per line, with the source file/sheet, the original name, what it seems to represent, and why it was not processed (e.g. unclear unit or code, no terminag match yet, needs a decision). Do not list purely administrative or redundant columns (e.g. row numbers, enumerator names, values already used to compute a processed variable). This lets the reviewer see at a glance what information is left in the raw data.
-- **Do not add empty variables just because they are required.** A `write_files()` "missing variables" message means: check whether you have a real value (from the data, codebook, or publication). It does **not** mean invent a column of `NA`s or `""` to satisfy `required_variables.csv`. If you do not have a value, omit the variable and note it in `## ISSUES`. An empty placeholder is worse than a missing-variable message.
+- **Do not add empty variables just because they are required.** A `write_files()` "missing variables" message means: check whether you have a real value (from the data, codebook, or publication). It does **not** mean invent a column of `NA`s or `""` to satisfy `required_variables.csv`. If you do not have a value, omit the variable and note it in `## MISSING`. An empty placeholder is worse than a missing-variable message.
 - **treatment variables** it is imperative that all treatment variables are included as individual variables and that they are interpretable. It is _not_ sufficient to only have it as part of a treatment code (in variable "treatment"). This holds **even when terminag has no matching variable name**: give the treatment its own clear new variable name rather than burying it only in `treatment`. Such a new variable triggers a warning and is dropped from the written output, but that is fine — naming it explicitly is what lets a maintainer add the term to terminag (a separate process). A missing vocabulary term is never a reason to hide a treatment inside the `treatment` code.
 - **Variable (Column) names** should match a variable name from terminag. 
-- **New variable names** where there is not matching name in terminag; propose an appropriate new variable name. List these new variables at the top of the script under ## NEW VARIABLES and describe what they represent, and what their unit is (do not add unit to the variable name). New variables cause a warning and are dropped but that is _not_ a concern. Do not change terminag, that is a separate process.
+- **New variable names and values** where there is no matching name in terminag; propose an appropriate new variable name. List new variables and any unmatched categorical values at the top of the script under `## NEW`, describing what each new variable represents and its unit (do not add the unit to the variable name). New variables cause a warning and are dropped, which is fine. Do not change terminag; that is a separate process.
 - **Categorical values, and units must match terminag.** Check `variables_*.csv` (names, `valid_min`/`valid_max`) and `values_*.csv` (accepted category values, e.g. crop names, country names).
-- **Keep unstandardized diseases and pests in `disease` / `pest_species` (in `long` when needed).** Do **not** move diseases or pests that are not yet in `values_disease.csv` or `values_pest.csv` (e.g., `smut`, `tar spot`, `maize weevil`, `termites`) into custom `*_` wide columns just to avoid `invalid terms` messages. Store them in `disease` (with `disease_severity` / `disease_incidence`) or `pest_species` (with `pest_severity` / `pest_incidence`) — in the `long` table if there are multiple diseases/pests or time points — and note the missing terms in `## ISSUES` so maintainers can add them to terminag. The same applies generally to missing controlled-vocabulary values: keep them in the proper Carob column rather than splitting them into ad-hoc `*_` columns.
+- **Keep unstandardized diseases and pests in `disease` / `pest_species` (in `long` when needed).** Do **not** move diseases or pests that are not yet in `values_disease.csv` or `values_pest.csv` (e.g., `smut`, `tar spot`, `maize weevil`, `termites`) into custom `*_` wide columns just to avoid `invalid terms` messages. Store them in `disease` (with `disease_severity` / `disease_incidence`) or `pest_species` (with `pest_severity` / `pest_incidence`) — in the `long` table if there are multiple diseases/pests or time points — and list the missing terms in `## NEW` so maintainers can add them to terminag. The same applies generally to missing controlled-vocabulary values: keep them in the proper Carob column rather than splitting them into ad-hoc `*_` columns.
 - **Coerce explicitly.** `read.excel`/`read.csv` may read a column as character; wrap numeric math in `as.numeric(...)` (e.g. density calculations) and integers in `as.integer(...)`. This avoids "bad datatype" warnings.
 - **Normalize names**: `carobiner::fix_name(x, "title")` for admin/location names; `trimws()` to remove stray whitespace (untrimmed values are flagged).
 - **`crop`** and other controlled values must be lowercase accepted terms (`tolower(...)` where appropriate). Intercrops use an underscore: `"maize_bean"`. In the rare case of multiple crop_rotations, these can be separated with a `#`
@@ -325,7 +325,7 @@ carob_script(path = "<root>/carob/carob")
 
 `carobiner::write_files(path, meta, d)` prints messages you must resolve:
 
-- **`missing variables` / `missing metadata`**: a required variable/metadata field is absent (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`). If you have a real value, add it. If you do not, **do not** add an empty/`NA` column just to clear the message — omit the variable and note it in `## ISSUES`.
+- **`missing variables` / `missing metadata`**: a required variable/metadata field is absent (see `carobiner/inst/terms/required_variables.csv`). Some are conditional on the group (e.g. `crop`, `yield`, `N/P/K_fertilizer`, `irrigated` are not required for `survey`/`soil_samples`). If you have a real value, add it. If you do not, **do not** add an empty/`NA` column just to clear the message — omit the variable and note it in `## MISSING`.
 - **`unknown variables`**: a column name is not in the vocabulary. Rename it to a terminag name, or, if it is legitimately non-standard, **keep it** with an underscore name (Section 5). Do **not** delete or omit a meaningful variable just because it is not in terminag — naming it is what lets it be added later.
 - **`out of bounds`**: a numeric value is outside `valid_min`/`valid_max`. Consider fixing the units or the value. DO NOT set outlier values to NA. Add a comment about it, suggesting next steps, but leave the action to the script author.
 - **`bad datatype`**: coerce the column (`as.numeric`, `as.integer`, `as.character`).
@@ -363,7 +363,19 @@ The goal is that every remaining warning is either intentional and explained, or
 
 Do **not** force data into a one-row-per-unit shape when that loses information. If a dataset has several record types (e.g. a household survey with per-variety records *and* a separate "largest plot" block), capture each in its own `data.frame` with interpretable, standardized names rather than deduplicating away real observations. Decide how to write extra tables (e.g. as "long" records) separately.
 
-Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgement calls that were or still need to be made. In the code, do *not* refer to the ISSUES by number like `# see ISSUES 4` as the issues list may change. Just make the comment again, perhapts in abridged form. Unless very short (2-3 words) put comments on their own line above the code it refers to.
+### Header comments above the script
+
+The two most important comment blocks at the top of a script are **`## ISSUES`** and **`## NEW`**:
+
+- **`## ISSUES`** *(most important)*: Only items that need a **human action or judgment call**, or point to an **especially worrisome data-quality issue**. Keep it **succinct** so a human can immediately grasp what needs to be done. Do **not** include:
+  - routine implementation notes (e.g., `# Requires DBI and RSQLite packages to read the SQLite source file.`), or
+  - `write_files()` messages that running the script will surface automatically anyway (e.g., `# write_files: missing carob_contributor; invalid organization Thünen.`).
+- **`## NEW`** *(most important)*: New **variables or categorical values** that appear in the script and cannot be matched to terminag (for new variables, briefly describe what each represents and its unit).
+- **`## MISSING`**: Required variables that are genuinely unavailable from the data, codebook, or publication (omit the column rather than adding empty `NA`s; see Section 5).
+- **`## NOTES`** *(less critical)*: A concise summary of the dataset and anything out of the ordinary done to it. Omit obvious or routine technical details (such as `# Requires DBI and RSQLite packages to read the SQLite source file.`).
+- **`## NOT PROCESSED`**: Possibly relevant raw variables (columns, sheets, or files) left unprocessed and why (see Section 5).
+
+In the code itself, do *not* refer to `ISSUES` by number (like `# see ISSUES 4`) as the list may change — just restate the comment briefly in place. Unless very short (2–3 words), put comments on their own line above the code they refer to.
 
 ---
 
@@ -385,7 +397,7 @@ Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgemen
   - `new agronomy script doi:10.25502/20180814/1514/HJ`
   - `edited varieties script doi:10.7910/DVN/SMGA6L`
 - **PR message** is for the reviewer — make it **very succinct**. It should:
-  - list, in one line each, the `## NOTES`/`## ISSUES` the reviewer needs to consider (assumptions, unit conversions, anything moved to `_pending`/`_rejected` and *why*, open questions);
+  - list, in one line each, the `## ISSUES` and `## NEW` items the reviewer needs to consider (judgment calls, data-quality caveats, new variables/values, anything moved to `_pending`/`_rejected` and *why*, open questions);
   - list the messages printed by `write_files()` that remain (e.g. `unknown variables: stake_diameter_`, `out of bounds: ...`, `datespan: ...`), so the reviewer knows what to expect and why each is acceptable.
 - Do **not** submit an auto-generated / boilerplate message (e.g. "Added metadata"). No message should be identical across datasets.
 
@@ -431,9 +443,10 @@ Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgemen
 
 - [ ] File named `<dataset_id>.R` and placed in `scripts/<group>/`.
 - [ ] Title + abstract copied into the script; 
-- [ ] `## NOTES` describe peculiarities --- make these succinct!
-- [ ] `## ISSUES` notes any caveats that need attention --- make these succinct!
-- [ ] `## NOTES`/`## ISSUES` are correct — verified against the data and paper, not blindly trusted.
+- [ ] `## ISSUES` succinctly lists only items needing human action/judgment or worrisome data-quality problems (no boilerplate or raw `write_files()` output).
+- [ ] `## NEW` lists all new variables (with meaning and unit) and unmatched vocabulary values.
+- [ ] `## MISSING` lists required variables unavailable from the data, codebook, or publication (without adding empty/`NA` columns).
+- [ ] `## NOTES` concisely summarizes the data and anything out of the ordinary done to it (verified against the data and paper, not blindly trusted).
 - [ ] `## NOT PROCESSED` lists all possibly relevant raw variables that were not processed, and why.
 - [ ] `uri`, `group`, `get_data`, `get_metadata`, `write_files` all present.
 - [ ] Metadata: real `data_organization`, `data_type`, `treatment_vars`, `response_vars`, `carob_LLM`, `carob_date`, `carob_completion`, `carob_effort` (`0` for new scripts; unchanged when editing existing scripts); `NA` (not `""`) for absent fields; treatments and responses not swapped.
@@ -450,7 +463,7 @@ Write concise NOTES and ISSUES. NOTES are background info. ISSUES about judgemen
 - [ ] No `suppressWarnings()`/`suppressMessages()`/`options(warn=-1)` and no "numeric-looking" filters used; every remaining warning is either fixed or left with a `#` comment explaining why.
 - [ ] No records dropped merely to silence a warning; no information silently dropped to fit a single table; no empty/`NA` columns added just because a variable is required.
 - [ ] Finished file moved out of `_draft/`; one dataset per PR.
-- [ ] Commit message `<new|edited> <group> script <uri>`; PR message very succinctly lists the `## NOTES`/`## ISSUES` and the remaining `write_files()` messages.
+- [ ] Commit message `<new|edited> <group> script <uri>`; PR message very succinctly lists the `## ISSUES`/`## NEW` items and the remaining `write_files()` messages.
 
 ---
 
