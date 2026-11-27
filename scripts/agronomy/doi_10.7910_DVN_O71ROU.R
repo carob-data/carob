@@ -2,7 +2,8 @@
 # license: GPL (>=3)
 
 ## ISSUES
-
+## 947 rows have missing location and Geo coordinates (longitude and latitude)
+## 3 rows with missing geo coordinates and location 
 
 carob_script <- function(path) {
 
@@ -216,10 +217,10 @@ This database compiles a globally representative, meta-analysis–ready collecti
 	### Fixing lon and lat error 
 	
 	geo <- data.frame(
-	  country= c("Bangladesh","Bangladesh", "Pakistan", "Pakistan", "Cameroon", "Cameroon", "Iran", rep("India",2), rep("Malawi", 10)),
-	  location = c("Chandbill", "Hatikata", "Sheikhupura", "University of Agriculture, Faisalabad", "Wakwa","Yagoua", "Mazandaran province", "Eastern Himalaya","University of Calcutta", "Bandawe Tembo village", "Bereu", "Bridge to Kasuwa", "Chembelwa village", "Chizongwe", "Kasongo", "Mapelela", "Nkhapa village", "Puertete village", "Sani village"),
-	  lon = c(88.6678, 88.831, 73.998, 73.075, 13.626, 15.236, 51.919, 91.732, 88.362, 34.149, 34.849, 33.985, 34.843, 34.324, 34.2636, 34.916, 34.294, NA, 34.302),
-	  lat = c(23.748, 23.662, 31.7141, 31.429, 7.170, 10.347, 36.332,26.123, 22.575, -11.874, -16.148, -11.422, -14.023, -13.160, -12.872, -16.1015, -11.608, NA, -13.020),
+	  country= c("Bangladesh","Bangladesh", "Pakistan", "Pakistan", "Cameroon", "Cameroon", "Iran", rep("India",2), rep("Malawi", 11)),
+	  location = c("Chandbill", "Hatikata", "Sheikhupura", "University of Agriculture, Faisalabad", "Wakwa","Yagoua", "Mazandaran province", "Eastern Himalaya","University of Calcutta", "Bandawe Tembo village", "Bereu", "Bridge to Kasuwa", "Chembelwa village", "Chizongwe", "Kasongo", "Mapelela", "Nkhapa village", "Puertete village", "Sani village", "Chilambe village"),
+	  lon = c(88.6678, 88.831, 73.998, 73.075, 13.626, 15.236, 51.919, 91.732, 88.362, 34.149, 34.849, 33.985, 34.843, 34.324, 34.2636, 34.916, 34.294, NA, 34.302, 35.4333),
+	  lat = c(23.748, 23.662, 31.7141, 31.429, 7.170, 10.347, 36.332,26.123, 22.575, -11.874, -16.148, -11.422, -14.023, -13.160, -12.872, -16.1015, -11.608, NA, -13.020, -15.2833),
 	  geo_from = FALSE
 	)
 	
