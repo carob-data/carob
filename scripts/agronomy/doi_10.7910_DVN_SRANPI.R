@@ -18,7 +18,7 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 	ff  <- carobiner::get_data(uri, path, group)
 
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = "Sustainable Farming Program",
@@ -33,7 +33,7 @@ This dataset contains 86 field-level observations from on-farm rice trials condu
 		notes = NA)
 	
 
-	f <- ff[basename(ff) == "On-farm_Salinity data.xls"]
+	f <- ff[basename(ff) == "data.xls"]
 
 	r <- carobiner::read.excel(f)
 

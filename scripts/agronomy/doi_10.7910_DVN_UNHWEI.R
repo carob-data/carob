@@ -10,11 +10,12 @@ carob_script <- function(path) {
 The dataset includes agronomic and climatic records collected from 2015 to 2025, as well as soil data collected in 2015, 2023, and 2026. Data were collected at the AfricaRice research station in M'Bé, Bouaké, Côte d'Ivoire (7.8528° N, 5.1111° W), from a long-term experiment (LTE) established on upland rice-based cropping systems. The experiment was conducted in large plots, with an elementary plot size of 152 m². The LTE comprises a range of cropping systems differing in: • Soil tillage: conventional tillage (disc ploughing followed by harrowing) or no-till conservation agriculture; • Crop association and rotation: continuous rice cultivation or rice-maize rotations; • Cover crops: annual or perennial legume species; • Cropping season: sowing in March, June, or July; • Upland rice variety: NERICA 4 or WAB 56-50; • Fertilization: no fertilizer application or NPK fertilization; • Seed treatment: with or without fungicide and insecticide treatment. Agronomic data were obtained through field observations and measurements conducted within the LTE plots. 
 "
 
+
   uri <- "doi:10.7910/DVN/UNHWEI"
   group <- "agronomy"
   ff  <- carobiner::get_data(uri, path, group)
   
-  meta <- carobiner::get_metadata(uri, path, group, major=2, minor=0,
+  meta <- carobiner::get_metadata(uri, path, group, major=3, minor=0,
 		data_organization = "AfricaRice; CIRAD",
 		publication = NA,
 		project = "Sustainable and Diversified Rice-based Farming Systems",
@@ -29,13 +30,13 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
 		design = NA
   )
   
-  f1 <- ff[basename(ff) == "5 Agronomy 2015-2025.xls"]
-  f2 <- ff[basename(ff) == "6 Soil  2015.xls"]
-  f3 <- ff[basename(ff) == "7 Soil 2023-26.xls"]
+  f1 <- ff[basename(ff) == "5 Agronomy 2015-2025-1.xls"]
+  f2 <- ff[basename(ff) == "6 Soil  2015-1.xls"]
+  f3 <- ff[basename(ff) == "7 Soil 2023-26-1.xls"]
   
-  r1 <- suppressWarnings(carobiner::read.excel(f1, na= c("n/a", "no data")))
-  r2 <- carobiner::read.excel(f2, na= c("n/a", "no data"))
-  r3 <- carobiner::read.excel(f3, na= c("n/a", "no data"))
+  r1 <- suppressWarnings(carobiner::read.excel(f1, na= c("n/a", "no data", "NA", "nA", "NM", "CNE", "")))
+  r2 <- carobiner::read.excel(f2, na= c("n/a", "no data", "NA", "nA", "NM", "CNE", ""))
+  r3 <- carobiner::read.excel(f3, na= c("n/a", "no data", "NA", "nA", "NM", "CNE", ""))
 
   d <- data.frame(
     country= "Côte d'Ivoire",
@@ -46,7 +47,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     latitude = 7.8528,
     longitude = -5.1111,
     geo_from_source = TRUE,
-    crop = gsub("\\(|\\)", "", tolower(r1$Main_crop)),
+    crop = gsub("\\(|\\)", "", tolower(r1$Main_Crop)),
     intercrops = gsub("\\(|\\)", "", tolower(r1$Crop_Association)),
     intercrop_type = "unknown", # Type of intercropping (e.g. mixed, strip)
     variety= r1$Main_Crop_Variety,
@@ -67,7 +68,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     grain_fill = 1-r1$`%_Empty_Grains`,
     # F0 is no fertilizer. F1 is N-P-K 104-21-30. F0+ and F1+ are not coded in System_Fertilization.
     # A recorded Soil_Tillage date is conventional tillage; a blank date is no-till (none).
-    crop_rotation = r1$Cropping_system_Rotation,
+    crop_rotation = r1$Cropping_System_Rotation,
     land_prep_method = ifelse(is.na(r1$Soil_Tillage), "none", "conventional"),
     N_fertilizer= ifelse(r1$System_Fertilization=="F0",0,104),
     P_fertilizer= ifelse(r1$System_Fertilization=="F0",0,21),
@@ -114,7 +115,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   
   # Some inconsistencies were found in the dates. Below, I am fixing it
   d$maturity_date <- ifelse(d$maturity_date=="3/11/20017", "3/11/2017", d$maturity_date)
-  d$harvest_date <- ifelse(d$harvest_date=="No harvest", NA, d$harvest_date)
+  d$harvest_date <- ifelse(tolower(d$harvest_date)=="no harvest", NA, d$harvest_date)
   d$planting_date <- ifelse(d$planting_date %in% c("Not sown (ants and bees)", "17"), NA, d$planting_date)
   d$flowering_date <- ifelse(d$flowering_date=="16/092018", "16/09/2018", d$flowering_date)
   
@@ -122,12 +123,15 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   convert_mixed_date <- function(x) {
     x <- as.character(x)
     x[x=="-"] <- NA
+    is_iso <- grepl("^\\d{4}-\\d{2}-\\d{2}", x)
+    x[is_iso] <- substr(x[is_iso], 1, 10)
     # Identify values already in DD-MM-YYYY format and transform them to YYYY-MM-DD format
     is_date <- grepl("^\\d{1,2}/\\d{2}/\\d{4}$", x)
     x[is_date] <- format(as.Date(x[is_date], format = "%d/%m/%Y"), "%Y-%m-%d")
   
     # For values that are not already dates and are not NA, I convert them using Excel's date origin (1899-12-30)
-    x[!is_date & !is.na(x)] <- format(as.Date(as.numeric(x[!is_date & !is.na(x)]), origin = "1899-12-30"), "%Y-%m-%d")
+    is_num <- !is_iso & !is_date & !is.na(x)
+    x[is_num] <- format(as.Date(as.numeric(x[is_num]), origin = "1899-12-30"), "%Y-%m-%d")
     x
   }
   

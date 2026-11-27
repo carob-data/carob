@@ -16,7 +16,7 @@ This database compiles a globally representative, meta-analysis–ready collecti
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "AfricaRice",
 		publication = NA,
 		project = NA,
@@ -32,9 +32,9 @@ This database compiles a globally representative, meta-analysis–ready collecti
 	)
 	
 
-	f1 <- ff[basename(ff) == "data_Rice Biofortification data_meta-analysis.xls"]
-	#f2 <- ff[basename(ff) == "dictionary_Rice Biofortification data_meta-analysis.xls"]
-	#f3 <- ff[basename(ff) == "Publication Verdict List_Rice Biofortification data_meta-analysis.xls"]
+	f1 <- ff[basename(ff) == "data.xls"]
+	#f2 <- ff[basename(ff) == "dictionary.xls"]
+	#f3 <- ff[basename(ff) == "Rice_Biofortification_data_meta-analysis.xls"]
 
 	r1 <- suppressWarnings(carobiner::read.excel(f1, na= c("NA", "?", "N/A", "na")))
 	#r2 <- carobiner::read.excel(f2)

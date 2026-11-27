@@ -18,7 +18,7 @@ Yield stability assessment -- Rice and Pearl millet data
 	group <- "agronomy"
 	ff  <- carobiner::get_data(uri, path, group)
 
-	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=0,
+	meta <- carobiner::get_metadata(uri, path, group, major=1, minor=1,
 		data_organization = "ICRISAT;AfricaRice",
 		publication ="doi:10.1371/journal.pone.0317170",
 		project = NA,
@@ -35,8 +35,8 @@ Yield stability assessment -- Rice and Pearl millet data
 	
 	
 	
-	f1 <- ff[basename(ff) == "Yield_and_Biomass_data_NDiaye_Senegal.xlsx"]
-	f2 <- ff[basename(ff) == "Yield_and_Biomass_data_Sadore_Niger.xlsx"]
+	f1 <- ff[basename(ff) == "data_NDiaye_Senegal.xlsx"]
+	f2 <- ff[basename(ff) == "data_Sadore_Niger.xlsx"]
 
 	
 	r1 <- carobiner::read.excel(f1, fix_names = TRUE)
