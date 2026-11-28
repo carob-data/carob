@@ -28,8 +28,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 		treatment_vars = "P_fertilizer;land_prep_method",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
-		carob_completion = 100,	
-		notes = "LLM-review: [medium, metadata] trial_id is the plot. Missing P is replaced with 0. on_farm TRUE needs a check against what looks like a station trial."
+		carob_completion = 100
 	)
 	
 
@@ -59,7 +58,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  date = as.character(as.Date(r1$obs_date, "%m/%d/%Y")),
 	  treatment = r1$treatment,
 	  rep = as.integer(substr(r1$replicate, 2, 2)),
-	  trial_id = r1$plot,
+	  plot_id = r1$plot,
 	  application = r1$material,
 	  amount = r1$rate_kg_ha,
 	  N_fertilizer = r1$n_rate_kg_ha,
@@ -100,7 +99,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  treatment = r4$treatment,
 	  crop=trimws(gsub("corn", "maize", tolower(r4$Crop))),
 	  rep = as.integer(substr(r4$replicate, 2, 2)),
-	  grain_P = ifelse(grepl("grain", r4$fraction), as.numeric(r4$P..ppm), NA)/1000 ## to mg/g
+	  grain_P = ifelse(grepl("grain", r4$fraction), as.numeric(r4$P....), NA) * 10 ## % -> mg/g
 	)
 	
 	d42 <- data.frame(
@@ -108,7 +107,7 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
 	  treatment = r4$treatment,
 	  crop=trimws(gsub("corn", "maize", tolower(r4$Crop))),
 	  rep = as.integer(substr(r4$replicate, 2, 2)),
-	  residue_P = ifelse(grepl("stover", r4$fraction), as.numeric(r4$P..ppm), NA)/1000  ## to mg/g
+	  residue_P = ifelse(grepl("stover", r4$fraction), as.numeric(r4$P....), NA) * 10  ## % -> mg/g
 	)
 	
 	d4 <- merge(d41[!is.na(d41$grain_P),], d42[!is.na(d42$residue_P),], all=TRUE)
@@ -132,31 +131,32 @@ Phosphorus (P) budgets for cropping systems provide insights for keeping soil P 
   
 	### Fixing fertilizer type
 	
-	d$fertilizer_type <- ifelse(grepl("Fertilizer 19-17-0|0-46-0", d$application), "unknown",
-	                     ifelse(grepl("UAN", d$application), "AN",
-	                     ifelse(grepl("Ammonium sulfate", d$application), "AS", 
+	d$fertilizer_type <- ifelse(grepl("0-46-0", d$application), "TSP",
+	                     ifelse(grepl("Fertilizer 19-17-0", d$application), "NP",
+	                     ifelse(grepl("UAN", d$application), "UAN",
+	                     ifelse(grepl("Ammonium sulfate", d$application), "DAS", 
 	                     ifelse(grepl("monoammonium phosphate", d$application), "MAP",
 	                     ifelse(grepl("potash fertilizer", d$application), "KCl", 
 	                     ifelse(grepl("lime", d$application), "lime",
-	                     ifelse(grepl("Fertilizer|Sulfur", d$application), "unknown",
-	                     ifelse(grepl("Herbicide|H2O|Dual|custom mix", d$application), "", 
-						 d$application))))))))
+	                     ifelse(grepl("Sulfur", d$application), "S",
+	                     ifelse(grepl("Fertilizer", d$application), "unknown",
+	                     ifelse(grepl("Herbicide|H2O|Dual|custom mix", d$application), NA, 
+						 d$application))))))))))
 
 	
 	d$land_prep_method <- ifelse(grepl("reduced input", d$treatment), "reduced tillage",
                           ifelse(grepl("no-till", d$treatment), "none", 
                           ifelse(grepl("biologically based", d$treatment), "unknown", d$treatment)))
 
-	d$P_fertilizer <- ifelse(is.na(d$P_fertilizer), 0, d$P_fertilizer)
-	
+	d$trial_id <- paste0("KBS_", d$planting_date)
 	d$country <- "United States" 
 	d$adm1 <- "Michigan"
 	d$location <- "KBS"
 	d$longitude <- - 85.3749
 	d$latitude  <- 42.3956
-	d$on_farm <- TRUE 
+	d$on_farm <- FALSE 
 	d$is_survey <- FALSE
-	d$yield_part <- "grain" 
+	d$yield_part <- ifelse(d$crop == "soybean", "seed", "grain") 
 	d$irrigated <- NA 
 	d$geo_from_source <- TRUE # From publication
 	

@@ -67,8 +67,9 @@ carob_script <- function(path) {
 	d1$irrigated <- FALSE
 	d1$inoculated <- FALSE
 	d1$yield_part <- "grain"  
+	d1$yield_part[d1$crop %in% c("common bean", "pigeon pea")] <- "seed"
 	d1$planting_date <- "2019"
-	d1$trial_id <- "1"
+	d1$trial_id <- paste(d1$location, d1$planting_date, sep = "_")
 
    ## get from data description 
 	
@@ -99,7 +100,7 @@ carob_script <- function(path) {
 		location = r2$Ecozone, 
 		rep = as.integer(r2$Reps),
 		soil_pH = r2$pH, 
-		soil_EC = r2$X.EC.Salts.uS.cm, 
+		soil_EC = r2$X.EC.Salts.uS.cm / 1000, # uS/cm -> mS/cm 
 		soil_P = r2$X.Phosphorus.Olsen.ppm, 
 		soil_K = r2$Potassium.ppm, 
 		soil_Ca = r2$Calcium.ppm, 
@@ -128,8 +129,8 @@ carob_script <- function(path) {
 		rhum = w$Relative.Humidity.pct, 
 		wspd = w$Wind.Speed.km.h / 3.6, #km/h -> m/s
 		wdir = w$Wind.Direction.Deg,
-		wgst = w$Wind.Gust.km.h,
-		srad = w$Solar.Rad.wat.m2
+		wgst = w$Wind.Gust.km.h / 3.6, #km/h -> m/s
+		irad = w$Solar.Rad.wat.m2 # W/m2 = J s-1 m-2
 	)
 	dw$date <- as.Date(carobiner::eng_months_to_nr(dw$date), format="%d-%m-%Y") |> as.character()
 	

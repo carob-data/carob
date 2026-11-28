@@ -134,8 +134,8 @@ carob_script <- function(path) {
       treatment= r4$Tmnt,
       fertilizer_type= paste(r4$Fertilizer.1.Application_Product.used, r4$Fertilizer.2.Application_Product.used, r4$Fertilizer.3.Application_Product.used, sep =";"),
       fertilizer_amount= rowSums(r4[,c("TSP.kg.ha", "MOP.kg.ha", "Gypsum.Kg.ha","Urea.kg.ha","ZnSO4.kg.ha")]),
-      fertilizer_price = r4$Calculation_Fertilizer.cost.Tk.ha / rowSums(r4[, c("TSP.kg.ha", "MOP.kg.ha", "Gypsum.Kg.ha","Urea.kg.ha","ZnSO4.kg.ha")]), ##Tk/ha
-      currency= "Tk",
+      fertilizer_price = r4$Calculation_Fertilizer.cost.Tk.ha / rowSums(r4[, c("TSP.kg.ha", "MOP.kg.ha", "Gypsum.Kg.ha","Urea.kg.ha","ZnSO4.kg.ha")]), ## BDT/kg
+      currency= "BDT",
       N_fertilizer= r4$N,
       P_fertilizer= r4$P / 2.29, # P2O5 to P
       K_fertilizer= r4$K / 1.2051, # K2O to K
@@ -189,7 +189,7 @@ carob_script <- function(path) {
       dmy_storage= r6$Sun.dry.grain.wt.t.ha*1000,## kg/ha
       seed_weight= r6$X1000.grain.weight.g,
       fwy_total= r6$Biomass.t.ha*1000, ## kg/ha
-      harvest_index= r6$HI,
+      harvest_index= r6$HI * 100, # fraction -> %
       dmy_residue= as.numeric(r6$dmy_residue)
     )
     
@@ -253,8 +253,6 @@ carob_script <- function(path) {
   
   d$insecticide_used <- ifelse(is.na(d$insecticide_product)| grepl("none", d$insecticide_product), FALSE, TRUE)
   d$herbicide_used <- ifelse(is.na(d$herbicide_product)| grepl("none", d$herbicide_product), FALSE, TRUE)
-  
-  d$fertilizer_price <- as.character(d$fertilizer_price)
   
   # Clean up and convert correctly
   d$fertilizer_date <- gsub(" UTC", "", d$fertilizer_date)

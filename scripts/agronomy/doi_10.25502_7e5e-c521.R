@@ -19,7 +19,7 @@ carob_script <- function(path) {
 		project="N2Africa",
 		response_vars= "yield",
 		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer",
-		notes = "LLM-review: [medium, fertilizer] 30 kg P is added for TSP and NPK, but DAP is converted with 30 times 0.46 over 2.29, so only DAP is converted from oxide."
+		notes = NA
 	)
 	
 	
@@ -29,7 +29,7 @@ carob_script <- function(path) {
 
 	# process file(s)
  
-	d <- r[, c("country", "id", "lga_district_woreda", "sector_ward", "gps_field_device_latitude.decimal_degrees", "gps_latitude_field.decimal_degrees", "gps_field_device_longitude.decimal_degrees", "gps_field_device_longitude.decimal_degrees", "crop_1_previous_season", "inoculation_n2africa_field", "pack_species", "pack_variety","pack_mineral_fertilizer_type")] 
+	d <- r[, c("country", "id", "lga_district_woreda", "sector_ward", "gps_field_device_latitude.decimal_degrees", "gps_latitude_field.decimal_degrees", "gps_field_device_longitude.decimal_degrees", "gps_longitude_field.decimal_degrees", "crop_1_previous_season", "inoculation_n2africa_field", "pack_species", "pack_variety","pack_mineral_fertilizer_type")] 
 	
 	colnames(d) <- c("country", "trial_id", "location", "site", "latitude1", "latitude2", "longitude1", "longitude2","previous_crop", "inoculated","crop", "variety", "fertilizer_type")
 	
@@ -70,7 +70,10 @@ carob_script <- function(path) {
 	i <- is.na(d1$yield1)
 	d1$yield1[i] <- d1$yield2[i]
 	
-	d1$row_spacing[d1$row_spacing >150] <- NA
+	d1$row_spacing[d1$row_spacing > 150] <- NA
+	# 2 rows entered in meters (0.75 m) instead of cm
+	i <- !is.na(d1$row_spacing) & d1$row_spacing > 0 & d1$row_spacing < 2
+	d1$row_spacing[i] <- d1$row_spacing[i] * 100
 	# calculate the area 
 	d1$area <- d1$width_size_plot * d1$number_row * d1$row_spacing / 100 # in m2
 	d1$yield <- 10000 * d1$yield1 / d1$area #kg/ha
@@ -97,36 +100,24 @@ carob_script <- function(path) {
 		lon = c(12.2117,32.3925, 33.8697, 12.0596, 29.9828, 34.1646, 12.0189, 33.7225,12.1927, 12.1295, 12.1275, 29.6132, 33.7744, 29.6132, 32.5302,12.2597, 38.2229, 11.9764, 11.9253, 38.246, 38.2739, 11.8543,11.7044, 11.7525, 33.6667, 12.1002, 12.1893, 12.2587, 6.8377,29.6167, 8.617, 12.0108, 11.5786, 11.7462, 12.2217, 11.8304,11.5494, 12.1577, 11.7044, 38.353, 38.2615, 31.2857, 12.2026,12.2676, 11.9764, 12.1271, 11.5786, 38.3207, 32.7258, 12.0318,11.8596, 12.1387, 36.3873, 33.7659, 33.7934, 12.1577, 32.471,12.1634, 29.6268, 38.3159, 29.9251, 11.6124, 12.2179, 12.1577,11.9173, 11.8304, 12.291, 12.1295, 12.0596, 12.2262, 29.6132,32.4523, 38.448, 33.7242, 38.3192, 38.3273, 29.6167, 33.7833,5.7048, 33.6661, -0.3062, 6.6754, 33.6317, 8.2063, 29.6446,6.6723, 12.2414, 6.65, 29.7487, 29.6132, 29.6268, 31.2531, 38.353, 32.423, 33.8505, 33.84, 6.1112, 12.0172),
 		lat = c(10.5321,2.4063, 1.1328, 10.5646, -1.2416, 1.0794, 10.5118, 0.635,10.5249, 10.6161, 10.5018, -1.1917, 1.278, -1.1917, 2.0019,10.5458, -4.6215, 10.5713, 10.5391, -4.6618, -4.8102, 10.4857,10.4454, 10.4532, 0.4167, 10.4334, 10.4914, 10.5429, 9.493, -1.2001, 9.1343, 10.4122, 10.3422, 10.3692, 10.4286, 10.4486,10.321, 10.6785, 10.4454, -4.82, -4.6685, -0.7326, 10.6019,10.5287, 10.5713, 10.5417, 10.3422, -4.8022, 2.3404, 10.8436,10.5227, 10.5487, 11.2597, 1.2879, 1.2922, 10.6785, 2.0636,10.6585, -1.2174, -4.5978, -1.1963, 10.394, 10.5674, 10.6785,10.3484, 10.4486, 10.5261, 10.6161, 10.5646, 10.5809, -1.1917,2.0449, -4.4953, 1.144, -4.5801, -4.6056, -1.2001, 1.3167, 8.1348, 0.4362, 10.9695, 8.7811, 0.4593, 7.621, -1.2358,9.3437, 10.5273, 9.3833, -1.2346, -1.1917, -1.2174, -0.5578,-4.82, 2.4199, 1.102, 1.1087, 8.3288, 10.3993))
 	
-	d <- merge(d,geo,bx="location", all.y =TRUE)
+	geo <- aggregate(cbind(lon, lat) ~ location, data = geo[!is.na(geo$location), ], FUN = mean)
+	d$geo_from_source <- !is.na(d$longitude) & !is.na(d$latitude)
+	d <- merge(d, geo, by = "location", all.x = TRUE)
 	
 	d$longitude[is.na(d$longitude)] <- d$lon[is.na(d$longitude)]
 	d$latitude[is.na(d$latitude)] <- d$lat[is.na(d$latitude)]
 	d$lat <- d$lon <- NULL
 	 # fix long and lat Error 
-	d$latitude[d$site=="Manolo"] <- -4.6214543
-	d$longitude[d$site=="Manolo"] <- 38.2229416
-	d$latitude[d$site=="Yagba"] <- 8.1347528
-	d$longitude[d$site=="Yagba"] <- 5.7048151
-	d$latitude[d$site=="Zongo"] <- 9.1343447
-	d$longitude[d$site=="Zongo"] <- 8.6170085
-	d$latitude[d$site=="Gusi"] <- 10.3993
-	d$longitude[d$site=="Gusi"] <- 12.0172
-	d$latitude[d$site=="Ayaka"] <- 7.54557
-	d$longitude[d$site=="Ayaka"] <- 8.80838
-	d$latitude[d$site=="Taki"] <- 8.3287812
-	d$longitude[d$site=="Taki"] <- 6.1111875
-	d$latitude[d$site=="Agan"] <- 8.23333
-	d$longitude[d$site=="Agan"] <- 4.3
-	d$latitude[d$site=="Pukica"] <- 2.3403573
-	d$longitude[d$site=="Pukica"] <- 32.7258227
-	d$latitude[d$site=="Aceno"] <- 2.4198729
-	d$longitude[d$site=="Aceno"] <- 32.4230282
-	d$latitude[d$site=="Odenyo"] <- 2.1460009
-	d$longitude[d$site=="Odenyo"] <- 32.4943264
-	d$latitude[d$site=="Odyenyo"] <- 2.1460009
-	d$longitude[d$site=="Odyenyo"] <- 32.4943264
-	
-	d$geo_from_source <- FALSE
+	site_geo <- data.frame(
+		site = c("Manolo", "Yagba", "Zongo", "Gusi", "Ayaka", "Taki", "Agan", "Pukica", "Aceno", "Odenyo", "Odyenyo"),
+		slat = c(-4.6214543, 8.1347528, 9.1343447, 10.3993, 7.54557, 8.3287812, 8.23333, 2.3403573, 2.4198729, 2.1460009, 2.1460009),
+		slon = c(38.2229416, 5.7048151, 8.6170085, 12.0172, 8.80838, 6.1111875, 4.3, 32.7258227, 32.4230282, 32.4943264, 32.4943264)
+	)
+	m <- match(d$site, site_geo$site)
+	has_s <- !is.na(m)
+	d$latitude[has_s] <- site_geo$slat[m[has_s]]
+	d$longitude[has_s] <- site_geo$slon[m[has_s]]
+	d$geo_from_source[has_s] <- FALSE
 
 	# drop rows containing non-existent locations	
 	d <- d[!(d$site=="Vigi"| d$site=="KYAGHAEU" | d$site=="Tartio" | d$site=="Auk East"),]
@@ -157,13 +148,13 @@ carob_script <- function(path) {
 	d$K_fertilizer[i] <- 20
 	
 	i <- grepl("DAP", d$fertilizer_type)
-	d$N_fertilizer[i] <- d$N_fertilizer[i] + 30*0.18
-	d$P_fertilizer[i] <- d$P_fertilizer[i] + 30*0.46/2.29 
-
-	i <- grepl("SSP", d$fertilizer_type)
+	d$N_fertilizer[i] <- d$N_fertilizer[i] + 30 * 18 / 20.1
 	d$P_fertilizer[i] <- d$P_fertilizer[i] + 30
 
-	i <- grepl("SSP", d$fertilizer_type)
+	i <- grepl("SSP|TSP", d$fertilizer_type)
+	d$P_fertilizer[i] <- d$P_fertilizer[i] + 30
+
+	i <- grepl("urea", d$fertilizer_type)
 	d$N_fertilizer[i] <- d$N_fertilizer[i] + 60
 
 	d$N_fertilizer[is.na(d$fertilizer_type)] <- NA

@@ -168,12 +168,14 @@ carob_script <- function(path) {
   
   # # EGB: Fixing and adding
 	  d3$on_farm <- TRUE
-	  d3$is_survey <- TRUE
+	  d3$is_survey <- FALSE
 	  d3$variety_type <- "climbing"
 	  d3$yield_part <- "seed"
 	  # Add dates
 		d3$planting_date <- as.character(as.Date(as.character(d3$planting_date), format = "%d-%b-%y"))
 		d3$harvest_date <- as.character(as.Date(as.character(d3$harvest_date_date), format = "%d-%b-%y"))
+		# planted 2016-10-12, harvested 2017-02-16 (year typo 2016 in raw data)
+		d3$harvest_date[d3$planting_date == "2016-10-12" & d3$harvest_date == "2016-02-16"] <- "2017-02-16"
 
 ## do not compute new variables at this point of processing.
 #	  d3$flowering <- as.integer(difftime(as.Date(as.character(d3$flowering_date), format = "%d-%b-%y"),

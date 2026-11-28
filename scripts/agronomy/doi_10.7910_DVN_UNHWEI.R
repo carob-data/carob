@@ -65,7 +65,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     plot_area_non_treated = r1$Untreated_Plot_Size_m2,
     yield_treated = r1$`Treated_Plot_Yield_kg_ ha_1`,
     yield_non_treated = r1$`Untreated_Plot_Yield_kg_ ha_1`,
-    grain_fill = 1-r1$`%_Empty_Grains`,
+    grain_fill = (1 - r1$`%_Empty_Grains`) * 100, # proportion -> %
     # F0 is no fertilizer. F1 is N-P-K 104-21-30. F0+ and F1+ are not coded in System_Fertilization.
     # A recorded Soil_Tillage date is conventional tillage; a blank date is no-till (none).
     crop_rotation = r1$Cropping_System_Rotation,
@@ -112,7 +112,14 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   d$is_survey <- FALSE
   d$yield_isfresh <- TRUE
   d$yield_part <- "grain"
+  d$yield_part[d$crop == "cassava"] <- "roots"
+  d$yield_part[d$crop %in% c("pigeon pea", "dolichos")] <- "seed"
+  d$yield_part[d$crop == "stylosanthes"] <- "aboveground biomass"
   
+  # Convert date columns to character first so ifelse() does not strip POSIXct to Unix seconds
+  date_vars <- c("emergence_date", "flowering_date", "maturity_date", "weeding_dates", "planting_date", "harvest_date")
+  d[date_vars] <- lapply(d[date_vars], as.character)
+
   # Some inconsistencies were found in the dates. Below, I am fixing it
   d$maturity_date <- ifelse(d$maturity_date=="3/11/20017", "3/11/2017", d$maturity_date)
   d$harvest_date <- ifelse(tolower(d$harvest_date)=="no harvest", NA, d$harvest_date)
@@ -121,22 +128,24 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
   
   # Some of the dates are converted to numerical values after loading the data while some were not. I fix it here
   convert_mixed_date <- function(x) {
-    x <- as.character(x)
-    x[x=="-"] <- NA
+    x <- trimws(as.character(x))
+    x[x %in% c("-", "")] <- NA
     is_iso <- grepl("^\\d{4}-\\d{2}-\\d{2}", x)
     x[is_iso] <- substr(x[is_iso], 1, 10)
-    # Identify values already in DD-MM-YYYY format and transform them to YYYY-MM-DD format
-    is_date <- grepl("^\\d{1,2}/\\d{2}/\\d{4}$", x)
+    x[is_iso & x < "1950-01-01"] <- NA_character_
+    # Identify values already in D/M/YYYY or DD/MM/YYYY format and transform them to YYYY-MM-DD format
+    is_date <- grepl("^\\d{1,2}/\\d{1,2}/\\d{4}$", x)
     x[is_date] <- format(as.Date(x[is_date], format = "%d/%m/%Y"), "%Y-%m-%d")
   
-    # For values that are not already dates and are not NA, I convert them using Excel's date origin (1899-12-30)
-    is_num <- !is_iso & !is_date & !is.na(x)
-    x[is_num] <- format(as.Date(as.numeric(x[is_num]), origin = "1899-12-30"), "%Y-%m-%d")
+    # For values that are not already dates and are not NA, convert Excel serials (origin 1899-12-30)
+    is_num <- !is_iso & !is_date & !is.na(x) & grepl("^\\d+(\\.\\d+)?$", x)
+    nums <- as.numeric(x[is_num])
+    x[is_num] <- ifelse(nums >= 18264, format(as.Date(nums, origin = "1899-12-30"), "%Y-%m-%d"), NA_character_)
+    x[!is_iso & !is_date & !is_num] <- NA_character_
     x
   }
   
   # Now I apply it to all the variables recording date
-  date_vars <- c("emergence_date", "flowering_date", "maturity_date", "weeding_dates", "planting_date", "harvest_date")
   d[date_vars] <- lapply(d[date_vars], convert_mixed_date)
     
   # seed treatment / no seed treatment was done and yields as well as plot area size
@@ -154,8 +163,8 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     depth_top = ifelse(r2$Horizon=="0-5 cm", 0, ifelse(r2$Horizon=="15-25 cm", 15, ifelse(r2$Horizon=="35-45 cm", 35, NA))),
     depth_bottom = ifelse(r2$Horizon=="0-5 cm", 5, ifelse(r2$Horizon=="15-25 cm", 25, ifelse(r2$Horizon=="35-45 cm", 45, NA))),
     soil_pH = r2$pH_H2O,
-    soil_EC = r2$EC25_µs_cm_1, # To convert µS/cm (microsiemens per centimeter) to mS/cm
-    soil_SOC = r2$Organic_C_gkg_1_2015,
+    soil_EC = r2$EC25_µs_cm_1 / 1000, # µS/cm -> mS/cm
+    soil_SOC = r2$Organic_C_gkg_1_2015 / 10, # g/kg -> %
     soil_clay = r2$`Clay_%`,
     soil_silt = r2$`Silt_%`,
     soil_sand = r2$`Sand_%`,
@@ -167,7 +176,7 @@ The dataset includes agronomic and climatic records collected from 2015 to 2025,
     depth_top = ifelse(r3$Horizon=="0 -5cm", 0, ifelse(r3$Horizon=="05-10 cm", 5, ifelse(r3$Horizon=="10 -20 cm", 10, ifelse(r3$Horizon=="20 -30 cm", 20, ifelse(r3$Horizon=="30 -50 cm", 30, NA))))),
     depth_bottom = ifelse(r3$Horizon=="0 -5cm", 5, ifelse(r3$Horizon=="05-10 cm", 10, ifelse(r3$Horizon=="10 -20 cm", 20, ifelse(r3$Horizon=="20 -30 cm", 30, ifelse(r3$Horizon=="30 -50 cm", 50, NA))))),
     soil_pH = r3$pH_H2O,
-    soil_SOC = r3$Organic_C_gkg_1_2026,
+    soil_SOC = r3$Organic_C_gkg_1_2026 / 10, # g/kg -> %
     soil_clay = r3$`Clay_%`,
     soil_silt = r3$`Silt_%`,
     soil_sand = r3$`Sand_%`,

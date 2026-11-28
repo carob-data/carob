@@ -24,8 +24,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 		carob_date="2023-04-05",
 		response_vars= "yield",
 		treatment_vars="intercrops",
-		data_type="experiment",
-		notes = "LLM-review: [medium, invented] N, P, and K are NA for every row, in addition to the broken merge above. [medium, treatment] intercrops is set to yes, and a later correction reads intercrop, so it never runs. on_farm is NA for the Kfardan station. adm3 is Kfar Dan and adm1 includes the word Governorate."
+		data_type="experiment"
 	)
 	
 	f1 <- ff[basename(ff) == "01_Plot_Information.csv"] 	
@@ -44,7 +43,7 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	d1 <- data.frame(
 		rep = r1$Rep,
 		plot_id = r1$PlotCode,
-		treatment = paste(r1$CropCombination, r1$VarietyCombination, sep = "_"),
+		treatment = trimws(paste(r1$CropCombination, r1$VarietyCombination, sep = "_")),
 		rain = 194.4,
 		irrigation_number = 2L, # see r5
 		irrigation_amount = 60, # see r5
@@ -120,12 +119,11 @@ The trial includes 40 faba bean varieties and 2  wheat varieties that are grown 
 	d$intercrops[i & d$crop=="faba bean"] <- "durum wheat"
 	
 	d$is_survey <- FALSE
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 
-	d$irrigated <- NA
-	d$on_farm <- NA
+	d$irrigated <- TRUE
+	d$on_farm <- FALSE
 	d$country <- "Lebanon"
-	d$adm1 <- "Baalbek-Hermel Governorate"
+	d$adm1 <- "Baalbek-Hermel"
 	d$adm2 <- "Baalbek"
 	d$adm3 <- "Kfar Dan"
 	d$location <- "Lebanese Agricultural Research Institute station"

@@ -48,7 +48,7 @@ carob_script <- function(path) {
 	ndvi <- r[, nv]
 	ndvi$record_id <- 1:nrow(ndvi)
 	dates <- as.numeric(gsub("NDVI_", "", nv)) + as.Date("1900-01-01") - 2
-	ndvi <- reshape(ndvi, direction="long", varying=nv, v.names="NDVI", times = as.character(dates))
+	ndvi <- reshape(ndvi, direction="long", varying=nv, v.names="NDVI", timevar="date", times = as.character(dates))
   ndvi$id <- NULL
   
   d$trial_id <- "1"
@@ -70,8 +70,8 @@ carob_script <- function(path) {
 	d$P_fertilizer <- (104*0.52) / 2.29
 	d$K_fertilizer <- 0
 	
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE
+	d$yield_moisture <- 14 # Yield.at.14pct.hum_kg.ha
 
 	carobiner::write_files(path, meta, d, long=ndvi)
 }

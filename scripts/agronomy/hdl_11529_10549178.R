@@ -50,6 +50,8 @@ The key objectives of the study included assessing the interactions between geno
 		yield_part= "grain",
 		CA_years=r$`Years of CA`
 	)
+	# one erroneous negative yield (-317.2 kg/ha) in raw data
+	d$yield[!is.na(d$yield) & d$yield < 0] <- NA
 
 	d$intercrops <- ifelse(r$`Growth strategy` == "intercropped", "legume", "none")
 	d$adm2 <- gsub("Nkotakhota", "Nkhotakota", d$adm2)

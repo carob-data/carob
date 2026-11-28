@@ -124,12 +124,11 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 		K_fertilizer = r2$K,
 		yield = r2$GrainYld*1000
 	)	
-	d2$trial_id = paste("RW", d2$adm2, d2$Season, sep = "_")
 	d2$K_fertilizer[d2$K_fertilizer == "D"] <- 0
 	d2$K_fertilizer <- as.numeric(d2$K_fertilizer)
 
 	# the dates are extracted from the reference, with a and b differentiating seasons within years.
-	d2$trial_id <- paste(d2$Season, d2$adm2)
+	d2$trial_id <- trimws(paste(r2$Season, d2$adm2))
 	dd2 <- data.frame(
 		trial_id = c("2014B Ngoma", "2014B Nyagatare", "2015 B Ngoma", "2015 B Nyagatare", "2015 B Musanze", "2015A Bugesera", "2015A Ngoma", "2015A Nyagatare", "2015A Burera", "2015A Musanze", "2015A Huye"), 
 		planting_date = c("2014-03-09", "2013-11-03", "2015-02-27", "2015-02-24", "2015-02-10", "2014-03-10", "2014-09-26", "2014-09-22", "2014-09-18", "2014-10-09", "2015-03-04"), 
@@ -190,7 +189,7 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 	d3 <- merge(d3, geo, by = "adm3", all.x = TRUE) 
 	
 	#dates from the reference
-	d3$trial_id <- paste(d3$adm3, d3$Y)
+	d3$trial_id <- trimws(paste(d3$adm3, r3$Y))
 	
 	dd <- data.frame(trial_id = c("Dareda 15", "Dareda 16", "Ilonga 14", "Ilonga 15", "Kwedizinga 16", "Kwedizinga 15", "Mavamizi 14", "Mlingano 14", "Mlingano 15", "Muheza 15", "Selian 14", "Selian 15", "Uyole 15", "Uyole 16"), 
 		planting_date = c("2015-05-01", "2016-01-01", "2014-02-21", "2015-03-04", "2016-04-04", "2015-03-21", "2014-03-17", "2014-03-10", "2015-03-24", "2015-03-19", "2014-03-20", "2015-04-03", "2014-12-12", "2015-12-24"), 
@@ -245,6 +244,7 @@ Also see: doi:10.21955/gatesopenres.1115299.1"
 	d$on_farm <- TRUE
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
+	d$geo_from_source <- FALSE
 	d$row_spacing <- 75
 	d$plant_spacing <- 25
 	d$rep <- as.integer(d$rep)

@@ -44,10 +44,10 @@ carob_script <- function(path){
 	d$on_farm <- TRUE
 	d$planting_date <- as.character(as.Date(paste(d$planting_date_yyyy, d$planting_date_mm, d$planting_date_dd, sep = "-")))
 	d$harvest_date <- as.character(as.Date(paste(d$date_harvest_yyyy, d$date_harvest_mm, d$date_harvest_dd, sep = "-")))
-	d$treatment <- paste(d$main_treatment, d$sub_treatment_inoc, d$sub_treatment_fert, sep = "_")
+	d$treatment <- trimws(paste(d$main_treatment, d$sub_treatment_inoc, d$sub_treatment_fert, sep = "_"))
 	
 	#adding fertilizer information
-	f <- paste(d$main_treatment, d$sub_treatment_inoc, d$sub_treatment_fert, collapse=" ")
+	f <- paste(d$main_treatment, d$sub_treatment_inoc, d$sub_treatment_fert, sep = " ")
 	f <- toupper(f)
 	d$K_fertilizer <- d$P_fertilizer <- d$N_fertilizer <- 0
 	# this could be further simplified as the fertilizer combination is always the same.
@@ -59,8 +59,10 @@ carob_script <- function(path){
 	d$inoculated <- d$sub_treatment_inoc == "Inoculated"
 	d$inoculated[d$sub_treatment_inoc == "Sub-treatment (Inocu"] <- TRUE
 	 
-	d$fertilizer_type <- ""
-	d$fertilizer_type[d$N_fertilizer > 0] <- c("TSP; KCl; urea")
+	d$fertilizer_type <- "none"
+	d$fertilizer_type[d$P_fertilizer > 0] <- "TSP"
+	d$fertilizer_type[d$K_fertilizer > 0 & d$P_fertilizer > 0] <- "TSP; KCl"
+	d$fertilizer_type[d$N_fertilizer > 0] <- "TSP; KCl; urea"
 	
 	d$yield <- d$grain_yield_ha_calc
 	
@@ -101,12 +103,12 @@ carob_script <- function(path){
 	# all zero  d2$soil_K <- d2$k
 	d2$soil_sand <- d2$sand
 	d2$soil_clay <- d2$clay
-	d2$soil_SOC <- d2$tot_carbon
-	d2$soil_N <- d2$tot_nitrogen 
-	d2$soil_N[d2$soil_N == 0] <- NA
+	d2$soil_C_total <- d2$tot_carbon
+	d2$soil_N_total <- d2$tot_nitrogen * 10000 # % -> mg/kg
+	d2$soil_N_total[d2$soil_N_total == 0] <- NA
 	
 	#subset the processed variables
-	d2 <- d2[, c("trial_id", "soil_pH", "soil_sand","soil_clay","soil_SOC","soil_N")]
+	d2 <- d2[, c("trial_id", "soil_pH", "soil_sand","soil_clay","soil_C_total","soil_N_total")]
 	
 	# combining the processed data sets to one
 	s <- merge(d, d1, by = "trial_id")
@@ -135,8 +137,8 @@ carob_script <- function(path){
 	q$planting_date[i] <- "2012-08-23"
 		
 	# all scripts should end like this
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	q$yield_isfresh <- NA #needs to be checked
+	q$yield_moisture <- as.numeric(NA) #needs to be checked
 
 	carobiner::write_files(meta, q, path=path)
 }  

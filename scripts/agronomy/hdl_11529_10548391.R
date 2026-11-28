@@ -46,8 +46,8 @@ Tanzania Performance Trials 2016
     location=r$Village,
     crop=tolower(r$Crop),
     field_size=r$`Field size`,
-    plant_density=r$FP_PD,
-    soil_depth=r$Soil_depth,
+    plant_density_class_=r$FP_PD, # categorical range ("<50, 000", "> 55, 000"), not numeric
+    soil_depth_class_=r$Soil_depth, # categorical range ("<50 cm", ">50 cm"), not numeric
     previous_crop_residue_management=tolower(r$Residue_tc),
     soil_P=r$P_soil_value,
     soil_K=r$K_soil_value,
@@ -56,7 +56,7 @@ Tanzania Performance Trials 2016
     yield_moisture=NA,
     geo_from_source=FALSE
   )
-  d$trial_id <- 1:nrow(d)
+  d$trial_id <- as.character(1:nrow(d))
 
   # fertilizer data
   ctrl <- data.frame(

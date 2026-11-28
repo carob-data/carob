@@ -26,7 +26,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-27",
-		notes = "LLM-review: [medium, admin] Village is stored in adm3 and location is never set.", 
+		notes = NA, 
 		design = NA
 	)
 	
@@ -51,7 +51,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		country = "India",
 		adm1 = trimws(df$STATE),
 		adm2 = df$District,
-		adm3 = df$Village,
+		location = df$Village,
 		treatment = df$Treat_details,
 		rep = as.integer(df$Rep),
 		land_prep_method = df$Tillage,
@@ -65,7 +65,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		weeding_method = df$Weedmgt_type,
 		plant_density = df$PN,
 		yield = df$GY*1000,
-		fertilizer_price = as.character(df$Fert_cost),
+		fertilizer_cost_ = as.numeric(df$Fert_cost), # total fertilizer cost in USD/ha, not per-kg price
 		crop_price = df$Price,
 		currency = "USD"
 	  )
@@ -91,7 +91,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	d$yield_moisture <- 15  
 	d$treatment <- iconv(d$treatment, from = "latin1", to = "UTF-8", sub = "")
 	d$treatment <- trimws(d$treatment)
-	d$trial_id <- paste(d$adm3, substr(d$planting_date, 1, 4), sep = "_")
+	d$trial_id <- paste(d$location, substr(d$planting_date, 1, 4), sep = "_")
 	d$crop <- "maize"
 	d$yield_part <- "grain"
 	d$land_prep_method <- gsub("Conventional", "conventional", d$land_prep_method)
@@ -102,7 +102,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 	
 	#fixing location
 	g <- data.frame(
-		adm3 =c("Singarpur", "Barbill", "Baria",  "Bagdofa", "Rasamtala", "Labda", "Batupondugandi", "Tisira", 
+		location = c("Singarpur", "Barbill", "Baria",  "Bagdofa", "Rasamtala", "Labda", "Batupondugandi", "Tisira", 
 	           "Jashipur", "Deogaon", "Sarangarh", "Tikarpara"),
 	# "Barbill" not locatable within Mayurbhanj (only match found is Barbil
 	# town, Kendujhar district, 33km from the Mayurbhanj border) - using
@@ -111,7 +111,7 @@ Maize is the staple crop cultivated during the monsoon season in the rainfed upl
 		longitude = c(86.0885, 86.4059, 85.9431, 87.0135, 86.003, 86.4847, 86.135, 86.002, 86.079, 86.1373, 85.9174, 86.712)
 	)
 	
-	d <- merge(d, g, by="adm3", all.x=TRUE)
+	d <- merge(d, g, by="location", all.x=TRUE)
 	
 	#using adm2 coordinates where adm3 is NA
 	d$latitude[is.na(d$latitude)] <- 21.8907

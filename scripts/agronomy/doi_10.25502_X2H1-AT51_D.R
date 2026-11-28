@@ -61,6 +61,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 		
 	d$planting_date <- as.character(as.Date(d$date_planting,"%m/%d/%Y"))
 	d$harvest_date <- as.character(as.Date(d$date_harvest, "%m/%d/%Y"))
+	# 2013-01-01 harvest date before 2013-07-01 planting date is a placeholder/typo
+	d$harvest_date[!is.na(d$planting_date) & !is.na(d$harvest_date) & d$harvest_date < d$planting_date] <- NA
 	# based on harvested plants from harvested area/ha
 	d$plant_density <- d$no_plants/(d$area_harvest_plot_m2/10000) 
 	d$plant_density[d$plant_density == "NaN"] <- NA
@@ -77,7 +79,8 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d1$previous_crop <- tolower(d1$crop_n2a_plot_p_season)
 	d1$previous_crop <- ifelse(d1$previous_crop == "bread wheat","wheat",
 						ifelse(d1$previous_crop == "tef","teff",
-						ifelse(d1$previous_crop == "noug (guziota scarba)", "noug", d1$previous_crop)))
+						ifelse(d1$previous_crop == "fallow", "none",
+						ifelse(d1$previous_crop == "noug (guziota scarba)", "noug", d1$previous_crop))))
 	d1$previous_crop[d1$previous_crop == ""] <- NA
 	d1 <- d1[,c("trial_id","previous_crop")]
 	
@@ -125,11 +128,11 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d5 <- data.frame(read.csv(f5)) 
 	d5$trial_id <- toupper(d5$farm_id)
 	d5$soil_pH <- d5$ph
-	d5$soil_SOC <- d5$tc_perc
-	d5$soil_N <- d5$n_perc
+	d5$soil_C_total <- d5$tc_perc
+	d5$soil_N_total <- d5$n_perc * 10000 # % -> mg/kg
 	d5$soil_sand <- as.numeric(d5$sand_perc)
 	d5$soil_clay <- as.numeric(d5$clay_perc)
-	d5 <- d5[,c("trial_id","soil_pH","soil_SOC","soil_N","soil_sand","soil_clay")]
+	d5 <- d5[,c("trial_id","soil_pH","soil_C_total","soil_N_total","soil_sand","soil_clay")]
 
 	# compiling into a single final dataset
 	
@@ -145,12 +148,12 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	N <- 25 * 0.18
 	
 	f$fertilizer_type <- "none"
-	f$P_fertilizer <- ifelse(
-		f$treatment %in% c("+p,+i","+p,-i","+p","hachalu,+i,+p","wayu,+i,+p","wolki,+i,+p","dagim,+i,+p","lalo,+i,+p","local,+i,+p"),P,0)
-	f$N_fertilizer <- ifelse(
-		f$treatment %in% c("+p,+i","+p,-i","+p","hachalu,+i,+p","wayu,+i,+p","wolki,+i,+p","dagim,+i,+p","lalo,+i,+p","local,+i,+p"),N,0)
+	trt_low <- tolower(f$treatment)
+	has_p <- trt_low %in% c("+p,+i","+p,-i","+p","hachalu,+i,+p","wayu,+i,+p","wolki,+i,+p","dagim,+i,+p","lalo,+i,+p","local,+i,+p")
+	f$P_fertilizer <- ifelse(has_p, P, 0)
+	f$N_fertilizer <- ifelse(has_p, N, 0)
 	f$K_fertilizer <- 0
-	f$inoculated <- grepl("\\+i", f$treatment)
+	f$inoculated <- grepl("\\+i", trt_low)
 	f$fertilizer_type[f$N_fertilizer > 0] <- "DAP"
 	f$fertilizer_type[f$P_fertilizer > 0] <- "DAP"
 	f$country <- "Ethiopia"
@@ -161,7 +164,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	
 	f <- f[,c("trial_id","country","adm3","location","site","planting_date","harvest_date",
 			"rep","treatment","crop","variety","previous_crop","yield","fwy_residue","dmy_total",
-			"seed_weight","plant_density","soil_pH","soil_SOC","soil_N","soil_sand","soil_clay",
+			"seed_weight","plant_density","soil_pH","soil_C_total","soil_N_total","soil_sand","soil_clay",
 			"fertilizer_type","P_fertilizer","N_fertilizer","K_fertilizer","inoculated","row_spacing",
 			"plant_spacing","on_farm","elevation","latitude","longitude")]
 

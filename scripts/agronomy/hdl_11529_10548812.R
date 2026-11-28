@@ -26,7 +26,7 @@ This experiments were established with different rates of nitrogen in order to g
 		carob_contributor = "Blessing Dzuda",
 		carob_effort = NA,
 		carob_date = "2025-10-17",
-		notes = "LLM-review: [medium, invented] N, P, and K are NA for every row.", 
+		notes = NA, 
 		design = NA
 	)
 	
@@ -41,7 +41,7 @@ This experiments were established with different rates of nitrogen in order to g
 		  adm2 = r$Municipality,
 		  location = r$Locality,
 		  latitude = r$Latitude,
-		  longitude = r$Longitude,
+		  longitude = -abs(r$Longitude), # raw sheet omits minus sign for Oaxaca (97 -> -97)
 		  planting_date = as.character(r$Planting.Date),
 		  irrigation_dates = as.character(r$Prepalanting.sowing.irrigation),
 		  land_prep_method = tolower(paste0(r$Tillage, ";", r$Planting.method))	,

@@ -22,7 +22,7 @@ carob_script <- function(path) {
     project=NA,
 	response_vars = "yield",
 	treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;inoculated",
-	notes = "LLM-review: [medium, fertilizer] NPK is stored as 12.5, 28.5, 28.5 and SSP as 50, while DAP is converted. SYMPAL is stored as P 23 and K 26, which is the grade, not a rate. High yields are set to NA."
+	notes = NA
   )
   
   f <- ff[basename(ff) == "a_general_1.csv"] 
@@ -79,7 +79,7 @@ carob_script <- function(path) {
   i <- which(d3$yield_unit == "Kg/acre" & d3$farm_size > 0)
   d3$yield[i] <- d3$yield1[i] / 0.404686
   # merge d and d3
-  d <- merge(d,d3,bx="trial_id", all.y = T)
+  d <- merge(d, d3, by="trial_id", all.y = TRUE)
   d$inoculated <- FALSE
   d$inoculated[!is.na(d$inoculation_type)| d$inoculation_type !=""] <- TRUE
   d <- d[, c("country", "trial_id", "location","adm1","adm2","longitude", "latitude","crop", "yield","fertilizer_type","inoculated")]
@@ -105,20 +105,23 @@ carob_script <- function(path) {
   d$N_fertilizer <- 0
   d$P_fertilizer <- 0
   d$K_fertilizer <- 0
-  d$N_fertilizer[d$fertilizer_type=="NPK"] <- 12.5
-  d$P_fertilizer[d$fertilizer_type=="NPK"|d$fertilizer_type=="NPK, CAN"] <- 28.5
-  d$K_fertilizer[d$fertilizer_type=="NPK"|d$fertilizer_type=="NPK, CAN"] <- 28.5
+  # NPK 10-23-23 at 125 kg/ha -> elemental N, P, K
+  d$N_fertilizer[d$fertilizer_type=="NPK"] <- 125 * 0.10
+  d$P_fertilizer[d$fertilizer_type=="NPK"|d$fertilizer_type=="NPK, CAN"] <- 125 * 0.23 / 2.29
+  d$K_fertilizer[d$fertilizer_type=="NPK"|d$fertilizer_type=="NPK, CAN"] <- 125 * 0.23 / 1.2051
   
+  # Sympal (0-23-26) application rate not reported -> leave P and K as NA
   d$N_fertilizer[d$fertilizer_type=="Sympal(NPK)" |d$fertilizer_type=="Sympal"] <- 0
-  d$P_fertilizer[d$fertilizer_type=="Sympal(NPK)" |d$fertilizer_type=="Sympal"] <- 23
-  d$K_fertilizer[d$fertilizer_type=="Sympal(NPK)" |d$fertilizer_type=="Sympal"] <- 26
+  d$P_fertilizer[d$fertilizer_type=="Sympal(NPK)" |d$fertilizer_type=="Sympal"] <- NA
+  d$K_fertilizer[d$fertilizer_type=="Sympal(NPK)" |d$fertilizer_type=="Sympal"] <- NA
   
   d$N_fertilizer[d$fertilizer_type=="Urea"] <- 60 * 0.46
   d$N_fertilizer[d$fertilizer_type=="DAP"] <- 50 * 0.18
-  d$P_fertilizer[d$fertilizer_type=="DAP"|d$fertilizer_type=="DAP, Urea" |d$fertilizer_type=="DAP, CAN"] <- 50*0.46/2.29
-  d$P_fertilizer[d$fertilizer_type=="SSP"] <- 50
+  d$P_fertilizer[d$fertilizer_type=="DAP"|d$fertilizer_type=="DAP, Urea" |d$fertilizer_type=="DAP, CAN"] <- 50 * 0.46 / 2.29
+  # SSP (20% P2O5 = 8.74% P) at 50 kg/ha
+  d$P_fertilizer[d$fertilizer_type=="SSP"] <- 50 * 0.0874
   d$N_fertilizer[d$fertilizer_type=="DAP, Urea"] <- 60*0.46 + 50*0.18 
-  d$N_fertilizer[d$fertilizer_type=="NPK, CAN"] <- 12.5 
+  d$N_fertilizer[d$fertilizer_type=="NPK, CAN"] <- 125 * 0.10 
   d$N_fertilizer[d$fertilizer_type=="DAP, CAN" ] <- 50*0.18 
   d$N_fertilizer[d$fertilizer_type=="Urea, CAN" ] <- 60*0.46 
   #fix country name
@@ -202,19 +205,17 @@ carob_script <- function(path) {
   d$yield[d$crop=="groundnut" & d$yield > 8500] <- NA
   d$yield[d$crop=="soybean" & d$yield > 15000] <- NA
   # fix whitespace in variable
-  d$fertilizer_type[d$fertilizer_type==""] <- NA
-  d$location[d$location==""] <- NA
-  d$adm1[d$adm1==""] <- NA
-  d$adm2[d$adm2==""] <- NA
-  # # EGB:
-  # # Removing OM_type and OM_used since there is no info on such
-  # d$OM_type[d$OM_type==""] <- NA
-  # # add column
-  # d$OM_used <- FALSE
-  # d$OM_used[!is.na(d$OM_type)] <- TRUE
-  # data type
-  d$location <- as.character(d$location)
+  for (col in c("fertilizer_type", "location", "adm1", "adm2", "crop")) {
+    d[[col]] <- trimws(as.character(d[[col]]))
+    d[[col]][d[[col]] == ""] <- NA
+  }
   d$yield_part <- "seed"
+  d$yield_part[d$crop %in% c("maize", "sorghum", "millet", "finger millet", "rice")] <- "grain"
+  d$yield_part[d$crop %in% c("cassava", "sweetpotato")] <- "roots"
+  d$yield_part[d$crop == "potato"] <- "tubers"
+  d$yield_part[d$crop == "banana"] <- "fruit"
+  d$yield_part[d$crop %in% c("kale", "tobacco", "vegetables")] <- "leaves"
+  d$yield_part[d$crop == "sugarcane"] <- "stems"
   d$planting_date <- as.character(NA)
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

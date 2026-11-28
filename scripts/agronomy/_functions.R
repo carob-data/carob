@@ -70,7 +70,7 @@ IRRI_LTE <- function(f, path) {
 		yield = r$GYkgha,
 		N_fert_level = as.integer(gsub("F", "", r$Afactor)),
 		variety_code = paste0(r$Year, "_", r$Bfactor),
-		variety = r$B_label,
+		variety = trimws(r$B_label),
 		trial_id = as.character(r$Crop_no)
 	)
 	# from https://lte.irri.org/ltcce 2025/06/13

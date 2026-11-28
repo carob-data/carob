@@ -24,27 +24,27 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 		carob_date = "2026-05-06",
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "seed_density",
+		treatment_vars = "seed_density;planting_date;harvest_date",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "LLM-review: [medium, metadata] trial_id includes the block, so it is one id per replicate. S_fertilizer is 2 while the notes say amounts are not specified: the 2 is the grade of 24-0-0-2, not kg S/ha. yield_isfresh is TRUE on dry-matter yield. Early versus late planting is also a treatment and is not in treatment_vars."
+		notes = NA
 	)
 	
 
 	f1 <- ff[basename(ff) == "Seeding_rate_Data.csv"]
-	f2 <- ff[basename(ff) == "README.md"]
-
 	r1 <- read.csv(f1, na= ".")
-	#r2 <- read.???(f2)
 
-	### process
-	
-	d <- data.frame(
+	### Seeding_rate_Data.csv stores two separate side-by-side tables:
+	### cols 1-5: sequential harvest timing (Aug/Sep/Oct) in 2017 & 2019
+	### cols 6-14: planting date (Early/Late) x seeding rate in 2017-2019 (final harvest)
+
+	# Planting date x seeding rate table (cols 6-14)
+	d1 <- data.frame(
+	  trial_id = paste0(r1$E, "_planting"),
 	  location = substr(r1$E, 5, 11),
-	  seed_density = r1$Seeding..S..rate,
-	  rep = r1$Block..B.,
-	  dmy_total = r1$Dry.matter.yield..Mg.ha.*1000,
+	  seed_density = r1$S.rate,
+	  rep = as.integer(r1$B),
 	  planting_date = ifelse(grepl("Late planting", r1$planting.date) & grepl("2017", r1$E), "2017-07-05",
 	                  ifelse(grepl("Late planting", r1$planting.date) & grepl("2018", r1$E), "2018-07-02",
 	                  ifelse(grepl("Late planting", r1$planting.date) & grepl("2019", r1$E), "2019-06-29",
@@ -52,40 +52,47 @@ This dataset includes measurements from a field study evaluating biomass sorghum
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Holland", r1$E), "2018-06-09",
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2019Holland", r1$E), "2019-05-24",
 	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2017Hare", r1$E), "2017-06-09",
-	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Hare", r1$E), "2018-06-07", "2019-05-23")))))))), # from publication,
-	  harvest_date = paste(substr(r1$E, 1, 4), carobiner::eng_months_to_nr(r1$Harvest.time), sep = "-"),
-	  yield = r1$Yield..Mg.ha.*1000,
+	                  ifelse(grepl("Early planting", r1$planting.date) & grepl("2018Hare", r1$E), "2018-06-07", "2019-05-23")))))))), # from publication
+	  harvest_date = substr(r1$E, 1, 4),
+	  yield = as.numeric(r1$Yield..Mg.ha.) * 1000,
+	  dmy_total = as.numeric(r1$Yield..Mg.ha.) * 1000,
 	  plant_height = r1$Plant.height..cm.,
+	  stem_diameter = as.numeric(r1$Stem.diameter..mm.) / 10, # mm -> cm
 	  disease_severity = as.character(r1$Disease.severity....),
-	  crop = "sorghum",
-	  country ="United States",
-	  soil_texture = ifelse(grepl("Holland", r1$E), "loam", "loamy sand"),
-	  trial_id = paste(r1$Environment..E., r1$Block..B.), 
-	  fertilizer_type = "lime;NPK;AS", # (AS ; 24-0-0-2) from reference
-	  S_fertilizer = 2,
-	  on_farm = TRUE, 
-	  is_survey = FALSE, 
-	  yield_part = "aboveground biomass", 
-	  yield_moisture = as.numeric(NA), 
-	  geo_from_source = FALSE,
-	  irrigated = NA,
-	  yield_isfresh = TRUE
-		
+	  soil_texture = ifelse(grepl("Holland", r1$E), "loam", "loamy sand")
 	)
 
-	d$harvest_date <- gsub("-8", "-08", d$harvest_date)
-	d$harvest_date <- gsub("-9", "-09", d$harvest_date)
-	### Adding longitude and latitude coordinate
-	
-	geo <- data.frame(
-	  location = c("Holland","Hare"),
-	  longitude = c(-86.1050, -85.8210),
-	  latitude = c(42.7898, 42.6978)
+	# Sequential harvest timing table (cols 1-5)
+	d2 <- data.frame(
+	  trial_id = paste0(r1$Environment..E., "_harvest"),
+	  location = substr(r1$Environment..E., 5, 11),
+	  seed_density = r1$Seeding..S..rate,
+	  rep = as.integer(r1$Block..B.),
+	  planting_date = substr(r1$Environment..E., 1, 4),
+	  harvest_date = sprintf("%s-%02d", substr(r1$Environment..E., 1, 4), as.integer(carobiner::eng_months_to_nr(r1$Harvest.time))),
+	  yield = as.numeric(r1$Dry.matter.yield..Mg.ha.) * 1000,
+	  dmy_total = as.numeric(r1$Dry.matter.yield..Mg.ha.) * 1000,
+	  soil_texture = ifelse(grepl("Holland", r1$Environment..E.), "loam", "loamy sand")
 	)
-	
-	d <- merge(d, geo, by="location", all.x = TRUE)
-	
-	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA) 
+
+	d <- carobiner::bindr(d1, d2)
+
+	d$crop <- "sorghum"
+	d$country <- "United States"
+	d$adm1 <- "Virginia"
+	d$adm2 <- "Suffolk"
+	# Virginia Tech Tidewater AREC (Holland and Hare research farms), Suffolk, VA
+	d$longitude <- -76.7671
+	d$latitude <- 36.6850
+	d$geo_from_source <- FALSE
+	d$fertilizer_type <- "lime;NPK;DAS" # (ammonium sulfate 24-0-0-2) from reference; amounts not specified
+	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
+	d$on_farm <- FALSE
+	d$is_survey <- FALSE
+	d$irrigated <- NA
+	d$yield_part <- "aboveground biomass"
+	d$yield_moisture <- 0
+	d$yield_isfresh <- FALSE
 
 	carobiner::write_files(path, meta, d)
 }

@@ -60,11 +60,11 @@ carob_script <- function(path) {
 			maturity_days=as.integer(r$Mat_days),
 			seed_weight=r$Thousand,
 			crop_price=as.numeric(r$Price)/1000,
-			currency="??",
+			currency="MXN",
 			N_fertilizer=r$Fert_N,
 			P_fertilizer=r$Fert_P / 2.29,
 			K_fertilizer=r$Fert_K,
-			row_spacing=as.numeric(r$Row_dist),
+			row_spacing=as.numeric(r$Row_dist) * 100, # m -> cm
 			rain=as.numeric(r$Precip),
 			variety=r$Variety,
 			previous_crop_residue_perc=r$Res_perc,
@@ -74,6 +74,7 @@ carob_script <- function(path) {
 			season=r$Cycle,
 			plant_density=as.numeric(r$Plants_m2)*10000,
 			yield_part="grain",
+			yield_moisture=as.numeric(r$Moist_adjust) * 100, # fraction -> %
 			trial_id=id
 			#slper=r$Lodging,
 		)
@@ -96,6 +97,10 @@ carob_script <- function(path) {
 			c("bean", "descanso", "fallow", "fig leaf gourd", "haba"),
 			c("common bean", "none", "none", "fig-leaf gourd", "faba bean"))
 	d <- d[d$crop!="none", ]
+	d$yield_part[d$crop %in% c("common bean", "faba bean", "pea")] <- "seed"
+	d$yield_part[d$crop %in% c("fig-leaf gourd", "peach")] <- "fruit"
+	# tree row spacing (4 m, 8.4 m) is not annual crop row_spacing
+	d$row_spacing[!is.na(d$row_spacing) & d$row_spacing > 180] <- NA
 
 	d$crop_rotation <- gsub("/|-|, ", ";", d$crop_rotation)
 	d$crop_rotation <- gsub("descanso|fallow", "none", d$crop_rotation)
@@ -111,8 +116,7 @@ carob_script <- function(path) {
 	d$is_survey <- FALSE
 	d$irrigated <- FALSE
 
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE
 
 	carobiner::write_files(path, meta, d)
 }

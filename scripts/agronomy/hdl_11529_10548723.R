@@ -32,19 +32,16 @@ carob_script <- function(path) {
                                   carob_effort = NA,
                                   carob_date = "2025-05-29",
                                   notes = NA,
-                                  design = "Randmized Complete Block Design"
+                                  design = "Randomized Complete Block Design"
   )
   
   f <- ff[basename(ff) == "BD Ensayos Omision VF.xlsx"]
   
   clean_num <- function(x) {
-    x <- as.character(x)
-    x <- gsub(",", ".", x)            
-    x <- gsub("^ND$", NA, x)          
-    x <- gsub("^\\.$", NA, x)
-    x <- gsub("^-$", NA, x)
-    x <- gsub("[^0-9\\.\\-]", "", x)  
-    x <- gsub("^\\s*$", NA, x)         
+    x <- trimws(as.character(x))
+    x[x == "50800 a 56000"] <- "53400" # midpoint of reported density range
+    x <- gsub(",", ".", x)
+    x[!grepl("^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$", x)] <- NA
     as.numeric(x)
   }
   

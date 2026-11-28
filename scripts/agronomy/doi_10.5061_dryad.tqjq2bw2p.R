@@ -25,7 +25,7 @@ Soil samples were collected before the trials and after the trials. Data collect
       project="InnovAfrica", 
       data_type= "experiment", 
       treatment_vars= "herbicide_used; crop_rotation; planting_method; land_prep_method; residue_prevcrop; residue_prevcrop_used", 
-      response_vars = "yield; fwy_residue", 
+      response_vars = "yield", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
       carob_date="2025-05-30",
@@ -186,14 +186,14 @@ Soil samples were collected before the trials and after the trials. Data collect
  
    d$country <- "Tanzania"
    d$adm1 <- "Lindi"
-   d$treatment <- c("farmers practice", "CvT-dibble stick ","CvT-dibble stick-glyphosate intercrop", "CA-dibble stick-glyphosate sorghum-legume rotation", "CA-glyphosate legume-sorghum rotation")[d$treatment]
+   d$treatment <- c("farmers practice", "CvT-dibble stick","CvT-dibble stick-glyphosate intercrop", "CA-dibble stick-glyphosate sorghum-legume rotation", "CA-glyphosate legume-sorghum rotation")[d$treatment]
 
 	d$residue_prevcrop_used <- ifelse(grepl("CvT", d$treatment), TRUE, FALSE)
 	    
 	d$planting_method <- ifelse(grepl("CA", d$treatment), "direct seeding", 
 	                            ifelse(grepl("CvT", d$treatment), "dibbling", "manual"))
 	d$land_prep_method <- ifelse(grepl("farmers practice", d$treatment), "conventional",
-	                       ifelse(grepl("CvT", d$treatment), "conservation tillage", "conservation agriculture"))
+	                       ifelse(grepl("CvT", d$treatment), "minimum tillage", "none"))
 
    fp <- grepl("farmers practice", d$treatment)
    d$fertilizer_type <- ifelse(fp, "none", "NPS")
@@ -203,7 +203,8 @@ Soil samples were collected before the trials and after the trials. Data collect
    d$S_fertilizer <- ifelse(fp, 0, NA_real_)
 
    d$trial_id <- d$location
-   d$yield_part <- ifelse(d$crop == "groundnut", "pod", "grain")
+   d$yield_part <- ifelse(d$crop == "groundnut", "pod",
+                   ifelse(d$crop %in% c("cowpea", "pigeon pea", "common bean", "soybean", "mung bean", "lablab"), "seed", "grain"))
    d$on_farm= TRUE
    d$is_survey= FALSE
    d$irrigated= NA

@@ -23,8 +23,7 @@ carob_script <- function(path){
 		carob_modified_by = "Eduardo Garcia Bendito",
 		carob_last_modified = "2024-03-07",
 		response_vars = "yield",
-		treatment_vars = "inoculated;P_fertilizer",	
-		notes = "LLM-review: [medium, fertilizer] P_fertilizer is the character 19.23 with no derivation. is_survey is left NA on an on-farm experiment."
+		treatment_vars = "inoculated;P_fertilizer"
 	)
 
 	p_year <- 2014 #planting year
@@ -55,7 +54,7 @@ carob_script <- function(path){
 
 	# d <- d0, d1, d3, d4, d5
 	
-	d0$trial_id <- d0$experiment_id
+	d0$trial_id <- trimws(d0$farm_id)
 	
 	# Get experiment treatments from d0 table
 	trts <- grep("name_treatment_", colnames(d0), perl = TRUE)
@@ -115,13 +114,13 @@ carob_script <- function(path){
 	d0_trt$N_fertilizer <- rep(0, nrow(d0_trt))
 	d0_trt$K_fertilizer <- rep(0, nrow(d0_trt))
 	phosphorus <- grep("phosphorus",d0_trt$treatment)
-	d0_trt$fertilizer[phosphorus] <- 'NPK'
-	d0_trt$P_fertilizer[phosphorus] <- '19.23'
+	d0_trt$fertilizer[phosphorus] <- 'TSP'
+	d0_trt$P_fertilizer[phosphorus] <- 19.23
 	
 	# Include a field for whether inoculated or not
 	ino <- grep("inoc",d0_trt$treatment)
-	d0_trt$inoculated <- rep('no', nrow(d0_trt))
-	d0_trt$inoculated[ino] <- 'yes'
+	d0_trt$inoculated <- FALSE
+	d0_trt$inoculated[ino] <- TRUE
 	d0_trt$SN <- rep(d0$SN,5)
 
 	# add plot no for the d0_trt
@@ -346,7 +345,7 @@ carob_script <- function(path){
 	
 	
 	d$on_farm <- TRUE
-	d$is_survey <- NA 
+	d$is_survey <- FALSE 
 	d$irrigated	<- NA
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked

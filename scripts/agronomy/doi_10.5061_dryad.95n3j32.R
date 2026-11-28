@@ -55,41 +55,40 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
       rep= as.integer(r1$R),
       yield= r1$GrYdMgH*1000,
       yield_moisture= 15.5, 
-      grain_P= r1$Gr_P*100,
-      harvest_index= r1$HI,
-      dmy_total= r1$StDMMg_ha*1000,
-      residue_P= r1$SPp*100
-   )
-   
-   ### process soil data 
-   d2 <- data.frame(
-      location= ifelse(grepl("HAL", r2$L), "Haskell Agricultural Laboratory", 
-                       ifelse(grepl("WC", r2$L), "West Central Research and Extension Center", "Eastern Nebraska Research and Extension Center")),
-      trial_id= ifelse(grepl("HAL", r2$L), "1", 
-                       ifelse(grepl("WC", r2$L), "2", "3")),
-      planting_date= r2$y,
-      plot_id= as.character(r2$pl),
-      rep= as.integer(r2$r),
-      land_prep_method= tolower(r2$tillage),
-      depth= r2$`depth, inches`,
-      #soil_P_available1= r2$Bray1,
-      soil_P = r2$Olsen,
-      soil_P_Mehlich= r2$Mehlich3,
-      country= "United States"
-   )
-   
-   ### merge d2 and d1
-   d <- merge(d2, d1, by=c("location", "rep", "planting_date", "plot_id", "land_prep_method"), all.x = TRUE) 
-   d$land_prep_method <- ifelse(grepl("no-till", d$land_prep_method), "minimum tillage", "disk tillage")
-   
-   d$crop <- "maize"
-   d$yield_part <- "grain"
-   d$is_survey <- FALSE
-   d$on_farm <- TRUE
-   d$geo_from_source <- FALSE
-   d$irrigated <- NA
-   d$N_fertilizer <- 0
-   d$K_fertilizer <- 0
+       grain_P= r1$Gr_P * 10, # % -> mg/g
+       harvest_index= r1$HI * 100, # fraction -> %
+       dmy_total= r1$StDMMg_ha*1000,
+       residue_P= r1$SPp * 10 # % -> mg/g
+    )
+    
+    ### process soil data 
+    d2 <- data.frame(
+       location= ifelse(grepl("HAL", r2$L), "Haskell Agricultural Laboratory", 
+                        ifelse(grepl("WC", r2$L), "West Central Research and Extension Center", "Eastern Nebraska Research and Extension Center")),
+       trial_id= paste(ifelse(grepl("HAL", r2$L), "HAL", ifelse(grepl("WC", r2$L), "WCREC", "ENREC")), r2$y, sep = "_"),
+       planting_date= r2$y,
+       plot_id= as.character(r2$pl),
+       rep= as.integer(r2$r),
+       land_prep_method= tolower(r2$tillage),
+       depth= r2$`depth, inches`,
+       #soil_P_available1= r2$Bray1,
+       soil_P = r2$Olsen,
+       soil_P_Mehlich= r2$Mehlich3,
+       country= "United States"
+    )
+    
+    ### merge d2 and d1
+    d <- merge(d2, d1, by=c("location", "rep", "planting_date", "plot_id", "land_prep_method"), all.x = TRUE) 
+    d$land_prep_method <- ifelse(grepl("no-till", d$land_prep_method), "none", "disk tillage")
+    
+    d$crop <- "maize"
+    d$yield_part <- "grain"
+    d$is_survey <- FALSE
+    d$on_farm <- FALSE
+    d$geo_from_source <- FALSE
+    d$irrigated <- NA
+    d$N_fertilizer <- as.numeric(NA)
+    d$K_fertilizer <- as.numeric(NA)
    
    ### fixing planting date
    plt <- data.frame(
@@ -155,15 +154,16 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
       ### datatype 
       cols <- c("tmax", "tmin", "rhum","wspd", "srad", "prec")
       d[cols] <- lapply(d[cols], function(x) {
-         x <- trimws(as.character(x))
+         x <- trimws(gsub("W$", "", as.character(x))) # strip 'W' flag on precipitation
          x[!is.na(x) & !grepl("^-?\\d+(\\.\\d+)?$", x)] <- NA
          as.numeric(x)
       })
       wth <- d[grepl(date, d$year),]
+      if (nrow(wth) == 0) return(NULL)
       if (date=="2012"){ group <- rep(1:366, length.out = nrow(wth))}
       else{ group <- rep(1:365, length.out = nrow(wth))}
       result <- lapply(cols, function(col) {
-         tapply(wth[[col]], group, mean)
+         tapply(wth[[col]], group, mean, na.rm = TRUE)
       })
       tt <- do.call(data.frame, result)
       names(tt) <- cols
@@ -274,15 +274,17 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
    
    
    ### Location 3:  Haskell Agricultural Laboratory
+   # In W1 (top Concord block), headers T-High..Precip are shifted 1 column right relative to the data
+   idx3 <- which(names(w1) == "T.High.2")
    wth3 <- data.frame(
       day= w1$CONCORD,
       year= w1$X.44,
-      tmax= w1$X.46,
-      tmin= w1$T.High.2,
-      rhum= w1$T.Low.2,
-      wspd= w1$Rel.Hum.2,
-      srad= w1$Wind.Spd.2,
-      prec= w1$Solar.2
+      tmax= w1[[idx3 - 1]],
+      tmin= w1[[idx3]],
+      rhum= w1[[idx3 + 1]],
+      wspd= w1[[idx3 + 3]],
+      srad= w1[[idx3 + 4]],
+      prec= w1[[idx3 + 5]]
    ) 
 
    wth3 <- wth3[-c(1:2),]   
@@ -309,7 +311,7 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
       srad= w2$Solar.2,
       prec= w2$Precip.2
    ) 
-   wth32 <- wth3[-c(1:2),] 
+   wth32 <- wth32[-c(1:3),] 
    
    wthf2 <- carobiner::bindr(wth3, wth31, wth32)
    
@@ -319,13 +321,19 @@ Phosphorus removal in crop harvest has increased as yields have increased.  Fert
    wthf2 <- wthf2[!is.na(wthf2$year),]
    
    ## fixing date
-   wth_mean3 <- lapply(date1, function(y) pr_wth(y, wth3))
+   wth_mean3 <- lapply(date1, function(y) pr_wth(y, wthf2))
    wth_mean3 <- do.call(rbind, wth_mean3)
    wth_mean3$location  <- "Haskell Agricultural Laboratory"
    wth_mean3$longitude <- -96.9588
    wth_mean3$latitude <- 42.38148
    
    wth <- carobiner::bindr(wth_mean1, wth_mean2,	wth_mean3)
+   # Convert Weather sheet imperial units to SI: F -> C, mi/hr -> m/s, Langley -> kJ/m2, inches -> mm
+   wth$tmax <- (wth$tmax - 32) * 5 / 9
+   wth$tmin <- (wth$tmin - 32) * 5 / 9
+   wth$wspd <- wth$wspd * 0.44704
+   wth$srad <- wth$srad * 41.84
+   wth$prec <- wth$prec * 25.4
    wth$date <- as.character(as.Date(wth$doy - 1, origin = paste0(wth$year, "-01-01")))
    wth$geo_from_source <-  FALSE
    wth$country <-  "United States"

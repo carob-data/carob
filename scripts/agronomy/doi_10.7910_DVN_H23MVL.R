@@ -19,8 +19,7 @@ carob_script <- function(path) {
 		data_type="compilation",
 		project=NA,
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer",				
-		notes = "LLM-review: [medium, invented] Missing N, P, and K are set to 0. soil organic carbon above 20 is set to NA. Rows with no location are dropped. trial_id is one per row. is_survey is TRUE with data_type compilation. irrigated is FALSE for a multi-country compilation. Every non-conventional tillage value, including NA, becomes none."
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer"
 	)
   
   
@@ -125,12 +124,12 @@ carob_script <- function(path) {
   # Add columns
   
   d$on_farm <- FALSE
-  d$is_survey <- TRUE
-  d$irrigated <- FALSE
+  d$is_survey <- FALSE
+  d$irrigated <- NA
   # fill missing data in long and lat columns
 
   yx <- c("latitude", "longitude")
-  d$location <- gsub("\n", "",  d$location)
+  d$location <- trimws(gsub("\n", "",  d$location))
   locs <- data.frame(
 	location=c("Anhui (AH)", "Guangdong", "Guangdong (GD)","Guangdong, Hunan, Jiangsu, Hubei", "Hebei","Hubei (HB)","Hubei, An'hui"  ,"Heilongjiang","Heilongjiang (HLJ)","Heilongjiang and Jilin provinces","Heilongjiang, Jilin","Henan","Hunan (HN)","Hunan, Guangdong, Jiangxi","Jiangsu","Jiangxi (JX)", "Jiaxing", "Jilin", "Jilin (JL)","Jilin Province Northeast China","Jinhua-Quzhou Basin in Central Zhejiang","Jinhua, Jin-Qu, Zheijang","Liaoning","Shandong","Shanxi","Tianmushan in Jinhua", "Xushan Village, Xiaonan County, Hubei Province","Zhejiang","East Java, Lampung, North Sumatra, South Sulawesi","Grobogan, Central Java (GRO)","Jeneponto, South Sulawesi (SUL)","Kediri, East Java (EJA)","Lampung Tengah, Lampung (LAM)","Sukamandi, West Java","Tanah Karo, North Sumatra (SUM)","An Giang, Mekong River Delta","Binh Tay, Mekong Delta","Binh Thanh, Mekong Delta","Can Tho, Mekong River Delta", "Cau Ke, Tra Vinh (TRA)","Chau Phu An Giang, Mekong River Delta","CuM\u0092gar, Dak Lak (DAK)","Dinh Mon, Mekong Delta","Go Cong Tay Tien Giang, Mekong River Delta","Hanoi, Red River Delta","Mai Son, Son La (SON)","Omon Cantho, Mekong River Delta","Omon, Mekong Delta","Tan Chau, An Giang (ANG)","Tien Giang, Mekong River Delta","Trang Bang, Tay Ninh (TAY)","Vinh Phuc & Bac Giang (DEG)","Aduthurai, Cauvery Delta, Tamil Nadu","Andhra Pradesh","Bihar","Bihar, Haryana, Karnataka, Punjab, Uttar Pradesh","Control villages in Nadia, West Bengal, India","East and south eastern coastal plain - Kendrapara and Puri, Odisha","Gurdaspur, Hoshiarpur, Ludhiana, Patiala, Faridkot, and Firozpur in Punjab province in Northwest India","Haryana","Haryana, Punjab","Intervention villages in Nadia, West Bengal, India","Karnal, Kurukshetra, Kaithal, Ambala,Yamunanagar, Panipat, and Sonepat districts of Haryana","Karnataka","Kumbakonam, Tamil Nadu","Mewat, Haryana", "Mid central table land - Dhenkanal, Odisha","Needamangalam, Tamil Nadu","Norman E. Borlaug Crop Research Centre of G.B. Pant University of Agriculture and Technology, Pantnagar","North central plateau - Keonjhar and Mayurbhanj, Odisha", "North eastern coastal plain - Balasore, Bhadrak and Jajpur, Odisha","North western plateau - Sundergarh","Odisha","Old and New Cauvery Delta in Thanjavur District","Orathanadu, Tamil Nadu","Papanasam, Tamil Nadu","Pattukkottai, Tamil Nadu","Peravurani, Tamil Nadu","Punjab","Site 1 in Siruguppa, Bijapur, and Navalgund Talukas of Northern Karnataka","Tamil Nadu","Thanjavur, Cauvery Delta, Tamil Nadu","Thiruvaiyaru, Tamil Nadu", "Thiruvonam, Tamil Nadu","Uttar Pradesh","Uttarakhand","West Bengal","Western central table land - Sambalpur","Damak and Gauradaha in Jhapa district","Itahara and Babiyabirta municipalities in Morang district of eastern Nepal","Lamjung Campus, Sundarbazar", "Ilagan, Isabela (ISA)","Ilocos Norte/Sur, La Union, Pangasinan, Isabela, Zambales, Nueva Ecija, Bulacan","IRRI farm", "La Union, Pangasinan, Zambales, Bulacan","Malaybalay, Bukidnon (BUK)", "Maligaya, Nueva Ecija, Central Luzon","Munoz, Nueva Ecija, Central Luzon", "Nueva Ecija and Tarlac","Pangasinan and Tarlac","Pangasinan, Laguna, Occidental Mindoro, Iloilo, Negros Occidental, Davao, Maguindanao","Sto. Domingo, Nueva Ecija, Central Luzon","Gazipur and Comilla","Kpong","Senegal River delta or middle valley"),
 	lon = c(117.226,  113.324, 113.324, 113.324, 111.7091, 112.2708, 112.2708, 127.6447,  127.6447, 127.6447, 127.6447, 113.6143, 111.7091, 111.7091, 119.8092,  115.7222, 120.8863, 126.1887, 126.1887, 126.1887, 119.9521, 119.9521,  122.488, 118.7169, 112.2894, 119.4713, 102.4791, 120.6636, 105.2176,  110.927, 119.6985, 112.0153, 105.2176, 107.6222, 98.4416, 105.1827,  107.0772, 105.5763, 105.5306, 106.061, 108.2351, 108.2078, 105.6127,  106.6563, 105.7001, 104.017, 105.6186, 105.6186, 105.1866, 106.369,  106.3375, 105.5594, 79.4582, 79.9629, 85.6097, 85.6097, 88.5152,  86.6098, 75.3167, 76.3398, 76.2043, 88.3213, 76.8968, 76.1675,  79.3754, 77.0495, 85.5237, 79.4855, 79.4832, 86.4084, 86.9217,  84.0362, 84.4261, 79.0504, 79.2479, 79.2544, 79.3352, 79.2047,  75.415, 76.8939, 78.4083, 79.0504, 79.0138, 76.9283, 80.5657,  79.2042, 88.3213, 84.2736, 87.6767, 87.6345, 84.4162, 121.8886,  120.1673, 121.2624, 121.0197, 125.0185, 120.599, 124.8836, 121.0602,  120.1673, 121.35, 121.014, 89.1595, 0.0604, -16.3075), 
@@ -146,11 +145,6 @@ carob_script <- function(path) {
    d$lat <- d$lon <- d$reference <- NULL
    d$geo_from_source <- TRUE
    d$geo_from_source[i] <- FALSE
-    # fix soil_SOC range and fertilizer
-    d$soil_SOC[d$soil_SOC>20] <- NA
-    d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
-    d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
-    d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
     # remove rows without location
     d <- d[!is.na(d$location),]
    # fix error in long and lat 
@@ -160,8 +154,8 @@ carob_script <- function(path) {
     d$latitude[d$location=="Badarganj"] <- 25.7071259
     d$longitude[d$location=="Chandbill"] <- 90.2934413
     d$latitude[d$location=="Chandbill"] <- 24.4769288
-    d$longitude[d$location=="Jhapa "] <- 87.885701
-    d$latitude[d$location=="Jhapa "] <- 26.5837354
+    d$longitude[d$location=="Jhapa"] <- 87.885701
+    d$latitude[d$location=="Jhapa"] <- 26.5837354
     d$longitude[d$location=="Grobogan, Central Java (GRO)"] <- 110.8966767
     d$latitude[d$location=="Grobogan, Central Java (GRO)"] <- -7.0980947
     d$longitude[d$location=="Ilocos Norte/Sur, La Union, Pangasinan, Isabela, Zambales, Nueva Ecija, Bulacan"] <- 121
@@ -200,12 +194,13 @@ carob_script <- function(path) {
   d$K_fertilizer <- as.double(d$K_fertilizer)
   d$N_splits <- as.integer(d$N_splits)
   d$soil_pH <- as.double(d$soil_pH)
-  d$soil_SOC <- as.double(d$soil_SOC)
+  d$soil_SOC <- as.double(d$soil_SOC) / 10 # g/kg -> %
   d$yield_part <- "grain"
 	
 	d$trial_id <- as.character(1:nrow(d))
 	#fixing land prep method
-	d$land_prep_method <- ifelse(grepl("Conventional tillage", d$land_prep_method),"conventional", "none")  
+	d$land_prep_method <- ifelse(is.na(d$land_prep_method), NA,
+	                      ifelse(grepl("Conventional tillage", d$land_prep_method), "conventional", "none"))
 	
 	d$yield_isfresh <- as.numeric(NA) #needs to be checked
 	d$yield_moisture <- as.numeric(NA) #needs to be checked

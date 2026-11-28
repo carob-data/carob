@@ -71,7 +71,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
   d$sub_treatment_fert <- carobiner::replace_values(d$sub_treatment_fert,
                                                     c("TSP/KCL","TSP/KCL/Urea","SYMPAL","MRP"),
                                                     c("TSP/KCl","TSP/KCl/urea","sympal","unknown"))
-  d$treatment <- paste0("Main treatment: ",d$main_treatment, " | ","Fertilizer treatment: ",d$sub_treatment_fert, " | ","Inoculant treatment: ",d$sub_treatment_inoc)
+  d$treatment <- trimws(paste0("Main treatment: ",d$main_treatment, " | ","Fertilizer treatment: ",d$sub_treatment_fert, " | ","Inoculant treatment: ",d$sub_treatment_inoc))
   
   # standardizing the all the fertilizer types
   ## MRP is an unknown fertilizer
@@ -164,11 +164,12 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 		ifelse(grepl("Butula",z$location),34.3355,35.2146883))))))))
 
 	# filling in the crop column based on trial_id
-	z$crop <- ""
+	z$crop <- NA_character_
 	z$crop[ grep("_CB", z$trial_id) ] <- "common bean" # climbing
 	z$crop[ grep("_BB", z$trial_id) ] <- "common bean" # bush
 	z$crop[ grep("_SB", z$trial_id) ] <- "soybean"
 	z$crop[ grep("rust", ignore.case = TRUE,z$trial_id) ] <- "soybean"  # RUST trial was conducted on soybean as per publication
+	z$crop[ grep("MAIZE_ROT", z$trial_id) ] <- "soybean" # legume inoculation trial in maize rotation
 	z <- z[!is.na(z$yield),] # dropping entries without yield output
 	#rearranging the data 
 	

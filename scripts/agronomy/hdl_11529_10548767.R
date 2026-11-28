@@ -15,7 +15,7 @@ carob_script <- function(path) {
     project=NA,
     data_type = "experiment",
     response_vars = "yield",
-    treatment_vars = "N_fertilizer;irrigated;land_prep_method;residue_prevcrop_used;N_splits",
+    treatment_vars = "N_fertilizer;land_prep_method;residue_prevcrop_used;N_splits",
     carob_contributor="Hope Mazungunye",
     carob_effort = NA,
     carob_date="2023-09-15",
@@ -83,18 +83,19 @@ carob_script <- function(path) {
   #selecting columns of interest, as some parameters cannot be processed.
   d2 <- r2[-1, c(1:7)] 
   #Added new column names, as they get mixed up when data set is read. Some of the cells in the raw data set are merged.
-  colnames(d2) <- c("treatment", "R1_grain_N", "R2_grain_N", "R3_grain_N", "R1_leaf_N", "R2_leaf_N", "R3_leaf_N")
+  colnames(d2) <- c("treatment", "R1_grain_N", "R2_grain_N", "R3_grain_N", "R1_residue_N", "R2_residue_N", "R3_residue_N")
   
   d2 <- reshape(d2,
-              varying=c("R1_grain_N", "R1_leaf_N",
-                        "R2_grain_N", "R2_leaf_N",
-                        "R3_grain_N", "R3_leaf_N"),
-              v.names=c("grain_N", "leaf_N"),
+              varying=c("R1_grain_N", "R1_residue_N",
+                        "R2_grain_N", "R2_residue_N",
+                        "R3_grain_N", "R3_residue_N"),
+              v.names=c("grain_N", "residue_N"),
               timevar="rep",
               times=c("1", "2","3"),
               direction='long')
   
-    d2[, c("grain_N", "leaf_N")] <- lapply(d2[, c("grain_N", "leaf_N")], as.numeric)
+    # Raw sheet headers are "Grain N (%) at harvest" and "Straw N (%) at Harvest" -> convert % to mg/g
+    d2[, c("grain_N", "residue_N")] <- lapply(d2[, c("grain_N", "residue_N")], function(x) as.numeric(x) * 10)
     d <- merge(d1, d2, by=c("treatment", "rep", "id"))
     d$id <- NULL 
     d$rep <- as.integer(d$rep)

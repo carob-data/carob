@@ -108,6 +108,7 @@ The cropping system physiological characteristic datasheet contains data on maiz
 	d$currency <- "TZS" ## (Not sure as it is missing from the raw data.) 
 	d$variety <- c("Meru 513", "Jesica", "Karatu")[d$crop]
 	d$crop <- c("maize", "common bean", "pigeon pea")[d$crop]
+	d$yield_part[d$crop %in% c("common bean", "pigeon pea")] <- "seed"
 
 	d$intercrops <- ifelse(grepl("Continuous maize", d$treatment) & grepl("maize", d$crop), "none",
 					  ifelse(grepl("Mbili-Mbili", d$treatment) & grepl("maize", d$crop), "pigeon pea;common bean",
@@ -132,8 +133,8 @@ The cropping system physiological characteristic datasheet contains data on maiz
 	   depth_bottom = 20,
 	   soil_pH= r3$pH,
 	   soil_EC= r3$X.EC.Salts.uS.cm/1000, #mS/cm
-	   soil_N= r3$pctN,
-	   soil_C= r3$pctC,
+	   soil_N_total= r3$pctN * 10000, # % -> mg/kg
+	   soil_C_total= r3$pctC,
 	   soil_P= r3$X.Phosphorus.Olsen.ppm,
 	   soil_K= r3$Potassium.ppm,
 	   soil_Ca= r3$Calcium.ppm,
@@ -174,7 +175,7 @@ The cropping system physiological characteristic datasheet contains data on maiz
 		country= "Tanzania",
 		geo_from_source= FALSE,
 		date= as.character(as.Date(carobiner::eng_months_to_nr(paste0("2019", "-", r4$Measurement.Date)), format ="%Y-%d-%m")),
-		srad= r4$Solar.Rad.wat.m2,
+		irad= r4$Solar.Rad.wat.m2, # W/m2 = J s-1 m-2
 		rhum= r4$Relative.Humidity.pct,
 		temp= r4$Temperature.C,
 		prec= r4$Rainfall.mm,
@@ -183,10 +184,10 @@ The cropping system physiological characteristic datasheet contains data on maiz
 		wspd= r4$Wind.Speed.km.h/3.6, ## m/s
 		dewp= r4$Dew.Point.C,
 		longitude= ifelse(grepl("Gallapo", r4$Ecozone), 35.855, 
-					ifelse(grepl("Sabilo", r4$Ecozone), 35.4790, 35.745)),
+					ifelse(grepl("Sabilo", r4$Ecozone), 35.4790, 35.645)),
 		
 	   latitude= ifelse(grepl("Gallapo", r4$Ecozone), -4.2840, 
-						  ifelse(grepl("Sabilo", r4$Ecozone), -4.347, -4.207))
+						  ifelse(grepl("Sabilo", r4$Ecozone), -4.347, -4.3001))
 	)
 
 	carobiner::write_files(path, meta, d, wth = W, var_meta = soilmeta)

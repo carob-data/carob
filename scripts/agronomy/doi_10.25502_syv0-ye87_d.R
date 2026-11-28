@@ -68,7 +68,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		soil_pH_CaCl2 = ifelse(grepl("CaCl2", r2$pH_Method),r2$Soil_pH, NA ), 
 		soil_sand = r2$sand,
 		soil_clay = r2$clay,
-		soil_N = r2$Tnitrogen,
+		soil_N_total = r2$Tnitrogen * 10000, # % -> mg/kg
 		soil_SOC = r2$SOC,
 		soil_SOM = r2$SOM,
 		soil_CEC = r2$CEC,
@@ -183,7 +183,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 		on_farm = grepl("On-farm", r2$Trial_type), 
 		is_survey = FALSE, 
 		crop = "common bean", 
-		yield_part = "grain", 
+		yield_part = "seed", 
 		yield_moisture = as.numeric(NA),
 		yield_isfresh = NA, # GrainYld does not say fresh or dry
 		geo_from_source = TRUE
@@ -205,7 +205,7 @@ This dataset supports a global meta-analysis that investigates how agronomic pra
 	                                c("grain_S_trt", "grain_S_cnt"), c("grain_Mo_trt","grain_Mo_cnt"), c("grain_se_trt", "grain_se_cnt")),
 	             v.names = c("N_fertilizer","P_fertilizer", "K_fertilizer","Zn_fertilizer", "Fe_fertilizer", "Cu_fertilizer", "Se_fertilizer",
 	                         "S_fertilizer", "B_fertilizer", "Mg_fertilizer", "Ca_fertilizer", "Mn_fertilizer", "Mo_fertilizer", "OM_type","irrigated", "treatment",
-	                         "yield", "grain_protein", "grain_N", "dmy_residue", "oil_rate", "grain_P", "grain_Zn", "grain_Fe", "grain_B", "grain_Mn", "grain_Cu", "grain_S",
+	                         "yield", "grain_protein", "grain_N", "grain_starch_", "oil_rate", "grain_P", "grain_Zn", "grain_Fe", "grain_B", "grain_Mn", "grain_Cu", "grain_S",
 	                         "grain_Mo", "grain_Se"),
 	             direction = "long",
 	             times = c(1,2))

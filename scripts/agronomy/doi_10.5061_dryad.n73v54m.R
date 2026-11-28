@@ -43,7 +43,7 @@ carob_script <- function(path) {
       trial_id= locf(r$ID),
       reference= locf(r$Reference), 
       location= r$`City /  Town / County`,
-      adm1= r$`Province / state`,
+      adm1= gsub("Wisconcin", "Wisconsin", r$`Province / state`),
       country= gsub("USA", "United States", r$Country), #
       lonLat= ifelse(grepl(";", r$Coordinates), NA , r$Coordinates), ### Keep rows with unique entries
       rain= as.numeric(ifelse(grepl(";", r$`Mean annual precipitation (mm)`), NA , gsub("  ", "", r$`Mean annual precipitation (mm)`))),
@@ -95,9 +95,9 @@ carob_script <- function(path) {
   ### latitude
   #d$lat <- gsub("42°52' – 42°59'|42°53' – 42°52'|42°51'–42°53'|27º52'50º18'|28°48'S and 52°77'", NA, d$lat) 
   P <- carobiner::fix_name(d$lat)
-  P <- gsub("42°52' – 42°59'", "-42°56" , P)
-  P <- gsub("42°53' – 42°52'", "-42°53", P)
-  P <- gsub("42°51'–42°53'", "-42°52", P)
+  P <- gsub("42°52' – 42°59'", "42°56" , P)
+  P <- gsub("42°53' – 42°52'", "42°53", P)
+  P <- gsub("42°51'–42°53'", "42°52", P)
   P <- gsub("27º52'50º18'", "38°35", P)
   P <- gsub("28°48'S and 52°77'", "-28°48", P)
   d$lat <- P
@@ -108,9 +108,10 @@ carob_script <- function(path) {
   ### longitude
   #d$lon <- gsub(" 76°36'–76°40'|28°48'S and 52°77'| 76°49'–76°46'|27º52'50º18'", NA, d$lon)
   P <- carobiner::fix_name(d$lon)
-  P <- gsub("76°36'–76°40'", "-76°38" , P)
-  P <- gsub("76°49'–76°46'", "-76°48", P)
-  P <- gsub("42°51'–42°53'", "-42°52", P)
+  P <- gsub("76°36'–76°40'", "76°38" , P)
+  P <- gsub("76°49'–76°46'", "76°48", P)
+  P <- gsub("78°16'–78°17'", "78°16", P)
+  P <- gsub("42°51'–42°53'", "42°52", P)
   P <- gsub("27º52'50º18'", "38°35", P)
   P <- gsub("28°48'S and 52°77'", "-52°77", P)
   d$lon <- P

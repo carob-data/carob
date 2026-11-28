@@ -33,13 +33,13 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 		project = "GAIA",
 		carob_effort = NA,
 		carob_date = "2026-04-28",
-		design = "unitOfAnalysis",
-		data_type = "experiment",
+		design = "RCBD",
+		data_type = "on-farm experiment",
 		treatment_vars = "lime",
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "LLM-review: [medium, crop] yield_part is grain for all crops, and the Rwanda year-1 file includes beans. data_type is experiment."
+		notes = NA
 	)
 	
 
@@ -76,6 +76,8 @@ To facilitate interoperability and harmonization of agronomic terminology, a loo
 	   yield_isfresh = NA,
 	   geo_from_source = TRUE
 	)
+	d$yield_part[d$crop == "common bean"] <- "seed"
+	d$yield_part[d$crop == "potato"] <- "tubers"
 	
 	### Fixing Lon and lat coordinate
 	

@@ -129,7 +129,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	    plot_area = as.numeric(r5$Plot.size..m2.),
 	    crop = "rice",
 	    variety = r5$Variety,
-	    plant_height =  as.numeric(r5$Height.of.rice.stubble.in.plot..cm.),
+	    stubble_height_ = as.numeric(r5$Height.of.rice.stubble.in.plot..cm.), # rice stubble height, not plant_height
 	    planting_date = r5$Date.of.seeding..dd.mm.yy.,
 	    transplanting_date = r5$Date.of.transplanting..dd.mm.yy.,
 	    #planting_method = r5$`Row seeded/ transplanted (1) or B'cast/random (2)`,
@@ -463,7 +463,7 @@ Farmers' participatory researchers managed long-term trails aimed to improve the
 	
 	### herbicide implement
 	P <- carobiner::fix_name(d$herbicide_implement)
-	P <- gsub("spray;spraying|NA;spraying", "manure spreader", P)
+	P <- gsub("spray;spraying|NA;spraying", "backpack sprayer", P)
 	P <- gsub("spray;broadcasting", "broadcast spreader", P)
 	P <- gsub("NA;broadcasting", "broadcast spreader", P)
 	d$herbicide_implement <- P

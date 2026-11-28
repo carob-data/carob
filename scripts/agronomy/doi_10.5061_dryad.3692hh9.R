@@ -20,11 +20,11 @@ carob_script <- function(path) {
 		project = NA, 
 		data_type = "experiment", 
 		response_vars = "yield",
-		treatment_vars = "N_fertilizer;P_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
+		treatment_vars = "N_fertilizer;P_fertilizer;K_fertilizer;S_fertilizer;Mg_fertilizer;Zn_fertilizer;B_fertilizer", 
 		carob_contributor = "Robert Hijmans", 
 		carob_effort = NA,
 		carob_date = "2024-06-29",
-		notes = "LLM-review: [medium, crop] yield_part is seed for wheat. Cereals use grain. Rows are filled and then any remaining missing N, and its yield, is dropped. [medium, coordinates] The comment says coordinates are from the publication, but geo_from_source is FALSE, and many trial ids never get coordinates. One trial is planted 2015-10-13 and harvested 2015-02-24."
+		notes = NA
 	)
    
 	f <- ff[basename(ff)=="EA wheat database.xlsx"]
@@ -103,7 +103,7 @@ carob_script <- function(path) {
     d$irrigated= NA
     d$is_survey= FALSE
 	d$crop <- "wheat"
-	d$yield_part <- "seed"
+	d$yield_part <- "grain"
 	
 	# EGB:
 	# # As per publication (Table 3)
@@ -123,7 +123,7 @@ carob_script <- function(path) {
 		
 	# EGB:
 	# # Georeferencing from publication
-	d$geo_from_source <- FALSE
+	d$geo_from_source <- TRUE
 	d$longitude <- NA
 	d$longitude[d$trial_id == "Njoro14"] <- 35.946
 	d$longitude[d$trial_id == "Eldoret14"] <- 35.708 
@@ -170,7 +170,7 @@ carob_script <- function(path) {
 	d$harvest_date[d$trial_id == "NBureRus14b"] <- "2014-08-23"
 	d$harvest_date[d$trial_id == "NBurRusa14b"] <- "2014-08-23"
 	d$harvest_date[d$trial_id == "NBURRus15b"] <- "2015-08-18"
-	d$harvest_date[d$trial_id == "NBurBut2015A"] <- "2015-02-24"
+	d$harvest_date[d$trial_id == "NBurBut2015A"] <- "2016-02-24" # planted 2015-10-13
 	
 	d$country[grep("Selian15", d$trial_id)] <- "Tanzania"
 	d$planting_year <- NULL

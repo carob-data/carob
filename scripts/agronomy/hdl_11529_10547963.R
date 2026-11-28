@@ -192,7 +192,7 @@ carob_script <- function(path) {
          dmy_storage= r6$Sun.dry.grain.wt.t.ha*1000,## kg/ha
          seed_weight= r6$X1000.grain.weight.g,
          fwy_total= r6$Biomass.t.ha*1000, ## kg/ha
-         harvest_index= r6$HI
+         harvest_index= r6$HI * 100 # fraction -> %
       )
       merge(d, d7, by=c("location", "crop_sys", "treatment", "year", "season", "farmer_name", "plot_area"), all.x = TRUE)
    }
@@ -292,10 +292,6 @@ carob_script <- function(path) {
    d$insecticide_used <- ifelse(is.na(d$insecticide_product)| grepl("none", d$insecticide_product), FALSE, TRUE)
    d$herbicide_used <- ifelse(is.na(d$herbicide_product)| grepl("none", d$herbicide_product), FALSE, TRUE)
 
-   # so that you can specify the price per fertilizer type
-   d$fertilizer_price <- as.character(d$fertilizer_price)
-   
-   
    i <- grep("^42", d$flowering_date)
    d$flowering_date[i] <- as.character(as.Date("1900-01-01") +  as.numeric(d$flowering_date[i]) -2 )
 	d$flowering_date[d$flowering_date == "02-29-16"] <- "2016-02-29"

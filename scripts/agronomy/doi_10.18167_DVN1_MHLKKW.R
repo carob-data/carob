@@ -24,14 +24,14 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 		publication = "doi:10.1016/j.fcr.2021.108335",
 		project = NA,
 		design = "randomized block design" ,
-		data_type = "on-farm experiment",
+		data_type = "experiment",
 		treatment_vars = "OM_used;fertilizer_used",
 		response_vars = "yield;soil_SOC", 
 		carob_contributor = "Illiana Kwenda",
 		carob_date = "2026-07-24",
 		carob_completion = 80,	
 		carob_effort = 5,
-		notes = "LLM-review: [low, metadata] The Gagnoa IDESSA station is coded on-farm, with trial_id 1 for 1971-1992."
+		notes = NA
 	)
 	
 
@@ -85,7 +85,7 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  soil_Mg_exch = as.numeric(r1c$Mg_ech_cmole_kg),
 	  soil_P = as.numeric(r1c$P_ass_mg_kg),
 	  soil_P_total = as.numeric(r1c$P_tot_mg_kg),
-	  soil_N_total = as.numeric(r1c$Ntot_mg_g),
+	  soil_N_total = as.numeric(r1c$Ntot_mg_g) * 1000, # mg/g -> mg/kg
 	  soil_CEC = as.numeric(r1c$CEC_cmole_kg)
 	)
 	d2$soil_pH_KCl[d2$soil_pH_KCl == 1.09] <- NA
@@ -99,7 +99,7 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	  method       = r1d$Method,
 	  age  = r1d$Age, #11 or 22 (years?)
 	  soil_SOC = as.numeric(r1d$Contenu_C_g_kg_sol) / 10, # g/kg to %
-	  soil_N   = as.numeric(r1d$Contenu_N_g_kg_sol), 
+	  soil_N_total = as.numeric(r1d$Contenu_N_g_kg_sol) * 1000, # g/kg to mg/kg
 	  Teneur_C =  r1d$Teneur_C_g_kg_fraction, #concentration of carbon within that specific soil fraction
 	  Teneur_N = r1d$Teneur_N_g_kg_fraction #concentration of N within that specific soil fraction
 	)	
@@ -114,8 +114,8 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 
 #	d <- merge(d, d3, by = c("treatment", "rep"), all = TRUE)
 	
-	d$trial_id <- "1"
-	d$on_farm <- TRUE
+	d$trial_id <- paste(d$date, d$cycle, sep = "_")
+	d$on_farm <- FALSE
 	d$is_survey <- FALSE 
 	d$irrigated <- NA
 
@@ -148,7 +148,7 @@ More specificially, the dataset contains weather data, crop yield, soil properti
 	
 	d$yield_part <- "grain"
 	d$yield_isfresh <- FALSE 
-	d$yield_moisture <- NA
+	d$yield_moisture <- 0
 	
 	carobiner::write_files(path, meta, d, wth = wth)
 }

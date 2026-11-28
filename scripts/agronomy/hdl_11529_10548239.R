@@ -50,10 +50,10 @@ carob_script <- function(path) {
 		soil_ex_acidity = r1$Exch.Acidity.cmol.kg, 
 		soil_ECEC = r1$ECEC.cmol.kg, 
 
-		soil_N = r1$N.pct, 
+		soil_N_total = r1$N.pct * 10000, # % -> mg/kg
 		soil_P_Mehlich = r1$Meh.P.ppm, 
 		soil_K = r1$K.ppm, 
-		soil_Na = r1$Na.cmol.kg, 
+		soil_Na_exch = r1$Na.cmol.kg, 
 		soil_Zn = r1$Zn.ppm, 
 		soil_Cu = r1$Cu.ppm, 
 		soil_Mn = r1$Mn.ppm, 
@@ -113,7 +113,7 @@ carob_script <- function(path) {
 	i <- trts == "NPK+Ca+Mg+Zn+B"
 	d$Ca_fertilizer[i] <- d$Mg_fertilizer[i] <- 10
 	d$Zn_fertilizer[i] <- d$B_fertilizer[i] <- 5 
-	d$fertilizer_type[i] <- paste0(d$fertilizer_type[i], ";gypsum;MgSO4;ZnSO4;borax")
+	d$fertilizer_type[i] <- paste0(d$fertilizer_type[i], ";gypsum;MgSO4;ZnSO4;Borax")
 	i <- grep("^;", d$fertilizer_type)
 	d$fertilizer_type[i] <- substr(d$fertilizer_type[i], 2, 100)
 	d$fertilizer_type[d$fertilizer_type==""] <- "none"

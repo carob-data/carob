@@ -161,15 +161,16 @@ carob_script <- function(path) {
 	for (v in c("flowering_days" , "maturity_days", "plant_height", "dmy_storage", "yield", "seed_weight", "silking_days")) {
 		d[[v]] <- as.numeric(d[[v]])
 	}
-	d$plant_density <- as.numeric(d$plant_density) * 1000
+	d$plant_density <- as.numeric(d$plant_density) * 10000 # plants/m2 -> plants/ha
+	d$spike_density <- as.numeric(d$spike_density) * 10000 # spikes/m2 -> spikes/ha
 
 	# empty rep 
 	d <- d[!is.na(d$yield), ]
 	
 	d$N_fertilizer <- d$P_fertilizer <- d$K_fertilizer <- as.numeric(NA)
 	
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE
+	d$yield_moisture <- 12 # Yield_12%H2O
 
 	carobiner::write_files(path, meta, d)
 }

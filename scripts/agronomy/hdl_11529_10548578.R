@@ -50,6 +50,7 @@ carob_script <- function(path) {
     harvest_date=r$Harvest_date,
     dmy_storage=r$Yield_dry,
     yield=r$Yield_moist,
+    yield_moisture=r$Moist_adjust,
     crop_price=r$Price
   )
   
@@ -61,27 +62,36 @@ carob_script <- function(path) {
   d$irrigated <- TRUE 
   d$country <- "Mexico"
   d$yield_part <- "grain"
-  d$trial_id <- paste0(d$adm1,"_",d$rep)
+  d$trial_id <- paste(r$State, r$Year, r$Cycle, sep = "_")
   d$crop <- gsub("Barley","barley",d$crop)
   d$crop <- gsub("Maize","maize",d$crop)
   d$land_prep_method <- gsub("CT","conventional",d$land_prep_method)
   d$land_prep_method <- gsub("PBW","permanent beds",d$land_prep_method)
-  d$yield[1:19] <- d$yield[1:19]*1000
   
   d$planting_date <- as.character(as.Date(d$planting_date))
   d$harvest_date <- as.character(as.Date(d$harvest_date))
   d$emergence_date  <- as.character(as.Date(d$emergence_date))
+  # 2019 Winter barley cycle has 2020-12-20 sowing / 2020-12-28 emergence before 2020-05-13 harvest (year typo)
+  i <- r$Year == 2019 & r$Cycle == "Winter" & d$planting_date == "2020-12-20"
+  d$planting_date[i] <- "2019-12-20"
+  d$emergence_date[i & d$emergence_date == "2020-12-28"] <- "2019-12-28"
 
   d[d=="."] <- NA
   d$plant_height <- as.numeric(d$plant_height)
   d$flowering_days <- as.integer(d$flowering_days)
   d$maturity_days <- as.integer(d$maturity_days)
+  d$yield <- as.numeric(d$yield) * 1000 # all rows in t/ha -> kg/ha
   d$dmy_storage <- as.numeric(d$dmy_storage)
-  d$crop_price <- as.numeric(d$crop_price)/1000
+  # 2017-2019 maize and 2017-2018 barley are in t/ha; 2019 winter barley is already in kg/ha
+  j <- !is.na(d$dmy_storage) & d$dmy_storage < 100
+  d$dmy_storage[j] <- d$dmy_storage[j] * 1000
+  d$crop_price <- as.numeric(d$crop_price) / 1000 # MXN/t -> MXN/kg
+  d$currency <- "MXN"
   d$irrigation_number<- as.integer(d$irrigation_number)
   
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE
+	d$yield_moisture <- as.numeric(d$yield_moisture)
+	d$yield_moisture[!is.na(d$yield_moisture) & d$yield_moisture < 1] <- d$yield_moisture[!is.na(d$yield_moisture) & d$yield_moisture < 1] * 100
 
   carobiner::write_files(path, meta, d)
 }

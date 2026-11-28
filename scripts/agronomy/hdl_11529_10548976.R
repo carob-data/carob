@@ -26,7 +26,7 @@ carob_script <- function(path) {
 	)
 	
 	f <- ff[basename(ff) == "DAT-SJCotzoconExperiments.xlsx"]
-	r <- carobiner::read.excel(f, sheet="San Juan Cotzocon_OAX")
+	r <- carobiner::read.excel(f, sheet="San Juan Cotzocon_OAX", na=".")
 
 	d <- data.frame(
 		crop="maize",
@@ -38,7 +38,7 @@ carob_script <- function(path) {
 		rep=as.integer(r$Num_Rep), 
 		crop_rotation="maize; velvet bean; kidney bean",
 		variety=r$Variety, 
-		seed_density=r$Seed_dens,
+		seed_density=as.numeric(r$Seed_dens),
 		K_fertilizer=r$Fert_K,
 		P_fertilizer=r$Fert_P,
 		N_fertilizer=r$Fert_N,
@@ -64,8 +64,8 @@ carob_script <- function(path) {
 	d$land_prep_method <- gsub("Labranza Convencional", "conventional", d$land_prep_method)
 	d$land_prep_method <- gsub("Camas Permanentes Angostas", "permanent beds", d$land_prep_method)
    
-	d$yield_isfresh <- as.numeric(NA) #needs to be checked
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_isfresh <- TRUE
+	d$yield_moisture <- as.numeric(r$Moist_adjust) * 100 # fraction -> %
 
    carobiner::write_files(meta, d, path=path)
 }

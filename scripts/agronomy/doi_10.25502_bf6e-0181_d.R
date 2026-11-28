@@ -92,9 +92,9 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		adm2 = r2$Site,
 		season = r2$Season,
 		rep = r2$Replicate,
-		soil_pH = r2$pH._CaCl2_2H2O,
+		soil_pH_CaCl2 = r2$pH._CaCl2_2H2O,
 		soil_C_total = r2$C,
-		soil_N = r2$N,
+		soil_N_total = r2$N * 10000, # % -> mg/kg
 		soil_P = r2$P,
 		soil_K = r2$K*39*10, ## from cmol/kg to mg/kg
 		soil_Mg = r2$Mg*24.31*10,
@@ -124,7 +124,7 @@ The use of mineral fertilizer and organic inputs with an improved and local vari
 		OM_amount = r3$Qt_FYM,
 		fertilizer_type = "urea;TSP;KCl;CaCO3;MgSO4;ZnSO4",
 		fertilizer_amount = rowSums(r3[, c("Urea", "TSP", "KCl", "CaCO3", "MgSO4", "ZnSO4")]),
-		fertilizer_price = as.character(r3$Total_Applied_fertilizer)
+		fertilizer_cost_ = as.numeric(r3$Total_Applied_fertilizer) # total fertilizer cost in USD/ha, not per-kg price
 	)
 	
 

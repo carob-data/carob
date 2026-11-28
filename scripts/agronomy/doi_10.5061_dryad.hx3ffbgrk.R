@@ -31,12 +31,11 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
             carob_effort = NA,
             carob_date="2025-06-23",
             carob_completion=100,
-            notes="LLM-review: [medium, metadata] Seventeen existing research trials are one experiment, and treatment_vars are historical management rather than treatments applied in this study. N is 0 for every soybean trial. Soil-test P is stored as soil_P_total. trial_id is 1 for all 17 sites. on_farm is TRUE. No-till becomes minimum tillage."
+            notes=NA
    )
    
    
    f <- ff[basename(ff) == "SeveroSilvaEtal_FCR_Dryad.xlsx"]
-   rr <- carobiner::read.excel(f)
    
    ### process file
    r <- carobiner::read.excel(f,  sheet = "data", na= ("."))
@@ -70,10 +69,10 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
       yield= r$yield_kg_ha,
       soil_pH= as.numeric(r$ph),
       soil_SOM= as.numeric(r$`OM-LOI`),
-      soil_P_total= as.numeric(r$STP),
+      soil_P= as.numeric(r$STP),
       soil_K= as.numeric(r$STK),
       soil_SOC= as.numeric(r$SOC),
-      soil_N= r$TN,
+      soil_N_total= as.numeric(r$TN) * 10000, # % -> mg/kg
       soil_type= r$texture_class,
       soil_sand= r$sand,
       soil_silt= r$silt,
@@ -81,10 +80,10 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
       rain= r$prcp_2023_mm,
       temp= r$mean_2023_temp_c,
       country= "United States",
-      yield_part= "grain",
+      yield_part= "seed",
       is_survey= FALSE,
-      on_farm= TRUE,
-      trial_id="1" , 
+      on_farm= FALSE,
+      trial_id= paste(r$state, r$location, sep = "_"),
       geo_from_source= TRUE
       
    )
@@ -93,7 +92,7 @@ Implications: To optimize soybean yield, conservation practices should prioritiz
             c("Arkansas","Iowa", "Minnesota", "North Carolina","North Dakota", "Ohio", "Wisconsin"))
    
  d$land_prep_method <- carobiner::replace_values(d$land_prep_method, c("NT", "CT", "CP", "MP", "ST", "RT"),  
-                  c("minimum tillage", "conventional", "tillage", "tillage","strip tillage", "reduced tillage"))
+                  c("none", "conventional", "tillage", "tillage","strip tillage", "reduced tillage"))
  
  
  P <- carobiner::fix_name(d$crop_rotation) 

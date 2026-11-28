@@ -22,7 +22,7 @@ Grain legume crops are a significant component of the human diet and animal feed
       carob_effort = NA,
       carob_date="2025-06-28",
       carob_completion=100,
-      notes="LLM-review: [medium, fertilizer] DAP, SSP, and TSP are converted toward elemental P, but MAP is multiplied by 0.52, the P2O5 fraction. Every K dose is divided by 1.2051. Grain yield has no unit conversion in a multi-country compilation. on_farm is TRUE for the whole compilation. [low, forbidden] suppressWarnings around read.csv."
+      notes=NA
    )
    
    
@@ -61,16 +61,17 @@ Grain legume crops are a significant component of the human diet and animal feed
       planting_date= substr(gsub("NA |\\.", "", r2$Crop_Date_Seeding), 1, 11),
       harvest_date= substr(gsub("NA |\\.", "", r2$Crop_Date_Harvest), 1, 11),
       #harvest_days= as.numeric(gsub(" or 212| or 222| or 165", "", r2$Crop_Date_From_Seeding_To_Harvest_Day_Number)),
-      rep= r2$Crop_Replicate_Number,
-      yield= r2$Crop_Yield_Grain,
-      yield_moisture= r2$Crop_Yield_Grain_DM_Percentage*100,
-      fwy_total= r2$Crop_Biomass_Aerial,
-      harvest_index= r2$Crop_Harvest_Index,
-      grain_N= r2$Crop_N_Quantity_Grain*10,
-      residue_N= r2$Crop_N_Quantity_Aerial,
+      rep= as.integer(r2$Crop_Replicate_Number),
+      yield= r2$Crop_Yield_Grain * 1000, # t/ha -> kg/ha
+      yield_moisture= (1 - r2$Crop_Yield_Grain_DM_Percentage) * 100, # DM fraction -> moisture %
+      yield_isfresh= ifelse(r2$Crop_Yield_Grain_DM_Percentage == 1, FALSE, ifelse(!is.na(r2$Crop_Yield_Grain_DM_Percentage), TRUE, NA)),
+      y_total= r2$Crop_Biomass_Aerial * 1000, # t/ha -> kg/ha
+      harvest_index= r2$Crop_Harvest_Index * 100, # fraction -> %
+      # Crop_N_Quantity_Grain is N uptake (kg/ha); divide by yield (t/ha) for concentration (mg/g)
+      grain_N= ifelse(!is.na(r2$Crop_Yield_Grain) & r2$Crop_Yield_Grain > 0, r2$Crop_N_Quantity_Grain / r2$Crop_Yield_Grain, NA),
       grain_protein= r2$Crop_Protein_Quantity_Percentage_Grain,
-      on_farm= TRUE,
-      is_survey=  FALSE,
+      on_farm= NA,
+      is_survey= FALSE,
       yield_part= "grain"
    )
    
@@ -134,35 +135,64 @@ Grain legume crops are a significant component of the human diet and animal feed
    r3$fertilizer_type <- P
    
    
+   parse_formula_pct <- function(ut, idx) {
+      m <- regmatches(ut, regexec("\\(([0-9.NA]+)-([0-9.NA]+)-([0-9.NA]+)\\)", ut))
+      sapply(m, function(x) if (length(x) >= idx + 1) suppressWarnings(as.numeric(x[idx + 1])) else NA_real_)
+   }
+
    N_fert <- r3[grepl("N", r3$Fertilization_NPK), ]
    names(N_fert) <- gsub("^Fertilization_NPK_Dose$", "N_fertilizer", names(N_fert))
    names(N_fert) <- gsub("fertilizer_type", "fertilizer_type1", names(N_fert))
-   N_fert <- N_fert[, c("N_fertilizer", "fertilizer_type1", "IDCrop_Crop")]
+   N_fert <- N_fert[, c("N_fertilizer", "fertilizer_type1", "Fertilization_NPK_Dose_Unit_Type", "IDCrop_Crop")]
    N_fert$N_fertilizer <- gsub(" and 3000.00|NA and 10.00| and 10.00| and 35.00| and 28.00| and 59.00| and 60.00| or 7.00 or 15.00 or 22.00 or 29.00 or 44.00 and 20.00| or 50.00| or 40.00 or 80.00| or 60.00", NA, N_fert$N_fertilizer)
-   N_fert$N_fertilizer <- ifelse(grepl("DAS", N_fert$fertilizer_type1 ), as.numeric(N_fert$N_fertilizer)*0.21, 
-           ifelse(grepl("MAP", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.11, 
-           ifelse(grepl("CAN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.26,
-           ifelse(grepl("urea", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.46,
-           ifelse(grepl("AN", N_fert$fertilizer_type1), as.numeric(N_fert$N_fertilizer)*0.34, as.numeric(N_fert$N_fertilizer)))))) 
-   
-   
+   n_val <- as.numeric(N_fert$N_fertilizer)
+   ut <- N_fert$Fertilization_NPK_Dose_Unit_Type
+   n_fpct <- parse_formula_pct(ut, 1)
+   N_fert$N_fertilizer <- ifelse(ut == "N", n_val,
+      ifelse(ut %in% c("Urea", "Urea (46.00%N)"), n_val * 0.46,
+      ifelse(ut == "Ammonium nitrate", n_val * 0.34,
+      ifelse(ut == "Ammonium sulphate", n_val * 0.21,
+      ifelse(ut == "Diammonium phosphate", n_val * 0.18,
+      ifelse(grepl("Fertilizer formula", ut), n_val * n_fpct / 100, NA))))))
+   N_fert$Fertilization_NPK_Dose_Unit_Type <- NULL
+
    P_fert <- r3[grepl("P", r3$Fertilization_NPK), ]
    names(P_fert) <- gsub("^Fertilization_NPK_Dose$", "P_fertilizer", names(P_fert))
    names(P_fert) <- gsub("fertilizer_type", "fertilizer_type2", names(P_fert))
-   P_fert <- unique(P_fert[, c("P_fertilizer", "fertilizer_type2", "IDCrop_Crop")])
+   P_fert <- unique(P_fert[, c("P_fertilizer", "fertilizer_type2", "Fertilization_NPK_Dose_Unit_Type", "IDCrop_Crop")])
    P_fert$P_fertilizer <- gsub(" and 3000.00| or 30.00 or 90.00| or 30.00 or 60.00| or 17.80| or 7.00 or 15.00 or 22.00 or 29.00 or 44.00", NA, P_fert$P_fertilizer)
-   P_fert$P_fertilizer <- ifelse(grepl("DAP", P_fert$fertilizer_type2 ), as.numeric(P_fert$P_fertilizer)*0.201, 
-           ifelse(grepl("MAP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.52, 
-           ifelse(grepl("DSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.20,
-           ifelse(grepl("SSP",P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.0874,
-           ifelse(grepl("TSP", P_fert$fertilizer_type2), as.numeric(P_fert$P_fertilizer)*0.1923, as.numeric(P_fert$P_fertilizer)))))) 
-   
-   K_fert <- r3[grepl("K", r3$Fertilization_NPK),]
+   p_val <- as.numeric(P_fert$P_fertilizer)
+   ut <- P_fert$Fertilization_NPK_Dose_Unit_Type
+   p_fpct <- parse_formula_pct(ut, 2)
+   p_is_oxide <- grepl("NA-NA-NA", ut)
+   P_fert$P_fertilizer <- ifelse(ut == "P", p_val,
+      ifelse(ut %in% c("P2O5", "P2O"), p_val / 2.29,
+      ifelse(ut == "Diammonium phosphate", p_val * 0.201,
+      ifelse(ut == "Triple super phosphate", p_val * 0.201,
+      ifelse(ut %in% c("Double super phosphate", "Double super phosphate (17.50%P)"), p_val * 0.175,
+      ifelse(ut == "Single super phosphate (9.10%P)", p_val * 0.091,
+      ifelse(ut == "Single super phosphate (9.60%P)", p_val * 0.096,
+      ifelse(ut %in% c("Single super phosphate", "Super phosphate"), p_val * 0.0874,
+      ifelse(grepl("Fertilizer formula", ut), p_val * p_fpct / 100 / ifelse(p_is_oxide, 2.29, 1), NA)))))))))
+   P_fert$Fertilization_NPK_Dose_Unit_Type <- NULL
+
+   K_fert <- r3[grepl("K", r3$Fertilization_NPK), ]
    names(K_fert) <- gsub("^Fertilization_NPK_Dose$", "K_fertilizer", names(K_fert))
    names(K_fert) <- gsub("fertilizer_type", "fertilizer_type3", names(K_fert))
-   K_fert <- unique(K_fert[, c("K_fertilizer", "fertilizer_type3", "IDCrop_Crop")])
-   K_fert$K_fertilizer <- gsub(" and 3000.00", NA, K_fert$K_fertilizer )
-   K_fert$K_fertilizer <- as.numeric(K_fert$K_fertilizer)/1.2051
+   K_fert <- unique(K_fert[, c("K_fertilizer", "fertilizer_type3", "Fertilization_NPK_Dose_Unit_Type", "IDCrop_Crop")])
+   K_fert$K_fertilizer <- gsub(" and 3000.00", NA, K_fert$K_fertilizer)
+   k_val <- as.numeric(K_fert$K_fertilizer)
+   ut <- K_fert$Fertilization_NPK_Dose_Unit_Type
+   k_fpct <- parse_formula_pct(ut, 3)
+   k_is_oxide <- grepl("NA-NA-NA", ut)
+   K_fert$K_fertilizer <- ifelse(ut == "K", k_val,
+      ifelse(ut == "K2O", k_val / 1.2051,
+      ifelse(ut == "Potassium chloride", k_val * 0.50,
+      ifelse(ut == "Potassium chloride (24.90%K)", k_val * 0.249,
+      ifelse(ut == "Potassium muriate (49.50%K)", k_val * 0.495,
+      ifelse(ut == "Potassium sulphate", k_val * 0.42,
+      ifelse(grepl("Fertilizer formula", ut), k_val * k_fpct / 100 / ifelse(k_is_oxide, 1.2051, 1), NA)))))))
+   K_fert$Fertilization_NPK_Dose_Unit_Type <- NULL
 
    
    #### merge N_fert, P_fert, K_fert data 
@@ -208,7 +238,7 @@ Grain legume crops are a significant component of the human diet and animal feed
    
    ### Process Site file 
    
-   r5 <- suppressWarnings(read.csv(f5, header = TRUE))
+   r5 <- read.csv(f5, header = TRUE, skipNul = TRUE)
   
    d5 <- data.frame(
       site_id= r5$IDSite,
@@ -229,8 +259,8 @@ Grain legume crops are a significant component of the human diet and animal feed
       soil_pH_CaCl2= ifelse(grepl("CaCl2|Ca", r5$Site_Soil_pH_Basis), r5$Site_Soil_pH, NA),
       soil_pH_KCl= ifelse(grepl("KCl", r5$Site_Soil_pH_Basis), r5$Site_Soil_pH, NA),
       soil_SOM= r5$Site_Soil_Organic_Matter_Percentage,
-      soil_N= as.numeric(gsub(" \\(only to 0.10 m depth\\)", "", r5$Site_Soil_N_Percentage)),
-      soil_C= as.numeric(gsub(" \\(only to 0.10 m depth\\)", "", r5$Site_Soil_C_Percentage)),
+      soil_N_total= as.numeric(gsub(" \\(only to 0.10 m depth\\)", "", r5$Site_Soil_N_Percentage)) * 10000, # % -> mg/kg
+      soil_C_total= as.numeric(gsub(" \\(only to 0.10 m depth\\)", "", r5$Site_Soil_C_Percentage)),
       rain= r5$Site_Precipitation_mm,
       #season= r5$Site_Precipitation_Period,
       year= gsub("from ", "",  r5$Site_Precipitation_Period_Year),
@@ -311,6 +341,10 @@ Grain legume crops are a significant component of the human diet and animal feed
    P <- gsub("yellow lupine", "yellow lupin", P) 
    P <- gsub("horsegram", "lentil", P) ## not sure
    d$crop <- P
+   d$yield_part[d$crop == "sweetpotato"] <- "roots"
+   d$yield_part[d$crop %in% c("tomato", "garden tomato", "watermelon")] <- "fruit"
+   d$yield_part[d$crop == "pak choi"] <- "leaves"
+   d$yield_part[d$crop %in% c("upland cotton", "cotton")] <- "seed"
    d$country[grepl("United States of America", d$country)] <- "United States"
 #####  Process tillage file
  r6 <- read.csv(f6)
@@ -364,8 +398,8 @@ Grain legume crops are a significant component of the human diet and animal feed
  d7$fungicide_used <- ifelse(grepl("1", d7$fungicide_used), TRUE, FALSE)
  
 
- ### merge d7 and df
- df <- merge(d7, df, by="IDCrop_Crop", all.x = TRUE)
+ ### merge df and d7 (keep all crop records even without pesticide records)
+ df <- merge(df, d7, by="IDCrop_Crop", all.x = TRUE)
  
  
  ### Keep  only data with site information 

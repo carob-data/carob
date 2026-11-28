@@ -58,7 +58,7 @@ carob_script <- function(path) {
 			# Yield data is reported as dry weight
 			yield = d$Yield..kg.ha., 
 			 # Residue data is measured as dry weight
-			fwy_residue = d$Stover.yield..kg.ha,
+			dmy_residue = d$Stover.yield..kg.ha,
 			
 			fertilizer_type = 
 				ifelse(d$Treatment == "0.33NP/farmer practice" | d$Treatment == "NP", "urea;DAP",
@@ -150,10 +150,16 @@ carob_script <- function(path) {
 	)
 	d <- merge(d, geo, by="location", all.x=TRUE)
 
+	# 2014-2015 file has some stover yields entered 1000x too high (g/ha instead of kg/ha)
+	i <- !is.na(d$dmy_residue) & d$dmy_residue > 100000
+	d$dmy_residue[i] <- d$dmy_residue[i] / 1000
+	# 2016 file has negative stover yields where Biomass - Grain < 0
+	d$dmy_residue[!is.na(d$dmy_residue) & d$dmy_residue < 0] <- NA
+
 	d$irrigated <- NA
 	
 	d$yield_isfresh <- FALSE # yield is reported as dry weight
-	d$yield_moisture <- as.numeric(NA) #needs to be checked
+	d$yield_moisture <- 0
 
 	carobiner::write_files(meta, d, path=path)
 }

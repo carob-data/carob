@@ -87,10 +87,10 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d1$soil_K <- d1$k
 	d1$soil_sand <- d1$sand
 	d1$soil_clay <- d1$clay
-	d1$soil_SOC <- d1$tot_carbon
-	d1$soil_N <- d1$tot_nitrogen
+	d1$soil_C_total <- d1$tot_carbon
+	d1$soil_N_total <- d1$tot_nitrogen * 10000 # % -> mg/kg
 
-	d1 <- d1[,c("experiment_id","soil_pH","soil_K","soil_sand","soil_clay","soil_SOC","soil_N")]
+	d1 <- d1[,c("experiment_id","soil_pH","soil_K","soil_sand","soil_clay","soil_C_total","soil_N_total")]
 
 	f2 <- ff[basename(ff) == "general.csv"]
 	d2 <- read.csv(f2)
@@ -130,7 +130,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	d4$K_fertilizer <- ifelse(grepl("KCl", d4$fertilizer_type), 30, 0)
 	d4$N_splits <- ifelse(grepl("urea",d4$fertilizer_type), 2L, 0L)
 	
-	d <- d4[, c("trial_id","country","location","latitude", "longitude", "elevation","rep", "treatment","crop", "variety", "planting_date","harvest_date","inoculated","plant_density","seed_weight","dmy_roots","dmy_total", "fwy_residue","yield","fertilizer_type","N_fertilizer","N_splits","P_fertilizer","K_fertilizer", "soil_pH", "soil_K", "soil_sand", "soil_clay", "soil_SOC", "soil_N", "on_farm")]
+	d <- d4[, c("trial_id","country","location","latitude", "longitude", "elevation","rep", "treatment","crop", "variety", "planting_date","harvest_date","inoculated","plant_density","seed_weight","dmy_roots","dmy_total", "fwy_residue","yield","fertilizer_type","N_fertilizer","N_splits","P_fertilizer","K_fertilizer", "soil_pH", "soil_K", "soil_sand", "soil_clay", "soil_C_total", "soil_N_total", "on_farm")]
 
 
 
@@ -138,7 +138,7 @@ Description: N2Africa is to contribute to increasing biological nitrogen fixatio
 	
 	d$plant_density[d$plant_density == 0] <- NA
 	d$soil_K[d$soil_K==0] <- NA
-	d$soil_N[d$soil_N==0] <- NA
+	d$soil_N_total[d$soil_N_total==0] <- NA
 
 	d$yield_part <- "seed"
 	d$is_survey <- FALSE

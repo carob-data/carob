@@ -24,9 +24,9 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 		project = NA,
 		design = NA,
 		data_type = "experiment",
-		treatment_vars = "N_fertilizer;N_organic",
+		treatment_vars = "inoculated;N_organic;P_fertilizer;N_fertilizer",
 		response_vars = "yield;nodule_weight", 
-		notes = "LLM-review: [medium, fertilizer] fertilizer_type is sympal on every field row, including SYMPAL equal to NO. treatment_vars are N_fertilizer and N_organic, while field N is hardcoded 0 and the factors that vary are inoculation, vermicompost, and SYMPAL. [low, coordinates] Both Siaya sites and the greenhouse rows get one adm1 centroid.",
+		notes = NA,
 		carob_contributor = "Cedric Ngakou",
 		carob_date = "2026-08-04",
 		carob_completion = 100,	
@@ -61,7 +61,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 		dmy_residue = (r1$SDW_G_P/9)*10,
 		#r1$EFFECTIVENESS,
 		yield = r1$GRAIN_YIELD_KG_HA,
-		fertilizer_type = "sympal",
+		fertilizer_type = ifelse(r1$SYMPAL == "YES", "sympal", "none"),
 		OM_type = "vermicompost",
 		inoculant = "Rhizobia",
 		trial_id = "site7"
@@ -89,7 +89,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	  #r2$EFFECTIVENESS,
 	  yield = r2$GRAIN_YIELD_KG_HA,
 	  OM_type = "vermicompost",
-	  fertilizer_type = "sympal",
+	  fertilizer_type = ifelse(r2$SYMPAL == "YES", "sympal", "none"),
 	  inoculant = "Rhizobia",
 	  trial_id = "site17"
 	)
@@ -111,7 +111,7 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	  fertilizer_used = FALSE,
 	  plot_id = as.character(r3$POT_NO),
 	  soil_C_total = r3$CARBON,
-	  soil_N = r3$NITROGEN,
+	  soil_N_total = r3$NITROGEN * 10000, # % -> mg/kg
 	  treatment = r3$TREATMENT,
 	  #sample_id = as.character(r3$SOIL_NUMBER),
 	  inoculated = grepl("^Inoculation$", r3$TREATMENT),
@@ -172,8 +172,8 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	  trial_id = c("site7", "site17"),
 	  soil_P = c(3.1, 12),
 	  soil_pH = c(4.5, 5.4),
-	  soil_N_total = c(0.6, 0.8),
-	  soil_SOC = c(8, 10.5),
+	  soil_N_total = c(0.6, 0.8) * 1000, # g/kg -> mg/kg
+	  soil_SOC = c(8, 10.5) / 10, # g/kg -> %
 	  soil_Ca_exch = c(0.9, 5.5),
 	  soil_Mg_exch = c(0.3, 1.5),
 	  soil_K_exch = c(0.2, 0.3),
@@ -181,13 +181,15 @@ Phase-II will set up sustainable, institutionalized quality control and regulato
 	)
 	
 	d <- merge(d, soil, by= "trial_id", all.x = TRUE)
+	d$soil_N_total <- ifelse(is.na(d$soil_N_total.x), d$soil_N_total.y, d$soil_N_total.x)
+	d$soil_N_total.x <- d$soil_N_total.y <- NULL
 	
 	#####
 	d$crop <- "soybean"
 	d$is_survey <- FALSE
 	d$on_farm <- !grepl("greenhouse", d$trial_id)
 	d$yield_moisture <- NA
-	d$yield_part <- "grain"
+	d$yield_part <- "seed"
 	d$country <- "Kenya" 
 	d$geo_from_source <- FALSE
 	d$latitude <- -0.0546 

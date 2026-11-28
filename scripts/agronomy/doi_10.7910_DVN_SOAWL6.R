@@ -15,11 +15,11 @@ carob_script <- function(path) {
 		data_organization = "CIAT",
 		data_type="compilation",
 		response_vars= "yield",
-		treatment_vars="none",
+		treatment_vars="N_fertilizer;P_fertilizer;K_fertilizer;Zn_fertilizer;Fe_fertilizer",
 		carob_contributor="Fredy Chimire",
 		carob_effort = NA,
 		carob_date="2024-02-24",
-		notes = "LLM-review: [medium, coordinates] Location fixes set latitude only for Ismailia, Nyankpala, and Palampur, and geo_from_source stays TRUE. Rows are dropped for missing country or yield. treatment_vars is none on a treatment-versus-control dataset. Grain P is the mean of two inorganic-P columns."
+		notes = NA
 	)
 
 	f <- ff[basename(ff) == "02a. Maize data for meta_analysis_updated.txt"]
@@ -63,9 +63,9 @@ carob_script <- function(path) {
 		soil_texture = gsub("_", " ", tolower(r$Texture)),
 		soil_type = r$Soil.type_New,
 		rain = r$SeasonalRainfall,
-		grain_Zn = r$GrainZn_Trt,
-		grain_Fe = r$GrainFe.mgkg.1._Trt,
-		grain_N = r$GrainN_Trt,
+		grain_Zn = r$GrainZn_Trt / 1000, # mg/kg -> mg/g
+		grain_Fe = r$GrainFe.mgkg.1._Trt / 1000, # mg/kg -> mg/g
+		grain_N = r$GrainN_Trt * 10, # % -> mg/g
 		grain_protein = r$Proteins_Trt,
 		
 		yield_cnt = r$GrainYld_Cnt*1000, 
@@ -74,8 +74,8 @@ carob_script <- function(path) {
 		K_fertilizer_cnt = r$K_Applied_Cnt, 
 		Fe_fertilizer_cnt = r$Fe_Applied_Cnt, 
 		Zn_fertilizer_cnt = r$Zn_Applied_Cnt, 
-		grain_Zn_cnt = r$GrainZn_Cnt, 
-		grain_Fe_cnt = r$GrainFe.mgkg.1._Cnt,
+		grain_Zn_cnt = r$GrainZn_Cnt / 1000, # mg/kg -> mg/g
+		grain_Fe_cnt = r$GrainFe.mgkg.1._Cnt / 1000, # mg/kg -> mg/g
 		grain_P_cnt = r$InorgP_Cnt
 	)
 
@@ -148,6 +148,7 @@ carob_script <- function(path) {
 	d$latitude[d$location == "Ismailia Governorate"] <- 30.695
 	d$latitude[d$location == "Nyankpala"] <- 9.421
 	d$latitude[d$location == "Palampur"] <- 32.1
+	d$geo_from_source[d$location %in% c("Ismailia Governorate", "Nyankpala", "Palampur")] <- FALSE
 	d$country[d$location %in% c("Gabura", "Tulatuli")] <- "Bangladesh"
 
 	dd <- d[!is.na(d$yield_cnt), ] 

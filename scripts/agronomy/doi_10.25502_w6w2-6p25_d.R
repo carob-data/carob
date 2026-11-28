@@ -88,10 +88,10 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
                 ifelse(grepl("Organic fertiliser", r$Organic_matter_type), "unknown", tolower(r$Organic_matter_type) )),
       treatment = trimws(r$Treatment),
       yield = r$yield*1000, ## kg/ha
-      grain_Zn = r$grain_Zn,
-      grain_Fe = r$grain_Fe,
+      grain_Zn = r$grain_Zn / 1000, # mg/kg -> mg/g
+      grain_Fe = r$grain_Fe / 1000, # mg/kg -> mg/g
       grain_protein= r$grain_protein,
-      grain_N = r$grain_N,
+      grain_N = r$grain_N * 10, # % -> mg/g
       soil_type = r$Soil_type_New,
       soil_pH = ifelse(grepl("Soil:water|Water|H2O", r$PH_Method), r$pH, NA) ,
       soil_pH_KCl = ifelse(grepl("KCl", r$PH_Method), r$pH, NA),
@@ -102,7 +102,7 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       soil_clay = r$Clay,
       soil_SOC = r$SOC,
       soil_SOM = r$SOM,
-      soil_N = r$Tot_N,
+      soil_N_total = r$Tot_N * 10000, # % -> mg/kg
 #      soil_P = ifelse(!grepl("Mehlich", r$AveP_method), r$Avail_P, NA) ,
 #      soil_P_method = ifelse(!grepl("Mehlich", r$AveP_method), r$AveP_method, NA),
 #     soil_P_mehlich3 = ifelse(grepl("Mehlich", r$AveP_method) & is.na(r$Avail_P_Mehlich), r$Avail_P, r$Avail_P_Mehlich),
@@ -125,12 +125,6 @@ This dataset supports a global meta-analysis that assesses how agronomic practic
       fertilizer_used = TRUE
    )	
 	
-	###  Fixing fertilizer
-	d$N_fertilizer[is.na(d$N_fertilizer)] <- 0
-	d$P_fertilizer[is.na(d$P_fertilizer)] <- 0
-	d$K_fertilizer[is.na(d$K_fertilizer)] <- 0
-
-
 	#soil <- d[, grepl("soil_P|soil_Zn|record_id", names(d))]   
 	  
 	### We transform soil_P and soil_Zn  into a long format to capture different method of extraction

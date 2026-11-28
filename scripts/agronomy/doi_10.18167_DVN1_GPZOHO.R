@@ -33,7 +33,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 		response_vars = "yield", 
 		carob_contributor = "Cedric Ngakou",
 		carob_completion = 100,	
-		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data. LLM-review: [medium, crop] yield_part is grain for cotton as well as the cereals. [low, metadata] trial_id is built from essai and serie only, so 1965-1990 share ids. on_farm is TRUE for the NTarla station. The DataFumier sheet is read and never used."
+		notes = "The DataNtarla_1965_90_dataversev1.xlsx file includes all the data. Wind speed units in Climat sheet are noted as uncertain in source metadata."
 	)
 	
 
@@ -46,7 +46,6 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 	r4 <- carobiner::read.excel(f, sheet="AnalysesSol_granulo")
 	r5 <- carobiner::read.excel(f, sheet="AnalysesSol_chimie")
 	r6 <- carobiner::read.excel(f, sheet="Rendements_Culture")
-	r7 <- carobiner::read.excel(f, sheet="DataFumier")
 	
 	
  #### process fertilizer
@@ -158,7 +157,7 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
 		serie = r6$serie,
 		rep = as.integer(r6$bloc),
 		yield = r6$rdt,
-		trial_id = paste(r6$Essai , r6$serie, sep = "-"),
+		trial_id = paste(r6$Essai, r6$serie, paste0("19", r6$annee), sep = "-"),
 		country = "Mali",
 		longitude = -5.688,
 		latitude = 12.619,
@@ -189,10 +188,12 @@ Dataset of agronomic and climate variables over the 1965-1990 period of experime
    
    df$crop_rotation <- ifelse(grepl("sorghum", df$crop), "sorghum;groundnut;cotton",
                         ifelse(grepl("cotton", df$crop), "cotton;sorghum;groundnut", "groundnut;cotton;sorghum"))
-   df$on_farm <- TRUE
+   df$on_farm <- FALSE
    df$is_survey <- FALSE
    df$irrigated <- NA
    df$yield_part <- "grain"
+   df$yield_part[df$crop == "cotton"] <- "seed"
+   df$yield_part[df$crop == "groundnut"] <- "pod"
    df$yield_isfresh <- as.numeric(NA)
    df$yield_moisture <- as.numeric(NA)
    

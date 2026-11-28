@@ -22,9 +22,9 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 		project ="ACAI",
 		design = NA,
 		data_type ="experiment",
-		treatment_vars = "variety;N_fertilizer,P_fertilizer,K_fertilizer",
+		treatment_vars = "variety;N_fertilizer;P_fertilizer;K_fertilizer",
 		response_vars = "yield", 
-		notes = "LLM-review: [medium, treatment] treatment_vars lists N, P, and K with commas, so P and K are not separate treatment variables. There is no location or coordinates. The 75:20:90 strings are parsed as elemental with no comment.",
+		notes = NA,
 		carob_contributor = "Blessing Dzuda",
 		carob_date = "2026-07-18",
 		carob_completion = 90,	
@@ -63,7 +63,7 @@ ACAI is a 5 year Bill & Melinda Gates Foundation funded project in 5 countries i
 	                        ifelse(all_na, NA, rowSums(r[, prod_cols], na.rm = TRUE)))
 	d$yield <- (r$prod_fw_kg/d$plot_area)*10000
 	
-	##deriving fertilizer amount from treatments
+	##deriving fertilizer amount from treatments (ACAI cassava NPK rates are elemental N:P:K kg/ha)
 	fert_clean <- sub(" NPK$", "", d$fertilizer_used)
 	fert_clean[d$fertilizer_used == "control"] <- "0:0:0"
 	fert_clean[fert_clean %in% c("", "Mkombozi or Mkuranga1")] <- "NA:NA:NA"

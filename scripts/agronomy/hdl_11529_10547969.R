@@ -52,11 +52,15 @@ carob_script <- function(path) {
       P_fertilizer=r2$P2O5.kg.ha / 2.29,
       K_fertilizer=r2$K2O.kg.ha /  1.2051,
       Zn_fertilizer=r2$ZnSO4.kg.ha,
-      B_fertilizer=r2$Boric.acid.kg.ha.1
+      B_fertilizer=r2$Boric.acid.kg.ha.1 * 0.1748 # H3BO3 is 17.48% B
     ) 
     
     d2$fertilizer_type <- apply(r2[, grep("Application_Product.used", names(r2))], 1, 
-                             \(i) paste(unique(i), collapse="; "))
+                             \(i) {
+                               u <- unique(trimws(as.character(i[!is.na(i)])))
+                               u <- u[u != ""]
+                               if (length(u) == 0) NA_character_ else paste(u, collapse="; ")
+                             })
     
     
     r3 <- carobiner::read.excel.hdr(f, sheet ="14 - Grain Harvest ", skip=4, hdr=3)	
@@ -93,9 +97,14 @@ carob_script <- function(path) {
 	d$fertilizer_type <- gsub("MoP|MOP", "KCl", d$fertilizer_type)
 	d$fertilizer_type <- gsub("UREA", "urea", d$fertilizer_type)
 	d$fertilizer_type <- gsub("N:P:K|10-26-26|1899-12-31 10:26:26|:26:26", "NPK", d$fertilizer_type)
-	d$fertilizer_type <- gsub("[0-9]|-|:|,", '', d$fertilizer_type)
-	d$fertilizer_type[grep("boron", d$fertilizer_type, TRUE)] <- "borax"
-	d$fertilizer_type[is.na(d$fertilizer_type)] <- "unknown"
+	d$fertilizer_type <- gsub("[0-9]|-|:|,", "", d$fertilizer_type)
+	d$fertilizer_type <- sapply(strsplit(d$fertilizer_type, ";"), \(x) {
+		x <- trimws(x)
+		x <- x[!is.na(x) & x != "" & x != "NA"]
+		x[grepl("boron", x, ignore.case = TRUE)] <- "Borax"
+		x <- unique(x)
+		if (length(x) == 0) "unknown" else paste(x, collapse = "; ")
+	})
 	
   
   
@@ -132,7 +141,7 @@ carob_script <- function(path) {
 
 	d <- merge(d, trt, by="code")
 	d$code <- NULL
-	d$planting_method = "transplanted"
+	d$planting_method <- ifelse(d$crop == "rice", "transplanted", NA)
 
 	d$location <- gsub("DURGANAGAR","Durganagar", d$location)
 	d$location <- gsub("MANSAI","Mansai", d$location)

@@ -33,9 +33,9 @@ carob_script <- function(path) {
 		treatment=r$Treatment,
 		land_prep_method=tolower(r$Treatment),
 		soil_pH=r$`pH (H2O) -repeat`,
-		soil_EC=r$`Electrical conductivity (µS/cm)` / 100,
-		soil_N=r$`N concentration (mg/g Soil)`,
-		soil_C=r$`C concentration (mg/g Soil)`,
+		soil_EC=r$`Electrical conductivity (µS/cm)` / 1000, # uS/cm -> mS/cm
+		soil_N_total=r$`N concentration (mg/g Soil)` * 1000, # mg/g -> mg/kg
+		soil_C_total=r$`C concentration (mg/g Soil)` / 10, # mg/g -> %
 		soil_CEC=r$`Exchangeable cations (meq/100g)`,
 		soil_ex_acidity=r$`Exchangeable acidity (meq/100g)`,
 		fwy_total=r$`Mean biomass yield (kg/ha)`,

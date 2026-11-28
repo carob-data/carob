@@ -1,5 +1,17 @@
 # R script for "carob"
 
+## ISSUES
+# This is a global compilation of ~500 published articles; several source articles in the Dryad CSV contain
+# upstream unit/data-entry outliers that are left as reported (not silently dropped):
+# - Seed density: Art397 (Maize 43205) and Art427 (Wheat 32126) appear to be seeds/ha entered in the seeds/m2 column.
+# - Soil bulk density: Art351 reports 141000 and one study reports 1.41e-6.
+# - Grain/residue micronutrients: Art453 (rice Fe/Mn/Cu/Zn) and Art54 (Zn) appear 1000x too high (mg/kg entered as g/kg);
+#   Art339 reports grain protein 67-92%; Art27 reports residue_P 95-114 mg/g.
+# - Fertilizers: Art210 (Cu=1040, Zn=2795, Fe=760 kg/ha, sewage sludge/compost), Art309 (K up to 4303), Art185 (P up to 1276).
+# - Soil: Art152 reports Kjeldahl N = 209 g/kg; Art11 soil_Ca = 38800 mg/kg; Art413 organic soil SOM up to 59%.
+# - High yields: Art468 rice (53224 kg/ha), Art53 wheat (24850 kg/ha).
+# - Many grain/residue micronutrient (Cu, B, Mo, Mn, Fe, Zn) and Cl/Ca values are legitimately below terminag's current valid_min.
+
 
 carob_script <- function(path) {
    
@@ -12,15 +24,14 @@ carob_script <- function(path) {
   
    meta <- carobiner::get_metadata(uri, path, group, major=12, minor=NA, 
       data_organization = "WUR;APNI;IFA",
-      publication=NA, 
+      publication="doi:10.1007/s10705-024-10381-6", 
       project=NA, 
       data_type= "compilation", 
       response_vars= "yield", 
       treatment_vars = "N_fertilizer; P_fertilizer; K_fertilizer", 
       carob_contributor= "Cedric Ngakou", 
       carob_effort = NA,
-      carob_date="2025-05-31",
-      notes="LLM-review: [medium, crop] yield_part is none while yield is fresh crop-product yield. The same times 1000 used for protein is applied to Fe, Mn, Cu, and Zn, storing about 0.05 mg/g against a grain_Fe range of 1-100."
+      carob_date="2025-05-31"
    )
    
    
@@ -31,11 +42,11 @@ carob_script <- function(path) {
    
    d <- data.frame(
       trial_id = paste0(r$Article_ID, "-", r$Experiment_Number),
-	  treatment= r$Treatment_Name,
+	  treatment= trimws(r$Treatment_Name),
       rep= r$Replicate_n,
-      country= r$Country,
-      adm1= r$State_province,
-	  location = r$Nearest_town_city,
+      country= trimws(r$Country),
+      adm1= trimws(r$State_province),
+	  location = trimws(r$Nearest_town_city),
       elevation= r$GPS_coordinates_altitude,
       latitude= r$GPS_lat_DD,
       longitude= r$GPS_long_DD,
@@ -43,7 +54,7 @@ carob_script <- function(path) {
       rain= r$Actual_rainfall_during.trial_mm, 
       irrigation_method= 
 	     ifelse(grepl("Sprinkler|spinkler|sprinklers|sprinkler", r$Irrigation_method_Name), "sprinkler", 
-         ifelse(grepl("Pre-watering humidity|Irrigated at booting|Irrigated at silking|Drought-stressed|flexible gated|soil|average", r$Irrigation_method_Name), "unknwon", 
+         ifelse(grepl("Pre-watering humidity|Irrigated at booting|Irrigated at silking|Drought-stressed|flexible gated|soil|average", r$Irrigation_method_Name), "unknown", 
          ifelse(grepl("Furrow|furrow", r$Irrigation_method_Name), "furrow", 
          ifelse(grepl("pivot|Pivot", r$Irrigation_method_Name), "center pivot sprinkler",
          ifelse(grepl("border", r$Irrigation_method_Name), "border",
@@ -54,12 +65,12 @@ carob_script <- function(path) {
    
    ### Process plot management data
    
-      plot_area= r$Plot_area,
+      plot_area= ifelse(r$Plot_area == 0, NA, r$Plot_area),
       land_prep_method= 
 	       ifelse(grepl("conventional tillage|Conventional|convential|cultural practices were|conventional", r$Cultivation_method_Name), "conventional",
            ifelse(grepl("Manual|hand|manual|Hand", r$Cultivation_method_Name), "manual", 
            ifelse(grepl("Conservation", r$Cultivation_method_Name), "minimum tillage", 
-           ifelse(grepl("Ploughing|Ploughed|ploughing|plough", r$Cultivation_method_Name), "Ploughing",
+           ifelse(grepl("Ploughing|Ploughed|ploughing|plough", r$Cultivation_method_Name), "ploughing",
            ifelse(grepl("rotavator|rotation", r$Cultivation_method_Name),"rotovating",
            ifelse(grepl("Continuous spring barley|Spring barley|Planted with interrow|Plots were seeded|low-input|Organic|plowed with cultivar|rain-proof shelter|vibrocultivator", r$Cultivation_method_Name), "unknown", 
            ifelse(grepl("Reduced tillage", r$Cultivation_method_Name), "reduced tillage" ,
@@ -71,27 +82,27 @@ carob_script <- function(path) {
            ifelse(grepl("lupin", r$Previous_crop_Name), "white lupin",
            ifelse(grepl("Wheat|wheat", r$Previous_crop_Name), "wheat", 
            ifelse(grepl("soybean", r$Previous_crop_Name), "soybean",
-           ifelse(grepl("Potato", r$Previous_crop_Name), "Potato", 
+           ifelse(grepl("Potato", r$Previous_crop_Name), "potato", 
            ifelse(grepl("maize|Zea mays L.", r$Previous_crop_Name), "maize", r$Previous_crop_Name)))))),
    
-      planting_date= as.character(as.Date(as.numeric(gsub("0", NA, r$Sowing_date_DD_MM_YY)), origin="1899-12-31")),
+      planting_date= as.character(as.Date(ifelse(r$Sowing_date_DD_MM_YY == 0, NA, r$Sowing_date_DD_MM_YY), origin="1899-12-30")),
       harvest_date= r$Date_harvest_YYYYMMDD, 
       #r$Latin_name,
       #crop= r$Crop_original,
       crop= tolower(r$Crop_standardised),
-      variety= r$Crop_variety,
+      variety= trimws(r$Crop_variety),
       #r$Crop_variety_release_Year,
       #r$Crop_variety_other,
      # intercrops= r$Intercrop_name_Name,
-      seed_rate= r$Sow_density_Seeds_m2*10000,
-      plant_density= r$Harvest_density_Plants_m2*10000,
+      seed_density= ifelse(r$Sow_density_Seeds_m2 == 0, NA, r$Sow_density_Seeds_m2) * 10000,
+      plant_density= ifelse(r$Harvest_density_Plants_m2 == 0, NA, r$Harvest_density_Plants_m2) * 10000,
       fertilizer_type= 
 	     ifelse(grepl("zospirilum brasiliense|extra calcium added|Government |recommendations|mineral|planting time", r$Fertiliser_type_Name), "unknown", 
          ifelse(grepl("Combination| Conventional", r$Fertiliser_type_Name), "NPK",
          ifelse(grepl("organic", r$Fertiliser_type_Name), "unknown", 
          ifelse(grepl("N: Urea, P: Triple super phosphate, K:", r$Fertiliser_type_Name),"NPK;urea", 
-         ifelse(grepl("N: Urea; P: Di-ammonium phosphate ", r$Fertiliser_type_Name), "ura;DAP", 
-         ifelse(grepl("N: Urea; P: Bio-activated", r$Fertiliser_type_Name), "ura;unknown;MOP", r$Fertiliser_type_Name)))))),
+         ifelse(grepl("N: Urea; P: Di-ammonium phosphate ", r$Fertiliser_type_Name), "urea;DAP", 
+         ifelse(grepl("N: Urea; P: Bio-activated", r$Fertiliser_type_Name), "urea;unknown;MOP", r$Fertiliser_type_Name)))))),
       N_fertilizer= r$Fertiliser_N_kg_N_ha,
       P_fertilizer= r$Fertiliser_P_kg_P_ha,
       K_fertilizer= r$Fertiliser_K_kg_K_ha,
@@ -111,93 +122,99 @@ carob_script <- function(path) {
    ## Process yield data
       #fwy_cobs= r$CobY_mean_kg_fresh_ha,
       yield= r$CPY_mean_kg_fresh_ha,
-      yield_moisture= r$CPCon_DM_mean_kg_DM_kg_fresh*100,
+      yield_moisture= (1 - r$CPCon_DM_mean_kg_DM_kg_fresh) * 100, # kg DM / kg fresh -> % moisture
+      yield_isfresh= ifelse(!is.na(r$CPY_mean_kg_fresh_ha), TRUE, NA),
       fwy_residue= r$CRY_mean_kg_fresh_ha,
       fwy_total= r$AGY_mean_kg_fresh_ha,
       dmy_storage= r$CPY_mean_kg_DM_ha,
       #dmy_cobs= r$CobY_mean_kg_DM_ha,
       dmy_residue= r$CRY_mean_kg_DM_ha,
       dmy_total= r$AGY_mean_kg_DM_ha,
-      harvest_index= r$HI_mean_Unitless,
+      harvest_index= ifelse(r$HI_mean_Unitless <= 1, r$HI_mean_Unitless * 100, r$HI_mean_Unitless), # unitless -> % (2 studies already in %)
       geo_from_source= TRUE,
       on_farm= NA, 
       is_survey= FALSE,
-      yield_part= "none", 
+      yield_part= "grain", 
       
    
 
-   ## Process nutrient content  data
-  
-      grain_protein= r$CPCon_Prot_mean_kg_kg_DM*1000,  # to mg/g
-      grain_N= r$CPCon_N_mean_kg_kg_DM*1000,
-      grain_P= r$CPCon_P_mean_kg_kg_DM*1000,
-      grain_K= r$CPCon_K_mean_kg_kg_DM*1000,
-      grain_S= r$CPCon_S_mean_kg_kg_DM*1000,
-      grain_Ca= r$CPCon_Ca_mean_kg_kg_DM*1000,
-      grain_Mg= r$CPCon_Mg_mean_kg_kg_DM*1000,
-      grain_B= r$CPCon_B_mean_kg_kg_DM*1000,
-      grain_Cl= r$CPCon_Cl_mean_kg_kg_DM*1000,
-      grain_Cu= r$CPCon_Cu_mean_kg_kg_DM*1000,
-      grain_Fe= r$CPCon_Fe_mean_kg_kg_DM*1000,
-      grain_Mn= r$CPCon_Mn_mean_kg_kg_DM*1000,
-      grain_Mo= r$CPCon_Mo_mean_kg_kg_DM*1000,
-      grain_Zn= r$CPCon_Zn_mean_kg_kg_DM*1000,
+   ## Process nutrient content  data (0 in raw CSV is a missing-value placeholder)
+      grain_protein= ifelse(r$CPCon_Prot_mean_kg_kg_DM == 0, NA, r$CPCon_Prot_mean_kg_kg_DM) * 100,  # kg/kg DM -> %
+      grain_N= ifelse(r$CPCon_N_mean_kg_kg_DM == 0, NA, r$CPCon_N_mean_kg_kg_DM) * 1000,
+      grain_P= ifelse(r$CPCon_P_mean_kg_kg_DM == 0, NA, r$CPCon_P_mean_kg_kg_DM) * 1000,
+      grain_K= ifelse(r$CPCon_K_mean_kg_kg_DM == 0, NA, r$CPCon_K_mean_kg_kg_DM) * 1000,
+      grain_S= ifelse(r$CPCon_S_mean_kg_kg_DM == 0, NA, r$CPCon_S_mean_kg_kg_DM) * 1000,
+      grain_Ca= ifelse(r$CPCon_Ca_mean_kg_kg_DM == 0, NA, r$CPCon_Ca_mean_kg_kg_DM) * 1000,
+      grain_Mg= ifelse(r$CPCon_Mg_mean_kg_kg_DM == 0, NA, r$CPCon_Mg_mean_kg_kg_DM) * 1000,
+      grain_B= ifelse(r$CPCon_B_mean_kg_kg_DM == 0, NA, r$CPCon_B_mean_kg_kg_DM) * 1000,
+      grain_Cl= ifelse(r$CPCon_Cl_mean_kg_kg_DM == 0, NA, r$CPCon_Cl_mean_kg_kg_DM) * 1000,
+      grain_Cu= ifelse(r$CPCon_Cu_mean_kg_kg_DM == 0, NA, r$CPCon_Cu_mean_kg_kg_DM) * 1000,
+      grain_Fe= ifelse(r$CPCon_Fe_mean_kg_kg_DM == 0, NA, r$CPCon_Fe_mean_kg_kg_DM) * 1000,
+      grain_Mn= ifelse(r$CPCon_Mn_mean_kg_kg_DM == 0, NA, r$CPCon_Mn_mean_kg_kg_DM) * 1000,
+      grain_Mo= ifelse(r$CPCon_Mo_mean_kg_kg_DM == 0, NA, r$CPCon_Mo_mean_kg_kg_DM) * 1000,
+      grain_Zn= ifelse(r$CPCon_Zn_mean_kg_kg_DM == 0, NA, r$CPCon_Zn_mean_kg_kg_DM) * 1000,
 	  
 	  # this should be a fraction between 0 and 1, but some are too low, some are too high. None seem good
       #residue_protein= r$CRCon_Prot_mean_kg_kg_DM, 
 
-      residue_N= r$CRCon_N_mean_kg_kg_DM*1000,
-      residue_P= r$CRCon_P_mean_kg_kg_DM*1000,
-      residue_K= r$CRCon_K_mean_kg_kg_DM*1000,
-      residue_S= r$CRCon_S_mean_kg_kg_DM*1000,
-      residue_Ca= r$CRCon_Ca_mean_kg_kg_DM*1000,
-      residue_Mg= r$CRCon_Mg_mean_kg_kg_DM*1000,
-      residue_B= r$CRCon_B_mean_kg_kg_DM*1000,
-      residue_Cl= r$CRCon_Cl_mean_kg_kg_DM*1000,
-      residue_Cu= r$CRCon_Cu_mean_kg_kg_DM*1000,
-      residue_Fe= r$CRCon_Fe_mean_kg_kg_DM*1000,
-      residue_Mn= r$CRCon_Mn_mean_kg_kg_DM*1000,
-      residue_Mo= r$CRCon_Mo_mean_kg_kg_DM*1000,
-      residue_Zn= r$CRCon_Zn_mean_kg_kg_DM*1000, ## mg/g
+      residue_N= ifelse(r$CRCon_N_mean_kg_kg_DM == 0, NA, r$CRCon_N_mean_kg_kg_DM) * 1000,
+      residue_P= ifelse(r$CRCon_P_mean_kg_kg_DM == 0, NA, r$CRCon_P_mean_kg_kg_DM) * 1000,
+      residue_K= ifelse(r$CRCon_K_mean_kg_kg_DM == 0, NA, r$CRCon_K_mean_kg_kg_DM) * 1000,
+      residue_S= ifelse(r$CRCon_S_mean_kg_kg_DM == 0, NA, r$CRCon_S_mean_kg_kg_DM) * 1000,
+      residue_Ca= ifelse(r$CRCon_Ca_mean_kg_kg_DM == 0, NA, r$CRCon_Ca_mean_kg_kg_DM) * 1000,
+      residue_Mg= ifelse(r$CRCon_Mg_mean_kg_kg_DM == 0, NA, r$CRCon_Mg_mean_kg_kg_DM) * 1000,
+      residue_B= ifelse(r$CRCon_B_mean_kg_kg_DM == 0, NA, r$CRCon_B_mean_kg_kg_DM) * 1000,
+      residue_Cl= ifelse(r$CRCon_Cl_mean_kg_kg_DM == 0, NA, r$CRCon_Cl_mean_kg_kg_DM) * 1000,
+      residue_Cu= ifelse(r$CRCon_Cu_mean_kg_kg_DM == 0, NA, r$CRCon_Cu_mean_kg_kg_DM) * 1000,
+      residue_Fe= ifelse(r$CRCon_Fe_mean_kg_kg_DM == 0, NA, r$CRCon_Fe_mean_kg_kg_DM) * 1000,
+      residue_Mn= ifelse(r$CRCon_Mn_mean_kg_kg_DM == 0, NA, r$CRCon_Mn_mean_kg_kg_DM) * 1000,
+      residue_Mo= ifelse(r$CRCon_Mo_mean_kg_kg_DM == 0, NA, r$CRCon_Mo_mean_kg_kg_DM) * 1000,
+      residue_Zn= ifelse(r$CRCon_Zn_mean_kg_kg_DM == 0, NA, r$CRCon_Zn_mean_kg_kg_DM) * 1000, ## mg/g
 
-   ## process Soil data 
+   ## process Soil data (0 in raw CSV is a missing-value placeholder)
 
       soil_clay= r$Soil_clay_.,
       soil_silt= r$Soil_silt_.,
       soil_sand= r$Soil_sand_.,
       soil_type= r$Soil_texture_Name,
       #soil_texture= r$Soil_class_Name,
-      soil_pH= ifelse(is.na(r$Soil_pH_H2O_1.1_Number) & !is.na(r$Soil_pH_H2O_1.2.5_Number) , r$Soil_pH_H2O_1.2.5_Number ,
-               ifelse(is.na(r$Soil_pH_H2O_1.1_Number) & !is.na(r$Soil_pH_H2O_1.5_Number), r$Soil_pH_H2O_1.5_Number , r$Soil_pH_H2O_1.1_Number)),
+      soil_pH= ifelse(!is.na(r$Soil_pH_H2O_1.1_Number) & r$Soil_pH_H2O_1.1_Number > 0, r$Soil_pH_H2O_1.1_Number,
+               ifelse(!is.na(r$Soil_pH_H2O_1.2.5_Number) & r$Soil_pH_H2O_1.2.5_Number > 0, r$Soil_pH_H2O_1.2.5_Number,
+               ifelse(!is.na(r$Soil_pH_H2O_1.5_Number) & r$Soil_pH_H2O_1.5_Number > 0, r$Soil_pH_H2O_1.5_Number, NA))),
      
-      soil_pH_CaCl2= r$Soil_pH_CaCl2_Number,
-      soil_bd= r$Soil_Bulk_density_mg_cm3,
-      soil_SOC= r$Soil_SOC_K2Cr2O7_g_C_kg*10, # in %
-      soil_N= r$Soil_NC_Kjeldahl_g_N_kg*1000,
-      soil_C= r$Soil_Carbon_Wakley_Black_g_C_kg*10,
+      soil_pH_CaCl2= ifelse(r$Soil_pH_CaCl2_Number == 0, NA, r$Soil_pH_CaCl2_Number),
+      # Most values are in mg/cm3 (930-1530 -> g/cm3 by /1000); a few are already in g/cm3 (0.76-1.84)
+      soil_bd= ifelse(r$Soil_Bulk_density_mg_cm3 == 0, NA,
+               ifelse(r$Soil_Bulk_density_mg_cm3 >= 100 & r$Soil_Bulk_density_mg_cm3 <= 3000,
+                      r$Soil_Bulk_density_mg_cm3 / 1000, r$Soil_Bulk_density_mg_cm3)),
+      soil_SOC= ifelse(!is.na(r$Soil_SOC_K2Cr2O7_g_C_kg) & r$Soil_SOC_K2Cr2O7_g_C_kg > 0, r$Soil_SOC_K2Cr2O7_g_C_kg / 10,
+                ifelse(!is.na(r$Soil_Carbon_Wakley_Black_g_C_kg) & r$Soil_Carbon_Wakley_Black_g_C_kg > 0, r$Soil_Carbon_Wakley_Black_g_C_kg / 10, NA)), # g/kg -> %
+      soil_N_total= ifelse(r$Soil_NC_Kjeldahl_g_N_kg == 0, NA, r$Soil_NC_Kjeldahl_g_N_kg) * 1000, # g/kg -> mg/kg
       #r$Soil_Carbon_test_1_g_C_kg,
       #r$Soil_N_.Parco2020._kg_N_ha,
       #r$Soil_N_.De.Silva.2008._kg_N_ha,
-      soil_K= r$Soil_K_.Black._kg_K_ha,
-      soil_S= r$Soil_S_Mehlich.3_mg_S_kg,
-      soil_S_avail= r$Soil_S_available_mg_S_kg,
+      #r$Soil_K_.Black._kg_K_ha,
+      soil_S= ifelse(!is.na(r$Soil_S_Mehlich.3_mg_S_kg), r$Soil_S_Mehlich.3_mg_S_kg, r$Soil_S_available_mg_S_kg),
       #r$Soil_S_.Method.2._mg_S_kg,
-      soil_P= r$Soil_P_Olsen_mg_kg,
-	  soil_P_method = "Olsen",
-      soil_P_Bray2= r$Soil_P_Bray_2_mg_P_kg,
-      #r$Soil_P_Bray_1_mg_P_kg,
-      soil_P_Mehlich = r$Soil_P_Mehlich.3_mg_P_kg,
+      soil_P= ifelse(!is.na(r$Soil_P_Olsen_mg_kg), r$Soil_P_Olsen_mg_kg,
+              ifelse(!is.na(r$Soil_P_Bray_1_mg_P_kg), r$Soil_P_Bray_1_mg_P_kg,
+              ifelse(!is.na(r$Soil_P_Mehlich.3_mg_P_kg) & r$Soil_P_Mehlich.3_mg_P_kg > 0, r$Soil_P_Mehlich.3_mg_P_kg,
+                     r$Soil_P_Bray_2_mg_P_kg))),
+      soil_P_method = ifelse(!is.na(r$Soil_P_Olsen_mg_kg), "Olsen",
+                      ifelse(!is.na(r$Soil_P_Bray_1_mg_P_kg), "Bray 1",
+                      ifelse(!is.na(r$Soil_P_Mehlich.3_mg_P_kg) & r$Soil_P_Mehlich.3_mg_P_kg > 0, "Mehlich 3",
+                      ifelse(!is.na(r$Soil_P_Bray_2_mg_P_kg), "Bray 2", NA)))),
       #r$Soil_K_dry_mg_K_kg,
       #r$Soil_K_wet_mg_K_kg,
-      soil_K_exch= r$Soil_K_exchangeable_mg_K_kg,
+      soil_K_exch= r$Soil_K_exchangeable_mg_K_kg / 390.983, # mg/kg -> cmol(+)/kg
       soil_K= r$Soil_K_.Mehlich.3._mg_K_kg,
       #r$Soil_K_.Method.1._mg_K_kg,
       soil_Fe= r$Soil_FE_DETPA_extractable_mg_kg,
       soil_Zn= r$Soil_Zn_DETPA_extractable_mg_kg,
       soil_Ca= r$Soil_Ca_Mehlich.3_mg_Ca_kg,
-      soil_pH_KCl= r$Soil_pH_KCl_Number,
+      soil_pH_KCl= ifelse(r$Soil_pH_KCl_Number == 0, NA, r$Soil_pH_KCl_Number),
 	  	  
-      soil_SOM= r$Soil_OM_.,
+      soil_SOM= ifelse(r$Soil_OM_. == 0, NA, r$Soil_OM_.),
       #r$Soil_N_Alkaline_permanganate_kg_N_ha,
       soil_Cu= r$Soil_Cu_DETPA_extractable_mg_kg,
       soil_Mn= r$Soil_Mn_DETPA_extractable_mg_kg
@@ -208,7 +225,7 @@ carob_script <- function(path) {
       #r$Soil_K_.ammonium_acetate._mg_kg
    )
    
-	soilmeta <- data.frame(variable=c("S", "K", "Ca", "Fe", "Zn"), method=c(rep("Mehlich", 3), c("DETPA","DETPA")))
+	soilmeta <- data.frame(variable=c("K", "Ca", "Fe", "Zn", "Cu", "Mn"), method=c("Mehlich3", "Mehlich3", rep("DTPA", 4)))
 
 	refs = paste0(r$First_author_name, " & ", r$Second_author_name, ", ", r$Year_published, ". ", r$Title_of_article, ". ",
 			r$Journal_title, " ", r$Journal_vol, ": ", r$Page_numbers, ". ", r$DOI)
@@ -417,7 +434,7 @@ carob_script <- function(path) {
    P <- gsub("no crop for previous 3 years.", "none", P)
    P <- gsub("black-oats|oats|green oat|oat| oat ", "oats", P)
    P <- gsub("0", "unknown", P)
-   P <- gsub("linon usitatissimum", "lemon", P)
+   P <- gsub("linon usitatissimum", "flax", P)
    P <- gsub("^triticum aestivum l.", "wheat", P)
    P <- gsub("carrots", "carrot", P)
    P <- gsub("soybeans|soyeansoy beans\\?|soyean", "soybean", P)
@@ -448,6 +465,16 @@ carob_script <- function(path) {
    P <- gsub("soybeans", "soybean", P)
    P <- gsub("linseed flax", "flax", P)
    d$crop <- P
+   d$yield_part <- ifelse(is.na(d$crop), NA,
+                   ifelse(d$crop == "potato", "tubers",
+                   ifelse(d$crop == "lucerne", "aboveground biomass",
+                   ifelse(d$crop %in% c("common bean", "cotton", "faba bean", "brown mustard", "lablab", "flax", "pea", "rapeseed", "soybean"), "seed", "grain"))))
+   d$land_prep_method <- trimws(d$land_prep_method)
+   pm <- c("dibbling", "direct seeding", "manual", "mechanized", "mechanized line sowing", "transplanting")
+   d$planting_method <- ifelse(d$land_prep_method %in% pm, d$land_prep_method, NA)
+   d$land_prep_method[d$land_prep_method %in% pm] <- NA
+   d$irrigation_method <- trimws(d$irrigation_method)
+   d$fertilizer_type <- trimws(d$fertilizer_type)
    
 # removing one duplicate
 	d <- unique(d)

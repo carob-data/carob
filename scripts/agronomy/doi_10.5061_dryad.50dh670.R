@@ -51,7 +51,7 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	  N_fertilizer = r$Nitrogen,
 	  treatment = r$Irrigation,
 	  insect_species = tolower(r$soil_mite),
-	  insect_abundance = r$soil_mite_abundance, # individual/m2
+	  insect_abundance = as.character(r$soil_mite_abundance), # individual/m2
 	  irrigated = TRUE,
 	  crop = "wheat",
 	  yield = NA,
@@ -69,7 +69,7 @@ Overuse of groundwater and nitrogen  fertilizer constitute a severe threat to cr
 	d$treatment <- c("CIR" = "conventional irrigation", "RIR" = "reduced irrigation")[d$treatment]
 	
 	d$is_survey <- FALSE
-	d$on_farm <- TRUE
+	d$on_farm <- FALSE
 	d$trial_id <- "1"
 	d$yield_moisture <- NA
 	d$yield_isfresh <- NA

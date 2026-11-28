@@ -47,7 +47,7 @@ Author Thomas Kätterer reported that 'The dataset refers to the long-term trial
 
 #### yield data 
 	d1 <- data.frame(
-		trial_id = paste(r1$ID,r1$Farm, sep = "_"),
+		trial_id = paste(r1$ID, r1$Farm, r1$Season, sep = "_"),
 		location = r1$Site,
 		plot_id = as.character(r1$Plot_No),
 		rep = r1$Rep,
@@ -60,7 +60,7 @@ Author Thomas Kätterer reported that 'The dataset refers to the long-term trial
 		is_survey = FALSE, 
 		on_farm = TRUE, 
 		yield_moisture = NA_real_, 
-		yield_part = "grain", 
+		yield_part = ifelse(tolower(r1$Crop) == "soybean", "seed", "grain"), 
 		irrigated = NA, 
 		K_fertilizer = as.numeric(NA),
 		yield_isfresh = NA
@@ -144,7 +144,7 @@ Author Thomas Kätterer reported that 'The dataset refers to the long-term trial
 	  soil_clay = c(61.00, 70.33),
 	  soil_sand = c(23.67, 17.67),
 	  soil_C_total = c(1.82, 1.90),
-	  soil_N_total = c(0.16,  0.11),
+	  soil_N_total = c(0.16, 0.11) * 10000, # % -> mg/kg
 	  soil_P = c(8.60, 0.54),
 	  soil_P_method = "Olsen",
 	  # exchangeable cations are cmol/kg (meq/100g); mg/kg = cmol/kg * equivalent weight * 10

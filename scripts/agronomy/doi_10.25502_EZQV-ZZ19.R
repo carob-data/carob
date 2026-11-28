@@ -19,7 +19,7 @@ carob_script <- function(path){
 		data_organization="IITA;ICRAF;WUR",
 		response_vars= "yield",
 		treatment_vars="inoculated;P_fertilizer",
-		notes = "LLM-review: [medium, metadata] data_type is on-farm experiment, but is_survey is TRUE and on_farm is FALSE. Pod weight is used when seed weight is missing, then yield_part is seed for all rows."
+		notes = NA
 	)
 
 	
@@ -104,9 +104,11 @@ carob_script <- function(path){
     ##RH: as long as you specify that in yield_part!
 		
 	d0$length[d0$length == 0.75] <- 10 #to change that one entry with 0.75 as the length
-	d0$yield <- 10000 / (d0$width*d0$length) * ifelse(is.na(d0$seed_weight), d0$pod_weight , d0$seed_weight)
+	d0$yield <- 10000 / (d0$width * d0$length) * ifelse(is.na(d0$seed_weight), d0$pod_weight, d0$seed_weight)
+	d0$yield_part <- ifelse(is.na(d0$seed_weight) & !is.na(d0$pod_weight), "pod",
+		ifelse(d0$crop == "maize", "grain", "seed"))
 	
-	d0$fwy_residue <- 10000 / as.numeric(d0$width * d0$width) * d0$fwy_residue
+	d0$fwy_residue <- 10000 / as.numeric(d0$width * d0$length) * d0$fwy_residue
 	d0$fertilizer_type[grepl("\\+p|\\+ p", d0$treatment, perl = TRUE)] <- "SSP"
 	d0$SSP_amt_per_plot[grepl("SSP",d0$fertilizer_type)] <- 2
 	
@@ -117,15 +119,15 @@ carob_script <- function(path){
 	d0$K_fertilizer <- 0
 	d0 <- d0[!duplicated(d0), ]
 	d0$treatment <- carobiner::fix_name(d0$treatment)
-	d0 <- d0[, c("trial_id","treatment","fertilizer_type","inoculated","N_fertilizer","P_fertilizer","K_fertilizer","crop","yield", "fwy_residue")]
+	d0 <- d0[, c("trial_id","treatment","fertilizer_type","inoculated","N_fertilizer","P_fertilizer","K_fertilizer","crop","yield","yield_part","fwy_residue")]
   
 	#the next dataset 
 	d1 <- carobiner::change_names(r1,c("district","sector_ward","village"),c("adm1","adm2","location"))
 	d1$country <- carobiner::fix_name(d1$country, "title")
 	d1$adm1[ d1$adm1 %in% c("Kaduna State", "Kaduna", "KADUNA", "KADUNA per  ZANGON AYA") ] <- "Kaduna"
 	d1$adm1 <- carobiner::replace_values(d1$adm1,c("Kano State","Niger State"), c("Kano","Niger"))
-	d1$is_survey <- TRUE
-	d1$on_farm <- FALSE
+	d1$is_survey <- FALSE
+	d1$on_farm <- TRUE
 	d1$trial_id <- r1$farm_id
 	d1$date <- as.character(as.Date(paste(r1$date_hhsurvey_dd.days, r1$date_hhsurvey_mm.months, r1$date_hhsurvey_yyyy.years, sep = "-"), format = "%d-%B-%Y"))
 	d1$harvest_date <- as.character(as.Date(paste(r1$date_harvest_dd_technician_1, r1$date_harvest_mm_technician_1, r1$date_harvest_yyyy_technician_1, sep = "-"), format = "%d-%B-%Y"))
@@ -136,7 +138,6 @@ carob_script <- function(path){
 	d1 <- d1[,c("trial_id","country","latitude","longitude","adm1","adm2","location","date","harvest_date","is_survey","on_farm")]	
 	
 	d <- merge(d1, d0, by = "trial_id", all = TRUE)
-	d$yield_part <- "seed"
 	
 	##efyrouwa: How can we incorporate r3 with d??
 	

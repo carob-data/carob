@@ -18,7 +18,7 @@ carob_script <- function(path) {
 		project=NA,
 		publication= "doi:10.1017/S0014479715000265",
 		data_organization = "CIMMYT",
-		data_type="experiment",
+		data_type="on-farm experiment",
 		carob_contributor="Fredy Chimire",
 		carob_effort = NA,
 		carob_date="2024-01-11",
@@ -33,7 +33,7 @@ carob_script <- function(path) {
   
 	d <- data.frame(
 		harvest_date=r$Harvest.Year,
-		variety=r$Variety,
+		variety=trimws(r$Variety),
 		plant_density=r$Plantpopulation,
 		adm2=r$District,
 		location=r$Village,
@@ -56,9 +56,9 @@ carob_script <- function(path) {
 	d$K_fertilizer <- 0	
 	d$S_fertilizer <- fert[,1] * .04	
 	
-	d$fertilizer_type <- "none"
-	d$fertilizer_type[fert[,1] > 0] <- "NPS"
-	d$fertilizer_type[fert[,2] > 0] <- paste0(d$fertilizer_type[fert[,2] > 0], ";urea")
+	d$fertilizer_type <- ifelse(fert[,1] > 0 & fert[,2] > 0, "NPS; urea",
+	                     ifelse(fert[,1] > 0, "NPS",
+	                     ifelse(fert[,2] > 0, "urea", "none")))
 	
  
   d$country<- "Malawi"
