@@ -1,16 +1,24 @@
 # R script for "carob"
 
 ## ISSUES
-# This is a global compilation of ~500 published articles; several source articles in the Dryad CSV contain
-# upstream unit/data-entry outliers that are left as reported (not silently dropped):
-# - Seed density: Art397 (Maize 43205) and Art427 (Wheat 32126) appear to be seeds/ha entered in the seeds/m2 column.
-# - Soil bulk density: Art351 reports 141000 and one study reports 1.41e-6.
-# - Grain/residue micronutrients: Art453 (rice Fe/Mn/Cu/Zn) and Art54 (Zn) appear 1000x too high (mg/kg entered as g/kg);
-#   Art339 reports grain protein 67-92%; Art27 reports residue_P 95-114 mg/g.
-# - Fertilizers: Art210 (Cu=1040, Zn=2795, Fe=760 kg/ha, sewage sludge/compost), Art309 (K up to 4303), Art185 (P up to 1276).
-# - Soil: Art152 reports Kjeldahl N = 209 g/kg; Art11 soil_Ca = 38800 mg/kg; Art413 organic soil SOM up to 59%.
-# - High yields: Art468 rice (53224 kg/ha), Art53 wheat (24850 kg/ha).
-# - Many grain/residue micronutrient (Cu, B, Mo, Mn, Fe, Zn) and Cl/Ca values are legitimately below terminag's current valid_min.
+# This is a global compilation of ~500 published articles. Clearly impossible 10x/100x/1000x/1e5x upstream
+# unit/decimal entry typos in specific articles are set to NA with explicit comments below:
+# - seed_density > 5e7 (Art397 maize 4.32e8, Art427 wheat 3.21e8: seeds/ha entered in seeds/m2)
+# - soil_bd < 0.1 or > 3 (Art351 141000; one study 1.41e-6)
+# - grain/residue nutrient 100x-1000x unit typos (high: Art453, Art54, Art339, Art27, Art217, Art88, Art343;
+#   double-divided 1000x low: Art4, Art101, Art103, Art209, Art306, Art315)
+# - soil 10x-1000x unit errors (soil_N_total > 10000 or < 50 mg/kg, proven by impossible C:N ratios of 0.3-1.5 or >1000;
+#   Art15/94 soil_P > 1500; Art96 soil_S > 1000; Art11 soil_Ca > 20000)
+# - yield 10x single-row decimal typos (Art468 rice 53224 vs median 5395; Art53 wheat 24850 vs median 2776)
+# - fertilizer upstream errors/non-fertilizer totals: Art210 mineral NPK row Cu=1040 & Zn=2795 (1000x unit typo);
+#   Art309 bulk zeolite rock oxide composition entered as K (up to 4303), Fe (up to 2609), and Ca (up to 1008);
+#   Art185 FYM P miscalculated 10-20x high (405-1276 kg P/ha); Art500 Zero-N control rows given Full-N rate (876-890).
+# - pure organic rows (280 rows across 30 articles, e.g. manure, compost, slurry, sewage sludge, biochar, blood meal)
+#   are moved from *_fertilizer into N/P/K/Ca/Fe/Mg_organic with OM_used=TRUE, OM_type, and N/P/K_fertilizer=0.
+# - mixed organic+mineral rows (~398 rows) have OM_used=TRUE and OM_type set, but the source CSV only reports a single
+#   combined nutrient total so *_fertilizer on those mixed rows still includes the organic share.
+# Remaining high rates are published trials kept as reported (e.g. Art534 potato N=1000, Art33/500 Full-N soybean
+# 640-894, Art86 soybean P=490/K=930, Art71/173 elemental S=300-1014, Art488 liming Ca=1214, Art413 peat SOM 49-59%).
 
 
 carob_script <- function(path) {
@@ -227,6 +235,62 @@ carob_script <- function(path) {
    
 	soilmeta <- data.frame(variable=c("K", "Ca", "Fe", "Zn", "Cu", "Mn"), method=c("Mehlich3", "Mehlich3", rep("DTPA", 4)))
 
+	# Separate purely organic rows from inorganic *_fertilizer (must run before merge(d, geo) reorders rows)
+	ft_raw <- r$Fertiliser_type_Name
+	tr_raw <- r$Treatment_Name
+	om_pat <- "manure|compost|sludge|biochar|litter|slurry|slurrry|vermi|cake|straw|dung|chicken|cow|swine|pig|poultry|fym|humic|seaweed|meal|bone|blood|guano|digestate|(?<!in)organic"
+	min_pat <- "urea|npk|dap|map|ssp|tsp|mop|sop|kcl|superphosphate|super phosphate|superphosephate|nitrate|sulfate|sulphate|phosphate|potash|mineral|inorganic|k2s04|k2so4|can\\b|uan\\b|calcium di-phosphate|ammonium|n:|p:|k:|;\\s*n$|bio sulphur"
+	is_om <- !is.na(ft_raw) & grepl(om_pat, ft_raw, ignore.case = TRUE, perl = TRUE)
+	is_min <- (!is.na(ft_raw) & grepl(min_pat, ft_raw, ignore.case = TRUE, perl = TRUE)) |
+	          (!is.na(tr_raw) & grepl("\\+.*(npk|urea|dap|ssp|tsp|mop|kcl|mineral|chemical)", tr_raw, ignore.case = TRUE, perl = TRUE))
+	pure_om <- is_om & !is_min
+
+	d$OM_used <- ifelse(is_om, TRUE, NA)
+	get_om_type <- function(s) {
+		if (is.na(s)) return(NA_character_)
+		s <- tolower(s)
+		out <- character()
+		if (grepl("vermicompost", s)) out <- c(out, "vermicompost")
+		if (grepl("compost", gsub("vermicompost|composted sewage sludge", "", s))) out <- c(out, "compost")
+		if (grepl("composted sewage sludge", s)) out <- c(out, "treated sewage sludge")
+		else if (grepl("sewage sludge|sludge", s)) out <- c(out, "sewage sludge (dried, municipal)")
+		if (grepl("broiler litter", s)) out <- c(out, "broiler litter")
+		if (grepl("poultry|chicken", s)) out <- c(out, "poultry manure")
+		if (grepl("slurry|slurrry|digestate", s)) out <- c(out, "liquid manure")
+		if (grepl("swine manure|pig manure", s)) out <- c(out, "swine manure (dried)")
+		if (grepl("sheep manure", s)) out <- c(out, "sheep manure (dried)")
+		if (grepl("cow manure|cattle|beef cattle|cow dung", s)) out <- c(out, "cattle dung")
+		if (grepl("farmyard|farm yard|fym|fallmanure|springmanure|concentrated manure|goat manure", s) ||
+		    (grepl("manure", s) && length(out) == 0)) out <- c(out, "farmyard manure")
+		if (grepl("leaf litter", s)) out <- c(out, "leaf litter")
+		if (grepl("biochar", s)) out <- c(out, "biochar")
+		if (grepl("blood meal", s)) out <- c(out, "blood meal")
+		if (grepl("bone meal", s)) out <- c(out, "bone meal")
+		if (grepl("soybean meal", s)) out <- c(out, "soy meal")
+		if (grepl("straw", s)) out <- c(out, "straw")
+		if (grepl("cake", s)) out <- c(out, "oil cake")
+		if (grepl("seaweed", s)) out <- c(out, "seaweed (dried)")
+		if (length(out) == 0) out <- "unknown"
+		paste(unique(out), collapse = "; ")
+	}
+	d$OM_type <- ifelse(is_om, vapply(ft_raw, get_om_type, character(1)), NA_character_)
+
+	d$N_organic <- ifelse(pure_om, d$N_fertilizer, NA_real_)
+	d$P_organic <- ifelse(pure_om, d$P_fertilizer, NA_real_)
+	d$K_organic <- ifelse(pure_om, d$K_fertilizer, NA_real_)
+	d$Ca_organic <- ifelse(pure_om, d$Ca_fertilizer, NA_real_)
+	d$Fe_organic <- ifelse(pure_om, d$Fe_fertilizer, NA_real_)
+	d$Mg_organic <- ifelse(pure_om, d$Mg_fertilizer, NA_real_)
+
+	d$N_fertilizer[pure_om] <- 0
+	d$P_fertilizer[pure_om] <- 0
+	d$K_fertilizer[pure_om] <- 0
+	for (fc in c("S_fertilizer", "Ca_fertilizer", "Mg_fertilizer", "B_fertilizer", "Cl_fertilizer",
+	             "Cu_fertilizer", "Fe_fertilizer", "Mn_fertilizer", "Mo_fertilizer", "Zn_fertilizer")) {
+		d[[fc]][pure_om] <- NA_real_
+	}
+	d$fertilizer_type[pure_om] <- "none"
+
 	refs = paste0(r$First_author_name, " & ", r$Second_author_name, ", ", r$Year_published, ". ", r$Title_of_article, ". ",
 			r$Journal_title, " ", r$Journal_vol, ": ", r$Page_numbers, ". ", r$DOI)
 	refs <- gsub("& et al", "et al.", refs)
@@ -384,7 +448,7 @@ carob_script <- function(path) {
    # List of Normalized names of fertilizer 
    normalized_names <- c("urea", "SSP", "SOP", "H3BO3", "ZnSO4", "CaHPO4", 
                 "\\(NH₄\\)HCO3", "ATS", "DAS", "CMP", "SCU", "KCl", 
-                "TSP", "AN", "MAP", "gypsum", "NPK", "unknown")
+                "TSP", "AN", "MAP", "gypsum", "NPK", "none", "unknown")
    
    # Create the regex pattern
    pattern <- paste0("\\b(", paste( normalized_names, collapse = "|"), ")\\b")
@@ -475,6 +539,64 @@ carob_script <- function(path) {
    d$land_prep_method[d$land_prep_method %in% pm] <- NA
    d$irrigation_method <- trimws(d$irrigation_method)
    d$fertilizer_type <- trimws(d$fertilizer_type)
+
+   # Null out clearly impossible upstream unit/decimal typos in specific source articles (see ## ISSUES)
+   # seed_density: Art397 (4.32e8) and Art427 (3.21e8) entered seeds/ha in seeds/m2 column
+   d$seed_density[d$seed_density > 5e7] <- NA
+   # soil_bd: Art351 (141000) and one study (1.41e-6) are 1e5x / 1e-6x typos
+   d$soil_bd[d$soil_bd < 0.1 | d$soil_bd > 3] <- NA
+   # grain & residue nutrient 100x-1000x high typos (e.g. Art453 rice N/Fe/Zn/Cu/Mn, Art54 rice Zn,
+   # Art339 maize protein 67-92%, Art27 soybean residue_P 95-114, Art217 wheat residue_N 90-122,
+   # Art88 soybean grain_K 128, Art343 wheat grain_P 26-38)
+   d$grain_N[d$grain_N > 100] <- NA
+   d$grain_K[d$grain_K > 60] <- NA
+   d$grain_P[d$grain_P > 20] <- NA
+   d$grain_Fe[d$grain_Fe > 5] <- NA
+   d$grain_Zn[d$grain_Zn > 2] <- NA
+   d$grain_Cu[d$grain_Cu > 0.5] <- NA
+   d$grain_Mn[d$grain_Mn > 2] <- NA
+   d$grain_protein[d$grain_protein > 60] <- NA
+   d$residue_N[d$residue_N > 80] <- NA
+   d$residue_P[d$residue_P > 20] <- NA
+   d$residue_Zn[d$residue_Zn > 5] <- NA
+   # grain & residue nutrient 100x-1000x low typos (double-divided by 1000 in upstream compilation:
+   # Art4, Art101, Art103, Art209, Art306, Art315)
+   d$grain_K[d$grain_K < 0.05] <- NA
+   d$grain_P[d$grain_P < 0.05] <- NA
+   d$grain_Mg[d$grain_Mg < 0.01] <- NA
+   d$grain_Ca[d$grain_Ca < 0.005] <- NA
+   d$grain_Fe[d$grain_Fe < 0.0005] <- NA
+   d$grain_Zn[d$grain_Zn < 0.0005] <- NA
+   d$grain_Mn[d$grain_Mn < 0.0005] <- NA
+   d$residue_N[d$residue_N < 0.1] <- NA
+   d$residue_P[d$residue_P < 0.01] <- NA
+   # soil 10x-1000x unit errors:
+   # soil_N_total > 10000 mg/kg (>1% N on mineral croplands with C:N = 0.3-1.5, e.g. Art92/127/152/197/207/304/405/425/477/513)
+   # and < 50 mg/kg (<0.005% N, double-divided in Art44/72/111/119/369/383/388/407/435)
+   d$soil_N_total[d$soil_N_total > 10000 | d$soil_N_total < 50] <- NA
+   d$soil_P[d$soil_P > 1500] <- NA
+   d$soil_S[d$soil_S > 1000] <- NA
+   d$soil_Ca[d$soil_Ca > 20000] <- NA
+   # yield single-row 10x decimal typos: Art468 rice (53224 vs median 5395) and Art53 wheat (24850 vs median 2776)
+   i <- (d$crop == "rice" & d$yield > 25000) | (d$crop == "wheat" & d$yield > 20000)
+   d$yield[i] <- NA
+   d$dmy_storage[i] <- NA
+   # fertilizer upstream errors & non-fertilizer rock totals:
+   # Art210 mineral NPK 40-25-33 row has 1000x unit typo for Cu (1040) and Zn (2795 kg/ha)
+   i <- grepl("^210-", d$trial_id) & grepl("40:25:33", d$treatment)
+   d$Cu_fertilizer[i] <- NA
+   d$Zn_fertilizer[i] <- NA
+   # Art309 (Amiri 2021) entered bulk zeolite rock elemental oxide content as K (up to 4303), Fe (up to 2609), Ca (up to 1008)
+   i <- grepl("^309-", d$trial_id)
+   d$K_fertilizer[i & d$K_fertilizer > 1000] <- NA
+   d$Fe_fertilizer[i & d$Fe_fertilizer > 200] <- NA
+   d$Ca_fertilizer[i & d$Ca_fertilizer > 300] <- NA
+   # Art185 (Zenebe 2021) miscalculated FYM P 10-20x too high (405/810/1215 + 60.72 kg P/ha)
+   i <- grepl("^185-", d$trial_id) & d$P_fertilizer >= 400
+   d$P_fertilizer[i] <- NA
+   # Art500 (Cafaro La Menza 2020) copied Full-N rates (876-890 kg/ha) onto Zero-N control rows
+   i <- grepl("^500-", d$trial_id) & grepl("Zero", d$treatment)
+   d$N_fertilizer[i] <- NA
    
 # removing one duplicate
 	d <- unique(d)
